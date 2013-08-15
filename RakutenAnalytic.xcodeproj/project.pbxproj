@@ -64,8 +64,27 @@
 		2AD9639C157FA2C5007A2E01 /* RACommons.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD9639B157FA2C5007A2E01 /* RACommons.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52D0122A166E3E30005B3A8E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D01228166E3E30005B3A8E /* CoreGraphics.framework */; };
 		52D0122B166E3E30005B3A8E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D01229166E3E30005B3A8E /* Security.framework */; };
-		74C614CF17BD5B4E00D428AD /* RCommonUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */; };
-		9B1B3C4817256A3E0027103E /* RCommonUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */; };
+		74C6156117BD71C800D428AD /* RUtil+NSData+Compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6154A17BD6D7B00D428AD /* RUtil+NSData+Compression.m */; };
+		74C6156317BD71DE00D428AD /* RDeviceInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6152617BD6D7B00D428AD /* RDeviceInformation.m */; };
+		74C6156517BD71DE00D428AD /* RGenericUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6152917BD6D7B00D428AD /* RGenericUtility.m */; };
+		74C6156717BD71DE00D428AD /* RUtilHTTPManager+Post+Headers.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6152C17BD6D7B00D428AD /* RUtilHTTPManager+Post+Headers.m */; };
+		74C6156917BD71DE00D428AD /* RUtilHTTPManager+Post.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6152E17BD6D7B00D428AD /* RUtilHTTPManager+Post.m */; };
+		74C6156B17BD71DE00D428AD /* RUtilHTTPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153017BD6D7B00D428AD /* RUtilHTTPManager.m */; };
+		74C6156D17BD71DE00D428AD /* HTMLLinkButton+Drawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153317BD6D7B00D428AD /* HTMLLinkButton+Drawing.m */; };
+		74C6156F17BD71DE00D428AD /* HTMLLinkButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153517BD6D7B00D428AD /* HTMLLinkButton.m */; };
+		74C6157117BD71DE00D428AD /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153817BD6D7B00D428AD /* KeychainItemWrapper.m */; };
+		74C6157317BD71DE00D428AD /* RLicense.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153B17BD6D7B00D428AD /* RLicense.m */; };
+		74C6157517BD71DE00D428AD /* RLicenseinformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6153D17BD6D7B00D428AD /* RLicenseinformation.m */; };
+		74C6157717BD71DE00D428AD /* RGeoLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6154017BD6D7B00D428AD /* RGeoLocationManager.m */; };
+		74C6157B17BD71DE00D428AD /* RUtil+NSData+Base64EncDec.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6154817BD6D7B00D428AD /* RUtil+NSData+Base64EncDec.m */; };
+		74C6157E17BD71DE00D428AD /* RLoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6154D17BD6D7B00D428AD /* RLoadingView.m */; };
+		74C6158017BD71DE00D428AD /* RProgressBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6154F17BD6D7B00D428AD /* RProgressBar.m */; };
+		74C6158517BD71DE00D428AD /* RStringUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6155517BD6D7B00D428AD /* RStringUtility.m */; };
+		74C6158717BD71DE00D428AD /* RUtil+NSString+EncDec.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6155717BD6D7B00D428AD /* RUtil+NSString+EncDec.m */; };
+		74C6158917BD71DE00D428AD /* RUtil+NSString+EncURLComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6155917BD6D7B00D428AD /* RUtil+NSString+EncURLComponent.m */; };
+		74C6158B17BD71DE00D428AD /* RUtil+NSString+HMACSHA1.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6155B17BD6D7B00D428AD /* RUtil+NSString+HMACSHA1.m */; };
+		74C6158D17BD71DE00D428AD /* RUtil+UIColor+HexEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 74C6155E17BD6D7B00D428AD /* RUtil+UIColor+HexEncoding.m */; };
+		74C6158E17BD762B00D428AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D01229166E3E30005B3A8E /* Security.framework */; };
 		9B1B3C4A17256A3E0027103E /* SBJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4617256A3E0027103E /* SBJSON.framework */; };
 		9BC30B901694064800E4C811 /* RAJsonHelperUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BC30B8D1694064800E4C811 /* RAJsonHelperUtilTests.m */; };
 		9BC30B9B1694071200E4C811 /* RATrackingLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BC30B981694071200E4C811 /* RATrackingLibTests.m */; };
@@ -105,8 +124,50 @@
 		5290EB9F16136BD000DBBD98 /* RakutenAnalyticFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = RakutenAnalyticFramework.sh; sourceTree = "<group>"; };
 		52D01228166E3E30005B3A8E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		52D01229166E3E30005B3A8E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		74C6152517BD6D7B00D428AD /* RDeviceInformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RDeviceInformation.h; sourceTree = "<group>"; };
+		74C6152617BD6D7B00D428AD /* RDeviceInformation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RDeviceInformation.m; sourceTree = "<group>"; };
+		74C6152817BD6D7B00D428AD /* RGenericUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RGenericUtility.h; sourceTree = "<group>"; };
+		74C6152917BD6D7B00D428AD /* RGenericUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RGenericUtility.m; sourceTree = "<group>"; };
+		74C6152B17BD6D7B00D428AD /* RUtilHTTPManager+Post+Headers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtilHTTPManager+Post+Headers.h"; sourceTree = "<group>"; };
+		74C6152C17BD6D7B00D428AD /* RUtilHTTPManager+Post+Headers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtilHTTPManager+Post+Headers.m"; sourceTree = "<group>"; };
+		74C6152D17BD6D7B00D428AD /* RUtilHTTPManager+Post.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtilHTTPManager+Post.h"; sourceTree = "<group>"; };
+		74C6152E17BD6D7B00D428AD /* RUtilHTTPManager+Post.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtilHTTPManager+Post.m"; sourceTree = "<group>"; };
+		74C6152F17BD6D7B00D428AD /* RUtilHTTPManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RUtilHTTPManager.h; sourceTree = "<group>"; };
+		74C6153017BD6D7B00D428AD /* RUtilHTTPManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RUtilHTTPManager.m; sourceTree = "<group>"; };
+		74C6153217BD6D7B00D428AD /* HTMLLinkButton+Drawing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HTMLLinkButton+Drawing.h"; sourceTree = "<group>"; };
+		74C6153317BD6D7B00D428AD /* HTMLLinkButton+Drawing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "HTMLLinkButton+Drawing.m"; sourceTree = "<group>"; };
+		74C6153417BD6D7B00D428AD /* HTMLLinkButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTMLLinkButton.h; sourceTree = "<group>"; };
+		74C6153517BD6D7B00D428AD /* HTMLLinkButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HTMLLinkButton.m; sourceTree = "<group>"; };
+		74C6153717BD6D7B00D428AD /* KeychainItemWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
+		74C6153817BD6D7B00D428AD /* KeychainItemWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
+		74C6153A17BD6D7B00D428AD /* RLicense.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLicense.h; sourceTree = "<group>"; };
+		74C6153B17BD6D7B00D428AD /* RLicense.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLicense.m; sourceTree = "<group>"; };
+		74C6153C17BD6D7B00D428AD /* RLicenseinformation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLicenseinformation.h; sourceTree = "<group>"; };
+		74C6153D17BD6D7B00D428AD /* RLicenseinformation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLicenseinformation.m; sourceTree = "<group>"; };
+		74C6153F17BD6D7B00D428AD /* RGeoLocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RGeoLocationManager.h; sourceTree = "<group>"; };
+		74C6154017BD6D7B00D428AD /* RGeoLocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RGeoLocationManager.m; sourceTree = "<group>"; };
+		74C6154717BD6D7B00D428AD /* RUtil+NSData+Base64EncDec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+NSData+Base64EncDec.h"; sourceTree = "<group>"; };
+		74C6154817BD6D7B00D428AD /* RUtil+NSData+Base64EncDec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+NSData+Base64EncDec.m"; sourceTree = "<group>"; };
+		74C6154917BD6D7B00D428AD /* RUtil+NSData+Compression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+NSData+Compression.h"; sourceTree = "<group>"; };
+		74C6154A17BD6D7B00D428AD /* RUtil+NSData+Compression.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+NSData+Compression.m"; sourceTree = "<group>"; };
+		74C6154C17BD6D7B00D428AD /* RLoadingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RLoadingView.h; sourceTree = "<group>"; };
+		74C6154D17BD6D7B00D428AD /* RLoadingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RLoadingView.m; sourceTree = "<group>"; };
+		74C6154E17BD6D7B00D428AD /* RProgressBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RProgressBar.h; sourceTree = "<group>"; };
+		74C6154F17BD6D7B00D428AD /* RProgressBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RProgressBar.m; sourceTree = "<group>"; };
+		74C6155117BD6D7B00D428AD /* RCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCommon.h; sourceTree = "<group>"; };
+		74C6155217BD6D7B00D428AD /* RCommonUtilities-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RCommonUtilities-Prefix.pch"; sourceTree = "<group>"; };
+		74C6155317BD6D7B00D428AD /* RUtilLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RUtilLogger.h; sourceTree = "<group>"; };
+		74C6155417BD6D7B00D428AD /* RStringUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RStringUtility.h; sourceTree = "<group>"; };
+		74C6155517BD6D7B00D428AD /* RStringUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RStringUtility.m; sourceTree = "<group>"; };
+		74C6155617BD6D7B00D428AD /* RUtil+NSString+EncDec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+NSString+EncDec.h"; sourceTree = "<group>"; };
+		74C6155717BD6D7B00D428AD /* RUtil+NSString+EncDec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+NSString+EncDec.m"; sourceTree = "<group>"; };
+		74C6155817BD6D7B00D428AD /* RUtil+NSString+EncURLComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+NSString+EncURLComponent.h"; sourceTree = "<group>"; };
+		74C6155917BD6D7B00D428AD /* RUtil+NSString+EncURLComponent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+NSString+EncURLComponent.m"; sourceTree = "<group>"; };
+		74C6155A17BD6D7B00D428AD /* RUtil+NSString+HMACSHA1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+NSString+HMACSHA1.h"; sourceTree = "<group>"; };
+		74C6155B17BD6D7B00D428AD /* RUtil+NSString+HMACSHA1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+NSString+HMACSHA1.m"; sourceTree = "<group>"; };
+		74C6155D17BD6D7B00D428AD /* RUtil+UIColor+HexEncoding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RUtil+UIColor+HexEncoding.h"; sourceTree = "<group>"; };
+		74C6155E17BD6D7B00D428AD /* RUtil+UIColor+HexEncoding.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RUtil+UIColor+HexEncoding.m"; sourceTree = "<group>"; };
 		92EE77314CEB4EECA2EDD465 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
-		9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RCommonUtilities.framework; path = Samples/Frameworks/RCommonUtilities.framework; sourceTree = "<group>"; };
 		9B1B3C4617256A3E0027103E /* SBJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SBJSON.framework; path = Samples/Frameworks/SBJSON.framework; sourceTree = "<group>"; };
 		9BC30B8D1694064800E4C811 /* RAJsonHelperUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAJsonHelperUtilTests.m; sourceTree = "<group>"; };
 		9BC30B981694071200E4C811 /* RATrackingLibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATrackingLibTests.m; sourceTree = "<group>"; };
@@ -122,6 +183,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74C6158E17BD762B00D428AD /* Security.framework in Frameworks */,
 				2A06D697157E13430090F4CA /* UIKit.framework in Frameworks */,
 				2A06D66F157E0B950090F4CA /* libsqlite3.0.dylib in Frameworks */,
 				2A06D670157E0B950090F4CA /* libz.1.2.5.dylib in Frameworks */,
@@ -130,7 +192,6 @@
 				2A06D66E157E0B950090F4CA /* CoreTelephony.framework in Frameworks */,
 				2A06D671157E0B950090F4CA /* SystemConfiguration.framework in Frameworks */,
 				2A06D631157DE6F00090F4CA /* Foundation.framework in Frameworks */,
-				74C614CF17BD5B4E00D428AD /* RCommonUtilities.framework in Frameworks */,
 				1490EBD4B8F840F48A5E0BB3 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,7 +211,6 @@
 				2A5426D81589BB4E00B01B7B /* SenTestingKit.framework in Frameworks */,
 				2A5426D91589BB4E00B01B7B /* UIKit.framework in Frameworks */,
 				2A5426DA1589BB4E00B01B7B /* Foundation.framework in Frameworks */,
-				9B1B3C4817256A3E0027103E /* RCommonUtilities.framework in Frameworks */,
 				9B1B3C4A17256A3E0027103E /* SBJSON.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				5290EB9F16136BD000DBBD98 /* RakutenAnalyticFramework.sh */,
+				74C6156017BD6D7B00D428AD /* RCommonUtilities */,
 				2A06D632157DE6F00090F4CA /* RakutenAnalytic */,
 				2A5426DB1589BB4E00B01B7B /* RakutenAnalyticTests */,
 				2A06D62F157DE6F00090F4CA /* Frameworks */,
@@ -182,7 +243,6 @@
 		2A06D62F157DE6F00090F4CA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */,
 				9B1B3C4617256A3E0027103E /* SBJSON.framework */,
 				2A06D669157E0B950090F4CA /* libsqlite3.0.dylib */,
 				2A06D66A157E0B950090F4CA /* libz.1.2.5.dylib */,
@@ -287,6 +347,144 @@
 				2A5426E41589BB4E00B01B7B /* RakutenAnalyticTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		74C6152717BD6D7B00D428AD /* DeviceInformation */ = {
+			isa = PBXGroup;
+			children = (
+				74C6152517BD6D7B00D428AD /* RDeviceInformation.h */,
+				74C6152617BD6D7B00D428AD /* RDeviceInformation.m */,
+			);
+			path = DeviceInformation;
+			sourceTree = "<group>";
+		};
+		74C6152A17BD6D7B00D428AD /* GenericUtility */ = {
+			isa = PBXGroup;
+			children = (
+				74C6152817BD6D7B00D428AD /* RGenericUtility.h */,
+				74C6152917BD6D7B00D428AD /* RGenericUtility.m */,
+			);
+			path = GenericUtility;
+			sourceTree = "<group>";
+		};
+		74C6153117BD6D7B00D428AD /* HTTPNetworkServices */ = {
+			isa = PBXGroup;
+			children = (
+				74C6152B17BD6D7B00D428AD /* RUtilHTTPManager+Post+Headers.h */,
+				74C6152C17BD6D7B00D428AD /* RUtilHTTPManager+Post+Headers.m */,
+				74C6152D17BD6D7B00D428AD /* RUtilHTTPManager+Post.h */,
+				74C6152E17BD6D7B00D428AD /* RUtilHTTPManager+Post.m */,
+				74C6152F17BD6D7B00D428AD /* RUtilHTTPManager.h */,
+				74C6153017BD6D7B00D428AD /* RUtilHTTPManager.m */,
+			);
+			path = HTTPNetworkServices;
+			sourceTree = "<group>";
+		};
+		74C6153617BD6D7B00D428AD /* HyperLinkButton */ = {
+			isa = PBXGroup;
+			children = (
+				74C6153217BD6D7B00D428AD /* HTMLLinkButton+Drawing.h */,
+				74C6153317BD6D7B00D428AD /* HTMLLinkButton+Drawing.m */,
+				74C6153417BD6D7B00D428AD /* HTMLLinkButton.h */,
+				74C6153517BD6D7B00D428AD /* HTMLLinkButton.m */,
+			);
+			path = HyperLinkButton;
+			sourceTree = "<group>";
+		};
+		74C6153917BD6D7B00D428AD /* KeychainWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				74C6153717BD6D7B00D428AD /* KeychainItemWrapper.h */,
+				74C6153817BD6D7B00D428AD /* KeychainItemWrapper.m */,
+			);
+			path = KeychainWrapper;
+			sourceTree = "<group>";
+		};
+		74C6153E17BD6D7B00D428AD /* LicenseInformation */ = {
+			isa = PBXGroup;
+			children = (
+				74C6153A17BD6D7B00D428AD /* RLicense.h */,
+				74C6153B17BD6D7B00D428AD /* RLicense.m */,
+				74C6153C17BD6D7B00D428AD /* RLicenseinformation.h */,
+				74C6153D17BD6D7B00D428AD /* RLicenseinformation.m */,
+			);
+			path = LicenseInformation;
+			sourceTree = "<group>";
+		};
+		74C6154117BD6D7B00D428AD /* LocationManager */ = {
+			isa = PBXGroup;
+			children = (
+				74C6153F17BD6D7B00D428AD /* RGeoLocationManager.h */,
+				74C6154017BD6D7B00D428AD /* RGeoLocationManager.m */,
+			);
+			path = LocationManager;
+			sourceTree = "<group>";
+		};
+		74C6154B17BD6D7B00D428AD /* NSDataUtility */ = {
+			isa = PBXGroup;
+			children = (
+				74C6154717BD6D7B00D428AD /* RUtil+NSData+Base64EncDec.h */,
+				74C6154817BD6D7B00D428AD /* RUtil+NSData+Base64EncDec.m */,
+				74C6154917BD6D7B00D428AD /* RUtil+NSData+Compression.h */,
+				74C6154A17BD6D7B00D428AD /* RUtil+NSData+Compression.m */,
+			);
+			path = NSDataUtility;
+			sourceTree = "<group>";
+		};
+		74C6155017BD6D7B00D428AD /* ProgressIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				74C6154C17BD6D7B00D428AD /* RLoadingView.h */,
+				74C6154D17BD6D7B00D428AD /* RLoadingView.m */,
+				74C6154E17BD6D7B00D428AD /* RProgressBar.h */,
+				74C6154F17BD6D7B00D428AD /* RProgressBar.m */,
+			);
+			path = ProgressIndicator;
+			sourceTree = "<group>";
+		};
+		74C6155C17BD6D7B00D428AD /* StringUtility */ = {
+			isa = PBXGroup;
+			children = (
+				74C6155417BD6D7B00D428AD /* RStringUtility.h */,
+				74C6155517BD6D7B00D428AD /* RStringUtility.m */,
+				74C6155617BD6D7B00D428AD /* RUtil+NSString+EncDec.h */,
+				74C6155717BD6D7B00D428AD /* RUtil+NSString+EncDec.m */,
+				74C6155817BD6D7B00D428AD /* RUtil+NSString+EncURLComponent.h */,
+				74C6155917BD6D7B00D428AD /* RUtil+NSString+EncURLComponent.m */,
+				74C6155A17BD6D7B00D428AD /* RUtil+NSString+HMACSHA1.h */,
+				74C6155B17BD6D7B00D428AD /* RUtil+NSString+HMACSHA1.m */,
+			);
+			path = StringUtility;
+			sourceTree = "<group>";
+		};
+		74C6155F17BD6D7B00D428AD /* UIColor */ = {
+			isa = PBXGroup;
+			children = (
+				74C6155D17BD6D7B00D428AD /* RUtil+UIColor+HexEncoding.h */,
+				74C6155E17BD6D7B00D428AD /* RUtil+UIColor+HexEncoding.m */,
+			);
+			path = UIColor;
+			sourceTree = "<group>";
+		};
+		74C6156017BD6D7B00D428AD /* RCommonUtilities */ = {
+			isa = PBXGroup;
+			children = (
+				74C6152717BD6D7B00D428AD /* DeviceInformation */,
+				74C6152A17BD6D7B00D428AD /* GenericUtility */,
+				74C6153117BD6D7B00D428AD /* HTTPNetworkServices */,
+				74C6153617BD6D7B00D428AD /* HyperLinkButton */,
+				74C6153917BD6D7B00D428AD /* KeychainWrapper */,
+				74C6153E17BD6D7B00D428AD /* LicenseInformation */,
+				74C6154117BD6D7B00D428AD /* LocationManager */,
+				74C6154B17BD6D7B00D428AD /* NSDataUtility */,
+				74C6155017BD6D7B00D428AD /* ProgressIndicator */,
+				74C6155117BD6D7B00D428AD /* RCommon.h */,
+				74C6155217BD6D7B00D428AD /* RCommonUtilities-Prefix.pch */,
+				74C6155317BD6D7B00D428AD /* RUtilLogger.h */,
+				74C6155C17BD6D7B00D428AD /* StringUtility */,
+				74C6155F17BD6D7B00D428AD /* UIColor */,
+			);
+			path = RCommonUtilities;
 			sourceTree = "<group>";
 		};
 		9BC30B8B1694063C00E4C811 /* RAJsonHelperUtil */ = {
@@ -494,10 +692,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74C6156317BD71DE00D428AD /* RDeviceInformation.m in Sources */,
+				74C6156517BD71DE00D428AD /* RGenericUtility.m in Sources */,
+				74C6156717BD71DE00D428AD /* RUtilHTTPManager+Post+Headers.m in Sources */,
+				74C6156917BD71DE00D428AD /* RUtilHTTPManager+Post.m in Sources */,
+				74C6156B17BD71DE00D428AD /* RUtilHTTPManager.m in Sources */,
+				74C6156D17BD71DE00D428AD /* HTMLLinkButton+Drawing.m in Sources */,
+				74C6156F17BD71DE00D428AD /* HTMLLinkButton.m in Sources */,
+				74C6157117BD71DE00D428AD /* KeychainItemWrapper.m in Sources */,
+				74C6157317BD71DE00D428AD /* RLicense.m in Sources */,
+				74C6157517BD71DE00D428AD /* RLicenseinformation.m in Sources */,
+				74C6157717BD71DE00D428AD /* RGeoLocationManager.m in Sources */,
+				74C6157B17BD71DE00D428AD /* RUtil+NSData+Base64EncDec.m in Sources */,
+				74C6157E17BD71DE00D428AD /* RLoadingView.m in Sources */,
+				74C6158017BD71DE00D428AD /* RProgressBar.m in Sources */,
+				74C6158517BD71DE00D428AD /* RStringUtility.m in Sources */,
+				74C6158717BD71DE00D428AD /* RUtil+NSString+EncDec.m in Sources */,
+				74C6158917BD71DE00D428AD /* RUtil+NSString+EncURLComponent.m in Sources */,
+				74C6158B17BD71DE00D428AD /* RUtil+NSString+HMACSHA1.m in Sources */,
+				74C6158D17BD71DE00D428AD /* RUtil+UIColor+HexEncoding.m in Sources */,
 				2A06D643157DE7990090F4CA /* RATrackingLib.m in Sources */,
 				2A06D677157E0C560090F4CA /* RADBHelper.m in Sources */,
 				2A06D6A4157E1A1C0090F4CA /* RARequestResponseHandler.m in Sources */,
 				9BD57A1A1689741D0001F930 /* RAJsonHelperUtil.m in Sources */,
+				74C6156117BD71C800D428AD /* RUtil+NSData+Compression.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

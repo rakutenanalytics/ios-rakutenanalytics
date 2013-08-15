@@ -18,8 +18,8 @@
  */
 
 #import "RAJsonHelperUtil.h"
-#import "RCommonUtilities/RGenericUtility.h"
-#import "SBJson/NSString+SBJson.h"
+#import "RGenericUtility.h"
+#import "SBJson/NSObject+SBJson.h"
 #import "RACommons.h"
 
 @interface RAJsonHelperUtil()

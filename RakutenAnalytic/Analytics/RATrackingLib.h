@@ -27,7 +27,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "RCommonUtilities/RLicenseInformation.h"
+#import "RLicenseInformation.h"
 
 @interface RATrackingLib : NSObject
 {

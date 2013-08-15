@@ -18,8 +18,8 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "RCommonUtilities/RUtilHTTPManager.h"
-#import "RCommonUtilities/RUtilHTTPManager+Post.h"
+#import "RUtilHTTPManager.h"
+#import "RUtilHTTPManager+Post.h"
 
 @interface RARequestResponseHandler : NSObject
 {

@@ -24,12 +24,12 @@
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
-#import "RCommonUtilities/RUtilLogger.h"
-#import "RCommonUtilities/RStringUtility.h"
+#import "RUtilLogger.h"
+#import "RStringUtility.h"
 
-#import "RCommonUtilities/RUtil+NSData+Compression.h"
-#import "RCommonUtilities/RUtil+NSData+Base64EncDec.h"
-#import "RCommonUtilities/RUtil+NSString+EncDec.h"
+#import "RUtil+NSData+Compression.h"
+#import "RUtil+NSData+Base64EncDec.h"
+#import "RUtil+NSString+EncDec.h"
 
 //Key value range constants
 #define kMaxCustomParameterValueLength      15

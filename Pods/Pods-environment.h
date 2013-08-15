@@ -6,6 +6,12 @@
 // project.
 
 
+// FXReachability
+#define COCOAPODS_POD_AVAILABLE_FXReachability
+#define COCOAPODS_VERSION_MAJOR_FXReachability 1
+#define COCOAPODS_VERSION_MINOR_FXReachability 1
+#define COCOAPODS_VERSION_PATCH_FXReachability 0
+
 // SBJson
 #define COCOAPODS_POD_AVAILABLE_SBJson
 #define COCOAPODS_VERSION_MAJOR_SBJson 3

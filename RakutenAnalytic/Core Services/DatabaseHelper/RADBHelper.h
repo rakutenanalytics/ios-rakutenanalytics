@@ -22,10 +22,10 @@
 
 #import <Foundation/Foundation.h>
 #import "sqlite3.h"
-#import "RCommonUtilities/RStringUtility.h"
-#import "RCommonUtilities/RDeviceInformation.h"
+#import "RStringUtility.h"
+#import "RDeviceInformation.h"
 #import "RATrackingLib.h"
-#import "RCommonUtilities/RGeoLocationManager.h"
+#import "RGeoLocationManager.h"
 
 @interface RADBHelper : NSObject
 {

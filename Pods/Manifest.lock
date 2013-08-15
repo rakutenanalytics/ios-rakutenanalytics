@@ -1,10 +1,13 @@
 PODS:
+  - FXReachability (1.1)
   - SBJson (3.2)
 
 DEPENDENCIES:
+  - FXReachability (~> 1.1)
   - SBJson (~> 3.2)
 
 SPEC CHECKSUMS:
+  FXReachability: afd163afb55d92199a1359526474882af17f4436
   SBJson: e60b4dc22448c2ae1e754b523a4ab53408e85c8d
 
 COCOAPODS: 0.23.0

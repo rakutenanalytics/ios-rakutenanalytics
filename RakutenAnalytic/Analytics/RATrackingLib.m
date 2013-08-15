@@ -25,17 +25,17 @@
  Version: 1.0
  
  */
-#import "RCommonUtilities/RNetworkManager.h"
-#import "RCommonUtilities/RGeoLocationManager.h"
-#import "RCommonUtilities/RGenericUtility.h"
+#import "FXReachability.h"
+#import "RGeoLocationManager.h"
+#import "RGenericUtility.h"
 #import "RATrackingLib.h"
 #import "RADBHelper.h"
-#import "RCommonUtilities/RDeviceInformation.h"
+#import "RDeviceInformation.h"
 #import "RACommons.h"
 #import "RARequestResponseHandler.h"
 #import "RAJsonHelperUtil.h"
 #import "RATrackingLib+Private.h"
-#import "RCommonUtilities/RLicense.h"
+#import "RLicense.h"
 
 const float kSecondsValue = 3600.00;
 const float kDefaultThrottleDelay = 10;
@@ -213,8 +213,6 @@ enum
                                                  name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
     
-    //Network manager will start notifying the network status
-    [[RNetworkManager sharedManager] startNotifier];
     [RADBHelper sharedInstance];
     
     self.cks = [stringUtility getUUID];
@@ -811,9 +809,9 @@ enum
     self.ts = [stringUtility dateToStringFormat:[NSDate date]];
     
     // if isReachable is true that means application is in online mode
-    self.online = [[RNetworkManager sharedManager] isReachable];
+    self.online = [FXReachability isReachable];
     
-    self.mnetw = [[RNetworkManager sharedManager] networkType];
+    self.mnetw = [[FXReachability sharedInstance] status];
 }
 
 /*!
@@ -842,7 +840,6 @@ enum
 
 -(void)dealloc
 {
-    [[RNetworkManager sharedManager] stopNotifier];
     self.genre = nil;
     self.location = nil;
     self.referer= nil;
