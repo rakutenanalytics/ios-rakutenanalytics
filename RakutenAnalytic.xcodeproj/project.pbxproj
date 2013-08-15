@@ -1,0 +1,784 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		1E4FDCA015D6386E007792ED /* RakutenAnalyticFramework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1E4FDCA115D6386E007792ED /* Build configuration list for PBXAggregateTarget "RakutenAnalyticFramework" */;
+			buildPhases = (
+				1E4FDCA415D63887007792ED /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = RakutenAnalyticFramework;
+			productName = RakutenAnalyticFramework;
+		};
+		9BEE90A1169D32C600B9D9CA /* Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9BEE90A2169D32C600B9D9CA /* Build configuration list for PBXAggregateTarget "Documentation" */;
+			buildPhases = (
+				9BEE90A5169D32FE00B9D9CA /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Documentation;
+			productName = Documentation;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		1490EBD4B8F840F48A5E0BB3 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1990D927536E4DC4B393F930 /* libPods.a */; };
+		2A06D631157DE6F00090F4CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D630157DE6F00090F4CA /* Foundation.framework */; };
+		2A06D642157DE7990090F4CA /* RATrackingLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A06D640157DE7990090F4CA /* RATrackingLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2A06D643157DE7990090F4CA /* RATrackingLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D641157DE7990090F4CA /* RATrackingLib.m */; };
+		2A06D66C157E0B950090F4CA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D666157E0B950090F4CA /* CFNetwork.framework */; };
+		2A06D66D157E0B950090F4CA /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D667157E0B950090F4CA /* CoreLocation.framework */; };
+		2A06D66E157E0B950090F4CA /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D668157E0B950090F4CA /* CoreTelephony.framework */; };
+		2A06D66F157E0B950090F4CA /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D669157E0B950090F4CA /* libsqlite3.0.dylib */; };
+		2A06D670157E0B950090F4CA /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D66A157E0B950090F4CA /* libz.1.2.5.dylib */; };
+		2A06D671157E0B950090F4CA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D66B157E0B950090F4CA /* SystemConfiguration.framework */; };
+		2A06D676157E0C560090F4CA /* RADBHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A06D674157E0C560090F4CA /* RADBHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A06D677157E0C560090F4CA /* RADBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D675157E0C560090F4CA /* RADBHelper.m */; };
+		2A06D697157E13430090F4CA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D696157E13430090F4CA /* UIKit.framework */; };
+		2A06D6A3157E1A1C0090F4CA /* RARequestResponseHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A06D6A1157E1A1C0090F4CA /* RARequestResponseHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A06D6A4157E1A1C0090F4CA /* RARequestResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D6A2157E1A1C0090F4CA /* RARequestResponseHandler.m */; };
+		2A220CA7158A043E0077D202 /* RATrackingLib.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D641157DE7990090F4CA /* RATrackingLib.m */; };
+		2A220CA8158A043E0077D202 /* RADBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D675157E0C560090F4CA /* RADBHelper.m */; };
+		2A220CA9158A043E0077D202 /* RARequestResponseHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A06D6A2157E1A1C0090F4CA /* RARequestResponseHandler.m */; };
+		2A220CAB158A046D0077D202 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D666157E0B950090F4CA /* CFNetwork.framework */; };
+		2A220CAC158A046D0077D202 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D667157E0B950090F4CA /* CoreLocation.framework */; };
+		2A220CAD158A046D0077D202 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D668157E0B950090F4CA /* CoreTelephony.framework */; };
+		2A220CAE158A046D0077D202 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D669157E0B950090F4CA /* libsqlite3.0.dylib */; };
+		2A220CAF158A046D0077D202 /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D66A157E0B950090F4CA /* libz.1.2.5.dylib */; };
+		2A220CB0158A046D0077D202 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D66B157E0B950090F4CA /* SystemConfiguration.framework */; };
+		2A5426D81589BB4E00B01B7B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A5426D71589BB4E00B01B7B /* SenTestingKit.framework */; };
+		2A5426D91589BB4E00B01B7B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D696157E13430090F4CA /* UIKit.framework */; };
+		2A5426DA1589BB4E00B01B7B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A06D630157DE6F00090F4CA /* Foundation.framework */; };
+		2A5426E01589BB4E00B01B7B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2A5426DE1589BB4E00B01B7B /* InfoPlist.strings */; };
+		2A5426E31589BB4E00B01B7B /* RakutenAnalyticTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A5426E21589BB4E00B01B7B /* RakutenAnalyticTests.m */; };
+		2AD9639C157FA2C5007A2E01 /* RACommons.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD9639B157FA2C5007A2E01 /* RACommons.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52D0122A166E3E30005B3A8E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D01228166E3E30005B3A8E /* CoreGraphics.framework */; };
+		52D0122B166E3E30005B3A8E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52D01229166E3E30005B3A8E /* Security.framework */; };
+		74C614CF17BD5B4E00D428AD /* RCommonUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */; };
+		9B1B3C4817256A3E0027103E /* RCommonUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */; };
+		9B1B3C4A17256A3E0027103E /* SBJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1B3C4617256A3E0027103E /* SBJSON.framework */; };
+		9BC30B901694064800E4C811 /* RAJsonHelperUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BC30B8D1694064800E4C811 /* RAJsonHelperUtilTests.m */; };
+		9BC30B9B1694071200E4C811 /* RATrackingLibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BC30B981694071200E4C811 /* RATrackingLibTests.m */; };
+		9BC30BA116943D2600E4C811 /* RATrackingLib+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BC30B9F16943D2600E4C811 /* RATrackingLib+Private.h */; };
+		9BD37F7216A4366D00E2B7E3 /* RATrackingGenreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD37F7116A4366D00E2B7E3 /* RATrackingGenreTests.m */; };
+		9BD57A191689741D0001F930 /* RAJsonHelperUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD57A171689741D0001F930 /* RAJsonHelperUtil.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9BD57A1A1689741D0001F930 /* RAJsonHelperUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD57A181689741D0001F930 /* RAJsonHelperUtil.m */; };
+		9BD57A1B1689741D0001F930 /* RAJsonHelperUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD57A181689741D0001F930 /* RAJsonHelperUtil.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1990D927536E4DC4B393F930 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A06D62D157DE6F00090F4CA /* libRakutenAnalytic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRakutenAnalytic.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A06D630157DE6F00090F4CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2A06D634157DE6F00090F4CA /* RakutenAnalytic-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RakutenAnalytic-Prefix.pch"; sourceTree = "<group>"; };
+		2A06D640157DE7990090F4CA /* RATrackingLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RATrackingLib.h; sourceTree = "<group>"; };
+		2A06D641157DE7990090F4CA /* RATrackingLib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATrackingLib.m; sourceTree = "<group>"; };
+		2A06D666157E0B950090F4CA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		2A06D667157E0B950090F4CA /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		2A06D668157E0B950090F4CA /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		2A06D669157E0B950090F4CA /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		2A06D66A157E0B950090F4CA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		2A06D66B157E0B950090F4CA /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		2A06D674157E0C560090F4CA /* RADBHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RADBHelper.h; sourceTree = "<group>"; };
+		2A06D675157E0C560090F4CA /* RADBHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RADBHelper.m; sourceTree = "<group>"; };
+		2A06D696157E13430090F4CA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		2A06D6A1157E1A1C0090F4CA /* RARequestResponseHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RARequestResponseHandler.h; sourceTree = "<group>"; };
+		2A06D6A2157E1A1C0090F4CA /* RARequestResponseHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RARequestResponseHandler.m; sourceTree = "<group>"; };
+		2A5426D61589BB4E00B01B7B /* RakutenAnalyticTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RakutenAnalyticTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A5426D71589BB4E00B01B7B /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		2A5426DD1589BB4E00B01B7B /* RakutenAnalyticTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RakutenAnalyticTests-Info.plist"; sourceTree = "<group>"; };
+		2A5426DF1589BB4E00B01B7B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2A5426E11589BB4E00B01B7B /* RakutenAnalyticTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RakutenAnalyticTests.h; sourceTree = "<group>"; };
+		2A5426E21589BB4E00B01B7B /* RakutenAnalyticTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RakutenAnalyticTests.m; sourceTree = "<group>"; };
+		2A5426E41589BB4E00B01B7B /* RakutenAnalyticTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RakutenAnalyticTests-Prefix.pch"; sourceTree = "<group>"; };
+		2AD9639B157FA2C5007A2E01 /* RACommons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RACommons.h; sourceTree = "<group>"; };
+		5290EB9F16136BD000DBBD98 /* RakutenAnalyticFramework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = RakutenAnalyticFramework.sh; sourceTree = "<group>"; };
+		52D01228166E3E30005B3A8E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		52D01229166E3E30005B3A8E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		92EE77314CEB4EECA2EDD465 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RCommonUtilities.framework; path = Samples/Frameworks/RCommonUtilities.framework; sourceTree = "<group>"; };
+		9B1B3C4617256A3E0027103E /* SBJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SBJSON.framework; path = Samples/Frameworks/SBJSON.framework; sourceTree = "<group>"; };
+		9BC30B8D1694064800E4C811 /* RAJsonHelperUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAJsonHelperUtilTests.m; sourceTree = "<group>"; };
+		9BC30B981694071200E4C811 /* RATrackingLibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATrackingLibTests.m; sourceTree = "<group>"; };
+		9BC30B9F16943D2600E4C811 /* RATrackingLib+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RATrackingLib+Private.h"; sourceTree = "<group>"; };
+		9BD37F7116A4366D00E2B7E3 /* RATrackingGenreTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATrackingGenreTests.m; sourceTree = "<group>"; };
+		9BD57A171689741D0001F930 /* RAJsonHelperUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAJsonHelperUtil.h; sourceTree = "<group>"; };
+		9BD57A181689741D0001F930 /* RAJsonHelperUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAJsonHelperUtil.m; sourceTree = "<group>"; };
+		9BEE909F169D328100B9D9CA /* AppledocSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppledocSettings.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2A06D62A157DE6F00090F4CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A06D697157E13430090F4CA /* UIKit.framework in Frameworks */,
+				2A06D66F157E0B950090F4CA /* libsqlite3.0.dylib in Frameworks */,
+				2A06D670157E0B950090F4CA /* libz.1.2.5.dylib in Frameworks */,
+				2A06D66C157E0B950090F4CA /* CFNetwork.framework in Frameworks */,
+				2A06D66D157E0B950090F4CA /* CoreLocation.framework in Frameworks */,
+				2A06D66E157E0B950090F4CA /* CoreTelephony.framework in Frameworks */,
+				2A06D671157E0B950090F4CA /* SystemConfiguration.framework in Frameworks */,
+				2A06D631157DE6F00090F4CA /* Foundation.framework in Frameworks */,
+				74C614CF17BD5B4E00D428AD /* RCommonUtilities.framework in Frameworks */,
+				1490EBD4B8F840F48A5E0BB3 /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A5426D21589BB4E00B01B7B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52D0122A166E3E30005B3A8E /* CoreGraphics.framework in Frameworks */,
+				52D0122B166E3E30005B3A8E /* Security.framework in Frameworks */,
+				2A220CAB158A046D0077D202 /* CFNetwork.framework in Frameworks */,
+				2A220CAC158A046D0077D202 /* CoreLocation.framework in Frameworks */,
+				2A220CAD158A046D0077D202 /* CoreTelephony.framework in Frameworks */,
+				2A220CAE158A046D0077D202 /* libsqlite3.0.dylib in Frameworks */,
+				2A220CAF158A046D0077D202 /* libz.1.2.5.dylib in Frameworks */,
+				2A220CB0158A046D0077D202 /* SystemConfiguration.framework in Frameworks */,
+				2A5426D81589BB4E00B01B7B /* SenTestingKit.framework in Frameworks */,
+				2A5426D91589BB4E00B01B7B /* UIKit.framework in Frameworks */,
+				2A5426DA1589BB4E00B01B7B /* Foundation.framework in Frameworks */,
+				9B1B3C4817256A3E0027103E /* RCommonUtilities.framework in Frameworks */,
+				9B1B3C4A17256A3E0027103E /* SBJSON.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2A06D622157DE6F00090F4CA = {
+			isa = PBXGroup;
+			children = (
+				5290EB9F16136BD000DBBD98 /* RakutenAnalyticFramework.sh */,
+				2A06D632157DE6F00090F4CA /* RakutenAnalytic */,
+				2A5426DB1589BB4E00B01B7B /* RakutenAnalyticTests */,
+				2A06D62F157DE6F00090F4CA /* Frameworks */,
+				2A06D62E157DE6F00090F4CA /* Products */,
+				92EE77314CEB4EECA2EDD465 /* Pods.xcconfig */,
+			);
+			sourceTree = "<group>";
+		};
+		2A06D62E157DE6F00090F4CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2A06D62D157DE6F00090F4CA /* libRakutenAnalytic.a */,
+				2A5426D61589BB4E00B01B7B /* RakutenAnalyticTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2A06D62F157DE6F00090F4CA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9B1B3C4517256A3E0027103E /* RCommonUtilities.framework */,
+				9B1B3C4617256A3E0027103E /* SBJSON.framework */,
+				2A06D669157E0B950090F4CA /* libsqlite3.0.dylib */,
+				2A06D66A157E0B950090F4CA /* libz.1.2.5.dylib */,
+				52D01228166E3E30005B3A8E /* CoreGraphics.framework */,
+				52D01229166E3E30005B3A8E /* Security.framework */,
+				2A06D696157E13430090F4CA /* UIKit.framework */,
+				2A06D666157E0B950090F4CA /* CFNetwork.framework */,
+				2A06D667157E0B950090F4CA /* CoreLocation.framework */,
+				2A06D668157E0B950090F4CA /* CoreTelephony.framework */,
+				2A06D66B157E0B950090F4CA /* SystemConfiguration.framework */,
+				2A06D630157DE6F00090F4CA /* Foundation.framework */,
+				2A5426D71589BB4E00B01B7B /* SenTestingKit.framework */,
+				1990D927536E4DC4B393F930 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2A06D632157DE6F00090F4CA /* RakutenAnalytic */ = {
+			isa = PBXGroup;
+			children = (
+				2A06D63D157DE76E0090F4CA /* Analytics */,
+				2A06D63E157DE76E0090F4CA /* Common */,
+				2A06D63F157DE76E0090F4CA /* Core Services */,
+				2A06D633157DE6F00090F4CA /* Supporting Files */,
+			);
+			path = RakutenAnalytic;
+			sourceTree = "<group>";
+		};
+		2A06D633157DE6F00090F4CA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9BEE909F169D328100B9D9CA /* AppledocSettings.plist */,
+				2A06D634157DE6F00090F4CA /* RakutenAnalytic-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2A06D63D157DE76E0090F4CA /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				2A06D640157DE7990090F4CA /* RATrackingLib.h */,
+				2A06D641157DE7990090F4CA /* RATrackingLib.m */,
+				9BC30B9F16943D2600E4C811 /* RATrackingLib+Private.h */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		2A06D63E157DE76E0090F4CA /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2AD9639B157FA2C5007A2E01 /* RACommons.h */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2A06D63F157DE76E0090F4CA /* Core Services */ = {
+			isa = PBXGroup;
+			children = (
+				9BD57A12168973340001F930 /* JsonHelper */,
+				2A06D673157E0C3B0090F4CA /* DatabaseHelper */,
+				2A06D6A0157E19F90090F4CA /* RequestResponseHandler */,
+			);
+			path = "Core Services";
+			sourceTree = "<group>";
+		};
+		2A06D673157E0C3B0090F4CA /* DatabaseHelper */ = {
+			isa = PBXGroup;
+			children = (
+				2A06D674157E0C560090F4CA /* RADBHelper.h */,
+				2A06D675157E0C560090F4CA /* RADBHelper.m */,
+			);
+			path = DatabaseHelper;
+			sourceTree = "<group>";
+		};
+		2A06D6A0157E19F90090F4CA /* RequestResponseHandler */ = {
+			isa = PBXGroup;
+			children = (
+				2A06D6A1157E1A1C0090F4CA /* RARequestResponseHandler.h */,
+				2A06D6A2157E1A1C0090F4CA /* RARequestResponseHandler.m */,
+			);
+			path = RequestResponseHandler;
+			sourceTree = "<group>";
+		};
+		2A5426DB1589BB4E00B01B7B /* RakutenAnalyticTests */ = {
+			isa = PBXGroup;
+			children = (
+				9BD37F6E16A4360800E2B7E3 /* GenreTests */,
+				9BC30B91169406D900E4C811 /* RATrackingLib */,
+				9BC30B8B1694063C00E4C811 /* RAJsonHelperUtil */,
+				2A5426E11589BB4E00B01B7B /* RakutenAnalyticTests.h */,
+				2A5426E21589BB4E00B01B7B /* RakutenAnalyticTests.m */,
+				2A5426DC1589BB4E00B01B7B /* Supporting Files */,
+			);
+			path = RakutenAnalyticTests;
+			sourceTree = "<group>";
+		};
+		2A5426DC1589BB4E00B01B7B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2A5426DD1589BB4E00B01B7B /* RakutenAnalyticTests-Info.plist */,
+				2A5426DE1589BB4E00B01B7B /* InfoPlist.strings */,
+				2A5426E41589BB4E00B01B7B /* RakutenAnalyticTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9BC30B8B1694063C00E4C811 /* RAJsonHelperUtil */ = {
+			isa = PBXGroup;
+			children = (
+				9BC30B8D1694064800E4C811 /* RAJsonHelperUtilTests.m */,
+			);
+			path = RAJsonHelperUtil;
+			sourceTree = "<group>";
+		};
+		9BC30B91169406D900E4C811 /* RATrackingLib */ = {
+			isa = PBXGroup;
+			children = (
+				9BC30B981694071200E4C811 /* RATrackingLibTests.m */,
+			);
+			path = RATrackingLib;
+			sourceTree = "<group>";
+		};
+		9BD37F6E16A4360800E2B7E3 /* GenreTests */ = {
+			isa = PBXGroup;
+			children = (
+				9BD37F7116A4366D00E2B7E3 /* RATrackingGenreTests.m */,
+			);
+			path = GenreTests;
+			sourceTree = "<group>";
+		};
+		9BD57A12168973340001F930 /* JsonHelper */ = {
+			isa = PBXGroup;
+			children = (
+				9BD57A171689741D0001F930 /* RAJsonHelperUtil.h */,
+				9BD57A181689741D0001F930 /* RAJsonHelperUtil.m */,
+			);
+			path = JsonHelper;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2A06D62B157DE6F00090F4CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A06D642157DE7990090F4CA /* RATrackingLib.h in Headers */,
+				2A06D676157E0C560090F4CA /* RADBHelper.h in Headers */,
+				2A06D6A3157E1A1C0090F4CA /* RARequestResponseHandler.h in Headers */,
+				2AD9639C157FA2C5007A2E01 /* RACommons.h in Headers */,
+				9BD57A191689741D0001F930 /* RAJsonHelperUtil.h in Headers */,
+				9BC30BA116943D2600E4C811 /* RATrackingLib+Private.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2A06D62C157DE6F00090F4CA /* RakutenAnalytic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A06D63A157DE6F00090F4CA /* Build configuration list for PBXNativeTarget "RakutenAnalytic" */;
+			buildPhases = (
+				DBD04118020B41AA87318995 /* Check Pods Manifest.lock */,
+				2A06D629157DE6F00090F4CA /* Sources */,
+				2A06D62A157DE6F00090F4CA /* Frameworks */,
+				2A06D62B157DE6F00090F4CA /* Headers */,
+				30C6456222C74695858037F6 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RakutenAnalytic;
+			productName = RakutenAnalytic;
+			productReference = 2A06D62D157DE6F00090F4CA /* libRakutenAnalytic.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		2A5426D51589BB4E00B01B7B /* RakutenAnalyticTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A5426E51589BB4E00B01B7B /* Build configuration list for PBXNativeTarget "RakutenAnalyticTests" */;
+			buildPhases = (
+				2A5426D11589BB4E00B01B7B /* Sources */,
+				2A5426D21589BB4E00B01B7B /* Frameworks */,
+				2A5426D31589BB4E00B01B7B /* Resources */,
+				2A5426D41589BB4E00B01B7B /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RakutenAnalyticTests;
+			productName = RakutenAnalyticTests;
+			productReference = 2A5426D61589BB4E00B01B7B /* RakutenAnalyticTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2A06D624157DE6F00090F4CA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = 2A06D627157DE6F00090F4CA /* Build configuration list for PBXProject "RakutenAnalytic" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 2A06D622157DE6F00090F4CA;
+			productRefGroup = 2A06D62E157DE6F00090F4CA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2A06D62C157DE6F00090F4CA /* RakutenAnalytic */,
+				2A5426D51589BB4E00B01B7B /* RakutenAnalyticTests */,
+				1E4FDCA015D6386E007792ED /* RakutenAnalyticFramework */,
+				9BEE90A1169D32C600B9D9CA /* Documentation */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2A5426D31589BB4E00B01B7B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A5426E01589BB4E00B01B7B /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1E4FDCA415D63887007792ED /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh $SRCROOT/RakutenAnalyticFramework.sh || exit 1\nexit 0";
+		};
+		2A5426D41589BB4E00B01B7B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+		30C6456222C74695858037F6 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9BEE90A5169D32FE00B9D9CA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh $SRCROOT/AppleDoc/docRunable.sh || exit 1\nexit 0";
+		};
+		DBD04118020B41AA87318995 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2A06D629157DE6F00090F4CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A06D643157DE7990090F4CA /* RATrackingLib.m in Sources */,
+				2A06D677157E0C560090F4CA /* RADBHelper.m in Sources */,
+				2A06D6A4157E1A1C0090F4CA /* RARequestResponseHandler.m in Sources */,
+				9BD57A1A1689741D0001F930 /* RAJsonHelperUtil.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A5426D11589BB4E00B01B7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A220CA7158A043E0077D202 /* RATrackingLib.m in Sources */,
+				2A220CA8158A043E0077D202 /* RADBHelper.m in Sources */,
+				2A220CA9158A043E0077D202 /* RARequestResponseHandler.m in Sources */,
+				2A5426E31589BB4E00B01B7B /* RakutenAnalyticTests.m in Sources */,
+				9BD57A1B1689741D0001F930 /* RAJsonHelperUtil.m in Sources */,
+				9BC30B901694064800E4C811 /* RAJsonHelperUtilTests.m in Sources */,
+				9BC30B9B1694071200E4C811 /* RATrackingLibTests.m in Sources */,
+				9BD37F7216A4366D00E2B7E3 /* RATrackingGenreTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		2A5426DE1589BB4E00B01B7B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2A5426DF1589BB4E00B01B7B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1E4FDCA215D6386E007792ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		1E4FDCA315D6386E007792ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		2A06D638157DE6F00090F4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"/Users/sumantarout/Desktop/Code From Mandar/RCommonUtilities/RCommonUtilities/RCommonUtilities\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-fstack-protector-all";
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "\"/Users/sumantarout/Desktop/Code From Mandar/RCommonUtilities/RCommonUtilities/RCommonUtilities\"";
+			};
+			name = Debug;
+		};
+		2A06D639157DE6F00090F4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"/Users/sumantarout/Desktop/Code From Mandar/RCommonUtilities/RCommonUtilities/RCommonUtilities\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "-fstack-protector-all";
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = "\"/Users/sumantarout/Desktop/Code From Mandar/RCommonUtilities/RCommonUtilities/RCommonUtilities\"";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2A06D63B157DE6F00090F4CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92EE77314CEB4EECA2EDD465 /* Pods.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DSTROOT = /tmp/RakutenAnalytic.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Samples/Frameworks\"",
+					"\"$(SRCROOT)/Samples/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RakutenAnalytic/RakutenAnalytic-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Debug;
+		};
+		2A06D63C157DE6F00090F4CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92EE77314CEB4EECA2EDD465 /* Pods.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DSTROOT = /tmp/RakutenAnalytic.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Samples/Frameworks\"",
+					"\"$(SRCROOT)/Samples/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RakutenAnalytic/RakutenAnalytic-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
+		2A5426E61589BB4E00B01B7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)/../Samples/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RakutenAnalyticTests/RakutenAnalyticTests-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "RakutenAnalyticTests/RakutenAnalyticTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		2A5426E71589BB4E00B01B7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)/../Samples/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RakutenAnalyticTests/RakutenAnalyticTests-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "RakutenAnalyticTests/RakutenAnalyticTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+		9BEE90A3169D32C600B9D9CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9BEE90A4169D32C600B9D9CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1E4FDCA115D6386E007792ED /* Build configuration list for PBXAggregateTarget "RakutenAnalyticFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E4FDCA215D6386E007792ED /* Debug */,
+				1E4FDCA315D6386E007792ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A06D627157DE6F00090F4CA /* Build configuration list for PBXProject "RakutenAnalytic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A06D638157DE6F00090F4CA /* Debug */,
+				2A06D639157DE6F00090F4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A06D63A157DE6F00090F4CA /* Build configuration list for PBXNativeTarget "RakutenAnalytic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A06D63B157DE6F00090F4CA /* Debug */,
+				2A06D63C157DE6F00090F4CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A5426E51589BB4E00B01B7B /* Build configuration list for PBXNativeTarget "RakutenAnalyticTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A5426E61589BB4E00B01B7B /* Debug */,
+				2A5426E71589BB4E00B01B7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9BEE90A2169D32C600B9D9CA /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BEE90A3169D32C600B9D9CA /* Debug */,
+				9BEE90A4169D32C600B9D9CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2A06D624157DE6F00090F4CA /* Project object */;
+}
