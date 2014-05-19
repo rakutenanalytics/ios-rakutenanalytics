@@ -1,0 +1,1 @@
+../../RSDKSupport/RSDKSupport/NSCoder+RAExtensions.h

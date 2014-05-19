@@ -1,0 +1,582 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		64AA591542634CC5B2C358C6 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91A2F82C659B48689259BDFA /* libPods.a */; };
+		6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */; };
+		6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */; };
+		694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */; };
+		697AAE25192DA4FB006EF197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE23192DA4FB006EF197 /* InfoPlist.strings */; };
+		697AAE27192DA4FB006EF197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE26192DA4FB006EF197 /* main.m */; };
+		697AAE2B192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */; };
+		697AAE2E192DA4FB006EF197 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE2C192DA4FB006EF197 /* Main.storyboard */; };
+		697AAE34192DA4FB006EF197 /* RSDKAnalyticsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */; };
+		697AAE36192DA4FB006EF197 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE35192DA4FB006EF197 /* Images.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		69C1C85D1941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E061B9E932DB47F59CEB6A76;
+			remoteInfo = Pods;
+		};
+		69C1C85F1941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 27407033DA794C828FE00439;
+			remoteInfo = "Pods-FXForms";
+		};
+		69C1C8611941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E5749C8D85634E208A01B760;
+			remoteInfo = "Pods-FXReachability";
+		};
+		69C1C8631941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A3161A14A00240BBAA2650EF;
+			remoteInfo = "Pods-FontAwesomeKit";
+		};
+		69C1C8651941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2C576F1F35DE478B997E3397;
+			remoteInfo = "Pods-RESideMenu";
+		};
+		69C1C8671941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 176531368B684176B87FA8CE;
+			remoteInfo = "Pods-RSDKAnalytics";
+		};
+		69C1C8691941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1156184B65BE4D7DA846D4DA;
+			remoteInfo = "Pods-RSDKDeviceInformation";
+		};
+		69C1C86B1941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EB6560512D18464D9E968556;
+			remoteInfo = "Pods-RSDKSupport";
+		};
+		69C1C86D1941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C7A7A7BA8C4F4498AB2884DE;
+			remoteInfo = "Pods-SVProgressHUD";
+		};
+		69C1C86F1941571000EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AAAC8A40FEA248348342DDF4;
+			remoteInfo = "Pods-TestFlightSDK";
+		};
+		69C1C8711941571700EE4CAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 576E9B2F6E3445FB9E865B9E;
+			remoteInfo = Pods;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1BAB34517F5C4BAA920F90CA /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = ../Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRootViewController.m; sourceTree = "<group>"; };
+		6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRootViewController.h; sourceTree = "<group>"; };
+		6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecordForm.h; sourceTree = "<group>"; };
+		6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordForm.m; sourceTree = "<group>"; };
+		692BDF75194068FC000884D8 /* RSDKAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = RSDKAnalyticsSample.entitlements; sourceTree = "<group>"; };
+		694B0BC5193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsLeftMenuViewController.h; sourceTree = "<group>"; };
+		694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsLeftMenuViewController.m; sourceTree = "<group>"; };
+		697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSDKAnalyticsSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		697AAE22192DA4FB006EF197 /* RSDKAnalyticsSample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RSDKAnalyticsSample-Info.plist"; sourceTree = "<group>"; };
+		697AAE24192DA4FB006EF197 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		697AAE26192DA4FB006EF197 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		697AAE29192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsAppDelegate.h; sourceTree = "<group>"; };
+		697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsAppDelegate.m; sourceTree = "<group>"; };
+		697AAE2D192DA4FB006EF197 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		697AAE32192DA4FB006EF197 /* RSDKAnalyticsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsViewController.h; sourceTree = "<group>"; };
+		697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsViewController.m; sourceTree = "<group>"; };
+		697AAE35192DA4FB006EF197 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		69C1C8501941571000EE4CAE /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = ../Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		91A2F82C659B48689259BDFA /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D980D5940B3D4E25B5B27794 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64AA591542634CC5B2C358C6 /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		697AAE0E192DA4FA006EF197 = {
+			isa = PBXGroup;
+			children = (
+				697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */,
+				697AAE18192DA4FA006EF197 /* Products */,
+				1BAB34517F5C4BAA920F90CA /* Pods.xcconfig */,
+				94A333C20AD34832B9F43333 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		697AAE18192DA4FA006EF197 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */ = {
+			isa = PBXGroup;
+			children = (
+				692BDF75194068FC000884D8 /* RSDKAnalyticsSample.entitlements */,
+				697AAE35192DA4FB006EF197 /* Images.xcassets */,
+				697AAE2C192DA4FB006EF197 /* Main.storyboard */,
+				697AAE29192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.h */,
+				697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */,
+				694B0BC5193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.h */,
+				694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */,
+				6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */,
+				6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */,
+				6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */,
+				6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */,
+				697AAE32192DA4FB006EF197 /* RSDKAnalyticsViewController.h */,
+				697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */,
+				697AAE21192DA4FB006EF197 /* Supporting Files */,
+			);
+			path = RSDKAnalyticsSample;
+			sourceTree = "<group>";
+		};
+		697AAE21192DA4FB006EF197 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				697AAE22192DA4FB006EF197 /* RSDKAnalyticsSample-Info.plist */,
+				697AAE23192DA4FB006EF197 /* InfoPlist.strings */,
+				697AAE26192DA4FB006EF197 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		69C1C8511941571000EE4CAE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				69C1C85E1941571000EE4CAE /* libPods.a */,
+				69C1C8601941571000EE4CAE /* libPods-FXForms.a */,
+				69C1C8621941571000EE4CAE /* libPods-FXReachability.a */,
+				69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */,
+				69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */,
+				69C1C8681941571000EE4CAE /* libPods-RSDKAnalytics.a */,
+				69C1C86A1941571000EE4CAE /* libPods-RSDKDeviceInformation.a */,
+				69C1C86C1941571000EE4CAE /* libPods-RSDKSupport.a */,
+				69C1C86E1941571000EE4CAE /* libPods-SVProgressHUD.a */,
+				69C1C8701941571000EE4CAE /* libPods-TestFlightSDK.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		94A333C20AD34832B9F43333 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				69C1C8501941571000EE4CAE /* Pods.xcodeproj */,
+				91A2F82C659B48689259BDFA /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */;
+			buildPhases = (
+				9229B1B7853F47F0B110AA72 /* Check Pods Manifest.lock */,
+				697AAE13192DA4FA006EF197 /* Sources */,
+				697AAE15192DA4FA006EF197 /* Resources */,
+				D980D5940B3D4E25B5B27794 /* Frameworks */,
+				4106378C5C2F4F5AA719AED5 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				69C1C8721941571700EE4CAE /* PBXTargetDependency */,
+			);
+			name = RSDKAnalyticsSample;
+			productName = RSDKAnalyticsSample;
+			productReference = 697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		697AAE0F192DA4FA006EF197 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = RSDKAnalytics;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Rakuten, Inc.";
+				TargetAttributes = {
+					697AAE16192DA4FA006EF197 = {
+						DevelopmentTeam = 87CT3T3CK2;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RSDKAnalyticsSample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 697AAE0E192DA4FA006EF197;
+			productRefGroup = 697AAE18192DA4FA006EF197 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 69C1C8511941571000EE4CAE /* Products */;
+					ProjectRef = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		69C1C85E1941571000EE4CAE /* libPods.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libPods.a;
+			remoteRef = 69C1C85D1941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8601941571000EE4CAE /* libPods-FXForms.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-FXForms.a";
+			remoteRef = 69C1C85F1941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8621941571000EE4CAE /* libPods-FXReachability.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-FXReachability.a";
+			remoteRef = 69C1C8611941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-FontAwesomeKit.a";
+			remoteRef = 69C1C8631941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RESideMenu.a";
+			remoteRef = 69C1C8651941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8681941571000EE4CAE /* libPods-RSDKAnalytics.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKAnalytics.a";
+			remoteRef = 69C1C8671941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C86A1941571000EE4CAE /* libPods-RSDKDeviceInformation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKDeviceInformation.a";
+			remoteRef = 69C1C8691941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C86C1941571000EE4CAE /* libPods-RSDKSupport.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKSupport.a";
+			remoteRef = 69C1C86B1941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C86E1941571000EE4CAE /* libPods-SVProgressHUD.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-SVProgressHUD.a";
+			remoteRef = 69C1C86D1941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		69C1C8701941571000EE4CAE /* libPods-TestFlightSDK.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-TestFlightSDK.a";
+			remoteRef = 69C1C86F1941571000EE4CAE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		697AAE15192DA4FA006EF197 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				697AAE36192DA4FB006EF197 /* Images.xcassets in Resources */,
+				697AAE2E192DA4FB006EF197 /* Main.storyboard in Resources */,
+				697AAE25192DA4FB006EF197 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4106378C5C2F4F5AA719AED5 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9229B1B7853F47F0B110AA72 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		697AAE13192DA4FA006EF197 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				697AAE34192DA4FB006EF197 /* RSDKAnalyticsViewController.m in Sources */,
+				6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */,
+				697AAE27192DA4FB006EF197 /* main.m in Sources */,
+				697AAE2B192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m in Sources */,
+				6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */,
+				694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		69C1C8721941571700EE4CAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Pods;
+			targetProxy = 69C1C8711941571700EE4CAE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		697AAE23192DA4FB006EF197 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				697AAE24192DA4FB006EF197 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		697AAE2C192DA4FB006EF197 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				697AAE2D192DA4FB006EF197 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		697AAE4A192DA4FB006EF197 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		697AAE4B192DA4FB006EF197 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		697AAE4D192DA4FB006EF197 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BAB34517F5C4BAA920F90CA /* Pods.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
+				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		697AAE4E192DA4FB006EF197 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BAB34517F5C4BAA920F90CA /* Pods.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
+				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RSDKAnalyticsSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				697AAE4A192DA4FB006EF197 /* Debug */,
+				697AAE4B192DA4FB006EF197 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				697AAE4D192DA4FB006EF197 /* Debug */,
+				697AAE4E192DA4FB006EF197 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 697AAE0F192DA4FA006EF197 /* Project object */;
+}

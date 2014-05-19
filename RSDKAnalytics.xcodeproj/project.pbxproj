@@ -1,0 +1,577 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */; };
+		691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */; };
+		692F6B20192AE2C10075F70D /* RSDKAnalyticsRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */; };
+		698F8181192C3F5500031B48 /* libRSDKAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */; };
+		698F8182192C3F6500031B48 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F3871E1929FD15002E8F91 /* libsqlite3.dylib */; };
+		698F8183192C3F6C00031B48 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F387201929FD1B002E8F91 /* libz.dylib */; };
+		69A397CF1924AB5E0002B258 /* RSDKAnalyticsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */; };
+		69F0A65A192C998F00E82438 /* RSDKAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F0A659192C998F00E82438 /* RSDKAnalytics.m */; };
+		72B9C34738B74E549621BB18 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A954E69E004059B2E8E1BB /* libPods.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		696C259B1941561900D2E409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 949669933D944D98A5AE9B73;
+			remoteInfo = Pods;
+		};
+		696C259D1941561900D2E409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DD9699662A9A4B3A90E78774;
+			remoteInfo = "Pods-FXReachability";
+		};
+		696C259F1941561900D2E409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 65175A5516564B509AE1497F;
+			remoteInfo = "Pods-RSDKDeviceInformation";
+		};
+		696C25A11941561900D2E409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F5DE03AAA4EC43199C6F3630;
+			remoteInfo = "Pods-RSDKSupport";
+		};
+		696C25A31941562300D2E409 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A418C15ACF74663ACBA41BE;
+			remoteInfo = Pods;
+		};
+		698F817F192C3F4D00031B48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69A397BC1924AB5E0002B258 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 69A397C31924AB5E0002B258;
+			remoteInfo = RSDKAnalytics;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		07A954E69E004059B2E8E1BB /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6902034D1929E4F200DE6226 /* RSDKAnalyticsRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecord.h; sourceTree = "<group>"; };
+		6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecord.m; sourceTree = "<group>"; };
+		691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsDatabase.h; sourceTree = "<group>"; };
+		691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsDatabase.m; sourceTree = "<group>"; };
+		692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordTests.m; sourceTree = "<group>"; };
+		696C25941941561900D2E409 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRSDKAnalytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsManager.h; sourceTree = "<group>"; };
+		69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsManager.m; sourceTree = "<group>"; };
+		69A397D41924AB5E0002B258 /* RSDKAnalyticsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RSDKAnalyticsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		69A397DF1924AB5E0002B258 /* RSDKAnalyticsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RSDKAnalyticsTests-Info.plist"; sourceTree = "<group>"; };
+		69F0A656192C6B0B00E82438 /* RSDKAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalytics.h; sourceTree = "<group>"; };
+		69F0A659192C998F00E82438 /* RSDKAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalytics.m; sourceTree = "<group>"; };
+		69F3871E1929FD15002E8F91 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		69F387201929FD1B002E8F91 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		F43912C271E849AAAD16EFC3 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		69A397D11924AB5E0002B258 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				698F8183192C3F6C00031B48 /* libz.dylib in Frameworks */,
+				698F8182192C3F6500031B48 /* libsqlite3.dylib in Frameworks */,
+				698F8181192C3F5500031B48 /* libRSDKAnalytics.a in Frameworks */,
+				72B9C34738B74E549621BB18 /* libPods.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		696C25951941561900D2E409 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				696C259C1941561900D2E409 /* libPods.a */,
+				696C259E1941561900D2E409 /* libPods-FXReachability.a */,
+				696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */,
+				696C25A21941561900D2E409 /* libPods-RSDKSupport.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		69A397BB1924AB5E0002B258 = {
+			isa = PBXGroup;
+			children = (
+				69A397C91924AB5E0002B258 /* RSDKAnalytics */,
+				69A397DD1924AB5E0002B258 /* RSDKAnalyticsTests */,
+				69A397C61924AB5E0002B258 /* Frameworks */,
+				69A397C51924AB5E0002B258 /* Products */,
+				F43912C271E849AAAD16EFC3 /* Pods.xcconfig */,
+			);
+			sourceTree = "<group>";
+		};
+		69A397C51924AB5E0002B258 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */,
+				69A397D41924AB5E0002B258 /* RSDKAnalyticsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		69A397C61924AB5E0002B258 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				696C25941941561900D2E409 /* Pods.xcodeproj */,
+				69F387201929FD1B002E8F91 /* libz.dylib */,
+				69F3871E1929FD15002E8F91 /* libsqlite3.dylib */,
+				07A954E69E004059B2E8E1BB /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		69A397C91924AB5E0002B258 /* RSDKAnalytics */ = {
+			isa = PBXGroup;
+			children = (
+				69F0A656192C6B0B00E82438 /* RSDKAnalytics.h */,
+				69F0A659192C998F00E82438 /* RSDKAnalytics.m */,
+				69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */,
+				69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */,
+				691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */,
+				691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */,
+				6902034D1929E4F200DE6226 /* RSDKAnalyticsRecord.h */,
+				6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */,
+			);
+			path = RSDKAnalytics;
+			sourceTree = "<group>";
+		};
+		69A397DD1924AB5E0002B258 /* RSDKAnalyticsTests */ = {
+			isa = PBXGroup;
+			children = (
+				69A397DE1924AB5E0002B258 /* Supporting Files */,
+				692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */,
+			);
+			path = RSDKAnalyticsTests;
+			sourceTree = "<group>";
+		};
+		69A397DE1924AB5E0002B258 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				69A397DF1924AB5E0002B258 /* RSDKAnalyticsTests-Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		69A397C31924AB5E0002B258 /* RSDKAnalytics */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69A397E71924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalytics" */;
+			buildPhases = (
+				F469E1E57073462CB06C9FAD /* Check Pods Manifest.lock */,
+				69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */,
+				69A397C01924AB5E0002B258 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				696C25A41941562300D2E409 /* PBXTargetDependency */,
+			);
+			name = RSDKAnalytics;
+			productName = RSDKAnalytics;
+			productReference = 69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		69A397D31924AB5E0002B258 /* RSDKAnalyticsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69A397EA1924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsTests" */;
+			buildPhases = (
+				B97FD841F9F84AC695270B14 /* Check Pods Manifest.lock */,
+				69A397D01924AB5E0002B258 /* Sources */,
+				69A397D11924AB5E0002B258 /* Frameworks */,
+				A58B17E974E142F89EF9E956 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				698F8180192C3F4D00031B48 /* PBXTargetDependency */,
+			);
+			name = RSDKAnalyticsTests;
+			productName = RSDKAnalyticsTests;
+			productReference = 69A397D41924AB5E0002B258 /* RSDKAnalyticsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		69A397BC1924AB5E0002B258 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Rakuten, Inc.";
+			};
+			buildConfigurationList = 69A397BF1924AB5E0002B258 /* Build configuration list for PBXProject "RSDKAnalytics" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 69A397BB1924AB5E0002B258;
+			productRefGroup = 69A397C51924AB5E0002B258 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 696C25951941561900D2E409 /* Products */;
+					ProjectRef = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				69A397C31924AB5E0002B258 /* RSDKAnalytics */,
+				69A397D31924AB5E0002B258 /* RSDKAnalyticsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		696C259C1941561900D2E409 /* libPods.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libPods.a;
+			remoteRef = 696C259B1941561900D2E409 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		696C259E1941561900D2E409 /* libPods-FXReachability.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-FXReachability.a";
+			remoteRef = 696C259D1941561900D2E409 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKDeviceInformation.a";
+			remoteRef = 696C259F1941561900D2E409 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		696C25A21941561900D2E409 /* libPods-RSDKSupport.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKSupport.a";
+			remoteRef = 696C25A11941561900D2E409 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check RSDKAnalytics Version";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -e -u -o pipefail\n\nread PODSPEC_VERSION < <(/usr/bin/sed -n 's/^[[:space:]]*s\\.version[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\"/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}.podspec\")\n\nread SOURCE_CODE_VERSION < <(/usr/bin/sed -n 's/^.*RSDKAnalyticsVersion[[:space:]]*=[[:space:]]*@\"\\([^\"]*\\)\";/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\n[ \"$PODSPEC_VERSION\" == \"$SOURCE_CODE_VERSION\" ] && exit\n\nread LINE < <(grep -n RSDKAnalyticsVersion \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\ncat >&2 <<EOT\n${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m:${LINE%%:*}:1: error: ${PRODUCT_NAME}.podspec says version should be $PODSPEC_VERSION\n${LINE#*:}\nEOT\n\nexit 1\n";
+		};
+		A58B17E974E142F89EF9E956 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B97FD841F9F84AC695270B14 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F469E1E57073462CB06C9FAD /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		69A397C01924AB5E0002B258 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */,
+				69F0A65A192C998F00E82438 /* RSDKAnalytics.m in Sources */,
+				6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */,
+				69A397CF1924AB5E0002B258 /* RSDKAnalyticsManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		69A397D01924AB5E0002B258 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				692F6B20192AE2C10075F70D /* RSDKAnalyticsRecordTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		696C25A41941562300D2E409 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Pods;
+			targetProxy = 696C25A31941562300D2E409 /* PBXContainerItemProxy */;
+		};
+		698F8180192C3F4D00031B48 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 69A397C31924AB5E0002B258 /* RSDKAnalytics */;
+			targetProxy = 698F817F192C3F4D00031B48 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		69A397E51924AB5E0002B258 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		69A397E61924AB5E0002B258 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		69A397E81924AB5E0002B258 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			buildSettings = {
+				DSTROOT = /tmp/RSDKAnalytics.dst;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		69A397E91924AB5E0002B258 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			buildSettings = {
+				DSTROOT = /tmp/RSDKAnalytics.dst;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		69A397EB1924AB5E0002B258 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "RSDKAnalyticsTests/RSDKAnalyticsTests-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		69A397EC1924AB5E0002B258 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				INFOPLIST_FILE = "RSDKAnalyticsTests/RSDKAnalyticsTests-Info.plist";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		69A397BF1924AB5E0002B258 /* Build configuration list for PBXProject "RSDKAnalytics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69A397E51924AB5E0002B258 /* Debug */,
+				69A397E61924AB5E0002B258 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69A397E71924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalytics" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69A397E81924AB5E0002B258 /* Debug */,
+				69A397E91924AB5E0002B258 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		69A397EA1924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				69A397EB1924AB5E0002B258 /* Debug */,
+				69A397EC1924AB5E0002B258 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 69A397BC1924AB5E0002B258 /* Project object */;
+}

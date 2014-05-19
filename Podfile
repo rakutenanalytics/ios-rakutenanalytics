@@ -1,5 +1,10 @@
-platform :ios, "4.3"
+platform :ios, "6.0"
 
-pod "SBJson", "~> 3.2"
-pod "FXReachability", "~> 1.1"
+pod 'RSDKSupport/Utilities', '~> 2.2.3'
+pod 'RSDKDeviceInformation', '~> 1.0.0'
+pod 'FXReachability',        '~> 1.1.1'
 
+link_with ['RSDKAnalyticsTests']
+
+# vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
+# sublime: tab_size 2; translate_tabs_to_spaces true; trim_trailing_white_space_on_save true; trim_automatic_white_space true; x_syntax Packages/Ruby/Ruby.tmLanguage

@@ -1,13 +1,16 @@
 PODS:
-  - FXReachability (1.1)
-  - SBJson (3.2)
+  - FXReachability (1.1.1)
+  - RSDKDeviceInformation (1.0.0)
+  - RSDKSupport/Utilities (2.2.3)
 
 DEPENDENCIES:
-  - FXReachability (~> 1.1)
-  - SBJson (~> 3.2)
+  - FXReachability (~> 1.1.1)
+  - RSDKDeviceInformation (~> 1.0.0)
+  - RSDKSupport/Utilities (~> 2.2.3)
 
 SPEC CHECKSUMS:
-  FXReachability: afd163afb55d92199a1359526474882af17f4436
-  SBJson: e60b4dc22448c2ae1e754b523a4ab53408e85c8d
+  FXReachability: 34c68085c9a12c7fe4f791bdb54e99f14d90b5ae
+  RSDKDeviceInformation: c07da66e968034bfe595b0fcd4ef4a003c7514dc
+  RSDKSupport: a86de9c06468044a2f330442578106b1390c0572
 
-COCOAPODS: 0.23.0
+COCOAPODS: 0.32.1
