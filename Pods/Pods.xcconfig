@@ -2,7 +2,7 @@ CLANG_ENABLE_MODULES = YES
 CLANG_MODULES_AUTOLINK = YES
 GCC_C_LANGUAGE_STANDARD = gnu99
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/FXReachability" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers" -isystem "${PODS_ROOT}/Headers/FXReachability" -isystem "${PODS_ROOT}/Headers/RSDKDeviceInformation" -isystem "${PODS_ROOT}/Headers/RSDKSupport"
-OTHER_LDFLAGS = -ObjC -framework Foundation -framework SystemConfiguration
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers" -isystem "${PODS_ROOT}/Headers/RSDKDeviceInformation" -isystem "${PODS_ROOT}/Headers/RSDKSupport"
+OTHER_LDFLAGS = -ObjC -framework Foundation
 PODS_ROOT = ${SRCROOT}/Pods

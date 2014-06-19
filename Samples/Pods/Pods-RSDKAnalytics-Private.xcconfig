@@ -3,6 +3,6 @@ CLANG_ENABLE_MODULES = ${PODS_RSDKANALYTICS_CLANG_ENABLE_MODULES}
 CLANG_MODULES_AUTOLINK = ${PODS_RSDKANALYTICS_CLANG_MODULES_AUTOLINK}
 GCC_C_LANGUAGE_STANDARD = ${PODS_RSDKANALYTICS_GCC_C_LANGUAGE_STANDARD}
 GCC_PREPROCESSOR_DEFINITIONS = COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/RSDKAnalytics" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/FXForms" "${PODS_ROOT}/Headers/FXReachability" "${PODS_ROOT}/Headers/FontAwesomeKit" "${PODS_ROOT}/Headers/RESideMenu" "${PODS_ROOT}/Headers/RSDKAnalytics" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport" "${PODS_ROOT}/Headers/SVProgressHUD" "${PODS_ROOT}/Headers/TestFlightSDK"
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/RSDKAnalytics" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/FXForms" "${PODS_ROOT}/Headers/FontAwesomeKit" "${PODS_ROOT}/Headers/RESideMenu" "${PODS_ROOT}/Headers/RSDKAnalytics" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport" "${PODS_ROOT}/Headers/SVProgressHUD" "${PODS_ROOT}/Headers/TestFlightSDK"
 OTHER_LDFLAGS = -ObjC ${PODS_RSDKANALYTICS_OTHER_LDFLAGS}
 PODS_ROOT = ${SRCROOT}

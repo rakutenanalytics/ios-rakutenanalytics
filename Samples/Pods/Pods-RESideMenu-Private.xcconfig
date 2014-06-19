@@ -1,5 +1,5 @@
 #include "Pods-RESideMenu.xcconfig"
 GCC_PREPROCESSOR_DEFINITIONS = COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/RESideMenu" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/FXForms" "${PODS_ROOT}/Headers/FXReachability" "${PODS_ROOT}/Headers/FontAwesomeKit" "${PODS_ROOT}/Headers/RESideMenu" "${PODS_ROOT}/Headers/RSDKAnalytics" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport" "${PODS_ROOT}/Headers/SVProgressHUD" "${PODS_ROOT}/Headers/TestFlightSDK"
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/RESideMenu" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/FXForms" "${PODS_ROOT}/Headers/FontAwesomeKit" "${PODS_ROOT}/Headers/RESideMenu" "${PODS_ROOT}/Headers/RSDKAnalytics" "${PODS_ROOT}/Headers/RSDKDeviceInformation" "${PODS_ROOT}/Headers/RSDKSupport" "${PODS_ROOT}/Headers/SVProgressHUD" "${PODS_ROOT}/Headers/TestFlightSDK"
 OTHER_LDFLAGS = -ObjC ${PODS_RESIDEMENU_OTHER_LDFLAGS}
 PODS_ROOT = ${SRCROOT}

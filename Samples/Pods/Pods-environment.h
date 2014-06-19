@@ -12,23 +12,17 @@
 #define COCOAPODS_VERSION_MINOR_FXForms 1
 #define COCOAPODS_VERSION_PATCH_FXForms 6
 
-// FXReachability
-#define COCOAPODS_POD_AVAILABLE_FXReachability
-#define COCOAPODS_VERSION_MAJOR_FXReachability 1
-#define COCOAPODS_VERSION_MINOR_FXReachability 1
-#define COCOAPODS_VERSION_PATCH_FXReachability 1
-
 // FontAwesomeKit/Core
 #define COCOAPODS_POD_AVAILABLE_FontAwesomeKit_Core
 #define COCOAPODS_VERSION_MAJOR_FontAwesomeKit_Core 2
 #define COCOAPODS_VERSION_MINOR_FontAwesomeKit_Core 1
-#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_Core 5
+#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_Core 6
 
 // FontAwesomeKit/FontAwesome
 #define COCOAPODS_POD_AVAILABLE_FontAwesomeKit_FontAwesome
 #define COCOAPODS_VERSION_MAJOR_FontAwesomeKit_FontAwesome 2
 #define COCOAPODS_VERSION_MINOR_FontAwesomeKit_FontAwesome 1
-#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_FontAwesome 5
+#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_FontAwesome 6
 
 // RESideMenu
 #define COCOAPODS_POD_AVAILABLE_RESideMenu
@@ -40,7 +34,7 @@
 #define COCOAPODS_POD_AVAILABLE_RSDKAnalytics
 #define COCOAPODS_VERSION_MAJOR_RSDKAnalytics 2
 #define COCOAPODS_VERSION_MINOR_RSDKAnalytics 0
-#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 0
+#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 1
 
 // RSDKDeviceInformation
 #define COCOAPODS_POD_AVAILABLE_RSDKDeviceInformation

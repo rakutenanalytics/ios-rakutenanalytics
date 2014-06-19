@@ -26,13 +26,6 @@
 			remoteGlobalIDString = 949669933D944D98A5AE9B73;
 			remoteInfo = Pods;
 		};
-		696C259D1941561900D2E409 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DD9699662A9A4B3A90E78774;
-			remoteInfo = "Pods-FXReachability";
-		};
 		696C259F1941561900D2E409 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
@@ -102,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				696C259C1941561900D2E409 /* libPods.a */,
-				696C259E1941561900D2E409 /* libPods-FXReachability.a */,
 				696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */,
 				696C25A21941561900D2E409 /* libPods-RSDKSupport.a */,
 			);
@@ -251,13 +243,6 @@
 			fileType = archive.ar;
 			path = libPods.a;
 			remoteRef = 696C259B1941561900D2E409 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		696C259E1941561900D2E409 /* libPods-FXReachability.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libPods-FXReachability.a";
-			remoteRef = 696C259D1941561900D2E409 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */ = {

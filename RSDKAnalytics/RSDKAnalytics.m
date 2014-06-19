@@ -14,5 +14,5 @@
  * The « Check RSDKAnalytics Version » build phase checks that they match.
  */
 
-const NSString* const RSDKAnalyticsVersion = @"2.0.0";
+const NSString* const RSDKAnalyticsVersion = @"2.0.1";
 

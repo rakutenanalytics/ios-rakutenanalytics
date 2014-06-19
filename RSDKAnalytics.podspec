@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
-  s.version      = "2.0.0"
+  s.version      = "2.0.1"
   s.summary      = "Rakuten SDK analytics library"
   s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -19,7 +19,6 @@ Pod::Spec.new do |s|
 
   s.dependency 'RSDKSupport/Utilities', '~> 2.2.3'
   s.dependency 'RSDKDeviceInformation', '~> 1.0.0'
-  s.dependency 'FXReachability',        '~> 1.1.1'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

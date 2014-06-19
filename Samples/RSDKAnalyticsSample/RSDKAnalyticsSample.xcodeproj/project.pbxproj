@@ -34,13 +34,6 @@
 			remoteGlobalIDString = 27407033DA794C828FE00439;
 			remoteInfo = "Pods-FXForms";
 		};
-		69C1C8611941571000EE4CAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E5749C8D85634E208A01B760;
-			remoteInfo = "Pods-FXReachability";
-		};
 		69C1C8631941571000EE4CAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
@@ -188,7 +181,6 @@
 			children = (
 				69C1C85E1941571000EE4CAE /* libPods.a */,
 				69C1C8601941571000EE4CAE /* libPods-FXForms.a */,
-				69C1C8621941571000EE4CAE /* libPods-FXReachability.a */,
 				69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */,
 				69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */,
 				69C1C8681941571000EE4CAE /* libPods-RSDKAnalytics.a */,
@@ -289,13 +281,6 @@
 			fileType = archive.ar;
 			path = "libPods-FXForms.a";
 			remoteRef = 69C1C85F1941571000EE4CAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		69C1C8621941571000EE4CAE /* libPods-FXReachability.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libPods-FXReachability.a";
-			remoteRef = 69C1C8611941571000EE4CAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */ = {

@@ -13,6 +13,7 @@
 @import Darwin.POSIX.sys;
 @import ObjectiveC.runtime;
 @import UIKit;
+@import SystemConfiguration;
 
 #import <sqlite3.h>
 
@@ -22,8 +23,6 @@
 #import <RSDKSupport/RSDKAssert.h>
 
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
-
-#import <FXReachability/FXReachability.h>
 
 #import "RSDKAnalytics.h"
 #import "RSDKAnalyticsDatabase.h"
@@ -58,6 +57,16 @@ typedef NS_ENUM(NSInteger, RSDKAnalyticsMobileNetworkType)
     RSDKAnalyticsMobileNetworkType4G      = 4,
 };
 
+
+/*
+ * Reachability status.
+ */
+typedef NS_ENUM(NSInteger, RSDKAnalyticsReachabilityStatus)
+{
+    RSDKAnalyticsReachabilityStatusOffline,
+    RSDKAnalyticsReachabilityStatusConnectedWithWWAN,
+    RSDKAnalyticsReachabilityStatusConnectedWithWiFi,
+};
 
 /*
  * This pointer is used as the key for the associated object we set on
@@ -100,6 +109,11 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 
 /*
+ * Keep track of reachability.
+ */
+@property (nonatomic, assign) RSDKAnalyticsReachabilityStatus reachablityStatus;
+
+/*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
  * will do nothing if uploadTimer is not nil.
  *
@@ -121,6 +135,8 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 @property(nonatomic, copy) NSString *sessionCookie;
 
+@property(nonatomic, copy) NSString *startTime;
+
 - (instancetype)initSharedInstance;
 @end
 
@@ -130,94 +146,34 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 @implementation RSDKAnalyticsManager
 
+static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
+{
+    RSDKAnalyticsManager *instance = RSDKAnalyticsManager.sharedInstance;
+    RSDKAnalyticsReachabilityStatus status;
+
+    if ((flags & kSCNetworkReachabilityFlagsReachable) == 0 ||
+        (flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0)
+    {
+        status = RSDKAnalyticsReachabilityStatusOffline;
+    }
+    else if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0)
+    {
+
+        status = RSDKAnalyticsReachabilityStatusConnectedWithWWAN;
+    }
+    else
+    {
+        status = RSDKAnalyticsReachabilityStatusConnectedWithWiFi;
+    }
+
+    instance.reachablityStatus = status;
+}
+
 #pragma mark - Class methods
 
 + (void)load
 {
-    /*
-     * This class isn't supposed to be subclassed, but if it is,
-     * then we don't want to run what follows for the subclasses.
-     */
-
-    if (self != RSDKAnalyticsManager.class)
-    {
-        return;
-    }
-
-
-    /*
-     * We want to know the point in time at which the application was started,
-     * not at which RSDKAnalyticsManager was first used, so we record that instant
-     * in RSDKAnalyticsManager.startTime.
-     */
-
-    @autoreleasepool
-    {
-
-        /*
-         * Using the following code would result in libICU being lazily loaded along with
-         * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
-         *
-         * ```
-         * NSDateFormatter *startTimeFormatter = NSDateFormatter.new;
-         * startTimeFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-         * startTimeFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-         * startTimeFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-         * NSString *startTime = [startTimeFormatter stringFromDate:NSDate.date];
-         * ```
-         *
-         * Think NSCalendar is the solution? No luck, it loads ICU too! Instead,
-         * we just use a few lines of C, which allocate about 20KB. It's OK as we don't need
-         * any fancy locale.
-         */
-
-
-        /*
-         * The reason I don't use gettimeofday (2) is that it's a BSD 4.2 function, it's not part
-         * of the standard C library, and I'm not sure how Apple feels about using those.
-         *
-         * -[NSDate timeIntervalSince1970] gives the same result anyway.
-         */
-
-        NSTimeInterval now = NSDate.date.timeIntervalSince1970;
-        struct timeval tod;
-        tod.tv_sec  = (long) ceil(now);
-        tod.tv_usec = (int)  ceil((now - tod.tv_sec) * (double) NSEC_PER_MSEC);
-
-
-        /*
-         * localtime (3) reuses an internal buffer, so the pointer it returns must never get
-         * free (3)'d. localtime (3) is ISO C90 so it's safe to use without having to worry
-         * about Apple's wrath.
-         */
-
-        struct tm *time = localtime(&tod.tv_sec);
-
-
-        /*
-         * struct tm's epoc is 1900/1/1. Months start at 0.
-         */
-
-        NSString *startTime = [NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
-                               1900 + time->tm_year,
-                               1 + time->tm_mon,
-                               time->tm_mday,
-                               time->tm_hour,
-                               time->tm_min,
-                               time->tm_sec];
-
-        objc_setAssociatedObject(self,
-                                 RSDKAnalyticsStartTimeKey,
-                                 startTime,
-                                 OBJC_ASSOCIATION_COPY_NONATOMIC);
-    }
-}
-
-//--------------------------------------------------------------------------
-
-+ (NSString*)startTime
-{
-    return objc_getAssociatedObject(self, RSDKAnalyticsStartTimeKey);
+    [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
 }
 
 //--------------------------------------------------------------------------
@@ -270,7 +226,57 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 {
     if (self = [super init])
     {
-        [self _startNewSession];
+        /*
+         * Using the following code would result in libICU being lazily loaded along with
+         * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
+         *
+         * ```
+         * NSDateFormatter *startTimeFormatter = NSDateFormatter.new;
+         * startTimeFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+         * startTimeFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+         * startTimeFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+         * NSString *startTime = [startTimeFormatter stringFromDate:NSDate.date];
+         * ```
+         *
+         * Think NSCalendar is the solution? No luck, it loads ICU too! Instead,
+         * we just use a few lines of C, which allocate about 20KB. It's OK as we don't need
+         * any fancy locale.
+         */
+
+
+        /*
+         * The reason I don't use gettimeofday (2) is that it's a BSD 4.2 function, it's not part
+         * of the standard C library, and I'm not sure how Apple feels about using those.
+         *
+         * -[NSDate timeIntervalSince1970] gives the same result anyway.
+         */
+
+        NSTimeInterval now = NSDate.date.timeIntervalSince1970;
+        struct timeval tod;
+        tod.tv_sec  = (long) ceil(now);
+        tod.tv_usec = (int)  ceil((now - tod.tv_sec) * (double) NSEC_PER_MSEC);
+
+
+        /*
+         * localtime (3) reuses an internal buffer, so the pointer it returns must never get
+         * free (3)'d. localtime (3) is ISO C90 so it's safe to use without having to worry
+         * about Apple's wrath.
+         */
+
+        struct tm *time = localtime(&tod.tv_sec);
+
+
+        /*
+         * struct tm's epoc is 1900/1/1. Months start at 0.
+         */
+
+        self.startTime = [NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
+                          1900 + time->tm_year,
+                          1 + time->tm_mon,
+                          time->tm_mday,
+                          time->tm_hour,
+                          time->tm_min,
+                          time->tm_sec];
 
 
         /*
@@ -287,6 +293,24 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
         });
 
 
+        /*
+         * Keep track of reachability.
+         */
+
+        NSURL *endpoint = self.class.endpointAddress;
+        SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, endpoint.host.UTF8String);
+        SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
+        SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+
+        atexit_b(^
+        {
+            if (reachability)
+            {
+                SCNetworkReachabilityUnscheduleFromRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+                CFRelease(reachability);
+            }
+        });
+
 
         /*
          * Register notification handlers.
@@ -300,10 +324,11 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 
         /*
-         * Renew the session cookie every time the application goes back to the
+         * Start a new session, and renew it every time the application goes back to the
          * foreground.
          */
 
+        [self _startNewSession];
         [notificationCenter addObserver:self
                                selector:@selector(_startNewSession)
                                    name:UIApplicationDidBecomeActiveNotification
@@ -527,13 +552,13 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
     // {name: "mnetw", longName: "MOBILE_NETWORK_TYPE", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2, 3, 4], userSettable: true}
     RSDKAnalyticsMobileNetworkType mobileNetworkType;
 
-    switch (FXReachability.sharedInstance.status)
+    switch (self.reachablityStatus)
     {
-        case FXReachabilityStatusReachableViaWiFi:
+        case RSDKAnalyticsReachabilityStatusConnectedWithWiFi:
             mobileNetworkType = RSDKAnalyticsMobileNetworkTypeWiFi;
             break;
 
-        case FXReachabilityStatusReachableViaWWAN:
+        case RSDKAnalyticsReachabilityStatusConnectedWithWWAN:
             mobileNetworkType = self.isUsingLTE ? RSDKAnalyticsMobileNetworkType4G : RSDKAnalyticsMobileNetworkType3G;
             break;
 
@@ -563,7 +588,7 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
     jsonDic[@"mos"] = osVersion;
 
     // {name: "online", longName: "ONLINE_STATUS", fieldType: "BOOLEAN", userSettable: false}
-    jsonDic[@"online"] = FXReachability.sharedInstance.status != FXReachabilityStatusNotReachable ? @YES : @NO;
+    jsonDic[@"online"] = self.reachablityStatus != RSDKAnalyticsReachabilityStatusOffline ? @YES : @NO;
 
     // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
     NSString *uniqueDeviceId = RSDKDeviceInformation.uniqueDeviceIdentifier;
@@ -580,7 +605,7 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
     jsonDic[@"res"] = screenResolution;
 
     // {name: "ltm", longName: "SCRIPT_START_TIME", fieldType: "STRING", maxLength: 20, minLength: 0, regex: "\\d\\d\\d\\d-\\d\\d\\-\\d\\d \\d\\d:\\d\\d:\\d\\d", userSettable: false}
-    jsonDic[@"ltm"] = self.class.startTime;
+    jsonDic[@"ltm"] = self.startTime;
 
     // {name: "cks", longName: "SESSION_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
     jsonDic[@"cks"] = self.sessionCookie;

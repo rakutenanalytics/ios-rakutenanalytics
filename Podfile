@@ -2,7 +2,6 @@ platform :ios, "6.0"
 
 pod 'RSDKSupport/Utilities', '~> 2.2.3'
 pod 'RSDKDeviceInformation', '~> 1.0.0'
-pod 'FXReachability',        '~> 1.1.1'
 
 link_with ['RSDKAnalyticsTests']
 

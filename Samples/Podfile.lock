@@ -1,15 +1,14 @@
 PODS:
-  - FontAwesomeKit/Core (2.1.5)
-  - FontAwesomeKit/FontAwesome (2.1.5):
+  - FontAwesomeKit/Core (2.1.6)
+  - FontAwesomeKit/FontAwesome (2.1.6):
     - FontAwesomeKit/Core
   - FXForms (1.1.6)
-  - FXReachability (1.1.1)
   - RESideMenu (4.0.4)
-  - RSDKAnalytics (2.0.0):
-    - FXReachability (~> 1.1.1)
+  - RSDKAnalytics (2.0.1):
     - RSDKDeviceInformation (~> 1.0.0)
     - RSDKSupport/Utilities (~> 2.2.3)
-  - RSDKDeviceInformation (1.0.0)
+  - RSDKDeviceInformation (1.0.0):
+    - RSDKSupport/Utilities (~> 2.2.3)
   - RSDKSupport/Utilities (2.2.3)
   - SVProgressHUD (1.0)
   - TestFlightSDK (3.0.2)
@@ -27,14 +26,13 @@ EXTERNAL SOURCES:
     :path: ../RSDKAnalytics.podspec
 
 SPEC CHECKSUMS:
-  FontAwesomeKit: 2e37bec52edbb8f8044a487734ba63eb320a2665
+  FontAwesomeKit: 57148108bfda6b7921d17fc723995b99d41bafb0
   FXForms: 9387c60ee6f3e1c75e0f8998012acc1ce0ad8d0a
-  FXReachability: 34c68085c9a12c7fe4f791bdb54e99f14d90b5ae
   RESideMenu: af599feabe620b562667b91cb1abe3d961b01f08
-  RSDKAnalytics: 059cfc6f48ee9bc43507fedcda8a47699b47a5c5
-  RSDKDeviceInformation: c07da66e968034bfe595b0fcd4ef4a003c7514dc
+  RSDKAnalytics: 2fc592abda6a0945170985f6731e6b35821cc3ba
+  RSDKDeviceInformation: 561b4b68df33e5fb39ea576b7cd33cd36a8609b9
   RSDKSupport: a86de9c06468044a2f330442578106b1390c0572
   SVProgressHUD: 5034c6e22b8c2ca3e09402e48d41ed0340aa1c50
   TestFlightSDK: 0c24c533748d0d84bfe7a3cb6036fa79124d84ee
 
-COCOAPODS: 0.32.1
+COCOAPODS: 0.33.1
