@@ -40,37 +40,13 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     {
         self.accountId = accountId;
         self.affiliateId = RSDKAnalyticsInvalidAffiliateId;
-        self.campaignCode = nil;
         self.cartState = RSDKAnalyticsInvalidCartState;
         self.checkoutStage = RSDKAnalyticsInvalidCheckoutStage;
         self.checkpoints = RSDKAnalyticsInvalidCheckpoints;
-        self.componentId = nil;
-        self.componentTop = nil;
         self.contentLocale = NSLocale.currentLocale;
-        self.currencyCode = nil;
-        self.customParameters = nil;
-        self.eventType = nil;
-        self.excludeWordSearchQuery = nil;
-        self.genre = nil;
-        self.goalId = nil;
-        self.itemGenre = nil;
-        self.itemId = nil;
-        self.itemPrice = nil;
-        self.itemVariation = nil;
         self.navigationTime = RSDKAnalyticsInvalidNavigationTime;
-        self.numberOfItems = nil;
-        self.orderId = nil;
-        self.pageName = nil;
-        self.pageType = nil;
-        self.referrer = nil;
-        self.requestCode = nil;
-        self.scrollDivId = nil;
-        self.scrollViewed = nil;
         self.searchMethod = RSDKAnalyticsInvalidSearchMethod;
-        self.searchQuery = nil;
-        self.searchSelectedLocale = nil;
         self.serviceId = serviceId;
-        self.shopId = nil;
     }
     return self;
 }
@@ -86,8 +62,14 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 {
     NSMutableDictionary *dictionary = NSMutableDictionary.new;
 
-    // {name: acc", longName: "ACCOUNT_ID", fieldType: "INT", minValue: 0, userSettable: true}
+    // {name: "acc", longName: "ACCOUNT_ID", fieldType: "INT", minValue: 0, userSettable: true}
     dictionary[@"acc"] = @(self.accountId);
+
+    // {name: "easyid", longName: "EASY_ID", fieldType: "STRING", maxLength: 16, minLength: 3, userSettable: true}
+    if (self.easyId)
+    {
+        dictionary[@"easyid"] = self.easyId;
+    }
 
     // {name: "afid", longName: "AFFILIATE_ID", fieldType: "INT", userSettable: true}
     if (self.affiliateId != RSDKAnalyticsInvalidAffiliateId)
@@ -290,7 +272,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setCampaignCode:(NSString *)campaignCode
 {
-    _campaignCode = [self validateString_:campaignCode propertyName:@"campaignCode" maxLength:20 predicate:nil];
+    _campaignCode = [self _validateString:campaignCode propertyName:@"campaignCode" maxLength:20 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
@@ -316,7 +298,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setComponentId:(NSArray *)componentId
 {
-    _componentId = [self validateArray_:componentId propertyName:@"componentId" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
+    _componentId = [self _validateArray:componentId propertyName:@"componentId" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -331,7 +313,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setComponentTop:(NSArray *)componentTop
 {
-    _componentTop = [self validateArray_:componentTop propertyName:@"componentTop" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
+    _componentTop = [self _validateArray:componentTop propertyName:@"componentTop" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -383,30 +365,40 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 //--------------------------------------------------------------------------
 
+- (void)setEasyId:(NSString *)easyId
+{
+    _easyId = [self _validateString:easyId propertyName:@"easyId" maxLength:25 predicate:^BOOL(NSString *string)
+    {
+        return string.length >= 3;
+    }];
+}
+
+//--------------------------------------------------------------------------
+
 - (void)setExcludeWordSearchQuery:(NSString*)excludeWordSearchQuery
 {
-    _excludeWordSearchQuery = [self validateString_:excludeWordSearchQuery propertyName:@"excludeWordSearchQuery" maxLength:1024 predicate:nil];
+    _excludeWordSearchQuery = [self _validateString:excludeWordSearchQuery propertyName:@"excludeWordSearchQuery" maxLength:1024 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setGenre:(NSString*)genre
 {
-    _genre = [self validateString_:genre propertyName:@"genre" maxLength:200 predicate:nil];
+    _genre = [self _validateString:genre propertyName:@"genre" maxLength:200 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setGoalId:(NSString *)goalId
 {
-    _goalId = [self validateString_:goalId propertyName:@"goalId" maxLength:10 predicate:nil];
+    _goalId = [self _validateString:goalId propertyName:@"goalId" maxLength:10 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setItemGenre:(NSArray *)itemGenre
 {
-    _itemGenre = [self validateArray_:itemGenre propertyName:@"itemGenre" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
+    _itemGenre = [self _validateArray:itemGenre propertyName:@"itemGenre" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -420,7 +412,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setItemId:(NSArray *)itemId
 {
-    _itemId = [self validateArray_:itemId propertyName:@"itemId" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
+    _itemId = [self _validateArray:itemId propertyName:@"itemId" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -434,7 +426,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setItemVariation:(NSArray *)itemVariation
 {
-    _itemVariation = [self validateArray_:itemVariation propertyName:@"itemVariation" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
+    _itemVariation = [self _validateArray:itemVariation propertyName:@"itemVariation" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -448,7 +440,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setNumberOfItems:(NSArray *)numberOfItems
 {
-    _numberOfItems = [self validateArray_:numberOfItems propertyName:@"numberOfItems" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
+    _numberOfItems = [self _validateArray:numberOfItems propertyName:@"numberOfItems" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -474,21 +466,21 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setPageName:(NSString *)pageName
 {
-    _pageName = [self validateString_:pageName propertyName:@"pageName" maxLength:1024 predicate:nil];
+    _pageName = [self _validateString:pageName propertyName:@"pageName" maxLength:1024 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setPageType:(NSString *)pageType
 {
-    _pageType = [self validateString_:pageType propertyName:@"pageType" maxLength:20 predicate:nil];
+    _pageType = [self _validateString:pageType propertyName:@"pageType" maxLength:20 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setItemPrice:(NSArray *)itemPrice
 {
-    _itemPrice = [self validateArray_:itemPrice propertyName:@"itemPrice" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
+    _itemPrice = [self _validateArray:itemPrice propertyName:@"itemPrice" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -502,14 +494,14 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setReferrer:(NSString *)referrer
 {
-    _referrer = [self validateString_:referrer propertyName:@"referrer" maxLength:2048 predicate:nil];
+    _referrer = [self _validateString:referrer propertyName:@"referrer" maxLength:2048 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 - (void)setRequestCode:(NSString *)requestCode
 {
-    _requestCode = [self validateString_:requestCode propertyName:@"requestCode" maxLength:32 predicate:nil];
+    _requestCode = [self _validateString:requestCode propertyName:@"requestCode" maxLength:32 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
@@ -522,7 +514,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         return;
     }
 
-    _scrollDivId = [self validateArray_:scrollDivId propertyName:@"scrollDivId" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
+    _scrollDivId = [self _validateArray:scrollDivId propertyName:@"scrollDivId" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -542,7 +534,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         return;
     }
 
-    _scrollViewed = [self validateArray_:scrollViewed propertyName:@"scrollViewed" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
+    _scrollViewed = [self _validateArray:scrollViewed propertyName:@"scrollViewed" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
     {
         // Silence -Wunused when DEBUG is not defined
         (void)index;
@@ -556,14 +548,14 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setSearchQuery:(NSString *)searchQuery
 {
-    _searchQuery = [self validateString_:searchQuery propertyName:@"searchQuery" maxLength:1024 predicate:nil];
+    _searchQuery = [self _validateString:searchQuery propertyName:@"searchQuery" maxLength:1024 predicate:nil];
 }
 
 //--------------------------------------------------------------------------
 
 #pragma mark - Validation
 
-- (NSString *)validateString_:(NSString *)string propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength predicate:(BOOL (^)(NSString *string))predicate
+- (NSString *)_validateString:(NSString *)string propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength predicate:(BOOL (^)(NSString *string))predicate
 {
     // Silence -Wunused when DEBUG is not defined
     (void)propertyName;
@@ -599,7 +591,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     return string.copy;
 }
 
-- (NSArray *)validateArray_:(NSArray *)array propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength itemValidator:(BOOL (^)(id item, int index))itemValidator
+- (NSArray *)_validateArray:(NSArray *)array propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength itemValidator:(BOOL (^)(id item, int index))itemValidator
 {
     // Silence -Wunused when DEBUG is not defined
     (void)propertyName;

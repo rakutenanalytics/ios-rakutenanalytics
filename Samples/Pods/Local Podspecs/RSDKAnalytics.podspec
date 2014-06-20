@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
-  s.version      = "2.0.1"
+  s.version      = "2.1.0"
   s.summary      = "Rakuten SDK analytics library"
   s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   s.source_files  = 'RSDKAnalytics/**/*.{h,m}'
   s.ios.libraries = 'sqlite3', 'z'
 
-  s.dependency 'RSDKSupport/Utilities', '~> 2.2.3'
-  s.dependency 'RSDKDeviceInformation', '~> 1.0.0'
+  s.dependency 'RSDKSupport/Utilities', '~> 2.1.3'
+  s.dependency 'RSDKDeviceInformation', '~> 1.1.0'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

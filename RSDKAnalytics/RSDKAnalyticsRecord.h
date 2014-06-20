@@ -8,6 +8,7 @@
 
 @import Foundation;
 
+
 /**
  * Values for [RSDKAnalyticsRecord checkoutStage].
  *
@@ -164,6 +165,8 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  */
 - (NSDictionary *)propertiesDictionary;
 
+#pragma mark - Environment
+
 /**
  * @name Environment
  */
@@ -171,7 +174,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Account identifier, e.g. `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
  *
- * @note This value will be send as the **acc** (`ACCOUNT_ID`) RAT parameter. See
+ * @note This value will be sent as the **acc** (`ACCOUNT_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -182,7 +185,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Service identifier, e.g. `14` for Singapore Mall.
  *
- * @note This value will be send as the **aid** (`SERVICE_ID`) RAT parameter. See
+ * @note This value will be sent as the **aid** (`SERVICE_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -191,11 +194,25 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 @property (nonatomic, readonly) int64_t serviceId;
 
 /**
+ * Easy ID. This identifies the currently logged-in user.
+ *
+ * @note This value will be sent as the **easyid** (`EASY_ID`) RAT parameter. See
+ * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * for more information.
+ *
+ * @warning When setting this property, values over 25 characters in length will get ignored and
+ * the property reset to `nil`.
+ *
+ * @since 2.1.0
+ */
+@property (nonatomic, copy) NSString *easyId;
+
+/**
  * Affiliate identifier. Set to `RSDKAnalyticsInvalidAffiliateId` by default.
  *
  * This is the identifier of an affiliate the user has been redirected from.
  *
- * @note This value will be send as the **afid** (`AFFILIATE_ID`) RAT parameter. See
+ * @note This value will be sent as the **afid** (`AFFILIATE_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -209,11 +226,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * Goals are application-specific values corresponding to business objectives, for
  * instance **Create happy customers**, **Improve conversion rate**.
  *
- * @note This value will be send as the **gol** (`GOAL_ID`) RAT parameter. See
+ * @note This value will be sent as the **gol** (`GOAL_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 10 characters in length will get truncated.
+ * @warning When setting this property, values over 10 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -222,11 +240,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Campaign code. Not set by default.
  *
- * @note This value will be send as the **cc** (`CAMPAIGN_CODE`) RAT parameter. See
+ * @note This value will be sent as the **cc** (`CAMPAIGN_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 20 characters in length will get truncated.
+ * @warning When setting this property, values over 20 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -235,13 +254,15 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Shop identifier. Not set by default.
  *
- * @note This value will be send as the **shopid** (`SHOP_ID`) RAT parameter. See
+ * @note This value will be sent as the **shopid** (`SHOP_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
  * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *shopId;
+
+#pragma mark - Region
 
 /**
  * @name Region
@@ -250,7 +271,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Content locale. Set to the current locale by default.
  *
- * @note This value will be send as the **cntln** (`CONTENT_LANGUAGE`) RAT parameter. See
+ * @note This value will be sent as the **cntln** (`CONTENT_LANGUAGE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -262,7 +283,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * Currency code, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217).
  * Not set by default.
  *
- * @note This value will be send as the **cycode** (`CURRENCY_CODE`) RAT parameter. See
+ * @note This value will be sent as the **cycode** (`CURRENCY_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -273,6 +294,8 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  */
 @property (nonatomic, copy) NSString *currencyCode;
 
+#pragma mark - Search
+
 /**
  * @name Search
  */
@@ -280,11 +303,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Search selected locale. Not set by default.
  *
- * @note This value will be send as the **lang** (`SEARCH_SELECTED_LANGUAGE`) RAT parameter. See
+ * @note This value will be sent as the **lang** (`SEARCH_SELECTED_LANGUAGE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 16 characters in length will get truncated.
+ * @warning When setting this property, values over 16 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -293,11 +317,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Search query. Not set by default.
  *
- * @note This value will be send as the **sq** (`SEARCH_QUERY`) RAT parameter. See
+ * @note This value will be sent as the **sq** (`SEARCH_QUERY`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 1024 characters in length will get truncated.
+ * @warning When setting this property, values over 1024 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -308,7 +333,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @see RSDKAnalyticsSearchMethod
  *
- * @note This value will be send as the **oa** (`OR_AND`) RAT parameter. See
+ * @note This value will be sent as the **oa** (`OR_AND`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -319,11 +344,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Exclude word search query. Not set by default.
  *
- * @note This value will be send as the **esq** (`EXCLUDE_WORD_SEARCH_QUERY`) RAT parameter. See
+ * @note This value will be sent as the **esq** (`EXCLUDE_WORD_SEARCH_QUERY`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 1024 characters in length will get truncated.
+ * @warning When setting this property, values over 1024 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -335,15 +361,18 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * The RSDKSearch module allows to restrict product search queries to a certain
  * genre, which you can copy into this property.
  *
- * @note This value will be send as the **genre** (`GENRE`) RAT parameter. See
+ * @note This value will be sent as the **genre** (`GENRE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 200 characters in length will get truncated.
+ * @warning When setting this property, values over 200 characters in length will get ignored and 
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *genre;
+
+#pragma mark - Navigation
 
 /**
  * @name Navigation
@@ -352,11 +381,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Current page or screen name. Not set by default.
  *
- * @note This value will be send as the **pgn** (`PAGE_NAME`) RAT parameter. See
+ * @note This value will be sent as the **pgn** (`PAGE_NAME`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 1024 characters in length will get truncated.
+ * @warning When setting this property, values over 1024 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -365,11 +395,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Current page (or screen) type. Not set by default.
  *
- * @note This value will be send as the **pgt** (`PAGE_TYPE`) RAT parameter. See
+ * @note This value will be sent as the **pgt** (`PAGE_TYPE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 20 characters in length will get truncated.
+ * @warning When setting this property, values over 20 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -378,11 +409,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Previous page name or URL. Not set by default.
  *
- * @note This value will be send as the **ref** (`REFERRER`) RAT parameter. See
+ * @note This value will be sent as the **ref** (`REFERRER`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 2048 characters in length will get truncated.
+ * @warning When setting this property, values over 2048 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -391,7 +423,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Navigation time. Set to `RSDKAnalyticsInvalidNavigationTime` by default.
  *
- * @note This value will be send as the **mnavtime** (`MOBILE_NAVIGATION_TIME`) RAT parameter. See
+ * @note This value will be sent as the **mnavtime** (`MOBILE_NAVIGATION_TIME`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -404,13 +436,15 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * Application developers can set this to any desired value. It will show up in RAT report.
  *
- * @note This value will be send as the **chkpt** (`CHECKPOINTS`) RAT parameter. See
+ * @note This value will be sent as the **chkpt** (`CHECKPOINTS`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
  * @since 2.0.0
  */
 @property (nonatomic) int64_t checkpoints;
+
+#pragma mark - Items
 
 /**
  * @name Items
@@ -422,12 +456,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * This contains an array of strings of the form "shopId/itemId".
  * If the shopId/ part is omitted, the itemId is assumed to be a productId.
  *
- * @note This value will be send as the **itemid** (`ITEM_ID`) RAT parameter. See
+ * @note This value will be sent as the **itemid** (`ITEM_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSString` objects only. Array
- * over 100 items in length will get truncated.
+ * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
+ * over 100 items in length will get ignored and the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -436,12 +470,13 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Number of items. Not set by default.
  *
- * @note This value will be send as the **ni** (`NUMBER_OF_ITEMS`) RAT parameter. See
+ * @note This value will be sent as the **ni** (`NUMBER_OF_ITEMS`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSNumber` objects only, all of which
- * should be integers strictly greater than zero. Array over 100 items in length will get truncated.
+ * @warning When setting this property, arrays should contain `NSNumber` objects only, all of
+ * which should be integers strictly greater than zero. Arrays over 100 items in length will
+ * get ignored and the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -450,12 +485,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Item prices. Not set by default.
  *
- * @note This value will be send as the **price** (`PRICE`) RAT parameter. See
+ * @note This value will be sent as the **price** (`PRICE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSNumber` objects only. Array
- * over 100 items in length will get truncated.
+ * @warning When setting this property, arrays should contain `NSNumber` objects only. Arrays
+ * over 100 items in length will get ignored and the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -464,12 +499,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Item genre. Not set by default.
  *
- * @note This value will be send as the **igenre** (`ITEM_GENRE`) RAT parameter. See
+ * @note This value will be sent as the **igenre** (`ITEM_GENRE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSString` objects only. Array
- * over 100 items in length will get truncated.
+ * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
+ * over 100 items in length will get ignored and the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -478,16 +513,19 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Item variation. Not set by default.
  *
- * @note This value will be send as the **variation** (`ITEM_VARIATION`) RAT parameter. See
+ * @note This value will be sent as the **variation** (`ITEM_VARIATION`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
  * @warning When setting this property, arrays should only contain objects that can be
- * serialized using `NSJSONSerialization`. Array over 100 items in length will get truncated.
+ * serialized using `NSJSONSerialization`. Arrays over 100 items in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
 @property (nonatomic, strong) NSArray *itemVariation;
+
+#pragma mark - Order
 
 /**
  * @name Order
@@ -496,7 +534,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Order identifier. Not set by default.
  *
- * @note This value will be send as the **order_id** (`ORDER_ID`) RAT parameter. See
+ * @note This value will be sent as the **order_id** (`ORDER_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -507,7 +545,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Cart state. Set to `RSDKAnalyticsInvalidCartState` by default.
  *
- * @note This value will be send as the **cart** (`CART_STATE`) RAT parameter. See
+ * @note This value will be sent as the **cart** (`CART_STATE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -520,13 +558,15 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @see RSDKAnalyticsCheckoutStage
  *
- * @note This value will be send as the **chkout** (`CHECKOUT`) RAT parameter. See
+ * @note This value will be sent as the **chkout** (`CHECKOUT`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
  * @since 2.0.0
  */
 @property (nonatomic) RSDKAnalyticsCheckoutStage checkoutStage;
+
+#pragma mark - Other
 
 /**
  * @name Other
@@ -535,7 +575,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Component id. Not set by default.
  *
- * @note This value will be send as the **compid** (`COMPONENT_ID`) RAT parameter. See
+ * @note This value will be sent as the **compid** (`COMPONENT_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -548,7 +588,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Component top. Not set by default.
  *
- * @note This value will be send as the **comptop** (`COMPONENT_TOP`) RAT parameter. See
+ * @note This value will be sent as the **comptop** (`COMPONENT_TOP`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -561,7 +601,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Custom parameters. Not set by default.
  *
- * @note This value will be send as the **cp** (`CUSTOM_PARAMETERS`) RAT parameter. See
+ * @note This value will be sent as the **cp** (`CUSTOM_PARAMETERS`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -577,7 +617,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Event type. Not set by default.
  *
- * @note This value will be send as the **etype** (`EVENT_TYPE`) RAT parameter. See
+ * @note This value will be sent as the **etype** (`EVENT_TYPE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
@@ -592,11 +632,12 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * that developers can set this to any value, though it is not clear for what purpose anybody would
  * actually want to do so.
  *
- * @note This value will be send as the **reqc** (`REQUEST_CODE`) RAT parameter. See
+ * @note This value will be sent as the **reqc** (`REQUEST_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, values over 32 characters in length will get truncated.
+ * @warning When setting this property, values over 32 characters in length will get ignored and
+ * the property reset to `nil`.
  *
  * @since 2.0.0
  */
@@ -605,12 +646,13 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Scroll div identifier. Not set by default.
  *
- * @note This value will be send as the **scroll** (`SCROLL_DIV_ID`) RAT parameter. See
+ * @note This value will be sent as the **scroll** (`SCROLL_DIV_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSString` objects only. Array
- * over 100 items in length will get truncated. An empty array is a synonym of `nil`.
+ * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
+ * over 100 items in length will get ignored and the property reset to `nil`. An empty array
+ * is a synonym of `nil`.
  *
  * @since 2.0.0
  */
@@ -619,12 +661,13 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 /**
  * Scroll viewed. Not set by default.
  *
- * @note This value will be send as the **sresv** (`SCROLL_VIEWED`) RAT parameter. See
+ * @note This value will be sent as the **sresv** (`SCROLL_VIEWED`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
- * @warning When setting this property, arrays should contain `NSString` objects only.Array
- * over 100 items in length will get truncated. An empty array is a synonym of `nil`.
+ * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
+ * over 100 items in length will get ignored and the property reset to `nil`. An empty array is
+ * a synonym of `nil`.
  *
  * @since 2.0.0
  */

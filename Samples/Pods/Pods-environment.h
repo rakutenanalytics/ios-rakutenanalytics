@@ -16,13 +16,13 @@
 #define COCOAPODS_POD_AVAILABLE_FontAwesomeKit_Core
 #define COCOAPODS_VERSION_MAJOR_FontAwesomeKit_Core 2
 #define COCOAPODS_VERSION_MINOR_FontAwesomeKit_Core 1
-#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_Core 6
+#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_Core 7
 
 // FontAwesomeKit/FontAwesome
 #define COCOAPODS_POD_AVAILABLE_FontAwesomeKit_FontAwesome
 #define COCOAPODS_VERSION_MAJOR_FontAwesomeKit_FontAwesome 2
 #define COCOAPODS_VERSION_MINOR_FontAwesomeKit_FontAwesome 1
-#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_FontAwesome 6
+#define COCOAPODS_VERSION_PATCH_FontAwesomeKit_FontAwesome 7
 
 // RESideMenu
 #define COCOAPODS_POD_AVAILABLE_RESideMenu
@@ -33,19 +33,19 @@
 // RSDKAnalytics
 #define COCOAPODS_POD_AVAILABLE_RSDKAnalytics
 #define COCOAPODS_VERSION_MAJOR_RSDKAnalytics 2
-#define COCOAPODS_VERSION_MINOR_RSDKAnalytics 0
-#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 1
+#define COCOAPODS_VERSION_MINOR_RSDKAnalytics 1
+#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 0
 
 // RSDKDeviceInformation
 #define COCOAPODS_POD_AVAILABLE_RSDKDeviceInformation
 #define COCOAPODS_VERSION_MAJOR_RSDKDeviceInformation 1
-#define COCOAPODS_VERSION_MINOR_RSDKDeviceInformation 0
+#define COCOAPODS_VERSION_MINOR_RSDKDeviceInformation 1
 #define COCOAPODS_VERSION_PATCH_RSDKDeviceInformation 0
 
 // RSDKSupport/Utilities
 #define COCOAPODS_POD_AVAILABLE_RSDKSupport_Utilities
 #define COCOAPODS_VERSION_MAJOR_RSDKSupport_Utilities 2
-#define COCOAPODS_VERSION_MINOR_RSDKSupport_Utilities 2
+#define COCOAPODS_VERSION_MINOR_RSDKSupport_Utilities 1
 #define COCOAPODS_VERSION_PATCH_RSDKSupport_Utilities 3
 
 // SVProgressHUD

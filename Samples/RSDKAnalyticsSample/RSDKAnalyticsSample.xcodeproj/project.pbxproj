@@ -20,6 +20,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6986A4941957F15D00E60F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4DBB0BD45E4C45759312F5FC;
+			remoteInfo = "Pods-FontAwesomeKit";
+		};
 		69C1C85D1941571000EE4CAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
@@ -33,13 +40,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 27407033DA794C828FE00439;
 			remoteInfo = "Pods-FXForms";
-		};
-		69C1C8631941571000EE4CAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A3161A14A00240BBAA2650EF;
-			remoteInfo = "Pods-FontAwesomeKit";
 		};
 		69C1C8651941571000EE4CAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -87,7 +87,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 576E9B2F6E3445FB9E865B9E;
+			remoteGlobalIDString = 1DD151F9C059428080A06929;
 			remoteInfo = Pods;
 		};
 /* End PBXContainerItemProxy section */
@@ -181,7 +181,7 @@
 			children = (
 				69C1C85E1941571000EE4CAE /* libPods.a */,
 				69C1C8601941571000EE4CAE /* libPods-FXForms.a */,
-				69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */,
+				6986A4951957F15D00E60F05 /* libPods-FontAwesomeKit.a */,
 				69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */,
 				69C1C8681941571000EE4CAE /* libPods-RSDKAnalytics.a */,
 				69C1C86A1941571000EE4CAE /* libPods-RSDKDeviceInformation.a */,
@@ -269,6 +269,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6986A4951957F15D00E60F05 /* libPods-FontAwesomeKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-FontAwesomeKit.a";
+			remoteRef = 6986A4941957F15D00E60F05 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		69C1C85E1941571000EE4CAE /* libPods.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -281,13 +288,6 @@
 			fileType = archive.ar;
 			path = "libPods-FXForms.a";
 			remoteRef = 69C1C85F1941571000EE4CAE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		69C1C8641941571000EE4CAE /* libPods-FontAwesomeKit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libPods-FontAwesomeKit.a";
-			remoteRef = 69C1C8631941571000EE4CAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */ = {

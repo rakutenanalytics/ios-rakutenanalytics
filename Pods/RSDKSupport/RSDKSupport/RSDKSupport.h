@@ -9,43 +9,37 @@
 /**
  *  Modeling utilities
  */
-#import <RSDKSupport/RProperty.h>
-#import <RSDKSupport/RBaseEntity.h>
-#import <RSDKSupport/REntityJSONSerializer.h>
-#import <RSDKSupport/NSValueTransformer+RDefaultTransformers.h>
+#import "RProperty.h"
+#import "RBaseEntity.h"
+#import "REntityJSONSerializer.h"
+#import "NSValueTransformer+RDefaultTransformers.h"
 
 /**
  *  Networking utilities
  */
-#import <RSDKSupport/RNetworkOperation.h>
-#import <RSDKSupport/RNetworkCertificateAuthenticator.h>
-#import <RSDKSupport/RNetworkResponseSerializer.h>
-#import <RSDKSupport/RNetworkRequestSerializer.h>
-#import <RSDKSupport/RNetworkManagerConfiguration.h>
-#import <RSDKSupport/RNetworkManager.h>
+#import "RNetworkOperation.h"
+#import "RNetworkCertificateAuthenticator.h"
+#import "RNetworkResponseSerializer.h"
+#import "RNetworkRequestSerializer.h"
+#import "RNetworkBaseClient.h"
 
 /**
  *  Categories
  */
-#import <RSDKSupport/NSValueTransformer+RBlockTransformations.h>
-#import <RSDKSupport/NSCoder+RAExtensions.h>
-#import <RSDKSupport/NSData+RAExtensions.h>
-#import <RSDKSupport/NSDictionary+RAExtensions.h>
-#import <RSDKSupport/NSHTTPURLResponse+RAExtensions.h>
-#import <RSDKSupport/NSString+RAExtensions.h>
-#import <RSDKSupport/UIResponder+RErrorResponder.h>
-#import <RSDKSupport/NSObject+RAccessibility.h>
-#import <RSDKSupport/UIColor+RExtensions.h>
+#import "NSValueTransformer+RBlockTransformations.h"
+#import "NSCoder+RAExtensions.h"
+#import "NSData+RAExtensions.h"
+#import "NSDictionary+RAExtensions.h"
+#import "NSHTTPURLResponse+RAExtensions.h"
+#import "NSString+RAExtensions.h"
+#import "UIResponder+RErrorResponder.h"
+#import "NSObject+RAccessibility.h"
+#import "UIColor+RExtensions.h"
 
 /**
  *  Other utilities
  */
-#import <RSDKSupport/RLoggingHelper.h>
-#import <RSDKSupport/REnumHelpers.h>
-#import <RSDKSupport/RSDKAssert.h>
-#import <RSDKSupport/RSDKError.h>
-
-/**
- *  Deprecated
- */
-#import <RSDKSupport/RNetworkBaseClient.h>
+#import "RSDKAssert.h"
+#import "RSDKError.h"
+#import "REnumHelpers.h"
+#import "RLoggingHelper.h"
