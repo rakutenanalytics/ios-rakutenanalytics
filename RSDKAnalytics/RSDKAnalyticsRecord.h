@@ -133,7 +133,7 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @since 2.0.0
  */
-@interface RSDKAnalyticsRecord : NSObject
+@interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Create a new record object.

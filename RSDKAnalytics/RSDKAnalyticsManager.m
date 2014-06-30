@@ -610,9 +610,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // {name: "cks", longName: "SESSION_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
     jsonDic[@"cks"] = self.sessionCookie;
 
-    // FIXME: fill the description below once the IDL has "ts1".
-    // {name: "ts1", ...
-    jsonDic[@"ts1"] = @(MAX(0ll, (int64_t) round(NSDate.date.timeIntervalSince1970 * 1000.0)));
+    // {name: "ts1", longName: "CLIENT_PROVIDED_TIMESTAMP", definitionLevel: "APP", fieldType: "INT", minValue: 0, userSettable: true}
+    // Unit is seconds. Up to version 2.1.0 it was milliseconds.
+    jsonDic[@"ts1"] = @(MAX(0ll, (int64_t) round(NSDate.date.timeIntervalSince1970)));
 
     // {name: "tzo", longName: "TIMEZONE", fieldType: "DOUBLE", minValue: -12.0, maxValue: 12.0, userSettable: false}
     jsonDic[@"tzo"] = @(NSTimeZone.localTimeZone.secondsFromGMT / 3600.0);

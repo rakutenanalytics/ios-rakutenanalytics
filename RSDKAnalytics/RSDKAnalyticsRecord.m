@@ -632,5 +632,184 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     return array.copy;
 }
 
+#pragma mark - NSSecureCoding
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)decoder
+{
+    union
+    {
+        uint64_t unsignedValue;
+        int64_t  signedValue;
+    } value64;
+
+    value64.signedValue     = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(accountId))];
+    uint64_t  accountId     = value64.unsignedValue;
+    int64_t   serviceId     = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(serviceId))];
+
+    if (self = [self initWithAccountId:accountId serviceId:serviceId])
+    {
+        self.easyId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(easyId))];
+        self.affiliateId            = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(affiliateId))];
+        self.goalId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(goalId))];
+        self.campaignCode           = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(campaignCode))];
+        self.shopId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(shopId))];
+
+        self.contentLocale          = [decoder decodeObjectOfClass:NSLocale.class forKey:NSStringFromSelector(@selector(contentLocale))];
+        self.currencyCode           = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(currencyCode))];
+
+        self.searchSelectedLocale   = [decoder decodeObjectOfClass:NSLocale.class forKey:NSStringFromSelector(@selector(searchSelectedLocale))];
+        self.searchQuery            = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(searchQuery))];
+        self.searchMethod           = [decoder decodeIntegerForKey:NSStringFromSelector(@selector(searchMethod))];
+        self.excludeWordSearchQuery = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(excludeWordSearchQuery))];
+        self.genre                  = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(genre))];
+
+        self.pageName               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(pageName))];
+        self.pageType               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(pageType))];
+        self.referrer               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(referrer))];
+        self.navigationTime         = [decoder decodeDoubleForKey:NSStringFromSelector(@selector(navigationTime))];
+        self.checkpoints            = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(checkpoints))];
+
+        self.itemId                 = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemId))];
+        self.numberOfItems          = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(numberOfItems))];
+        self.itemPrice              = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemPrice))];
+        self.itemGenre              = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemGenre))];
+        self.itemVariation          = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemVariation))];
+
+        self.orderId                = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(orderId))];
+        value64.signedValue         = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(cartState))];
+        self.cartState              = value64.unsignedValue;
+        self.checkoutStage          = [decoder decodeIntegerForKey:NSStringFromSelector(@selector(checkoutStage))];
+
+        self.componentId            = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(componentId))];
+        self.componentTop           = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(componentTop))];
+        self.customParameters       = [decoder decodeObjectOfClass:NSDictionary.class forKey:NSStringFromSelector(@selector(customParameters))];
+        self.eventType              = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(eventType))];
+        self.requestCode            = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(requestCode))];
+        self.scrollDivId            = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(scrollDivId))];
+        self.scrollViewed           = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(scrollViewed))];
+    }
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    union
+    {
+        uint64_t unsignedValue;
+        int64_t  signedValue;
+    } value64;
+
+    value64.unsignedValue = self.accountId;
+    [coder encodeInt64:value64.signedValue          forKey:NSStringFromSelector(@selector(accountId))];
+    [coder encodeInt64:self.serviceId               forKey:NSStringFromSelector(@selector(serviceId))];
+    [coder encodeObject:self.easyId                 forKey:NSStringFromSelector(@selector(easyId))];
+    [coder encodeInt64:self.affiliateId             forKey:NSStringFromSelector(@selector(affiliateId))];
+    [coder encodeObject:self.goalId                 forKey:NSStringFromSelector(@selector(goalId))];
+    [coder encodeObject:self.campaignCode           forKey:NSStringFromSelector(@selector(campaignCode))];
+    [coder encodeObject:self.shopId                 forKey:NSStringFromSelector(@selector(shopId))];
+
+    [coder encodeObject:self.contentLocale          forKey:NSStringFromSelector(@selector(contentLocale))];
+    [coder encodeObject:self.currencyCode           forKey:NSStringFromSelector(@selector(currencyCode))];
+
+    [coder encodeObject:self.searchSelectedLocale   forKey:NSStringFromSelector(@selector(searchSelectedLocale))];
+    [coder encodeObject:self.searchQuery            forKey:NSStringFromSelector(@selector(searchQuery))];
+    [coder encodeInteger:self.searchMethod          forKey:NSStringFromSelector(@selector(searchMethod))];
+    [coder encodeObject:self.excludeWordSearchQuery forKey:NSStringFromSelector(@selector(excludeWordSearchQuery))];
+    [coder encodeObject:self.genre                  forKey:NSStringFromSelector(@selector(genre))];
+
+    [coder encodeObject:self.pageName               forKey:NSStringFromSelector(@selector(pageName))];
+    [coder encodeObject:self.pageType               forKey:NSStringFromSelector(@selector(pageType))];
+    [coder encodeObject:self.referrer               forKey:NSStringFromSelector(@selector(referrer))];
+    [coder encodeDouble:self.navigationTime         forKey:NSStringFromSelector(@selector(navigationTime))];
+    [coder encodeInt64:self.checkpoints             forKey:NSStringFromSelector(@selector(checkpoints))];
+
+    [coder encodeObject:self.itemId                 forKey:NSStringFromSelector(@selector(itemId))];
+    [coder encodeObject:self.numberOfItems          forKey:NSStringFromSelector(@selector(numberOfItems))];
+    [coder encodeObject:self.itemPrice              forKey:NSStringFromSelector(@selector(itemPrice))];
+    [coder encodeObject:self.itemVariation          forKey:NSStringFromSelector(@selector(itemVariation))];
+
+    value64.unsignedValue = self.cartState;
+    [coder encodeObject:self.orderId                forKey:NSStringFromSelector(@selector(orderId))];
+    [coder encodeInt64:value64.signedValue          forKey:NSStringFromSelector(@selector(cartState))];
+    [coder encodeInteger:self.checkoutStage         forKey:NSStringFromSelector(@selector(checkoutStage))];
+
+    [coder encodeObject:self.componentId            forKey:NSStringFromSelector(@selector(componentId))];
+    [coder encodeObject:self.componentTop           forKey:NSStringFromSelector(@selector(componentTop))];
+    [coder encodeObject:self.customParameters       forKey:NSStringFromSelector(@selector(customParameters))];
+    [coder encodeObject:self.eventType              forKey:NSStringFromSelector(@selector(eventType))];
+    [coder encodeObject:self.requestCode            forKey:NSStringFromSelector(@selector(requestCode))];
+    [coder encodeObject:self.scrollDivId            forKey:NSStringFromSelector(@selector(scrollDivId))];
+    [coder encodeObject:self.scrollViewed           forKey:NSStringFromSelector(@selector(scrollViewed))];
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(NSZone __unused *)zone
+{
+    RSDKAnalyticsRecord *copy = [RSDKAnalyticsRecord recordWithAccountId:self.accountId serviceId:self.serviceId];
+
+    copy.easyId                 = self.easyId;
+    copy.affiliateId            = self.affiliateId;
+    copy.goalId                 = self.goalId;
+    copy.campaignCode           = self.campaignCode;
+    copy.shopId                 = self.shopId;
+    copy.contentLocale          = self.contentLocale;
+    copy.currencyCode           = self.currencyCode;
+    copy.searchSelectedLocale   = self.searchSelectedLocale;
+    copy.searchQuery            = self.searchQuery;
+    copy.searchMethod           = self.searchMethod;
+    copy.excludeWordSearchQuery = self.excludeWordSearchQuery;
+    copy.genre                  = self.genre;
+    copy.pageName               = self.pageName;
+    copy.pageType               = self.pageType;
+    copy.referrer               = self.referrer;
+    copy.navigationTime         = self.navigationTime;
+    copy.checkpoints            = self.checkpoints;
+    copy.itemId                 = [NSArray.new initWithArray:self.itemId copyItems:YES];
+    copy.numberOfItems          = [NSArray.new initWithArray:self.numberOfItems copyItems:YES];
+    copy.itemPrice              = [NSArray.new initWithArray:self.itemPrice copyItems:YES];
+    copy.itemGenre              = [NSArray.new initWithArray:self.itemGenre copyItems:YES];
+    copy.itemVariation          = [NSArray.new initWithArray:self.itemVariation copyItems:YES];
+    copy.orderId                = self.orderId;
+    copy.cartState              = self.cartState;
+    copy.checkoutStage          = self.checkoutStage;
+    copy.componentId            = [NSArray.new initWithArray:self.componentId copyItems:YES];
+    copy.componentTop           = [NSArray.new initWithArray:self.componentTop copyItems:YES];
+    copy.customParameters       = [NSDictionary.new initWithDictionary:self.customParameters copyItems:YES];
+    copy.eventType              = self.eventType;
+    copy.requestCode            = self.requestCode;
+    copy.scrollDivId            = [NSArray.new initWithArray:self.scrollDivId copyItems:YES];
+    copy.scrollViewed           = [NSArray.new initWithArray:self.scrollViewed copyItems:YES];
+    return copy;
+}
+
+#pragma mark - NSObject
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
+        return YES;
+    }
+
+    if (![object isKindOfClass:self.class])
+    {
+        return NO;
+    }
+
+    return [self.propertiesDictionary isEqual:[object propertiesDictionary]];
+}
+
+- (NSUInteger)hash
+{
+    return self.propertiesDictionary.hash;
+}
+
 @end
 

@@ -47,6 +47,7 @@
     XCTAssertNotNil(record);
 
     XCTAssertEqual(record.affiliateId, RSDKAnalyticsInvalidAffiliateId);
+    XCTAssertNil(record.easyId);
     XCTAssertNil(record.campaignCode);
     XCTAssertEqual(record.cartState, RSDKAnalyticsInvalidCartState);
     XCTAssertEqual(record.checkoutStage, RSDKAnalyticsInvalidCheckoutStage);
@@ -88,6 +89,17 @@
         record.affiliateId = value;
         XCTAssertEqual(record.affiliateId, value);
     }
+}
+
+- (void)testRecordEasyIdSetter
+{
+    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
+
+    XCTAssertNoThrow(record.easyId = @"0123456789012345678901234");
+    XCTAssertEqualObjects(record.easyId, @"0123456789012345678901234");
+    XCTAssertThrows(record.easyId = self.veryLongString);
+    XCTAssertNoThrow(record.easyId = nil);
+    XCTAssertNil(record.easyId);
 }
 
 - (void)testRecordCampaignCodeSetter
@@ -515,6 +527,26 @@
     XCTAssert(extraneousFields.count == 0, @"Extraneous fields: %@", extraneousFields);
 
     XCTAssertEqualObjects(propertiesDictionary, expected);
+}
+
+- (void)testCodingDecoding
+{
+    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:2];
+
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:record];
+    RSDKAnalyticsRecord *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+
+    XCTAssertEqualObjects(unarchived.propertiesDictionary, record.propertiesDictionary);
+}
+
+- (void)testObjectEquality
+{
+    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:2];
+
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:record];
+    RSDKAnalyticsRecord *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+
+    XCTAssertEqualObjects(unarchived, record);
 }
 
 @end

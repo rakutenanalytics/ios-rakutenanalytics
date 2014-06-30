@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
-  s.version      = "2.1.0"
+  s.version      = "2.1.1"
   s.summary      = "Rakuten SDK analytics library"
   s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
