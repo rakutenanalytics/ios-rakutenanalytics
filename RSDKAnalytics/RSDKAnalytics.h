@@ -1,16 +1,10 @@
-//
-//  RSDKAnalytics.h
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
 @import Foundation;
 
 #import "RSDKAnalyticsManager.h"
 #import "RSDKAnalyticsRecord.h"
+#import "RSDKAnalyticsItem.h"
 
+/// @name Environment
 
 /**
  * Version of this library.
@@ -20,8 +14,15 @@
  * [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
+ * @ingroup AnalyticsConstants
  * @since 2.0.0
  */
 
 FOUNDATION_EXTERN const NSString* const RSDKAnalyticsVersion;
+
+#ifdef DOXYGEN
+    /**
+     * @defgroup AnalyticsConstants Constants and enumerations
+     */
+#endif
 

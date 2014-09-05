@@ -55,10 +55,14 @@
     record.navigationTime = self.navigationTime;
     record.checkpoints    = self.checkpoints;
 
-    record.itemId        = self.itemId;
-    record.numberOfItems = self.numberOfItems;
-    record.itemPrice     = self.itemPrice;
-    record.itemVariation = self.itemVariation;
+    for (NSString *itemIdentifier in self.itemIdentifiers)
+    {
+        RSDKAnalyticsItem *item = [RSDKAnalyticsItem itemWithIdentifier:itemIdentifier];
+        item.quantity = 3;
+        item.price = 12;
+        item.genre = self.genreForItems;
+        [record addItem:item];
+    }
 
     record.orderId       = self.orderId;
     record.cartState     = self.cartState;
@@ -181,27 +185,21 @@
     return @{@"textField.keyboardType": @(UIKeyboardTypeDecimalPad)};
 }
 
-- (id)itemIdField {
-    return @{FXFormFieldHeader: @"Items"};
+- (id)genreForItemsField
+{
+    return @{FXFormFieldHeader: @"Items",
+             FXFormFieldDefaultValue: @"dummyGenre"};
 }
 
-/*
-- (id)numberOfItemsField {
-
+- (id)itemIdentifiersField
+{
+    return @{FXFormFieldInline: @YES,
+             FXFormFieldTemplate: @{FXFormFieldDefaultValue: @"shopId/itemId",
+                                    FXFormFieldType: FXFormFieldTypeText,
+                                    FXFormFieldTitle: @"Add Item Id",
+                                    },
+             };
 }
-
-- (id)itemPriceField {
-
-}
-
-- (id)itemGenreField {
-
-}
-
-- (id)itemVariationField {
-
-}
-*/
 
 - (id)checkoutStageField
 {
@@ -260,4 +258,3 @@
 }
 
 @end
-

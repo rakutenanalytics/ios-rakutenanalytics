@@ -53,11 +53,8 @@
 // }}
 
 // {{ items
-@property (nonatomic, strong) NSArray *itemId;
-@property (nonatomic, strong) NSArray *numberOfItems;
-@property (nonatomic, strong) NSArray *itemPrice;
-@property (nonatomic, strong) NSArray *itemGenre;
-@property (nonatomic, strong) NSArray *itemVariation;
+@property (nonatomic, copy)   NSString *genreForItems;
+@property (nonatomic, strong) NSArray  *itemIdentifiers;
 // }}
 
 // {{order
@@ -78,4 +75,3 @@
 
 - (RSDKAnalyticsRecord *)record;
 @end
-

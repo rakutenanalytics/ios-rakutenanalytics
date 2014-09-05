@@ -12,19 +12,23 @@
 
 + (instancetype)stringWithUUID
 {
-    // Switch to NSUUID when iOS 5 is deprecated
-#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
-    CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-    if (uuidRef) {
-        CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
-        CFRelease(uuidRef);
-        return uuidString ? (__bridge_transfer NSString *) uuidString : nil;
+    if ([NSUUID class])
+    {
+        // iOS 6+
+        return [[NSUUID UUID] UUIDString];
+    } else
+    {
+        // iOS 5.x
+        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+        if (uuidRef)
+        {
+            CFStringRef uuidString = CFUUIDCreateString(kCFAllocatorDefault, uuidRef);
+            CFRelease(uuidRef);
+            return uuidString ? (__bridge_transfer NSString *) uuidString : nil;
+        }
+
+        return nil;
     }
-    
-    return nil;
-#else
-    return [[NSUUID UUID] UUIDString];
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
 }
 
 - (instancetype)trim

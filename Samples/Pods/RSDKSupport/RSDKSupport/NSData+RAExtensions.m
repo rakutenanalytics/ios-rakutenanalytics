@@ -17,66 +17,18 @@
 
 - (NSString *)base64
 {
-    NSMutableString *result = [NSMutableString new];
-    NSUInteger offset = 0;
-    NSInteger state = 0;
-    NSInteger index = 0;
-    const unsigned char *data = [self bytes];
-    
-    static const char kBase64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    
-    while (offset < [self length])
+    static BOOL useLegacyMethod;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        useLegacyMethod = ![self respondsToSelector:@selector(base64EncodedStringWithOptions:)];
+    });
+
+    if (useLegacyMethod)
     {
-        switch (state)
-        {
-            case 0:
-                index = (data[offset] >> 2) & 0x3F;
-                break;
-                
-            case 1:
-                index = (data[offset++] & 0x03) << 4;
-                if (offset < [self length])
-                {
-                    index |= (data[offset] >> 4) & 0x0F;
-                }
-                break;
-                
-            case 2:
-                index = (data[offset++] & 0x0F) << 2;
-                if (offset < [self length])
-                {
-                    index |= (data[offset] >> 6) & 0x03;
-                }
-                break;
-                
-            case 3:
-                index = data[offset++] & 0x3F;
-                break;
-                
-            default:
-                break;
-        }
-        
-        state = (state + 1) % 4;
-        [result appendFormat:@"%c", kBase64Table[index]];
+        return [self base64Encoding];
     }
-    
-    switch (state)
-    {
-        case 1:
-        case 2:
-            [result appendString:@"=="];
-            break;
-            
-        case 3:
-            [result appendString:@"="];
-            break;
-            
-        default:
-            break;
-    }
-    
-    return result;
+
+    return [self base64EncodedStringWithOptions:0];
 }
 
 - (instancetype)sha1

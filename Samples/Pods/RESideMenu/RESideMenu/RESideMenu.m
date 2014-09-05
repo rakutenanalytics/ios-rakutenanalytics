@@ -133,6 +133,11 @@
 
 - (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated
 {
+    if (_contentViewController == contentViewController)
+    {
+        return;
+    }
+    
     if (!animated) {
         [self setContentViewController:contentViewController];
     } else {
@@ -146,6 +151,8 @@
             [self __hideViewController:self.contentViewController];
             [contentViewController didMoveToParentViewController:self];
             _contentViewController = contentViewController;
+
+            [self __statusBarNeedsAppearanceUpdate];
             [self __updateContentViewShadow];
             
             if (self.visible) {
@@ -255,6 +262,7 @@
     [self.view.window endEditing:YES];
     [self __addContentButton];
     [self __updateContentViewShadow];
+    [self __resetContentViewScale];
     
     [UIView animateWithDuration:self.animationDuration animations:^{
         if (self.scaleContentView) {
@@ -293,6 +301,7 @@
     [self.view.window endEditing:YES];
     [self __addContentButton];
     [self __updateContentViewShadow];
+    [self __resetContentViewScale];
     
     [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
     [UIView animateWithDuration:self.animationDuration animations:^{
@@ -420,6 +429,16 @@
         layer.shadowOpacity = self.contentViewShadowOpacity;
         layer.shadowRadius = self.contentViewShadowRadius;
     }
+}
+
+- (void)__resetContentViewScale
+{
+    CGAffineTransform t = self.contentViewContainer.transform;
+    CGFloat scale = sqrt(t.a * t.a + t.c * t.c);
+    CGRect frame = self.contentViewContainer.frame;
+    self.contentViewContainer.transform = CGAffineTransformIdentity;
+    self.contentViewContainer.transform = CGAffineTransformMakeScale(scale, scale);
+    self.contentViewContainer.frame = frame;
 }
 
 #pragma mark -

@@ -5,7 +5,11 @@ platform :ios, "6.0"
 pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
 
 # Extra pods this sample uses
-pod 'FXForms',                    '~>1.1.6',  :inhibit_warnings => true
+
+# FXForms 1.1.7 still hasn't been released and we want support for array fields (e.g. itemIdentifiers)
+#pod 'FXForms',                    '~>1.1.6',  :inhibit_warnings => true
+pod 'FXForms', :git => 'https://github.com/nicklockwood/FXForms.git', :commit => '627eda9e73', :inhibit_warnings => true
+
 pod 'SVProgressHUD',              '~>1.0',    :inhibit_warnings => true
 pod 'RESideMenu',                 '~>4.0.4',  :inhibit_warnings => true
 pod 'FontAwesomeKit/FontAwesome', '~>2.1.5',  :inhibit_warnings => true

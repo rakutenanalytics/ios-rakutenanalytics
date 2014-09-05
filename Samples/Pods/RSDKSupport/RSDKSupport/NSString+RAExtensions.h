@@ -6,35 +6,39 @@
 //  Copyright (c) 2013 Rakuten Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /**
- * Category extending NSString with additions needed by the Rakuten SDK.
+ * Category extending `NSString` with additions needed by the Rakuten SDK.
+ *
+ * @category NSString(RAExtensions) NSString+RAExtensions.h <RSDKSupport/NSString+RAExtensions.h>
  */
 @interface NSString (RAExtensions)
 
 /**
- * Creates a NSString object containing an UUID4 in string form.
+ * Create a new `NSString` instance containing an **UUID4**.
  *
- * @see http://tools.ietf.org/html/rfc4122
+ * @see [RFC 4122: A Universally Unique IDentifier URN Namespace](http://tools.ietf.org/html/rfc4122)
  *
- * @return A NSString with an UUID4 in string form.
+ * @return A `NSString` with an **UUID4** in string form.
  */
 + (instancetype)stringWithUUID;
 
 /**
- * Returns a copy of the current string with trailing spaces removed.
+ * Return a copy of the receiver with heading and trailing white space removed.
  *
- * @return A copy of the string with the trailing spaces removed.
+ * Heading and trailing character part of the [Unicode General Category Z*](http://www.unicode.org/versions/Unicode6.2.0/ch04.pdf#G124142) are
+ * removed, as well as code points in the range **U000A…U000D** and **U0085**.
+ *
+ * @return Copy of the receiver with heading and trailing white space removed.
  */
 - (instancetype)trim;
 
 /**
- * Checks if the current string is either empty or comprised exclusively
+ * Check if the current string is either empty or comprised exclusively
  * by whitespace.
  *
- * @return YES if the string is either empty or just made up of whitespace,
- *         NO otherwise.
+ * @return `YES` if the string, once trimmed, is empty, or `NO` otherwise.
  */
 - (BOOL)isEmpty;
 

@@ -1,74 +1,85 @@
-//
-//  RSDKAnalyticsManager.h
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
 @import Foundation;
 
 @class RSDKAnalyticsRecord;
 
-
 /**
+ * Main class of the module.
+ *
  * This class handles:
  *
- *  - Enabling or disabling **location tracking** with [RSDKAnalyticsManager locationTrackingEnabled];
- *  - **Spooling** RSDKAnalyticsRecord instances with [RSDKAnalyticsManager spoolRecord:].
+ *  - Enabling or disabling **location tracking** with RSDKAnalyticsManager::locationTrackingEnabled;
+ *  - **Spooling** RSDKAnalyticsRecord instances with RSDKAnalyticsManager::spoolRecord:.
  *  - **Gathering system data** that it merges with each record it spools. See the next section.
  *
  * ## Automatically gathered system data
  * The fields below, documented in the [Rakuten Analytics Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl),
  * are automatically merged with the properties of each RSDKAnalyticsRecord that gets spooled:
  *
- *  - **ckp** (`PERSISTENT_COOKIE`)
- *  - **cks** (`SESSION_COOKIE`)
- *  - **dln** (`DEVICE_LANGUAGE`)
- *  - **loc** (`LOCATION`)
- *  - **ltm** (`SCRIPT_START_TIME`)
- *  - **mbat** (`BATTERY_USAGE`)
- *  - **mcn** (`MOBILE_CARRIER_NAME`)
- *  - **mnetw** (`MOBILE_NETWORK_TYPE`)
- *  - **model** (`MOBILE_DEVICE_BRAND_MODEL`)
- *  - **mori** (`MOBILE_ORIENTATION`)
- *  - **mos** (`MOBILE_OS`)
- *  - **online** (`ONLINE_STATUS`)
- *  - **powerstatus** (`BATTERY_CHARGING_STATUS`)
- *  - **res** (`RESOLUTION`)
- *  - **ts1** (`CLIENT_PROVIDED_TIMESTAMP`)
- *  - **tzo** (`TIMEZONE`)
- *  - **ua** (`USER_AGENT`)
- *  - **ver** (`VERSION`)
+ *  Field         | Long field name
+ *  -------------:|:-------------------------------
+ *  `ckp`         | `PERSISTENT_COOKIE`
+ *  `cks`         | `SESSION_COOKIE`
+ *  `dln`         | `DEVICE_LANGUAGE`
+ *  `loc`         | `LOCATION`
+ *  `ltm`         | `SCRIPT_START_TIME`
+ *  `mbat`        | `BATTERY_USAGE`
+ *  `mcn`         | `MOBILE_CARRIER_NAME`
+ *  `mnetw`       | `MOBILE_NETWORK_TYPE`
+ *  `model`       | `MOBILE_DEVICE_BRAND_MODEL`
+ *  `mori`        | `MOBILE_ORIENTATION`
+ *  `mos`         | `MOBILE_OS`
+ *  `online`      | `ONLINE_STATUS`
+ *  `powerstatus` | `BATTERY_CHARGING_STATUS`
+ *  `res`         | `RESOLUTION`
+ *  `ts1`         | `CLIENT_PROVIDED_TIMESTAMP`
+ *  `tzo`         | `TIMEZONE`
+ *  `ua`          | `USER_AGENT`
+ *  `ver`         | `VERSION`
  *
- * @since 2.0.0
+ * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
  */
 
 @interface RSDKAnalyticsManager : NSObject
-
 
 /**
  * Retrieve the shared instance.
  *
  * @return The shared instance.
- *
- * @since 2.0.0
  */
 
 + (instancetype)sharedInstance;
 
 
 /**
- * Spool a record. It is first saved on-disk, then uploaded asynchronously
+ * Spool a record\. It is first saved on-disk, then uploaded asynchronously
  * to the RAT server, on the background queue.
  *
+ * @msc
+ *   hscale="0.8";
+ *
+ *   app [label="app", linecolor="transparent", textcolor="transparent"],
+ *   RSDKAnalyticsManager [label="Manager"],
+ *   db [label="On-disk Database"],
+ *   server [label="RAT Server"];
+ *
+ *   app => RSDKAnalyticsManager [label="spoolRecord:"];
+ *   RSDKAnalyticsManager => db [label="enqueue operation"];
+ *   RSDKAnalyticsManager >> app [label="OK"];
+ *   db => db [label="insert record"];
+ *   RSDKAnalyticsManager loop server [label="Poll database periodically"] {
+ *     RSDKAnalyticsManager => db [label="fetch records"];
+ *     db >> RSDKAnalyticsManager [label="records[]"];
+ *     RSDKAnalyticsManager => server [label="async send"];
+ *     server >> RSDKAnalyticsManager [label="200 OK"];
+ *     RSDKAnalyticsManager => db [label="delete records"];
+ *   };
+ * @endmsc
+ *
  * Developers who wish to monitor the module's network activity can do so
- * by listening to the notifications it sends, respectively RSDKAnalyticsWillUploadNotification,
- * RSDKAnalyticsUploadFailureNotification and RSDKAnalyticsUploadSuccessNotification.
+ * by listening to the notifications it sends, respectively @ref RSDKAnalyticsWillUploadNotification,
+ * @ref RSDKAnalyticsUploadFailureNotification and @ref RSDKAnalyticsUploadSuccessNotification.
  *
  * @param record  Record to be added to the database.
- *
- * @since 2.0.0
  */
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record;
@@ -78,8 +89,6 @@
  * This is the URL this module uploads records to.
  *
  * @return URL of the server.
- *
- * @since 2.0.0
  */
 
 + (NSURL*)endpointAddress;
@@ -95,8 +104,6 @@
  * information, trying to set this property to `YES` has no effect. Please refer
  * to the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/)
  * for more information.
- *
- * @since 2.0.0
  */
 
 @property (nonatomic,getter=isLocationTrackingEnabled) BOOL locationTrackingEnabled;
@@ -104,10 +111,7 @@
 @end
 
 
-
-/**
- * @name Notifications
- */
+/// @name Notifications
 
 
 /**
@@ -117,7 +121,7 @@
  * `object` is a the JSON payload being uploaded, in its unserialized
  * NSArray form.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 
 FOUNDATION_EXTERN NSString *const RSDKAnalyticsWillUploadNotification;
@@ -129,9 +133,9 @@ FOUNDATION_EXTERN NSString *const RSDKAnalyticsWillUploadNotification;
  * `object` is a the JSON payload that was being uploaded, in its unserialized
  * NSArray form.
  * `userInfo` contains a NSError instance under the key `NSUnderlyingErrorKey`. Connection
- * errors use the `NSURLErrorDomain` domain. Other errors use RSDKAnalyticsErrorDomain.
+ * errors use the `NSURLErrorDomain` domain. Other errors use @ref RSDKAnalyticsErrorDomain.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 
 FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadFailureNotification;
@@ -141,24 +145,22 @@ FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadFailureNotification;
  * The SDK sends this notification after an upload succeeded.
  *
  * `object` is a the JSON payload that was being uploaded, in its unserialized
- * NSArray form.
+ * `NSArray` form.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 
 FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadSuccessNotification;
 
 
 
-/**
- * @name Errors
- */
+/// @name Errors
 
 
 /**
  * Error domain.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 
 FOUNDATION_EXTERN NSString *const RSDKAnalyticsErrorDomain;
@@ -167,14 +169,13 @@ FOUNDATION_EXTERN NSString *const RSDKAnalyticsErrorDomain;
 /**
  * Error codes
  *
- * @since 2.0.0
+ * @enum RSDKAnalyticsError
+ * @ingroup AnalyticsConstants
  */
 
 typedef NS_ENUM(NSInteger, RSDKAnalyticsError)
 {
-    /**
-     * Server sent a status that wasn't 200.
-     */
+    /// Server sent a status that wasn't 200.
     RSDKAnalyticsErrorWrongResponseStatus
 };
 

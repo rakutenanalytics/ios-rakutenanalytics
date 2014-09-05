@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
-  s.version      = "2.1.1"
+  s.version      = "2.2.0"
   s.summary      = "Rakuten SDK analytics library"
   s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -15,6 +15,8 @@ Pod::Spec.new do |s|
   }
 
   s.source_files  = 'RSDKAnalytics/**/*.{h,m}'
+  s.private_header_files = 'RSDKAnalytics/RSDKAnalyticsDatabase.h'
+
   s.ios.libraries = 'sqlite3', 'z'
 
   s.dependency 'RSDKSupport/Utilities', '~> 2.1.3'

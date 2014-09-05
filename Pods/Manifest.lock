@@ -1,14 +1,14 @@
 PODS:
-  - RSDKDeviceInformation (1.1.0):
-    - RSDKSupport/Utilities (~> 2.1.3)
-  - RSDKSupport/Utilities (2.1.3)
+  - RSDKDeviceInformation (1.1.1):
+    - RSDKSupport/Utilities (~> 2.1.4)
+  - RSDKSupport/Utilities (2.1.4)
 
 DEPENDENCIES:
-  - RSDKDeviceInformation (~> 1.1.0)
-  - RSDKSupport/Utilities (~> 2.1.3)
+  - RSDKDeviceInformation (~> 1.1.1)
+  - RSDKSupport/Utilities (~> 2.1.4)
 
 SPEC CHECKSUMS:
-  RSDKDeviceInformation: 52890a271946561775c314a9acfaaa01be2f3513
-  RSDKSupport: 21a59a93711d89e48888c9284fb6ddb20d71a567
+  RSDKDeviceInformation: 14ea92b10523a0717039091aac8108912607dc89
+  RSDKSupport: 5826fe3c2746326cddfed8b06e86eefa1c895819
 
 COCOAPODS: 0.33.1

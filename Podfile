@@ -1,7 +1,7 @@
 platform :ios, "6.0"
 
-pod 'RSDKSupport/Utilities', '~> 2.1.3'
-pod 'RSDKDeviceInformation', '~> 1.1.0'
+pod 'RSDKSupport/Utilities', '~> 2.1.4'
+pod 'RSDKDeviceInformation', '~> 1.1.1'
 
 link_with ['RSDKAnalyticsTests']
 

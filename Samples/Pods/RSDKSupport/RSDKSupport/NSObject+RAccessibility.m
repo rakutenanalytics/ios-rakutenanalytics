@@ -6,13 +6,14 @@
 //  Copyright (c) 2014 Rakuten Inc. All rights reserved.
 //
 
+@import UIKit;
+@import ObjectiveC.runtime;
+
 #import "NSObject+RAccessibility.h"
-#import <UIKit/UIKit.h>
-#import <objc/runtime.h>
 
 @implementation NSObject (RAccessibility)
 
-- (void)r_setupAccessbilityIdentifiers
+- (void)r_setupAccessibilityIdentifiers
 {
     unsigned int propertyCount;
     
@@ -69,7 +70,7 @@
 
 #if RSDKSupportShorthand
 
-- (void)setupAccessbilityIdentifiers
+- (void)setupAccessibilityIdentifiers
 {
     [self r_setupAccessibilityIdentifiers];
 }

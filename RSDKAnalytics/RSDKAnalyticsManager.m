@@ -194,7 +194,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record
 {
-    [self.sharedInstance spoolRecord_:record];
+    [self.sharedInstance _spoolRecord:record];
 }
 
 //--------------------------------------------------------------------------
@@ -287,9 +287,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
         self.locationManager.delegate = self;
 
+        typeof(self) __weak weakSelf = self;
         atexit_b(^
         {
-            [self.locationManager stopUpdatingLocation];
+            typeof(weakSelf) __strong strongSelf = weakSelf;
+            [strongSelf _stopMonitoringLocation];
         });
 
 
@@ -319,7 +321,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         NSNotificationCenter* notificationCenter = NSNotificationCenter.defaultCenter;
         atexit_b(^
         {
-            [notificationCenter removeObserver:self];
+            typeof(weakSelf) __strong strongSelf = weakSelf;
+
+            if (strongSelf)
+            {
+                [notificationCenter removeObserver:strongSelf];
+            }
         });
 
 
@@ -373,13 +380,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     if (!locationTrackingEnabled)
     {
-        RDebugLog(@"Stop monitoring location");
-        [self.locationManager stopUpdatingLocation];
+        [self _stopMonitoringLocation];
     }
     else if (CLLocationManager.locationServicesEnabled && CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorized)
     {
-        RDebugLog(@"Start monitoring location");
-        [self.locationManager startUpdatingLocation];
+        [self _startMonitoringLocation];
     }
 
 }
@@ -397,13 +402,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     if (status == kCLAuthorizationStatusAuthorized && CLLocationManager.locationServicesEnabled)
     {
-        RDebugLog(@"Start monitoring location");
-        [self.locationManager startUpdatingLocation];
+        [self _startMonitoringLocation];
     }
     else
     {
-        RDebugLog(@"Stop monitoring location");
-        [self.locationManager stopUpdatingLocation];
+        [self _stopMonitoringLocation];
     }
 }
 
@@ -421,7 +424,19 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 #pragma mark - Private methods
 
-- (void)spoolRecord_:(RSDKAnalyticsRecord *)record
+- (void)_startMonitoringLocation
+{
+    RDebugLog(@"[RSDKAnalytics] Start monitoring location");
+    [self.locationManager startUpdatingLocation];
+}
+
+- (void)_stopMonitoringLocation
+{
+    RDebugLog(@"[RSDKAnalytics] Stop monitoring location");
+    [self.locationManager stopUpdatingLocation];
+}
+
+- (void)_spoolRecord:(RSDKAnalyticsRecord *)record
 {
     if (!record)
     {
@@ -689,7 +704,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 /*
  * Called by -_doBackgroundUpload only if previously-saved records were found.
  */
-- (void)doBackgroundUploadWithRecords_:(NSArray *)records identifiers:(NSArray *)identifiers
+- (void)_doBackgroundUploadWithRecords:(NSArray *)records identifiers:(NSArray *)identifiers
 {
     /*
      * When you make changes here, always check the server-side program will
@@ -855,7 +870,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         if (records.count)
         {
-            [strongSelf doBackgroundUploadWithRecords_:records identifiers:identifiers];
+            [strongSelf _doBackgroundUploadWithRecords:records identifiers:identifiers];
         }
         else
         {

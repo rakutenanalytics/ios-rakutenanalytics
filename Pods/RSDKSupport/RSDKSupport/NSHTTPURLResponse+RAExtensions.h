@@ -6,20 +6,21 @@
 //  Copyright (c) 2013 Rakuten Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /**
- * Category extending NSHTTPURLResponse with additions needed by the
+ * Category extending `NSHTTPURLResponse` with additions needed by the
  * Rakuten SDK.
+ *
+ * @category NSHTTPURLResponse(RAExtensions) NSHTTPURLResponse+RAExtensions.h <RSDKSupport/NSHTTPURLResponse+RAExtensions.h>
  */
 @interface NSHTTPURLResponse (RAExtensions)
 
 /**
- * Returns the text encoding of the response in NSStringEncoding
- * format.
+ * Returns the text encoding of the response.
  *
  * @return The text encoding returned in the request, or
- *         NSUTF8StringEncoding if none has been sent by the HTTP
+ *         `NSUTF8StringEncoding` if none has been sent by the HTTP
  *         server.
  */
 - (NSStringEncoding)textEncoding;

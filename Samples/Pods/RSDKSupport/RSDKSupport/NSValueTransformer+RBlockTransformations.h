@@ -6,103 +6,128 @@
 //  Copyright (c) 2013 Rakuten Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 
 /**
- * This category adds methods for creating block based NSValueTransformers, and registering them
+ * Add methods for creating block-based `NSValueTransformers` and registering them.
+ *
+ * @category NSValueTransformer(RBlockTransformations) NSValueTransformer+RBlockTransformations.h <RSDKSupport/NSValueTransformer+RBlockTransformations.h>
  */
 @interface NSValueTransformer (RBlockTransformations)
 
 /// @name Creating block transformers
 
 /**
- * Creates a one-way transformer with a block
+ * Create a one-way transformer with a block.
  *
- * @param block The block to use when transforming a value into another value. This parameter is
- * required
- * @return A new instance of the caller
+ * @param block The block to use when transforming a value into another value.
+ * @return A new instance of the receiver.
  */
-+ (instancetype)r_transformerWithBlock:(id (^)(id))block;
++ (instancetype)r_transformerWithBlock:(id (^)(id value))block;
 
 /**
- * Creates a transformer with a forward and reversal block
+ * Create a transformer with forward and reverse transformation blocks.
  *
- * @param forwardBlock The block to use when transforming a value into another value. This parameter
- * is required
- * @param reverseBlock An optional block which undoes the action of the forwardBlock. If this is nil,
- * the transformer returned will be one-way and raise an exception if the `reverseTransformedValue:`
- * is invoked
- * @return A new instance of the caller
+ * @param forwardBlock Block to be used when transforming a value into another value.
+ * @param reverseBlock Optional block that undoes the action of `forwardBlock`.
+ *                     If `nil`, transformations are one-way and raise an exception
+ *                     if `-reverseTransformedValue:` is invoked.
+ * @return A new instance of the receiver.
  */
-+ (instancetype)r_transformerWithForwardBlock:(id (^)(id value))forwardBlock reverseBlock:(id (^)(id value))reverseBlock;
++ (instancetype)r_transformerWithForwardBlock:(id (^)(id value))forwardBlock
+                                 reverseBlock:(id (^)(id value))reverseBlock;
 
 
 /// @name Registering transformers
 
 /**
- * Attempts to creates and register a one-way block-based NSValueTransformer
+ * Attempt to create and register a one-way block-based `NSValueTransformer`.
  *
- * If successful, the transformer can be accessed using the class method `valueTransformerForName:`
- * on NSValueTransformer. If a transformer was already registered with the passed name, this method
- * will return `NO`.
+ * If successful, the transformer can be accessed using `+ [NSValueTransformer valueTransformerForName:]`.
+ * If a transformer was already registered with the passed name, this method will return `NO`.
  *
- * @param transformerName The name to register the new transformer with. This parameter is required
- * @param transformBlock The block to use when transforming a value into another value. This
- * parameter is required
- * @return A flag indicating if the registration was successful or not.
- * @see r_transformerWithBlock:
+ * @param transformerName The name to register the new transformer with.
+ * @param transformBlock The block to be used for transforming a value into another value.
+ * @return `YES` on success, `NO` on failure.
+ * @see #r_transformerWithBlock:
  */
-+ (BOOL)r_registerTransformerWithName:(NSString *)transformerName transformationBlock:(id (^)(id value))transformBlock;
++ (BOOL)r_registerTransformerWithName:(NSString *)transformerName
+                  transformationBlock:(id (^)(id value))transformBlock;
 
 /**
- * Attempts to create and register a block-based NSValueTransformer
+ * Attempts to create and register a block-based `NSValueTransformer`.
  *
- * If successful, the transformer can be accessed using the class method `valueTransformerForName:`
- * on NSValueTransformer. If a transformer was already registered with the passed name, this method
- * will return `NO`.
+ * If successful, the transformer can be accessed using `+[NSValueTransformer valueTransformerForName:]`.
+ * If a transformer was already registered with the passed name, this method will return `NO`.
  *
- * @param transformerNameThe name to register the new transformer with. This parameter is required
- * @param transformBlock The block to use when transforming a block into another value. This
- * parameter is required
- * @param reverseBlock A block that undoes the transformation of the transformBlock. This parameter
- * is optional
- * @return A flag indicating if the registration was successful or not
- * @see r_transformerWithForwardBlock:reverseBlock:
+ * @param transformerName The name to register the new transformer with.
+ * @param transformBlock The block to be used for transforming a value into another value.
+ * @param reverseBlock Optional block that undoes the action of `forwardBlock`.
+ *                     If `nil`, transformations are one-way and raise an exception
+ *                     if `-reverseTransformedValue:` is invoked.
+ * @return `YES` on success, `NO` on failure.
+ * @see #r_transformerWithForwardBlock:reverseBlock:
  */
-+ (BOOL)r_registerTransformerWithName:(NSString *)transformerName transformationBlock:(id (^)(id value))transformBlock reverseBlock:(id (^)(id value))reverseBlock;
++ (BOOL)r_registerTransformerWithName:(NSString *)transformerName
+                  transformationBlock:(id (^)(id value))transformBlock
+                         reverseBlock:(id (^)(id value))reverseBlock;
 
 #if RSDKSupportShorthand
 
 /// @name Shorthand versions
 
 /**
- * Alias for r_registerTransformerWithName:transformationBlock:
+ * Alias for #r_registerTransformerWithName:transformationBlock:
  *
- * @see r_registerTransformerWithName:transformationBlock:
+ * @note This method is only available if #RSDKSupportShorthand has been defined.
+ *
+ * @param transformerName The name to register the new transformer with.
+ * @param transformBlock The block to be used for transforming a value into another value.
+ * @return `YES` on success, `NO` on failure.
  */
-+ (BOOL)registerTransformerWithName:(NSString *)transformerName transformationBlock:(id (^)(id value))transformBlock;
++ (BOOL)registerTransformerWithName:(NSString *)transformerName
+                transformationBlock:(id (^)(id value))transformBlock;
 
 /**
- * Alias for r_registerTransformerWithName:transformationBlock:reverseBlock:
+ * Alias for #r_registerTransformerWithName:transformationBlock:reverseBlock:
  *
- * @see r_registerTransformerWithName:transformationBlock:reverseBlock:
+ * @note This method is only available if #RSDKSupportShorthand has been defined.
+ *
+ * @param transformerName The name to register the new transformer with.
+ * @param transformBlock The block to be used for transforming a value into another value.
+ * @param reverseBlock Optional block that undoes the action of `forwardBlock`.
+ *                     If `nil`, transformations are one-way and raise an exception
+ *                     if `-reverseTransformedValue:` is invoked.
+ * @return `YES` on success, `NO` on failure.
  */
-+ (BOOL)registerTransformerWithName:(NSString *)transformerName transformationBlock:(id (^)(id value))transformBlock reverseBlock:(id (^)(id value))reverseBlock;
++ (BOOL)registerTransformerWithName:(NSString *)transformerName
+                transformationBlock:(id (^)(id value))transformBlock
+                       reverseBlock:(id (^)(id value))reverseBlock;
 
 /**
- * Alias for r_transformerWithBlock:
+ * Alias for #r_transformerWithBlock:
  *
- * @see r_transformerWithBlock:
+ * @note This method is only available if #RSDKSupportShorthand has been defined.
+ *
+ * @param block The block to use when transforming a value into another value.
+ * @return A new instance of the receiver.
  */
-+ (instancetype)transformerWithBlock:(id (^)(id))block;
++ (instancetype)transformerWithBlock:(id (^)(id value))block;
 
 /**
- * Alias for r_transformerWithForwardBlock:reverseBlock:
+ * Alias for #r_transformerWithForwardBlock:reverseBlock:
  *
- * @see r_transformerWithForwardBlock:reverseBlock:
+ * @note This method is only available if #RSDKSupportShorthand has been defined.
+ *
+ * @param forwardBlock Block to be used when transforming a value into another value.
+ * @param reverseBlock Optional block that undoes the action of `forwardBlock`.
+ *                     If `nil`, transformations are one-way and raise an exception
+ *                     if `-reverseTransformedValue:` is invoked.
+ * @return A new instance of the receiver.
  */
-+ (instancetype)transformerWithForwardBlock:(id (^)(id value))forwardBlock reverseBlock:(id (^)(id value))reverseBlock;
++ (instancetype)transformerWithForwardBlock:(id (^)(id value))forwardBlock
+                               reverseBlock:(id (^)(id value))reverseBlock;
 
 #endif
 

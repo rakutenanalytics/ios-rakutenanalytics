@@ -59,10 +59,8 @@ NSString *const RSDKErrorForwardedErrorKey = @"RSDKError";
     return [self objectForUserInfoKey:(NSString *)key];
 }
 
-@end
 
-@implementation RSDKError (Deprecated)
-
+#pragma mark - Deprecated methods
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 

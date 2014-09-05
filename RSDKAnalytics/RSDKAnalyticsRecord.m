@@ -7,6 +7,7 @@
 //
 
 #import "RSDKAnalyticsRecord.h"
+#import "RSDKAnalyticsItem.h"
 #import <RSDKSupport/RSDKAssert.h>
 
 //--------------------------------------------------------------------------
@@ -22,6 +23,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 @interface RSDKAnalyticsRecord()
 @property (nonatomic) uint64_t accountId;
 @property (nonatomic) int64_t  serviceId;
+@property (nonatomic, strong)  NSMutableArray *items;
 @end
 
 @implementation RSDKAnalyticsRecord
@@ -47,6 +49,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         self.navigationTime = RSDKAnalyticsInvalidNavigationTime;
         self.searchMethod = RSDKAnalyticsInvalidSearchMethod;
         self.serviceId = serviceId;
+        self.items = NSMutableArray.new;
     }
     return self;
 }
@@ -58,9 +61,55 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     return [self.alloc initWithAccountId:accountId serviceId:serviceId];
 }
 
+- (BOOL)addItem:(RSDKAnalyticsItem *)item
+{
+    if (self.items.count == 100)
+    {
+        return NO;
+    }
+
+    [self.items addObject:item.copy];
+    return YES;
+}
+
+- (void)enumerateItemsWithBlock:(rsdk_analytics_item_enumeration_block_t)block
+{
+    if (!block)
+    {
+        return;
+    }
+
+    [self.items enumerateObjectsUsingBlock:block];
+}
+
+
 - (NSDictionary *)propertiesDictionary
 {
     NSMutableDictionary *dictionary = NSMutableDictionary.new;
+
+    NSMutableArray *itemIdentifiers = nil;
+    NSMutableArray *itemQuantities  = nil;
+    NSMutableArray *itemPrices      = nil;
+    NSMutableArray *itemGenres      = nil;
+    NSMutableArray *itemVariations  = nil;
+
+    NSUInteger itemCount = self.items.count;
+    if (itemCount)
+    {
+        itemIdentifiers = [NSMutableArray arrayWithCapacity:itemCount];
+        itemQuantities  = [NSMutableArray arrayWithCapacity:itemCount];
+        itemPrices      = [NSMutableArray arrayWithCapacity:itemCount];
+        itemGenres      = [NSMutableArray arrayWithCapacity:itemCount];
+        itemVariations  = [NSMutableArray arrayWithCapacity:itemCount];
+
+        [self enumerateItemsWithBlock:^(RSDKAnalyticsItem *item, NSUInteger __unused index, BOOL __unused *stop) {
+            [itemIdentifiers addObject:item.identifier];
+            [itemQuantities  addObject:@(item.quantity)];
+            [itemPrices      addObject:@(item.price)];
+            [itemGenres      addObject:item.genre.length ? item.genre : NSNull.null];
+            [itemVariations  addObject:item.variation ? item.variation : NSNull.null];
+        }];
+    }
 
     // {name: "acc", longName: "ACCOUNT_ID", fieldType: "INT", minValue: 0, userSettable: true}
     dictionary[@"acc"] = @(self.accountId);
@@ -156,21 +205,21 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "igenre", longName: "ITEM_GENRE", fieldType: "STRING_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (self.itemGenre)
+    if (itemGenres)
     {
-        dictionary[@"igenre"] = self.itemGenre;
+        dictionary[@"igenre"] = itemGenres;
     }
 
     // {name: "itemid", longName: "ITEM_ID", fieldType: "STRING_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (self.itemId)
+    if (itemIdentifiers)
     {
-        dictionary[@"itemid"] = self.itemId;
+        dictionary[@"itemid"] = itemIdentifiers;
     }
 
     // {name: "variation", longName: "ITEM_VARIATION", fieldType: "JSON_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (self.itemVariation)
+    if (itemVariations)
     {
-        dictionary[@"variation"] = self.itemVariation;
+        dictionary[@"variation"] = itemVariations;
     }
 
     // {name: "mnavtime", longName: "MOBILE_NAVIGATION_TIME", fieldType: "INT", definitionLevel: "APP", userSettable: true}
@@ -180,9 +229,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "ni", longName: "NUMBER_OF_ITEMS", fieldType: "INT_ARRAY", maxLength: 100, minLength: 0, minValue: 1, userSettable: true}
-    if (self.numberOfItems)
+    if (itemQuantities)
     {
-        dictionary[@"ni"] = self.numberOfItems;
+        dictionary[@"ni"] = itemQuantities;
     }
 
     // {name: "order_id", longName: "ORDER_ID", fieldType: "STRING", userSettable: true}
@@ -210,9 +259,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "price", longName: "PRICE", fieldType: "DOUBLE_ARRAY", maxLength: 100, minLength: 0, userSettable: true}
-    if (self.itemPrice)
+    if (itemPrices)
     {
-        dictionary[@"price"] = self.itemPrice;
+        dictionary[@"price"] = itemPrices;
     }
 
     // {name: "ref", longName: "REFERRER", fieldType: "URL", maxLength: 2048, minLength: 0, userSettable: false}
@@ -396,74 +445,6 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 //--------------------------------------------------------------------------
 
-- (void)setItemGenre:(NSArray *)itemGenre
-{
-    _itemGenre = [self _validateArray:itemGenre propertyName:@"itemGenre" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        RSDKASSERTIFNOT([item isKindOfClass:NSString.class], @"itemGenre[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSString.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setItemId:(NSArray *)itemId
-{
-    _itemId = [self _validateArray:itemId propertyName:@"itemId" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        RSDKASSERTIFNOT([item isKindOfClass:NSString.class], @"itemId[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSString.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setItemVariation:(NSArray *)itemVariation
-{
-    _itemVariation = [self _validateArray:itemVariation propertyName:@"itemVariation" maxLength:100 itemValidator:^BOOL(NSObject *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        RSDKASSERTIFNOT([item isKindOfClass:NSArray.class] || [item isKindOfClass:NSDictionary.class], @"itemVariation[%i]: Expected either a NSArray or a NSDictionary, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSArray.class] || [item isKindOfClass:NSDictionary.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setNumberOfItems:(NSArray *)numberOfItems
-{
-    _numberOfItems = [self _validateArray:numberOfItems propertyName:@"numberOfItems" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        if (![item isKindOfClass:NSNumber.class])
-        {
-            RSDKALWAYSASSERT(@"numberOfItems[%i]: Expected a NSNumber, found a %@", index, NSStringFromClass(item.class));
-            return NO;
-        }
-
-        int64_t value = item.longLongValue;
-        if (value < 1 || ![item isEqualToNumber:@(value)])
-        {
-            RSDKALWAYSASSERT(@"numberOfItems[%i]: Expected an integer strictly greater than 0, found %@", index, item);
-            return NO;
-        }
-
-        return YES;
-    }];
-}
-
-//--------------------------------------------------------------------------
-
 - (void)setPageName:(NSString *)pageName
 {
     _pageName = [self _validateString:pageName propertyName:@"pageName" maxLength:1024 predicate:nil];
@@ -474,20 +455,6 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 - (void)setPageType:(NSString *)pageType
 {
     _pageType = [self _validateString:pageType propertyName:@"pageType" maxLength:20 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setItemPrice:(NSArray *)itemPrice
-{
-    _itemPrice = [self _validateArray:itemPrice propertyName:@"itemPrice" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        RSDKASSERTIFNOT([item isKindOfClass:NSNumber.class], @"itemPrice[%i]: Expected a NSNumber, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSNumber.class];
-    }];
 }
 
 //--------------------------------------------------------------------------
@@ -674,11 +641,8 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         self.navigationTime         = [decoder decodeDoubleForKey:NSStringFromSelector(@selector(navigationTime))];
         self.checkpoints            = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(checkpoints))];
 
-        self.itemId                 = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemId))];
-        self.numberOfItems          = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(numberOfItems))];
-        self.itemPrice              = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemPrice))];
-        self.itemGenre              = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemGenre))];
-        self.itemVariation          = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(itemVariation))];
+        NSArray *immutableItems     = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(items))];
+        self.items                  = immutableItems.mutableCopy;
 
         self.orderId                = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(orderId))];
         value64.signedValue         = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(cartState))];
@@ -729,10 +693,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     [coder encodeDouble:self.navigationTime         forKey:NSStringFromSelector(@selector(navigationTime))];
     [coder encodeInt64:self.checkpoints             forKey:NSStringFromSelector(@selector(checkpoints))];
 
-    [coder encodeObject:self.itemId                 forKey:NSStringFromSelector(@selector(itemId))];
-    [coder encodeObject:self.numberOfItems          forKey:NSStringFromSelector(@selector(numberOfItems))];
-    [coder encodeObject:self.itemPrice              forKey:NSStringFromSelector(@selector(itemPrice))];
-    [coder encodeObject:self.itemVariation          forKey:NSStringFromSelector(@selector(itemVariation))];
+    [coder encodeObject:self.items                  forKey:NSStringFromSelector(@selector(items))];
 
     value64.unsignedValue = self.cartState;
     [coder encodeObject:self.orderId                forKey:NSStringFromSelector(@selector(orderId))];
@@ -771,11 +732,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     copy.referrer               = self.referrer;
     copy.navigationTime         = self.navigationTime;
     copy.checkpoints            = self.checkpoints;
-    copy.itemId                 = [NSArray.new initWithArray:self.itemId copyItems:YES];
-    copy.numberOfItems          = [NSArray.new initWithArray:self.numberOfItems copyItems:YES];
-    copy.itemPrice              = [NSArray.new initWithArray:self.itemPrice copyItems:YES];
-    copy.itemGenre              = [NSArray.new initWithArray:self.itemGenre copyItems:YES];
-    copy.itemVariation          = [NSArray.new initWithArray:self.itemVariation copyItems:YES];
+    copy.items                  = [NSMutableArray.new initWithArray:self.items copyItems:YES];
     copy.orderId                = self.orderId;
     copy.cartState              = self.cartState;
     copy.checkoutStage          = self.checkoutStage;

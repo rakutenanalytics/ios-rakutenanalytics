@@ -7,8 +7,9 @@
 //
 //  Copied shamelessly from https://github.com/mattt/TransformerKit
 
+@import ObjectiveC.runtime;
+
 #import "NSValueTransformer+RBlockTransformations.h"
-#import <objc/runtime.h>
 
 @interface _RBlockTransformer : NSValueTransformer
 

@@ -1,137 +1,104 @@
-//
-//  RSDKAnalyticsRecord.h
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
 @import Foundation;
 
+@class RSDKAnalyticsItem;
 
 /**
- * Values for [RSDKAnalyticsRecord checkoutStage].
+ * Values for RSDKAnalyticsRecord.checkoutStage.
  *
- * @since 2.0.0
+ * @enum RSDKAnalyticsCheckoutStage
+ * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSInteger, RSDKAnalyticsCheckoutStage)
 {
-    /**
-     * Invalid value.
-     *
-     * @since 2.0.0
-     */
+    /// Invalid value.
     RSDKAnalyticsInvalidCheckoutStage = 0,
 
-    /**
-     * Stage 1 of checking out (login).
-     *
-     * @since 2.0.0
-     */
+    /// Stage 1 of checking out (login).
     RSDKAnalyticsCheckoutStage1Login = 10,
 
-    /**
-     * Stage 2 of checking out (shipping details).
-     *
-     * @since 2.0.0
-     */
+    /// Stage 2 of checking out (shipping details).
     RSDKAnalyticsCheckoutStage2ShippingDetails = 20,
 
-    /**
-     * Stage 3 of checking out (order summary).
-     *
-     * @since 2.0.0
-     */
+    /// Stage 3 of checking out (order summary).
     RSDKAnalyticsCheckoutStage3OrderSummary = 30,
 
-    /**
-     * Stage 4 of checking out (payment).
-     *
-     * @since 2.0.0
-     */
+    ///Stage 4 of checking out (payment).
     RSDKAnalyticsCheckoutStage4Payment = 40,
 
-    /**
-     * Stage 5 of checking out (verification).
-     *
-     * @since 2.0.0
-     */
+    /// Stage 5 of checking out (verification).
     RSDKAnalyticsCheckoutStage5Verification = 50,
 };
 
 
 
 /**
- * Values for [RSDKAnalyticsRecord searchMethod].
+ * Values for RSDKAnalyticsRecord.searchMethod.
  *
- * @since 2.0.0
+ * @enum RSDKAnalyticsSearchMethod
+ * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSInteger, RSDKAnalyticsSearchMethod)
 {
-    /**
-     * Invalid value.
-     *
-     * @since 2.0.0
-     */
+    /// Invalid value.
     RSDKAnalyticsInvalidSearchMethod = 0,
 
-    /**
-     * AND operation.
-     *
-     * @since 2.0.0
-     */
+    /// AND operation.
     RSDKAnalyticsSearchMethodAnd = 1,
 
-    /**
-     * OR operation.
-     *
-     * @since 2.0.0
-     */
+    /// OR operation.
     RSDKAnalyticsSearchMethodOr = 2,
 };
 
 
 
 /**
- * Special value for [RSDKAnalyticsRecord affiliateId], corresponding to an invalid value.
+ * Special value for RSDKAnalyticsRecord.affiliateId, corresponding to an invalid value.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 FOUNDATION_EXTERN const int64_t RSDKAnalyticsInvalidAffiliateId;
 
 /**
- * Special value for [RSDKAnalyticsRecord checkpoints], corresponding to an invalid value.
+ * Special value for RSDKAnalyticsRecord.checkpoints, corresponding to an invalid value.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 FOUNDATION_EXTERN const int64_t RSDKAnalyticsInvalidCheckpoints;
 
 /**
- * Special value for [RSDKAnalyticsRecord cartState], corresponding to an invalid value.
+ * Special value for RSDKAnalyticsRecord.cartState, corresponding to an invalid value.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 FOUNDATION_EXTERN const uint64_t RSDKAnalyticsInvalidCartState;
 
 /**
- * Special value for [RSDKAnalyticsRecord navigationTime], corresponding to an invalid value.
+ * Special value for RSDKAnalyticsRecord.navigationTime, corresponding to an invalid value.
  *
- * @since 2.0.0
+ * @ingroup AnalyticsConstants
  */
 FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 
 
+/**
+ * Block called back when enumerating items with RSDKAnalyticsRecord::enumerateItemsWithBlock:.
+ *
+ * @param item       Current item of the enumeration.
+ * @param index      Current index.
+ * @param stop [out] Setting this to `YES` will stop the enumerator, i.e. the block won't be called for any subsequent item.
+ */
+typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, NSUInteger index, BOOL *stop);
 
 /**
- * This class represents a single analytics record. Records are added to the
- * database and uploaded to RAT using [RSDKAnalyticsManager spoolRecord:].
+ * A single analytics record. Records are added to the
+ * database and uploaded to RAT using RSDKAnalyticsManager::spoolRecord:.
  *
  * @note The properties below are named after the long names of RAT parameters in the
  * [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * document. For more information about each property, please see the
  * [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification).
  *
- * @since 2.0.0
+ * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
  */
 @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
@@ -141,14 +108,14 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @param accountId  Account identifier, e.g. `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
  * @param serviceId  Service identifier, e.g. `14` for Singapore Mall.
  * @return New RSDKAnalyticsRecord object.
- * @see accountId
- * @see serviceId
- * @see [RSDKAnalyticsManager spoolRecord:]
+ *
+ * @see
+ *   - accountId
+ *   - serviceId
+ *   - RSDKAnalyticsManager::spoolRecord:
  *
  * @note For a list of valid account and service identitifiers, please refer to
  * [this JSON file](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/aid_acc_Map.json).
- *
- * @since 2.0.0
  */
 + (instancetype)recordWithAccountId:(uint64_t)accountId serviceId:(int64_t)serviceId;
 
@@ -160,8 +127,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * document.
- *
- * @since 2.0.0
  */
 - (NSDictionary *)propertiesDictionary;
 
@@ -172,24 +137,20 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  */
 
 /**
- * Account identifier, e.g. `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
+ * Account identifier, e.g.\ `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
  *
  * @note This value will be sent as the **acc** (`ACCOUNT_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, readonly) uint64_t accountId;
 
 /**
- * Service identifier, e.g. `14` for Singapore Mall.
+ * Service identifier, e.g.\ `14` for Singapore Mall.
  *
  * @note This value will be sent as the **aid** (`SERVICE_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, readonly) int64_t serviceId;
 
@@ -202,21 +163,17 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 25 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.1.0
  */
 @property (nonatomic, copy) NSString *easyId;
 
 /**
- * Affiliate identifier. Set to `RSDKAnalyticsInvalidAffiliateId` by default.
+ * Affiliate identifier. Set to @ref RSDKAnalyticsInvalidAffiliateId by default.
  *
  * This is the identifier of an affiliate the user has been redirected from.
  *
  * @note This value will be sent as the **afid** (`AFFILIATE_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) int64_t affiliateId;
 
@@ -232,8 +189,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 10 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *goalId;
 
@@ -246,8 +201,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 20 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *campaignCode;
 
@@ -257,8 +210,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @note This value will be sent as the **shopid** (`SHOP_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *shopId;
 
@@ -274,8 +225,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @note This value will be sent as the **cntln** (`CONTENT_LANGUAGE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSLocale *contentLocale;
 
@@ -289,8 +238,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, any value that is not exactly 3-character long is a
  * synonym of `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *currencyCode;
 
@@ -309,8 +256,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 16 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSLocale *searchSelectedLocale;
 
@@ -323,21 +268,15 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 1024 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *searchQuery;
 
 /**
- * OR/AND. Set to `RSDKAnalyticsInvalidSearchMethod` by default.
- *
- * @see RSDKAnalyticsSearchMethod
+ * OR/AND. Set to @ref RSDKAnalyticsInvalidSearchMethod by default.
  *
  * @note This value will be sent as the **oa** (`OR_AND`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) RSDKAnalyticsSearchMethod searchMethod;
 
@@ -350,8 +289,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 1024 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *excludeWordSearchQuery;
 
@@ -367,8 +304,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 200 characters in length will get ignored and 
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *genre;
 
@@ -387,8 +322,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 1024 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *pageName;
 
@@ -401,8 +334,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 20 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *pageType;
 
@@ -415,32 +346,26 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 2048 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *referrer;
 
 /**
- * Navigation time. Set to `RSDKAnalyticsInvalidNavigationTime` by default.
+ * Navigation time. Set to @ref RSDKAnalyticsInvalidNavigationTime by default.
  *
  * @note This value will be sent as the **mnavtime** (`MOBILE_NAVIGATION_TIME`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) NSTimeInterval navigationTime;
 
 /**
- * Checkpoints. Set to `RSDKAnalyticsInvalidCheckpoints` by default.
+ * Checkpoints. Set to @ref RSDKAnalyticsInvalidCheckpoints by default.
  *
  * Application developers can set this to any desired value. It will show up in RAT report.
  *
  * @note This value will be sent as the **chkpt** (`CHECKPOINTS`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) int64_t checkpoints;
 
@@ -451,79 +376,21 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  */
 
 /**
- * Item identifier. Not set by default.
+ * Add an item to the record.
  *
- * This contains an array of strings of the form "shopId/itemId".
- * If the shopId/ part is omitted, the itemId is assumed to be a productId.
+ * @note A record can hold up to a hundred items.
  *
- * @note This value will be sent as the **itemid** (`ITEM_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- *
- * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
- * over 100 items in length will get ignored and the property reset to `nil`.
- *
- * @since 2.0.0
+ * @param item An @ref RSDKAnalyticsItem instance to add to the receiver.
+ * @return `YES` if the item could be inserted, `NO` if the maximum allowed number of items has already been reached.
  */
-@property (nonatomic, strong) NSArray *itemId;
+- (BOOL)addItem:(RSDKAnalyticsItem *)item;
 
 /**
- * Number of items. Not set by default.
+ * Enumerate items with block.
  *
- * @note This value will be sent as the **ni** (`NUMBER_OF_ITEMS`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- *
- * @warning When setting this property, arrays should contain `NSNumber` objects only, all of
- * which should be integers strictly greater than zero. Arrays over 100 items in length will
- * get ignored and the property reset to `nil`.
- *
- * @since 2.0.0
+ * @param block The block called for each item.
  */
-@property (nonatomic, strong) NSArray *numberOfItems;
-
-/**
- * Item prices. Not set by default.
- *
- * @note This value will be sent as the **price** (`PRICE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- *
- * @warning When setting this property, arrays should contain `NSNumber` objects only. Arrays
- * over 100 items in length will get ignored and the property reset to `nil`.
- *
- * @since 2.0.0
- */
-@property (nonatomic, strong) NSArray *itemPrice;
-
-/**
- * Item genre. Not set by default.
- *
- * @note This value will be sent as the **igenre** (`ITEM_GENRE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- *
- * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
- * over 100 items in length will get ignored and the property reset to `nil`.
- *
- * @since 2.0.0
- */
-@property (nonatomic, strong) NSArray *itemGenre;
-
-/**
- * Item variation. Not set by default.
- *
- * @note This value will be sent as the **variation** (`ITEM_VARIATION`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- *
- * @warning When setting this property, arrays should only contain objects that can be
- * serialized using `NSJSONSerialization`. Arrays over 100 items in length will get ignored and
- * the property reset to `nil`.
- *
- * @since 2.0.0
- */
-@property (nonatomic, strong) NSArray *itemVariation;
+- (void)enumerateItemsWithBlock:(rsdk_analytics_item_enumeration_block_t)block;
 
 #pragma mark - Order
 
@@ -537,32 +404,24 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @note This value will be sent as the **order_id** (`ORDER_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *orderId;
 
 /**
- * Cart state. Set to `RSDKAnalyticsInvalidCartState` by default.
+ * Cart state. Set to @ref RSDKAnalyticsInvalidCartState by default.
  *
  * @note This value will be sent as the **cart** (`CART_STATE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) uint64_t cartState;
 
 /**
- * Checkout. Set to `RSDKAnalyticsInvalidCheckoutStage` by default.
- *
- * @see RSDKAnalyticsCheckoutStage
+ * Checkout. Set to @ref RSDKAnalyticsInvalidCheckoutStage by default.
  *
  * @note This value will be sent as the **chkout** (`CHECKOUT`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic) RSDKAnalyticsCheckoutStage checkoutStage;
 
@@ -580,8 +439,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * for more information.
  *
  * @warning When setting this property, arrays should contain `NSString` objects only.
- *
- * @since 2.0.0
  */
 @property (nonatomic, strong) NSArray *componentId;
 
@@ -593,8 +450,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * for more information.
  *
  * @warning When setting this property, arrays should contain `NSNumber` objects only.
- *
- * @since 2.0.0
  */
 @property (nonatomic, strong) NSArray *componentTop;
 
@@ -609,8 +464,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * developers to ensure they use values that are supported by RAT. Specifically, keys
  * should not exceed 15 characters in length, while the length of string values should
  * not exceed 20 characters.
- *
- * @since 2.0.0
  */
 @property (nonatomic, strong) NSDictionary *customParameters;
 
@@ -620,8 +473,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @note This value will be sent as the **etype** (`EVENT_TYPE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *eventType;
 
@@ -638,8 +489,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  *
  * @warning When setting this property, values over 32 characters in length will get ignored and
  * the property reset to `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, copy) NSString *requestCode;
 
@@ -653,8 +502,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
  * over 100 items in length will get ignored and the property reset to `nil`. An empty array
  * is a synonym of `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, strong) NSArray *scrollDivId;
 
@@ -668,8 +515,6 @@ FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
  * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
  * over 100 items in length will get ignored and the property reset to `nil`. An empty array is
  * a synonym of `nil`.
- *
- * @since 2.0.0
  */
 @property (nonatomic, strong) NSArray *scrollViewed;
 

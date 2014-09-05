@@ -6,60 +6,61 @@
 //  Copyright (c) 2013 Rakuten Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /**
- * Category extending NSData with additions needed by the Rakuten SDK.
+ * Category extending `NSData` with additions needed by the Rakuten SDK.
+ *
+ * @category NSData(RAExtensions) NSData+RAExtensions.h <RSDKSupport/NSData+RAExtensions.h>
  */
 @interface NSData (RAExtensions)
 
 /**
- * Returns a NSString with the Base64 representation of the bytes contained
- * in the object.
+ * Return a `NSString` with the Base64 representation of the data held
+ * by the receiver.
  *
- * @see http://tools.ietf.org/html/rfc4648
- *
- * @return A string with the Base64-encoded bytes in the object.
+ * @see [RFC4648: The Base16, Base32, and Base64 Data Encodings](http://tools.ietf.org/html/rfc4648)
+ * @return A Base64 representation of the data held by the receiver.
+ * @deprecated Please use `-base64EncodedStringWithOptions:` on iOS7+ or `-base64Encoding` on earlier OS versions.
  */
-- (NSString *)base64;
+- (NSString *)base64 DEPRECATED_MSG_ATTRIBUTE("Please use -base64EncodedStringWithOptions: on iOS7+ or -base64Encoding on earlier OS versions");
 
 /**
- * Returns a NSData containing the SHA-1 hash of the bytes contained in the
- * object.
+ * Return a `NSData` containing the SHA-1 hash of the data held by the
+ * receiver.
  *
- * @see http://www.itl.nist.gov/fipspubs/fip180-1.htm
+ * @see [FIP 180-1: Secure Hash Standard](http://cpansearch.perl.org/src/GAAS/Digest-SHA1-2.13/fip180-1.html)
  *
- * @return A NSData with the SHA-1 hash of the object.
+ * @return A `NSData` with the SHA-1 hash of the receiver.
  */
 - (instancetype)sha1;
 
 /**
- * Returns a NSData containing the HMAC data computed with the given key using
+ * Return a `NSData` containing the HMAC data computed with the given key using
  * the SHA-1 algorithm.
  *
- * @see http://tools.ietf.org/html/rfc2104
+ * @see [RFC 2104: HMAC, Keyed-Hashing for Message Authentication](http://tools.ietf.org/html/rfc2104)
  *
  * @param key The HMAC key to use.
  *
- * @return A NSData with the HMAC data computed from the object.
+ * @return A `NSData` with the HMAC data computed from the receiver.
  */
 - (instancetype)hmacSha1ForKey:(NSData *)key;
 
 /**
- * Returns content as a hex-encoded string.
+ * Return a hexadecimal representation of the data held by the receiver.
  *
- * @return Content as a hex-encoded string.
+ * @return Hexadecimal representation of the data held by the receiver.
  */
 - (NSString *)hexadecimal;
 
 /**
- * Parses the given hex-encoded string and creates an NSData object with its
- * contents.
+ * Parse some hexadecimal string and create the corresponding `NSData`.
  *
- * @param string The hex-encodes string to parse.
+ * @param string Hexadecimal representation of some data.
  *
- * @return A NSData object containing the hex-encoded data, or nil if the input
- *         string was invalid.
+ * @return New `NSData` instance containing the decoded data, or `nil` if the input
+ *         was not valid hexadecimal.
  */
 + (instancetype)dataWithHexadecimal:(NSString *)string;
 

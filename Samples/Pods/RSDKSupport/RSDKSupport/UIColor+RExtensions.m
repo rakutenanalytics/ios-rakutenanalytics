@@ -10,6 +10,16 @@
 
 @implementation UIColor (RExtensions)
 
++ (instancetype)r_colorWithRGBAValue:(uint32_t)rgbaValue
+{
+    CGFloat red   = (rgbaValue >> 24) / 255.0;
+    CGFloat green = ((rgbaValue >> 16) & 0xff) / 255.0;
+    CGFloat blue  = ((rgbaValue >> 8) & 0xff) / 255.0;
+    CGFloat alpha = (rgbaValue & 0xff) / 255.0;
+
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
 + (instancetype)r_colorWithHexString:(NSString *)hexString
 {
     return [self r_colorWithHexString:hexString alpha:1.0];
@@ -39,6 +49,11 @@
 }
 
 #if RDKSupportShorthand
+
++ (instancetype)colorWithRGBAValue:(uint32_t)rgbaValue
+{
+    return [self r_colorWithRGBAValue:rgbaValue];
+}
 
 + (instancetype)colorWithHexString:(NSString *)hexString
 {

@@ -10,6 +10,7 @@
 		6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */; };
 		691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */; };
 		692F6B20192AE2C10075F70D /* RSDKAnalyticsRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */; };
+		6940F59B19BE83AE0039BB8E /* RSDKAnalyticsItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */; };
 		698F8181192C3F5500031B48 /* libRSDKAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */; };
 		698F8182192C3F6500031B48 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F3871E1929FD15002E8F91 /* libsqlite3.dylib */; };
 		698F8183192C3F6C00031B48 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F387201929FD1B002E8F91 /* libz.dylib */; };
@@ -63,6 +64,8 @@
 		691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsDatabase.h; sourceTree = "<group>"; };
 		691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsDatabase.m; sourceTree = "<group>"; };
 		692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordTests.m; sourceTree = "<group>"; };
+		6940F59919BE83AE0039BB8E /* RSDKAnalyticsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsItem.h; sourceTree = "<group>"; };
+		6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsItem.m; sourceTree = "<group>"; };
 		696C25941941561900D2E409 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRSDKAnalytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsManager.h; sourceTree = "<group>"; };
@@ -135,6 +138,8 @@
 		69A397C91924AB5E0002B258 /* RSDKAnalytics */ = {
 			isa = PBXGroup;
 			children = (
+				6940F59919BE83AE0039BB8E /* RSDKAnalyticsItem.h */,
+				6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */,
 				69F0A656192C6B0B00E82438 /* RSDKAnalytics.h */,
 				69F0A659192C998F00E82438 /* RSDKAnalytics.m */,
 				69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */,
@@ -330,6 +335,7 @@
 			files = (
 				691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */,
 				69F0A65A192C998F00E82438 /* RSDKAnalytics.m in Sources */,
+				6940F59B19BE83AE0039BB8E /* RSDKAnalyticsItem.m in Sources */,
 				6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */,
 				69A397CF1924AB5E0002B258 /* RSDKAnalyticsManager.m in Sources */,
 			);

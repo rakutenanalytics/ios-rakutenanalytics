@@ -6,8 +6,9 @@
 //  Copyright (c) 2014 Rakuten Inc. All rights reserved.
 //
 
+@import ObjectiveC.runtime;
+
 #import "UIResponder+RErrorResponder.h"
-#import <objc/runtime.h>
 
 static void *kRErrorResponderAlertViewDelegateKey = &kRErrorResponderAlertViewDelegateKey;
 

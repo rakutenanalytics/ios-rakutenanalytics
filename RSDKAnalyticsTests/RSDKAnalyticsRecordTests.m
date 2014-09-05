@@ -9,6 +9,7 @@
 @import XCTest;
 
 #import "RSDKAnalyticsRecord.h"
+#import "RSDKAnalyticsItem.h"
 
 @interface RSDKAnalyticsRecordTests : XCTestCase
 @end
@@ -61,16 +62,18 @@
     XCTAssertNil(record.excludeWordSearchQuery);
     XCTAssertNil(record.genre);
     XCTAssertNil(record.goalId);
-    XCTAssertNil(record.itemGenre);
-    XCTAssertNil(record.itemId);
-    XCTAssertNil(record.itemVariation);
+
+    __block BOOL hasItems = NO;
+    [record enumerateItemsWithBlock:^(RSDKAnalyticsItem __unused *item, NSUInteger __unused index, BOOL __unused *stop) {
+        hasItems = YES;
+    }];
+    XCTAssertFalse(hasItems);
+
     XCTAssertEqual(record.navigationTime, RSDKAnalyticsInvalidNavigationTime);
-    XCTAssertNil(record.numberOfItems);
     XCTAssertNil(record.orderId);
     XCTAssertEqual(record.searchMethod, RSDKAnalyticsInvalidSearchMethod);
     XCTAssertNil(record.pageName);
     XCTAssertNil(record.pageType);
-    XCTAssertNil(record.itemPrice);
     XCTAssertNil(record.referrer);
     XCTAssertNil(record.requestCode);
     XCTAssertNil(record.scrollDivId);
@@ -235,87 +238,6 @@
     XCTAssertEqualObjects(record.goalId, @"foo");
 }
 
-- (void)testItemGenreSetter
-{
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
-
-    id obj = @[@"string", @1];
-    XCTAssertThrows(record.itemGenre = obj);
-
-    obj = [NSMutableArray arrayWithCapacity:200];
-    for (int i = 0; i < 200;) {
-        [obj addObject:[NSString stringWithFormat:@"genre %d", ++i]];
-    }
-    XCTAssertThrows(record.itemGenre = obj);
-    obj = [obj subarrayWithRange:NSMakeRange(0, 100)];
-    XCTAssertNoThrow(record.itemGenre = obj);
-    XCTAssertEqual(record.itemGenre.count, 100u);
-    XCTAssertEqualObjects(record.itemGenre, obj);
-}
-
-- (void)testItemIdSetter
-{
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
-
-    id obj = @[@"string", @1];
-    XCTAssertThrows(record.itemId = obj);
-
-    obj = [NSMutableArray arrayWithCapacity:200];
-    for (int i = 0; i < 200;) {
-        [obj addObject:[NSString stringWithFormat:@"id %d", ++i]];
-    }
-    XCTAssertThrows(record.itemId = obj);
-    obj = [obj subarrayWithRange:NSMakeRange(0, 100)];
-    XCTAssertNoThrow(record.itemId = obj);
-    XCTAssertEqual(record.itemId.count, 100u);
-    XCTAssertEqualObjects(record.itemId, obj);
-}
-
-- (void)testItemVariationSetter
-{
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
-
-    NSArray *prototype = @[@[@"array"], @{@"dictionary": @1}];
-    NSUInteger prototypeCount = prototype.count;
-
-    id obj = [NSMutableArray arrayWithCapacity:200];
-    for (NSUInteger i = 0; i < 200; ++i) {
-        [obj addObject:prototype[i % prototypeCount]];
-    }
-    XCTAssertThrows(record.itemVariation = obj);
-    obj = [obj subarrayWithRange:NSMakeRange(0, 100)];
-    XCTAssertNoThrow(record.itemVariation = obj);
-    XCTAssertEqual(record.itemVariation.count, 100u);
-    XCTAssertEqualObjects(record.itemVariation, obj);
-}
-
-- (void)testNumberOfItemsSetter
-{
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
-
-    id obj = @[@1, @2, @"string"];
-    XCTAssertThrows(record.numberOfItems = obj, @"should contain NSNumber objects only");
-
-    obj = @[@1, @2, @(-1)];
-    XCTAssertThrows(record.numberOfItems = obj, @"all numbers should be positive");
-
-    obj = @[@1, @2, @1.1];
-    XCTAssertThrows(record.numberOfItems = obj, @"all numbers should be integers");
-
-    obj = @[@1, @2, @3];
-    XCTAssertNoThrow(record.numberOfItems = obj);
-
-    obj = [NSMutableArray arrayWithCapacity:200];
-    for (int i = 0; i < 200;) {
-        [obj addObject:@(++i)];
-    }
-    XCTAssertThrows(record.numberOfItems = obj);
-    obj = [obj subarrayWithRange:NSMakeRange(0, 100)];
-    XCTAssertNoThrow(record.numberOfItems = obj);
-    XCTAssertEqual(record.numberOfItems.count, 100u);
-    XCTAssertEqualObjects(record.numberOfItems, obj);
-}
-
 - (void)testPageNameSetter
 {
     RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
@@ -334,27 +256,6 @@
     XCTAssertNil(record.pageType);
     XCTAssertNoThrow(record.pageType = @"foo");
     XCTAssertEqualObjects(record.pageType, @"foo");
-}
-
-- (void)testItemPriceSetter
-{
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0 serviceId:0];
-
-    id obj = @[@1, @2, @"string"];
-    XCTAssertThrows(record.itemPrice = obj, @"should contain NSNumber objects only");
-
-    obj = @[@1.5, @2000, @3.3];
-    XCTAssertNoThrow(record.itemPrice = obj);
-
-    obj = [NSMutableArray arrayWithCapacity:200];
-    for (int i = 0; i < 200;) {
-        [obj addObject:@(++i)];
-    }
-    XCTAssertThrows(record.itemPrice = obj);
-    obj = [obj subarrayWithRange:NSMakeRange(0, 100)];
-    XCTAssertNoThrow(record.itemPrice = obj);
-    XCTAssertEqual(record.itemPrice.count, 100u);
-    XCTAssertEqualObjects(record.itemPrice, obj);
 }
 
 - (void)testReferrerSetter
@@ -496,16 +397,26 @@
     record.excludeWordSearchQuery = expected[@"esq"];
     record.genre = expected[@"genre"];
     record.goalId = expected[@"gol"];
-    record.itemGenre = expected[@"igenre"];
-    record.itemId = expected[@"itemid"];
-    record.itemVariation = expected[@"variation"];
+
+    RSDKAnalyticsItem *item1 = [RSDKAnalyticsItem itemWithIdentifier:@"A"];
+    RSDKAnalyticsItem *item2 = [RSDKAnalyticsItem itemWithIdentifier:@"B"];
+    item1.quantity = 1;
+    item2.quantity = 2;
+    item1.genre = @"A";
+    item2.genre = @"B";
+    item1.price = 1;
+    item2.price = 2;
+    item1.variation = dictionary;
+    item2.variation = dictionary;
+
+    [record addItem:item1];
+    [record addItem:item2];
+
     record.navigationTime = (NSTimeInterval)[expected[@"mnavtime"] longLongValue] / 1000.0;
-    record.numberOfItems = expected[@"ni"];
     record.orderId = expected[@"order_id"];
     record.searchMethod = RSDKAnalyticsSearchMethodAnd;
     record.pageName = expected[@"pgn"];
     record.pageType = expected[@"pgt"];
-    record.itemPrice = expected[@"price"];
     record.referrer = expected[@"ref"];
     record.requestCode = expected[@"reqc"];
     record.scrollDivId = expected[@"scroll"];

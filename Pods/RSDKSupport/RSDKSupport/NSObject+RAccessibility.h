@@ -6,24 +6,32 @@
 //  Copyright (c) 2014 Rakuten Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /**
- *  Extensions to NSobject adding accessibility utilities
+ * Extensions to `NSObject` adding accessibility utilities.
+ *
+ * @category NSObject(RAccessibility) NSObject+RAccessibility.h <RSDKSupport/NSObject+RAccessibility.h>
  */
 @interface NSObject (RAccessibility)
 
 /**
- *  Automatically sets the accessbilityIdentifier of UIView properties or UIViews contained in NSArray properties in this instance to the name of the property.
+ * Automatically set the accessibility identifiers for `UIView`
+ * properties or child `UIView` instances contained in `NSArray`
+ * properties of the receiver, matching the name of the properties.
  *
- *  @note This method will *NOT* set the accessbility identifier of any UIView property that does not have a standard getter, begins with a "_" prefix, or is named "view".
+ * @note This method will **NOT** set the accessbility identifier of any
+ *       `UIView` property that does not have a standard getter, has a
+ *       `_` prefix or is named `view`.
  */
-- (void)r_setupAccessbilityIdentifiers;
+- (void)r_setupAccessibilityIdentifiers;
 
 #if RSDKSupportShorthand
 
 /**
- *  Alias for r_setupAccessibilityIdentifiers
+ * Alias for #r_setupAccessibilityIdentifiers
+ *
+ * @note This method is only available if #RSDKSupportShorthand has been defined.
  */
 - (void)setupAccessibilityIdentifiers;
 
