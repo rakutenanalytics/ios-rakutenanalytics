@@ -8,12 +8,12 @@ pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
 
 # FXForms 1.1.7 still hasn't been released and we want support for array fields (e.g. itemIdentifiers)
 #pod 'FXForms',                    '~>1.1.6',  :inhibit_warnings => true
-pod 'FXForms', :git => 'https://github.com/nicklockwood/FXForms.git', :commit => '627eda9e73', :inhibit_warnings => true
+pod 'FXForms', :git => 'https://github.com/nicklockwood/FXForms.git', :commit => '627eda9e73'
 
-pod 'SVProgressHUD',              '~>1.0',    :inhibit_warnings => true
-pod 'RESideMenu',                 '~>4.0.4',  :inhibit_warnings => true
-pod 'FontAwesomeKit/FontAwesome', '~>2.1.5',  :inhibit_warnings => true
-pod 'TestFlightSDK',              '~>3.0.2',  :inhibit_warnings => true
+pod 'SVProgressHUD',              '~>1.0'
+pod 'RESideMenu',                 '4.0.6' # last version to build if iOS8 SDK is missing (Xcode5)
+pod 'FontAwesomeKit/FontAwesome', '~>2.1.5'
+pod 'TestFlightSDK',              '~>3.0.2'
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
 # sublime: tab_size 2; translate_tabs_to_spaces true; trim_trailing_white_space_on_save true; trim_automatic_white_space true; x_syntax Packages/Ruby/Ruby.tmLanguage

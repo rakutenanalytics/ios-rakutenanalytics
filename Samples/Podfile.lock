@@ -6,7 +6,7 @@ PODS:
   - RESideMenu (4.0.6)
   - RSDKAnalytics (2.2.0):
     - RSDKDeviceInformation (~> 1.1.0)
-    - RSDKSupport/Utilities (~> 2.1.3)
+    - RSDKSupport/Utilities (~> 2.1.4)
   - RSDKDeviceInformation (1.1.1):
     - RSDKSupport/Utilities (~> 2.1.4)
   - RSDKSupport/Utilities (2.1.4)
@@ -16,7 +16,7 @@ PODS:
 DEPENDENCIES:
   - FontAwesomeKit/FontAwesome (~> 2.1.5)
   - FXForms (from `https://github.com/nicklockwood/FXForms.git`, commit `627eda9e73`)
-  - RESideMenu (~> 4.0.4)
+  - RESideMenu (= 4.0.6)
   - RSDKAnalytics (from `../RSDKAnalytics.podspec`)
   - SVProgressHUD (~> 1.0)
   - TestFlightSDK (~> 3.0.2)
@@ -32,7 +32,7 @@ SPEC CHECKSUMS:
   FontAwesomeKit: a2edea3111dab107b4cc43b85881b404eb063385
   FXForms: d1c3fccab32a6702430b14808f7b46061008a4a9
   RESideMenu: 1d9293d36a2b23cac86c86033b80ee06c7dc9e71
-  RSDKAnalytics: 8ff2c12733693032c0261a8b172223d80e704707
+  RSDKAnalytics: 131acf6d8226f67bb789a89372081932388de659
   RSDKDeviceInformation: 14ea92b10523a0717039091aac8108912607dc89
   RSDKSupport: 5826fe3c2746326cddfed8b06e86eefa1c895819
   SVProgressHUD: 5034c6e22b8c2ca3e09402e48d41ed0340aa1c50

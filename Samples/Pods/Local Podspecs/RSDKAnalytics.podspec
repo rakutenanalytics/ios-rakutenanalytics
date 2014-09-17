@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
 
   s.ios.libraries = 'sqlite3', 'z'
 
-  s.dependency 'RSDKSupport/Utilities', '~> 2.1.3'
+  s.dependency 'RSDKSupport/Utilities', '~> 2.1.4'
   s.dependency 'RSDKDeviceInformation', '~> 1.1.0'
 end
 
