@@ -5,7 +5,7 @@ PODS:
   - FXForms (1.1.6)
   - RESideMenu (4.0.6)
   - RSDKAnalytics (2.2.0):
-    - RSDKDeviceInformation (~> 1.1.0)
+    - RSDKDeviceInformation (~> 1.1.1)
     - RSDKSupport/Utilities (~> 2.1.4)
   - RSDKDeviceInformation (1.1.1):
     - RSDKSupport/Utilities (~> 2.1.4)
@@ -32,7 +32,7 @@ SPEC CHECKSUMS:
   FontAwesomeKit: a2edea3111dab107b4cc43b85881b404eb063385
   FXForms: d1c3fccab32a6702430b14808f7b46061008a4a9
   RESideMenu: 1d9293d36a2b23cac86c86033b80ee06c7dc9e71
-  RSDKAnalytics: 131acf6d8226f67bb789a89372081932388de659
+  RSDKAnalytics: 4a2617172946592eaaf90c8e3b45bb48e9e9db2c
   RSDKDeviceInformation: 14ea92b10523a0717039091aac8108912607dc89
   RSDKSupport: 5826fe3c2746326cddfed8b06e86eefa1c895819
   SVProgressHUD: 5034c6e22b8c2ca3e09402e48d41ed0340aa1c50
