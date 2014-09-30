@@ -45,7 +45,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 57D971617A4247F3B50351F8;
+			remoteGlobalIDString = 0492336437994F75BE9A0423;
 			remoteInfo = Pods;
 		};
 		698F817F192C3F4D00031B48 /* PBXContainerItemProxy */ = {
@@ -498,6 +498,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "RSDKAnalyticsTests/RSDKAnalyticsTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -520,6 +521,7 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				INFOPLIST_FILE = "RSDKAnalyticsTests/RSDKAnalyticsTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
