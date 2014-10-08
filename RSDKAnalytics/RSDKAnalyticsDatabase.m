@@ -177,7 +177,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
         {
             if (sqlite3_exec(database, "begin exclusive transaction", 0, 0, 0) != SQLITE_OK)
             {
-                RDebugLog(@"Failed to begin transaction: %s", sqlite3_errmsg(database));
+                RDebugLog(@"[RMSDK] Analytics: Failed to begin transaction: %s", sqlite3_errmsg(database));
             }
             else
             {
@@ -211,7 +211,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
                      * Should we delete the database and start afresh?
                      */
 
-                    RDebugLog(@"Failed to commit transaction: %s", sqlite3_errmsg(database));
+                    RDebugLog(@"[RMSDK] Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
                 }
             }
         }

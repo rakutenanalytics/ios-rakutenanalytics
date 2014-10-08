@@ -34,8 +34,14 @@
     application.statusBarStyle = UIStatusBarStyleLightContent;
 
     // Turn on location tracking
-    self.locationManager = CLLocationManager.new;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    CLLocationManager *locationManager = CLLocationManager.new;
+    locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    if ([locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
+    {
+        // iOS8+
+        [locationManager requestAlwaysAuthorization];
+    }
+    self.locationManager = locationManager;
 
     return YES;
 }

@@ -96,8 +96,8 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 @interface RSDKAnalyticsManager()<CLLocationManagerDelegate>
 
-@property(nonatomic, strong) CLLocationManager *locationManager;
-
+@property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic) BOOL locationManagerIsUpdating;
 
 /*
  * We need to keep an instance of CTTelephonyNetworkInfo around to track
@@ -340,6 +340,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                selector:@selector(_startNewSession)
                                    name:UIApplicationDidBecomeActiveNotification
                                  object:nil];
+        [notificationCenter addObserver:self
+                               selector:@selector(_endSession)
+                                   name:UIApplicationWillResignActiveNotification
+                                 object:nil];
 
 
         /*
@@ -378,14 +382,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     _locationTrackingEnabled = locationTrackingEnabled;
 
-    if (!locationTrackingEnabled)
-    {
-        [self _stopMonitoringLocation];
-    }
-    else if (CLLocationManager.locationServicesEnabled && CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorized)
-    {
-        [self _startMonitoringLocation];
-    }
+    // Update
+    [self _updateLocationManagerWithStatus:CLLocationManager.authorizationStatus];
 
 }
 
@@ -395,12 +393,86 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)locationManager:(CLLocationManager * __unused)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (!self.locationTrackingEnabled)
+    [self _updateLocationManagerWithStatus:status];
+}
+
+//--------------------------------------------------------------------------
+
+#if DEBUG
+- (void)locationManagerDidPauseLocationUpdates:(CLLocationManager * __unused)manager
+{
+    RDebugLog(@"[RMSDK] Analytics: Location updates just paused.");
+}
+
+- (void)locationManagerDidResumeLocationUpdates:(CLLocationManager * __unused)manager
+{
+    RDebugLog(@"[RMSDK] Analytics: Location updates just resumed.");
+}
+
+- (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
+{
+    // error is only used in Debug
+    (void)error;
+
+    RDebugLog(@"[RMSDK] Analytics: Failed to acquire device location: %@", error.localizedDescription);
+}
+#endif
+
+//--------------------------------------------------------------------------
+
+#pragma mark - Private methods
+- (void)_updateLocationManagerWithStatus:(CLAuthorizationStatus)status
+{
+#if DEBUG
+    static CLAuthorizationStatus lastStatus = -1;
+    BOOL updated = NO;
+    @synchronized(self)
     {
-        return;
+        updated = status != lastStatus;
+        if (updated)
+        {
+            lastStatus = status;
+        }
     }
 
-    if (status == kCLAuthorizationStatusAuthorized && CLLocationManager.locationServicesEnabled)
+    if (updated)
+    {
+        NSString *statusString = nil;
+        switch (status)
+        {
+            case kCLAuthorizationStatusNotDetermined:
+                statusString = @"Not Determined";
+                break;
+
+            case kCLAuthorizationStatusRestricted:
+                statusString = @"Restricted";
+                break;
+
+            case kCLAuthorizationStatusDenied:
+                statusString = @"Denied";
+                break;
+
+            case kCLAuthorizationStatusAuthorizedAlways:
+                statusString = @"Authorized Always";
+                break;
+
+            case kCLAuthorizationStatusAuthorizedWhenInUse:
+                statusString = @"Authorized When In Use";
+                break;
+
+            default:
+                statusString = [NSString stringWithFormat:@"Value (%i)", status];
+                break;
+        }
+        RDebugLog(@"[RMSDK] Analytics: Location services' authorization status changed to [%@].", statusString);
+    }
+#endif
+
+    if (self.locationTrackingEnabled &&
+        CLLocationManager.locationServicesEnabled &&
+        (status == kCLAuthorizationStatusAuthorizedAlways ||
+         (status == kCLAuthorizationStatusAuthorizedWhenInUse && UIApplication.sharedApplication.applicationState == UIApplicationStateActive)
+        ))
     {
         [self _startMonitoringLocation];
     }
@@ -410,30 +482,30 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 }
 
-//--------------------------------------------------------------------------
-
-- (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
-{
-    // error is only used in Debug
-    (void)error;
-
-    RDebugLog(@"Failed to acquire device location: %@", error.localizedDescription);
-}
-
-//--------------------------------------------------------------------------
-
-#pragma mark - Private methods
-
 - (void)_startMonitoringLocation
 {
-    RDebugLog(@"[RSDKAnalytics] Start monitoring location");
+    if (self.locationManagerIsUpdating)
+    {
+        // Nothing to do.
+        return;
+    }
+
+    RDebugLog(@"[RMSDK] Analytics: Start monitoring location");
     [self.locationManager startUpdatingLocation];
+    self.locationManagerIsUpdating = YES;
 }
 
 - (void)_stopMonitoringLocation
 {
-    RDebugLog(@"[RSDKAnalytics] Stop monitoring location");
+    if (!self.locationManagerIsUpdating)
+    {
+        // Nothing to do.
+        return;
+    }
+
+    RDebugLog(@"[RMSDK] Analytics: Stop monitoring location");
     [self.locationManager stopUpdatingLocation];
+    self.locationManagerIsUpdating = NO;
 }
 
 - (void)_spoolRecord:(RSDKAnalyticsRecord *)record
@@ -519,40 +591,33 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     jsonDic[@"dln"] = [NSLocale.currentLocale objectForKey:NSLocaleLanguageCode];
 
     // {name: "loc", longName: "LOCATION", fieldType: "JSON"}
-    if (self.locationTrackingEnabled &&
-        CLLocationManager.locationServicesEnabled &&
-        CLLocationManager.authorizationStatus == kCLAuthorizationStatusAuthorized)
+    CLLocation *location = self.locationManager.location;
+    if (location && CLLocationCoordinate2DIsValid(location.coordinate))
     {
-        // Last known location
-        CLLocation *location = self.locationManager.location;
+        id locationDic = NSMutableDictionary.new;
 
-        if (location && CLLocationCoordinate2DIsValid(location.coordinate))
-        {
-            id locationDic = NSMutableDictionary.new;
+        // {name: "accu", longName: "ACCURACY", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
+        // According to RAL.js, unit is metre.
+        locationDic[@"accu"] = @(MAX(0.0, location.horizontalAccuracy));
 
-            // {name: "accu", longName: "ACCURACY", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
-            // According to RAL.js, unit is metre.
-            locationDic[@"accu"] = @(MAX(0.0, location.horizontalAccuracy));
+        // {name: "altitude", longName: "ALTITUDE", fieldType: "DOUBLE", userSettable: false}
+        locationDic[@"altitude"] = @(location.altitude);
 
-            // {name: "altitude", longName: "ALTITUDE", fieldType: "DOUBLE", userSettable: false}
-            locationDic[@"altitude"] = @(location.altitude);
+        // {name: "tms", longName: "GPS_TIMESTAMP", fieldType: "INT", minValue: 0, userSettable: false}
+        // According to RAL.js it's in milliseconds since the unix epoch
+        locationDic[@"tms"] = @(MAX(0ll, (int64_t) round(location.timestamp.timeIntervalSince1970 * 1000.0)));
 
-            // {name: "tms", longName: "GPS_TIMESTAMP", fieldType: "INT", minValue: 0, userSettable: false}
-            // According to RAL.js it's in milliseconds since the unix epoch
-            locationDic[@"tms"] = @(MAX(0ll, (int64_t) round(location.timestamp.timeIntervalSince1970 * 1000.0)));
+        // {name: "lat", longName: "LATITUDE", fieldType: "DOUBLE", minValue: -90.0, maxValue: 90.0, userSettable: false}
+        locationDic[@"lat"] = @(MIN(90.0, MAX(-90.0, location.coordinate.latitude)));
 
-            // {name: "lat", longName: "LATITUDE", fieldType: "DOUBLE", minValue: -90.0, maxValue: 90.0, userSettable: false}
-            locationDic[@"lat"] = @(MIN(90.0, MAX(-90.0, location.coordinate.latitude)));
+        // {name: "long", longName: "LONGITUDE", fieldType: "DOUBLE", minValue: -180.0, maxValue: 180.0, userSettable: false}
+        locationDic[@"long"] = @(MIN(180.0, MAX(-180.0, location.coordinate.longitude)));
 
-            // {name: "long", longName: "LONGITUDE", fieldType: "DOUBLE", minValue: -180.0, maxValue: 180.0, userSettable: false}
-            locationDic[@"long"] = @(MIN(180.0, MAX(-180.0, location.coordinate.longitude)));
+        // {name: "speed", longName: "SPEED", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
+        locationDic[@"speed"] = @(MAX(0.0, location.speed));
 
-            // {name: "speed", longName: "SPEED", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
-            locationDic[@"speed"] = @(MAX(0.0, location.speed));
-
-            //{name: "loc", longName: "LOCATION", fieldType: "JSON", comment: "Location related field group"}
-            jsonDic[@"loc"] = locationDic;
-        }
+        //{name: "loc", longName: "LOCATION", fieldType: "JSON", comment: "Location related field group"}
+        jsonDic[@"loc"] = locationDic;
     }
 
     // {name: "mcn", longName: "MOBILE_CARRIER_NAME", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
@@ -885,6 +950,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     self.sessionCookie = NSString.stringWithUUID;
 
+    /*
+     * Resume location updates if needed.
+     */
+
+    [self _updateLocationManagerWithStatus:CLLocationManager.authorizationStatus];
 
     /*
      * Schedule a background upload attempt when the app becomes
@@ -892,6 +962,20 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      */
 
     [self _scheduleBackgroundUpload];
+}
+
+//--------------------------------------------------------------------------
+
+- (void)_endSession
+{
+    /*
+     * Pause location updates if needed.
+     */
+
+    if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusAuthorizedAlways)
+    {
+        [self _stopMonitoringLocation];
+    }
 }
 
 //--------------------------------------------------------------------------

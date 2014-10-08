@@ -139,5 +139,12 @@
                                         error.localizedDescription]];
 }
 
+#pragma mark - FXFormFieldCell actions
+
+- (void)trackLocationChanged:(FXFormSwitchCell *)cell
+{
+    RSDKAnalyticsManager.sharedInstance.locationTrackingEnabled = cell.switchControl.on;
+}
+
 @end
 

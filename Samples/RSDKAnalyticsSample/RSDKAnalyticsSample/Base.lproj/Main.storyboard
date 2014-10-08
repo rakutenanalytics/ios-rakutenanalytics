@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Off-Kc-vHN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Off-Kc-vHN">
     <dependencies>
-        <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
         <!--Analytics Root View Controller-->
@@ -31,7 +30,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="navigationBar">
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <color key="barTintColor" red="0.74901960784314" green="0" blue="0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.74901960784314003" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <connections>
                         <segue destination="formController" kind="relationship" relationship="rootViewController" id="navigateToFormControllerSeque"/>
@@ -41,7 +40,7 @@
             </objects>
             <point key="canvasLocation" x="-218" y="-133"/>
         </scene>
-        <!--Analytics View Controller - Add a record-->
+        <!--Add a record-->
         <scene sceneID="formScene">
             <objects>
                 <viewController id="formController" customClass="RSDKAnalyticsViewController" sceneMemberID="viewController">

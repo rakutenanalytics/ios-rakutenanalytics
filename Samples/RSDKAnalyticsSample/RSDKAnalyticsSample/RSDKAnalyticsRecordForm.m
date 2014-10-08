@@ -81,6 +81,11 @@
 
 #pragma mark - Fields
 
+- (id)trackLocationField
+{
+    return @{FXFormFieldAction: @"trackLocationChanged:"};
+}
+
 - (id)accountIdField
 {
     return @{FXFormFieldHeader: @"Environment",
