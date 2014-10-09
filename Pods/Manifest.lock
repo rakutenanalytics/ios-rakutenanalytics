@@ -1,14 +1,21 @@
 PODS:
-  - RSDKDeviceInformation (1.1.1):
+  - RSDKAnalytics (2.2.1):
+    - RSDKDeviceInformation (~> 1.1.2)
+    - RSDKSupport/Utilities (~> 2.1.4)
+  - RSDKDeviceInformation (1.1.2):
     - RSDKSupport/Utilities (~> 2.1.4)
   - RSDKSupport/Utilities (2.1.4)
 
 DEPENDENCIES:
-  - RSDKDeviceInformation (~> 1.1.1)
-  - RSDKSupport/Utilities (~> 2.1.4)
+  - RSDKAnalytics (from `./RSDKAnalytics.podspec`)
+
+EXTERNAL SOURCES:
+  RSDKAnalytics:
+    :path: ./RSDKAnalytics.podspec
 
 SPEC CHECKSUMS:
-  RSDKDeviceInformation: 14ea92b10523a0717039091aac8108912607dc89
+  RSDKAnalytics: 69b14a3cadeca7a4ad4d49ba4d58cfc79267461e
+  RSDKDeviceInformation: 812d8c90317e186272afd55f57dec745165f09a9
   RSDKSupport: 5826fe3c2746326cddfed8b06e86eefa1c895819
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.34.2

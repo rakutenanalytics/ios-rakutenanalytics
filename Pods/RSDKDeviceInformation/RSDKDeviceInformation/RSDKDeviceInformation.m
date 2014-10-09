@@ -158,10 +158,13 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
             if (![idForVendor stringByTrimmingCharactersInSet:zeroesAndHyphens].length)
             {
                 /*
-                 * Filter out nil, empty, or zeroed strings (e.g. "00000000-0000-0000-0000-000000000000")
+                 * Filter out nil, empty, or zeroed strings (e.g. "00000000-0000-0000-0000-000000000000"):
+                 * Some iOS6 devices return a zero id. See http://openradar.appspot.com/12377282
+                 *
+                 * We don't have many options here, beside generating an id.
                  */
 
-                return nil;
+                idForVendor = [NSUUID.UUID UUIDString];
             }
 
             deviceIdData = [idForVendor dataUsingEncoding:NSUTF8StringEncoding].sha1;

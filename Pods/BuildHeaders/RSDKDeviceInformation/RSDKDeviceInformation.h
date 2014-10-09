@@ -1,1 +1,0 @@
-../../RSDKDeviceInformation/RSDKDeviceInformation/RSDKDeviceInformation.h

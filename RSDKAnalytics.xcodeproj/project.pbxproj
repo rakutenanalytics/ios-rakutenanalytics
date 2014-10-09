@@ -7,58 +7,57 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */; };
-		691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */; };
 		692F6B20192AE2C10075F70D /* RSDKAnalyticsRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */; };
-		6940F59B19BE83AE0039BB8E /* RSDKAnalyticsItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */; };
-		698F8181192C3F5500031B48 /* libRSDKAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */; };
-		698F8182192C3F6500031B48 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F3871E1929FD15002E8F91 /* libsqlite3.dylib */; };
-		698F8183192C3F6C00031B48 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 69F387201929FD1B002E8F91 /* libz.dylib */; };
-		69A397CF1924AB5E0002B258 /* RSDKAnalyticsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */; };
-		69F0A65A192C998F00E82438 /* RSDKAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 69F0A659192C998F00E82438 /* RSDKAnalytics.m */; };
-		72B9C34738B74E549621BB18 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A954E69E004059B2E8E1BB /* libPods.a */; };
+		C36F7BDB74527EB93785191A /* libPods-RSDKAnalyticsTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 65215BDECB0E967DF38D03A7 /* libPods-RSDKAnalyticsTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		696C259B1941561900D2E409 /* PBXContainerItemProxy */ = {
+		695D17CF19E620F900833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 949669933D944D98A5AE9B73;
-			remoteInfo = Pods;
+			remoteGlobalIDString = F5A093DAF35A8E51A58B0046;
+			remoteInfo = "Pods-RSDKAnalyticsTests";
 		};
-		696C259F1941561900D2E409 /* PBXContainerItemProxy */ = {
+		695D17D119E620F900833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 65175A5516564B509AE1497F;
-			remoteInfo = "Pods-RSDKDeviceInformation";
+			remoteGlobalIDString = D2691E039E7CEAB8476FA11E;
+			remoteInfo = "Pods-RSDKAnalyticsTests-RSDKAnalytics";
 		};
-		696C25A11941561900D2E409 /* PBXContainerItemProxy */ = {
+		695D17D319E620F900833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F5DE03AAA4EC43199C6F3630;
-			remoteInfo = "Pods-RSDKSupport";
+			remoteGlobalIDString = CA15411C2EC9E1A288A4C42B;
+			remoteInfo = "Pods-RSDKAnalyticsTests-RSDKDeviceInformation";
 		};
-		696C25A31941562300D2E409 /* PBXContainerItemProxy */ = {
+		695D17D519E620F900833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 61F47064D73F4E105052FD62;
+			remoteInfo = "Pods-RSDKAnalyticsTests-RSDKSupport";
+		};
+		695D17D719E6211600833B10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0492336437994F75BE9A0423;
-			remoteInfo = Pods;
+			remoteGlobalIDString = 76535C2F5E132D0C663A3F9E;
+			remoteInfo = "Pods-RSDKAnalyticsTests-RSDKAnalytics";
 		};
-		698F817F192C3F4D00031B48 /* PBXContainerItemProxy */ = {
+		695D17D919E6213F00833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 69A397BC1924AB5E0002B258 /* Project object */;
+			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 69A397C31924AB5E0002B258;
-			remoteInfo = RSDKAnalytics;
+			remoteGlobalIDString = 59E95232DA4B0361B73A5BFE;
+			remoteInfo = "Pods-RSDKAnalyticsTests";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		07A954E69E004059B2E8E1BB /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		65215BDECB0E967DF38D03A7 /* libPods-RSDKAnalyticsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RSDKAnalyticsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6902034D1929E4F200DE6226 /* RSDKAnalyticsRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecord.h; sourceTree = "<group>"; };
 		6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecord.m; sourceTree = "<group>"; };
 		691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsDatabase.h; sourceTree = "<group>"; };
@@ -66,7 +65,7 @@
 		692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordTests.m; sourceTree = "<group>"; };
 		6940F59919BE83AE0039BB8E /* RSDKAnalyticsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsItem.h; sourceTree = "<group>"; };
 		6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsItem.m; sourceTree = "<group>"; };
-		696C25941941561900D2E409 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
+		695D17C819E620F900833B10 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		69A397C41924AB5E0002B258 /* libRSDKAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRSDKAnalytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsManager.h; sourceTree = "<group>"; };
 		69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsManager.m; sourceTree = "<group>"; };
@@ -74,9 +73,8 @@
 		69A397DF1924AB5E0002B258 /* RSDKAnalyticsTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RSDKAnalyticsTests-Info.plist"; sourceTree = "<group>"; };
 		69F0A656192C6B0B00E82438 /* RSDKAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalytics.h; sourceTree = "<group>"; };
 		69F0A659192C998F00E82438 /* RSDKAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalytics.m; sourceTree = "<group>"; };
-		69F3871E1929FD15002E8F91 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		69F387201929FD1B002E8F91 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		F43912C271E849AAAD16EFC3 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		7780BD470FB1D262FD87FCB9 /* Pods-RSDKAnalyticsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSDKAnalyticsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RSDKAnalyticsTests/Pods-RSDKAnalyticsTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FE4D6686D24239F3EED28967 /* Pods-RSDKAnalyticsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RSDKAnalyticsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RSDKAnalyticsTests/Pods-RSDKAnalyticsTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,22 +82,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				698F8183192C3F6C00031B48 /* libz.dylib in Frameworks */,
-				698F8182192C3F6500031B48 /* libsqlite3.dylib in Frameworks */,
-				698F8181192C3F5500031B48 /* libRSDKAnalytics.a in Frameworks */,
-				72B9C34738B74E549621BB18 /* libPods.a in Frameworks */,
+				C36F7BDB74527EB93785191A /* libPods-RSDKAnalyticsTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		696C25951941561900D2E409 /* Products */ = {
+		07BF434A1E7A530C9C8F5B4C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				696C259C1941561900D2E409 /* libPods.a */,
-				696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */,
-				696C25A21941561900D2E409 /* libPods-RSDKSupport.a */,
+				695D17C819E620F900833B10 /* Pods.xcodeproj */,
+				65215BDECB0E967DF38D03A7 /* libPods-RSDKAnalyticsTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		09AE57C8362CB989C5237B88 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7780BD470FB1D262FD87FCB9 /* Pods-RSDKAnalyticsTests.debug.xcconfig */,
+				FE4D6686D24239F3EED28967 /* Pods-RSDKAnalyticsTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		695D17C919E620F900833B10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				695D17D019E620F900833B10 /* libPods-RSDKAnalyticsTests.a */,
+				695D17D219E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKAnalytics.a */,
+				695D17D419E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKDeviceInformation.a */,
+				695D17D619E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKSupport.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,9 +123,9 @@
 			children = (
 				69A397C91924AB5E0002B258 /* RSDKAnalytics */,
 				69A397DD1924AB5E0002B258 /* RSDKAnalyticsTests */,
-				69A397C61924AB5E0002B258 /* Frameworks */,
 				69A397C51924AB5E0002B258 /* Products */,
-				F43912C271E849AAAD16EFC3 /* Pods.xcconfig */,
+				09AE57C8362CB989C5237B88 /* Pods */,
+				07BF434A1E7A530C9C8F5B4C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -122,17 +136,6 @@
 				69A397D41924AB5E0002B258 /* RSDKAnalyticsTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		69A397C61924AB5E0002B258 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				696C25941941561900D2E409 /* Pods.xcodeproj */,
-				69F387201929FD1B002E8F91 /* libz.dylib */,
-				69F3871E1929FD15002E8F91 /* libsqlite3.dylib */,
-				07A954E69E004059B2E8E1BB /* libPods.a */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		69A397C91924AB5E0002B258 /* RSDKAnalytics */ = {
@@ -176,14 +179,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69A397E71924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalytics" */;
 			buildPhases = (
-				F469E1E57073462CB06C9FAD /* Check Pods Manifest.lock */,
 				69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */,
 				69A397C01924AB5E0002B258 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				696C25A41941562300D2E409 /* PBXTargetDependency */,
+				695D17D819E6211600833B10 /* PBXTargetDependency */,
 			);
 			name = RSDKAnalytics;
 			productName = RSDKAnalytics;
@@ -194,15 +196,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69A397EA1924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsTests" */;
 			buildPhases = (
-				B97FD841F9F84AC695270B14 /* Check Pods Manifest.lock */,
+				DA86DE0B7BB025D5E007AC4B /* Check Pods Manifest.lock */,
 				69A397D01924AB5E0002B258 /* Sources */,
 				69A397D11924AB5E0002B258 /* Frameworks */,
-				A58B17E974E142F89EF9E956 /* Copy Pods Resources */,
+				2B97FA8687C1DDC09CAC508F /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				698F8180192C3F4D00031B48 /* PBXTargetDependency */,
+				695D17DA19E6213F00833B10 /* PBXTargetDependency */,
 			);
 			name = RSDKAnalyticsTests;
 			productName = RSDKAnalyticsTests;
@@ -230,8 +232,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 696C25951941561900D2E409 /* Products */;
-					ProjectRef = 696C25941941561900D2E409 /* Pods.xcodeproj */;
+					ProductGroup = 695D17C919E620F900833B10 /* Products */;
+					ProjectRef = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -243,45 +245,38 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		696C259C1941561900D2E409 /* libPods.a */ = {
+		695D17D019E620F900833B10 /* libPods-RSDKAnalyticsTests.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libPods.a;
-			remoteRef = 696C259B1941561900D2E409 /* PBXContainerItemProxy */;
+			path = "libPods-RSDKAnalyticsTests.a";
+			remoteRef = 695D17CF19E620F900833B10 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		696C25A01941561900D2E409 /* libPods-RSDKDeviceInformation.a */ = {
+		695D17D219E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKAnalytics.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libPods-RSDKDeviceInformation.a";
-			remoteRef = 696C259F1941561900D2E409 /* PBXContainerItemProxy */;
+			path = "libPods-RSDKAnalyticsTests-RSDKAnalytics.a";
+			remoteRef = 695D17D119E620F900833B10 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		696C25A21941561900D2E409 /* libPods-RSDKSupport.a */ = {
+		695D17D419E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKDeviceInformation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libPods-RSDKSupport.a";
-			remoteRef = 696C25A11941561900D2E409 /* PBXContainerItemProxy */;
+			path = "libPods-RSDKAnalyticsTests-RSDKDeviceInformation.a";
+			remoteRef = 695D17D319E620F900833B10 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		695D17D619E620F900833B10 /* libPods-RSDKAnalyticsTests-RSDKSupport.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libPods-RSDKAnalyticsTests-RSDKSupport.a";
+			remoteRef = 695D17D519E620F900833B10 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check RSDKAnalytics Version";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "set -e -u -o pipefail\n\nread PODSPEC_VERSION < <(/usr/bin/sed -n 's/^[[:space:]]*s\\.version[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\"/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}.podspec\")\n\nread SOURCE_CODE_VERSION < <(/usr/bin/sed -n 's/^.*RSDKAnalyticsVersion[[:space:]]*=[[:space:]]*@\"\\([^\"]*\\)\";/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\n[ \"$PODSPEC_VERSION\" == \"$SOURCE_CODE_VERSION\" ] && exit\n\nread LINE < <(grep -n RSDKAnalyticsVersion \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\ncat >&2 <<EOT\n${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m:${LINE%%:*}:1: error: ${PRODUCT_NAME}.podspec says version should be $PODSPEC_VERSION\n${LINE#*:}\nEOT\n\nexit 1\n";
-		};
-		A58B17E974E142F89EF9E956 /* Copy Pods Resources */ = {
+		2B97FA8687C1DDC09CAC508F /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -293,25 +288,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RSDKAnalyticsTests/Pods-RSDKAnalyticsTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B97FD841F9F84AC695270B14 /* Check Pods Manifest.lock */ = {
+		69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
+			name = "Check RSDKAnalytics Version";
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -e -u -o pipefail\n\nread PODSPEC_VERSION < <(/usr/bin/sed -n 's/^[[:space:]]*s\\.version[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\"/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}.podspec\")\n\nread SOURCE_CODE_VERSION < <(/usr/bin/sed -n 's/^.*RSDKAnalyticsVersion[[:space:]]*=[[:space:]]*@\"\\([^\"]*\\)\";/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\n[ \"$PODSPEC_VERSION\" == \"$SOURCE_CODE_VERSION\" ] && exit\n\nread LINE < <(grep -n RSDKAnalyticsVersion \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\ncat >&2 <<EOT\n${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m:${LINE%%:*}:1: error: ${PRODUCT_NAME}.podspec says version should be $PODSPEC_VERSION\n${LINE#*:}\nEOT\n\nexit 1\n";
 		};
-		F469E1E57073462CB06C9FAD /* Check Pods Manifest.lock */ = {
+		DA86DE0B7BB025D5E007AC4B /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -333,11 +323,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				691ACB271925FFCA008857A4 /* RSDKAnalyticsDatabase.m in Sources */,
-				69F0A65A192C998F00E82438 /* RSDKAnalytics.m in Sources */,
-				6940F59B19BE83AE0039BB8E /* RSDKAnalyticsItem.m in Sources */,
-				6902034F1929E4F200DE6226 /* RSDKAnalyticsRecord.m in Sources */,
-				69A397CF1924AB5E0002B258 /* RSDKAnalyticsManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,15 +337,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		696C25A41941562300D2E409 /* PBXTargetDependency */ = {
+		695D17D819E6211600833B10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Pods;
-			targetProxy = 696C25A31941562300D2E409 /* PBXContainerItemProxy */;
+			name = "Pods-RSDKAnalyticsTests-RSDKAnalytics";
+			targetProxy = 695D17D719E6211600833B10 /* PBXContainerItemProxy */;
 		};
-		698F8180192C3F4D00031B48 /* PBXTargetDependency */ = {
+		695D17DA19E6213F00833B10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 69A397C31924AB5E0002B258 /* RSDKAnalytics */;
-			targetProxy = 698F817F192C3F4D00031B48 /* PBXContainerItemProxy */;
+			name = "Pods-RSDKAnalyticsTests";
+			targetProxy = 695D17D919E6213F00833B10 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -466,7 +451,6 @@
 		};
 		69A397E81924AB5E0002B258 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
 			buildSettings = {
 				DSTROOT = /tmp/RSDKAnalytics.dst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -476,7 +460,6 @@
 		};
 		69A397E91924AB5E0002B258 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
 			buildSettings = {
 				DSTROOT = /tmp/RSDKAnalytics.dst;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -486,7 +469,7 @@
 		};
 		69A397EB1924AB5E0002B258 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			baseConfigurationReference = 7780BD470FB1D262FD87FCB9 /* Pods-RSDKAnalyticsTests.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -502,8 +485,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-framework",
-					XCTest,
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -513,7 +494,7 @@
 		};
 		69A397EC1924AB5E0002B258 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43912C271E849AAAD16EFC3 /* Pods.xcconfig */;
+			baseConfigurationReference = FE4D6686D24239F3EED28967 /* Pods-RSDKAnalyticsTests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -525,8 +506,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-framework",
-					XCTest,
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

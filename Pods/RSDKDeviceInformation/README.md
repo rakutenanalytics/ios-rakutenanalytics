@@ -6,3 +6,6 @@ the device they are running on.
  configured first. Please refer to @ref device-information-keychain-setup "Setting up the keychain"
  for the right way to do so.
 
+If the keychain is locked or the identifier could not otherwise be read, RSDKDeviceInformation::uniqueDeviceIdentifier
+returns `nil`. Applications should retry when the application becomes active again.
+
