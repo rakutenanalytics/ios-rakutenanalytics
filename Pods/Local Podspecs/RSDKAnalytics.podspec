@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
-  s.version      = "2.2.1"
+  s.version      = "2.2.2"
   s.summary      = "Rakuten SDK analytics library"
   s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -11,7 +11,8 @@ Pod::Spec.new do |s|
   s.xcconfig = {
     'CLANG_ENABLE_MODULES'    => 'YES',
     'CLANG_MODULES_AUTOLINK'  => 'YES',
-    'GCC_C_LANGUAGE_STANDARD' => 'gnu99'
+    'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
+    'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
   }
 
   s.source_files  = 'RSDKAnalytics/**/*.{h,m}'

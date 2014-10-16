@@ -181,10 +181,15 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 + (instancetype)sharedInstance
 {
     static id instance;
+
     static dispatch_once_t once;
     dispatch_once(&once, ^
     {
         instance = [self.alloc initSharedInstance];
+    });
+
+    atexit_b(^{
+        instance = nil;
     });
 
     return instance;
@@ -287,46 +292,24 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
         self.locationManager.delegate = self;
 
-        typeof(self) __weak weakSelf = self;
-        atexit_b(^
-        {
-            typeof(weakSelf) __strong strongSelf = weakSelf;
-            [strongSelf _stopMonitoringLocation];
-        });
-
 
         /*
          * Keep track of reachability.
          */
 
         NSURL *endpoint = self.class.endpointAddress;
-        SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, endpoint.host.UTF8String);
-        SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
-        SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+        static SCNetworkReachabilityRef reachability;
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{
+            reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, endpoint.host.UTF8String);
+            SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
+            SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 
-        atexit_b(^
-        {
-            if (reachability)
+            atexit_b(^
             {
                 SCNetworkReachabilityUnscheduleFromRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
                 CFRelease(reachability);
-            }
-        });
-
-
-        /*
-         * Register notification handlers.
-         */
-
-        NSNotificationCenter* notificationCenter = NSNotificationCenter.defaultCenter;
-        atexit_b(^
-        {
-            typeof(weakSelf) __strong strongSelf = weakSelf;
-
-            if (strongSelf)
-            {
-                [notificationCenter removeObserver:strongSelf];
-            }
+            });
         });
 
 
@@ -336,12 +319,16 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          */
 
         [self _startNewSession];
+
+        NSNotificationCenter* notificationCenter = NSNotificationCenter.defaultCenter;
+
         [notificationCenter addObserver:self
                                selector:@selector(_startNewSession)
                                    name:UIApplicationDidBecomeActiveNotification
                                  object:nil];
+
         [notificationCenter addObserver:self
-                               selector:@selector(_endSession)
+                               selector:@selector(_stopMonitoringLocationUnlessAlways)
                                    name:UIApplicationWillResignActiveNotification
                                  object:nil];
 
@@ -370,21 +357,25 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 //--------------------------------------------------------------------------
 
+- (void)dealloc
+{
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    [self _stopMonitoringLocation];
+}
+
+//--------------------------------------------------------------------------
+
 #pragma mark - Getters & setters
 
 - (void)setLocationTrackingEnabled:(BOOL)locationTrackingEnabled
 {
-    if (locationTrackingEnabled == _locationTrackingEnabled)
+    if (locationTrackingEnabled != _locationTrackingEnabled)
     {
-        // No change
-        return;
+        _locationTrackingEnabled = locationTrackingEnabled;
+
+        // Update
+        [self _startStopMonitoringLocationIfNeeded];
     }
-
-    _locationTrackingEnabled = locationTrackingEnabled;
-
-    // Update
-    [self _updateLocationManagerWithStatus:CLLocationManager.authorizationStatus];
-
 }
 
 //--------------------------------------------------------------------------
@@ -393,7 +384,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)locationManager:(CLLocationManager * __unused)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    [self _updateLocationManagerWithStatus:status];
+    [self _startStopMonitoringLocationIfNeeded];
 }
 
 //--------------------------------------------------------------------------
@@ -411,9 +402,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    // error is only used in Debug
-    (void)error;
-
     RDebugLog(@"[RMSDK] Analytics: Failed to acquire device location: %@", error.localizedDescription);
 }
 #endif
@@ -421,8 +409,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 //--------------------------------------------------------------------------
 
 #pragma mark - Private methods
-- (void)_updateLocationManagerWithStatus:(CLAuthorizationStatus)status
+- (void)_startStopMonitoringLocationIfNeeded
 {
+    CLAuthorizationStatus status = CLLocationManager.authorizationStatus;
+
 #if DEBUG
     static CLAuthorizationStatus lastStatus = -1;
     BOOL updated = NO;
@@ -653,16 +643,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // {name: "mori", longName: "MOBILE_ORIENTATION", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2], userSettable: true}
-    UIDeviceOrientation deviceOrientation = device.orientation;
-
-    if (deviceOrientation == UIDeviceOrientationPortrait || deviceOrientation == UIDeviceOrientationPortraitUpsideDown)
-    {
-        jsonDic[@"mori"] = @1;
-    }
-    else if (deviceOrientation == UIDeviceOrientationLandscapeLeft || deviceOrientation == UIDeviceOrientationLandscapeRight)
-    {
-        jsonDic[@"mori"] = @2;
-    }
+    jsonDic[@"mori"] = @(UIDeviceOrientationIsLandscape(device.orientation) ? 2 : 1);
 
     // {name: "mos", longName: "MOBILE_OS", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
     jsonDic[@"mos"] = osVersion;
@@ -954,7 +935,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * Resume location updates if needed.
      */
 
-    [self _updateLocationManagerWithStatus:CLLocationManager.authorizationStatus];
+    [self _startStopMonitoringLocationIfNeeded];
 
     /*
      * Schedule a background upload attempt when the app becomes
@@ -966,12 +947,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 //--------------------------------------------------------------------------
 
-- (void)_endSession
+- (void)_stopMonitoringLocationUnlessAlways
 {
-    /*
-     * Pause location updates if needed.
-     */
-
     if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusAuthorizedAlways)
     {
         [self _stopMonitoringLocation];

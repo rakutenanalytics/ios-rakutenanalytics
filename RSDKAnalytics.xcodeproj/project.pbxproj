@@ -44,14 +44,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 76535C2F5E132D0C663A3F9E;
+			remoteGlobalIDString = 1AEB2F69DA66FA77E638C2B3;
 			remoteInfo = "Pods-RSDKAnalyticsTests-RSDKAnalytics";
 		};
 		695D17D919E6213F00833B10 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 695D17C819E620F900833B10 /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 59E95232DA4B0361B73A5BFE;
+			remoteGlobalIDString = 158ECC172A4E648101D24731;
 			remoteInfo = "Pods-RSDKAnalyticsTests";
 		};
 /* End PBXContainerItemProxy section */
@@ -179,7 +179,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69A397E71924AB5E0002B258 /* Build configuration list for PBXNativeTarget "RSDKAnalytics" */;
 			buildPhases = (
-				69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */,
 				69A397C01924AB5E0002B258 /* Sources */,
 			);
 			buildRules = (
@@ -290,16 +289,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RSDKAnalyticsTests/Pods-RSDKAnalyticsTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		69F0A65B192D7E7E00E82438 /* Check RSDKAnalytics Version */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "Check RSDKAnalytics Version";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "set -e -u -o pipefail\n\nread PODSPEC_VERSION < <(/usr/bin/sed -n 's/^[[:space:]]*s\\.version[[:space:]]*=[[:space:]]*\"\\([^\"]*\\)\"/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}.podspec\")\n\nread SOURCE_CODE_VERSION < <(/usr/bin/sed -n 's/^.*RSDKAnalyticsVersion[[:space:]]*=[[:space:]]*@\"\\([^\"]*\\)\";/\\1/p' \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\n[ \"$PODSPEC_VERSION\" == \"$SOURCE_CODE_VERSION\" ] && exit\n\nread LINE < <(grep -n RSDKAnalyticsVersion \"${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m\")\n\ncat >&2 <<EOT\n${PROJECT_DIR}/${PRODUCT_NAME}/${PRODUCT_NAME}.m:${LINE%%:*}:1: error: ${PRODUCT_NAME}.podspec says version should be $PODSPEC_VERSION\n${LINE#*:}\nEOT\n\nexit 1\n";
 		};
 		DA86DE0B7BB025D5E007AC4B /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

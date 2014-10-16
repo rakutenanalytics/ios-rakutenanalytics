@@ -8,11 +8,7 @@
 
 #import "RSDKAnalytics.h"
 
-
-/*
- * This must be kept in sync with the version specified in the podspec.
- * The « Check RSDKAnalytics Version » build phase checks that they match.
- */
-
-const NSString* const RSDKAnalyticsVersion = @"2.2.1";
+#define QUOTE(s) #s
+#define EXPAND_AND_QUOTE(s) QUOTE(s)
+const NSString* const RSDKAnalyticsVersion = @ EXPAND_AND_QUOTE(RMSDK_ANALYTICS_VERSION);
 
