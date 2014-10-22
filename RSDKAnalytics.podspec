@@ -2,10 +2,10 @@ Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Julien Cayzac" => "julien.cayzac@mail.rakuten.com" }
   s.version      = "2.2.2"
-  s.summary      = "Rakuten SDK analytics library"
-  s.homepage     = "https://git.dev.rakuten.com/projects/SDK/repos/ios-analytics/"
+  s.summary      = "Rakuten Mobile SDK analytics module"
+  s.homepage     = "https://rmsdk.azurewebsites.net/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
-  s.source       = { :git => "https://git.dev.rakuten.com/scm/SDK/ios-analytics.git", :tag => s.version.to_s }
+  s.source       = { :git => "https://git.rakuten-it.com/scm/SDK/ios-analytics.git", :tag => s.version.to_s }
   s.platform = :ios, "6.0"
   s.requires_arc = true
   s.xcconfig = {
