@@ -6,4 +6,5 @@ HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public
 LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/TestFlightSDK"
 OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/FXForms" -isystem "${PODS_ROOT}/Headers/Public/FontAwesomeKit" -isystem "${PODS_ROOT}/Headers/Public/RESideMenu" -isystem "${PODS_ROOT}/Headers/Public/RSDKAnalytics" -isystem "${PODS_ROOT}/Headers/Public/RSDKDeviceInformation" -isystem "${PODS_ROOT}/Headers/Public/RSDKSupport" -isystem "${PODS_ROOT}/Headers/Public/SVProgressHUD" -isystem "${PODS_ROOT}/Headers/Public/TestFlightSDK" '-DRMSDK_ANALYTICS_VERSION=2.2.2'
 OTHER_LDFLAGS = -ObjC -l"Pods-FXForms" -l"Pods-FontAwesomeKit" -l"Pods-RESideMenu" -l"Pods-RSDKAnalytics" -l"Pods-RSDKDeviceInformation" -l"Pods-RSDKSupport" -l"Pods-SVProgressHUD" -l"Pods-TestFlightSDK" -l"TestFlight" -l"sqlite3" -l"z" -framework "CoreText" -framework "QuartzCore" -framework "UIKit"
+OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
 PODS_ROOT = ${SRCROOT}/../Pods

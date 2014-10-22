@@ -14,7 +14,7 @@ EXTERNAL SOURCES:
     :path: ./RSDKAnalytics.podspec
 
 SPEC CHECKSUMS:
-  RSDKAnalytics: 296fb237d03677d9eef9c57ab55ba0f689f6690f
+  RSDKAnalytics: 569d872c9a3de06bd449a3b0a2f2f425248fe886
   RSDKDeviceInformation: 812d8c90317e186272afd55f57dec745165f09a9
   RSDKSupport: 5826fe3c2746326cddfed8b06e86eefa1c895819
 
