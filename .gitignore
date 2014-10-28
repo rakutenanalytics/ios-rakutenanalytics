@@ -6,6 +6,7 @@ analyzer.log
 *~.nib
 
 build/
+artifacts/
 
 *.pbxuser
 *.perspective
