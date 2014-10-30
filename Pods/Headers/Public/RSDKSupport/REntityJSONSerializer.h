@@ -1,0 +1,1 @@
+../../../RSDKSupport/RSDKSupport/Modeling/REntityJSONSerializer.h

@@ -16,7 +16,11 @@
 
 #define RSDKDeviceInformationDomain @"jp.co.rakuten.ios.sdk.deviceinformation"
 
-NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformationDomain;
+/* FOUNDATION_EXTERN */ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformationDomain;
+
+static NSString *const probeKey = RSDKDeviceInformationDomain @"probe";
+static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
+
 
 @implementation RSDKDeviceInformation
 
@@ -51,19 +55,17 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
         static NSString *accessGroup = nil;
         if (!accessGroup)
         {
-            static NSString *probeKey = RSDKDeviceInformationDomain @".probe";
+            CFDictionaryRef query = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrService: probeKey,
+                                                                 (__bridge id)kSecAttrAccount: probeKey,
+                                                                 (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+                                                                 (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAlways,
+                                                                 (__bridge id)kSecReturnAttributes: @YES};
 
-            NSDictionary *query = @{(__bridge id)kSecAttrService: probeKey,
-                                    (__bridge id)kSecAttrAccount: probeKey,
-                                    (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-                                    (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAlways,
-                                    (__bridge id)kSecReturnAttributes: @YES};
-
-            status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
+            status = SecItemCopyMatching(query, &result);
 
             if (status == errSecItemNotFound)
             {
-                status = SecItemAdd((__bridge CFDictionaryRef)query, &result);
+                status = SecItemAdd(query, &result);
             }
 
             if (status != errSecSuccess)
@@ -90,9 +92,9 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
             /*
              * Try to clean things up
              */
-            SecItemDelete((__bridge CFDictionaryRef)@{(__bridge id)kSecAttrService: probeKey,
-                                                      (__bridge id)kSecAttrAccount: probeKey,
-                                                      (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword});
+            SecItemDelete((__bridge CFDictionaryRef) @{(__bridge id)kSecAttrService: probeKey,
+                                                       (__bridge id)kSecAttrAccount: probeKey,
+                                                       (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword});
         }
 #endif // TARGET_IPHONE_SIMULATOR
 
@@ -101,24 +103,21 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
          * Here we always have a bundle seed id.
          */
 
-        static NSString        *uuidKey = RSDKDeviceInformationDomain @"uuid";
-        static NSDictionary    *searchQuery;
-        static dispatch_once_t  once;
-
-        dispatch_once(&once, ^
+        static CFDictionaryRef searchQuery = NULL;
+        if (!searchQuery)
         {
-            searchQuery = @{(__bridge id)kSecAttrAccount: uuidKey,
-                            (__bridge id)kSecAttrService: uuidKey,
-                            (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-    #if !TARGET_IPHONE_SIMULATOR
-                            (__bridge id)kSecAttrAccessGroup: accessGroup,
-    #endif
-                            (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
-                            (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
-                            };
-        });
+            searchQuery = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrAccount: uuidKey,
+                                                       (__bridge id)kSecAttrService: uuidKey,
+                                                       (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+#if !TARGET_IPHONE_SIMULATOR
+                                                       (__bridge id)kSecAttrAccessGroup: accessGroup,
+#endif // TARGET_IPHONE_SIMULATOR
+                                                       (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
+                                                       (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
+                                                       };
+        };
 
-        status = SecItemCopyMatching((__bridge CFDictionaryRef)searchQuery, &result);
+        status = SecItemCopyMatching(searchQuery, &result);
 
         if (status == errSecSuccess)
         {
@@ -127,6 +126,8 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
              */
 
             value = [CFBridgingRelease(result) hexadecimal];
+
+            RDebugLog(@"Unique device identifier: %@", value);
             return value;
         }
 
@@ -170,28 +171,27 @@ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformation
             deviceIdData = [idForVendor dataUsingEncoding:NSUTF8StringEncoding].sha1;
         }
 
-        static NSDictionary *saveQuery = nil;
-        static dispatch_once_t onceAgain;
-        dispatch_once(&onceAgain, ^
+        static CFDictionaryRef saveQuery = NULL;
+        if (!saveQuery)
         {
-            saveQuery = @{(__bridge id)kSecAttrAccount: uuidKey,
-                          (__bridge id)kSecAttrService: uuidKey,
-                          (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-    #if !TARGET_IPHONE_SIMULATOR
-                          (__bridge id)kSecAttrAccessGroup: accessGroup,
-    #endif
-                          (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-                          (__bridge id)kSecValueData: deviceIdData,
-                          };
-        });
+            saveQuery = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrAccount: uuidKey,
+                                                     (__bridge id)kSecAttrService: uuidKey,
+                                                     (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+#if !TARGET_IPHONE_SIMULATOR
+                                                     (__bridge id)kSecAttrAccessGroup: accessGroup,
+#endif // TARGET_IPHONE_SIMULATOR
+                                                     (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+                                                     (__bridge id)kSecValueData: deviceIdData,
+                                                     };
+        };
 
-        status = SecItemAdd((__bridge CFDictionaryRef)saveQuery, NULL);
+        status = SecItemAdd(saveQuery, NULL);
         if (status != errSecSuccess)
         {
             return nil;
         }
 
-        value = [deviceIdData hexadecimal];
+        value = deviceIdData.hexadecimal;
 
         RDebugLog(@"Unique device identifier: %@", value);
         return value;

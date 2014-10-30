@@ -19,8 +19,8 @@ Pod::Spec.new do |s|
   s.private_header_files = 'RSDKAnalytics/RSDKAnalyticsDatabase.h'
   s.ios.libraries        = 'sqlite3', 'z'
 
-  s.dependency 'RSDKSupport/Utilities', '~> 2.1.4'
-  s.dependency 'RSDKDeviceInformation', '~> 1.1.2'
+  s.dependency 'RSDKSupport',           '~> 2.1.5'
+  s.dependency 'RSDKDeviceInformation', '~> 1.2.0'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
