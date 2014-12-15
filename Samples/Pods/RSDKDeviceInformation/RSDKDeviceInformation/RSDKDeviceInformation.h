@@ -1,17 +1,25 @@
-//
-//  RSDKDeviceInformation.h
-//  RSDKDeviceInformation
-//
-//  Created by Julien Cayzac on 6/3/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
-
 @import Foundation;
+#import <Availability.h>
 
+#ifdef __cplusplus
+#define RSDKDEVICEINFORMATION_EXPORT extern "C" __attribute__((visibility ("default")))
+#else
+#define RSDKDEVICEINFORMATION_EXPORT extern __attribute__((visibility ("default")))
+#endif
+
+#ifdef DOXYGEN
 /**
  * @defgroup DeviceInformationConstants Constants
  */
+#endif
+
+/**
+ *  The version of the RSDKDeviceInformation module.
+ *
+ *  @ingroup DeviceInformationConstants
+ */
+RSDKDEVICEINFORMATION_EXPORT const NSString* const RSDKDeviceInformationVersion;
+
 
 /**
  * The keychain access group used to share the unique device identifier
@@ -21,15 +29,13 @@
  *
  * @ingroup DeviceInformationConstants
  */
-
-FOUNDATION_EXTERN NSString *const RSDKDeviceInformationKeychainAccessGroup;
-
+RSDKDEVICEINFORMATION_EXPORT NSString *const RSDKDeviceInformationKeychainAccessGroup;
 
 
 /**
  * This class provides information about the device the application is currently running on.
+ * @class RSDKDeviceInformation RSDKDeviceInformation.h <RSDKDeviceInformation/RSDKDeviceInformation.h>
  */
-
 @interface RSDKDeviceInformation : NSObject
 
 

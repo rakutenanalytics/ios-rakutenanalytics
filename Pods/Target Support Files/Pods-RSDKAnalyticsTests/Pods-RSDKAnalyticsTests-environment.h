@@ -10,13 +10,13 @@
 #define COCOAPODS_POD_AVAILABLE_RSDKAnalytics
 #define COCOAPODS_VERSION_MAJOR_RSDKAnalytics 2
 #define COCOAPODS_VERSION_MINOR_RSDKAnalytics 2
-#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 2
+#define COCOAPODS_VERSION_PATCH_RSDKAnalytics 3
 
 // RSDKDeviceInformation
 #define COCOAPODS_POD_AVAILABLE_RSDKDeviceInformation
 #define COCOAPODS_VERSION_MAJOR_RSDKDeviceInformation 1
-#define COCOAPODS_VERSION_MINOR_RSDKDeviceInformation 2
-#define COCOAPODS_VERSION_PATCH_RSDKDeviceInformation 0
+#define COCOAPODS_VERSION_MINOR_RSDKDeviceInformation 3
+#define COCOAPODS_VERSION_PATCH_RSDKDeviceInformation 1
 
 // RSDKSupport
 #define COCOAPODS_POD_AVAILABLE_RSDKSupport

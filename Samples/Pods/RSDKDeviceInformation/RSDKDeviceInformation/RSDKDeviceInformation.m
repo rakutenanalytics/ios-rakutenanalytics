@@ -8,19 +8,44 @@
 
 @import UIKit.UIDevice;
 @import Darwin.POSIX.sys.utsname;
+#import <CommonCrypto/CommonCrypto.h>
 
 #import "RSDKDeviceInformation.h"
-#import <RSDKSupport/RSDKAssert.h>
-#import <RSDKSupport/NSData+RAExtensions.h>
-#import <RSDKSupport/RLoggingHelper.h>
 
 #define RSDKDeviceInformationDomain @"jp.co.rakuten.ios.sdk.deviceinformation"
+#define QUOTE(s) #s
+#define EXPAND_AND_QUOTE(s) QUOTE(s)
 
-/* FOUNDATION_EXTERN */ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformationDomain;
+/* RSDKDEVICEINFORMATION_EXPORT */ const NSString* const RSDKDeviceInformationVersion = @ EXPAND_AND_QUOTE(RMSDK_DEVICE_INFORMATION_VERSION);
+/* RSDKDEVICEINFORMATION_EXPORT */ NSString *const RSDKDeviceInformationKeychainAccessGroup = RSDKDeviceInformationDomain;
 
 static NSString *const probeKey = RSDKDeviceInformationDomain @"probe";
 static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
 
+static NSString *hexadecimal(const NSData *data)
+{
+    const unsigned char *bytes = data.bytes;
+    NSUInteger length = data.length;
+    NSMutableString *output = [NSMutableString stringWithCapacity:(length << 1)];
+    for (NSUInteger offset = 0; offset < length; ++offset)
+    {
+        [output appendFormat:@"%02x", bytes[offset]];
+    }
+    return output.copy;
+}
+
+static void checkMissingAccessControl(OSStatus status)
+{
+    // errSecNoAccessForItem is not defined for iOS, only OS X.
+    // Normally it would be found in <Security/SecBase.h>.
+    if (status == /* errSecNoAccessForItem */ -25243)
+    {
+        [NSException raise:NSObjectNotAvailableException format:
+         @"\nYour application is lacking the proper keychain-access-group entitlements.\n"
+         @"Please refer to the API reference documentation for RSDKDeviceInformation here:\n\t"
+         @"https://rmsdk.azurewebsites.net/docs/ios/RSDKDeviceInformation#device-information-keychain-setup\n\n"];
+    }
+}
 
 @implementation RSDKDeviceInformation
 
@@ -55,11 +80,12 @@ static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
         static NSString *accessGroup = nil;
         if (!accessGroup)
         {
-            CFDictionaryRef query = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrService: probeKey,
-                                                                 (__bridge id)kSecAttrAccount: probeKey,
-                                                                 (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-                                                                 (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAlways,
-                                                                 (__bridge id)kSecReturnAttributes: @YES};
+            NSDictionary *strongQuery = @{(__bridge id)kSecAttrService: probeKey,
+                                          (__bridge id)kSecAttrAccount: probeKey,
+                                          (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+                                          (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAlways,
+                                          (__bridge id)kSecReturnAttributes: @YES};
+            CFDictionaryRef query = (__bridge CFDictionaryRef)strongQuery;
 
             status = SecItemCopyMatching(query, &result);
 
@@ -84,17 +110,19 @@ static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
             /*
              * While we're at it, why not check developers didn't do the unthinkable?
              */
-
-            RSDKASSERTIFNOT(![RSDKDeviceInformationKeychainAccessGroup isEqualToString:[defaultAccessGroup substringFromIndex:firstDot.location + 1]],
-                            @"\"%@\" is your default access group. Make sure your application's bundle identifier is the first entry of `keychain-access-groups` in your entitlements!", RSDKDeviceInformationDomain);
+            if ([RSDKDeviceInformationKeychainAccessGroup isEqualToString:[defaultAccessGroup substringFromIndex:firstDot.location + 1]])
+            {
+                [NSException raise:NSGenericException format:@"\"%@\" is your default access group. Make sure your application's bundle identifier is the first entry of `keychain-access-groups` in your entitlements!", RSDKDeviceInformationDomain];
+            }
 
 
             /*
              * Try to clean things up
              */
-            SecItemDelete((__bridge CFDictionaryRef) @{(__bridge id)kSecAttrService: probeKey,
-                                                       (__bridge id)kSecAttrAccount: probeKey,
-                                                       (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword});
+            strongQuery = @{(__bridge id)kSecAttrService: probeKey,
+                            (__bridge id)kSecAttrAccount: probeKey,
+                            (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword};
+            SecItemDelete((__bridge CFDictionaryRef)strongQuery);
         }
 #endif // TARGET_IPHONE_SIMULATOR
 
@@ -106,28 +134,26 @@ static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
         static CFDictionaryRef searchQuery = NULL;
         if (!searchQuery)
         {
-            searchQuery = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrAccount: uuidKey,
-                                                       (__bridge id)kSecAttrService: uuidKey,
-                                                       (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+            searchQuery = (CFDictionaryRef)CFBridgingRetain( @{(__bridge id)kSecAttrAccount: uuidKey,
+                                                               (__bridge id)kSecAttrService: uuidKey,
+                                                               (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
 #if !TARGET_IPHONE_SIMULATOR
-                                                       (__bridge id)kSecAttrAccessGroup: accessGroup,
+                                                               (__bridge id)kSecAttrAccessGroup: accessGroup,
 #endif // TARGET_IPHONE_SIMULATOR
-                                                       (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
-                                                       (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue,
-                                                       };
+                                                               (__bridge id)kSecMatchLimit: (__bridge id)kSecMatchLimitOne,
+                                                               (__bridge id)kSecReturnData: (__bridge id)kCFBooleanTrue
+                                                               });
         };
 
         status = SecItemCopyMatching(searchQuery, &result);
+        checkMissingAccessControl(status);
 
         if (status == errSecSuccess)
         {
             /*
              * Device id found!
              */
-
-            value = [CFBridgingRelease(result) hexadecimal];
-
-            RDebugLog(@"Unique device identifier: %@", value);
+            value = hexadecimal(CFBridgingRelease(result));
             return value;
         }
 
@@ -168,32 +194,35 @@ static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
                 idForVendor = [NSUUID.UUID UUIDString];
             }
 
-            deviceIdData = [idForVendor dataUsingEncoding:NSUTF8StringEncoding].sha1;
+            NSData *data = [idForVendor dataUsingEncoding:NSUTF8StringEncoding];
+            unsigned char hash[CC_SHA1_DIGEST_LENGTH];
+            CC_SHA1(data.bytes, (unsigned int)data.length, hash);
+
+            deviceIdData = [NSData dataWithBytes:hash length:CC_SHA1_DIGEST_LENGTH];
         }
 
         static CFDictionaryRef saveQuery = NULL;
         if (!saveQuery)
         {
-            saveQuery = (__bridge CFDictionaryRef) @{(__bridge id)kSecAttrAccount: uuidKey,
-                                                     (__bridge id)kSecAttrService: uuidKey,
-                                                     (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
+            saveQuery = (CFDictionaryRef)CFBridgingRetain( @{(__bridge id)kSecAttrAccount: uuidKey,
+                                                             (__bridge id)kSecAttrService: uuidKey,
+                                                             (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
 #if !TARGET_IPHONE_SIMULATOR
-                                                     (__bridge id)kSecAttrAccessGroup: accessGroup,
+                                                             (__bridge id)kSecAttrAccessGroup: accessGroup,
 #endif // TARGET_IPHONE_SIMULATOR
-                                                     (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-                                                     (__bridge id)kSecValueData: deviceIdData,
-                                                     };
+                                                             (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+                                                             (__bridge id)kSecValueData: deviceIdData,
+                                                             });
         };
 
         status = SecItemAdd(saveQuery, NULL);
+        checkMissingAccessControl(status);
         if (status != errSecSuccess)
         {
             return nil;
         }
 
-        value = deviceIdData.hexadecimal;
-
-        RDebugLog(@"Unique device identifier: %@", value);
+        value = hexadecimal(deviceIdData);
         return value;
     }
 }
@@ -207,8 +236,6 @@ static NSString *const uuidKey  = RSDKDeviceInformationDomain @"uuid";
         struct utsname systemInfo;
         uname(&systemInfo);
         value = [NSString.alloc initWithUTF8String:systemInfo.machine];
-
-        RDebugLog(@"Model identifier: %@", value);
     });
 
     return value;

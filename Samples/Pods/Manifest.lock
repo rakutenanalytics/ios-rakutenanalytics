@@ -2,15 +2,14 @@ PODS:
   - FontAwesomeKit/Core (2.1.8)
   - FontAwesomeKit/FontAwesome (2.1.8):
     - FontAwesomeKit/Core
-  - FXForms (1.2.3)
+  - FXForms (1.2.10)
   - RESideMenu (4.0.7)
-  - RSDKAnalytics (2.2.2):
-    - RSDKDeviceInformation (~> 1.2.0)
+  - RSDKAnalytics (2.2.3):
+    - RSDKDeviceInformation (~> 1.3.1)
     - RSDKSupport (~> 2.1.5)
-  - RSDKDeviceInformation (1.2.0):
-    - RSDKSupport (~> 2.1.5)
+  - RSDKDeviceInformation (1.3.1)
   - RSDKSupport (2.1.5):
-    - RSDKSupport/Core
+    - RSDKSupport/Core (= 2.1.5)
   - RSDKSupport/Core (2.1.5):
     - RSDKSupport/Modeling
     - RSDKSupport/Networking
@@ -37,12 +36,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   FontAwesomeKit: a2edea3111dab107b4cc43b85881b404eb063385
-  FXForms: 1ce92711525fb35950e18bc197dbe0fcd02e01c6
+  FXForms: 758fe50c354f10e707cd1a47e5c4ac9198404427
   RESideMenu: a9c1cd2e64e60e1d3166ddac01a83e215a0e4d30
-  RSDKAnalytics: a968c7388fbd51c58933490388aa07f69a78b0a5
-  RSDKDeviceInformation: b8a349d68ea6a35e6ed9825f2d8e2e94e0d5efff
+  RSDKAnalytics: 9995e3499b67b1fe0a3965b077c9e43d7df454a9
+  RSDKDeviceInformation: a1062694e6b876b339791d3867287adeaa51c631
   RSDKSupport: 1fa559ec054c67ff77112906d666c1e8c2d5d4c1
   SVProgressHUD: 5034c6e22b8c2ca3e09402e48d41ed0340aa1c50
   TestFlightSDK: 0c24c533748d0d84bfe7a3cb6036fa79124d84ee
 
-COCOAPODS: 0.34.4
+COCOAPODS: 0.35.0.rc1

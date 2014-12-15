@@ -1,10 +1,11 @@
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
 CLANG_ENABLE_MODULES = YES
 CLANG_MODULES_AUTOLINK = YES
 GCC_C_LANGUAGE_STANDARD = gnu99
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/FXForms" "${PODS_ROOT}/Headers/Public/FontAwesomeKit" "${PODS_ROOT}/Headers/Public/RESideMenu" "${PODS_ROOT}/Headers/Public/RSDKAnalytics" "${PODS_ROOT}/Headers/Public/RSDKDeviceInformation" "${PODS_ROOT}/Headers/Public/RSDKSupport" "${PODS_ROOT}/Headers/Public/SVProgressHUD" "${PODS_ROOT}/Headers/Public/TestFlightSDK"
 LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/TestFlightSDK"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/FXForms" -isystem "${PODS_ROOT}/Headers/Public/FontAwesomeKit" -isystem "${PODS_ROOT}/Headers/Public/RESideMenu" -isystem "${PODS_ROOT}/Headers/Public/RSDKAnalytics" -isystem "${PODS_ROOT}/Headers/Public/RSDKDeviceInformation" -isystem "${PODS_ROOT}/Headers/Public/RSDKSupport" -isystem "${PODS_ROOT}/Headers/Public/SVProgressHUD" -isystem "${PODS_ROOT}/Headers/Public/TestFlightSDK" '-DRMSDK_ANALYTICS_VERSION=2.2.2'
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/FXForms" -isystem "${PODS_ROOT}/Headers/Public/FontAwesomeKit" -isystem "${PODS_ROOT}/Headers/Public/RESideMenu" -isystem "${PODS_ROOT}/Headers/Public/RSDKAnalytics" -isystem "${PODS_ROOT}/Headers/Public/RSDKDeviceInformation" -isystem "${PODS_ROOT}/Headers/Public/RSDKSupport" -isystem "${PODS_ROOT}/Headers/Public/SVProgressHUD" -isystem "${PODS_ROOT}/Headers/Public/TestFlightSDK" '-DRMSDK_ANALYTICS_VERSION=2.2.3' '-DRMSDK_DEVICE_INFORMATION_VERSION=1.3.1'
 OTHER_LDFLAGS = -ObjC -l"Pods-FXForms" -l"Pods-FontAwesomeKit" -l"Pods-RESideMenu" -l"Pods-RSDKAnalytics" -l"Pods-RSDKDeviceInformation" -l"Pods-RSDKSupport" -l"Pods-SVProgressHUD" -l"Pods-TestFlightSDK" -l"TestFlight" -l"sqlite3" -l"z" -framework "CoreText" -framework "QuartzCore" -framework "UIKit"
 OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
 PODS_ROOT = ${SRCROOT}/../Pods

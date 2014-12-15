@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Mobile Vision & Product Group | SDTD" => "prj-rmsdk@mail.rakuten.com" }
-  s.version      = "2.2.2"
+  s.version      = "2.2.3"
   s.summary      = "Rakuten Mobile SDK's analytics module"
   s.homepage     = "https://rmsdk.azurewebsites.net/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
     'CLANG_ENABLE_MODULES'    => 'YES',
     'CLANG_MODULES_AUTOLINK'  => 'YES',
     'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
   }
 
@@ -20,7 +21,7 @@ Pod::Spec.new do |s|
   s.ios.libraries        = 'sqlite3', 'z'
 
   s.dependency 'RSDKSupport',           '~> 2.1.5'
-  s.dependency 'RSDKDeviceInformation', '~> 1.2.0'
+  s.dependency 'RSDKDeviceInformation', '~> 1.3.1'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
