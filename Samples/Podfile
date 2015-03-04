@@ -9,6 +9,6 @@ pod 'FXForms',                    '~>1.2.3'
 pod 'SVProgressHUD',              '~>1.0'
 pod 'RESideMenu',                 '~>4.0.7'
 pod 'FontAwesomeKit/FontAwesome', '~>2.1.5'
-pod 'TestFlightSDK',              '~>3.0.2'
+pod 'HockeySDK',                  '~>3.6.2'
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

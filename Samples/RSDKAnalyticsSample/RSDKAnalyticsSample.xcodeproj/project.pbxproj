@@ -76,19 +76,26 @@
 			remoteGlobalIDString = C7A7A7BA8C4F4498AB2884DE;
 			remoteInfo = "Pods-SVProgressHUD";
 		};
-		69C1C86F1941571000EE4CAE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AAAC8A40FEA248348342DDF4;
-			remoteInfo = "Pods-TestFlightSDK";
-		};
 		69C1C8711941571700EE4CAE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6BEBD34258B72DFCB76F2DDB;
+			remoteGlobalIDString = 74CC23599054499DB20D430F;
 			remoteInfo = Pods;
+		};
+		740036FC1AA7B54800A5C07D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 39309D51B574B0017C9B8AA8;
+			remoteInfo = HockeySDKResources;
+		};
+		740036FE1AA7B54800A5C07D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 69C1C8501941571000EE4CAE /* Pods.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EDD60E07EE2F124354FE532D;
+			remoteInfo = "Pods-HockeySDK";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -189,15 +196,16 @@
 		69C1C8511941571000EE4CAE /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				740036FD1AA7B54800A5C07D /* HockeySDKResources.bundle */,
 				69C1C85E1941571000EE4CAE /* libPods.a */,
 				69C1C8601941571000EE4CAE /* libPods-FXForms.a */,
 				6986A4951957F15D00E60F05 /* libPods-FontAwesomeKit.a */,
+				740036FF1AA7B54800A5C07D /* libPods-HockeySDK.a */,
 				69C1C8661941571000EE4CAE /* libPods-RESideMenu.a */,
 				69C1C8681941571000EE4CAE /* libPods-RSDKAnalytics.a */,
 				69C1C86A1941571000EE4CAE /* libPods-RSDKDeviceInformation.a */,
 				69C1C86C1941571000EE4CAE /* libPods-RSDKSupport.a */,
 				69C1C86E1941571000EE4CAE /* libPods-SVProgressHUD.a */,
-				69C1C8701941571000EE4CAE /* libPods-TestFlightSDK.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -335,11 +343,18 @@
 			remoteRef = 69C1C86D1941571000EE4CAE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		69C1C8701941571000EE4CAE /* libPods-TestFlightSDK.a */ = {
+		740036FD1AA7B54800A5C07D /* HockeySDKResources.bundle */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = HockeySDKResources.bundle;
+			remoteRef = 740036FC1AA7B54800A5C07D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		740036FF1AA7B54800A5C07D /* libPods-HockeySDK.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libPods-TestFlightSDK.a";
-			remoteRef = 69C1C86F1941571000EE4CAE /* PBXContainerItemProxy */;
+			path = "libPods-HockeySDK.a";
+			remoteRef = 740036FE1AA7B54800A5C07D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
