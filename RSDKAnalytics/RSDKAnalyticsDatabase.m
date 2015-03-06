@@ -7,11 +7,6 @@
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import <sqlite3.h>
 
-#if DEBUG
-#define debugMessage NSLog
-#else
-#define debugMessage
-#endif
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -178,7 +173,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
         {
             if (sqlite3_exec(database, "begin exclusive transaction", 0, 0, 0) != SQLITE_OK)
             {
-                debugMessage(@"Failed to begin transaction: %s", sqlite3_errmsg(database));
+                RSDKAnalyticsDebugLog(@"Failed to begin transaction: %s", sqlite3_errmsg(database));
             }
             else
             {
@@ -211,7 +206,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
                      * FIXME: What can we do? It is a *very* unlikely scenario.
                      * Should we delete the database and start afresh?
                      */
-                    debugMessage(@"Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
+                    RSDKAnalyticsDebugLog(@"Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
                 }
             }
         }

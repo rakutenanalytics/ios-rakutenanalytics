@@ -15,12 +15,6 @@
 #import <RakutenAPIs/RakutenAPIs.h>
 #import "RSDKAnalyticsDatabase.h"
 
-#if DEBUG
-#define debugMessage NSLog
-#else
-#define debugMessage
-#endif
-
 ////////////////////////////////////////////////////////////////////////////
 
 // Externs
@@ -381,17 +375,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)locationManagerDidPauseLocationUpdates:(CLLocationManager * __unused)manager
 {
-    debugMessage(@"Location updates paused.");
+    RSDKAnalyticsDebugLog(@"Location updates paused.");
 }
 
 - (void)locationManagerDidResumeLocationUpdates:(CLLocationManager * __unused)manager
 {
-    debugMessage(@"Location updates resumed.");
+    RSDKAnalyticsDebugLog(@"Location updates resumed.");
 }
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    debugMessage(@"Failed to acquire device location: %@", error.localizedDescription);
+    RSDKAnalyticsDebugLog(@"Failed to acquire device location: %@", error.localizedDescription);
 }
 
 //--------------------------------------------------------------------------
@@ -429,7 +423,7 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
 
     if (updated)
     {
-        debugMessage(@"Location services' authorization status changed to [%@].", CLAuthorizationStatusToString(status));
+        RSDKAnalyticsDebugLog(@"Location services' authorization status changed to [%@].", CLAuthorizationStatusToString(status));
     }
 #endif
 
@@ -455,7 +449,7 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
         return;
     }
 
-    debugMessage(@"Start monitoring location");
+    RSDKAnalyticsDebugLog(@"Start monitoring location");
     [self.locationManager startUpdatingLocation];
     self.locationManagerIsUpdating = YES;
 }
@@ -468,7 +462,7 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
         return;
     }
 
-    debugMessage(@"Stop monitoring location");
+    RSDKAnalyticsDebugLog(@"Stop monitoring location");
     [self.locationManager stopUpdatingLocation];
     self.locationManagerIsUpdating = NO;
 }

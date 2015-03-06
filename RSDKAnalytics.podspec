@@ -21,7 +21,6 @@ Pod::Spec.new do |s|
   s.ios.libraries        = 'sqlite3', 'z'
 
   s.dependency 'RakutenAPIs',           '~> 1.0'
-  s.dependency 'RSDKDeviceInformation', '~> 1.3.1'
+  s.dependency 'RSDKDeviceInformation', '~> 1.4'
 end
-
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
