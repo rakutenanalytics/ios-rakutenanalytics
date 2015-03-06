@@ -1,4 +1,8 @@
-@import Foundation;
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
 @class RSDKAnalyticsRecord;
 
@@ -7,13 +11,13 @@
  *
  * This class handles:
  *
- *  - Enabling or disabling **location tracking** with RSDKAnalyticsManager::locationTrackingEnabled;
- *  - **Spooling** RSDKAnalyticsRecord instances with RSDKAnalyticsManager::spoolRecord:.
+ *  - Enabling or disabling **location tracking** with @ref RSDKAnalyticsManager::locationTrackingEnabled;
+ *  - **Spooling** @ref RSDKAnalyticsRecord instances with @ref RSDKAnalyticsManager::spoolRecord:.
  *  - **Gathering system data** that it merges with each record it spools. See the next section.
  *
  * ## Automatically gathered system data
  * The fields below, documented in the [Rakuten Analytics Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl),
- * are automatically merged with the properties of each RSDKAnalyticsRecord that gets spooled:
+ * are automatically merged with the properties of each @ref RSDKAnalyticsRecord that gets spooled:
  *
  *  Field         | Long field name
  *  -------------:|:-------------------------------
@@ -38,8 +42,7 @@
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
  */
-
-@interface RSDKAnalyticsManager : NSObject
+RMSDK_EXPORT @interface RSDKAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
@@ -97,7 +100,7 @@
 /**
  * Control whether the SDK should record the device's location or not.
  *
- * This property is set to `NO` by default, which means RSDKAnalyticsManager will
+ * This property is set to `NO` by default, which means @ref RSDKAnalyticsManager will
  * not attempt to record the device's location.
  *
  * @warning If the application has not already requested access to the location
@@ -124,7 +127,7 @@
  * @ingroup AnalyticsConstants
  */
 
-FOUNDATION_EXTERN NSString *const RSDKAnalyticsWillUploadNotification;
+RMSDK_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
 
 
 /**
@@ -133,12 +136,12 @@ FOUNDATION_EXTERN NSString *const RSDKAnalyticsWillUploadNotification;
  * `object` is a the JSON payload that was being uploaded, in its unserialized
  * NSArray form.
  * `userInfo` contains a NSError instance under the key `NSUnderlyingErrorKey`. Connection
- * errors use the `NSURLErrorDomain` domain. Other errors use @ref RSDKAnalyticsErrorDomain.
+ * errors use the `NSURLErrorDomain` domain. Other errors use @ref RakutenAPIErrorDomain.
  *
  * @ingroup AnalyticsConstants
  */
 
-FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadFailureNotification;
+RMSDK_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
 
 
 /**
@@ -150,32 +153,4 @@ FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadFailureNotification;
  * @ingroup AnalyticsConstants
  */
 
-FOUNDATION_EXTERN NSString *const RSDKAnalyticsUploadSuccessNotification;
-
-
-
-/// @name Errors
-
-
-/**
- * Error domain.
- *
- * @ingroup AnalyticsConstants
- */
-
-FOUNDATION_EXTERN NSString *const RSDKAnalyticsErrorDomain;
-
-
-/**
- * Error codes
- *
- * @enum RSDKAnalyticsError
- * @ingroup AnalyticsConstants
- */
-
-typedef NS_ENUM(NSInteger, RSDKAnalyticsError)
-{
-    /// Server sent a status that wasn't 200.
-    RSDKAnalyticsErrorWrongResponseStatus
-};
-
+RMSDK_EXPORT NSString *const RSDKAnalyticsUploadSuccessNotification;

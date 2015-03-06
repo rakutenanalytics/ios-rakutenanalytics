@@ -1,4 +1,8 @@
-@import Foundation;
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
 /**
  * Hold information about a shop item.
@@ -9,7 +13,7 @@
  *
  * @class RSDKAnalyticsItem RSDKAnalyticsItem.h RSDKAnalytics/RSDKAnalyticsItem.h
  */
-@interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
+RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Item identifier. Not set by default.

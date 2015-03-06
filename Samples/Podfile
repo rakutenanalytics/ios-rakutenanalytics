@@ -1,12 +1,12 @@
 workspace 'Samples.xcworkspace'
 xcodeproj 'RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj'
 
-platform :ios, "6.0"
+platform :ios, "7.0"
 pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
 
 # Extra pods this sample uses
 pod 'FXForms',                    '~>1.2.3'
-pod 'SVProgressHUD',              '~>1.0'
+pod 'SVProgressHUD',              '~>1.0.0'
 pod 'RESideMenu',                 '~>4.0.7'
 pod 'FontAwesomeKit/FontAwesome', '~>2.1.5'
 pod 'HockeySDK',                  '~>3.6.2'

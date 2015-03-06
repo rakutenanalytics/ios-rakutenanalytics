@@ -1,4 +1,8 @@
-@import Foundation;
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
 @class RSDKAnalyticsItem;
 
@@ -56,28 +60,28 @@ typedef NS_ENUM(NSInteger, RSDKAnalyticsSearchMethod)
  *
  * @ingroup AnalyticsConstants
  */
-FOUNDATION_EXTERN const int64_t RSDKAnalyticsInvalidAffiliateId;
+RMSDK_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId;
 
 /**
  * Special value for RSDKAnalyticsRecord.checkpoints, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-FOUNDATION_EXTERN const int64_t RSDKAnalyticsInvalidCheckpoints;
+RMSDK_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints;
 
 /**
  * Special value for RSDKAnalyticsRecord.cartState, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-FOUNDATION_EXTERN const uint64_t RSDKAnalyticsInvalidCartState;
+RMSDK_EXPORT const uint64_t RSDKAnalyticsInvalidCartState;
 
 /**
  * Special value for RSDKAnalyticsRecord.navigationTime, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-FOUNDATION_EXTERN const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
+RMSDK_EXPORT const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 
 
 /**
@@ -100,7 +104,7 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  *
  * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
  */
-@interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
+RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Create a new record object.

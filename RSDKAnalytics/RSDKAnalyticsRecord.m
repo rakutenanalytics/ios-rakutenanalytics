@@ -1,14 +1,8 @@
-//
-//  RSDKAnalyticsRecord.m
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
-#import "RSDKAnalyticsRecord.h"
-#import "RSDKAnalyticsItem.h"
-#import <RSDKSupport/RSDKAssert.h>
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalytics.h>
 
 //--------------------------------------------------------------------------
 // Definitions for the externs declared in the header file
@@ -32,7 +26,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (instancetype)init
 {
-    RSDKALWAYSASSERT(@"Please use +[RSDKAnalyticsRecord recordWithAccountId:serviceId:]");
+    [self doesNotRecognizeSelector:_cmd];
     return nil;
 }
 
@@ -328,19 +322,16 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
 - (void)setCheckoutStage:(RSDKAnalyticsCheckoutStage)checkoutStage
 {
-    if (checkoutStage != RSDKAnalyticsCheckoutStage1Login &&
+    BOOL notACheckoutStage =
+        checkoutStage != RSDKAnalyticsCheckoutStage1Login           &&
         checkoutStage != RSDKAnalyticsCheckoutStage2ShippingDetails &&
-        checkoutStage != RSDKAnalyticsCheckoutStage3OrderSummary &&
-        checkoutStage != RSDKAnalyticsCheckoutStage4Payment &&
-        checkoutStage != RSDKAnalyticsCheckoutStage5Verification &&
-        checkoutStage != RSDKAnalyticsInvalidCheckoutStage)
-    {
-        RSDKALWAYSASSERT(@"checkoutStage: Expected a RSDKAnalyticsCheckoutStage, got %d", (int) checkoutStage);
-        _checkoutStage = RSDKAnalyticsInvalidCheckoutStage;
-        return;
-    }
+        checkoutStage != RSDKAnalyticsCheckoutStage3OrderSummary    &&
+        checkoutStage != RSDKAnalyticsCheckoutStage4Payment         &&
+        checkoutStage != RSDKAnalyticsCheckoutStage5Verification    &&
+        checkoutStage != RSDKAnalyticsInvalidCheckoutStage;
 
-    _checkoutStage = checkoutStage;
+    NSAssert(!notACheckoutStage, @"checkoutStage: Expected a RSDKAnalyticsCheckoutStage, got %d", (int)checkoutStage);
+    _checkoutStage = notACheckoutStage ? RSDKAnalyticsInvalidCheckoutStage : checkoutStage;
 }
 
 //--------------------------------------------------------------------------
@@ -352,9 +343,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         // Silence -Wunused when DEBUG is not defined
         (void)index;
 
-        BOOL ok = [item isKindOfClass:NSString.class];
-        RSDKASSERTIFNOT(ok, @"componentId[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
-        return ok;
+        BOOL isString = [item isKindOfClass:NSString.class];
+        NSParameterAssert(isString);
+        return isString;
     }];
 }
 
@@ -367,7 +358,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         // Silence -Wunused when DEBUG is not defined
         (void)index;
 
-        RSDKASSERTIFNOT([item isKindOfClass:NSNumber.class], @"componentTop[%i]: Expected a NSNumber, found a %@", index, NSStringFromClass(item.class));
+        NSAssert([item isKindOfClass:NSNumber.class], @"componentTop[%i]: Expected a NSNumber, found a %@", index, NSStringFromClass(item.class));
         return [item isKindOfClass:NSNumber.class];
     }];
 }
@@ -386,14 +377,14 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     if (currencyCode)
     {
         NSString *normalizedCurrencyCode = currencyCode.uppercaseString;
+        BOOL isRecognizedISO4217CurrencyCode = [ISOCurrencyCodes containsObject:normalizedCurrencyCode];
 
-        if ([ISOCurrencyCodes containsObject:normalizedCurrencyCode])
+        NSAssert(isRecognizedISO4217CurrencyCode, @"\"%@\" is not a recognized ISO-4217 currency code", currencyCode);
+        if (isRecognizedISO4217CurrencyCode)
         {
             _currencyCode = normalizedCurrencyCode;
             return;
         }
-
-        RSDKALWAYSASSERT(@"\"%@\" is not a recognized ISO-4217 currency code", currencyCode);
     }
 
     _currencyCode = nil;
@@ -486,7 +477,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         // Silence -Wunused when DEBUG is not defined
         (void)index;
 
-        RSDKASSERTIFNOT([item isKindOfClass:NSString.class], @"scrollDivId[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
+        NSAssert([item isKindOfClass:NSString.class], @"scrollDivId[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
         return [item isKindOfClass:NSString.class];
     }];
 }
@@ -506,7 +497,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         // Silence -Wunused when DEBUG is not defined
         (void)index;
 
-        RSDKASSERTIFNOT([item isKindOfClass:NSString.class], @"scrollViewed[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
+        NSAssert([item isKindOfClass:NSString.class], @"scrollViewed[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
         return [item isKindOfClass:NSString.class];
     }];
 }
@@ -527,31 +518,21 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     // Silence -Wunused when DEBUG is not defined
     (void)propertyName;
 
-    if (!string)
-    {
-        return nil;
-    }
+    if (!string) { return nil; }
 
-    if (![string isKindOfClass:NSString.class])
-    {
-        RSDKALWAYSASSERT(@"%@: Expected a NSString, found a %@", propertyName, NSStringFromClass(string.class));
-        return nil;
-    }
+    NSAssert([string isKindOfClass:NSString.class], @"%@: Expected a NSString, found a %@", propertyName, NSStringFromClass(string.class));
+    if (![string isKindOfClass:NSString.class]) { return nil; }
 
     unsigned long length = string.length;
-    if (maxLength >= 0 && length > (unsigned long)maxLength)
-    {
-        RSDKALWAYSASSERT(@"%@: string too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
-        return nil;
-    }
+    BOOL tooLong = maxLength >= 0 && length > (unsigned long)maxLength;
+    NSAssert(!tooLong, @"%@: string too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
+    if (tooLong) { return nil; }
 
     if (predicate)
     {
-        if (!predicate(string))
-        {
-            RSDKALWAYSASSERT(@"%@: validation failed", propertyName);
-            return nil;
-        }
+        BOOL passedPredicate = predicate(string);
+        NSAssert(passedPredicate, @"%@: validation failed", propertyName);
+        if (!passedPredicate) { return nil; }
     }
 
     // Ensure the returned value is immutable
@@ -568,18 +549,13 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         return nil;
     }
 
-    if (![array isKindOfClass:NSArray.class])
-    {
-        RSDKALWAYSASSERT(@"%@: Expected a NSArray, found a %@", propertyName, NSStringFromClass(array.class));
-        return nil;
-    }
+    NSAssert([array isKindOfClass:NSArray.class], @"%@: Expected a NSArray, found a %@", propertyName, NSStringFromClass(array.class));
+    if (![array isKindOfClass:NSArray.class]) { return nil; }
 
     unsigned long length = array.count;
-    if (maxLength >= 0 && length > (unsigned long)maxLength)
-    {
-        RSDKALWAYSASSERT(@"%@: array too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
-        return nil;
-    }
+    BOOL tooLong = maxLength >= 0 && length > (unsigned long)maxLength;
+    NSAssert(!tooLong, @"%@: array too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
+    if (tooLong) { return nil; }
 
     if (itemValidator)
     {
@@ -587,11 +563,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         for (id item in array)
         {
             ++index;
-            if (!itemValidator(item, index))
-            {
-                RSDKALWAYSASSERT(@"%@[%i]: validation failed", propertyName, index);
-                return nil;
-            }
+            BOOL passed = itemValidator(item, index);
+            NSAssert(passed, @"%@[%i]: validation failed", propertyName, index);
+            if (!passed) { return nil; }
         }
     }
 

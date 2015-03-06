@@ -1,12 +1,7 @@
-//
-//  RSDKAnalyticsManager.m
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
-
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
 @import CoreGraphics;
 @import CoreLocation;
 @import CoreTelephony;
@@ -15,18 +10,16 @@
 @import UIKit;
 @import SystemConfiguration;
 
-#import <sqlite3.h>
-
-#import <RSDKSupport/NSData+RAExtensions.h>
-#import <RSDKSupport/NSString+RAExtensions.h>
-#import <RSDKSupport/RLoggingHelper.h>
-#import <RSDKSupport/RSDKAssert.h>
-
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
-
-#import "RSDKAnalytics.h"
+#import <RSDKAnalytics/RSDKAnalytics.h>
+#import <RakutenAPIs/RakutenAPIs.h>
 #import "RSDKAnalyticsDatabase.h"
 
+#if DEBUG
+#define debugMessage NSLog
+#else
+#define debugMessage
+#endif
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -35,7 +28,6 @@
 NSString *const RSDKAnalyticsWillUploadNotification    = @"RSDKAnalyticsWillUploadNotification";
 NSString *const RSDKAnalyticsUploadFailureNotification = @"RSDKAnalyticsUploadFailureNotification";
 NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSuccessNotification";
-NSString *const RSDKAnalyticsErrorDomain               = @"RSDKAnalyticsErrorDomain";
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -221,7 +213,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (instancetype)init
 {
-    RSDKALWAYSASSERT(@"%1$@ is a singleton. Please use [%1$@ sharedInstance].", NSStringFromClass(self.class));
+    [self doesNotRecognizeSelector:_cmd];
     return nil;
 }
 
@@ -387,28 +379,38 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     [self _startStopMonitoringLocationIfNeeded];
 }
 
-//--------------------------------------------------------------------------
-
-#if DEBUG
 - (void)locationManagerDidPauseLocationUpdates:(CLLocationManager * __unused)manager
 {
-    RDebugLog(@"[RMSDK] Analytics: Location updates just paused.");
+    debugMessage(@"Location updates paused.");
 }
 
 - (void)locationManagerDidResumeLocationUpdates:(CLLocationManager * __unused)manager
 {
-    RDebugLog(@"[RMSDK] Analytics: Location updates just resumed.");
+    debugMessage(@"Location updates resumed.");
 }
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    RDebugLog(@"[RMSDK] Analytics: Failed to acquire device location: %@", error.localizedDescription);
+    debugMessage(@"Failed to acquire device location: %@", error.localizedDescription);
 }
-#endif
 
 //--------------------------------------------------------------------------
 
 #pragma mark - Private methods
+
+NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
+{
+    switch (status)
+    {
+        case kCLAuthorizationStatusNotDetermined:       return @"Not Determined";
+        case kCLAuthorizationStatusRestricted:          return @"Restricted";
+        case kCLAuthorizationStatusDenied:              return @"Denied";
+        case kCLAuthorizationStatusAuthorizedAlways:    return @"Authorized Always";
+        case kCLAuthorizationStatusAuthorizedWhenInUse: return @"Authorized When In Use";
+        default: return [NSString stringWithFormat:@"Value (%i)", status];
+    }
+}
+
 - (void)_startStopMonitoringLocationIfNeeded
 {
     CLAuthorizationStatus status = CLLocationManager.authorizationStatus;
@@ -427,34 +429,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     if (updated)
     {
-        NSString *statusString = nil;
-        switch (status)
-        {
-            case kCLAuthorizationStatusNotDetermined:
-                statusString = @"Not Determined";
-                break;
-
-            case kCLAuthorizationStatusRestricted:
-                statusString = @"Restricted";
-                break;
-
-            case kCLAuthorizationStatusDenied:
-                statusString = @"Denied";
-                break;
-
-            case kCLAuthorizationStatusAuthorizedAlways:
-                statusString = @"Authorized Always";
-                break;
-
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
-                statusString = @"Authorized When In Use";
-                break;
-
-            default:
-                statusString = [NSString stringWithFormat:@"Value (%i)", status];
-                break;
-        }
-        RDebugLog(@"[RMSDK] Analytics: Location services' authorization status changed to [%@].", statusString);
+        debugMessage(@"Location services' authorization status changed to [%@].", CLAuthorizationStatusToString(status));
     }
 #endif
 
@@ -480,7 +455,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         return;
     }
 
-    RDebugLog(@"[RMSDK] Analytics: Start monitoring location");
+    debugMessage(@"Start monitoring location");
     [self.locationManager startUpdatingLocation];
     self.locationManagerIsUpdating = YES;
 }
@@ -493,7 +468,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         return;
     }
 
-    RDebugLog(@"[RMSDK] Analytics: Stop monitoring location");
+    debugMessage(@"Stop monitoring location");
     [self.locationManager stopUpdatingLocation];
     self.locationManagerIsUpdating = NO;
 }
@@ -683,8 +658,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     // Add record to database and schedule an upload
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDic options:0 error:0];
-    RSDKASSERTIFNOT(jsonData, @"Failed to serialize to JSON: %@", jsonDic);
-
     typeof(self) __weak weakSelf = self;
     [RSDKAnalyticsDatabase addRecord:jsonData completion:^
     {
@@ -880,11 +853,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 return;
             }
 
-            error = [NSError errorWithDomain:RSDKAnalyticsErrorDomain
-                                        code:RSDKAnalyticsErrorWrongResponseStatus
-                                    userInfo:@{NSURLErrorFailingURLErrorKey: response.URL,
-                                               NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Expected status code == 200, got %ld", (long)httpResponse.statusCode]
-                                               }];
+            error = [NSError errorWithDomain:RakutenAPIErrorDomain
+                                        code:RakutenAPIInvalidPlatformResponseError
+                                    userInfo:@{NSLocalizedDescriptionKey: @"invalid_response",
+                                              NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Expected status code == 200, got %ld", (long)httpResponse.statusCode]}];
         }
 
         id userInfo = nil;
@@ -929,7 +901,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)_startNewSession
 {
-    self.sessionCookie = NSString.stringWithUUID;
+    self.sessionCookie = NSUUID.UUID.UUIDString;
 
     /*
      * Resume location updates if needed.

@@ -60,6 +60,7 @@
 		65215BDECB0E967DF38D03A7 /* libPods-RSDKAnalyticsTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RSDKAnalyticsTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6902034D1929E4F200DE6226 /* RSDKAnalyticsRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecord.h; sourceTree = "<group>"; };
 		6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecord.m; sourceTree = "<group>"; };
+		6919CEB41AA9E2D300F92670 /* RSDKAnalyticsDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsDefines.h; sourceTree = "<group>"; };
 		691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsDatabase.h; sourceTree = "<group>"; };
 		691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsDatabase.m; sourceTree = "<group>"; };
 		692F6B1F192AE2C10075F70D /* RSDKAnalyticsRecordTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordTests.m; sourceTree = "<group>"; };
@@ -141,14 +142,15 @@
 		69A397C91924AB5E0002B258 /* RSDKAnalytics */ = {
 			isa = PBXGroup;
 			children = (
-				6940F59919BE83AE0039BB8E /* RSDKAnalyticsItem.h */,
-				6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */,
 				69F0A656192C6B0B00E82438 /* RSDKAnalytics.h */,
 				69F0A659192C998F00E82438 /* RSDKAnalytics.m */,
-				69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */,
-				69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */,
 				691ACB251925FFCA008857A4 /* RSDKAnalyticsDatabase.h */,
 				691ACB261925FFCA008857A4 /* RSDKAnalyticsDatabase.m */,
+				6919CEB41AA9E2D300F92670 /* RSDKAnalyticsDefines.h */,
+				6940F59919BE83AE0039BB8E /* RSDKAnalyticsItem.h */,
+				6940F59A19BE83AE0039BB8E /* RSDKAnalyticsItem.m */,
+				69A397CC1924AB5E0002B258 /* RSDKAnalyticsManager.h */,
+				69A397CE1924AB5E0002B258 /* RSDKAnalyticsManager.m */,
 				6902034D1929E4F200DE6226 /* RSDKAnalyticsRecord.h */,
 				6902034E1929E4F200DE6226 /* RSDKAnalyticsRecord.m */,
 			);

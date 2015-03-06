@@ -1,4 +1,8 @@
-@import Foundation;
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
 /**
  * Internal interface used to centralize access to the analytics database.
@@ -9,7 +13,7 @@
  *
  * @class RSDKAnalyticsDatabase RSDKAnalyticsDatabase.h RSDKAnalytics/RSDKAnalyticsDatabase.h
  */
-@interface RSDKAnalyticsDatabase : NSObject
+RMSDK_EXPORT @interface RSDKAnalyticsDatabase : NSObject
 
 /**
  * Add a record to the database.

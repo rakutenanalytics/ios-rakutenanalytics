@@ -1,16 +1,17 @@
-//
-//  RSDKAnalyticsDatabase.m
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/16/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
 
 #import "RSDKAnalyticsDatabase.h"
-#import <RSDKSupport/RLoggingHelper.h>
-#import <RSDKSupport/RSDKAssert.h>
+#import <RSDKAnalytics/RSDKAnalytics.h>
 #import <sqlite3.h>
 
+#if DEBUG
+#define debugMessage NSLog
+#else
+#define debugMessage
+#endif
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -177,7 +178,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
         {
             if (sqlite3_exec(database, "begin exclusive transaction", 0, 0, 0) != SQLITE_OK)
             {
-                RDebugLog(@"[RMSDK] Analytics: Failed to begin transaction: %s", sqlite3_errmsg(database));
+                debugMessage(@"Failed to begin transaction: %s", sqlite3_errmsg(database));
             }
             else
             {
@@ -210,8 +211,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
                      * FIXME: What can we do? It is a *very* unlikely scenario.
                      * Should we delete the database and start afresh?
                      */
-
-                    RDebugLog(@"[RMSDK] Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
+                    debugMessage(@"Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
                 }
             }
         }
@@ -249,7 +249,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 + (sqlite3*)database
 {
-    static sqlite3 *database;
+    static sqlite3 *database = 0;
     static dispatch_once_t once;
     dispatch_once(&once, ^
     {
@@ -263,8 +263,8 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
         if(sqlite3_open(databasePath.UTF8String, &database) != SQLITE_OK)
         {
-            RSDKALWAYSASSERT(@"Failed to open database: %@", databasePath);
-            database = NULL;
+            database = 0;
+            [NSException raise:NSInternalInconsistencyException format:@"Failed to open database: %@", databasePath];
             return;
         }
 
@@ -276,9 +276,10 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
         NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", RSDKAnalyticsTableName];
         if (sqlite3_exec(database, query.UTF8String, 0, 0, 0) != SQLITE_OK)
         {
-            RSDKALWAYSASSERT(@"Failed to create table: %s", sqlite3_errmsg(database));
             sqlite3_close(database);
-            database = NULL;
+            database = 0;
+
+            [NSException raise:NSInternalInconsistencyException format:@"Failed to create table: %s", sqlite3_errmsg(database)];
             return;
         }
 
@@ -290,7 +291,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
         atexit_b(^
         {
             sqlite3_close(database);
-            database = NULL;
+            database = 0;
         });
     });
 

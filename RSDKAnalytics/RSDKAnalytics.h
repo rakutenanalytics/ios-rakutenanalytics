@@ -1,8 +1,11 @@
-@import Foundation;
-
-#import "RSDKAnalyticsManager.h"
-#import "RSDKAnalyticsRecord.h"
-#import "RSDKAnalyticsItem.h"
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
+#import <RSDKAnalytics/RSDKAnalyticsManager.h>
+#import <RSDKAnalytics/RSDKAnalyticsRecord.h>
+#import <RSDKAnalytics/RSDKAnalyticsItem.h>
 
 /// @name Environment
 
@@ -17,8 +20,7 @@
  * @ingroup AnalyticsConstants
  * @since 2.0.0
  */
-
-FOUNDATION_EXTERN const NSString* const RSDKAnalyticsVersion;
+RMSDK_EXPORT NSString* const RSDKAnalyticsVersion;
 
 #ifdef DOXYGEN
     /**

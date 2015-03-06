@@ -1,11 +1,8 @@
-//
-//  RSDKAnalyticsItem.h
-//  RSDKAnalytics
-//
-//  Created by Julien Cayzac on 5/19/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-#import "RSDKAnalyticsItem.h"
+/*
+ * © Rakuten, Inc.
+ * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
+#import <RSDKAnalytics/RSDKAnalytics.h>
 
 @implementation RSDKAnalyticsItem
 
