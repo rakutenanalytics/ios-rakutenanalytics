@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
  */
 @import CoreGraphics;
 @import CoreLocation;

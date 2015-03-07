@@ -1,11 +1,7 @@
-//
-//  RSDKAnalyticsLeftMenuViewController.h
-//  RSDKAnalyticsSample
-//
-//  Created by Julien Cayzac on 5/22/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
+/*
+ * © Rakuten, Inc.
+ * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
 @import UIKit;
 #import <RESideMenu/RESideMenu.h>
 

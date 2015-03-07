@@ -1,11 +1,7 @@
-//
-//  RSDKAnalyticsRecordForm.h
-//  RSDKAnalyticsSample
-//
-//  Created by Julien Cayzac on 5/26/14.
-//  Copyright (c) 2014 Rakuten, Inc. All rights reserved.
-//
-
+/*
+ * © Rakuten, Inc.
+ * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ */
 #import <FXForms/FXForms.h>
 #import <RSDKAnalytics/RSDKAnalytics.h>
 
