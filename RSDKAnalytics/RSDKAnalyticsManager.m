@@ -621,6 +621,7 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
     jsonDic[@"online"] = self.reachablityStatus != RSDKAnalyticsReachabilityStatusOffline ? @YES : @NO;
 
     // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
+    // note: this throws an exception if the app is not properly configured
     NSString *uniqueDeviceId = RSDKDeviceInformation.uniqueDeviceIdentifier;
     // This can be nil if the device is locked and the value hasn't been retrieved yet
     if (uniqueDeviceId)

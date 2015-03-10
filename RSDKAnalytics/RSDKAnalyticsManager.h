@@ -83,6 +83,12 @@ RMSDK_EXPORT @interface RSDKAnalyticsManager : NSObject
  * @ref RSDKAnalyticsUploadFailureNotification and @ref RSDKAnalyticsUploadSuccessNotification.
  *
  * @param record  Record to be added to the database.
+ * @exception NSObjectInaccessibleException The application's entitlements do not include the
+ *            access group required to access the device identifier. See @ref device-information-keychain-setup "RSDKDeviceInformation: Setting up the keychain"
+ *            for more information.
+ * @exception NSInternalInconsistencyException The application is misconfigured and the first
+ *            access group does not match the application's bundle identifier. See @ref device-information-keychain-setup "RSDKDeviceInformation: Setting up the keychain"
+ *            for more information.
  */
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record;

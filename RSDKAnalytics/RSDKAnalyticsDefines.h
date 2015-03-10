@@ -8,7 +8,7 @@
 
 #ifndef DOXYGEN
     #if DEBUG
-        #define RSDKAnalyticsDebugLog(...) NSLog(__VA_ARGS__)
+        #define RSDKAnalyticsDebugLog(...) NSLog(@"[RMSDK] Analytics: %@", ([NSString stringWithFormat:__VA_ARGS__]))
     #else
         #define RSDKAnalyticsDebugLog(...) do { } while(0)
     #endif
