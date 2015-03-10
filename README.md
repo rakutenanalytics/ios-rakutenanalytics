@@ -7,9 +7,7 @@ automatically send reports to the Rakuten Analytics servers.
  access to be properly configured. Please refer to @ref device-information-keychain-setup "Setting up the keychain"
  for the right way to do so.
 
-@attention Without this, RSDKAnalytics will still work but will not assign the
- `PERSISTENT_COOKIE` RAT field with the device's unique identifier, when
- sending records to RAT servers.
+@attention Without this, RSDKAnalyticsManager::spoolRecord: will raise a `NSObjectInaccessibleException`.
 
 
 ## Usage
