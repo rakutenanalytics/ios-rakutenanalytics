@@ -550,8 +550,13 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
     jsonDic[@"dln"] = [NSLocale.currentLocale objectForKey:NSLocaleLanguageCode];
 
     // {name: "loc", longName: "LOCATION", fieldType: "JSON"}
-    CLLocation *location = self.locationManager.location;
-    if (location && CLLocationCoordinate2DIsValid(location.coordinate))
+    CLLocationCoordinate2D coordinate = kCLLocationCoordinate2DInvalid;
+    CLLocation *location = self.locationTrackingEnabled ? self.locationManager.location : nil;
+    if (location)
+    {
+        coordinate = location.coordinate;
+    }
+    if (CLLocationCoordinate2DIsValid(location.coordinate))
     {
         id locationDic = NSMutableDictionary.new;
 
