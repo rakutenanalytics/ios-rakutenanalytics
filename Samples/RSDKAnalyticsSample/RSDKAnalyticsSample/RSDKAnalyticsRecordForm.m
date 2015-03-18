@@ -23,6 +23,20 @@
 }
 @end
 
+@interface RSDKAnalyticsNumericFieldCell : FXFormTextFieldCell
+@end
+
+@implementation RSDKAnalyticsNumericFieldCell
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    static NSPredicate *predicate;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", @"^[0-9]*$"];
+    });
+    return [predicate evaluateWithObject:string];
+}
+@end
 
 
 /////////////////////////////////////////////////////////////////
@@ -85,13 +99,21 @@
 - (id)accountIdField
 {
     return @{FXFormFieldHeader: @"Environment",
-             @"textField.keyboardType": @(UIKeyboardTypeNumberPad),
-             FXFormFieldValueTransformer: ^(id input)
-             {
-                 return input;
-             }};
+             FXFormFieldType: FXFormFieldTypeUnsigned,
+             FXFormFieldCell: RSDKAnalyticsNumericFieldCell.class};
 }
 
+- (id)serviceIdField
+{
+    return @{FXFormFieldType: FXFormFieldTypeUnsigned,
+             FXFormFieldCell: RSDKAnalyticsNumericFieldCell.class};
+}
+
+- (id)affiliateIdField
+{
+    return @{FXFormFieldType: FXFormFieldTypeUnsigned,
+             FXFormFieldCell: RSDKAnalyticsNumericFieldCell.class};
+}
 
 - (id)contentLocaleField
 {
@@ -181,11 +203,6 @@
              @"textField.keyboardType": @(UIKeyboardTypeDecimalPad)};
 }
 
-- (id)affiliateIdField
-{
-    return @{@"textField.keyboardType": @(UIKeyboardTypeDecimalPad)};
-}
-
 - (id)genreForItemsField
 {
     return @{FXFormFieldHeader: @"Items",
@@ -226,7 +243,8 @@
 
 - (id)cartStateField
 {
-    return @{@"textField.keyboardType": @(UIKeyboardTypeNumberPad)};
+    return @{FXFormFieldType: FXFormFieldTypeUnsigned,
+             FXFormFieldCell: RSDKAnalyticsNumericFieldCell.class};
 }
 
 #pragma mark - Private methods
