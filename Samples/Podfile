@@ -1,3 +1,6 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://git.rakuten-it.com/scm/SLABS/slabs-specs.git'
+
 workspace 'Samples.xcworkspace'
 xcodeproj 'RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj'
 

@@ -556,7 +556,7 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
     {
         coordinate = location.coordinate;
     }
-    if (CLLocationCoordinate2DIsValid(location.coordinate))
+    if (CLLocationCoordinate2DIsValid(coordinate))
     {
         id locationDic = NSMutableDictionary.new;
 
@@ -572,10 +572,10 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
         locationDic[@"tms"] = @(MAX(0ll, (int64_t) round(location.timestamp.timeIntervalSince1970 * 1000.0)));
 
         // {name: "lat", longName: "LATITUDE", fieldType: "DOUBLE", minValue: -90.0, maxValue: 90.0, userSettable: false}
-        locationDic[@"lat"] = @(MIN(90.0, MAX(-90.0, location.coordinate.latitude)));
+        locationDic[@"lat"] = @(MIN(90.0, MAX(-90.0, coordinate.latitude)));
 
         // {name: "long", longName: "LONGITUDE", fieldType: "DOUBLE", minValue: -180.0, maxValue: 180.0, userSettable: false}
-        locationDic[@"long"] = @(MIN(180.0, MAX(-180.0, location.coordinate.longitude)));
+        locationDic[@"long"] = @(MIN(180.0, MAX(-180.0, coordinate.longitude)));
 
         // {name: "speed", longName: "SPEED", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
         locationDic[@"speed"] = @(MAX(0.0, location.speed));
