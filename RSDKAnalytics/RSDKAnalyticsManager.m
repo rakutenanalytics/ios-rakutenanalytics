@@ -392,19 +392,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 #pragma mark - Private methods
 
-NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
-{
-    switch (status)
-    {
-        case kCLAuthorizationStatusNotDetermined:       return @"Not Determined";
-        case kCLAuthorizationStatusRestricted:          return @"Restricted";
-        case kCLAuthorizationStatusDenied:              return @"Denied";
-        case kCLAuthorizationStatusAuthorizedAlways:    return @"Authorized Always";
-        case kCLAuthorizationStatusAuthorizedWhenInUse: return @"Authorized When In Use";
-        default: return [NSString stringWithFormat:@"Value (%i)", status];
-    }
-}
-
 - (void)_startStopMonitoringLocationIfNeeded
 {
     CLAuthorizationStatus status = CLLocationManager.authorizationStatus;
@@ -423,7 +410,17 @@ NS_INLINE NSString *CLAuthorizationStatusToString(CLAuthorizationStatus status)
 
     if (updated)
     {
-        RSDKAnalyticsDebugLog(@"Location services' authorization status changed to [%@].", CLAuthorizationStatusToString(status));
+        NSString *statusString;
+        switch (status)
+        {
+            case kCLAuthorizationStatusNotDetermined:       statusString = @"Not Determined";         break;
+            case kCLAuthorizationStatusRestricted:          statusString = @"Restricted";             break;
+            case kCLAuthorizationStatusDenied:              statusString = @"Denied";                 break;
+            case kCLAuthorizationStatusAuthorizedAlways:    statusString = @"Authorized Always";      break;
+            case kCLAuthorizationStatusAuthorizedWhenInUse: statusString = @"Authorized When In Use"; break;
+            default: statusString = [NSString stringWithFormat:@"Value (%i)", status];
+        }
+        RSDKAnalyticsDebugLog(@"Location services' authorization status changed to [%@].", statusString);
     }
 #endif
 
