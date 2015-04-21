@@ -64,6 +64,15 @@ RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
 @property (nonatomic, copy) NSDictionary *variation;
 
 /**
+ * Item tags. Not set by default.
+ *
+ * @note This value will appended to the **itag** (`Tag array`) RAT parameter. See
+ * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * for more information.
+ */
+@property (nonatomic, copy) NSArray *tags;
+
+/**
  * Create a new item.
  *
  * @param identifier Item identifier.

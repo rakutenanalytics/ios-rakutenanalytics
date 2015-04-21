@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Mobile Vision & Product Group | SDTD" => "prj-rmsdk@mail.rakuten.com" }
-  s.version      = "2.3.4"
+  s.version      = "2.4.0"
   s.summary      = "Rakuten Mobile SDK's analytics module"
   s.homepage     = "https://rmsdk.azurewebsites.net/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }

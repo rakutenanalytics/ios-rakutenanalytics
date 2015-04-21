@@ -27,12 +27,13 @@
         int64_t  signedValue;
     } value64;
 
-    [coder encodeObject:self.identifier forKey:NSStringFromSelector(@selector(identifier))];
+    [coder encodeObject:self.identifier    forKey:NSStringFromSelector(@selector(identifier))];
     value64.unsignedValue = self.quantity;
     [coder encodeInt64:value64.signedValue forKey:NSStringFromSelector(@selector(quantity))];
-    [coder encodeDouble:self.price forKey:NSStringFromSelector(@selector(price))];
-    [coder encodeObject:self.genre forKey:NSStringFromSelector(@selector(genre))];
-    [coder encodeObject:self.variation forKey:NSStringFromSelector(@selector(variation))];
+    [coder encodeDouble:self.price         forKey:NSStringFromSelector(@selector(price))];
+    [coder encodeObject:self.genre         forKey:NSStringFromSelector(@selector(genre))];
+    [coder encodeObject:self.variation     forKey:NSStringFromSelector(@selector(variation))];
+    [coder encodeObject:self.tags          forKey:NSStringFromSelector(@selector(tags))];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
@@ -50,9 +51,10 @@
         value64.signedValue = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(quantity))];
         self.quantity = value64.unsignedValue;
 
-        self.price = [decoder decodeDoubleForKey:NSStringFromSelector(@selector(price))];
-        self.genre = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(genre))];
+        self.price     = [decoder decodeDoubleForKey:NSStringFromSelector(@selector(price))];
+        self.genre     = [decoder decodeObjectOfClass:NSString.class     forKey:NSStringFromSelector(@selector(genre))];
         self.variation = [decoder decodeObjectOfClass:NSDictionary.class forKey:NSStringFromSelector(@selector(variation))];
+        self.tags      = [decoder decodeObjectOfClass:NSArray.class      forKey:NSStringFromSelector(@selector(tags))];
     }
     return self;
 }
@@ -71,6 +73,10 @@
                                                                                          (__bridge CFPropertyListRef) self.variation,
                                                                                          kCFPropertyListImmutable));
     }
+    if (self.tags.count)
+    {
+        item.tags = [NSMutableArray.alloc initWithArray:self.tags copyItems:YES];
+    }
 
     return item;
 }
@@ -83,7 +89,8 @@
                                                                                               @"quantity":   @(self.quantity),
                                                                                               @"price":      @(self.price),
                                                                                               @"genre":      self.genre,
-                                                                                              @"variation":  self.variation
+                                                                                              @"variation":  self.variation,
+                                                                                              @"tags":       self.tags,
                                                                                               }];
 }
 

@@ -86,8 +86,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     NSMutableArray *itemPrices      = nil;
     NSMutableArray *itemGenres      = nil;
     NSMutableArray *itemVariations  = nil;
+    NSMutableArray *itemTags        = nil;
 
-    NSUInteger itemCount = self.items.count;
+    NSUInteger itemCount = _items.count;
     if (itemCount)
     {
         itemIdentifiers = [NSMutableArray arrayWithCapacity:itemCount];
@@ -95,23 +96,59 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         itemPrices      = [NSMutableArray arrayWithCapacity:itemCount];
         itemGenres      = [NSMutableArray arrayWithCapacity:itemCount];
         itemVariations  = [NSMutableArray arrayWithCapacity:itemCount];
+        itemTags        = [NSMutableArray arrayWithCapacity:itemCount];
 
+        __block BOOL hasGenres     = NO;
+        __block BOOL hasVariations = NO;
+        __block BOOL hasTags       = NO;
         [self enumerateItemsWithBlock:^(RSDKAnalyticsItem *item, NSUInteger __unused index, BOOL __unused *stop) {
             [itemIdentifiers addObject:item.identifier];
             [itemQuantities  addObject:@(item.quantity)];
             [itemPrices      addObject:@(item.price)];
-            [itemGenres      addObject:item.genre.length ? item.genre : NSNull.null];
-            [itemVariations  addObject:item.variation ? item.variation : NSNull.null];
+
+            [itemGenres      addObject:item.genre     ?: @""];
+            [itemVariations  addObject:item.variation ?: @""];
+            [itemTags        addObject:[item.tags componentsJoinedByString:@"/"] ?: NSNull.null];
+
+            if (item.genre.length)
+            {
+                hasGenres = YES;
+            }
+
+            if (item.variation.count)
+            {
+                hasVariations = YES;
+            }
+
+            if (item.tags.count)
+            {
+                hasTags = YES;
+            }
         }];
+
+        if (!hasGenres)
+        {
+            itemGenres = nil;
+        }
+
+        if (!hasVariations)
+        {
+            itemVariations = nil;
+        }
+
+        if (!hasTags)
+        {
+            itemTags = nil;
+        }
     }
 
     // {name: "acc", longName: "ACCOUNT_ID", fieldType: "INT", minValue: 0, userSettable: true}
-    dictionary[@"acc"] = @(self.accountId);
+    dictionary[@"acc"] = @(_accountId);
 
-    // {name: "easyid", longName: "EASY_ID", fieldType: "STRING", maxLength: 16, minLength: 3, userSettable: true}
-    if (self.easyId)
+    // {name: "userid", longName: "USER_ID", fieldType: "STRING", maxLength: 200, minLength: 0, userSettable: true}
+    if (self.userId.length)
     {
-        dictionary[@"easyid"] = self.easyId;
+        dictionary[@"userid"] = self.userId;
     }
 
     // {name: "afid", longName: "AFFILIATE_ID", fieldType: "INT", userSettable: true}
@@ -121,7 +158,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "cc", longName: "CAMPAIGN_CODE", fieldType: "STRING", maxLength: 20, minLength: 0, userSettable: true}
-    if (self.campaignCode)
+    if (self.campaignCode.length)
     {
         dictionary[@"cc"] = self.campaignCode;
     }
@@ -145,13 +182,13 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "compid",longName: "COMPONENT_ID",fieldType: "STRING_ARRAY",userSettable: true}
-    if (self.componentId)
+    if (self.componentId.count)
     {
         dictionary[@"compid"] = self.componentId;
     }
 
     // {name: "comptop",longName: "COMPONENT_TOP",fieldType: "DOUBLE_ARRAY",userSettable: true}
-    if (self.componentTop)
+    if (self.componentTop.count)
     {
         dictionary[@"comptop"] = self.componentTop;
     }
@@ -165,55 +202,67 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     // {name: "cycode", longName: "CURRENCY_CODE", fieldType: "STRING", maxLength: 3, minLength: 0, userSettable: true}
     if (self.currencyCode)
     {
-        dictionary[@"cycode"] = self.currencyCode;
+        dictionary[@"cycode"] = self.currencyCode.uppercaseString;
     }
 
     // {name: "cp", longName: "CUSTOM_PARAMETERS", fieldType: "JSON"}
-    if (self.customParameters)
+    if (self.customParameters.count)
     {
         dictionary[@"cp"] = self.customParameters;
     }
 
     // {name: "etype",longName: "EVENT_TYPE",fieldType: "STRING",userSettable: true}
-    if (self.eventType)
+    if (self.eventType.length)
     {
         dictionary[@"etype"] = self.eventType;
     }
 
     // {name: "esq", longName: "EXCLUDE_WORD_SEARCH_QUERY", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
-    if (self.excludeWordSearchQuery)
+    if (self.excludeWordSearchQuery.length)
     {
         dictionary[@"esq"] = self.excludeWordSearchQuery;
     }
 
     // {name: "genre", longName: "GENRE", definitionLevel: "RAL", fieldType: "STRING", maxLength: 200, minLength: 0, userSettable: true}
-    if (self.genre)
+    if (self.genre.length)
     {
         dictionary[@"genre"] = self.genre;
     }
 
+    // {name: "tag", longName: "SELECTED_TAGS", fieldType: "STRING_ARRAY", maxLength: 8, minLength: 1, userSettable: true}
+    if (self.selectedTags.count)
+    {
+        dictionary[@"tag"] = self.selectedTags;
+    }
+
     // {name: "gol", longName: "GOAL_ID", fieldType: "STRING", maxLength: 10, minLength: 0, userSettable: true}
-    if (self.goalId)
+    if (self.goalId.length)
     {
         dictionary[@"gol"] = self.goalId;
     }
 
     // {name: "igenre", longName: "ITEM_GENRE", fieldType: "STRING_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (itemGenres)
+    if (itemGenres.count)
     {
         dictionary[@"igenre"] = itemGenres;
     }
 
     // {name: "itemid", longName: "ITEM_ID", fieldType: "STRING_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (itemIdentifiers)
+    if (itemIdentifiers.count)
     {
         dictionary[@"itemid"] = itemIdentifiers;
     }
 
     // {name: "variation", longName: "ITEM_VARIATION", fieldType: "JSON_ARRAY", definitionLevel: "RAL", maxLength": 100, minLength: 0, userSettable: true}
-    if (itemVariations)
+    if (itemVariations.count)
     {
         dictionary[@"variation"] = itemVariations;
+    }
+
+    // { name: "itag", longName: "Tag array", fieldType: "STRING_ARRAY", maxLength: 100, minLength: 0, userSettable: true},
+    if (itemTags.count)
+    {
+        dictionary[@"itag"] = itemTags;
     }
 
     // {name: "mnavtime", longName: "MOBILE_NAVIGATION_TIME", fieldType: "INT", definitionLevel: "APP", userSettable: true}
@@ -223,13 +272,13 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     }
 
     // {name: "ni", longName: "NUMBER_OF_ITEMS", fieldType: "INT_ARRAY", maxLength: 100, minLength: 0, minValue: 1, userSettable: true}
-    if (itemQuantities)
+    if (itemQuantities.count)
     {
         dictionary[@"ni"] = itemQuantities;
     }
 
     // {name: "order_id", longName: "ORDER_ID", fieldType: "STRING", userSettable: true}
-    if (self.orderId)
+    if (self.orderId.length)
     {
         dictionary[@"order_id"] = self.orderId;
     }
@@ -240,50 +289,56 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         dictionary[@"oa"] = self.searchMethod == RSDKAnalyticsSearchMethodAnd ? @"a" : @"o";
     }
 
+    // {name: "pgid", longName: "PAGE_ID", fieldType: "STRING", maxLength: 32, minLength: 1, userSettable: false},
+    if (self.pageIdentifier.length)
+    {
+        dictionary[@"pgid"] = self.pageIdentifier;
+    }
+
     // {name: "pgn", longName: "PAGE_NAME", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
-    if (self.pageName)
+    if (self.pageName.length)
     {
         dictionary[@"pgn"] = self.pageName;
     }
 
     // {name: "pgt", longName: "PAGE_TYPE", fieldType: "STRING", maxLength: 20, minLength: 0, userSettable: true}
-    if (self.pageType)
+    if (self.pageType.length)
     {
         dictionary[@"pgt"] = self.pageType;
     }
 
     // {name: "price", longName: "PRICE", fieldType: "DOUBLE_ARRAY", maxLength: 100, minLength: 0, userSettable: true}
-    if (itemPrices)
+    if (itemPrices.count)
     {
         dictionary[@"price"] = itemPrices;
     }
 
     // {name: "ref", longName: "REFERRER", fieldType: "URL", maxLength: 2048, minLength: 0, userSettable: false}
-    if (self.referrer)
+    if (self.referrer.length)
     {
         dictionary[@"ref"] = self.referrer;
     }
 
     // {name: "reqc", longName: "REQUEST_CODE", fieldType: "STRING", maxLength: 32, minLength: 0, userSettable: true}
-    if (self.requestCode)
+    if (self.requestCode.length)
     {
         dictionary[@"reqc"] = self.requestCode;
     }
 
     // {name: "scroll", longName: "SCROLL_DIV_ID", fieldType: "STRING_ARRAY", maxLength: 100, minLength: 1, userSettable: true
-    if (self.scrollDivId)
+    if (self.scrollDivId.count)
     {
         dictionary[@"scroll"] = self.scrollDivId;
     }
 
     // {name: "sresv", longName: "SCROLL_VIEWED", fieldType: "STRING_ARRAY", maxLength: 100, minLength: 1, userSettable: false}
-    if (self.scrollViewed)
+    if (self.scrollViewed.count)
     {
         dictionary[@"sresv"] = self.scrollViewed;
     }
 
     // {name: "sq", longName: "SEARCH_QUERY", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
-    if (self.searchQuery)
+    if (self.searchQuery.length)
     {
         dictionary[@"sq"] = self.searchQuery;
     }
@@ -298,7 +353,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     dictionary[@"aid"] = @(self.serviceId);
 
     // {name: "shopid", longName: "SHOP_ID", fieldType: "STRING", userSettable: true}
-    if (self.shopId)
+    if (self.shopId.length)
     {
         dictionary[@"shopid"] = self.shopId;
     }
@@ -309,268 +364,6 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p, %@>", NSStringFromClass(self.class), self, self.propertiesDictionary];
-}
-
-#pragma mark - Setters for RAT parameters with restrictions
-
-- (void)setCampaignCode:(NSString *)campaignCode
-{
-    _campaignCode = [self _validateString:campaignCode propertyName:@"campaignCode" maxLength:20 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setCheckoutStage:(RSDKAnalyticsCheckoutStage)checkoutStage
-{
-    BOOL notACheckoutStage =
-        checkoutStage != RSDKAnalyticsCheckoutStage1Login           &&
-        checkoutStage != RSDKAnalyticsCheckoutStage2ShippingDetails &&
-        checkoutStage != RSDKAnalyticsCheckoutStage3OrderSummary    &&
-        checkoutStage != RSDKAnalyticsCheckoutStage4Payment         &&
-        checkoutStage != RSDKAnalyticsCheckoutStage5Verification    &&
-        checkoutStage != RSDKAnalyticsInvalidCheckoutStage;
-
-    NSAssert(!notACheckoutStage, @"checkoutStage: Expected a RSDKAnalyticsCheckoutStage, got %d", (int)checkoutStage);
-    _checkoutStage = notACheckoutStage ? RSDKAnalyticsInvalidCheckoutStage : checkoutStage;
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setComponentId:(NSArray *)componentId
-{
-    _componentId = [self _validateArray:componentId propertyName:@"componentId" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        BOOL isString = [item isKindOfClass:NSString.class];
-        NSParameterAssert(isString);
-        return isString;
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setComponentTop:(NSArray *)componentTop
-{
-    _componentTop = [self _validateArray:componentTop propertyName:@"componentTop" maxLength:-1 itemValidator:^BOOL(NSObject *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        NSAssert([item isKindOfClass:NSNumber.class], @"componentTop[%i]: Expected a NSNumber, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSNumber.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setCurrencyCode:(NSString *)currencyCode
-{
-    static NSSet *ISOCurrencyCodes;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^
-    {
-        ISOCurrencyCodes = [NSSet setWithArray:NSLocale.ISOCurrencyCodes];
-    });
-
-    if (currencyCode)
-    {
-        NSString *normalizedCurrencyCode = currencyCode.uppercaseString;
-        BOOL isRecognizedISO4217CurrencyCode = [ISOCurrencyCodes containsObject:normalizedCurrencyCode];
-
-        NSAssert(isRecognizedISO4217CurrencyCode, @"\"%@\" is not a recognized ISO-4217 currency code", currencyCode);
-        if (isRecognizedISO4217CurrencyCode)
-        {
-            _currencyCode = normalizedCurrencyCode;
-            return;
-        }
-    }
-
-    _currencyCode = nil;
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setCustomParameters:(NSDictionary *)customParameters
-{
-    if (!customParameters.count)
-    {
-        _customParameters = nil;
-        return;
-    }
-
-    _customParameters = customParameters.copy;
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setEasyId:(NSString *)easyId
-{
-    _easyId = [self _validateString:easyId propertyName:@"easyId" maxLength:25 predicate:^BOOL(NSString *string)
-    {
-        return string.length >= 3;
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setExcludeWordSearchQuery:(NSString*)excludeWordSearchQuery
-{
-    _excludeWordSearchQuery = [self _validateString:excludeWordSearchQuery propertyName:@"excludeWordSearchQuery" maxLength:1024 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setGenre:(NSString*)genre
-{
-    _genre = [self _validateString:genre propertyName:@"genre" maxLength:200 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setGoalId:(NSString *)goalId
-{
-    _goalId = [self _validateString:goalId propertyName:@"goalId" maxLength:10 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setPageName:(NSString *)pageName
-{
-    _pageName = [self _validateString:pageName propertyName:@"pageName" maxLength:1024 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setPageType:(NSString *)pageType
-{
-    _pageType = [self _validateString:pageType propertyName:@"pageType" maxLength:20 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setReferrer:(NSString *)referrer
-{
-    _referrer = [self _validateString:referrer propertyName:@"referrer" maxLength:2048 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setRequestCode:(NSString *)requestCode
-{
-    _requestCode = [self _validateString:requestCode propertyName:@"requestCode" maxLength:32 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setScrollDivId:(NSArray *)scrollDivId
-{
-    if (scrollDivId.count < 1)
-    {
-        _scrollDivId = nil;
-        return;
-    }
-
-    _scrollDivId = [self _validateArray:scrollDivId propertyName:@"scrollDivId" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        NSAssert([item isKindOfClass:NSString.class], @"scrollDivId[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSString.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setScrollViewed:(NSArray *)scrollViewed
-{
-    if (scrollViewed.count < 1)
-    {
-        _scrollViewed = nil;
-        return;
-    }
-
-    _scrollViewed = [self _validateArray:scrollViewed propertyName:@"scrollViewed" maxLength:100 itemValidator:^BOOL(NSNumber *item, int index)
-    {
-        // Silence -Wunused when DEBUG is not defined
-        (void)index;
-
-        NSAssert([item isKindOfClass:NSString.class], @"scrollViewed[%i]: Expected a NSString, found a %@", index, NSStringFromClass(item.class));
-        return [item isKindOfClass:NSString.class];
-    }];
-}
-
-//--------------------------------------------------------------------------
-
-- (void)setSearchQuery:(NSString *)searchQuery
-{
-    _searchQuery = [self _validateString:searchQuery propertyName:@"searchQuery" maxLength:1024 predicate:nil];
-}
-
-//--------------------------------------------------------------------------
-
-#pragma mark - Validation
-
-- (NSString *)_validateString:(NSString *)string propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength predicate:(BOOL (^)(NSString *string))predicate
-{
-    // Silence -Wunused when DEBUG is not defined
-    (void)propertyName;
-
-    if (!string) { return nil; }
-
-    NSAssert([string isKindOfClass:NSString.class], @"%@: Expected a NSString, found a %@", propertyName, NSStringFromClass(string.class));
-    if (![string isKindOfClass:NSString.class]) { return nil; }
-
-    unsigned long length = string.length;
-    BOOL tooLong = maxLength >= 0 && length > (unsigned long)maxLength;
-    NSAssert(!tooLong, @"%@: string too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
-    if (tooLong) { return nil; }
-
-    if (predicate)
-    {
-        BOOL passedPredicate = predicate(string);
-        NSAssert(passedPredicate, @"%@: validation failed", propertyName);
-        if (!passedPredicate) { return nil; }
-    }
-
-    // Ensure the returned value is immutable
-    return string.copy;
-}
-
-- (NSArray *)_validateArray:(NSArray *)array propertyName:(NSString *)propertyName maxLength:(NSInteger)maxLength itemValidator:(BOOL (^)(id item, int index))itemValidator
-{
-    // Silence -Wunused when DEBUG is not defined
-    (void)propertyName;
-
-    if (!array)
-    {
-        return nil;
-    }
-
-    NSAssert([array isKindOfClass:NSArray.class], @"%@: Expected a NSArray, found a %@", propertyName, NSStringFromClass(array.class));
-    if (![array isKindOfClass:NSArray.class]) { return nil; }
-
-    unsigned long length = array.count;
-    BOOL tooLong = maxLength >= 0 && length > (unsigned long)maxLength;
-    NSAssert(!tooLong, @"%@: array too long (%lu > %lu)", propertyName, length, (unsigned long)maxLength);
-    if (tooLong) { return nil; }
-
-    if (itemValidator)
-    {
-        int index = -1;
-        for (id item in array)
-        {
-            ++index;
-            BOOL passed = itemValidator(item, index);
-            NSAssert(passed, @"%@[%i]: validation failed", propertyName, index);
-            if (!passed) { return nil; }
-        }
-    }
-
-    // Ensure the returned value is immutable
-    return array.copy;
 }
 
 #pragma mark - NSSecureCoding
@@ -594,7 +387,8 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
     if (self = [self initWithAccountId:accountId serviceId:serviceId])
     {
-        self.easyId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(easyId))];
+        self.userId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(userId))] ?:
+                                      [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(easyId))];
         self.affiliateId            = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(affiliateId))];
         self.goalId                 = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(goalId))];
         self.campaignCode           = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(campaignCode))];
@@ -608,7 +402,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
         self.searchMethod           = [decoder decodeIntegerForKey:NSStringFromSelector(@selector(searchMethod))];
         self.excludeWordSearchQuery = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(excludeWordSearchQuery))];
         self.genre                  = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(genre))];
+        self.selectedTags           = [decoder decodeObjectOfClass:NSArray.class forKey:NSStringFromSelector(@selector(selectedTags))];
 
+        self.pageIdentifier         = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(pageIdentifier))];
         self.pageName               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(pageName))];
         self.pageType               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(pageType))];
         self.referrer               = [decoder decodeObjectOfClass:NSString.class forKey:NSStringFromSelector(@selector(referrer))];
@@ -646,7 +442,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     value64.unsignedValue = self.accountId;
     [coder encodeInt64:value64.signedValue          forKey:NSStringFromSelector(@selector(accountId))];
     [coder encodeInt64:self.serviceId               forKey:NSStringFromSelector(@selector(serviceId))];
-    [coder encodeObject:self.easyId                 forKey:NSStringFromSelector(@selector(easyId))];
+    [coder encodeObject:self.userId                 forKey:NSStringFromSelector(@selector(userId))];
     [coder encodeInt64:self.affiliateId             forKey:NSStringFromSelector(@selector(affiliateId))];
     [coder encodeObject:self.goalId                 forKey:NSStringFromSelector(@selector(goalId))];
     [coder encodeObject:self.campaignCode           forKey:NSStringFromSelector(@selector(campaignCode))];
@@ -660,7 +456,9 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     [coder encodeInteger:self.searchMethod          forKey:NSStringFromSelector(@selector(searchMethod))];
     [coder encodeObject:self.excludeWordSearchQuery forKey:NSStringFromSelector(@selector(excludeWordSearchQuery))];
     [coder encodeObject:self.genre                  forKey:NSStringFromSelector(@selector(genre))];
+    [coder encodeObject:self.selectedTags           forKey:NSStringFromSelector(@selector(selectedTags))];
 
+    [coder encodeObject:self.pageIdentifier         forKey:NSStringFromSelector(@selector(pageIdentifier))];
     [coder encodeObject:self.pageName               forKey:NSStringFromSelector(@selector(pageName))];
     [coder encodeObject:self.pageType               forKey:NSStringFromSelector(@selector(pageType))];
     [coder encodeObject:self.referrer               forKey:NSStringFromSelector(@selector(referrer))];
@@ -689,7 +487,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 {
     RSDKAnalyticsRecord *copy = [RSDKAnalyticsRecord recordWithAccountId:self.accountId serviceId:self.serviceId];
 
-    copy.easyId                 = self.easyId;
+    copy.userId                 = self.userId;
     copy.affiliateId            = self.affiliateId;
     copy.goalId                 = self.goalId;
     copy.campaignCode           = self.campaignCode;
@@ -701,22 +499,47 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     copy.searchMethod           = self.searchMethod;
     copy.excludeWordSearchQuery = self.excludeWordSearchQuery;
     copy.genre                  = self.genre;
+    if (self.selectedTags.count)
+    {
+        copy.selectedTags       = [NSArray.alloc initWithArray:self.selectedTags copyItems:YES];
+    }
+    copy.pageIdentifier         = self.pageIdentifier;
     copy.pageName               = self.pageName;
     copy.pageType               = self.pageType;
     copy.referrer               = self.referrer;
     copy.navigationTime         = self.navigationTime;
     copy.checkpoints            = self.checkpoints;
-    copy.items                  = [NSMutableArray.new initWithArray:self.items copyItems:YES];
+    if (self.items.count)
+    {
+        copy.items              = [NSMutableArray.alloc initWithArray:self.items copyItems:YES];
+    }
     copy.orderId                = self.orderId;
     copy.cartState              = self.cartState;
     copy.checkoutStage          = self.checkoutStage;
-    copy.componentId            = [NSArray.new initWithArray:self.componentId copyItems:YES];
-    copy.componentTop           = [NSArray.new initWithArray:self.componentTop copyItems:YES];
-    copy.customParameters       = [NSDictionary.new initWithDictionary:self.customParameters copyItems:YES];
+    if (self.componentId.count)
+    {
+        copy.componentId        = [NSArray.alloc initWithArray:self.componentId copyItems:YES];
+    }
+    if (self.componentTop.count)
+    {
+        copy.componentTop       = [NSArray.alloc initWithArray:self.componentTop copyItems:YES];
+    }
+    if (self.customParameters.count)
+    {
+        copy.customParameters = (__bridge_transfer NSDictionary *)(CFPropertyListCreateDeepCopy(kCFAllocatorDefault,
+                                                                                                (__bridge CFPropertyListRef) self.customParameters,
+                                                                                                kCFPropertyListImmutable));
+    }
     copy.eventType              = self.eventType;
     copy.requestCode            = self.requestCode;
-    copy.scrollDivId            = [NSArray.new initWithArray:self.scrollDivId copyItems:YES];
-    copy.scrollViewed           = [NSArray.new initWithArray:self.scrollViewed copyItems:YES];
+    if (self.scrollDivId.count)
+    {
+        copy.scrollDivId        = [NSArray.alloc initWithArray:self.scrollDivId copyItems:YES];
+    }
+    if (self.scrollViewed.count)
+    {
+        copy.scrollViewed       = [NSArray.alloc initWithArray:self.scrollViewed copyItems:YES];
+    }
     return copy;
 }
 
@@ -740,6 +563,18 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 - (NSUInteger)hash
 {
     return self.propertiesDictionary.hash;
+}
+
+# pragma mark - Deprecated
+
+- (NSString *)easyId
+{
+    return self.userId;
+}
+
+- (void)setEasyId:(NSString *)easyId
+{
+    self.userId = easyId;
 }
 
 @end

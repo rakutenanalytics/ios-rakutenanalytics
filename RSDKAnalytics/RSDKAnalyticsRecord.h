@@ -102,6 +102,11 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  * document. For more information about each property, please see the
  * [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification).
  *
+ * @warning No validation is performed on the various properties exposed by this class:
+ * it is up to application developers to ensure they use values that are supported by RAT.
+ * The [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * has the most up-to-date information about each field's requirement.
+ *
  * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
  */
 RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
@@ -159,16 +164,15 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 @property (nonatomic, readonly) int64_t serviceId;
 
 /**
- * Easy ID. This identifies the currently logged-in user.
+ * User identifier.
  *
- * @note This value will be sent as the **easyid** (`EASY_ID`) RAT parameter. See
+ * This identifies the currently logged-in user, and can be obtained by calling @ref RIdInformationAPI::requestEncryptedEasyIdWithAccessToken:completion:.
+ *
+ * @note This value will be sent as the **userid** (`USER_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 25 characters in length will get ignored and
- * the property reset to `nil`.
  */
-@property (nonatomic, copy) NSString *easyId;
+@property (nonatomic, copy) NSString *userId;
 
 /**
  * Affiliate identifier. Set to @ref RSDKAnalyticsInvalidAffiliateId by default.
@@ -190,9 +194,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **gol** (`GOAL_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 10 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *goalId;
 
@@ -202,9 +203,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **cc** (`CAMPAIGN_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 20 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *campaignCode;
 
@@ -239,9 +237,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **cycode** (`CURRENCY_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, any value that is not exactly 3-character long is a
- * synonym of `nil`.
  */
 @property (nonatomic, copy) NSString *currencyCode;
 
@@ -257,9 +252,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **lang** (`SEARCH_SELECTED_LANGUAGE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 16 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSLocale *searchSelectedLocale;
 
@@ -269,9 +261,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **sq** (`SEARCH_QUERY`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 1024 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *searchQuery;
 
@@ -290,26 +279,26 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **esq** (`EXCLUDE_WORD_SEARCH_QUERY`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 1024 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *excludeWordSearchQuery;
 
 /**
  * Genre (search category). Not set by default.
  *
- * The RSDKSearch module allows to restrict product search queries to a certain
- * genre, which you can copy into this property.
- *
  * @note This value will be sent as the **genre** (`GENRE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 200 characters in length will get ignored and 
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *genre;
+
+/**
+ * Selected tags, to limit the search. Not set by default.
+ *
+ * @note This value will be sent as the **tag** (`SELECTED_TAGS`) RAT parameter. See
+ * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * for more information.
+ */
+@property (nonatomic, copy) NSArray *selectedTags;
 
 #pragma mark - Navigation
 
@@ -318,14 +307,20 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  */
 
 /**
+ * Page identifier, used to identify unique page access within a user session. Not set by default.
+ *
+ * @note This value will be sent as the **pgid** (`PAGE_ID`) RAT parameter. See
+ * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * for more information.
+ */
+@property (nonatomic, copy) NSString *pageIdentifier;
+
+/**
  * Current page or screen name. Not set by default.
  *
  * @note This value will be sent as the **pgn** (`PAGE_NAME`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 1024 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *pageName;
 
@@ -335,9 +330,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **pgt** (`PAGE_TYPE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 20 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *pageType;
 
@@ -347,9 +339,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **ref** (`REFERRER`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 2048 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *referrer;
 
@@ -441,8 +430,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **compid** (`COMPONENT_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, arrays should contain `NSString` objects only.
  */
 @property (nonatomic, strong) NSArray *componentId;
 
@@ -452,8 +439,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **comptop** (`COMPONENT_TOP`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, arrays should contain `NSNumber` objects only.
  */
 @property (nonatomic, strong) NSArray *componentTop;
 
@@ -463,11 +448,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **cp** (`CUSTOM_PARAMETERS`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning No validation is performed on custom parameters, it is up to application
- * developers to ensure they use values that are supported by RAT. Specifically, keys
- * should not exceed 15 characters in length, while the length of string values should
- * not exceed 20 characters.
  */
 @property (nonatomic, strong) NSDictionary *customParameters;
 
@@ -490,9 +470,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **reqc** (`REQUEST_CODE`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, values over 32 characters in length will get ignored and
- * the property reset to `nil`.
  */
 @property (nonatomic, copy) NSString *requestCode;
 
@@ -502,10 +479,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **scroll** (`SCROLL_DIV_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
- * over 100 items in length will get ignored and the property reset to `nil`. An empty array
- * is a synonym of `nil`.
  */
 @property (nonatomic, strong) NSArray *scrollDivId;
 
@@ -515,12 +488,19 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note This value will be sent as the **sresv** (`SCROLL_VIEWED`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
- *
- * @warning When setting this property, arrays should contain `NSString` objects only. Arrays
- * over 100 items in length will get ignored and the property reset to `nil`. An empty array is
- * a synonym of `nil`.
  */
 @property (nonatomic, strong) NSArray *scrollViewed;
 
+#pragma mark - Deprecated
+/**
+ * @name Deprecated
+ */
+
+/**
+ * User identifier.
+ *
+ * @deprecated You should use #userId instead.
+ */
+@property (nonatomic, copy) NSString *easyId DEPRECATED_MSG_ATTRIBUTE("-easyId is deprecated: you should change your code to use -userId instead.");
 @end
 

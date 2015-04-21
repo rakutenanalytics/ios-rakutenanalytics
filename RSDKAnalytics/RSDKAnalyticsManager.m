@@ -624,11 +624,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
     // note: this throws an exception if the app is not properly configured
-    NSString *uniqueDeviceId = RSDKDeviceInformation.uniqueDeviceIdentifier;
-    // This can be nil if the device is locked and the value hasn't been retrieved yet
-    if (uniqueDeviceId)
+    @try {
+        NSString *uniqueDeviceId = RSDKDeviceInformation.uniqueDeviceIdentifier;
+        // This can be nil if the device is locked and the value hasn't been retrieved yet
+        if (uniqueDeviceId)
+        {
+            jsonDic[@"ckp"] = uniqueDeviceId;
+        }
+    }
+    @catch (NSException *exception)
     {
-        jsonDic[@"ckp"] = uniqueDeviceId;
+        RSDKAnalyticsDebugLog(@"RSDKDeviceInformation is not properly configured:\n\n%@", exception);
     }
 
     // {name: "ua", longName: "USER_AGENT", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
@@ -655,11 +661,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     // Add record to database and schedule an upload
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDic options:0 error:0];
-    typeof(self) __weak weakSelf = self;
+    RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
+
+    @rmsdk_weakify(self);
     [RSDKAnalyticsDatabase addRecord:jsonData completion:^
     {
-        typeof(weakSelf) __strong strongSelf = weakSelf;
-        [strongSelf _scheduleBackgroundUpload];
+        @rmsdk_strongify(self);
+        [self _scheduleBackgroundUpload];
     }];
 }
 
@@ -727,22 +735,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * accept it. The source code is at
      * https://git.dev.rakuten.com/projects/RATR/repos/receiver/browse/receiver.c
      */
-
-
-    /*
-     * We'll be doing asynchronous stuff, but we will enventually
-     * end up calling -_backgroupUploadEnded. Let's make a block now
-     * that takes care of that so we don't need to strongify weakSelf
-     * all over the place.
-     */
-
-    typeof(self) __weak weakSelf = self;
-    void (^completion)() = ^
-    {
-        typeof(weakSelf) __strong strongSelf = weakSelf;
-        [strongSelf _backgroupUploadEnded];
-    };
-
+    @rmsdk_weakify(self);
 
     /*
      * Prepare the body of our POST request. It's a JSON-formatted array
@@ -811,6 +804,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                NSData * __unused data,
                                                NSError *connectionError)
     {
+        @rmsdk_strongify(self);
         NSError *error = connectionError;
 
         if (connectionError)
@@ -819,12 +813,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
              * Connection failed. Request a new attempt before calling the completion.
              */
 
-            typeof(weakSelf) __strong strongSelf = weakSelf;
-            if (strongSelf)
+            if (self)
             {
-                @synchronized(strongSelf)
+                @synchronized(self)
                 {
-                    strongSelf.uploadRequested = YES;
+                    self.uploadRequested = YES;
                 }
             }
         }
@@ -846,7 +839,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  */
 
                 [RSDKAnalyticsDatabase deleteRecordsWithIdentifiers:identifiers
-                                                         completion:completion];
+                                                         completion:^
+                {
+                    @rmsdk_strongify(self);
+                    [self _backgroupUploadEnded];
+                }];
                 return;
             }
 
@@ -866,7 +863,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                           object:recordGroup
                                                         userInfo:userInfo];
 
-        completion();
+        [self _backgroupUploadEnded];
     }];
 }
 
@@ -878,18 +875,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * Get a group of records and start uploading them.
      */
 
-    typeof(self) __weak weakSelf = self;
+    @rmsdk_weakify(self);
     [RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
     {
-        typeof(weakSelf) __strong strongSelf = weakSelf;
-
+        @rmsdk_strongify(self);
         if (records.count)
         {
-            [strongSelf _doBackgroundUploadWithRecords:records identifiers:identifiers];
+            [self _doBackgroundUploadWithRecords:records identifiers:identifiers];
         }
         else
         {
-            [strongSelf _backgroupUploadEnded];
+            [self _backgroupUploadEnded];
         }
     }];
 }
