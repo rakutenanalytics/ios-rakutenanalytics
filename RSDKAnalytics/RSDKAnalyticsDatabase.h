@@ -4,6 +4,8 @@
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Internal interface used to centralize access to the analytics database.
  *
@@ -44,3 +46,5 @@ RMSDK_EXPORT @interface RSDKAnalyticsDatabase : NSObject
 + (void)deleteRecordsWithIdentifiers:(NSArray*)identifiers completion:(void (^)())completion;
 
 @end
+
+NS_ASSUME_NONNULL_END

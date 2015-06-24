@@ -4,6 +4,8 @@
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class RSDKAnalyticsItem;
 
 /**
@@ -172,7 +174,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy, nullable) NSString *userId;
 
 /**
  * Affiliate identifier. Set to @ref RSDKAnalyticsInvalidAffiliateId by default.
@@ -195,7 +197,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *goalId;
+@property (nonatomic, copy, nullable) NSString *goalId;
 
 /**
  * Campaign code. Not set by default.
@@ -204,7 +206,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *campaignCode;
+@property (nonatomic, copy, nullable) NSString *campaignCode;
 
 /**
  * Shop identifier. Not set by default.
@@ -213,7 +215,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *shopId;
+@property (nonatomic, copy, nullable) NSString *shopId;
 
 #pragma mark - Region
 
@@ -228,7 +230,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSLocale *contentLocale;
+@property (nonatomic, copy, null_resettable) NSLocale *contentLocale;
 
 /**
  * Currency code, in [ISO-4217 format](http://en.wikipedia.org/wiki/ISO_4217).
@@ -238,7 +240,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *currencyCode;
+@property (nonatomic, copy, nullable) NSString *currencyCode;
 
 #pragma mark - Search
 
@@ -253,7 +255,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSLocale *searchSelectedLocale;
+@property (nonatomic, copy, nullable) NSLocale *searchSelectedLocale;
 
 /**
  * Search query. Not set by default.
@@ -262,7 +264,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *searchQuery;
+@property (nonatomic, copy, nullable) NSString *searchQuery;
 
 /**
  * OR/AND. Set to @ref RSDKAnalyticsInvalidSearchMethod by default.
@@ -280,7 +282,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *excludeWordSearchQuery;
+@property (nonatomic, copy, nullable) NSString *excludeWordSearchQuery;
 
 /**
  * Genre (search category). Not set by default.
@@ -289,7 +291,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *genre;
+@property (nonatomic, copy, nullable) NSString *genre;
 
 /**
  * Selected tags, to limit the search. Not set by default.
@@ -298,7 +300,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSArray *selectedTags;
+@property (nonatomic, copy, nullable) NSArray *selectedTags;
 
 #pragma mark - Navigation
 
@@ -313,7 +315,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *pageIdentifier;
+@property (nonatomic, copy, nullable) NSString *pageIdentifier;
 
 /**
  * Current page or screen name. Not set by default.
@@ -322,7 +324,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *pageName;
+@property (nonatomic, copy, nullable) NSString *pageName;
 
 /**
  * Current page (or screen) type. Not set by default.
@@ -331,7 +333,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *pageType;
+@property (nonatomic, copy, nullable) NSString *pageType;
 
 /**
  * Previous page name or URL. Not set by default.
@@ -340,7 +342,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *referrer;
+@property (nonatomic, copy, nullable) NSString *referrer;
 
 /**
  * Navigation time. Set to @ref RSDKAnalyticsInvalidNavigationTime by default.
@@ -373,7 +375,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  *
  * @note A record can hold up to a hundred items.
  *
- * @param item An @ref RSDKAnalyticsItem instance to add to the receiver.
+ * @param item `[Required]` An @ref RSDKAnalyticsItem instance to add to the receiver.
  * @return `YES` if the item could be inserted, `NO` if the maximum allowed number of items has already been reached.
  */
 - (BOOL)addItem:(RSDKAnalyticsItem *)item;
@@ -381,7 +383,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 /**
  * Enumerate items with block.
  *
- * @param block The block called for each item.
+ * @param block `[Required]` The block called for each item.
  */
 - (void)enumerateItemsWithBlock:(rsdk_analytics_item_enumeration_block_t)block;
 
@@ -398,7 +400,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *orderId;
+@property (nonatomic, copy, nullable) NSString *orderId;
 
 /**
  * Cart state. Set to @ref RSDKAnalyticsInvalidCartState by default.
@@ -431,7 +433,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, strong) NSArray *componentId;
+@property (nonatomic, nullable) NSArray *componentId;
 
 /**
  * Component top. Not set by default.
@@ -440,7 +442,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, strong) NSArray *componentTop;
+@property (nonatomic, nullable) NSArray *componentTop;
 
 /**
  * Custom parameters. Not set by default.
@@ -449,7 +451,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, strong) NSDictionary *customParameters;
+@property (nonatomic, nullable) NSDictionary *customParameters;
 
 /**
  * Event type. Not set by default.
@@ -458,7 +460,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *eventType;
+@property (nonatomic, copy, nullable) NSString *eventType;
 
 /**
  * Request code. Not set by default.
@@ -471,7 +473,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *requestCode;
+@property (nonatomic, copy, nullable) NSString *requestCode;
 
 /**
  * Scroll div identifier. Not set by default.
@@ -480,7 +482,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, strong) NSArray *scrollDivId;
+@property (nonatomic, nullable) NSArray *scrollDivId;
 
 /**
  * Scroll viewed. Not set by default.
@@ -489,7 +491,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, strong) NSArray *scrollViewed;
+@property (nonatomic, nullable) NSArray *scrollViewed;
 
 #pragma mark - Deprecated
 /**
@@ -501,6 +503,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  *
  * @deprecated You should use #userId instead.
  */
-@property (nonatomic, copy) NSString *easyId DEPRECATED_MSG_ATTRIBUTE("-easyId is deprecated: you should change your code to use -userId instead.");
+@property (nonatomic, copy, nullable) NSString *easyId DEPRECATED_MSG_ATTRIBUTE("-easyId is deprecated: you should change your code to use -userId instead.");
 @end
 
+NS_ASSUME_NONNULL_END

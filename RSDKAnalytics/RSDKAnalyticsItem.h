@@ -4,6 +4,8 @@
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Hold information about a shop item.
  *
@@ -25,7 +27,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy, nullable) NSString *identifier;
 
 /**
  * Number of items. Defaults to `0`.
@@ -52,7 +54,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSString *genre;
+@property (nonatomic, copy, nullable) NSString *genre;
 
 /**
  * Item variation. Not set by default.
@@ -61,7 +63,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSDictionary *variation;
+@property (nonatomic, copy, nullable) NSDictionary *variation;
 
 /**
  * Item tags. Not set by default.
@@ -70,13 +72,15 @@ RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy) NSArray *tags;
+@property (nonatomic, copy, nullable) NSArray *tags;
 
 /**
  * Create a new item.
  *
- * @param identifier Item identifier.
+ * @param identifier `[Optional]` Item identifier.
  */
-+ (instancetype)itemWithIdentifier:(NSString *)identifier;
++ (instancetype)itemWithIdentifier:(nullable NSString *)identifier;
 
 @end
+
+NS_ASSUME_NONNULL_END

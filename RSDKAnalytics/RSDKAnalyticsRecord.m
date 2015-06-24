@@ -48,6 +48,16 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     return self;
 }
 
+#pragma mark - Accessors
+
+- (void)setContentLocale:(NSLocale * __nullable)contentLocale {
+    contentLocale = contentLocale ?: NSLocale.currentLocale;
+
+    if (![contentLocale isEqual:_contentLocale]) {
+        _contentLocale = contentLocale.copy;
+    }
+}
+
 #pragma mark - Public methods
 
 + (instancetype)recordWithAccountId:(uint64_t)accountId serviceId:(int64_t)serviceId

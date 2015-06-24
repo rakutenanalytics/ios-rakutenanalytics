@@ -4,6 +4,8 @@
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class RSDKAnalyticsRecord;
 
 /**
@@ -82,7 +84,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsManager : NSObject
  * by listening to the notifications it sends, respectively @ref RSDKAnalyticsWillUploadNotification,
  * @ref RSDKAnalyticsUploadFailureNotification and @ref RSDKAnalyticsUploadSuccessNotification.
  *
- * @param record  Record to be added to the database.
+ * @param record  `[Required]` Record to be added to the database.
  * @exception NSObjectInaccessibleException The application's entitlements do not include the
  *            access group required to access the device identifier. See @ref device-information-keychain-setup "RSDKDeviceInformation: Setting up the keychain"
  *            for more information.
@@ -160,3 +162,5 @@ RMSDK_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
  */
 
 RMSDK_EXPORT NSString *const RSDKAnalyticsUploadSuccessNotification;
+
+NS_ASSUME_NONNULL_END
