@@ -4,7 +4,11 @@
  */
 #import <RSDKAnalytics/RSDKAnalytics.h>
 
-#define QUOTE(s) #s
-#define EXPAND_AND_QUOTE(s) QUOTE(s)
-NSString* const RSDKAnalyticsVersion = @ EXPAND_AND_QUOTE(RMSDK_ANALYTICS_VERSION);
+#ifndef RMSDK_ANALYTICS_VERSION
+#warning "RMSDK_ANALYTICS_VERSION not defined. Code that depends on it might fail."
+#define RMSDK_ANALYTICS_VERSION 0.0.0
+#endif
 
+/* RMSDK_EXPORT */ const NSString* const RSDKAnalyticsVersion = @ RMSDK_EXPAND_AND_QUOTE(RMSDK_ANALYTICS_VERSION);
+
+RMSDK_REGISTER_MODULE_VERSION(RSDKAnalytics, RMSDK_ANALYTICS_VERSION);

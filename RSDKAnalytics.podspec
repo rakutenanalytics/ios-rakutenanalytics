@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
   s.author       = { "Mobile Vision & Product Group | SDTD" => "prj-rmsdk@mail.rakuten.com" }
-  s.version      = "2.4.1"
+  s.version      = "2.5.0"
   s.summary      = "Rakuten Mobile SDK's analytics module"
   s.homepage     = "https://rmsdk.azurewebsites.net/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.private_header_files = 'RSDKAnalytics/RSDKAnalyticsDatabase.h'
   s.ios.libraries        = 'sqlite3', 'z'
 
-  s.dependency 'RakutenAPIs',           '~> 1.0'
+  s.dependency 'RakutenAPIs',           '~> 1.2'
   s.dependency 'RSDKDeviceInformation', '~> 1.4'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
