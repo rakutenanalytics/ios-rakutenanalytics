@@ -2,7 +2,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 source 'https://git.rakuten-it.com/scm/SLABS/slabs-specs.git'
 
 platform :ios, "7.0"
-target :RSDKAnalyticsTests, :exclusive => true do
+target :Tests, :exclusive => true do
   pod 'RSDKAnalytics', :path => './RSDKAnalytics.podspec'
 end
 

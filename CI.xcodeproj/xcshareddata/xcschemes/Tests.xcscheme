@@ -7,70 +7,47 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "NO"
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "69A397C31924AB5E0002B258"
-               BuildableName = "libRSDKAnalytics.a"
-               BlueprintName = "RSDKAnalytics"
-               ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "69A397D31924AB5E0002B258"
-               BuildableName = "RSDKAnalyticsTests.xctest"
-               BlueprintName = "RSDKAnalyticsTests"
-               ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
+               BlueprintIdentifier = "693B58071B7C6159008C5E86"
+               BuildableName = "Tests.xctest"
+               BlueprintName = "Tests"
+               ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "69A397D31924AB5E0002B258"
-               BuildableName = "RSDKAnalyticsTests.xctest"
-               BlueprintName = "RSDKAnalyticsTests"
-               ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
+               BlueprintIdentifier = "693B58071B7C6159008C5E86"
+               BuildableName = "Tests.xctest"
+               BlueprintName = "Tests"
+               ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "69A397C31924AB5E0002B258"
-            BuildableName = "libRSDKAnalytics.a"
-            BlueprintName = "RSDKAnalytics"
-            ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -78,28 +55,28 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "69A397C31924AB5E0002B258"
-            BuildableName = "libRSDKAnalytics.a"
-            BlueprintName = "RSDKAnalytics"
-            ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
+            BlueprintIdentifier = "693B58071B7C6159008C5E86"
+            BuildableName = "Tests.xctest"
+            BlueprintName = "Tests"
+            ReferencedContainer = "container:CI.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "69A397C31924AB5E0002B258"
-            BuildableName = "libRSDKAnalytics.a"
-            BlueprintName = "RSDKAnalytics"
-            ReferencedContainer = "container:RSDKAnalytics.xcodeproj">
+            BlueprintIdentifier = "693B58071B7C6159008C5E86"
+            BuildableName = "Tests.xctest"
+            BlueprintName = "Tests"
+            ReferencedContainer = "container:CI.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
