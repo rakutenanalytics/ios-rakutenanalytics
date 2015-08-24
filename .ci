@@ -1,4 +1,4 @@
 # workspace						scheme					options
 CI.xcworkspace					Tests
-Samples/Samples.xcworkspace		RSDKAnalyticsSample		profile=6d23ecdf-7fc5-4950-ae02-d0dfb165e545	notest
+Samples/Samples.xcworkspace		RSDKAnalyticsSample		profile=6feecd78-e1bd-4cfc-8168-84ab7e83ebb7	notest
 # vim:noet:ts=4:sw=4:ff=unix:

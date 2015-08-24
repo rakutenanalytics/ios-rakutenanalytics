@@ -1,0 +1,9 @@
+framework module RSDKAnalytics {
+  umbrella header "RSDKAnalytics.h"
+
+  export *
+  module * { export * }
+
+  link "sqlite3"
+  link "z"
+}
