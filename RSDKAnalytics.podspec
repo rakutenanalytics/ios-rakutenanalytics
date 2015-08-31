@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
-  s.author       = { "Mobile Vision & Product Group | SDTD" => "prj-rmsdk@mail.rakuten.com" }
+  s.authors      = { "Mobile Standards Group | SDTD" => "prj-rmsdk@mail.rakuten.com" }
   s.version      = "2.5.1"
   s.summary      = "Rakuten Mobile SDK's analytics module"
-  s.homepage     = "https://rmsdk.azurewebsites.net/"
+  s.homepage     = "https://rmsdk.apps.global.rakuten.com/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
-  s.source       = { :git => "https://git.rakuten-it.com/scm/SDK/ios-analytics.git", :tag => s.version.to_s }
+  s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "7.0"
   s.requires_arc = true
   s.xcconfig     = {
