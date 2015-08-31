@@ -1,5 +1,5 @@
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://git.rakuten-it.com/scm/SLABS/slabs-specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 platform :ios, "7.0"
 target :Tests, :exclusive => true do
