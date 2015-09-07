@@ -4,7 +4,9 @@
  */
 #import "RSDKAnalytics.h"
 #import "RSDKAnalyticsAppDelegate.h"
+// INTERNAL ONLY BEGINS
 #import <HockeySDK/HockeySDK.h>
+// INTERNAL ONLY ENDS
 
 /////////////////////////////////////////////////////////////////
 
@@ -13,10 +15,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	// INTERNAL ONLY BEGINS
     BITHockeyManager *hockey = BITHockeyManager.sharedHockeyManager;
     [hockey configureWithIdentifier:@"4645a14dfa63a030b68454d8aea8bbb9"];
     [hockey startManager];
     [hockey.authenticator authenticateInstallation];
+	// INTERNAL ONLY ENDS
     
     // Fixes navigation bar on iOS<7
     if (![UINavigationBar instancesRespondToSelector:@selector(barTintColor)])
