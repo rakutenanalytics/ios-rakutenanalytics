@@ -3,9 +3,7 @@
  * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
  */
 @import XCTest;
-
-#import "RSDKAnalyticsRecord.h"
-#import "RSDKAnalyticsItem.h"
+#import <RSDKAnalytics/RSDKAnalytics.h>
 
 @interface RSDKAnalyticsRecordTests : XCTestCase
 @end
