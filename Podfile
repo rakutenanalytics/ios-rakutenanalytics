@@ -3,6 +3,7 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 platform :ios, "7.0"
 target :Tests, :exclusive => true do
+  xcodeproj 'CI'
   pod 'RSDKAnalytics', :path => './RSDKAnalytics.podspec'
 end
 
