@@ -1,23 +1,17 @@
-test-reports/
-analyzer.log
-
+# OS X
 .DS_Store
+.LSOverride
+
+# vim
 *.swp
-*~.nib
 
-build/
-artifacts/
-
-*.pbxuser
-*.perspective
-*.perspectivev3
-
-*.mode1v3
-*.mode2v3
-
+# Xcode
 xcuserdata
-**/xcshareddata/*.xccheckout
-StaticAnalyzer
+*.xccheckout
+project.xcworkspace
 
-*.pyc
-*.pyo
+# cibuild
+/build
+/artifacts
+/.doxygen
+/Doxyfile

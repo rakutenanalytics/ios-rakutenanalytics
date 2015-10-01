@@ -1,6 +1,8 @@
+#ifndef DOXYGEN
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ *
+ * @authors "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
@@ -48,3 +50,6 @@ RMSDK_EXPORT @interface RSDKAnalyticsDatabase : NSObject
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
+
