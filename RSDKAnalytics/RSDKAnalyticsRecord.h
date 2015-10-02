@@ -168,7 +168,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 /**
  * User identifier.
  *
- * This identifies the currently logged-in user, and can be obtained by calling @ref RIdInformationAPI::requestEncryptedEasyIdWithAccessToken:completion:.
+ * This identifies the currently logged-in user, and can be obtained by calling RIdInformationAPI::requestEncryptedEasyIdWithAccessToken:completion:.
  *
  * @note This value will be sent as the **userid** (`USER_ID`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
@@ -267,7 +267,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 @property (nonatomic, copy, nullable) NSString *searchQuery;
 
 /**
- * OR/AND. Set to @ref RSDKAnalyticsInvalidSearchMethod by default.
+ * OR/AND. Set to RSDKAnalyticsInvalidSearchMethod by default.
  *
  * @note This value will be sent as the **oa** (`OR_AND`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
@@ -412,7 +412,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 @property (nonatomic) uint64_t cartState;
 
 /**
- * Checkout. Set to @ref RSDKAnalyticsInvalidCheckoutStage by default.
+ * Checkout. Set to RSDKAnalyticsInvalidCheckoutStage by default.
  *
  * @note This value will be sent as the **chkout** (`CHECKOUT`) RAT parameter. See
  * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)

@@ -1,4 +1,4 @@
 # workspace						scheme					options
-CI.xcworkspace					Tests
+CI.xcworkspace					Tests					test-on=iPhone 4s/7.1,iPad Air/8.4,iPhone 6 Plus/9.0
 Samples/Samples.xcworkspace		RSDKAnalyticsSample		profile=6feecd78-e1bd-4cfc-8168-84ab7e83ebb7	notest
 # vim:noet:ts=4:sw=4:ff=unix:
