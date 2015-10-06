@@ -91,8 +91,7 @@ For a list of valid `accountId` and `serviceId` values, please refer to the
 [Services and accounts](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/aid_acc_Map.json)
 JSON file.
 
-@note Developers with no access to the above file should request new account
- and service identifiers by email, using the address dev-rat@mail.rakuten.com.
+@note Please see @ref analytics-register to learn how to register new applications.
 
 ### Monitoring network activity
 Developers who want to monitor the module's network activity can do so by listening
@@ -108,4 +107,11 @@ and @ref RSDKAnalyticsUploadSuccessNotification notifications. For example:
 			NSLog(@"Successfully sent these records: %@", note.object);
 		}];
 ~~~
+
+@page analytics-register Registering a new application
+
+### Quick links
+
+* [Registration Form](https://confluence.rakuten-it.com/confluence/display/GEAP/01_RAT+New+Use+Application) (internal)
+* Support email for administrative tasks: dev-rat@mail.rakuten.com
 
