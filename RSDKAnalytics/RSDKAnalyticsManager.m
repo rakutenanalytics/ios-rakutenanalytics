@@ -540,7 +540,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         jsonDic[@"powerstatus"] = @(device.batteryState != UIDeviceBatteryStateUnplugged ? 1 : 0);
 
         // {name: "mbat", longName: "BATTERY_USAGE", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
-        jsonDic[@"mbat"] = [NSString stringWithFormat:@"%0.f", MIN(0, device.batteryLevel) * 100];
+        jsonDic[@"mbat"] = [NSString stringWithFormat:@"%0.f", device.batteryLevel * 100];
     }
 
     // {name: "dln", longName: "DEVICE_LANGUAGE", fieldType: "STRING", definitionLevel: "APP", maxLength: 16, minLength: 0, userSettable: true}
