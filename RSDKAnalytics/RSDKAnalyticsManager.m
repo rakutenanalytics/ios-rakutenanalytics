@@ -49,6 +49,7 @@ typedef NS_ENUM(NSInteger, RSDKAnalyticsMobileNetworkType)
  */
 typedef NS_ENUM(NSInteger, RSDKAnalyticsReachabilityStatus)
 {
+    RSDKAnalyticsReachabilityStatusUnknown = 0,
     RSDKAnalyticsReachabilityStatusOffline,
     RSDKAnalyticsReachabilityStatusConnectedWithWWAN,
     RSDKAnalyticsReachabilityStatusConnectedWithWiFi,
@@ -97,7 +98,7 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 /*
  * Keep track of reachability.
  */
-@property (nonatomic, assign) RSDKAnalyticsReachabilityStatus reachablityStatus;
+@property (nonatomic, assign) RSDKAnalyticsReachabilityStatus reachabilityStatus;
 
 /*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
@@ -152,7 +153,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         status = RSDKAnalyticsReachabilityStatusConnectedWithWiFi;
     }
 
-    instance.reachablityStatus = status;
+    instance.reachabilityStatus = status;
 }
 
 #pragma mark - Class methods
@@ -290,6 +291,18 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, endpoint.host.UTF8String);
             SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
             SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+
+            /*
+             * We register for reachability updates, but to get the current reachability we need to query it,
+             * so we do so from a background thread.
+             */
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                SCNetworkReachabilityFlags flags;
+                if (SCNetworkReachabilityGetFlags(reachability, &flags))
+                {
+                    _reachabilityCallback(reachability, flags, NULL);
+                }
+            });
 
             atexit_b(^
             {
@@ -593,7 +606,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // {name: "mnetw", longName: "MOBILE_NETWORK_TYPE", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2, 3, 4], userSettable: true}
     RSDKAnalyticsMobileNetworkType mobileNetworkType;
 
-    switch (self.reachablityStatus)
+    switch (self.reachabilityStatus)
     {
         case RSDKAnalyticsReachabilityStatusConnectedWithWiFi:
             mobileNetworkType = RSDKAnalyticsMobileNetworkTypeWiFi;
@@ -620,7 +633,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     jsonDic[@"mos"] = osVersion;
 
     // {name: "online", longName: "ONLINE_STATUS", fieldType: "BOOLEAN", userSettable: false}
-    jsonDic[@"online"] = self.reachablityStatus != RSDKAnalyticsReachabilityStatusOffline ? @YES : @NO;
+    if (self.reachability != RSDKAnalyticsReachabilityStatusUnknown)
+    {
+        jsonDic[@"online"] = (self.reachabilityStatus != RSDKAnalyticsReachabilityStatusOffline) ? @YES : @NO;
+    }
 
     // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
     // note: this throws an exception if the app is not properly configured
