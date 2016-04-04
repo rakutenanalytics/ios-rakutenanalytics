@@ -633,7 +633,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     jsonDic[@"mos"] = osVersion;
 
     // {name: "online", longName: "ONLINE_STATUS", fieldType: "BOOLEAN", userSettable: false}
-    if (self.reachability != RSDKAnalyticsReachabilityStatusUnknown)
+    if (self.reachabilityStatus != RSDKAnalyticsReachabilityStatusUnknown)
     {
         jsonDic[@"online"] = (self.reachabilityStatus != RSDKAnalyticsReachabilityStatusOffline) ? @YES : @NO;
     }
