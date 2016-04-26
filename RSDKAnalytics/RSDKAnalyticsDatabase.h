@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RSDKAnalyticsDatabase RSDKAnalyticsDatabase.h RSDKAnalytics/RSDKAnalyticsDatabase.h
  */
-RMSDK_EXPORT @interface RSDKAnalyticsDatabase : NSObject
+RSDKA_EXPORT @interface RSDKAnalyticsDatabase : NSObject
 
 /**
  * Add a record to the database.

@@ -21,7 +21,6 @@ Pod::Spec.new do |s|
   s.ios.libraries        = 'sqlite3', 'z'
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
-  s.dependency 'RakutenAPIs',           '~> 1.2'
   s.dependency 'RSDKDeviceInformation', '~> 1.4'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

@@ -20,7 +20,7 @@
  * @ingroup AnalyticsConstants
  * @since 2.0.0
  */
-RMSDK_EXPORT const NSString* const RSDKAnalyticsVersion;
+RSDKA_EXPORT const NSString* const RSDKAnalyticsVersion;
 
 #ifdef DOXYGEN
     /**
