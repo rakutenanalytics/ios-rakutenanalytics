@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
  */
-RMSDK_EXPORT @interface RSDKAnalyticsManager : NSObject
+RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
@@ -135,7 +135,7 @@ RMSDK_EXPORT @interface RSDKAnalyticsManager : NSObject
  * @ingroup AnalyticsConstants
  */
 
-RMSDK_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
+RSDKA_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
 
 
 /**
@@ -149,7 +149,7 @@ RMSDK_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
  * @ingroup AnalyticsConstants
  */
 
-RMSDK_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
+RSDKA_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
 
 
 /**
@@ -161,6 +161,6 @@ RMSDK_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
  * @ingroup AnalyticsConstants
  */
 
-RMSDK_EXPORT NSString *const RSDKAnalyticsUploadSuccessNotification;
+RSDKA_EXPORT NSString *const RSDKAnalyticsUploadSuccessNotification;
 
 NS_ASSUME_NONNULL_END

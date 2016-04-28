@@ -12,7 +12,6 @@
 
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import <RSDKAnalytics/RSDKAnalytics.h>
-#import <RakutenAPIs/RakutenAPIs.h>
 #import "RSDKAnalyticsDatabase.h"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -679,11 +678,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDic options:0 error:0];
     RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
 
-    @rmsdk_weakify(self);
+    typeof(self) __weak weakSelf = self;
     [RSDKAnalyticsDatabase addRecord:jsonData completion:^
     {
-        @rmsdk_strongify(self);
-        [self _scheduleBackgroundUpload];
+        typeof(weakSelf) __strong strongSelf = weakSelf;
+        [strongSelf _scheduleBackgroundUpload];
     }];
 }
 
@@ -751,7 +750,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * accept it. The source code is at
      * https://git.dev.rakuten.com/projects/RATR/repos/receiver/browse/receiver.c
      */
-    @rmsdk_weakify(self);
+    typeof(self) __weak weakSelf = self;
 
     /*
      * Prepare the body of our POST request. It's a JSON-formatted array
@@ -814,26 +813,20 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     request.HTTPMethod = @"POST";
     request.HTTPBody = postBody;
 
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:NSOperationQueue.currentQueue
-                           completionHandler:^(NSURLResponse *response,
-                                               NSData * __unused data,
-                                               NSError *connectionError)
-    {
-        @rmsdk_strongify(self);
-        NSError *error = connectionError;
+    NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        typeof(weakSelf) __strong strongSelf = weakSelf;
 
-        if (connectionError)
+        if (error)
         {
             /*
              * Connection failed. Request a new attempt before calling the completion.
              */
 
-            if (self)
+            if (strongSelf)
             {
-                @synchronized(self)
+                @synchronized(strongSelf)
                 {
-                    self.uploadRequested = YES;
+                    strongSelf.uploadRequested = YES;
                 }
             }
         }
@@ -856,17 +849,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
                 [RSDKAnalyticsDatabase deleteRecordsWithIdentifiers:identifiers
                                                          completion:^
-                {
-                    @rmsdk_strongify(self);
-                    [self _backgroupUploadEnded];
-                }];
+                 {
+                     typeof(weakSelf) __strong strongSelf = weakSelf;
+                     [strongSelf _backgroupUploadEnded];
+                 }];
                 return;
             }
 
-            error = [NSError errorWithDomain:RakutenAPIErrorDomain
-                                        code:RakutenAPIInvalidPlatformResponseError
+            error = [NSError errorWithDomain:NSURLErrorDomain
+                                        code:NSURLErrorUnknown
                                     userInfo:@{NSLocalizedDescriptionKey: @"invalid_response",
-                                              NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Expected status code == 200, got %ld", (long)httpResponse.statusCode]}];
+                                               NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Expected status code == 200, got %ld", (long)httpResponse.statusCode]}];
         }
 
         id userInfo = nil;
@@ -878,9 +871,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsUploadFailureNotification
                                                           object:recordGroup
                                                         userInfo:userInfo];
-
-        [self _backgroupUploadEnded];
+        
+        [strongSelf _backgroupUploadEnded];
     }];
+    [dataTask resume];
 }
 
 //--------------------------------------------------------------------------
@@ -891,17 +885,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * Get a group of records and start uploading them.
      */
 
-    @rmsdk_weakify(self);
+    typeof(self) __weak weakSelf = self;
     [RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
     {
-        @rmsdk_strongify(self);
+        typeof(weakSelf) __strong strongSelf = weakSelf;
         if (records.count)
         {
-            [self _doBackgroundUploadWithRecords:records identifiers:identifiers];
+            [strongSelf _doBackgroundUploadWithRecords:records identifiers:identifiers];
         }
         else
         {
-            [self _backgroupUploadEnded];
+            [strongSelf _backgroupUploadEnded];
         }
     }];
 }

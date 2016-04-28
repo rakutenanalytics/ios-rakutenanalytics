@@ -62,28 +62,28 @@ typedef NS_ENUM(NSInteger, RSDKAnalyticsSearchMethod)
  *
  * @ingroup AnalyticsConstants
  */
-RMSDK_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId;
+RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId;
 
 /**
  * Special value for RSDKAnalyticsRecord.checkpoints, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-RMSDK_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints;
+RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints;
 
 /**
  * Special value for RSDKAnalyticsRecord.cartState, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-RMSDK_EXPORT const uint64_t RSDKAnalyticsInvalidCartState;
+RSDKA_EXPORT const uint64_t RSDKAnalyticsInvalidCartState;
 
 /**
  * Special value for RSDKAnalyticsRecord.navigationTime, corresponding to an invalid value.
  *
  * @ingroup AnalyticsConstants
  */
-RMSDK_EXPORT const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
+RSDKA_EXPORT const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
 
 
 /**
@@ -111,7 +111,7 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  *
  * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
  */
-RMSDK_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
+RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Create a new record object.

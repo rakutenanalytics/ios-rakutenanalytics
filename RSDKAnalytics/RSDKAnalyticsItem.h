@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RSDKAnalyticsItem RSDKAnalyticsItem.h RSDKAnalytics/RSDKAnalyticsItem.h
  */
-RMSDK_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
+RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Item identifier. Not set by default.
