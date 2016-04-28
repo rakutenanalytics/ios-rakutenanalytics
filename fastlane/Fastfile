@@ -21,9 +21,13 @@ platform :ios do
 
   desc "Build a sample"
   lane :sample do |options|
-    cocoapods(podfile: "Samples/Podfile", repo_update: false)
+
+    # Increment version
     increment_build_number(build_number: lane_context[SharedValues::R_VERSION_FROM_DATE], xcodeproj: "Samples/RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj")
     increment_version_number(version_number: lane_context[SharedValues::R_VERSION_FROM_DATE], xcodeproj: "Samples/RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj")
+
+    # Install pods
+    cocoapods(podfile: "Samples/Podfile", repo_update: false)
 
     # Build sample
     gym(
