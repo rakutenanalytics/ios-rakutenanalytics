@@ -2,16 +2,18 @@ source 'https://github.com/CocoaPods/Specs.git'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 workspace 'Samples.xcworkspace'
-xcodeproj 'RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj'
+project 'RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj'
 
 platform :ios, "7.0"
-pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
 
-# Extra pods this sample uses
-pod 'FXForms',                    '~> 1.2'
-pod 'SVProgressHUD',              '~> 1.0'
-pod 'RESideMenu',                 '~> 4.0'
-pod 'FontAwesomeKit/FontAwesome', '~> 2.1'
-pod 'HockeySDK',                  '~> 3.8'
+target 'RSDKAnalyticsSample' do
+  pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
+
+  pod 'FXForms',                    '~> 1.2'
+  pod 'SVProgressHUD',              '~> 1.0'
+  pod 'RESideMenu',                 '~> 4.0'
+  pod 'FontAwesomeKit/FontAwesome', '~> 2.1'
+  pod 'HockeySDK',                  '~> 3.8'
+end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
