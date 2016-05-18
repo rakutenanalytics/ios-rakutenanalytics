@@ -16,7 +16,7 @@ platform :ios do
       clean: true,
       output_directory: './artifacts/unit-tests',
       scheme: "Tests",
-      device: 'iPhone 6') 
+      device: 'REM SDK Unit Tests')
   end
 
   desc "Build a sample"
