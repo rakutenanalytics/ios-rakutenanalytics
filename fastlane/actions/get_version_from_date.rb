@@ -6,7 +6,7 @@ module Fastlane
 
     class GetVersionFromDateAction < Action
       def self.run(params)
-        Helper.log.info "Making up a version from the current date"
+        UI.message("Making up a version from the current date")
 
         Actions.lane_context[SharedValues::R_VERSION_FROM_DATE] = Actions.sh("/bin/date -u +'1.%-y%m.%-d%H%M%S'").strip!
       end
