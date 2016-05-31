@@ -3,8 +3,6 @@ PROJECT_NAME     = RSDKAnalytics
 PROJECT_BRIEF    = "Analytics module of the Rakuten Ecosystem Mobile SDK"
 INPUT           += RSDKAnalytics
 IGNORE_PREFIX    = RSDKAnalytics
-TAGFILES         = \
-	"$(HOME)/remsdk-tagfiles/RSDKDeviceInformation-1.5.tag=../RSDKDeviceInformation-1.5" \
-	"$(HOME)/remsdk-tagfiles/RakutenAPIs-1.7.tag=../RakutenAPIs-1.7"
+TAGFILES         = "$(HOME)/remsdk-tagfiles/deviceinformation-1.5.tag=../deviceinformation-1.5"
 
 
