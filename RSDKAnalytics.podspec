@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
-  s.version      = "2.5.4"
+  s.version      = "2.5.5"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "Analytics module of the Rakuten Ecosystem Mobile SDK"
-  s.homepage     = "https://rmsdk.apps.global.rakuten.com/"
+  s.homepage     = "https://www.raksdtd.com/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "7.0"
@@ -15,10 +15,17 @@ Pod::Spec.new do |s|
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
   }
-
+  s.weak_frameworks      = [
+    'Foundation',
+    'UIKit',
+    'CoreGraphics',
+    'CoreLocation',
+    'CoreTelephony',
+    'SystemConfiguration',
+  ]
+  s.libraries            = 'sqlite3', 'z'
   s.source_files         = 'RSDKAnalytics/**/*.{h,m}'
   s.private_header_files = 'RSDKAnalytics/RSDKAnalyticsDatabase.h'
-  s.ios.libraries        = 'sqlite3', 'z'
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
   s.dependency 'RSDKDeviceInformation', '~> 1.4'
