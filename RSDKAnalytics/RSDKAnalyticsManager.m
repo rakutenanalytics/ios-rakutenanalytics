@@ -518,7 +518,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          * Build a user agent string of the form AppId/Version
          */
         NSBundle *bundle = NSBundle.mainBundle;
-        userAgent = [NSString stringWithFormat:@"%@/%@", bundle.bundleIdentifier, [bundle objectForInfoDictionaryKey:@"CFBundleVersion"]];
+        NSDictionary *bundleInfo = bundle.infoDictionary;
+        NSString *bundleVersion = bundleInfo[@"CFBundleShortVersionString"] ?: bundleInfo[@"CFBundleVersion"];
+        userAgent = [NSString stringWithFormat:@"%@/%@", bundle.bundleIdentifier, bundleVersion];
 
 
         /*
