@@ -815,7 +815,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     request.HTTPMethod = @"POST";
     request.HTTPBody = postBody;
 
-    NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error) {
         typeof(weakSelf) __strong strongSelf = weakSelf;
 
         if (error)
