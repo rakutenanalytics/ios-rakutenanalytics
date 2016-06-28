@@ -4,7 +4,6 @@
  */
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
-#import <AdSupport/ASIdentifierManager.h>
 
 @interface RSDKAnalyticsRecordTests : XCTestCase
 @end

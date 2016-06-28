@@ -3,7 +3,6 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalytics.h>
-#import <AdSupport/ASIdentifierManager.h>
 
 //--------------------------------------------------------------------------
 // Definitions for the externs declared in the header file
