@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 #import <RSDKAnalytics/RSDKAnalyticsManager.h>
@@ -14,7 +14,7 @@
  *
  * @note This value is sent as the **ver** (`VERSION`) RAT parameter
  * and is used as a protocol version by the server-side parsers. See the
- * [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  *
  * @ingroup AnalyticsConstants

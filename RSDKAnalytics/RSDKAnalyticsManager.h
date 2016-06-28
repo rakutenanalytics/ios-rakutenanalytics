@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
@@ -18,12 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
  *  - **Gathering system data** that it merges with each record it spools. See the next section.
  *
  * ## Automatically gathered system data
- * The fields below, documented in the [Rakuten Analytics Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl),
+ * The fields below, documented in the [Rakuten Analytics Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl),
  * are automatically merged with the properties of each @ref RSDKAnalyticsRecord that gets spooled:
  *
  *  Field         | Long field name
  *  -------------:|:-------------------------------
  *  `ckp`         | `PERSISTENT_COOKIE`
+ *  `cka`         | ``
  *  `cks`         | `SESSION_COOKIE`
  *  `dln`         | `DEVICE_LANGUAGE`
  *  `loc`         | `LOCATION`

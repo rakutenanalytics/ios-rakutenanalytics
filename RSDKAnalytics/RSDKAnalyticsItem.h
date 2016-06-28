@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
@@ -24,7 +24,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the `itemId` is assumed to be a `productId`.
  *
  * @note This value will be appended to the **itemid** (`ITEM_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *identifier;
@@ -33,7 +33,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * Number of items. Defaults to `0`.
  *
  * @note This value will be appended to the **ni** (`NUMBER_OF_ITEMS`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) uint64_t quantity;
@@ -42,7 +42,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * Item price. Defaults to `0.0`.
  *
  * @note This value will be appended to the **price** (`PRICE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) double price;
@@ -51,7 +51,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * Item genre. Not set by default.
  *
  * @note This value will be appended to the **igenre** (`ITEM_GENRE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *genre;
@@ -60,7 +60,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * Item variation. Not set by default.
  *
  * @note This value will appended to the **variation** (`ITEM_VARIATION`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSDictionary *variation;
@@ -69,7 +69,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * Item tags. Not set by default.
  *
  * @note This value will appended to the **itag** (`Tag array`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSArray *tags;

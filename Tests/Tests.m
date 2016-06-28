@@ -1,9 +1,10 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
+#import <AdSupport/ASIdentifierManager.h>
 
 @interface RSDKAnalyticsRecordTests : XCTestCase
 @end
@@ -116,7 +117,7 @@
                                @"sq": @"L",
                                @"lang": @"fr_CA",
                                @"aid": @6,
-                               @"shopid": @"N",
+                               @"shopid": @"N"
                                };
 
 

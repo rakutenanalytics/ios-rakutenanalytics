@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
@@ -100,13 +100,13 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  * database and uploaded to RAT using RSDKAnalyticsManager::spoolRecord:.
  *
  * @note The properties below are named after the long names of RAT parameters in the
- * [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * document. For more information about each property, please see the
  * [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification).
  *
  * @warning No validation is performed on the various properties exposed by this class:
  * it is up to application developers to ensure they use values that are supported by RAT.
- * The [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * The [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * has the most up-to-date information about each field's requirement.
  *
  * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
@@ -126,7 +126,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  *   - RSDKAnalyticsManager::spoolRecord:
  *
  * @note For a list of valid account and service identitifiers, please refer to
- * [this JSON file](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/aid_acc_Map.json).
+ * [this JSON file](https://git.rakuten-it.com/projects/RG/repos/rg/browse/aid_acc_Map.json).
  */
 + (instancetype)recordWithAccountId:(uint64_t)accountId serviceId:(int64_t)serviceId;
 
@@ -136,7 +136,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  *
  * @return The receiver's properties, as a dictionary.
  *
- * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * document.
  */
 - (NSDictionary *)propertiesDictionary;
@@ -151,7 +151,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Account identifier, e.g.\ `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
  *
  * @note This value will be sent as the **acc** (`ACCOUNT_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, readonly) uint64_t accountId;
@@ -160,7 +160,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Service identifier, e.g.\ `14` for Singapore Mall.
  *
  * @note This value will be sent as the **aid** (`SERVICE_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, readonly) int64_t serviceId;
@@ -171,7 +171,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * This identifies the currently logged-in user, and can be obtained by calling RIdInformationAPI::requestEncryptedEasyIdWithAccessToken:completion:.
  *
  * @note This value will be sent as the **userid** (`USER_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *userId;
@@ -182,7 +182,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * This is the identifier of an affiliate the user has been redirected from.
  *
  * @note This value will be sent as the **afid** (`AFFILIATE_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) int64_t affiliateId;
@@ -194,7 +194,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * instance **Create happy customers**, **Improve conversion rate**.
  *
  * @note This value will be sent as the **gol** (`GOAL_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *goalId;
@@ -203,7 +203,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Campaign code. Not set by default.
  *
  * @note This value will be sent as the **cc** (`CAMPAIGN_CODE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *campaignCode;
@@ -212,7 +212,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Shop identifier. Not set by default.
  *
  * @note This value will be sent as the **shopid** (`SHOP_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *shopId;
@@ -227,7 +227,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Content locale. Set to the current locale by default.
  *
  * @note This value will be sent as the **cntln** (`CONTENT_LANGUAGE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, null_resettable) NSLocale *contentLocale;
@@ -237,7 +237,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Not set by default.
  *
  * @note This value will be sent as the **cycode** (`CURRENCY_CODE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *currencyCode;
@@ -252,7 +252,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Search selected locale. Not set by default.
  *
  * @note This value will be sent as the **lang** (`SEARCH_SELECTED_LANGUAGE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSLocale *searchSelectedLocale;
@@ -261,7 +261,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Search query. Not set by default.
  *
  * @note This value will be sent as the **sq** (`SEARCH_QUERY`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *searchQuery;
@@ -270,7 +270,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * OR/AND. Set to RSDKAnalyticsInvalidSearchMethod by default.
  *
  * @note This value will be sent as the **oa** (`OR_AND`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) RSDKAnalyticsSearchMethod searchMethod;
@@ -279,7 +279,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Exclude word search query. Not set by default.
  *
  * @note This value will be sent as the **esq** (`EXCLUDE_WORD_SEARCH_QUERY`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *excludeWordSearchQuery;
@@ -288,7 +288,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Genre (search category). Not set by default.
  *
  * @note This value will be sent as the **genre** (`GENRE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *genre;
@@ -297,7 +297,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Selected tags, to limit the search. Not set by default.
  *
  * @note This value will be sent as the **tag** (`SELECTED_TAGS`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSArray *selectedTags;
@@ -312,7 +312,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Page identifier, used to identify unique page access within a user session. Not set by default.
  *
  * @note This value will be sent as the **pgid** (`PAGE_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *pageIdentifier;
@@ -321,7 +321,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Current page or screen name. Not set by default.
  *
  * @note This value will be sent as the **pgn** (`PAGE_NAME`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *pageName;
@@ -330,7 +330,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Current page (or screen) type. Not set by default.
  *
  * @note This value will be sent as the **pgt** (`PAGE_TYPE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *pageType;
@@ -339,7 +339,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Previous page name or URL. Not set by default.
  *
  * @note This value will be sent as the **ref** (`REFERRER`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *referrer;
@@ -348,7 +348,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Navigation time. Set to @ref RSDKAnalyticsInvalidNavigationTime by default.
  *
  * @note This value will be sent as the **mnavtime** (`MOBILE_NAVIGATION_TIME`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) NSTimeInterval navigationTime;
@@ -359,7 +359,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Application developers can set this to any desired value. It will show up in RAT report.
  *
  * @note This value will be sent as the **chkpt** (`CHECKPOINTS`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) int64_t checkpoints;
@@ -397,7 +397,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Order identifier. Not set by default.
  *
  * @note This value will be sent as the **order_id** (`ORDER_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *orderId;
@@ -406,7 +406,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Cart state. Set to @ref RSDKAnalyticsInvalidCartState by default.
  *
  * @note This value will be sent as the **cart** (`CART_STATE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) uint64_t cartState;
@@ -415,7 +415,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Checkout. Set to RSDKAnalyticsInvalidCheckoutStage by default.
  *
  * @note This value will be sent as the **chkout** (`CHECKOUT`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic) RSDKAnalyticsCheckoutStage checkoutStage;
@@ -430,7 +430,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Component id. Not set by default.
  *
  * @note This value will be sent as the **compid** (`COMPONENT_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, nullable) NSArray *componentId;
@@ -439,7 +439,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Component top. Not set by default.
  *
  * @note This value will be sent as the **comptop** (`COMPONENT_TOP`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, nullable) NSArray *componentTop;
@@ -448,7 +448,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Custom parameters. Not set by default.
  *
  * @note This value will be sent as the **cp** (`CUSTOM_PARAMETERS`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, nullable) NSDictionary *customParameters;
@@ -457,7 +457,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Event type. Not set by default.
  *
  * @note This value will be sent as the **etype** (`EVENT_TYPE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *eventType;
@@ -470,7 +470,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * actually want to do so.
  *
  * @note This value will be sent as the **reqc** (`REQUEST_CODE`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, copy, nullable) NSString *requestCode;
@@ -479,7 +479,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Scroll div identifier. Not set by default.
  *
  * @note This value will be sent as the **scroll** (`SCROLL_DIV_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, nullable) NSArray *scrollDivId;
@@ -488,7 +488,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * Scroll viewed. Not set by default.
  *
  * @note This value will be sent as the **sresv** (`SCROLL_VIEWED`) RAT parameter. See
- * the [RAT Generic IDL](https://git.dev.rakuten.com/projects/RG/repos/rg/browse/ratGeneric.idl)
+ * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
 @property (nonatomic, nullable) NSArray *scrollViewed;
