@@ -1,18 +1,21 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-@import CoreGraphics;
-@import CoreLocation;
-@import CoreTelephony;
 @import Darwin.POSIX.sys;
-@import ObjectiveC.runtime;
-@import UIKit;
-@import SystemConfiguration;
+
+#import <CoreGraphics/CoreGraphics.h>
+#import <CoreLocation/CoreLocation.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+#import <UIKit/UIKit.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <AdSupport/AdSupport.h>
+#import <objc/runtime.h>
 
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import <RSDKAnalytics/RSDKAnalytics.h>
-#import "RSDKAnalyticsDatabase.h"
+#import "_RSDKAnalyticsDatabase.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -673,15 +676,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // {name: "tzo", longName: "TIMEZONE", fieldType: "DOUBLE", minValue: -12.0, maxValue: 12.0, userSettable: false}
     jsonDic[@"tzo"] = @(NSTimeZone.localTimeZone.secondsFromGMT / 3600.0);
 
-    // {name: "ver", longName: "VERSION", fieldType: "STRING", maxLength: 32, minLength: 0,userSettable: false}
+    // {name: "ver", longName: "VERSION", fieldType: "STRING", maxLength: 32, minLength: 0, userSettable: false}
     jsonDic[@"ver"] = RSDKAnalyticsVersion;
+
+    // {name: "cka", longName: "COOKIE_ADVERTISING", fieldType: "STRING", userSettable: false}
+    NSString *idfaString = [ASIdentifierManager sharedManager].advertisingIdentifier.UUIDString;
+    if (idfaString.length)
+    {
+        jsonDic[@"cka"] = idfaString;
+    }
 
     // Add record to database and schedule an upload
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDic options:0 error:0];
     RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
 
     typeof(self) __weak weakSelf = self;
-    [RSDKAnalyticsDatabase addRecord:jsonData completion:^
+    [_RSDKAnalyticsDatabase addRecord:jsonData completion:^
     {
         typeof(weakSelf) __strong strongSelf = weakSelf;
         [strongSelf _scheduleBackgroundUpload];
@@ -750,7 +760,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     /*
      * When you make changes here, always check the server-side program will
      * accept it. The source code is at
-     * https://git.dev.rakuten.com/projects/RATR/repos/receiver/browse/receiver.c
+     * https://git.rakuten-it.com/projects/RATR/repos/receiver/browse/receiver.c
      */
     typeof(self) __weak weakSelf = self;
 
@@ -849,7 +859,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  * Delete the records from the local database.
                  */
 
-                [RSDKAnalyticsDatabase deleteRecordsWithIdentifiers:identifiers
+                [_RSDKAnalyticsDatabase deleteRecordsWithIdentifiers:identifiers
                                                          completion:^
                  {
                      typeof(weakSelf) __strong strongSelf = weakSelf;
@@ -888,7 +898,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      */
 
     typeof(self) __weak weakSelf = self;
-    [RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
+    [_RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
     {
         typeof(weakSelf) __strong strongSelf = weakSelf;
         if (records.count)

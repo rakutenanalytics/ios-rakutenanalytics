@@ -1,6 +1,6 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalytics.h>
 

@@ -1,8 +1,8 @@
 /*
  * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import "RSDKAnalyticsDatabase.h"
+#import "_RSDKAnalyticsDatabase.h"
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import <sqlite3.h>
 
@@ -48,12 +48,12 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 ////////////////////////////////////////////////////////////////////////////
 
-@interface RSDKAnalyticsDatabase ()
+@interface _RSDKAnalyticsDatabase ()
 + (NSOperationQueue *)queue;
 + (sqlite3*)database;
 @end
 
-@implementation RSDKAnalyticsDatabase
+@implementation _RSDKAnalyticsDatabase
 
 //--------------------------------------------------------------------------
 

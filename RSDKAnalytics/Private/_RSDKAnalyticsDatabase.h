@@ -1,8 +1,7 @@
 #ifndef DOXYGEN
 /*
  * © Rakuten, Inc.
- *
- * @authors "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
+ * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
@@ -15,9 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
  * need to otherwise synchronize calls to them. Completion blocks are then
  * executed on the caller's operation queue.
  *
- * @class RSDKAnalyticsDatabase RSDKAnalyticsDatabase.h RSDKAnalytics/RSDKAnalyticsDatabase.h
  */
-RSDKA_EXPORT @interface RSDKAnalyticsDatabase : NSObject
+RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
 
 /**
  * Add a record to the database.

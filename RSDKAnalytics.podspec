@@ -15,6 +15,7 @@ Pod::Spec.new do |s|
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
   }
+
   s.weak_frameworks      = [
     'Foundation',
     'UIKit',
@@ -22,10 +23,13 @@ Pod::Spec.new do |s|
     'CoreLocation',
     'CoreTelephony',
     'SystemConfiguration',
+    'AdSupport'
   ]
   s.libraries            = 'sqlite3', 'z'
   s.source_files         = 'RSDKAnalytics/**/*.{h,m}'
-  s.private_header_files = 'RSDKAnalytics/RSDKAnalyticsDatabase.h'
+  s.private_header_files = [
+    'RSDKAnalytics/Private/**/*.h'
+  ]
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
   s.dependency 'RSDKDeviceInformation', '~> 1.4'

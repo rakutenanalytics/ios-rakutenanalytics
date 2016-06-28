@@ -13,4 +13,5 @@ framework module RSDKAnalytics {
   link framework "CoreLocation"
   link framework "CoreTelephony"
   link framework "SystemConfiguration"
+  link framework "AdSupport"
 }
