@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * This class handles:
  *
- *  - Enabling or disabling **location tracking** with @ref RSDKAnalyticsManager::locationTrackingEnabled;
+ *  - Enabling or disabling **location tracking** with #shouldTrackLastKnownLocation;
+ *  - Enabling or disabling **[advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) tracking** with #shouldTrackAdvertisingIdentifier.
  *  - **Spooling** @ref RSDKAnalyticsRecord instances with @ref RSDKAnalyticsManager::spoolRecord:.
  *  - **Gathering system data** that it merges with each record it spools. See the next section.
  *
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Field         | Long field name
  *  -------------:|:-------------------------------
  *  `ckp`         | `PERSISTENT_COOKIE`
- *  `cka`         | ``
+ *  `cka`         | |
  *  `cks`         | `SESSION_COOKIE`
  *  `dln`         | `DEVICE_LANGUAGE`
  *  `loc`         | `LOCATION`
@@ -53,33 +54,11 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
  * @return The shared instance.
  */
 
-+ (instancetype)sharedInstance;
-
++ (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
 
 /**
  * Spool a record\. It is first saved on-disk, then uploaded asynchronously
  * to the RAT server, on the background queue.
- *
- * @msc
- *   hscale="0.8";
- *
- *   app [label="app", linecolor="transparent", textcolor="transparent"],
- *   RSDKAnalyticsManager [label="Manager"],
- *   db [label="On-disk Database"],
- *   server [label="RAT Server"];
- *
- *   app => RSDKAnalyticsManager [label="spoolRecord:"];
- *   RSDKAnalyticsManager => db [label="enqueue operation"];
- *   RSDKAnalyticsManager >> app [label="OK"];
- *   db => db [label="insert record"];
- *   RSDKAnalyticsManager loop server [label="Poll database periodically"] {
- *     RSDKAnalyticsManager => db [label="fetch records"];
- *     db >> RSDKAnalyticsManager [label="records[]"];
- *     RSDKAnalyticsManager => server [label="async send"];
- *     server >> RSDKAnalyticsManager [label="200 OK"];
- *     RSDKAnalyticsManager => db [label="delete records"];
- *   };
- * @endmsc
  *
  * Developers who wish to monitor the module's network activity can do so
  * by listening to the notifications it sends, respectively @ref RSDKAnalyticsWillUploadNotification,
@@ -107,18 +86,30 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
 
 
 /**
- * Control whether the SDK should record the device's location or not.
+ * Control whether the SDK should track the device's location or not.
  *
  * This property is set to `NO` by default, which means @ref RSDKAnalyticsManager will
- * not attempt to record the device's location.
+ * not use the device's location.
  *
  * @warning If the application has not already requested access to the location
  * information, trying to set this property to `YES` has no effect. Please refer
  * to the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/)
  * for more information.
  */
+@property (nonatomic) BOOL shouldTrackLastKnownLocation;
 
-@property (nonatomic,getter=isLocationTrackingEnabled) BOOL locationTrackingEnabled;
+/**
+ * Control whether the SDK should track the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) or not.
+ *
+ * This property is set to `YES` by default, which means @ref RSDKAnalyticsManager will
+ * use the advertising identifier.
+ */
+@property (nonatomic) BOOL shouldTrackAdvertisingIdentifier;
+
+/**
+ * @deprecated Use #shouldTrackLastKnownLocation instead.
+ */
+@property (nonatomic, getter=isLocationTrackingEnabled) BOOL locationTrackingEnabled DEPRECATED_MSG_ATTRIBUTE("Use shouldTrackLastKnownLocation instead");
 
 @end
 
@@ -144,8 +135,7 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
  *
  * `object` is a the JSON payload that was being uploaded, in its unserialized
  * NSArray form.
- * `userInfo` contains a NSError instance under the key `NSUnderlyingErrorKey`. Connection
- * errors use the `NSURLErrorDomain` domain. Other errors use @ref RakutenAPIErrorDomain.
+ * `userInfo` contains a `NSError` instance under the key `NSUnderlyingErrorKey`, that uses the `NSURLErrorDomain` domain.
  *
  * @ingroup AnalyticsConstants
  */

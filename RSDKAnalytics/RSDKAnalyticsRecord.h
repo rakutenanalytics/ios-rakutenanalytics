@@ -14,25 +14,25 @@ NS_ASSUME_NONNULL_BEGIN
  * @enum RSDKAnalyticsCheckoutStage
  * @ingroup AnalyticsConstants
  */
-typedef NS_ENUM(NSInteger, RSDKAnalyticsCheckoutStage)
+typedef NS_ENUM(NSUInteger, RSDKAnalyticsCheckoutStage)
 {
     /// Invalid value.
-    RSDKAnalyticsInvalidCheckoutStage = 0,
+    RSDKAnalyticsInvalidCheckoutStage RSDKA_SWIFT_NAME(invalid) = 0,
 
     /// Stage 1 of checking out (login).
-    RSDKAnalyticsCheckoutStage1Login = 10,
+    RSDKAnalyticsCheckoutStage1Login RSDKA_SWIFT_NAME(login) = 10,
 
     /// Stage 2 of checking out (shipping details).
-    RSDKAnalyticsCheckoutStage2ShippingDetails = 20,
+    RSDKAnalyticsCheckoutStage2ShippingDetails RSDKA_SWIFT_NAME(shippingDetails) = 20,
 
     /// Stage 3 of checking out (order summary).
-    RSDKAnalyticsCheckoutStage3OrderSummary = 30,
+    RSDKAnalyticsCheckoutStage3OrderSummary RSDKA_SWIFT_NAME(orderSummary) = 30,
 
     ///Stage 4 of checking out (payment).
-    RSDKAnalyticsCheckoutStage4Payment = 40,
+    RSDKAnalyticsCheckoutStage4Payment RSDKA_SWIFT_NAME(payment) = 40,
 
     /// Stage 5 of checking out (verification).
-    RSDKAnalyticsCheckoutStage5Verification = 50,
+    RSDKAnalyticsCheckoutStage5Verification RSDKA_SWIFT_NAME(verification) = 50,
 };
 
 
@@ -43,16 +43,16 @@ typedef NS_ENUM(NSInteger, RSDKAnalyticsCheckoutStage)
  * @enum RSDKAnalyticsSearchMethod
  * @ingroup AnalyticsConstants
  */
-typedef NS_ENUM(NSInteger, RSDKAnalyticsSearchMethod)
+typedef NS_ENUM(NSUInteger, RSDKAnalyticsSearchMethod)
 {
     /// Invalid value.
-    RSDKAnalyticsInvalidSearchMethod = 0,
+    RSDKAnalyticsInvalidSearchMethod RSDKA_SWIFT_NAME(invalid) = 0,
 
     /// AND operation.
-    RSDKAnalyticsSearchMethodAnd = 1,
+    RSDKAnalyticsSearchMethodAnd RSDKA_SWIFT_NAME(and) = 1,
 
     /// OR operation.
-    RSDKAnalyticsSearchMethodOr = 2,
+    RSDKAnalyticsSearchMethodOr RSDKA_SWIFT_NAME(or) = 2,
 };
 
 
