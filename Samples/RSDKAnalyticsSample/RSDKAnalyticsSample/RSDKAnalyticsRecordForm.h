@@ -16,6 +16,8 @@
 
 // {{configuration
 @property (nonatomic) BOOL trackLocation;
+@property (nonatomic) BOOL trackIDFA;
+
 // }}
 
 // {{environment

@@ -42,6 +42,15 @@
 /////////////////////////////////////////////////////////////////
 @implementation RSDKAnalyticsRecordForm
 
+- (instancetype)init
+{
+    if ((self = [super init]))
+    {
+        self.trackIDFA = YES;
+    }
+    return self;
+}
+
 - (RSDKAnalyticsRecord *)record
 {
     RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:self.accountId serviceId:self.serviceId];
@@ -90,6 +99,11 @@
 }
 
 #pragma mark - Fields
+
+- (id)trackIDFAField
+{
+    return @{FXFormFieldAction: @"trackIDFAChanged:"};
+}
 
 - (id)trackLocationField
 {

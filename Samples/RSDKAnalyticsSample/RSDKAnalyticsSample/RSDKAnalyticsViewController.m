@@ -46,7 +46,7 @@
      * Navigation items use an icon font.
      */
 
-    id barButtonItemAttributes = @{UITextAttributeFont: [FAKFontAwesome iconFontWithSize:UIFont.buttonFontSize * 1.5]};
+    id barButtonItemAttributes = @{NSFontAttributeName: [FAKFontAwesome iconFontWithSize:UIFont.buttonFontSize * 1.5]};
     [self.navigationItem.leftBarButtonItem setTitleTextAttributes:barButtonItemAttributes forState:UIControlStateNormal];
     [self.navigationItem.rightBarButtonItem setTitleTextAttributes:barButtonItemAttributes forState:UIControlStateNormal];
 
@@ -84,7 +84,8 @@
 - (IBAction)spool
 {
     RSDKAnalyticsRecordForm *form = self.formController.form;
-    RSDKAnalyticsManager.sharedInstance.locationTrackingEnabled = form.trackLocation;
+    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = form.trackLocation;
+    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = form.trackIDFA;
 
     [RSDKAnalyticsManager spoolRecord:form.record];
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
@@ -137,9 +138,14 @@
 
 #pragma mark - FXFormFieldCell actions
 
+- (void)trackIDFAChanged:(FXFormSwitchCell *)cell
+{
+    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = cell.switchControl.on;
+}
+
 - (void)trackLocationChanged:(FXFormSwitchCell *)cell
 {
-    RSDKAnalyticsManager.sharedInstance.locationTrackingEnabled = cell.switchControl.on;
+    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = cell.switchControl.on;
 }
 
 @end

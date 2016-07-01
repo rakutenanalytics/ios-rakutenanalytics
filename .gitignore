@@ -18,6 +18,7 @@ Pods
 # Fastlane
 /artifacts
 /fastlane/report.xml
+/fastlane/README.md
 
 # Doxygen
 /.doxygen
