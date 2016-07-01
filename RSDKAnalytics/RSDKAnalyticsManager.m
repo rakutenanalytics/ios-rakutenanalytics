@@ -220,6 +220,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
+        _shouldTrackAdvertisingIdentifier = YES;
+
         /*
          * Using the following code would result in libICU being lazily loaded along with
          * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
@@ -264,22 +266,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          * struct tm's epoc is 1900/1/1. Months start at 0.
          */
 
-        self.startTime = [NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
-                          1900 + time->tm_year,
-                          1 + time->tm_mon,
-                          time->tm_mday,
-                          time->tm_hour,
-                          time->tm_min,
-                          time->tm_sec];
+        _startTime = [NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
+                      1900 + time->tm_year,
+                      1 + time->tm_mon,
+                      time->tm_mday,
+                      time->tm_hour,
+                      time->tm_min,
+                      time->tm_sec];
 
 
         /*
          * Set up the location manager
          */
 
-        self.locationManager = CLLocationManager.new;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
-        self.locationManager.delegate = self;
+        _locationManager = CLLocationManager.new;
+        _locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+        _locationManager.delegate = self;
 
 
         /*
@@ -338,8 +340,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
          */
 
-        self.telephonyNetworkInfo  = CTTelephonyNetworkInfo.new;
-        if ([self.telephonyNetworkInfo respondsToSelector:@selector(currentRadioAccessTechnology)])
+        _telephonyNetworkInfo  = CTTelephonyNetworkInfo.new;
+        if ([_telephonyNetworkInfo respondsToSelector:@selector(currentRadioAccessTechnology)])
         {
             /*
              * Check immediately, then listen to changes.
@@ -367,16 +369,26 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 //--------------------------------------------------------------------------
 
 #pragma mark - Getters & setters
-
-- (void)setLocationTrackingEnabled:(BOOL)locationTrackingEnabled
+- (void)setShouldTrackLastKnownLocation:(BOOL)shouldTrackLastKnownLocation
 {
-    if (locationTrackingEnabled != _locationTrackingEnabled)
+    if (shouldTrackLastKnownLocation != _shouldTrackLastKnownLocation)
     {
-        _locationTrackingEnabled = locationTrackingEnabled;
+        _shouldTrackLastKnownLocation = shouldTrackLastKnownLocation;
 
         // Update
         [self _startStopMonitoringLocationIfNeeded];
     }
+}
+
+// Deprecated
+- (BOOL)isLocationTrackingEnabled
+{
+    return self.shouldTrackLastKnownLocation;
+}
+
+- (void)setLocationTrackingEnabled:(BOOL)locationTrackingEnabled
+{
+    self.shouldTrackLastKnownLocation = locationTrackingEnabled;
 }
 
 //--------------------------------------------------------------------------
@@ -439,7 +451,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 #endif
 
-    if (self.locationTrackingEnabled &&
+    if (self.shouldTrackLastKnownLocation &&
         CLLocationManager.locationServicesEnabled &&
         (status == kCLAuthorizationStatusAuthorizedAlways ||
          (status == kCLAuthorizationStatusAuthorizedWhenInUse && UIApplication.sharedApplication.applicationState == UIApplicationStateActive)
@@ -565,7 +577,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     // {name: "loc", longName: "LOCATION", fieldType: "JSON"}
     CLLocationCoordinate2D coordinate = kCLLocationCoordinate2DInvalid;
-    CLLocation *location = self.locationTrackingEnabled ? self.locationManager.location : nil;
+    CLLocation *location = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
     if (location)
     {
         coordinate = location.coordinate;
@@ -679,11 +691,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // {name: "ver", longName: "VERSION", fieldType: "STRING", maxLength: 32, minLength: 0, userSettable: false}
     jsonDic[@"ver"] = RSDKAnalyticsVersion;
 
-    // {name: "cka", longName: "COOKIE_ADVERTISING", fieldType: "STRING", userSettable: false}
-    NSString *idfaString = [ASIdentifierManager sharedManager].advertisingIdentifier.UUIDString;
-    if (idfaString.length)
+    if (_shouldTrackAdvertisingIdentifier && ASIdentifierManager.sharedManager.isAdvertisingTrackingEnabled)
     {
-        jsonDic[@"cka"] = idfaString;
+        NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
+        if (idfa.length)
+        {
+            if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
+                                                withString:@""
+                                                   options:NSRegularExpressionSearch
+                                                     range:NSMakeRange(0, idfa.length)].length)
+            {
+                // User has not disabled tracking
+
+                // {name: "cka", longName: "COOKIE_ADVERTISING", fieldType: "STRING", userSettable: false}
+                jsonDic[@"cka"] = idfa;
+            }
+        }
     }
 
     // Add record to database and schedule an upload
