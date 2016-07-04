@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  Field         | Long field name
  *  -------------:|:-------------------------------
+ *  `app_name`    | `APPLICATION_NAME`
+ *  `app_ver`     | `APPLICATION_VERSION`
  *  `ckp`         | `PERSISTENT_COOKIE`
  *  `cka`         | |
  *  `cks`         | `SESSION_COOKIE`
@@ -42,8 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  `ts1`         | `CLIENT_PROVIDED_TIMESTAMP`
  *  `tzo`         | `TIMEZONE`
  *  `ua`          | `USER_AGENT`
- *  `app_name`    | `APPLICATION_NAME`
- *  `app_ver`     | `APPLICATION_VERSION`
  *  `ver`         | `VERSION`
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
