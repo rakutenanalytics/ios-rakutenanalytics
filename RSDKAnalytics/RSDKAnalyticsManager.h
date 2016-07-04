@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  Field         | Long field name
  *  -------------:|:-------------------------------
+ *  `app_name`    | `APPLICATION_NAME`
+ *  `app_ver`     | `APPLICATION_VERSION`
  *  `ckp`         | `PERSISTENT_COOKIE`
  *  `cka`         | |
  *  `cks`         | `SESSION_COOKIE`

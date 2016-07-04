@@ -509,6 +509,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     static NSString *screenResolution;
     static NSString *carrierName;
     static NSString *userAgent;
+    static NSString *applicationName;
+    static NSString *bundleVersion;
     static dispatch_once_t once;
     dispatch_once(&once, ^
     {
@@ -534,8 +536,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          */
         NSBundle *bundle = NSBundle.mainBundle;
         NSDictionary *bundleInfo = bundle.infoDictionary;
-        NSString *bundleVersion = bundleInfo[@"CFBundleShortVersionString"] ?: bundleInfo[@"CFBundleVersion"];
-        userAgent = [NSString stringWithFormat:@"%@/%@", bundle.bundleIdentifier, bundleVersion];
+        applicationName = bundle.bundleIdentifier;
+        bundleVersion = bundleInfo[@"CFBundleShortVersionString"] ?: bundleInfo[@"CFBundleVersion"];
+        userAgent = [NSString stringWithFormat:@"%@/%@", applicationName, bundleVersion];
 
 
         /*
@@ -671,6 +674,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     // {name: "ua", longName: "USER_AGENT", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
     jsonDic[@"ua"] = userAgent;
+
+    // {name: "app_name", longName: "APPLICATION_NAME", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
+    jsonDic[@"app_name"] = applicationName;
+
+    // {name: "app_ver", longName: "APPLICATION_VERSION", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
+    jsonDic[@"app_ver"] = bundleVersion;
 
     // {name: "res", longName: "RESOLUTION", fieldType: "STRING", maxLength: 12, minLength: 0, userSettable: false }
     jsonDic[@"res"] = screenResolution;
