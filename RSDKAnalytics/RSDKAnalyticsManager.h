@@ -51,10 +51,12 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
 /**
  * Retrieve the shared instance.
  *
+ * @note **Swift 3+:** This method is now called `shared()`.
+ *
  * @return The shared instance.
  */
 
-+ (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
++ (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
 
 /**
  * Spool a record\. It is first saved on-disk, then uploaded asynchronously
