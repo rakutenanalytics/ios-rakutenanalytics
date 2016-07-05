@@ -165,9 +165,15 @@ Our SDK uses the IDFA only for: `conversion events, estimating the number of uni
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-5-7 2.5.7 (2016-07-xx)
-* Added the automatic tracking of the IDFA (if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`).
-* Documentation improvement.
+@subsection analytics-2-6-0 2.6.0 (2016-07-xx)
+* Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.
+* In addition to `ua` (user agent), the library now also sends the `app_name` and `app_ver` parameters to RAT. The information in those fields is essentially the same as in `ua`, but is split in order to optimize queries and aggregation of KPIs on the backend.
+* Deprecated `locationTrackingEnabled` and `isLocationTrackingEnabled` (in RSDKAnalyticsManager). Please use RSDKAnalyticsManager::shouldTrackLastKnownLocation instead.
+* Improved naming conventions for Swift 3.
+* Added support for generics.
+* [REMI-1105](https://jira.rakuten-it.com/jira/browse/REMI-1105): Fix background upload timer only firing once, due to being requested from a background queue.
+* Added @ref analytics-appstore "AppStore Submission Procedure" section to the documentation.
+* Improved documentation: added table of content, full changelog and better-detailed tutorial.
 
 @subsection analytics-2-5-6 2.5.6 (2016-06-24)
 * [REMI-1052](https://jira.rakuten-it.com/jira/browse/REM-1052) Fix wrong version number being sent.

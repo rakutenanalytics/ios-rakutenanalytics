@@ -6,16 +6,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RSDKAnalyticsRecord;
+
 /**
  * Hold information about a shop item.
+ *
+ * @note **Swift 3+:** This class is now called `RSDKAnalyticsRecord.Item`.
  *
  * @see
  *  - RSDKAnalyticsRecord::addItem:
  *  - RSDKAnalyticsRecord::enumerateItemsWithBlock:
  *
- * @class RSDKAnalyticsItem RSDKAnalyticsItem.h RSDKAnalytics/RSDKAnalyticsItem.h
+ * @class RSDKAnalyticsItem RSDKAnalyticsItem.h <RSDKAnalytics/RSDKAnalyticsItem.h>
  */
-RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
+RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.Item) @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
 
 /**
  * Item identifier. Not set by default.
@@ -63,7 +67,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy, nullable) NSDictionary *variation;
+@property (nonatomic, copy, nullable) NSDictionary RSDKA_GENERIC(NSString *, id) *variation;
 
 /**
  * Item tags. Not set by default.
@@ -72,7 +76,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy, nullable) NSArray *tags;
+@property (nonatomic, copy, nullable) NSArray RSDKA_GENERIC(NSString *) *tags;
 
 /**
  * Create a new item.

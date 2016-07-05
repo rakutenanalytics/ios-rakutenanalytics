@@ -7,83 +7,132 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RSDKAnalyticsItem;
+@class RSDKAnalyticsRecord;
 
 /**
  * Values for RSDKAnalyticsRecord.checkoutStage.
+ *
+ * @note **Swift 3+:** This enum is now called `RSDKAnalyticsRecord.CheckoutStage`.
  *
  * @enum RSDKAnalyticsCheckoutStage
  * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsCheckoutStage)
 {
-    /// Invalid value.
-    RSDKAnalyticsInvalidCheckoutStage RSDKA_SWIFT_NAME(invalid) = 0,
+    /**
+     * Invalid value.
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.invalid`.
+     */
+    RSDKAnalyticsInvalidCheckoutStage RSDKA_SWIFT3_NAME(invalid) = 0,
 
-    /// Stage 1 of checking out (login).
-    RSDKAnalyticsCheckoutStage1Login RSDKA_SWIFT_NAME(login) = 10,
+    /**
+     * Stage 1 of checking out (login).
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage1Login`.
+     */
+    RSDKAnalyticsCheckoutStage1Login RSDKA_SWIFT3_NAME(stage1Login) = 10,
 
-    /// Stage 2 of checking out (shipping details).
-    RSDKAnalyticsCheckoutStage2ShippingDetails RSDKA_SWIFT_NAME(shippingDetails) = 20,
+    /**
+     * Stage 2 of checking out (shipping details).
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage2ShippingDetails`.
+     */
+    RSDKAnalyticsCheckoutStage2ShippingDetails RSDKA_SWIFT3_NAME(stage2ShippingDetails) = 20,
 
-    /// Stage 3 of checking out (order summary).
-    RSDKAnalyticsCheckoutStage3OrderSummary RSDKA_SWIFT_NAME(orderSummary) = 30,
+    /**
+     * Stage 3 of checking out (order summary).
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage3OrderSummary`.
+     */
+    RSDKAnalyticsCheckoutStage3OrderSummary RSDKA_SWIFT3_NAME(stage3OrderSummary) = 30,
 
-    ///Stage 4 of checking out (payment).
-    RSDKAnalyticsCheckoutStage4Payment RSDKA_SWIFT_NAME(payment) = 40,
+    /**
+     * Stage 4 of checking out (payment).
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage4Payment`.
+     */
+    RSDKAnalyticsCheckoutStage4Payment RSDKA_SWIFT3_NAME(stage4Payment) = 40,
 
-    /// Stage 5 of checking out (verification).
-    RSDKAnalyticsCheckoutStage5Verification RSDKA_SWIFT_NAME(verification) = 50,
-};
+    /**
+     * Stage 5 of checking out (verification).
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage5Verification`.
+     */
+    RSDKAnalyticsCheckoutStage5Verification RSDKA_SWIFT3_NAME(stage5Verification) = 50,
+} RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.CheckoutStage);
 
 
 
 /**
  * Values for RSDKAnalyticsRecord.searchMethod.
  *
+ * @note **Swift 3+:** This enum is now called `RSDKAnalyticsRecord.SearchMethod`.
+ *
  * @enum RSDKAnalyticsSearchMethod
  * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsSearchMethod)
 {
-    /// Invalid value.
-    RSDKAnalyticsInvalidSearchMethod RSDKA_SWIFT_NAME(invalid) = 0,
+    /**
+     * Invalid value.
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.invalid`.
+     */
+    RSDKAnalyticsInvalidSearchMethod RSDKA_SWIFT3_NAME(invalid) = 0,
 
-    /// AND operation.
-    RSDKAnalyticsSearchMethodAnd RSDKA_SWIFT_NAME(and) = 1,
+    /**
+     * `AND` operation.
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.and`.
+     */
+    RSDKAnalyticsSearchMethodAnd RSDKA_SWIFT3_NAME(and) = 1,
 
-    /// OR operation.
-    RSDKAnalyticsSearchMethodOr RSDKA_SWIFT_NAME(or) = 2,
-};
+    /**
+     * `OR` operation.
+     *
+     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.or`.
+     */
+    RSDKAnalyticsSearchMethodOr RSDKA_SWIFT3_NAME(or) = 2,
+} RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.SearchMethod);
 
 
 
 /**
  * Special value for RSDKAnalyticsRecord.affiliateId, corresponding to an invalid value.
  *
+ * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidAffiliateId`.
+ *
  * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId;
+RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.invalidAffiliateId);
 
 /**
  * Special value for RSDKAnalyticsRecord.checkpoints, corresponding to an invalid value.
  *
+ * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidCheckpoints`.
+ *
  * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints;
+RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.invalidCheckpoints);
 
 /**
  * Special value for RSDKAnalyticsRecord.cartState, corresponding to an invalid value.
  *
+ * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidCartState`.
+ *
  * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT const uint64_t RSDKAnalyticsInvalidCartState;
+RSDKA_EXPORT const uint64_t RSDKAnalyticsInvalidCartState RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.invalidCartState);
 
 /**
  * Special value for RSDKAnalyticsRecord.navigationTime, corresponding to an invalid value.
  *
+ * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidNavigationTime`.
+ *
  * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT const NSTimeInterval RSDKAnalyticsInvalidNavigationTime;
+RSDKA_EXPORT const NSTimeInterval RSDKAnalyticsInvalidNavigationTime RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.invalidNavigationTime);
 
 
 /**
@@ -109,7 +158,7 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  * The [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * has the most up-to-date information about each field's requirement.
  *
- * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h RSDKAnalytics/RSDKAnalyticsRecord.h
+ * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h <RSDKAnalytics/RSDKAnalyticsRecord.h>
  */
 RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
@@ -139,7 +188,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * document.
  */
-- (NSDictionary *)propertiesDictionary;
+- (NSDictionary RSDKA_GENERIC(NSString *, id) *)propertiesDictionary;
 
 #pragma mark - Environment
 
@@ -296,11 +345,11 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
 /**
  * Selected tags, to limit the search. Not set by default.
  *
- * @note This value will be sent as the **tag** (`SELECTED_TAGS`) RAT parameter. See
+ * @note This value will be sent as the **tag** (`TAG`) RAT parameter. See
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, copy, nullable) NSArray *selectedTags;
+@property (nonatomic, copy, nullable) NSArray RSDKA_GENERIC(NSString *) *selectedTags;
 
 #pragma mark - Navigation
 
@@ -433,7 +482,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, nullable) NSArray *componentId;
+@property (nonatomic, nullable) NSArray RSDKA_GENERIC(NSString *) *componentId;
 
 /**
  * Component top. Not set by default.
@@ -442,7 +491,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, nullable) NSArray *componentTop;
+@property (nonatomic, nullable) NSArray RSDKA_GENERIC(NSNumber *) *componentTop;
 
 /**
  * Custom parameters. Not set by default.
@@ -451,7 +500,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, nullable) NSDictionary *customParameters;
+@property (nonatomic, nullable) NSDictionary RSDKA_GENERIC(NSString *, id) *customParameters;
 
 /**
  * Event type. Not set by default.
@@ -482,7 +531,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, nullable) NSArray *scrollDivId;
+@property (nonatomic, nullable) NSArray RSDKA_GENERIC(NSString *) *scrollDivId;
 
 /**
  * Scroll viewed. Not set by default.
@@ -491,7 +540,7 @@ RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying
  * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
  * for more information.
  */
-@property (nonatomic, nullable) NSArray *scrollViewed;
+@property (nonatomic, nullable) NSArray RSDKA_GENERIC(NSString *) *scrollViewed;
 
 #pragma mark - Deprecated
 /**

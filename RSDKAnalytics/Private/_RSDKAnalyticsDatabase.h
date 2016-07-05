@@ -23,7 +23,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  * @param record      The data to write.
  * @param completion  The block to call once the record has been added.
  */
-+ (void)addRecord:(NSData *)record completion:(void (^)())completion;
++ (void)addRecord:(NSData *)record completion:(dispatch_block_t)completion;
 
 /**
  * Fetch a group of records from the database.
@@ -35,7 +35,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  *
  * @param completion  The block to call once the records have been fetched.
  */
-+ (void)fetchRecordGroup:(void (^)(NSArray *records, NSArray *identifiers))completion;
++ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *records, NSArray RSDKA_GENERIC(NSNumber *) *identifiers))completion;
 
 /**
  * Delete some records from the database.
@@ -43,7 +43,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  * @param identifiers  The identifiers of the records to be deleted.
  * @param completion   The block to call once the records have been deleted.
  */
-+ (void)deleteRecordsWithIdentifiers:(NSArray*)identifiers completion:(void (^)())completion;
++ (void)deleteRecordsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers completion:(dispatch_block_t)completion;
 
 @end
 
