@@ -137,7 +137,6 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
 
 static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
 {
-    RSDKAnalyticsManager *instance = RSDKAnalyticsManager.sharedInstance;
     RSDKAnalyticsReachabilityStatus status;
 
     if ((flags & kSCNetworkReachabilityFlagsReachable) == 0 ||
@@ -155,53 +154,51 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         status = RSDKAnalyticsReachabilityStatusConnectedWithWiFi;
     }
 
-    instance.reachabilityStatus = status;
+    _instance.reachabilityStatus = status;
 }
 
 #pragma mark - Class methods
 
+static RSDKAnalyticsManager *_instance = nil;
+
 + (void)load
 {
-    [self performSelectorOnMainThread:@selector(sharedInstance) withObject:nil waitUntilDone:NO];
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        _instance = [self.alloc initSharedInstance];
+        atexit_b(^{
+            _instance = nil;
+        });
+    });
 }
 
 //--------------------------------------------------------------------------
 
 + (instancetype)sharedInstance
 {
-    static id instance;
-
-    static dispatch_once_t once;
-    dispatch_once(&once, ^
-    {
-        instance = [self.alloc initSharedInstance];
-    });
-
-    atexit_b(^{
-        instance = nil;
-    });
-
-    return instance;
+    return _instance;
 }
 
 //--------------------------------------------------------------------------
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record
 {
-    [self.sharedInstance _spoolRecord:record];
+    [_instance _spoolRecord:record];
 }
 
 //--------------------------------------------------------------------------
 
 + (NSURL*)endpointAddress
 {
-    static NSURL *url;
+    static NSURL *productionURL, *stagingURL;
     static dispatch_once_t once;
     dispatch_once(&once, ^
     {
-        url = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
+        productionURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
+        stagingURL    = [NSURL URLWithString:@"https://stg.rat.rakuten.co.jp/"];
     });
-    return url;
+
+    return _instance.shouldUseStagingEnvironment ? stagingURL : productionURL;
 }
 
 //--------------------------------------------------------------------------
@@ -858,7 +855,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     [request setValue:@"text/plain" forHTTPHeaderField:@"Content-Type"];
 
-
     /*
      * Set the content length, as the backend needs it.
      */
@@ -868,7 +864,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     request.HTTPMethod = @"POST";
     request.HTTPBody = postBody;
 
-    NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error) {
+    NSURLSessionDataTask *dataTask = [NSURLSession.sharedSession dataTaskWithRequest:request
+                                                                   completionHandler:^(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error) {
         typeof(weakSelf) __strong strongSelf = weakSelf;
 
         if (error)

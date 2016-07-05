@@ -33,6 +33,18 @@ Running `pod install` will install the module and its dependencies.
 No configuration is required to start recording user activity, but a couple of things can
 be fine-tuned:
 
+#### Using the Staging environment
+The module can be configured to use staging environment when talking to the backend, by
+setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
+
+    // Swift:
+    RSDKAnalyticsManager.shared().shouldUseStagingEnvironment = true
+    
+    // Obj-C:
+    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
+
+@note The RAT staging server requires an ATS exception at the moment. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
+
 #### Last known location tracking (opt-in)
 If your application uses location tracking, you can optionally let our SDK send that piece of information
 automatically to RAT by setting RSDKAnalyticsManager::shouldTrackLastKnownLocation
@@ -168,6 +180,7 @@ Our SDK uses the IDFA only for: `conversion events, estimating the number of uni
 @subsection analytics-2-6-0 2.6.0 (2016-07-xx)
 * Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.
 * In addition to `ua` (user agent), the library now also sends the `app_name` and `app_ver` parameters to RAT. The information in those fields is essentially the same as in `ua`, but is split in order to optimize queries and aggregation of KPIs on the backend.
+* [REM-12024](https://jira.rakuten-it.com/jira/browse/REM-12024): Added RSDKAnalyticsManager::shouldUseStagingEnvironment.
 * Deprecated `locationTrackingEnabled` and `isLocationTrackingEnabled` (in RSDKAnalyticsManager). Please use RSDKAnalyticsManager::shouldTrackLastKnownLocation instead.
 * Improved naming conventions for Swift 3.
 * Added support for generics.

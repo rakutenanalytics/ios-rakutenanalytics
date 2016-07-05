@@ -14,9 +14,18 @@ platform :ios do
     cocoapods
     scan(
       clean: true,
+      skip_build: true,
       output_directory: './artifacts/unit-tests',
-      scheme: "Tests",
-      device: 'REM SDK Unit Tests')
+      scheme: 'Tests',
+      device: 'REM SDK Unit Tests',
+      code_coverage: true)
+    # Doesn't work for now
+    #xcov(
+    #  include_test_targets: true,
+    #  project: 'Pods/Pods.xcodeproj',
+    #  derived_data_path: "#{Dir.pwd}/../build/RSDKAnalytics",
+    #  scheme: 'RSDKAnalytics',
+    #  output_directory: './artifacts/coverage')
   end
 
   desc "Build a sample"

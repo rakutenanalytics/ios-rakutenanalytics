@@ -35,7 +35,8 @@ static const NSUInteger RSDKAnalyticsHistorySize = 5000;
  * The SQLite database name.
  */
 
-static NSString *const RSDKAnalyticsDatabaseName = @"RSDKAnalytics.db";
+static NSString *const RSDKAnalyticsProductionDatabaseName = @"RSDKAnalytics.db";
+static NSString *const RSDKAnalyticsStagingDatabaseName    = @"RSDKAnalyticsSTG.db";
 
 
 /*
@@ -57,7 +58,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
-+ (void)addRecord:(NSData *)record completion:(void (^)())completion
++ (void)addRecord:(NSData *)record completion:(dispatch_block_t)completion
 {
     NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
     [self.queue addOperationWithBlock:^
@@ -112,7 +113,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
-+ (void)fetchRecordGroup:(void (^)(NSArray *records, NSArray *identifiers))completion
++ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *records, NSArray RSDKA_GENERIC(NSNumber *) *identifiers))completion
 {
     NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
     [self.queue addOperationWithBlock:^
@@ -162,7 +163,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
-+ (void)deleteRecordsWithIdentifiers:(NSArray*)identifiers completion:(void (^)())completion
++ (void)deleteRecordsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers completion:(dispatch_block_t)completion
 {
     NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
     [self.queue addOperationWithBlock:^
@@ -227,7 +228,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
     dispatch_once(&once, ^
     {
         queue = NSOperationQueue.new;
-        queue.name = @"jp.co.rakuten.ios.sdk.analytics.database";
+        queue.name = @"com.rakuten.esd.sdk.analytics.database";
 
         /*
          * Make the queue a FIFO so we don't need to worry about
@@ -241,55 +242,56 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
+static sqlite3 *openOrCreateDatabase(NSString *name)
+{
+    NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+    NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:name];
+    sqlite3 *result = 0;
+
+    /*
+     * Open the database
+     */
+    if (sqlite3_open(databasePath.UTF8String, &result) != SQLITE_OK)
+    {
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to open database: %@", databasePath];
+        return 0;
+    }
+
+
+    /*
+     * Create our table if it does exist yet.
+     */
+    NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", RSDKAnalyticsTableName];
+    if (sqlite3_exec(result, query.UTF8String, 0, 0, 0) != SQLITE_OK)
+    {
+        sqlite3_close(result);
+        [NSException raise:NSInternalInconsistencyException format:@"Failed to create table: %s", sqlite3_errmsg(result)];
+        return 0;
+    }
+
+
+    /*
+     * Close database upon end of thread.
+     */
+    atexit_b(^{
+        sqlite3_close(result);
+    });
+
+    return result;
+}
+
 + (sqlite3*)database
 {
-    static sqlite3 *database = 0;
+    static sqlite3 *productionDatabase = 0;
+    static sqlite3 *stagingDatabase    = 0;
     static dispatch_once_t once;
     dispatch_once(&once, ^
     {
-        NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-        NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:RSDKAnalyticsDatabaseName];
-
-
-        /*
-         * Open the database
-         */
-
-        if(sqlite3_open(databasePath.UTF8String, &database) != SQLITE_OK)
-        {
-            database = 0;
-            [NSException raise:NSInternalInconsistencyException format:@"Failed to open database: %@", databasePath];
-            return;
-        }
-
-
-        /*
-         * Create our table if it does exist yet.
-         */
-
-        NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", RSDKAnalyticsTableName];
-        if (sqlite3_exec(database, query.UTF8String, 0, 0, 0) != SQLITE_OK)
-        {
-            sqlite3_close(database);
-            database = 0;
-
-            [NSException raise:NSInternalInconsistencyException format:@"Failed to create table: %s", sqlite3_errmsg(database)];
-            return;
-        }
-
-
-        /*
-         * Close database upon end of thread.
-         */
-
-        atexit_b(^
-        {
-            sqlite3_close(database);
-            database = 0;
-        });
+        productionDatabase = openOrCreateDatabase(RSDKAnalyticsProductionDatabaseName);
+        stagingDatabase    = openOrCreateDatabase(RSDKAnalyticsStagingDatabaseName);
     });
 
-    return database;
+    return [RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment] ? stagingDatabase : productionDatabase;
 }
 
 @end

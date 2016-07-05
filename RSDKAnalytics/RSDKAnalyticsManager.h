@@ -111,6 +111,11 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
 @property (nonatomic) BOOL shouldTrackAdvertisingIdentifier;
 
 /**
+ * Control whether to use the staging environment or not. Defaults to `NO`.
+ */
+@property (nonatomic) BOOL shouldUseStagingEnvironment;
+
+/**
  * @deprecated Use #shouldTrackLastKnownLocation instead.
  */
 @property (nonatomic, getter=isLocationTrackingEnabled) BOOL locationTrackingEnabled DEPRECATED_MSG_ATTRIBUTE("Use shouldTrackLastKnownLocation instead");
