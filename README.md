@@ -177,7 +177,7 @@ Our SDK uses the IDFA only for: `conversion events, estimating the number of uni
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-6-0 2.6.0 (2016-07-18)
+@subsection analytics-2-6-0 2.6.0 (2016-07-27)
 * Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.
 * In addition to `ua` (user agent), the library now also sends the `app_name` and `app_ver` parameters to RAT. The information in those fields is essentially the same as in `ua`, but is split in order to optimize queries and aggregation of KPIs on the backend.
 * [REM-12024](https://jira.rakuten-it.com/jira/browse/REM-12024): Added RSDKAnalyticsManager::shouldUseStagingEnvironment.
