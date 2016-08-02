@@ -1,41 +1,35 @@
 @tableofcontents
 @section analytics-module Introduction
-The **analytics** module provides APIs for tracking user activity and automatically send reports to the Rakuten Analytics servers.
+The **analytics** module provides APIs for tracking user activity and automatically sends reports to the Rakuten Analytics servers.
 
-@attention This module tracks the [IDFA][idfa] by default, to track installation and conversion rates. Please see the
- @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
+@attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
 
 @section analytics-installing Installing
-Please refer to [the Ecosystem SDK documentation](https://www.raksdtd.com/ios/) for a detailed step-by-step guide to installing the SDK.
+See the [Ecosystem SDK documentation](https://www.raksdtd.com/ios/) guide for a detailed step-by-step guide on installing the SDK.
 
-If you would rather use this SDK module as a standalone library, your `Podfile` should contain:
+Alternatively, you can also use this SDK module as a standalone library. To use the SDK module as a standalone library, your `Podfile` should contain:
 
     source 'https://github.com/CocoaPods/Specs.git'
     source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
     pod 'RSDKAnalytics'
 
-Running `pod install` will install the module and its dependencies.
+Run `pod install` to install the module and its dependencies.
 
 @section analytics-tutorial Getting started
-@attention This module depends on the [deviceinformation](../deviceinformation-latest) module for
- retrieving the device's unique identifier, and that module requires keychain
- access to be properly configured. Please refer to @ref device-information-keychain-setup "Setting up the keychain"
- for the right way to do so.
+@attention This module depends on the [deviceinformation](../deviceinformation-latest) module to retrieve the device's unique identifier. The deviceinformation module also requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
 
-@attention Without this, RSDKAnalyticsManager::spoolRecord: will raise a `NSObjectInaccessibleException`.
+@attention Without the deviceinformation module, RSDKAnalyticsManager::spoolRecord: raises a `NSObjectInaccessibleException`.
 
 @subsection analytics-register Registering a new application
 * [Registration Form](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Introduction+Application+Form) (from `r-intra`)
 * Support email for administrative tasks: dev-rat@mail.rakuten.com
 
 @subsection analytics-configuration Configuration
-No configuration is required to start recording user activity, but a couple of things can
-be fine-tuned:
+No configuration is required to start recording user activity, but you can change settings like staging environment options and last known location tracking to best suit your app.
 
-#### Using the Staging environment
-The module can be configured to use staging environment when talking to the backend, by
-setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
+#### Using the staging environment
+The analytics module can be configured to use the staging environment when talking to the backend by setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
 
     // Swift:
     RSDKAnalyticsManager.shared().shouldUseStagingEnvironment = true
@@ -43,12 +37,11 @@ setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
     // Obj-C:
     RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
 
-@note The RAT staging server requires an ATS exception at the moment. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
+@note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
 
 #### Last known location tracking (opt-in)
-If your application uses location tracking, you can optionally let our SDK send that piece of information
-automatically to RAT by setting RSDKAnalyticsManager::shouldTrackLastKnownLocation
-to `YES`:
+If your app uses location tracking, you can have the SDK automatically send location information by setting RSDKAnalyticsManager::shouldTrackLastKnownLocation
+to `YES`. This setting is optional.
 
     // Swift:
     RSDKAnalyticsManager.shared().shouldTrackLastKnownLocation = true
@@ -56,12 +49,8 @@ to `YES`:
     // Obj-C:
     RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = YES;
 
-@warning Even with this property set to `YES`, the module will not track the
- device's location if your application is not also doing so, i.e. the
- application requested access to the device's location and the user granted it.
- Please refer to the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html)
- for more information on how to request location updates.
-@warning Applications typically add something like this to their `UIApplicationDelegate`:
+@warning The analytics module does not track the device's location if the user has not granted device location access to the app, even if this property set to `YES`. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
+@warning Apps usually add a code snippet similiar to the one below to their `UIApplicationDelegate`:
 @warning
 ~~~{.m}
 	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -84,8 +73,7 @@ to `YES`:
 ~~~
 
 #### IDFA tracking (opt-out)
-Our SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. Although not recommended,
-developers can still disable this by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+The Rakuten SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. It is not recommended to disable this feature, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
     // Swift
     RSDKAnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
@@ -99,18 +87,13 @@ and spooled by calling RSDKAnalyticsManager::spoolRecord:.
 
 The properties of RSDKAnalyticsRecord closely match the fields described in the
 [Rakuten Analytics Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
-JSON file. There are a few exceptions, mainly due to their corresponding field's name
+JSON file. There are some exceptions, due to the corresponding field's name
 being too obscure, but each property's documentation mentions both the short and long
-names of the field it eventually maps to.
+names of the field used for mapping.
 
-@note For more information about each property, please read
- the [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification).
+@note See the [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification) guide for more information about each property.
 
-Calling RSDKAnalyticsManager::spoolRecord: gathers extra values from the system
-(such as the current time, information about the device the application is
-running on and the type of network it is using to connect to the internet) and
-returns immediately. The insertion into the local database and the upload of the
-records to the Rakuten Analytics servers both happen on background queues.
+Calling RSDKAnalyticsManager::spoolRecord: gathers extra values from the system, such as the current time, information about the device, and the type of network it is using to connect to the internet, and returns them immediately. The insertion into the local database and the upload of records to the Rakuten Analytics servers both occur on background queues.
 
 ~~~{.m}
 	// Create a new record
@@ -131,14 +114,14 @@ records to the Rakuten Analytics servers both happen on background queues.
 	[RSDKAnalyticsManager spoolRecord:record];
 ~~~
 
-For a list of valid `accountId` and `serviceId` values, please refer to the
-[Services and accounts](https://git.rakuten-it.com/projects/RG/repos/rg/browse/aid_acc_Map.json)
-JSON file.
+See the [Services and accounts](https://git.rakuten-it.com/projects/RG/repos/rg/browse/aid_acc_Map.json)
+JSON file for a list of valid `accountId` and `serviceId` values.
 
-@note Please see @ref analytics-register to learn how to register new applications.
+
+@note See @ref analytics-register to learn how to register new applications.
 
 @subsection analytics-network-monitoring Monitoring network activity
-Developers who want to monitor the module's network activity can do so by listening
+You can monitor the module's network activity by listening
 to the @ref RSDKAnalyticsWillUploadNotification, @ref RSDKAnalyticsUploadFailureNotification
 and @ref RSDKAnalyticsUploadSuccessNotification notifications. For example:
 
@@ -153,27 +136,27 @@ and @ref RSDKAnalyticsUploadSuccessNotification notifications. For example:
 ~~~
 
 @section analytics-appstore AppStore Submission Procedure
-When releasing your application to the AppStore, Apple now asks that you **disclose your usage of the advertising identifier (IDFA)**.
+Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
 
 @image html appstore-idfa.png "IDFA usage disclosure" width=80%
 
 #### 1. Serve advertisements within the app.
-Please check this box if any of the following points apply:
-- You show ads anywhere in your app.
-- You are using the **[discover](../discover-latest)** module of our SDK.
+Check this box if any of the following options apply to your app:
+- You app contains advertisements.
+- You are using the **[discover](../discover-latest)** SDK module.
 
 #### 2. Attribute this app installation to a previously served advertisement
-Our SDK uses the IDFA for install attribution. Please select this check box.
+Check this checkbox. The Rakuten SDK uses the IDFA for install attribution. 
 
 #### 3. Attribute an action taken within this app to a previously served advertisement
-Our SDK uses the IDFA for re-engagment ads attribution. Please select this check box.
+Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution. 
 
 #### 4. iOS Limited Ad Tracking
-Our SDK fully complies with Apple requirement below:
+The Rakuten SDK fully complies with Apple requirement below:
 
 > Check the value of this property before performing any advertising tracking. If the value is NO, use the advertising identifier only for the following purposes: frequency capping, conversion events, estimating the number of unique users, security and fraud detection, and debugging.
 
-Our SDK uses the IDFA only for: `conversion events, estimating the number of unique users, security and fraud detection`.
+The Rakuten SDK only uses the IDFA for `conversion events, estimating the number of unique users, security and fraud detection`.
 
 @section analytics-changelog Changelog
 
@@ -186,10 +169,10 @@ Our SDK uses the IDFA only for: `conversion events, estimating the number of uni
 * Added support for generics.
 * [REMI-1105](https://jira.rakuten-it.com/jira/browse/REMI-1105): Fix background upload timer only firing once, due to being requested from a background queue.
 * Added @ref analytics-appstore "AppStore Submission Procedure" section to the documentation.
-* Improved documentation: added table of content, full changelog and better-detailed tutorial.
+* Improved documentation: added table of contents, full changelog and more detailed tutorial.
 
 @subsection analytics-2-5-6 2.5.6 (2016-06-24)
-* [REMI-1052](https://jira.rakuten-it.com/jira/browse/REM-1052) Fix wrong version number being sent.
+* [REMI-1052](https://jira.rakuten-it.com/jira/browse/REM-1052) Fixed wrong version number being sent.
 * Fix Xcode 6 build.
 
 @subsection analytics-2-5-5 2.5.5 (2016-06-06)
@@ -247,7 +230,7 @@ Our SDK uses the IDFA only for: `conversion events, estimating the number of uni
 
 @subsection analytics-2-2-0 2.2.0 (2014-09-22)
 * Add `RSDKAnalyticsItem`.
-* The `ts1` RAT field is now expressed in seconds (previously, it was milliseconds).
+* The `ts1` RAT field is now expressed in seconds (previously in milliseconds).
 
 @subsection analytics-2-1-0 2.1.0 (2014-06-24)
 * Remove dependency on [FXReachability](https://github.com/nicklockwood/FXReachability)
