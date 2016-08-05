@@ -26,4 +26,6 @@
 
 /* RMSDK_EXPORT */ const NSString* const RSDKAnalyticsVersion = @ RMSDK_EXPAND_AND_QUOTE(RMSDK_ANALYTICS_VERSION);
 
+NSString *const RSDKAnalyticsErrorDomain = @"com.rakuten.esd.sdk.errors.analytics";
+
 RMSDK_REGISTER_MODULE_VERSION(RSDKAnalytics, RMSDK_ANALYTICS_VERSION);

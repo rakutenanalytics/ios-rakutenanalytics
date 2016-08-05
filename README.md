@@ -25,31 +25,40 @@ Run `pod install` to install the module and its dependencies.
 * [Registration Form](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Introduction+Application+Form) (from `r-intra`)
 * Support email for administrative tasks: dev-rat@mail.rakuten.com
 
-@subsection analytics-configuration Configuration
-No configuration is required to start recording user activity, but you can change settings like staging environment options and last known location tracking to best suit your app.
+@subsection analytics-configure-rat Configuring RAT
+@attention Applications **MUST** configure their RAT `accountId` and `applicationId` with the methods presented below, or automatic KPI tracking for a number of SDK features (SSO, installs, conversions, etc) will be disabled.
 
-#### Using the staging environment
+    // Swift
+    let rat = RATTracker.shared()
+    rat.configure(accountId:     YOUR_RAT_ACCOUNT_ID)
+    rat.configure(applicationId: YOUR_RAT_APPLICATION_ID)
+    
+    // Obj-C
+    RATTracker *rat = RSDKAnalyticsRATTracker.sharedInstance;
+    [rat configureWithAccountId:     YOUR_RAT_ACCOUNT_ID];
+    [rat configureWithApplicationId: YOUR_RAT_APPLICATION_ID];
+
+@subsection analytics-configure-staging Using the staging environment
 The analytics module can be configured to use the staging environment when talking to the backend by setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
 
     // Swift:
     RSDKAnalyticsManager.shared().shouldUseStagingEnvironment = true
-    
+
     // Obj-C:
     RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
 
 @note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
 
-#### Last known location tracking (opt-in)
-If your app uses location tracking, you can have the SDK automatically send location information by setting RSDKAnalyticsManager::shouldTrackLastKnownLocation
-to `YES`. This setting is optional.
+@subsection analytics-configure-location Opting out of last known location tracking
+If you want to disable location tracking, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Tracking is enabled by default.
 
     // Swift:
-    RSDKAnalyticsManager.shared().shouldTrackLastKnownLocation = true
-    
-    // Obj-C:
-    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = YES;
+    RSDKAnalyticsManager.shared().shouldTrackLastKnownLocation = false
 
-@warning The analytics module does not track the device's location if the user has not granted device location access to the app, even if this property set to `YES`. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
+    // Obj-C:
+    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
+
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and this property is set to `YES`. Instead, it passively monitors location updates captured by your application. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.
 @warning Apps usually add a code snippet similiar to the one below to their `UIApplicationDelegate`:
 @warning
 ~~~{.m}
@@ -60,20 +69,20 @@ to `YES`. This setting is optional.
 		self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
 		return YES;
 	}
-	
+
 	- (void)applicationDidBecomeActive:(UIApplication *)application
 	{
 		[self.locationManager startUpdatingLocation];
 	}
-	
+
 	- (void)applicationWillResignActive:(UIApplication *)application
 	{
 		[self.locationManager stopUpdatingLocation];
 	}
 ~~~
 
-#### IDFA tracking (opt-out)
-The Rakuten SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. It is not recommended to disable this feature, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+@subsection analytics-configure-idfa Opting out of IDFA tracking
+The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. It is not recommended to disable this feature, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
     // Swift
     RSDKAnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
@@ -82,43 +91,27 @@ The Rakuten SDK automatically tracks the [advertising identifier (IDFA)][idfa] b
     RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
 
 @subsection analytics-recording Recording activity
-Records are created with RSDKAnalyticsRecord::recordWithAccountId:serviceId:
-and spooled by calling RSDKAnalyticsManager::spoolRecord:.
+Events are created with RSDKAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RSDKAnalyticsEvent::track "track" method.
 
-The properties of RSDKAnalyticsRecord closely match the fields described in the
-[Rakuten Analytics Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
-JSON file. There are some exceptions, due to the corresponding field's name
-being too obscure, but each property's documentation mentions both the short and long
-names of the field used for mapping.
+#### Tracking generic events
+Tracking a generic event relies on a @ref RSDKAnalyticsTracker "tracker" capable of processing the event currently being @ref RSDKAnalyticsManager::addTracker: "registered".
 
-@note See the [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification) guide for more information about each property.
+    // Swift
+    AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
 
-Calling RSDKAnalyticsManager::spoolRecord: gathers extra values from the system, such as the current time, information about the device, and the type of network it is using to connect to the internet, and returns them immediately. The insertion into the local database and the upload of records to the Rakuten Analytics servers both occur on background queues.
+    // Obj-C
+    [[RSDKAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
 
-~~~{.m}
-	// Create a new record
-	RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:123 serviceId:456];
-	
-	// Setup some parameters
-	record.currencyCode  = @"USD";
-	// …
+#### Tracking RAT-specific events
+A concrete tracker, RSDKAnalyticsRATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RSDKAnalyticsRATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, refer to the [RAT Specification](https://rakuten.atlassian.net/wiki/display/SDK/RAT+Specification).
 
-	// Add some items
-	RSDKAnalyticsItem *item = [RSDKAnalyticsItem itemWithIdentifier:@"shopId/itemId"];
-	item.quantity = 4;
-	item.price    = 158.75;
-	[record addItem:item];
-	// …
+@note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo` and `ver`.
 
-	// Spool the record!
-	[RSDKAnalyticsManager spoolRecord:record];
-~~~
+    // Swift
+    RATTracker.shared().event(eventType: "tapPage", parameters:["pgn": "coupon page"]).track()
 
-See the [Services and accounts](https://git.rakuten-it.com/projects/RG/repos/rg/browse/aid_acc_Map.json)
-JSON file for a list of valid `accountId` and `serviceId` values.
-
-
-@note See @ref analytics-register to learn how to register new applications.
+    // Obj-C
+    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"tapPage" parameters:@{@"pgn": @"coupon page"}] track];
 
 @subsection analytics-network-monitoring Monitoring network activity
 You can monitor the module's network activity by listening
@@ -146,10 +139,10 @@ Check this box if any of the following options apply to your app:
 - You are using the **[discover](../discover-latest)** SDK module.
 
 #### 2. Attribute this app installation to a previously served advertisement
-Check this checkbox. The Rakuten SDK uses the IDFA for install attribution. 
+Check this checkbox. The Rakuten SDK uses the IDFA for install attribution.
 
 #### 3. Attribute an action taken within this app to a previously served advertisement
-Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution. 
+Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution.
 
 #### 4. iOS Limited Ad Tracking
 The Rakuten SDK fully complies with Apple requirement below:
@@ -159,6 +152,12 @@ The Rakuten SDK fully complies with Apple requirement below:
 The Rakuten SDK only uses the IDFA for `conversion events, estimating the number of unique users, security and fraud detection`.
 
 @section analytics-changelog Changelog
+
+@subsection analytics-2-7-0 2.7.0 (2016-08-xx)
+* Major rewrite.
+* Support for custom event trackers.
+* Automatic KPI tracking from other parts of our SDK.
+* Deprecated RSDKAnalyticsManager::spoolRecords:, RSDKAnalyticsItem and RSDKAnalyticsRecord.
 
 @subsection analytics-2-6-0 2.6.0 (2016-07-27)
 * Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.

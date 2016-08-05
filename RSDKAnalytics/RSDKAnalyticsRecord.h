@@ -159,7 +159,10 @@ typedef void(^rsdk_analytics_item_enumeration_block_t)(RSDKAnalyticsItem *item, 
  * has the most up-to-date information about each field's requirement.
  *
  * @class RSDKAnalyticsRecord RSDKAnalyticsRecord.h <RSDKAnalytics/RSDKAnalyticsRecord.h>
+ *
+ * @deprecated Use RSDKAnalyticsEvent instead.
  */
+DEPRECATED_MSG_ATTRIBUTE("Use RSDKAnalyticsEvent instead from now on.")
 RSDKA_EXPORT @interface RSDKAnalyticsRecord : NSObject<NSSecureCoding, NSCopying>
 
 /**

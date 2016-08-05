@@ -86,8 +86,10 @@
     RSDKAnalyticsRecordForm *form = self.formController.form;
     RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = form.trackLocation;
     RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = form.trackIDFA;
+    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = form.useStaging;
 
-    [RSDKAnalyticsManager spoolRecord:form.record];
+    [RSDKAnalyticsManager.sharedInstance process:form.event];
+
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
 }
 
