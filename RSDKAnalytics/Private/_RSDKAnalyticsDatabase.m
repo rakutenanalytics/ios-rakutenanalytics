@@ -5,6 +5,7 @@
 #import "_RSDKAnalyticsDatabase.h"
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import <sqlite3.h>
+#import "_RSDKAnalyticsHelpers.h"
 
 
 ////////////////////////////////////////////////////////////////////////////

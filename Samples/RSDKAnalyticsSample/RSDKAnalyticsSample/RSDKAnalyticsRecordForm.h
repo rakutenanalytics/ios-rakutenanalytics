@@ -17,6 +17,7 @@
 // {{configuration
 @property (nonatomic) BOOL trackLocation;
 @property (nonatomic) BOOL trackIDFA;
+@property (nonatomic) BOOL useStaging;
 
 // }}
 
@@ -71,5 +72,5 @@
 @property (nonatomic, strong) NSDictionary *customParameters;
 // }}
 
-- (RSDKAnalyticsRecord *)record;
+- (RSDKAnalyticsEvent *)event;
 @end

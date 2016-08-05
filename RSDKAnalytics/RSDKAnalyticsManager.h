@@ -7,10 +7,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class RSDKAnalyticsRecord;
+@class RSDKAnalyticsEvent;
+@protocol RSDKAnalyticsTracker;
 
 /**
  * Main class of the module.
  *
+ * @note **Swift 3+:** This class is now called `AnalyticsManager`.
  * This class handles:
  *
  *  - Enabling or disabling **location tracking** with #shouldTrackLastKnownLocation;
@@ -48,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
  */
-RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
+RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
@@ -57,8 +60,29 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
  *
  * @return The shared instance.
  */
-
 + (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
+
+/**
+ * Process an event. The manager passes the event trackers for processing the event.
+ * When an event is processed, it is added to the database then uploaded asynchronously to server, on the background queue.
+ *
+ * Developers who wish to monitor the module's network activity can do so
+ * by listening to the notifications it sends, respectively @ref RSDKAnalyticsWillUploadNotification,
+ * @ref RSDKAnalyticsUploadFailureNotification and @ref RSDKAnalyticsUploadSuccessNotification.
+ *
+ * @param event  An event will be sent to RAT server.
+ */
+- (void)process:(RSDKAnalyticsEvent *)event;
+
+/**
+ * Add a tracker to tracker list.
+ * @param tracker  A tracker, that comforms @protocol RSDKAnalyticsTracker.
+ * @param error    A RSDKAnalyticsErrorDomain error.
+ * @exception      RSDKAnalyticsTrackerAlreadyPresentError Error if a tracker is already registered.
+ *
+ * @return YES if class name of the tracker hasn't been registered yet, NO if otherwise.
+ */
+- (BOOL)addTracker:(id<RSDKAnalyticsTracker>)tracker error:(NSError **)error;
 
 /**
  * Spool a record\. It is first saved on-disk, then uploaded asynchronously
@@ -75,19 +99,20 @@ RSDKA_EXPORT @interface RSDKAnalyticsManager : NSObject
  * @exception NSInternalInconsistencyException The application is misconfigured and the first
  *            access group does not match the application's bundle identifier. See @ref device-information-keychain-setup "RSDKDeviceInformation: Setting up the keychain"
  *            for more information.
+ *
+ * @deprecated Use use RSDKAnalyticsEvent and -[RSDKAnalyticsManager sharedInstance] process:] instead.
  */
-
-+ (void)spoolRecord:(RSDKAnalyticsRecord *)record;
++ (void)spoolRecord:(RSDKAnalyticsRecord *)record DEPRECATED_MSG_ATTRIBUTE("Please use RSDKAnalyticsEvent and -[RSDKAnalyticsManager sharedInstance] process:] instead.");
 
 
 /**
  * This is the URL this module uploads records to.
  *
  * @return URL of the server.
+ *
+ * @deprecated Use -[RSDKAnalyticsRATTracker endpointAddress] instead.
  */
-
-+ (NSURL*)endpointAddress;
-
++ (NSURL*)endpointAddress DEPRECATED_MSG_ATTRIBUTE("Please use -[RSDKAnalyticsRATTracker endpointAddress] from now on.");
 
 /**
  * Control whether the SDK should track the device's location or not.

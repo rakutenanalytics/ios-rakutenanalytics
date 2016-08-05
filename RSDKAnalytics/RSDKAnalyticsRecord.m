@@ -27,7 +27,7 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
-    return nil;
+    __builtin_unreachable();
 }
 
 - (instancetype)initWithAccountId:(uint64_t)accountId serviceId:(int64_t)serviceId
@@ -65,6 +65,8 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
     return [self.alloc initWithAccountId:accountId serviceId:serviceId];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)addItem:(RSDKAnalyticsItem *)item
 {
     if (self.items.count == 100)
@@ -370,6 +372,8 @@ const NSTimeInterval RSDKAnalyticsInvalidNavigationTime = -1.0;
 
     return dictionary;
 }
+#pragma clang diagnostic pop
+
 
 - (NSString *)description
 {

@@ -4,12 +4,15 @@
  */
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
+#import <AdSupport/ASIdentifierManager.h>
 
 @interface RSDKAnalyticsRecordTests : XCTestCase
 @end
 
 @implementation RSDKAnalyticsRecordTests
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (NSString *)veryLongString
 {
     static NSString *veryLongString;
@@ -198,6 +201,7 @@
 
     XCTAssertEqualObjects(unarchived, record);
 }
+#pragma clang diagnostic pop
 
 @end
 

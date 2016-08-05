@@ -7,10 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A3BC1721D3629EB00BBCA54 /* AnalyticsEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */; };
+		5A3BC1741D362A0A00BBCA54 /* AnalyticsStateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */; };
+		5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */; };
+		5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */; };
 		693B580B1B7C6159008C5E86 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 693B580A1B7C6159008C5E86 /* Tests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsEventTests.m; sourceTree = "<group>"; };
+		5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsStateTests.m; sourceTree = "<group>"; };
+		5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsManagerTests.m; sourceTree = "<group>"; };
+		5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsRATTrackerTests.m; sourceTree = "<group>"; };
 		693B58081B7C6159008C5E86 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		693B580A1B7C6159008C5E86 /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		693B580C1B7C6159008C5E86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -48,6 +56,10 @@
 			children = (
 				693B580A1B7C6159008C5E86 /* Tests.m */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
+				5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */,
+				5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */,
+				5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */,
+				5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -118,7 +130,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */,
+				5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */,
 				693B580B1B7C6159008C5E86 /* Tests.m in Sources */,
+				5A3BC1741D362A0A00BBCA54 /* AnalyticsStateTests.m in Sources */,
+				5A3BC1721D3629EB00BBCA54 /* AnalyticsEventTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +258,7 @@
 				693B580F1B7C6159008C5E86 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
