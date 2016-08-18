@@ -409,6 +409,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         cp[@"days_since_first_use"] = @([self daysPassedSinceDate:state.installLaunchDate]);
         cp[@"days_since_last_use"] = @([self daysPassedSinceDate:state.lastLaunchDate]);
+        cp[@"logged_in"] = @(state.loggedIn);
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticSsessionEndEvent])
@@ -443,6 +444,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([eventName isEqualToString:RSDKAnalyticApplicationUpdateEvent])
     {
         json[@"etype"] = @"_rem_update";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"previous_version"] = state.lastVersion;
+        cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
+        cp[@"days_since_last_upgrade"] = @([self daysPassedSinceDate:state.lastUpdateDate]);
+        json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticCrashEvent])
     {
