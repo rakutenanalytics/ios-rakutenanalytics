@@ -5,6 +5,17 @@
 #import "RSDKAnalyticsEvent.h"
 #import "_RSDKAnalyticsHelpers.h"
 
+NSString *const RSDKAnalyticsInitialLaunchEvent = @"initialLaunch";
+NSString *const RSDKAnalyticSsessionStartEvent = @"sessionStart";
+NSString *const RSDKAnalyticSsessionEndEvent = @"sessionEnd";
+NSString *const RSDKAnalyticPageVisitEvent = @"pageVisit";
+NSString *const RSDKAnalyticApplicationUpdateEvent = @"applicationUpdate";
+NSString *const RSDKAnalyticCrashEvent = @"crash";
+NSString *const RSDKAnalyticLoginEvent = @"login";
+NSString *const RSDKAnalyticLogoutEvent = @"logout";
+NSString *const RSDKAnalyticPushNotificationEvent = @"pushNotification";
+NSString *const RSDKAnalyticInstallEvent = @"install";
+
 @interface RSDKAnalyticsEvent ()
 
 @property (nonatomic, readwrite, copy) NSString *name;

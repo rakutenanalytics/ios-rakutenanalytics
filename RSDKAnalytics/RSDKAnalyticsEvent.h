@@ -61,4 +61,60 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.Event) @interface RSDKAnalyt
 - (void)track;
 @end
 
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Name) RSDKAnalyticsManagerEventName { };
+
+/*
+ * Event triggered on first launch after installation or reinstallation.
+ * Always followed by a .sessionStart event.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsInitialLaunchEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.initialLaunch);
+
+/*
+ * Event triggered on every launch, as well as resume from background when
+ * the life cycle session timeout has been exceeded.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticSsessionStartEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionStart);
+
+/*
+ * Event triggered when the app goes into background or the session times out.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticSsessionEndEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionEnd);
+
+/*
+ * Event triggered when a view controller is shown.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticPageVisitEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pageVisit);
+
+/*
+ * Event triggered on the first launch after an update.
+ * Always followed by a .sessionStart event.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticApplicationUpdateEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.applicationUpdate);
+
+/*
+ * Event triggered before .sessionStart if the application's last run resulted in a crash.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticCrashEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.crash);
+
+/*
+ * Event triggered when a user logs in.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticLoginEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.login);
+
+/*
+ * Event triggered when a user logs out.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticLogoutEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.logout);
+
+/*
+ * Event triggered when the application handles a push notification.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticPushNotificationEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pushNotification);
+
+/*
+ * Event triggered on first run after app install with or without version change
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticInstallEvent  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.install);
+
 NS_ASSUME_NONNULL_END
