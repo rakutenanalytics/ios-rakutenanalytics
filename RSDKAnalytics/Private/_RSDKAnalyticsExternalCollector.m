@@ -10,7 +10,7 @@ static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.prope
 static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
 
 @interface _RSDKAnalyticsExternalCollector ()
-@property (nonatomic, getter=isLoggedIn) BOOL loggedIn;
+@property (nonatomic) BOOL loggedIn;
 @property (nonatomic, nullable, copy) NSString *trackingIdentifier;
 
 @end
@@ -42,38 +42,22 @@ static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.s
 {
     if (self = [super init])
     {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLoginNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.login.password"
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLoginNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.login.one_tap"
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLoginNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.login.other"
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLogoutNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.logout.local"
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLogoutNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.logout.global"
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveLogoutNotification:)
-                                                     name:@"com.rakuten.esd.sdk.events.logout.verify"
-                                                   object:nil];
+        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.password" selector:@selector(receiveLoginNotification:)];
+        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.one_tap" selector:@selector(receiveLoginNotification:)];
+        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.other" selector:@selector(receiveLoginNotification:)];
+        [self addNotificationName:@"com.rakuten.esd.sdk.events.logout.local" selector:@selector(receiveLogoutNotification:)];
+        [self addNotificationName:@"com.rakuten.esd.sdk.events.logout.global" selector:@selector(receiveLogoutNotification:)];
         [self update];
     }
     return self;
+}
+
+- (void)addNotificationName:(NSString *)name selector:(SEL)aSelector
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:aSelector
+                                                 name:name
+                                               object:nil];
 }
 
 - (void)receiveLoginNotification:(NSNotification *)notification
@@ -94,7 +78,7 @@ static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.s
     {
         params[@"login_method"] = @(RSDKAnalyticsOtherLoginMethod);
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticLoginEvent parameters:params.copy] track];
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEvent parameters:params.copy] track];
 }
 
 - (void)receiveLogoutNotification:(NSNotification *)notification
@@ -104,7 +88,15 @@ static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.s
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = NO;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticLogoutEvent parameters:nil] track];
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    if ([notification.name isEqualToString:@"com.rakuten.esd.sdk.events.logout.local"])
+    {
+        params[@"logout_method"] = @(RSDKAnalyticsLocalLogoutMethod);
+    } else
+    {
+        params[@"logout_method"] = @(RSDKAnalyticsGlobalLogoutMethod);
+    }
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEvent parameters:params.copy] track];
 }
 
 

@@ -30,6 +30,7 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
+@property (nonatomic, readwrite) RSDKAnalyticsLogoutMethod logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -328,7 +329,8 @@ static RSDKAnalyticsManager *_instance = nil;
         state.sessionStartDate = self.sessionStartDate ?: nil;
 
         // Update state from collectors & event
-        state.loginMethod = event.parameters[@"login_method"];
+        state.loginMethod = [event.parameters[@"login_method"] integerValue];
+        state.logoutMethod = [event.parameters[@"logout_method"] integerValue];
         state.loggedIn = _externalCollector.loggedIn;
         state.initialLaunchDate = _launchCollector.initialLaunchDate;
         state.installLaunchDate = _launchCollector.installLaunchDate;

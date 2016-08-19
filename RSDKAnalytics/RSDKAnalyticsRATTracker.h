@@ -74,7 +74,7 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RATTracker) @interface RSDKAnalyticsRATTracker : 
  *
  * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl ) document.
  */
-- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters;
+- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters;
 
 @end
 

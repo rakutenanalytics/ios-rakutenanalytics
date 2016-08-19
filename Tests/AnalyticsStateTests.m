@@ -16,6 +16,7 @@
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
+@property (nonatomic, readwrite) RSDKAnalyticsLogoutMethod logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -78,6 +79,7 @@
     state.sessionStartDate = sessionStartDate;
     state.userIdentifier = @"userId";
     state.loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
+    state.logoutMethod = RSDKAnalyticsGlobalLogoutMethod;
     state.linkIdentifier = @"linkId";
     state.origin = RSDKAnalyticsExternalOrigin;
     state.currentPage = currentPage;
@@ -121,6 +123,7 @@
     XCTAssertNil(state.lastUpdateDate);
     XCTAssertTrue(state.lastVersionLaunches == 0);
     XCTAssertTrue(state.loginMethod == RSDKAnalyticsOtherLoginMethod);
+    XCTAssertTrue(state.logoutMethod == RSDKAnalyticsLocalLogoutMethod);
     XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
 }
 
@@ -150,6 +153,7 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
     XCTAssertTrue(state.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
+    XCTAssertTrue(state.logoutMethod == RSDKAnalyticsGlobalLogoutMethod);
     XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(state.linkIdentifier);
@@ -240,17 +244,18 @@
     XCTAssertNotNil(copy.advertisingIdentifier);
     XCTAssertTrue([copy.advertisingIdentifier isEqualToString:@"adId"]);
 
-    XCTAssertTrue(state.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
-    XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
+    XCTAssertTrue(copy.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
+    XCTAssertTrue(copy.logoutMethod == RSDKAnalyticsGlobalLogoutMethod);
+    XCTAssertTrue(copy.origin == RSDKAnalyticsExternalOrigin);
 
-    XCTAssertNotNil(state.linkIdentifier);
-    XCTAssertTrue([state.linkIdentifier isEqualToString:@"linkId"]);
+    XCTAssertNotNil(copy.linkIdentifier);
+    XCTAssertTrue([copy.linkIdentifier isEqualToString:@"linkId"]);
 
     XCTAssertNotNil(copy.lastKnownLocation);
     XCTAssertTrue(copy.lastKnownLocation.coordinate.latitude == -56.6462520);
     XCTAssertTrue(copy.lastKnownLocation.coordinate.longitude == -36.6462520);
 
-    XCTAssertNotNil(state.sessionStartDate);
+    XCTAssertNotNil(copy.sessionStartDate);
     NSDateComponents *components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:copy.sessionStartDate];
     NSInteger year = [components year];
     NSInteger month = [components month];

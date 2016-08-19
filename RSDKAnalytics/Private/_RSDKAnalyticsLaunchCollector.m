@@ -17,15 +17,15 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 {
     RSDKAnalyticsRATTracker *_tracker;
 }
-@property (nonatomic, nullable, copy) NSDate *initialLaunchDate;
-@property (nonatomic, nullable, copy) NSDate *installLaunchDate;
-@property (nonatomic, nullable, copy) NSDate *lastUpdateDate;
-@property (nonatomic, nullable, copy) NSDate *lastLaunchDate;
-@property (nonatomic, nullable, copy) NSString *lastVersion;
-@property (nonatomic) int64_t lastVersionLaunches;
-@property (nonatomic) BOOL isInitialLaunch;
-@property (nonatomic) BOOL isInstallLaunch;
-@property (nonatomic) BOOL isUpdateLaunch;
+@property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
+@property (nonatomic, readwrite) int64_t lastVersionLaunches;
+@property (nonatomic, readwrite) BOOL isInitialLaunch;
+@property (nonatomic, readwrite) BOOL isInstallLaunch;
+@property (nonatomic, readwrite) BOOL isUpdateLaunch;
 @end
 
 @implementation _RSDKAnalyticsLaunchCollector
@@ -91,7 +91,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         else
         {
             // no keychain item
-            _initialLaunchDate = NSDate.new;
+            _initialLaunchDate = NSDate.date;
             query[(__bridge id)kSecAttrCreationDate] = _initialLaunchDate;
             status = SecItemAdd((__bridge CFDictionaryRef)query, 0);
             _isInitialLaunch = YES;
@@ -113,12 +113,12 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 - (void)willResume:(NSNotification *)notification
 {
     [self update];
-    [[_tracker eventWithEventType:RSDKAnalyticSsessionStartEvent parameters:nil] track];
+    [[_tracker eventWithEventType:RSDKAnalyticsSessionStartEvent parameters:nil] track];
 }
 
 - (void)didSuspend:(NSNotification *)notification
 {
-    [[_tracker eventWithEventType:RSDKAnalyticSsessionEndEvent parameters:nil] track];
+    [[_tracker eventWithEventType:RSDKAnalyticsSessionEndEvent parameters:nil] track];
 }
 
 - (void)didLaunch:(NSNotification *)notification
@@ -136,7 +136,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // Triggered on first run after app install with or without version change. Also triggers a session start.
     if (_isInstallLaunch)
     {
-        [[_tracker eventWithEventType:RSDKAnalyticInstallEvent parameters:nil] track];
+        [[_tracker eventWithEventType:RSDKAnalyticsInstallEvent parameters:nil] track];
         _isInstallLaunch = NO;
         return;
     }
@@ -144,8 +144,8 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // Triggered on first run after upgrade (anytime the version number changes). Also triggers a session start.
     if (_isUpdateLaunch)
     {
-        [[_tracker eventWithEventType:RSDKAnalyticInstallEvent parameters:nil] track];
-        [[_tracker eventWithEventType:RSDKAnalyticApplicationUpdateEvent parameters:nil] track];
+        [[_tracker eventWithEventType:RSDKAnalyticsInstallEvent parameters:nil] track];
+        [[_tracker eventWithEventType:RSDKAnalyticsApplicationUpdateEvent parameters:nil] track];
         _isUpdateLaunch = NO;
         return;
     }
@@ -161,7 +161,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     _lastVersionLaunches = [defaults integerForKey:_RSDKAnalyticsLastVersionLaunchesKey];
 
     // Update values for the next run
-    NSDate *now = NSDate.new;
+    NSDate *now = NSDate.date;
     NSString *currentVersion = NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"];
     if (!_isInitialLaunch && !_installLaunchDate)
     {

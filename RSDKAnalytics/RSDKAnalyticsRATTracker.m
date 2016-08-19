@@ -154,7 +154,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
-        _startTime = [self stringWithDate:NSDate.date];
+        _startTime = [RSDKAnalyticsRATTracker stringWithDate:NSDate.date];
 
 
         /*
@@ -235,12 +235,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     self.applicationIdentifier = applicationIdentifier;
 }
 
-- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
+- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
     return [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@",_RSDKAnalyticsPrefix,eventType] parameters:parameters];
 }
 
-- (NSString *)stringWithDate:(NSDate *)date
++ (NSString *)stringWithDate:(NSDate *)date
 {
     /*
      * Using the following code would result in libICU being lazily loaded along with
@@ -294,7 +294,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                         time->tm_sec] copy];
 }
 
-- (NSString *)nameWithPage:(UIViewController *)page
++ (NSString *)nameWithPage:(UIViewController *)page
 {
     if (!page)
     {
@@ -312,7 +312,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return NSStringFromClass([page class]);
 }
 
-- (int64_t)daysPassedSinceDate:(NSDate *)date
++ (int64_t)daysPassedSinceDate:(NSDate *)date
 {
     if (!date)
     {
@@ -320,6 +320,131 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
     NSCalendar *calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     return [calendar components:NSDayCalendarUnit fromDate:date toDate:NSDate.date options:0].day;
+}
+
++ (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
+{
+    NSMutableDictionary *json = [NSMutableDictionary dictionary];
+
+    // RATTracker only processes event which prefix with "rat."
+    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
+    {
+        return NO;
+    }
+
+    NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
+    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEvent])
+    {
+        json[@"etype"] = @"_rem_init_launch";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"first_install_date"] = [RSDKAnalyticsRATTracker stringWithDate:state.initialLaunchDate];
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsInstallEvent])
+    {
+        json[@"etype"] = @"_rem_install";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEvent])
+    {
+        json[@"etype"] = @"_rem_launch";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"days_since_first_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
+        cp[@"days_since_last_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
+        cp[@"logged_in"] = @(state.loggedIn);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEvent])
+    {
+        json[@"etype"] = @"_rem_end_session";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEvent])
+    {
+        json[@"etype"] = @"_rem_visit";
+        json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
+        json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        switch (state.origin)
+        {
+            case RSDKAnalyticsInternalOrigin:
+                cp[@"ref_type"] = @"internal";
+                break;
+            case RSDKAnalyticsExternalOrigin:
+                cp[@"ref_type"] = @"external";
+                break;
+            case RSDKAnalyticsPushOrigin:
+                cp[@"ref_type"] = @"push";
+                break;
+            default:
+                cp[@"ref_type"] = @"other";
+                break;
+        }
+        cp[@"linkid"] = state.linkIdentifier;
+        cp[@"logged_in"] = @(state.loggedIn);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEvent])
+    {
+        json[@"etype"] = @"_rem_update";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"previous_version"] = state.lastVersion;
+        cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
+        cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsCrashEvent])
+    {
+        json[@"etype"] = @"_rem_crash";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsLoginEvent])
+    {
+        json[@"etype"] = @"_rem_login";
+        NSString *loginMethod;
+        switch (state.loginMethod)
+        {
+            case RSDKAnalyticsPasswordInputLoginMethod:
+                loginMethod = @"password";
+                break;
+            case RSDKAnalyticsOneTapLoginLoginMethod:
+                loginMethod = @"one_tap_login";
+                break;
+            default:
+                loginMethod = @"other";
+                break;
+        }
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"login_method"] = loginMethod;
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsLogoutEvent])
+    {
+        json[@"etype"] = @"_rem_logout";
+        NSString *logoutMethod;
+        switch (state.logoutMethod)
+        {
+            case RSDKAnalyticsLocalLogoutMethod:
+                logoutMethod = @"single";
+                break;
+            default:
+                logoutMethod = @"all";
+                break;
+        }
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"logout_method"] = logoutMethod;
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEvent])
+    {
+        json[@"etype"] = @"_rem_push_notify";
+    }
+    else
+    {
+        // only set json["etype"] if the event name is not rat.generic
+        if (![eventName hasPrefix:[_RSDKAnalyticsGenericType substringFromIndex:_RSDKAnalyticsPrefix.length]])
+        {
+            json[@"etype"] = eventName;
+        }
+    }
+    return json.copy;
 }
 
 - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
@@ -383,113 +508,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         };
     });
 
-    id json = [NSMutableDictionary dictionary];
-
-    // RATTracker only processes event which prefix with "rat."
-    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
-    {
-        return NO;
-    }
-
-    NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
-    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEvent])
-    {
-        json[@"etype"] = @"_rem_init_launch";
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"first_install_date"] = [self stringWithDate:state.initialLaunchDate];
-        json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticInstallEvent])
-    {
-        json[@"etype"] = @"_rem_install";
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticSsessionStartEvent])
-    {
-        json[@"etype"] = @"_rem_launch";
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"days_since_first_use"] = @([self daysPassedSinceDate:state.installLaunchDate]);
-        cp[@"days_since_last_use"] = @([self daysPassedSinceDate:state.lastLaunchDate]);
-        cp[@"logged_in"] = @(state.loggedIn);
-        json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticSsessionEndEvent])
-    {
-        json[@"etype"] = @"_rem_end_session";
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticPageVisitEvent])
-    {
-        json[@"etype"] = @"_rem_visit";
-        json[@"ref"] = [self nameWithPage:state.lastVisitedPage];
-        json[@"pgn"] = [self nameWithPage:state.currentPage];
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        switch (state.origin)
-        {
-            case RSDKAnalyticsInternalOrigin:
-                cp[@"ref_type"] = @"internal";
-                break;
-            case RSDKAnalyticsExternalOrigin:
-                cp[@"ref_type"] = @"external";
-                break;
-            case RSDKAnalyticsPushOrigin:
-                cp[@"ref_type"] = @"push";
-                break;
-            default:
-                cp[@"ref_type"] = @"other";
-                break;
-        }
-        cp[@"linkid"] = state.linkIdentifier;
-        cp[@"logged_in"] = @(state.loggedIn);
-        json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticApplicationUpdateEvent])
-    {
-        json[@"etype"] = @"_rem_update";
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"previous_version"] = state.lastVersion;
-        cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
-        cp[@"days_since_last_upgrade"] = @([self daysPassedSinceDate:state.lastUpdateDate]);
-        json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticCrashEvent])
-    {
-        json[@"etype"] = @"_rem_crash";
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticLoginEvent])
-    {
-        json[@"etype"] = @"_rem_login";
-        NSString *loginMethod;
-        switch (state.loginMethod)
-        {
-            case RSDKAnalyticsPasswordInputLoginMethod:
-                loginMethod = @"password";
-                break;
-            case RSDKAnalyticsOneTapLoginLoginMethod:
-                loginMethod = @"one_tap_login";
-                break;
-            default:
-                loginMethod = @"other";
-                break;
-        }
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"login_method"] = loginMethod;
-        json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticLogoutEvent])
-    {
-        json[@"etype"] = @"_rem_logout";
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticPushNotificationEvent])
-    {
-        json[@"etype"] = @"_rem_push_notify";
-    }
-    else
-    {
-        // only set json["etype"] if the event name is not rat.generic
-        if (![eventName hasPrefix:[_RSDKAnalyticsGenericType substringFromIndex:_RSDKAnalyticsPrefix.length]])
-        {
-            json[@"etype"] = eventName;
-        }
-    }
+    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
 
     if (event.parameters.count)
     {
