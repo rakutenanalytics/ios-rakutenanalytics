@@ -326,12 +326,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
-    // RATTracker only processes event which prefix with "rat."
-    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
-    {
-        return NO;
-    }
-
     NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEvent])
     {
@@ -508,6 +502,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         };
     });
 
+    // RATTracker only processes event which prefix with "rat."
+    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
+    {
+        return NO;
+    }
+    
     id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
 
     if (event.parameters.count)

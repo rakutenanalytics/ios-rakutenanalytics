@@ -40,7 +40,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 /*
  * The number of launches since last version is being stored in shared preferences.
  */
-@property (nonatomic, readonly) int64_t lastVersionLaunches;
+@property (nonatomic, readonly) NSInteger lastVersionLaunches;
 
 /**
  * Retrieve the shared instance.

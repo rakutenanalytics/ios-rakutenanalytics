@@ -25,11 +25,16 @@ NSString *const RSDKAnalyticsInstallEvent = @"install";
 
 @implementation RSDKAnalyticsEvent
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
+#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
-    __builtin_unreachable();
+    return nil;
 }
+#pragma clang diagnostic pop
+
 
 - (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
 {

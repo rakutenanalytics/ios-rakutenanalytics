@@ -22,7 +22,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic, readwrite) int64_t lastVersionLaunches;
+@property (nonatomic, readwrite) NSInteger lastVersionLaunches;
 @property (nonatomic, readwrite) BOOL isInitialLaunch;
 @property (nonatomic, readwrite) BOOL isInstallLaunch;
 @property (nonatomic, readwrite) BOOL isUpdateLaunch;
