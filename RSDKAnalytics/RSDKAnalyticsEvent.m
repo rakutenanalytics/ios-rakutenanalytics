@@ -5,16 +5,16 @@
 #import "RSDKAnalyticsEvent.h"
 #import "_RSDKAnalyticsHelpers.h"
 
-NSString *const RSDKAnalyticsInitialLaunchEvent = @"initialLaunch";
-NSString *const RSDKAnalyticsSessionStartEvent = @"sessionStart";
-NSString *const RSDKAnalyticsSessionEndEvent = @"sessionEnd";
-NSString *const RSDKAnalyticsPageVisitEvent = @"pageVisit";
-NSString *const RSDKAnalyticsApplicationUpdateEvent = @"applicationUpdate";
-NSString *const RSDKAnalyticsCrashEvent = @"crash";
-NSString *const RSDKAnalyticsLoginEvent = @"login";
-NSString *const RSDKAnalyticsLogoutEvent = @"logout";
-NSString *const RSDKAnalyticsPushNotificationEvent = @"pushNotification";
-NSString *const RSDKAnalyticsInstallEvent = @"install";
+NSString *const RSDKAnalyticsInitialLaunchEventName = @"initialLaunch";
+NSString *const RSDKAnalyticsSessionStartEventName = @"sessionStart";
+NSString *const RSDKAnalyticsSessionEndEventName = @"sessionEnd";
+NSString *const RSDKAnalyticsPageVisitEventName = @"pageVisit";
+NSString *const RSDKAnalyticsApplicationUpdateEventName = @"applicationUpdate";
+NSString *const RSDKAnalyticsCrashEventName = @"crash";
+NSString *const RSDKAnalyticsLoginEventName = @"login";
+NSString *const RSDKAnalyticsLogoutEventName = @"logout";
+NSString *const RSDKAnalyticsPushNotificationEventName = @"pushNotification";
+NSString *const RSDKAnalyticsInstallEventName = @"install";
 
 @interface RSDKAnalyticsEvent ()
 
@@ -31,7 +31,7 @@ NSString *const RSDKAnalyticsInstallEvent = @"install";
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
-    return nil;
+    __builtin_unreachable();
 }
 #pragma clang diagnostic pop
 

@@ -14,9 +14,9 @@
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
 @property (nonatomic, readwrite) BOOL loggedIn;
-@property (nonatomic, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, readwrite) RSDKAnalyticsLogoutMethod logoutMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
+@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -122,8 +122,8 @@
     XCTAssertNil(state.lastLaunchDate);
     XCTAssertNil(state.lastUpdateDate);
     XCTAssertTrue(state.lastVersionLaunches == 0);
-    XCTAssertTrue(state.loginMethod == RSDKAnalyticsOtherLoginMethod);
-    XCTAssertTrue(state.logoutMethod == RSDKAnalyticsLocalLogoutMethod);
+    XCTAssertNil(state.loginMethod);
+    XCTAssertNil(state.logoutMethod);
     XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
 }
 
@@ -152,8 +152,8 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.latitude == -56.6462520);
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
-    XCTAssertTrue(state.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
-    XCTAssertTrue(state.logoutMethod == RSDKAnalyticsGlobalLogoutMethod);
+    XCTAssertTrue([state.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
+    XCTAssertTrue([state.logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod]);
     XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(state.linkIdentifier);

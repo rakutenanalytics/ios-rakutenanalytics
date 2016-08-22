@@ -9,46 +9,46 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, RSDKAnalyticsLoginMethod)
-{
-    /**
-     * Login with other method except input password and one tap.
-     *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LoginMethod.other`.
-     */
-    RSDKAnalyticsOtherLoginMethod RSDKA_SWIFT3_NAME(other) = 0,
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsState.LoginMethod) RSDKAnalyticsLoginMethod { };
 
-    /**
-     * Password Input Login.
-     *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LoginMethod.passwordInput`.
-     */
-    RSDKAnalyticsPasswordInputLoginMethod RSDKA_SWIFT3_NAME(passwordInput),
+/**
+ * Login with other method except input password and one tap.
+ *
+ * @note **Swift 3+:** This value is now called `RSDKAnalyticsState.LoginMethod.other`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsOtherLoginMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLoginMethod.other);
 
-    /**
-     * One Tap Login.
-     *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LoginMethod.oneTapLogin`.
-     */
-    RSDKAnalyticsOneTapLoginLoginMethod RSDKA_SWIFT3_NAME(oneTapLogin),
-} RSDKA_SWIFT3_NAME(RSDKAnalyticsState.LoginMethod);
+/**
+ * Password Input Login.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LoginMethod.passwordInput`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsPasswordInputLoginMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLoginMethod.passwordInput);
 
-typedef NS_ENUM(NSUInteger, RSDKAnalyticsLogoutMethod)
-{
-    /**
-     * Logout from the current app only.
-     *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.single`.
-     */
-    RSDKAnalyticsLocalLogoutMethod RSDKA_SWIFT3_NAME(local) = 0,
+/**
+ * One Tap Login.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LoginMethod.oneTapLogin`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsOneTapLoginLoginMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLoginMethod.oneTapLogin);
 
-    /**
-     * Logout from all Rakuten apps.
-     *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.all`.
-     */
-    RSDKAnalyticsGlobalLogoutMethod RSDKA_SWIFT3_NAME(global),
-} RSDKA_SWIFT3_NAME(RSDKAnalyticsState.LogoutMethod);
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsState.LogoutMethod) RSDKAnalyticsLogoutMethod { };
+
+/**
+ * Logout from the current app only.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.local`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.local);
+
+/**
+ * Logout from all Rakuten apps.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.global`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.global);
 
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
 {
@@ -137,18 +137,18 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  * Note: for users logged in with RAE, this is the "encrypted easy id"
  * as returned by the `IdInformation/GetEncryptedEasyId/20140617` API.
  */
-@property (nonatomic, readonly, copy) NSString *userIdentifier;
+@property (nonatomic, nullable, readonly, copy) NSString *userIdentifier;
 
 /*
  * String representing the login method for the last logged-in user,
  * if that information is known.
  */
-@property (nonatomic, readonly) RSDKAnalyticsLoginMethod loginMethod;
+@property (nonatomic, nullable, readonly, copy) NSString *loginMethod;
 
 /*
  * String representing the logout method.
  */
-@property (nonatomic, readonly) RSDKAnalyticsLogoutMethod logoutMethod;
+@property (nonatomic, nullable, readonly, copy) NSString *logoutMethod;
 
 /*
  * String identifying a tracking code sent by a referrer.

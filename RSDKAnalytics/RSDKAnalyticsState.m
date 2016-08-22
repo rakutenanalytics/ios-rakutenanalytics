@@ -5,6 +5,13 @@
 #import "RSDKAnalyticsState.h"
 #import "_RSDKAnalyticsHelpers.h"
 
+NSString *const RSDKAnalyticsOtherLoginMethod = @"other";
+NSString *const RSDKAnalyticsPasswordInputLoginMethod = @"password";
+NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
+
+NSString *const RSDKAnalyticsLocalLogoutMethod = @"single";
+NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
+
 @interface RSDKAnalyticsState ()
 @property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
 @property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
@@ -13,9 +20,9 @@
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
 @property (nonatomic, readwrite) BOOL loggedIn;
-@property (nonatomic, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, readwrite) RSDKAnalyticsLogoutMethod logoutMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
+@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -37,7 +44,7 @@
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
-    return nil;
+    __builtin_unreachable();
 }
 #pragma clang diagnostic pop
 
@@ -70,8 +77,8 @@
          ^ self.sessionStartDate.hash
          ^ self.loggedIn
          ^ self.userIdentifier.hash
-         ^ self.loginMethod
-         ^ self.logoutMethod
+         ^ self.loginMethod.hash
+         ^ self.logoutMethod.hash
          ^ self.linkIdentifier.hash
          ^ self.origin
          ^ self.lastVisitedPage.hash
@@ -105,8 +112,8 @@
             && _RSDKAnalyticsObjects_equal(self.sessionStartDate, other.sessionStartDate)
             && (self.loggedIn == other.loggedIn)
             && _RSDKAnalyticsObjects_equal(self.userIdentifier, other.userIdentifier)
-            && (self.loginMethod == other.loginMethod)
-            && (self.logoutMethod == other.logoutMethod)
+            && _RSDKAnalyticsObjects_equal(self.loginMethod, other.loginMethod)
+            && _RSDKAnalyticsObjects_equal(self.logoutMethod, other.logoutMethod)
             && _RSDKAnalyticsObjects_equal(self.linkIdentifier, other.linkIdentifier)
             && (self.origin == other.origin)
             && _RSDKAnalyticsObjects_equal(self.lastVisitedPage, other.lastVisitedPage)

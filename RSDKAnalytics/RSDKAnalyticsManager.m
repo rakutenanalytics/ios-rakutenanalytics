@@ -29,8 +29,8 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, readwrite) RSDKAnalyticsLogoutMethod logoutMethod;
+@property (nonatomic, readwrite) NSString *loginMethod;
+@property (nonatomic, readwrite) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -44,10 +44,6 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @end
 
 @interface RSDKAnalyticsManager()<CLLocationManagerDelegate>
-{
-    _RSDKAnalyticsExternalCollector *_externalCollector;
-    _RSDKAnalyticsLaunchCollector *_launchCollector;
-}
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic) BOOL locationManagerIsUpdating;
 
@@ -121,8 +117,8 @@ static RSDKAnalyticsManager *_instance = nil;
     {
         _shouldTrackAdvertisingIdentifier = YES;
 
-        _externalCollector = _RSDKAnalyticsExternalCollector.sharedInstance;
-        _launchCollector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+        _RSDKAnalyticsExternalCollector.sharedInstance;
+        _RSDKAnalyticsLaunchCollector.sharedInstance;
 
         _trackers = [NSMutableSet set];
         NSError *error = nil;
@@ -328,16 +324,19 @@ static RSDKAnalyticsManager *_instance = nil;
         state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
         state.sessionStartDate = self.sessionStartDate ?: nil;
 
-        // Update state from collectors & event
-        state.loginMethod = [event.parameters[@"login_method"] integerValue];
-        state.logoutMethod = [event.parameters[@"logout_method"] integerValue];
-        state.loggedIn = _externalCollector.loggedIn;
-        state.initialLaunchDate = _launchCollector.initialLaunchDate;
-        state.installLaunchDate = _launchCollector.installLaunchDate;
-        state.lastUpdateDate = _launchCollector.lastUpdateDate;
-        state.lastLaunchDate = _launchCollector.lastLaunchDate;
-        state.lastVersion = _launchCollector.lastVersion;
-        state.lastVersionLaunches = _launchCollector.lastVersionLaunches;
+        // Update state with data from external collector
+        state.userIdentifier = _RSDKAnalyticsExternalCollector.sharedInstance.trackingIdentifier;
+        state.loginMethod = _RSDKAnalyticsExternalCollector.sharedInstance.loginMethod;
+        state.logoutMethod = _RSDKAnalyticsExternalCollector.sharedInstance.logoutMethod;
+        state.loggedIn = _RSDKAnalyticsExternalCollector.sharedInstance.loggedIn;
+
+        // Update state with data from launch collector
+        state.initialLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.initialLaunchDate;
+        state.installLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.installLaunchDate;
+        state.lastUpdateDate = _RSDKAnalyticsLaunchCollector.sharedInstance.lastUpdateDate;
+        state.lastLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.lastLaunchDate;
+        state.lastVersion = _RSDKAnalyticsLaunchCollector.sharedInstance.lastVersion;
+        state.lastVersionLaunches = _RSDKAnalyticsLaunchCollector.sharedInstance.lastVersionLaunches;
 
         BOOL processed = NO;
         for (id<RSDKAnalyticsTracker> tracker in self.trackers)

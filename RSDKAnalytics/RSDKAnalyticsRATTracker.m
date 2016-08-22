@@ -327,18 +327,18 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
 
     NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
-    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEvent])
+    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
         json[@"etype"] = @"_rem_init_launch";
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         cp[@"first_install_date"] = [RSDKAnalyticsRATTracker stringWithDate:state.initialLaunchDate];
         json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsInstallEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
     {
         json[@"etype"] = @"_rem_install";
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
         json[@"etype"] = @"_rem_launch";
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
@@ -347,11 +347,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         cp[@"logged_in"] = @(state.loggedIn);
         json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
     {
         json[@"etype"] = @"_rem_end_session";
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
     {
         json[@"etype"] = @"_rem_visit";
         json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
@@ -376,7 +376,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         cp[@"logged_in"] = @(state.loggedIn);
         json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
     {
         json[@"etype"] = @"_rem_update";
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
@@ -385,48 +385,25 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
         json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsCrashEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsCrashEventName])
     {
         json[@"etype"] = @"_rem_crash";
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsLoginEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
     {
         json[@"etype"] = @"_rem_login";
-        NSString *loginMethod;
-        switch (state.loginMethod)
-        {
-            case RSDKAnalyticsPasswordInputLoginMethod:
-                loginMethod = @"password";
-                break;
-            case RSDKAnalyticsOneTapLoginLoginMethod:
-                loginMethod = @"one_tap_login";
-                break;
-            default:
-                loginMethod = @"other";
-                break;
+        if (state.loginMethod.length) {
+            json[@"cp"] = @{@"login_method":state.loginMethod};
         }
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"login_method"] = loginMethod;
-        json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsLogoutEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
     {
         json[@"etype"] = @"_rem_logout";
-        NSString *logoutMethod;
-        switch (state.logoutMethod)
-        {
-            case RSDKAnalyticsLocalLogoutMethod:
-                logoutMethod = @"single";
-                break;
-            default:
-                logoutMethod = @"all";
-                break;
+        if (state.logoutMethod.length) {
+            json[@"cp"] = @{@"logout_method":state.logoutMethod};
         }
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"logout_method"] = logoutMethod;
-        json[@"cp"] = cp.copy;
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEvent])
+    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
     {
         json[@"etype"] = @"_rem_push_notify";
     }
