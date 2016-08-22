@@ -135,4 +135,69 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethodParameter  RSDKA_SWIF
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.global);
 
+/*
+ * Event triggered when app launches the Card Scanner module
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerVisit RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerVisit);
+
+/*
+ * Event triggered when the user starts the camera scan screen
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerScanStarted RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerScanStarted);
+
+/*
+ * Event triggered when the user cancels the camera scan screen
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerScanCanceled RSDKA_SWIFT3_NAME(RSDKAnalyticEvent.cardScannerScanCanceled);
+
+/*
+ * Event triggered when the user opts to enter their card details manually
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerManual RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerManual);
+
+/*
+ * Event triggered when the Card Scanner SDK has scanned the card number
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerNumberScanned RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerNumberScanned);
+
+/*
+ * Event triggered when the Card Scanner SDK failed to scan the card number
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerNumberScanFailed RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerNumberScanFailed);
+
+/*
+ * Event triggered when the user modified the scanned card number in the Card Scanner UI
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerNumberModified RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerNumberModifed);
+
+/*
+ * Event triggered when the Card Scanner SDK has identified the card type
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerCardTypeIdentified RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerCardTypeIdentified);
+
+/*
+ * Event triggered when the Card Scanner SDK has failed to identify the card type
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerCardTypeIdentifyFailed);
+
+/*
+ * Event triggered when the user modified the identified card type in the Card Scanner UI
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerCardTypeModified RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerCardTypeModifed);
+
+/*
+ * Event triggered when the Card Scanner SDK has scanned the card expiry
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerExpiryScanned RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerExpiryScanned);
+
+/*
+ * Event triggered when the Card Scanner SDK failed to scan the card expiry
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerExpiryScanFailed RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerExpiryScanFailed);
+
+/*
+ * Event triggered when the user modified the scanned card expiry in the Card Scanner UI
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsEventCardScannerExpiryModified RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.cardScannerExpiryModifed);
+
 NS_ASSUME_NONNULL_END

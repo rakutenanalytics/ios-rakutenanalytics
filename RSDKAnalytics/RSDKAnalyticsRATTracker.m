@@ -326,6 +326,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
     NSString *eventName = event.name;
+
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
         json[@"etype"] = eventName;
