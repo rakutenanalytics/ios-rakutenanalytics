@@ -8,6 +8,8 @@
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import "_RSDKAnalyticsHelpers.h"
+#import "_RSDKAnalyticsLaunchCollector.h"
+#import "_RSDKAnalyticsExternalCollector.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -25,10 +27,22 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
+@property (nonatomic, readwrite) BOOL loggedIn;
+@property (nonatomic, readwrite, copy) NSString *userIdentifier;
+@property (nonatomic, readwrite) NSString *loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
+@property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
+@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
+@property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
+@property (nonatomic) NSInteger lastVersionLaunches;
+@property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
 @end
 
 @interface RSDKAnalyticsManager()<CLLocationManagerDelegate>
-
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic) BOOL locationManagerIsUpdating;
 
@@ -101,6 +115,10 @@ static RSDKAnalyticsManager *_instance = nil;
     if (self = [super init])
     {
         _shouldTrackAdvertisingIdentifier = YES;
+
+        _RSDKAnalyticsExternalCollector.sharedInstance;
+        _RSDKAnalyticsLaunchCollector.sharedInstance;
+
         _trackers = [NSMutableSet set];
         NSError *error = nil;
         [self addTracker:[RSDKAnalyticsRATTracker sharedInstance] error:&error];
@@ -304,6 +322,21 @@ static RSDKAnalyticsManager *_instance = nil;
         }
         state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
         state.sessionStartDate = self.sessionStartDate ?: nil;
+
+        // Update state with data from external collector
+        _RSDKAnalyticsExternalCollector *externalCollector = _RSDKAnalyticsExternalCollector.sharedInstance;
+        state.userIdentifier = externalCollector.trackingIdentifier;
+        state.loginMethod = externalCollector.loginMethod;
+        state.loggedIn = externalCollector.loggedIn;
+
+        // Update state with data from launch collector
+        _RSDKAnalyticsLaunchCollector *launchCollector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+        state.initialLaunchDate = launchCollector.initialLaunchDate;
+        state.installLaunchDate = launchCollector.installLaunchDate;
+        state.lastUpdateDate = launchCollector.lastUpdateDate;
+        state.lastLaunchDate = launchCollector.lastLaunchDate;
+        state.lastVersion = launchCollector.lastVersion;
+        state.lastVersionLaunches = launchCollector.lastVersionLaunches;
 
         BOOL processed = NO;
         for (id<RSDKAnalyticsTracker> tracker in self.trackers)

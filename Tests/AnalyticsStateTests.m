@@ -13,6 +13,19 @@
 @property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
+@property (nonatomic, readwrite) BOOL loggedIn;
+@property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
+@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
+@property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
+@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
+@property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
+@property (nonatomic) NSInteger lastVersionLaunches;
+@property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
+@property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
 @end
 
 @interface AnalyticsStateTests : XCTestCase
@@ -30,6 +43,10 @@
 - (RSDKAnalyticsState *)defaultState
 {
     CLLocation *location = [[CLLocation alloc] initWithLatitude:-56.6462520 longitude:-36.6462520];
+    UIViewController *currentPage = [UIViewController.alloc init];
+    currentPage.view.frame = CGRectMake(0, 0, 100, 100);
+    UIViewController *lastVisitedPage = [UIViewController.alloc init];
+    lastVisitedPage.view.frame = CGRectMake(10, 10, 200, 200);
 
     NSDateComponents *dateComponents = [NSDateComponents.alloc init];
     [dateComponents setDay:10];
@@ -40,10 +57,36 @@
     [dateComponents setSecond:30];
     NSDate *sessionStartDate = [_calendar dateFromComponents:dateComponents];
 
+    [dateComponents setDay:10];
+    [dateComponents setMonth:6];
+    [dateComponents setYear:2016];
+    NSDate *initialLaunchDate = [_calendar dateFromComponents:dateComponents];
+
+    [dateComponents setDay:12];
+    [dateComponents setMonth:7];
+    [dateComponents setYear:2016];
+    NSDate *lastLaunchDate = [_calendar dateFromComponents:dateComponents];
+
+    [dateComponents setDay:11];
+    [dateComponents setMonth:7];
+    [dateComponents setYear:2016];
+    NSDate *lastUpdateDate = [_calendar dateFromComponents:dateComponents];
+
     RSDKAnalyticsState *state = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB" deviceIdentifier:@"deviceId"];
     state.advertisingIdentifier = @"adId";
     state.lastKnownLocation = location;
     state.sessionStartDate = sessionStartDate;
+    state.userIdentifier = @"userId";
+    state.loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
+    state.linkIdentifier = @"linkId";
+    state.origin = RSDKAnalyticsExternalOrigin;
+    state.currentPage = currentPage;
+    state.lastVisitedPage = lastVisitedPage;
+    state.lastVersion = @"1.0";
+    state.initialLaunchDate = initialLaunchDate;
+    state.lastLaunchDate = lastLaunchDate;
+    state.lastUpdateDate = lastUpdateDate;
+    state.lastVersionLaunches = 10;
     return state;
 }
 
@@ -66,8 +109,19 @@
 
     XCTAssertNil(state.advertisingIdentifier);
     XCTAssertNil(state.lastKnownLocation);
-
     XCTAssertNil(state.sessionStartDate);
+    XCTAssertTrue(!state.loggedIn);
+    XCTAssertNil(state.userIdentifier);
+    XCTAssertNil(state.linkIdentifier);
+    XCTAssertNil(state.lastVisitedPage);
+    XCTAssertNil(state.currentPage);
+    XCTAssertNil(state.lastVersion);
+    XCTAssertNil(state.initialLaunchDate);
+    XCTAssertNil(state.lastLaunchDate);
+    XCTAssertNil(state.lastUpdateDate);
+    XCTAssertTrue(state.lastVersionLaunches == 0);
+    XCTAssertNil(state.loginMethod);
+    XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
 }
 
 - (void)testAnalyticsStateWithSetting
@@ -95,6 +149,12 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.latitude == -56.6462520);
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
+    XCTAssertTrue([state.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
+    XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
+
+    XCTAssertNotNil(state.linkIdentifier);
+    XCTAssertTrue([state.linkIdentifier isEqualToString:@"linkId"]);
+
     XCTAssertNotNil(state.sessionStartDate);
     NSDateComponents *components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:state.sessionStartDate];
     NSInteger year = [components year];
@@ -109,6 +169,50 @@
     XCTAssertTrue(hour == 9);
     XCTAssertTrue(minute == 15);
     XCTAssertTrue(second == 30);
+
+    XCTAssertNotNil(state.lastVisitedPage);
+    XCTAssertTrue(state.lastVisitedPage.view.frame.size.height == 200);
+    XCTAssertTrue(state.lastVisitedPage.view.frame.size.width == 200);
+    XCTAssertTrue(state.lastVisitedPage.view.frame.origin.x == 10);
+    XCTAssertTrue(state.lastVisitedPage.view.frame.origin.y == 10);
+
+    XCTAssertNotNil(state.currentPage);
+    XCTAssertTrue(state.currentPage.view.frame.size.height == 100);
+    XCTAssertTrue(state.currentPage.view.frame.size.width == 100);
+    XCTAssertTrue(state.currentPage.view.frame.origin.x == 0);
+    XCTAssertTrue(state.currentPage.view.frame.origin.y == 0);
+
+    XCTAssertNotNil(state.lastVersion);
+    XCTAssertTrue([state.lastVersion isEqualToString:@"1.0"]);
+
+    XCTAssertNotNil(state.initialLaunchDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:state.initialLaunchDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 6);
+    XCTAssertTrue(day == 10);
+
+    XCTAssertNotNil(state.lastLaunchDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:state.lastLaunchDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 7);
+    XCTAssertTrue(day == 12);
+
+    XCTAssertNotNil(state.lastUpdateDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:state.lastUpdateDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 7);
+    XCTAssertTrue(day == 11);
+
+    XCTAssertTrue(state.lastVersionLaunches == 10);
 }
 
 - (void)testCopy
@@ -136,11 +240,17 @@
     XCTAssertNotNil(copy.advertisingIdentifier);
     XCTAssertTrue([copy.advertisingIdentifier isEqualToString:@"adId"]);
 
+    XCTAssertTrue([copy.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
+    XCTAssertTrue(copy.origin == RSDKAnalyticsExternalOrigin);
+
+    XCTAssertNotNil(copy.linkIdentifier);
+    XCTAssertTrue([copy.linkIdentifier isEqualToString:@"linkId"]);
+
     XCTAssertNotNil(copy.lastKnownLocation);
     XCTAssertTrue(copy.lastKnownLocation.coordinate.latitude == -56.6462520);
     XCTAssertTrue(copy.lastKnownLocation.coordinate.longitude == -36.6462520);
 
-    XCTAssertNotNil(state.sessionStartDate);
+    XCTAssertNotNil(copy.sessionStartDate);
     NSDateComponents *components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:copy.sessionStartDate];
     NSInteger year = [components year];
     NSInteger month = [components month];
@@ -154,6 +264,50 @@
     XCTAssertTrue(hour == 9);
     XCTAssertTrue(minute == 15);
     XCTAssertTrue(second == 30);
+
+    XCTAssertNotNil(copy.lastVisitedPage);
+    XCTAssertTrue(copy.lastVisitedPage.view.frame.size.height == 200);
+    XCTAssertTrue(copy.lastVisitedPage.view.frame.size.width == 200);
+    XCTAssertTrue(copy.lastVisitedPage.view.frame.origin.x == 10);
+    XCTAssertTrue(copy.lastVisitedPage.view.frame.origin.y == 10);
+
+    XCTAssertNotNil(copy.currentPage);
+    XCTAssertTrue(copy.currentPage.view.frame.size.height == 100);
+    XCTAssertTrue(copy.currentPage.view.frame.size.width == 100);
+    XCTAssertTrue(copy.currentPage.view.frame.origin.x == 0);
+    XCTAssertTrue(copy.currentPage.view.frame.origin.y == 0);
+
+    XCTAssertNotNil(copy.lastVersion);
+    XCTAssertTrue([copy.lastVersion isEqualToString:@"1.0"]);
+
+    XCTAssertNotNil(copy.initialLaunchDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:copy.initialLaunchDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 6);
+    XCTAssertTrue(day == 10);
+
+    XCTAssertNotNil(copy.lastLaunchDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:copy.lastLaunchDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 7);
+    XCTAssertTrue(day == 12);
+
+    XCTAssertNotNil(copy.lastUpdateDate);
+    components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:copy.lastUpdateDate];
+    year = [components year];
+    month = [components month];
+    day = [components day];
+    XCTAssertTrue(year == 2016);
+    XCTAssertTrue(month == 7);
+    XCTAssertTrue(day == 11);
+
+    XCTAssertTrue(copy.lastVersionLaunches == 10);
 }
 
 @end

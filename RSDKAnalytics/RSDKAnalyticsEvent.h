@@ -61,4 +61,78 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.Event) @interface RSDKAnalyt
 - (void)track;
 @end
 
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Name) RSDKAnalyticsManagerEventName { };
+
+/*
+ * Event triggered on first launch after installation or reinstallation.
+ * Always followed by a .sessionStart event.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsInitialLaunchEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.initialLaunch);
+
+/*
+ * Event triggered on every launch, as well as resume from background when
+ * the life cycle session timeout has been exceeded.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsSessionStartEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionStart);
+
+/*
+ * Event triggered when the app goes into background or the session times out.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsSessionEndEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionEnd);
+
+/*
+ * Event triggered when a view controller is shown.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsPageVisitEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pageVisit);
+
+/*
+ * Event triggered on the first launch after an update.
+ * Always followed by a .sessionStart event.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsApplicationUpdateEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.applicationUpdate);
+
+/*
+ * Event triggered before .sessionStart if the application's last run resulted in a crash.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsCrashEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.crash);
+
+/*
+ * Event triggered when a user logs in.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLoginEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.login);
+
+/*
+ * Event triggered when a user logs out.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.logout);
+
+/*
+ * Event triggered when the application handles a push notification.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsPushNotificationEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pushNotification);
+
+/*
+ * Event triggered on first run after app install with or without version change
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.install);
+
+
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.LogoutMethodParameter) RSDKAnalyticsLogoutMethodParameter { };
+
+/**
+ * Logout from the current app only.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.local`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.local);
+
+/**
+ * Logout from all Rakuten apps.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.global`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.global);
+
 NS_ASSUME_NONNULL_END

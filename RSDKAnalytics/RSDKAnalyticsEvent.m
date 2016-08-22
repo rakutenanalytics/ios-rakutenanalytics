@@ -5,6 +5,20 @@
 #import "RSDKAnalyticsEvent.h"
 #import "_RSDKAnalyticsHelpers.h"
 
+NSString *const RSDKAnalyticsInitialLaunchEventName = @"initialLaunch";
+NSString *const RSDKAnalyticsSessionStartEventName = @"sessionStart";
+NSString *const RSDKAnalyticsSessionEndEventName = @"sessionEnd";
+NSString *const RSDKAnalyticsPageVisitEventName = @"pageVisit";
+NSString *const RSDKAnalyticsApplicationUpdateEventName = @"applicationUpdate";
+NSString *const RSDKAnalyticsCrashEventName = @"crash";
+NSString *const RSDKAnalyticsLoginEventName = @"login";
+NSString *const RSDKAnalyticsLogoutEventName = @"logout";
+NSString *const RSDKAnalyticsPushNotificationEventName = @"pushNotification";
+NSString *const RSDKAnalyticsInstallEventName = @"install";
+
+NSString *const RSDKAnalyticsLocalLogoutMethodParameter = @"single";
+NSString *const RSDKAnalyticsGlobalLogoutMethodParameter = @"all";
+
 @interface RSDKAnalyticsEvent ()
 
 @property (nonatomic, readwrite, copy) NSString *name;
@@ -14,11 +28,16 @@
 
 @implementation RSDKAnalyticsEvent
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
+#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
     __builtin_unreachable();
 }
+#pragma clang diagnostic pop
+
 
 - (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
 {

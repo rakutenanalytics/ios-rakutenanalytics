@@ -154,56 +154,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
-        /*
-         * Using the following code would result in libICU being lazily loaded along with
-         * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
-         *
-         * ```
-         * NSDateFormatter *startTimeFormatter = NSDateFormatter.new;
-         * startTimeFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-         * startTimeFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-         * startTimeFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-         * NSString *startTime = [startTimeFormatter stringFromDate:NSDate.date];
-         * ```
-         *
-         * Think NSCalendar is the solution? No luck, it loads ICU too! Instead,
-         * we just use a few lines of C, which allocate about 20KB. It's OK as we don't need
-         * any fancy locale.
-         */
-
-
-        /*
-         * The reason I don't use gettimeofday (2) is that it's a BSD 4.2 function, it's not part
-         * of the standard C library, and I'm not sure how Apple feels about using those.
-         *
-         * -[NSDate timeIntervalSince1970] gives the same result anyway.
-         */
-        NSTimeInterval now = NSDate.date.timeIntervalSince1970;
-        struct timeval tod;
-        tod.tv_sec  = (long) ceil(now);
-        tod.tv_usec = (int)  ceil((now - tod.tv_sec) * (double) NSEC_PER_MSEC);
-
-
-        /*
-         * localtime (3) reuses an internal buffer, so the pointer it returns must never get
-         * free (3)'d. localtime (3) is ISO C90 so it's safe to use without having to worry
-         * about Apple's wrath.
-         */
-
-        struct tm *time = localtime(&tod.tv_sec);
-
-
-        /*
-         * struct tm's epoc is 1900/1/1. Months start at 0.
-         */
-
-        _startTime = [NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
-                      1900 + time->tm_year,
-                      1 + time->tm_mon,
-                      time->tm_mday,
-                      time->tm_hour,
-                      time->tm_min,
-                      time->tm_sec];
+        _startTime = [RSDKAnalyticsRATTracker stringWithDate:NSDate.date];
 
 
         /*
@@ -284,9 +235,187 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     self.applicationIdentifier = applicationIdentifier;
 }
 
-- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
+- (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
     return [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@",_RSDKAnalyticsPrefix,eventType] parameters:parameters];
+}
+
++ (NSString *)stringWithDate:(NSDate *)date
+{
+    /*
+     * Using the following code would result in libICU being lazily loaded along with
+     * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
+     *
+     * ```
+     * NSDateFormatter *startTimeFormatter = NSDateFormatter.new;
+     * startTimeFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+     * startTimeFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+     * startTimeFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+     * NSString *startTime = [startTimeFormatter stringFromDate:NSDate.date];
+     * ```
+     *
+     * Think NSCalendar is the solution? No luck, it loads ICU too! Instead,
+     * we just use a few lines of C, which allocate about 20KB. It's OK as we don't need
+     * any fancy locale.
+     */
+
+
+    /*
+     * The reason I don't use gettimeofday (2) is that it's a BSD 4.2 function, it's not part
+     * of the standard C library, and I'm not sure how Apple feels about using those.
+     *
+     * -[NSDate timeIntervalSince1970] gives the same result anyway.
+     */
+    NSTimeInterval timeInterval = date.timeIntervalSince1970;
+    struct timeval tod;
+    tod.tv_sec  = (long) ceil(timeInterval);
+    tod.tv_usec = (int)  ceil((timeInterval - tod.tv_sec) * (double) NSEC_PER_MSEC);
+
+
+    /*
+     * localtime (3) reuses an internal buffer, so the pointer it returns must never get
+     * free (3)'d. localtime (3) is ISO C90 so it's safe to use without having to worry
+     * about Apple's wrath.
+     */
+
+    struct tm *time = localtime(&tod.tv_sec);
+
+
+    /*
+     * struct tm's epoc is 1900/1/1. Months start at 0.
+     */
+
+     return [[NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
+                                        1900 + time->tm_year,
+                                        1 + time->tm_mon,
+                                        time->tm_mday,
+                                        time->tm_hour,
+                                        time->tm_min,
+                                        time->tm_sec] copy];
+}
+
++ (NSString *)nameWithPage:(UIViewController *)page
+{
+    if (!page)
+    {
+        return nil;
+    }
+    /*
+     * FIXME: should we allow developers to give view controllers distinctive
+     * names just for analytics?
+     */
+
+    /*
+     * FIXME (2): For UIWebView, WKWebView and SFSafariViewController, the
+     * current page's URL should be used instead.
+     */
+    return NSStringFromClass([page class]);
+}
+
++ (int64_t)daysPassedSinceDate:(NSDate *)date
+{
+    if (!date)
+    {
+        return 0;
+    }
+    NSCalendar *calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    return [calendar components:NSDayCalendarUnit fromDate:date toDate:NSDate.date options:0].day;
+}
+
++ (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
+{
+    NSMutableDictionary *json = [NSMutableDictionary dictionary];
+
+    NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
+    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
+    {
+        json[@"etype"] = @"_rem_init_launch";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"first_install_date"] = [RSDKAnalyticsRATTracker stringWithDate:state.initialLaunchDate];
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
+    {
+        json[@"etype"] = @"_rem_install";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
+    {
+        json[@"etype"] = @"_rem_launch";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"days_since_first_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
+        cp[@"days_since_last_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
+        cp[@"logged_in"] = @(state.loggedIn);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
+    {
+        json[@"etype"] = @"_rem_end_session";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
+    {
+        json[@"etype"] = @"_rem_visit";
+        json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
+        json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        switch (state.origin)
+        {
+            case RSDKAnalyticsInternalOrigin:
+                cp[@"ref_type"] = @"internal";
+                break;
+            case RSDKAnalyticsExternalOrigin:
+                cp[@"ref_type"] = @"external";
+                break;
+            case RSDKAnalyticsPushOrigin:
+                cp[@"ref_type"] = @"push";
+                break;
+            default:
+                cp[@"ref_type"] = @"other";
+                break;
+        }
+        cp[@"linkid"] = state.linkIdentifier;
+        cp[@"logged_in"] = @(state.loggedIn);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
+    {
+        json[@"etype"] = @"_rem_update";
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        cp[@"previous_version"] = state.lastVersion;
+        cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
+        cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
+        json[@"cp"] = cp.copy;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsCrashEventName])
+    {
+        json[@"etype"] = @"_rem_crash";
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
+    {
+        json[@"etype"] = @"_rem_login";
+        if (state.loginMethod.length) {
+            json[@"cp"] = @{@"login_method":state.loginMethod};
+        }
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
+    {
+        json[@"etype"] = @"_rem_logout";
+        if (event.parameters[@"logout_method"]) {
+            json[@"cp"] = @{@"logout_method":event.parameters[@"logout_method"]};
+        }
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
+    {
+        json[@"etype"] = @"_rem_push_notify";
+    }
+    else
+    {
+        // only set json["etype"] if the event name is not rat.generic
+        if (![eventName hasPrefix:[_RSDKAnalyticsGenericType substringFromIndex:_RSDKAnalyticsPrefix.length]])
+        {
+            json[@"etype"] = eventName;
+        }
+    }
+    return json.copy;
 }
 
 - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
@@ -350,13 +479,14 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         };
     });
 
-    id json = [NSMutableDictionary dictionary];
-    NSString *eventName = event.name;
-
-    if (![eventName hasPrefix:_RSDKAnalyticsPrefix])
+    // RATTracker only processes event which prefix with "rat."
+    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
     {
         return NO;
     }
+    
+    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
+
     if (event.parameters.count)
     {
         [json addEntriesFromDictionary:event.parameters];
@@ -384,12 +514,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             RSDKAnalyticsDebugLog(@"There is no value for 'aid' field, please configure it by using configureWithApplicationId: method");
         }
-    }
-
-    // only set json["etype"] if the event name is not rat.generic
-    if (![eventName hasPrefix:_RSDKAnalyticsGenericType])
-    {
-        json[@"etype"] = [eventName substringFromIndex:_RSDKAnalyticsPrefix.length];
     }
 
     // Add all the other automatic parameters
