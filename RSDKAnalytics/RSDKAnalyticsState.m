@@ -9,9 +9,6 @@ NSString *const RSDKAnalyticsOtherLoginMethod = @"other";
 NSString *const RSDKAnalyticsPasswordInputLoginMethod = @"password";
 NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
 
-NSString *const RSDKAnalyticsLocalLogoutMethod = @"single";
-NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
-
 @interface RSDKAnalyticsState ()
 @property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
 @property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
@@ -22,7 +19,6 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -78,7 +74,6 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
          ^ self.loggedIn
          ^ self.userIdentifier.hash
          ^ self.loginMethod.hash
-         ^ self.logoutMethod.hash
          ^ self.linkIdentifier.hash
          ^ self.origin
          ^ self.lastVisitedPage.hash
@@ -113,7 +108,6 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
             && (self.loggedIn == other.loggedIn)
             && _RSDKAnalyticsObjects_equal(self.userIdentifier, other.userIdentifier)
             && _RSDKAnalyticsObjects_equal(self.loginMethod, other.loginMethod)
-            && _RSDKAnalyticsObjects_equal(self.logoutMethod, other.logoutMethod)
             && _RSDKAnalyticsObjects_equal(self.linkIdentifier, other.linkIdentifier)
             && (self.origin == other.origin)
             && _RSDKAnalyticsObjects_equal(self.lastVisitedPage, other.lastVisitedPage)
@@ -137,7 +131,6 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod = @"all";
     copy.loggedIn = self.loggedIn;
     copy.userIdentifier = self.userIdentifier;
     copy.loginMethod = self.loginMethod;
-    copy.logoutMethod = self.logoutMethod;
     copy.linkIdentifier = self.linkIdentifier;
     copy.origin = self.origin;
     copy.lastVisitedPage = self.lastVisitedPage;

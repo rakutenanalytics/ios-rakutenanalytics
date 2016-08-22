@@ -16,6 +16,9 @@ NSString *const RSDKAnalyticsLogoutEventName = @"logout";
 NSString *const RSDKAnalyticsPushNotificationEventName = @"pushNotification";
 NSString *const RSDKAnalyticsInstallEventName = @"install";
 
+NSString *const RSDKAnalyticsLocalLogoutMethodParameter = @"single";
+NSString *const RSDKAnalyticsGlobalLogoutMethodParameter = @"all";
+
 @interface RSDKAnalyticsEvent ()
 
 @property (nonatomic, readwrite, copy) NSString *name;

@@ -30,7 +30,6 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, readwrite) NSString *loginMethod;
-@property (nonatomic, readwrite) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -325,18 +324,19 @@ static RSDKAnalyticsManager *_instance = nil;
         state.sessionStartDate = self.sessionStartDate ?: nil;
 
         // Update state with data from external collector
-        state.userIdentifier = _RSDKAnalyticsExternalCollector.sharedInstance.trackingIdentifier;
-        state.loginMethod = _RSDKAnalyticsExternalCollector.sharedInstance.loginMethod;
-        state.logoutMethod = _RSDKAnalyticsExternalCollector.sharedInstance.logoutMethod;
-        state.loggedIn = _RSDKAnalyticsExternalCollector.sharedInstance.loggedIn;
+        _RSDKAnalyticsExternalCollector *externalCollector = _RSDKAnalyticsExternalCollector.sharedInstance;
+        state.userIdentifier = externalCollector.trackingIdentifier;
+        state.loginMethod = externalCollector.loginMethod;
+        state.loggedIn = externalCollector.loggedIn;
 
         // Update state with data from launch collector
-        state.initialLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.initialLaunchDate;
-        state.installLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.installLaunchDate;
-        state.lastUpdateDate = _RSDKAnalyticsLaunchCollector.sharedInstance.lastUpdateDate;
-        state.lastLaunchDate = _RSDKAnalyticsLaunchCollector.sharedInstance.lastLaunchDate;
-        state.lastVersion = _RSDKAnalyticsLaunchCollector.sharedInstance.lastVersion;
-        state.lastVersionLaunches = _RSDKAnalyticsLaunchCollector.sharedInstance.lastVersionLaunches;
+        _RSDKAnalyticsLaunchCollector *launchCollector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+        state.initialLaunchDate = launchCollector.initialLaunchDate;
+        state.installLaunchDate = launchCollector.installLaunchDate;
+        state.lastUpdateDate = launchCollector.lastUpdateDate;
+        state.lastLaunchDate = launchCollector.lastLaunchDate;
+        state.lastVersion = launchCollector.lastVersion;
+        state.lastVersionLaunches = launchCollector.lastVersionLaunches;
 
         BOOL processed = NO;
         for (id<RSDKAnalyticsTracker> tracker in self.trackers)

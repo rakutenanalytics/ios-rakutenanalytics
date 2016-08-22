@@ -117,4 +117,22 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsPushNotificationEventName  RSDKA_SWIFT
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.install);
 
+
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.LogoutMethodParameter) RSDKAnalyticsLogoutMethodParameter { };
+
+/**
+ * Logout from the current app only.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.local`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.local);
+
+/**
+ * Logout from all Rakuten apps.
+ *
+ * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.global`.
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.global);
+
 NS_ASSUME_NONNULL_END

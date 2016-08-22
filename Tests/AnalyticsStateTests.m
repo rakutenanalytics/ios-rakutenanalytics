@@ -16,7 +16,6 @@
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
@@ -79,7 +78,6 @@
     state.sessionStartDate = sessionStartDate;
     state.userIdentifier = @"userId";
     state.loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
-    state.logoutMethod = RSDKAnalyticsGlobalLogoutMethod;
     state.linkIdentifier = @"linkId";
     state.origin = RSDKAnalyticsExternalOrigin;
     state.currentPage = currentPage;
@@ -123,7 +121,6 @@
     XCTAssertNil(state.lastUpdateDate);
     XCTAssertTrue(state.lastVersionLaunches == 0);
     XCTAssertNil(state.loginMethod);
-    XCTAssertNil(state.logoutMethod);
     XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
 }
 
@@ -153,7 +150,6 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
     XCTAssertTrue([state.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
-    XCTAssertTrue([state.logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod]);
     XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(state.linkIdentifier);
@@ -244,8 +240,7 @@
     XCTAssertNotNil(copy.advertisingIdentifier);
     XCTAssertTrue([copy.advertisingIdentifier isEqualToString:@"adId"]);
 
-    XCTAssertTrue(copy.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
-    XCTAssertTrue(copy.logoutMethod == RSDKAnalyticsGlobalLogoutMethod);
+    XCTAssertTrue([copy.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
     XCTAssertTrue(copy.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(copy.linkIdentifier);

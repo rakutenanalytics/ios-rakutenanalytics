@@ -399,8 +399,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
     {
         json[@"etype"] = @"_rem_logout";
-        if (state.logoutMethod.length) {
-            json[@"cp"] = @{@"logout_method":state.logoutMethod};
+        if (event.parameters[@"logout_method"]) {
+            json[@"cp"] = @{@"logout_method":event.parameters[@"logout_method"]};
         }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])

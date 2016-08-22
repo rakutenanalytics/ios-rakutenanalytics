@@ -33,23 +33,6 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsPasswordInputLoginMethod  RSDKA_SWIFT3
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsOneTapLoginLoginMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLoginMethod.oneTapLogin);
 
-/// @internal
-struct RSDKA_SWIFT3_NAME(RSDKAnalyticsState.LogoutMethod) RSDKAnalyticsLogoutMethod { };
-
-/**
- * Logout from the current app only.
- *
- * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.local`.
- */
-RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.local);
-
-/**
- * Logout from all Rakuten apps.
- *
- * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsState.LogoutMethod.global`.
- */
-RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.global);
-
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
 {
     /**
@@ -144,11 +127,6 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  * if that information is known.
  */
 @property (nonatomic, nullable, readonly, copy) NSString *loginMethod;
-
-/*
- * String representing the logout method.
- */
-@property (nonatomic, nullable, readonly, copy) NSString *logoutMethod;
 
 /*
  * String identifying a tracking code sent by a referrer.

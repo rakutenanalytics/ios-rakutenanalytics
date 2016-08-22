@@ -27,11 +27,6 @@ RSDKA_EXPORT @interface _RSDKAnalyticsExternalCollector : NSObject
  */
 @property (nonatomic, nullable, readonly, copy) NSString *loginMethod;
 
-/*
- * The logout method is being stored in shared preferences.
- */
-@property (nonatomic, nullable, readonly, copy) NSString *logoutMethod;
-
 /**
  * Retrieve the shared instance.
  *
