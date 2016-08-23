@@ -126,6 +126,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     if (_isInitialLaunch)
     {
         [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInitialLaunchEventName parameters:nil] track];
+        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInitialLaunch = NO;
         return;
     }
@@ -134,6 +135,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     if (_isInstallLaunch)
     {
         [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInstallEventName parameters:nil] track];
+        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInstallLaunch = NO;
         return;
     }
@@ -143,6 +145,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     {
         [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInstallEventName parameters:nil] track];
         [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsApplicationUpdateEventName parameters:nil] track];
+        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isUpdateLaunch = NO;
         return;
     }
