@@ -5,6 +5,7 @@
 #import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
 #import <RSDKAnalytics/RSDKAnalyticsState.h>
+#import <RSDKAnalytics/RSDKAnalyticsRATTracker.h>
 
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
@@ -91,7 +92,7 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOtherLoginMethod;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil] track];
+    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsLoginEventName parameters:nil] track];
 }
 
 - (void)receiveLogoutNotification:(NSNotification *)notification
@@ -110,7 +111,7 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
     {
         params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethodParameter;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:params.copy] track];
+    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsLogoutEventName parameters:params.copy] track];
 }
 
 
