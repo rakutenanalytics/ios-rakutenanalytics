@@ -5,16 +5,16 @@
 #import "RSDKAnalyticsEvent.h"
 #import "_RSDKAnalyticsHelpers.h"
 
-NSString *const RSDKAnalyticsInitialLaunchEventName = @"initialLaunch";
-NSString *const RSDKAnalyticsSessionStartEventName = @"sessionStart";
-NSString *const RSDKAnalyticsSessionEndEventName = @"sessionEnd";
-NSString *const RSDKAnalyticsPageVisitEventName = @"pageVisit";
-NSString *const RSDKAnalyticsApplicationUpdateEventName = @"applicationUpdate";
-NSString *const RSDKAnalyticsCrashEventName = @"crash";
-NSString *const RSDKAnalyticsLoginEventName = @"login";
-NSString *const RSDKAnalyticsLogoutEventName = @"logout";
-NSString *const RSDKAnalyticsPushNotificationEventName = @"pushNotification";
-NSString *const RSDKAnalyticsInstallEventName = @"install";
+NSString *const RSDKAnalyticsInitialLaunchEventName = @"_rem_init_launch";
+NSString *const RSDKAnalyticsSessionStartEventName = @"_rem_launch";
+NSString *const RSDKAnalyticsSessionEndEventName = @"_rem_end_session";
+NSString *const RSDKAnalyticsPageVisitEventName = @"_rem_visit";
+NSString *const RSDKAnalyticsApplicationUpdateEventName = @"_rem_update";
+NSString *const RSDKAnalyticsCrashEventName = @"_rem_crash";
+NSString *const RSDKAnalyticsLoginEventName = @"_rem_login";
+NSString *const RSDKAnalyticsLogoutEventName = @"_rem_logout";
+NSString *const RSDKAnalyticsPushNotificationEventName = @"_rem_push_notify";
+NSString *const RSDKAnalyticsInstallEventName = @"_rem_install";
 
 NSString *const RSDKAnalyticsLocalLogoutMethodParameter = @"single";
 NSString *const RSDKAnalyticsGlobalLogoutMethodParameter = @"all";

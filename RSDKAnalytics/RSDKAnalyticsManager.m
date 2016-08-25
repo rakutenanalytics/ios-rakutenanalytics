@@ -116,16 +116,17 @@ static RSDKAnalyticsManager *_instance = nil;
     {
         _shouldTrackAdvertisingIdentifier = YES;
 
-        _RSDKAnalyticsExternalCollector.sharedInstance;
-        _RSDKAnalyticsLaunchCollector.sharedInstance;
-
         _trackers = [NSMutableSet set];
         NSError *error = nil;
-        [self addTracker:[RSDKAnalyticsRATTracker sharedInstance] error:&error];
+        [self addTracker:RSDKAnalyticsRATTracker.sharedInstance error:&error];
         if (error)
         {
             RSDKAnalyticsDebugLog(@"Error:%@", error.description);
         }
+
+        _RSDKAnalyticsExternalCollector.sharedInstance;
+        _RSDKAnalyticsLaunchCollector.sharedInstance;
+
         /*
          * Set up the location manager
          */
@@ -343,6 +344,7 @@ static RSDKAnalyticsManager *_instance = nil;
         {
             if ([tracker processEvent:event state:state])
             {
+                NSLog(@"event: %@", event.name);
                 processed = TRUE;
             }
         }
