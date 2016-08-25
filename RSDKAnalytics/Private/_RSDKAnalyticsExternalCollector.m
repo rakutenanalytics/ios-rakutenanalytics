@@ -17,7 +17,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 @property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
-
+@property (nonatomic, nullable) NSDictionary              *cardScannerEventMapping;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -47,6 +47,22 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 {
     if (self = [super init])
     {
+        _cardScannerEventMapping = @{
+                                     @"user.visited"               : RSDKAnalyticsEventCardScannerVisit,
+                                     @"scanui.user.started"        : RSDKAnalyticsEventCardScannerScanStarted,
+                                     @"scanui.user.canceled"       : RSDKAnalyticsEventCardScannerScanCanceled,
+                                     @"scanui.user.manual"         : RSDKAnalyticsEventCardScannerManual,
+                                     @"number.scanned"             : RSDKAnalyticsEventCardScannerNumberScanned,
+                                     @"number.scan.failed"         : RSDKAnalyticsEventCardScannerNumberScanFailed,
+                                     @"number.modifed"             : RSDKAnalyticsEventCardScannerNumberModified,
+                                     @"cardtype.identified"        : RSDKAnalyticsEventCardScannerCardTypeIdentified,
+                                     @"cardtype.identify.failed"   : RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed,
+                                     @"cardtype.modifed"           : RSDKAnalyticsEventCardScannerCardTypeModified,
+                                     @"expiry.scanned"             : RSDKAnalyticsEventCardScannerExpiryScanned,
+                                     @"expiry.scan.failed"         : RSDKAnalyticsEventCardScannerExpiryScanFailed,
+                                     @"expiry.modified"            : RSDKAnalyticsEventCardScannerExpiryModified
+                                     };
+        
         [self addLoginObservers];
         [self addLogoutObservers];
         [self addCardScannerObservers];
@@ -78,36 +94,15 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)addCardScannerObservers
 {
-    NSDictionary *observe = @{
-                              @"user.visited"               : NSStringFromSelector(@selector(receiveCardScannerVisitNotification:)),
-                              @"scanui.user.started"        : NSStringFromSelector(@selector(receiveCardScannerScanStartedNotification:)),
-                              @"scanui.user.canceled"       : NSStringFromSelector(@selector(receiveCardScannerScanCanceledNotification:)),
-                              @"scanui.user.manual"         : NSStringFromSelector(@selector(receiveCardScannerScanManualNotification:)),
-                              @"number.scanned"             : NSStringFromSelector(@selector(receiveCardScannerNumberScannedNotification:)),
-                              @"number.scan.failed"         : NSStringFromSelector(@selector(receiveCardScannerNumberScanFailedNotification:)),
-                              @"number.modifed"             : NSStringFromSelector(@selector(receiveCardScannerNumberModifiedNotification:)),
-                              @"cardtype.identified"        : NSStringFromSelector(@selector(receiveCardScannerCardTypeIdentifiedNotification:)),
-                              @"cardtype.identify.failed"   : NSStringFromSelector(@selector(receiveCardScannerCardTypeIdentifyFailedNotification:)),
-                              @"cardtype.modifed"           : NSStringFromSelector(@selector(receiveCardScannerCardTypeModifiedNotification:)),
-                              @"expiry.scanned"             : NSStringFromSelector(@selector(receiveCardScannerExpiryScannedNotification:)),
-                              @"expiry.scan.failed"         : NSStringFromSelector(@selector(receiveCardScannerExpiryScanFailedNotification:)),
-                              @"expiry.modified"            : NSStringFromSelector(@selector(receiveCardScannerExpiryModifiedNotification:))
-                              };
-    
-    for (NSString *notification in observe)
-    {
-        [self addCardScannerNotificationName:notification selector:NSSelectorFromString(observe[notification])];
-    }
-}
-
-- (void)addCardScannerNotificationName:(NSString *)name selector:(SEL)aSelector
-{
     NSString *eventBase = [NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:aSelector
-                                                 name:[NSString stringWithFormat:@"%@%@", eventBase, name]
-                                               object:nil];
+    for (NSString *notification in _cardScannerEventMapping)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveCardScannerNotification:)
+                                                     name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
+                                                   object:nil];
+    }
 }
 
 - (void)addNotificationName:(NSString *)name selector:(SEL)aSelector
@@ -137,12 +132,12 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     
     // For login we want to provide the logged-in state with each event, and each event tracker can know how the user logged in, so the loginMethod should be persisted.
     
-    NSString *base = [NSString stringWithFormat:@"%@.login", _RSDKAnalyticsNotificationBaseName];
-    if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.password", base]])
+    NSString *base = [NSString stringWithFormat:@"%@.login.", _RSDKAnalyticsNotificationBaseName];
+    if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@password", base]])
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsPasswordInputLoginMethod;
     }
-    else if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.one_tap", base]])
+    else if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@one_tap", base]])
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
     }
@@ -169,72 +164,13 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     {
         params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethodParameter;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:params.copy] track];
+    [self.class trackEvent:RSDKAnalyticsLogoutEventName parameters:params.copy];
 }
 
-- (void)receiveCardScannerVisitNotification:(NSNotification *)notification
+- (void)receiveCardScannerNotification:(NSNotification *)notification
 {
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerVisit];
-}
-
-- (void)receiveCardScannerScanStartedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerScanStarted];
-}
-
-- (void)receiveCardScannerScanCanceledNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerScanCanceled];
-}
-
-- (void)receiveCardScannerScanManualNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerManual];
-}
-
-- (void)receiveCardScannerNumberScannedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerNumberScanned];
-}
-
-- (void)receiveCardScannerNumberScanFailedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerNumberScanFailed];
-}
-
-- (void)receiveCardScannerNumberModifiedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerNumberModified];
-}
-
-- (void)receiveCardScannerCardTypeIdentifiedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerCardTypeIdentified];
-}
-
-- (void)receiveCardScannerCardTypeIdentifyFailedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed];
-}
-
-- (void)receiveCardScannerCardTypeModifiedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerCardTypeModified];
-}
-
-- (void)receiveCardScannerExpiryScannedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerExpiryScanned];
-}
-
-- (void)receiveCardScannerExpiryScanFailedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerExpiryScanFailed];
-}
-
-- (void)receiveCardScannerExpiryModifiedNotification:(NSNotification *)notification
-{
-    [self.class trackEvent:RSDKAnalyticsEventCardScannerExpiryModified];
+    NSString *key = [notification.name substringFromIndex:[NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName].length];
+    [self.class trackEvent:_cardScannerEventMapping[key]];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.
@@ -289,6 +225,11 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 + (void)trackEvent:(NSString *)eventName
 {
     [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:nil] track];
+}
+
++ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
+{
+    [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }
 
 @end
