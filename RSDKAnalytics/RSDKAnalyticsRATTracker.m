@@ -348,11 +348,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
     {
-        NSParameterAssert(state.lastVisitedPage);
         NSParameterAssert(state.currentPage);
         json[@"etype"] = eventName;
-        json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
         json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
+        if (state.lastVisitedPage)
+        {
+            json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
+        }
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         switch (state.origin)
         {
