@@ -348,6 +348,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
     {
+        NSParameterAssert(state.lastVisitedPage);
+        NSParameterAssert(state.currentPage);
         json[@"etype"] = eventName;
         json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
         json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
@@ -367,14 +369,20 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 cp[@"ref_type"] = @"other";
                 break;
         }
-        cp[@"linkid"] = state.linkIdentifier;
+        if (state.linkIdentifier.length)
+        {
+            cp[@"linkid"] = state.linkIdentifier;
+        }
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
     {
         json[@"etype"] = eventName;
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"previous_version"] = state.lastVersion;
+        if (state.lastVersion.length)
+        {
+            cp[@"previous_version"] = state.lastVersion;
+        }
         cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
         cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
         json[@"cp"] = cp.copy;
@@ -480,12 +488,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     });
 
 
-    if (![RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state])
+    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
+    if (!json)
     {
         return NO;
     }
-
-    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
 
     if (event.parameters.count)
     {

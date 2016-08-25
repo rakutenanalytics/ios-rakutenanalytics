@@ -344,7 +344,6 @@ static RSDKAnalyticsManager *_instance = nil;
         {
             if ([tracker processEvent:event state:state])
             {
-                NSLog(@"event: %@", event.name);
                 processed = TRUE;
             }
         }
