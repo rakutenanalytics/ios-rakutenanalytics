@@ -325,37 +325,36 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 + (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
 {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
-
-    NSString *eventName = [event.name substringFromIndex:_RSDKAnalyticsPrefix.length];
+    NSString *eventName = event.name;
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
-        json[@"etype"] = @"_rem_init_launch";
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"first_install_date"] = [RSDKAnalyticsRATTracker stringWithDate:state.initialLaunchDate];
-        json[@"cp"] = cp.copy;
+        json[@"etype"] = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
     {
-        json[@"etype"] = @"_rem_install";
+        json[@"etype"] = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
-        json[@"etype"] = @"_rem_launch";
+        json[@"etype"] = eventName;
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         cp[@"days_since_first_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
         cp[@"days_since_last_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
-        cp[@"logged_in"] = @(state.loggedIn);
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
     {
-        json[@"etype"] = @"_rem_end_session";
+        json[@"etype"] = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
     {
-        json[@"etype"] = @"_rem_visit";
-        json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
+        NSParameterAssert(state.currentPage);
+        json[@"etype"] = eventName;
         json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
+        if (state.lastVisitedPage)
+        {
+            json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
+        }
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         switch (state.origin)
         {
@@ -372,48 +371,59 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 cp[@"ref_type"] = @"other";
                 break;
         }
-        cp[@"linkid"] = state.linkIdentifier;
-        cp[@"logged_in"] = @(state.loggedIn);
+        if (state.linkIdentifier.length)
+        {
+            cp[@"linkid"] = state.linkIdentifier;
+        }
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
     {
-        json[@"etype"] = @"_rem_update";
+        json[@"etype"] = eventName;
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"previous_version"] = state.lastVersion;
+        if (state.lastVersion.length)
+        {
+            cp[@"previous_version"] = state.lastVersion;
+        }
         cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
         cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsCrashEventName])
     {
-        json[@"etype"] = @"_rem_crash";
+        json[@"etype"] = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
     {
-        json[@"etype"] = @"_rem_login";
-        if (state.loginMethod.length) {
+        json[@"etype"] = eventName;
+        if (state.loginMethod.length)
+        {
             json[@"cp"] = @{@"login_method":state.loginMethod};
         }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
     {
-        json[@"etype"] = @"_rem_logout";
-        if (event.parameters[@"logout_method"]) {
+        json[@"etype"] = eventName;
+        if (event.parameters[@"logout_method"])
+        {
             json[@"cp"] = @{@"logout_method":event.parameters[@"logout_method"]};
         }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
     {
-        json[@"etype"] = @"_rem_push_notify";
+        json[@"etype"] = eventName;
+    }
+    else if ([eventName hasPrefix:_RSDKAnalyticsPrefix])
+    {
+        // only set json["etype"] if the event name is not rat.generic
+        if (![eventName hasPrefix:_RSDKAnalyticsGenericType])
+        {
+            json[@"etype"] = [eventName substringFromIndex:_RSDKAnalyticsPrefix.length];
+        }
     }
     else
     {
-        // only set json["etype"] if the event name is not rat.generic
-        if (![eventName hasPrefix:[_RSDKAnalyticsGenericType substringFromIndex:_RSDKAnalyticsPrefix.length]])
-        {
-            json[@"etype"] = eventName;
-        }
+        return nil;
     }
     return json.copy;
 }
@@ -479,13 +489,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         };
     });
 
-    // RATTracker only processes event which prefix with "rat."
-    if (![event.name hasPrefix:_RSDKAnalyticsPrefix])
+
+    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
+    if (!json)
     {
         return NO;
     }
-    
-    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
 
     if (event.parameters.count)
     {

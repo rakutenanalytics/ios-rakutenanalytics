@@ -4,7 +4,6 @@
  */
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
-#import <RSDKAnalytics/RSDKAnalyticsRATTracker.h>
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -52,7 +51,6 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 {
     if (self = [super init])
     {
-        RSDKAnalyticsRATTracker.sharedInstance;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(willResume:)
                                                      name:UIApplicationWillEnterForegroundNotification
@@ -110,12 +108,12 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 - (void)willResume:(NSNotification *)notification
 {
     [self update];
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsSessionStartEventName parameters:nil] track];
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
 }
 
 - (void)didSuspend:(NSNotification *)notification
 {
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsSessionEndEventName parameters:nil] track];
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionEndEventName parameters:nil] track];
 }
 
 - (void)didLaunch:(NSNotification *)notification
@@ -125,7 +123,8 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // Equivalent to installation or reinstallation. Also triggers a session start.
     if (_isInitialLaunch)
     {
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInitialLaunchEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInitialLaunchEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInitialLaunch = NO;
         return;
     }
@@ -133,7 +132,8 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // Triggered on first run after app install with or without version change. Also triggers a session start.
     if (_isInstallLaunch)
     {
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInstallEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInstallLaunch = NO;
         return;
     }
@@ -141,8 +141,9 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // Triggered on first run after upgrade (anytime the version number changes). Also triggers a session start.
     if (_isUpdateLaunch)
     {
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsInstallEventName parameters:nil] track];
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:RSDKAnalyticsApplicationUpdateEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsApplicationUpdateEventName parameters:nil] track];
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isUpdateLaunch = NO;
         return;
     }
