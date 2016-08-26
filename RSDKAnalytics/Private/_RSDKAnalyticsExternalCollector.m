@@ -4,18 +4,21 @@
  */
 #import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
+#import <RSDKAnalytics/_RSDKAnalyticsPrivateEvents.h>
 #import <RSDKAnalytics/RSDKAnalyticsState.h>
 
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
 static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginMethod";
 
+static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
+
 @interface _RSDKAnalyticsExternalCollector ()
 @property (nonatomic) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
-
+@property (nonatomic, nullable) NSDictionary              *cardScannerEventMapping;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -45,14 +48,62 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
 {
     if (self = [super init])
     {
-        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.password" selector:@selector(receiveLoginNotification:)];
-        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.one_tap" selector:@selector(receiveLoginNotification:)];
-        [self addNotificationName:@"com.rakuten.esd.sdk.events.login.other" selector:@selector(receiveLoginNotification:)];
-        [self addNotificationName:@"com.rakuten.esd.sdk.events.logout.local" selector:@selector(receiveLogoutNotification:)];
-        [self addNotificationName:@"com.rakuten.esd.sdk.events.logout.global" selector:@selector(receiveLogoutNotification:)];
+        [self addLoginObservers];
+        [self addLogoutObservers];
+        [self addCardScannerObservers];
+        
         [self update];
     }
     return self;
+}
+
+#pragma mark - Add notification observers
+
+- (void)addLoginObservers
+{
+    for (NSString *event in @[@"passsword", @"one_tap", @"other"])
+    {
+        NSString *eventName = [NSString stringWithFormat:@"%@.login.%@", _RSDKAnalyticsNotificationBaseName, event];
+        [self addNotificationName:eventName selector:@selector(receiveLoginNotification:)];
+    }
+}
+
+- (void)addLogoutObservers
+{
+    for (NSString *event in @[@"local", @"global"])
+    {
+        NSString *eventName = [NSString stringWithFormat:@"%@.logout.%@", _RSDKAnalyticsNotificationBaseName, event];
+        [self addNotificationName:eventName selector:@selector(receiveLogoutNotification:)];
+    }
+}
+
+- (void)addCardScannerObservers
+{
+    NSString *eventBase = [NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName];
+    
+    _cardScannerEventMapping = @{
+                                 @"user.visited"               : _RSDKAnalyticsPrivateEventCardScannerVisit,
+                                 @"scanui.user.started"        : _RSDKAnalyticsPrivateEventCardScannerScanStarted,
+                                 @"scanui.user.canceled"       : _RSDKAnalyticsPrivateEventCardScannerScanCanceled,
+                                 @"scanui.user.manual"         : _RSDKAnalyticsPrivateEventCardScannerManual,
+                                 @"number.scanned"             : _RSDKAnalyticsPrivateEventCardScannerNumberScanned,
+                                 @"number.scan.failed"         : _RSDKAnalyticsPrivateEventCardScannerNumberScanFailed,
+                                 @"number.modifed"             : _RSDKAnalyticsPrivateEventCardScannerNumberModified,
+                                 @"cardtype.identified"        : _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentified,
+                                 @"cardtype.identify.failed"   : _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentifyFailed,
+                                 @"cardtype.modifed"           : _RSDKAnalyticsPrivateEventCardScannerCardTypeModified,
+                                 @"expiry.scanned"             : _RSDKAnalyticsPrivateEventCardScannerExpiryScanned,
+                                 @"expiry.scan.failed"         : _RSDKAnalyticsPrivateEventCardScannerExpiryScanFailed,
+                                 @"expiry.modified"            : _RSDKAnalyticsPrivateEventCardScannerExpiryModified
+                                 };
+    
+    for (NSString *notification in _cardScannerEventMapping)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveCardScannerNotification:)
+                                                     name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
+                                                   object:nil];
+    }
 }
 
 - (void)addNotificationName:(NSString *)name selector:(SEL)aSelector
@@ -63,27 +114,31 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
                                                object:nil];
 }
 
+#pragma mark - Handle notifications
+
 - (void)receiveLoginNotification:(NSNotification *)notification
 {
     [self update];
-
+    
     if ([notification.object isKindOfClass:[NSString class]])
     {
         NSString *trackingIdentifier = [notification object];
         [_RSDKAnalyticsExternalCollector sharedInstance].trackingIdentifier = trackingIdentifier;
     }
-
+    
     if (![_RSDKAnalyticsExternalCollector sharedInstance].loggedIn)
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = YES;
     }
-
-    // For login we want to provide the logged-in state with each event, and each event tracker can now how the user logged in, so the loginMethod should be persisted.
-    if ([notification.name isEqualToString:@"com.rakuten.esd.sdk.events.login.password"])
+    
+    // For login we want to provide the logged-in state with each event, and each event tracker can know how the user logged in, so the loginMethod should be persisted.
+    
+    NSString *base = [NSString stringWithFormat:@"%@.login.", _RSDKAnalyticsNotificationBaseName];
+    if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@password", base]])
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsPasswordInputLoginMethod;
     }
-    else if ([notification.name isEqualToString:@"com.rakuten.esd.sdk.events.login.one_tap"])
+    else if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@one_tap", base]])
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
     }
@@ -91,7 +146,7 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOtherLoginMethod;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil] track];
+    [self.class trackEvent:RSDKAnalyticsLoginEventName];
 }
 
 - (void)receiveLogoutNotification:(NSNotification *)notification
@@ -102,7 +157,7 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
         [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = NO;
     }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    if ([notification.name isEqualToString:@"com.rakuten.esd.sdk.events.logout.local"])
+    if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.logout.local", _RSDKAnalyticsNotificationBaseName]])
     {
         params[@"logout_method"] = RSDKAnalyticsLocalLogoutMethodParameter;
     }
@@ -110,11 +165,17 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
     {
         params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethodParameter;
     }
-    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:params.copy] track];
+    [self.class trackEvent:RSDKAnalyticsLogoutEventName parameters:params.copy];
 }
 
+- (void)receiveCardScannerNotification:(NSNotification *)notification
+{
+    NSString *key = [notification.name substringFromIndex:[NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName].length];
+    [self.class trackEvent:_cardScannerEventMapping[key]];
+}
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.
+
 - (void)update
 {
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
@@ -158,6 +219,18 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
         [defaults removeObjectForKey:_RSDKAnalyticsLoginMethodKey];
     }
     [defaults synchronize];
+}
+
+#pragma mark - Tracking helpers
+
++ (void)trackEvent:(NSString *)eventName
+{
+    [self.class trackEvent:eventName parameters:nil];
+}
+
++ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
+{
+    [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }
 
 @end
