@@ -14,6 +14,8 @@
 NSString *const _RSDKAnalyticsPrefix = @"rat.";
 NSString *const _RSDKAnalyticsGenericType = @"rat.generic";
 
+NSString *const _RSDKAnalyticsCardScannerPrefix = @"_rem_cardscanner_";
+
 ////////////////////////////////////////////////////////////////////////////
 
 // Private constants
@@ -326,6 +328,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
     NSString *eventName = event.name;
+    
+    if (!eventName.length)
+    {
+        return nil;
+    }
 
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
@@ -411,6 +418,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
+    {
+        json[@"etype"] = eventName;
+    }
+    else if ([eventName hasPrefix:_RSDKAnalyticsCardScannerPrefix])
     {
         json[@"etype"] = eventName;
     }

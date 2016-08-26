@@ -47,22 +47,6 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 {
     if (self = [super init])
     {
-        _cardScannerEventMapping = @{
-                                     @"user.visited"               : RSDKAnalyticsEventCardScannerVisit,
-                                     @"scanui.user.started"        : RSDKAnalyticsEventCardScannerScanStarted,
-                                     @"scanui.user.canceled"       : RSDKAnalyticsEventCardScannerScanCanceled,
-                                     @"scanui.user.manual"         : RSDKAnalyticsEventCardScannerManual,
-                                     @"number.scanned"             : RSDKAnalyticsEventCardScannerNumberScanned,
-                                     @"number.scan.failed"         : RSDKAnalyticsEventCardScannerNumberScanFailed,
-                                     @"number.modifed"             : RSDKAnalyticsEventCardScannerNumberModified,
-                                     @"cardtype.identified"        : RSDKAnalyticsEventCardScannerCardTypeIdentified,
-                                     @"cardtype.identify.failed"   : RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed,
-                                     @"cardtype.modifed"           : RSDKAnalyticsEventCardScannerCardTypeModified,
-                                     @"expiry.scanned"             : RSDKAnalyticsEventCardScannerExpiryScanned,
-                                     @"expiry.scan.failed"         : RSDKAnalyticsEventCardScannerExpiryScanFailed,
-                                     @"expiry.modified"            : RSDKAnalyticsEventCardScannerExpiryModified
-                                     };
-        
         [self addLoginObservers];
         [self addLogoutObservers];
         [self addCardScannerObservers];
@@ -95,6 +79,22 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 - (void)addCardScannerObservers
 {
     NSString *eventBase = [NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName];
+    
+    _cardScannerEventMapping = @{
+                                 @"user.visited"               : RSDKAnalyticsEventCardScannerVisit,
+                                 @"scanui.user.started"        : RSDKAnalyticsEventCardScannerScanStarted,
+                                 @"scanui.user.canceled"       : RSDKAnalyticsEventCardScannerScanCanceled,
+                                 @"scanui.user.manual"         : RSDKAnalyticsEventCardScannerManual,
+                                 @"number.scanned"             : RSDKAnalyticsEventCardScannerNumberScanned,
+                                 @"number.scan.failed"         : RSDKAnalyticsEventCardScannerNumberScanFailed,
+                                 @"number.modifed"             : RSDKAnalyticsEventCardScannerNumberModified,
+                                 @"cardtype.identified"        : RSDKAnalyticsEventCardScannerCardTypeIdentified,
+                                 @"cardtype.identify.failed"   : RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed,
+                                 @"cardtype.modifed"           : RSDKAnalyticsEventCardScannerCardTypeModified,
+                                 @"expiry.scanned"             : RSDKAnalyticsEventCardScannerExpiryScanned,
+                                 @"expiry.scan.failed"         : RSDKAnalyticsEventCardScannerExpiryScanFailed,
+                                 @"expiry.modified"            : RSDKAnalyticsEventCardScannerExpiryModified
+                                 };
     
     for (NSString *notification in _cardScannerEventMapping)
     {
@@ -224,7 +224,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 + (void)trackEvent:(NSString *)eventName
 {
-    [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:nil] track];
+    [self.class trackEvent:eventName parameters:nil];
 }
 
 + (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
