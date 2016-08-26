@@ -19,24 +19,6 @@ NSString *const RSDKAnalyticsInstallEventName = @"_rem_install";
 NSString *const RSDKAnalyticsLocalLogoutMethodParameter = @"single";
 NSString *const RSDKAnalyticsGlobalLogoutMethodParameter = @"all";
 
-/**
- * Card Scanner events - see https://confluence.rakuten-it.com/confluence/display/ESD/Usage+Tracking+for+Card+Scanner
- */
-
-NSString *const RSDKAnalyticsEventCardScannerVisit                   = @"_rem_cardscanner_visit";
-NSString *const RSDKAnalyticsEventCardScannerScanStarted             = @"_rem_cardscanner_scanui_scan";
-NSString *const RSDKAnalyticsEventCardScannerScanCanceled            = @"_rem_cardscanner_scanui_cancel";
-NSString *const RSDKAnalyticsEventCardScannerManual                  = @"_rem_cardscanner_scanui_manual";
-NSString *const RSDKAnalyticsEventCardScannerNumberScanned           = @"_rem_cardscanner_confirmui_ccnumber_scansuccess";
-NSString *const RSDKAnalyticsEventCardScannerNumberScanFailed        = @"_rem_cardscanner_confirmui_ccnumber_scanfailed";
-NSString *const RSDKAnalyticsEventCardScannerNumberModified          = @"_rem_cardscanner_confirmui_ccnumber_scanincorrect";
-NSString *const RSDKAnalyticsEventCardScannerCardTypeIdentified      = @"_rem_cardscanner_confirmui_cctype_identificationsuccess";
-NSString *const RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed  = @"_rem_cardscanner_confirmui_cctype_identificationfailed";
-NSString *const RSDKAnalyticsEventCardScannerCardTypeModified        = @"_rem_cardscanner_confirmui_cctype_identificationincorrect";
-NSString *const RSDKAnalyticsEventCardScannerExpiryScanned           = @"_rem_cardscanner_confirmui_ccexpiry_scansuccess";
-NSString *const RSDKAnalyticsEventCardScannerExpiryScanFailed        = @"_rem_cardscanner_confirmui_ccexpiry_scanfailed";
-NSString *const RSDKAnalyticsEventCardScannerExpiryModified          = @"_rem_cardscanner_confirmui_ccexpiry_scanincorrect";
-
 @interface RSDKAnalyticsEvent ()
 
 @property (nonatomic, readwrite, copy) NSString *name;

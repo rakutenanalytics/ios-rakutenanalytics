@@ -4,6 +4,7 @@
  */
 #import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
+#import <RSDKAnalytics/_RSDKAnalyticsPrivateEvents.h>
 #import <RSDKAnalytics/RSDKAnalyticsState.h>
 
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
@@ -81,19 +82,19 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     NSString *eventBase = [NSString stringWithFormat:@"%@.cardscanner.", _RSDKAnalyticsNotificationBaseName];
     
     _cardScannerEventMapping = @{
-                                 @"user.visited"               : RSDKAnalyticsEventCardScannerVisit,
-                                 @"scanui.user.started"        : RSDKAnalyticsEventCardScannerScanStarted,
-                                 @"scanui.user.canceled"       : RSDKAnalyticsEventCardScannerScanCanceled,
-                                 @"scanui.user.manual"         : RSDKAnalyticsEventCardScannerManual,
-                                 @"number.scanned"             : RSDKAnalyticsEventCardScannerNumberScanned,
-                                 @"number.scan.failed"         : RSDKAnalyticsEventCardScannerNumberScanFailed,
-                                 @"number.modifed"             : RSDKAnalyticsEventCardScannerNumberModified,
-                                 @"cardtype.identified"        : RSDKAnalyticsEventCardScannerCardTypeIdentified,
-                                 @"cardtype.identify.failed"   : RSDKAnalyticsEventCardScannerCardTypeIdentifyFailed,
-                                 @"cardtype.modifed"           : RSDKAnalyticsEventCardScannerCardTypeModified,
-                                 @"expiry.scanned"             : RSDKAnalyticsEventCardScannerExpiryScanned,
-                                 @"expiry.scan.failed"         : RSDKAnalyticsEventCardScannerExpiryScanFailed,
-                                 @"expiry.modified"            : RSDKAnalyticsEventCardScannerExpiryModified
+                                 @"user.visited"               : _RSDKAnalyticsPrivateEventCardScannerVisit,
+                                 @"scanui.user.started"        : _RSDKAnalyticsPrivateEventCardScannerScanStarted,
+                                 @"scanui.user.canceled"       : _RSDKAnalyticsPrivateEventCardScannerScanCanceled,
+                                 @"scanui.user.manual"         : _RSDKAnalyticsPrivateEventCardScannerManual,
+                                 @"number.scanned"             : _RSDKAnalyticsPrivateEventCardScannerNumberScanned,
+                                 @"number.scan.failed"         : _RSDKAnalyticsPrivateEventCardScannerNumberScanFailed,
+                                 @"number.modifed"             : _RSDKAnalyticsPrivateEventCardScannerNumberModified,
+                                 @"cardtype.identified"        : _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentified,
+                                 @"cardtype.identify.failed"   : _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentifyFailed,
+                                 @"cardtype.modifed"           : _RSDKAnalyticsPrivateEventCardScannerCardTypeModified,
+                                 @"expiry.scanned"             : _RSDKAnalyticsPrivateEventCardScannerExpiryScanned,
+                                 @"expiry.scan.failed"         : _RSDKAnalyticsPrivateEventCardScannerExpiryScanFailed,
+                                 @"expiry.modified"            : _RSDKAnalyticsPrivateEventCardScannerExpiryModified
                                  };
     
     for (NSString *notification in _cardScannerEventMapping)
