@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  `ts1`         | `CLIENT_PROVIDED_TIMESTAMP`
  *  `tzo`         | `TIMEZONE`
  *  `ua`          | `USER_AGENT`
+ *  `userid`      | `USER_ID`
  *  `ver`         | `VERSION`
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>

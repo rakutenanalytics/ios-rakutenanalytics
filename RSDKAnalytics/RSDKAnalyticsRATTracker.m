@@ -357,7 +357,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
     {
         NSParameterAssert(state.currentPage);
-        json[@"etype"] = eventName;
+        json[@"etype"] = @"pv";
         json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
         if (state.lastVisitedPage)
         {
@@ -673,6 +673,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             json[@"cka"] = state.advertisingIdentifier;
         }
+    }
+
+    // {name: "userid", longName: "USER_ID", fieldType: "STRING", maxLength: 200, minLength: 0}
+    if (state.userIdentifier.length && ![(NSString *)json[@"userid"] length])
+    {
+        json[@"userid"] = state.userIdentifier;
     }
 
     // Add record to database and schedule an upload
