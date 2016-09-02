@@ -676,7 +676,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // {name: "userid", longName: "USER_ID", fieldType: "STRING", maxLength: 200, minLength: 0}
-    if (state.userIdentifier.length)
+    if (state.userIdentifier.length && ![(NSString *)json[@"userid"] length])
     {
         json[@"userid"] = state.userIdentifier;
     }
