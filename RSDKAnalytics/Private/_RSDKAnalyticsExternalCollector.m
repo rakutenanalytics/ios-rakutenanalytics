@@ -61,7 +61,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)addLoginObservers
 {
-    for (NSString *event in @[@"passsword", @"one_tap", @"other"])
+    for (NSString *event in @[@"password", @"one_tap", @"other"])
     {
         NSString *eventName = [NSString stringWithFormat:@"%@.login.%@", _RSDKAnalyticsNotificationBaseName, event];
         [self addNotificationName:eventName selector:@selector(receiveLoginNotification:)];
