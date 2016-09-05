@@ -317,7 +317,6 @@ A tracking event can now be sent for each corresponding stage of checkout.
 
 @code{.m}
     /* Send checkout tracking event
-     * "userid"     User ID
      * "cycode"     Currency Code - must be three characters
      * "chkout"     Checkout Stage - must be the value 10, 20, 30, 40, or 50
      * "cntln"      Content Language
@@ -329,7 +328,6 @@ A tracking event can now be sent for each corresponding stage of checkout.
      */
     [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"checkout" 
                     parameters:@{
-                        @"userid": @"username", 
                         @"cycode": @"JPY", 
                         @"chkout": CHECKOUT_STAGE4_PAYMENT,
                         @"cntln": @"fr_CA",
