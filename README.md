@@ -120,15 +120,45 @@ A concrete tracker, RSDKAnalyticsRATTracker, is automatically registered and int
 @subsection analytics-standard-events Standard Events
 The SDK will automatically send events for certain actions. The event type parameter for all of these events are prefixed with `_rem_`.  The events are listed below:
 
-- `_rem_init_launch` - Application is launched for the first time ever.
-- `_rem_launch` - Application is launched.
-- `_rem_end_session` - Application goes into background.
-- `_rem_update` - Application is launched and its version number does not match the version number of the previous launch.
-- `_rem_login` - User logged in successfully.
-- `_rem_logout` - User logged out.
-- `_rem_install` - Application version is launched for the first time.
+@note These events will send all of the automatic parameters that are normally sent with a RAT event. Some events also send additional parameters specific to the event, as listed below.
 
-@note These events will send all of the automatic parameters that are normally sent with a RAT event, as well as a few other parameters specific to each event. See the [Standard Event Specs](https://confluence.rakuten-it.com/confluence/display/ESD/Standard+Event+Tracking+with+RAT#StandardEventTrackingwithRAT-StandardEvents) for more information about each of these events.
+#### _rem_init_launch
+Application is launched for the first time ever.
+
+#### _rem_launch
+Application is launched.
+- `cp.days_since_first_use` - Number of calendar days passed since first run of the current version.
+- `cp.days_since_last_use` - Number of calendar days passed since the previous run.
+
+#### _rem_end_session
+Application goes into background.
+
+#### _rem_update
+Application is launched and its version number does not match the version number of the previous launch.
+- `cp.previous_version` - Version of the app at the time of the previous launch.
+- `cp.launches_since_last_upgrade` - Number of launches for the previous version.
+- `cp.days_since_last_upgrade` - Number of calendar days passed since the previous version was first run.
+
+#### _rem_login
+User logged in successfully.
+- `cp.login_method` - String representing method the used to login.
+    - `password` - User entered their credentials manually.
+    - `one_tag_login` - User used SSO's one-tap Login button.
+
+#### _rem_logout
+User logged out.
+- `cp.logout_method` - String representing the method used to logout.
+    - `single` - User logged out from the current app only.
+    - `all` - User logged out from all apps.
+
+#### _rem_install
+Application version is launched for the first time.
+- `cp.sdk_info` - Information about the REM SDK the application is built against, following a user agent-like grammar.
+- `cp.app_info` - Information report about the build and runtime environment for the app in a serialized JSON object format.
+    - `xcode` - Version of Xcode used to build the app.
+    - `sdk` - iOS SDK built against.
+    - `frameworks` - Name and versions of all the bundles returned by NSBundle.allFrameworks, excluding those witht the prefix `com.apple.`.
+    - `pods` - Name and versions of all the CocoaPods in the application.
 
 @subsection analytics-network-monitoring Monitoring network activity
 You can monitor the module's network activity by listening
