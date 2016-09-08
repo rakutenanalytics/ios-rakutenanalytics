@@ -112,7 +112,7 @@ static RSDKAnalyticsManager *_instance = nil;
 
 - (instancetype)initSharedInstance
 {
-    if (self = [super init])
+    if ((self = [super init]) && _RSDKAnalyticsExternalCollector.sharedInstance && _RSDKAnalyticsLaunchCollector.sharedInstance)
     {
         _shouldTrackAdvertisingIdentifier = YES;
 
@@ -123,9 +123,6 @@ static RSDKAnalyticsManager *_instance = nil;
         {
             RSDKAnalyticsDebugLog(@"Error:%@", error.description);
         }
-
-        _RSDKAnalyticsExternalCollector.sharedInstance;
-        _RSDKAnalyticsLaunchCollector.sharedInstance;
 
         /*
          * Set up the location manager

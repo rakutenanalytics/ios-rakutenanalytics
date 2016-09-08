@@ -39,7 +39,7 @@ NSString *const RSDKAnalyticsGlobalLogoutMethodParameter    = @"all";
 #pragma clang diagnostic pop
 
 
-- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
+- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
     NSParameterAssert(name.length);
     if ((self = [super init]))
