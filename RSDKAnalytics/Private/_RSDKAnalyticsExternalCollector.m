@@ -18,7 +18,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 @property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
-@property (nonatomic, nullable) NSDictionary              *cardInfoEventMapping;
+@property (nonatomic) NSDictionary                        *cardInfoEventMapping;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
