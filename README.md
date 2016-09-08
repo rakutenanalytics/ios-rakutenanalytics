@@ -49,16 +49,9 @@ The analytics module can be configured to use the staging environment when talki
 
 @note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
 
-@subsection analytics-configure-location Opting out of last known location tracking
-If you want to disable location tracking, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Tracking is enabled by default.
+@subsection analytics-configure-location Location Tracking
 
-    // Swift:
-    RSDKAnalyticsManager.shared().shouldTrackLastKnownLocation = false
-
-    // Obj-C:
-    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
-
-@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and this property is set to `YES`. Instead, it passively monitors location updates captured by your application. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.
 @warning Apps usually add a code snippet similiar to the one below to their `UIApplicationDelegate`:
 @warning
 ~~~{.m}
@@ -81,14 +74,15 @@ If you want to disable location tracking, you can set RSDKAnalyticsManager::shou
 	}
 ~~~
 
-@subsection analytics-configure-idfa Opting out of IDFA tracking
-The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. It is not recommended to disable this feature, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+If you want to disable location tracking, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Tracking is enabled by default.
 
-    // Swift
-    RSDKAnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
+~~~{.m}
+    // Swift:
+    RSDKAnalyticsManager.shared().shouldTrackLastKnownLocation = false
 
     // Obj-C:
-    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
+    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
+~~~
 
 @subsection analytics-recording Recording activity
 Events are created with RSDKAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RSDKAnalyticsEvent::track "track" method.
@@ -118,7 +112,7 @@ A concrete tracker, RSDKAnalyticsRATTracker, is automatically registered and int
 ~~~
 
 @subsection analytics-standard-events Standard Events
-The SDK will automatically send events for certain actions. The event type parameter for all of these events are prefixed with `_rem_`.
+The SDK will automatically send events to the Rakuten Analytics Tracker for certain actions. The event type parameter for all of these events are prefixed with `_rem_`.
 
 @note These events will send all of the automatic parameters that are normally sent with a RAT event. Some events also send additional parameters specific to the event, as listed below.
 
@@ -143,7 +137,7 @@ Application is launched and its version number does not match the version number
 User logged in successfully.
 - `cp.login_method` - String representing method the used to login.
     - `password` - User entered their credentials manually.
-    - `one_tag_login` - User used SSO's one-tap Login button.
+    - `one_tap_login` - User used SSO's one-tap Login button.
 
 #### _rem_logout
 User logged out.
@@ -157,7 +151,7 @@ Application version is launched for the first time.
 - `cp.app_info` - Information report about the build and runtime environment for the app in a serialized JSON object format.
     - `xcode` - Version of Xcode used to build the app.
     - `sdk` - iOS SDK built against.
-    - `frameworks` - Name and versions of all the bundles returned by NSBundle.allFrameworks, excluding those witht the prefix `com.apple.`.
+    - `frameworks` - Name and versions of all the bundles returned by NSBundle.allFrameworks, excluding those with the prefix `com.apple.`.
     - `pods` - Name and versions of all the CocoaPods in the application.
 
 @section analytics-appstore AppStore Submission Procedure
@@ -188,6 +182,11 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 @section analytics-rat-examples RAT Examples
 @note These examples are all using @ref RSDKAnalyticsRATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
 
+@subsection analytics-kibana Using Kibana to Test and Visualize Analytics
+[Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
+
+To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events" or one of the examples below, you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`. 
+
 @subsection analytics-screen-tracking Screen Tracking
 Some @ref analytics-standard-events "standard events" are sent by the SDK for screen tracking. However, events can also be sent manually if custom parameters are needed.
 
@@ -209,7 +208,7 @@ Some @ref analytics-standard-events "standard events" are sent by the SDK for sc
 @endcode
 
 @subsection analytics-ui-interactions UI Interactions
-[Action connections](https://developer.apple.com/library/ios/recipes/xcode_help-IB_connections/chapters/CreatingAction.html) can be setup on controls such as buttons in order to track clicks on the control. Interactions with views such as tapping, pinching, swiping, etc. can also be tracked by setting up a [Gesture Recognizer](https://developer.apple.com/library/ios/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/GestureRecognizer_basics/GestureRecognizer_basics.html)
+[Action connections](https://developer.apple.com/library/ios/recipes/xcode_help-IB_connections/chapters/CreatingAction.html) can be setup on controls such as buttons in order to track clicks on a control. Interactions with views such as tapping, pinching, swiping, etc. can also be tracked by setting up a [Gesture Recognizer](https://developer.apple.com/library/ios/documentation/EventHandling/Conceptual/EventHandlingiPhoneOS/GestureRecognizer_basics/GestureRecognizer_basics.html)
 
 @code{.m}
     /* Track Button Clicks
@@ -330,6 +329,17 @@ and @ref RSDKAnalyticsUploadSuccessNotification notifications. For example:
 			NSLog(@"Successfully sent these records: %@", note.object);
 		}];
 @endcode
+
+@subsection analytics-configure-idfa IDFA tracking
+The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+
+~~~{.m}
+    // Swift
+    RSDKAnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
+
+    // Obj-C:
+    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
+~~~
 
 @subsection analytics-custom-tracker Creating a Custom Tracker
 A custom @ref RSDKAnalyticsTracker "tracker" can be @ref RSDKAnalyticsManager::addTracker: "registered" to the @ref RSDKAnalyticsManager "manager". First, a @ref RSDKAnalyticsTracker "tracker" interface and implementation must be defined. RSDKAnalyticsTracker::processEvent will pass a @ref RSDKAnalyticsEvent object which contains the event name and parameters and a @ref RSDKAnalyticsState object which contains attributes automatically generated by the SDK.
