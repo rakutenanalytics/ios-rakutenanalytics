@@ -48,7 +48,7 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.Event) @interface RSDKAnalyt
  *
  * @return New RSDKAnalyticsEvent object.
  */
-- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters NS_DESIGNATED_INITIALIZER;
 
 /*
  * Convenience method for tracking an event.
