@@ -155,6 +155,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     if ([_RSDKAnalyticsExternalCollector sharedInstance].loggedIn)
     {
         [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = NO;
+        [_RSDKAnalyticsExternalCollector sharedInstance].trackingIdentifier = nil;
     }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.logout.local", _RSDKAnalyticsNotificationBaseName]])
