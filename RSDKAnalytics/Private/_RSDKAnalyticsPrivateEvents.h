@@ -5,66 +5,61 @@
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
 /*
- * Event triggered when app launches the Card Scanner module
- */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerVisit;
-
-/*
  * Event triggered when the user starts the camera scan screen
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerScanStarted;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoScanStarted;
 
 /*
  * Event triggered when the user cancels the camera scan screen
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerScanCanceled;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoScanCanceled;
 
 /*
  * Event triggered when the user opts to enter their card details manually
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerManual;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoManual;
 
 /*
- * Event triggered when the Card Scanner SDK has scanned the card number
+ * Event triggered when the external scan SDK has scanned the card number
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerNumberScanned;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoNumberScanned;
 
 /*
- * Event triggered when the Card Scanner SDK failed to scan the card number
+ * Event triggered when the external scan SDK failed to scan the card number
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerNumberScanFailed;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoNumberScanFailed;
 
 /*
- * Event triggered when the user modified the scanned card number in the Card Scanner UI
+ * Event triggered when the user modified the scanned card number in the Card Info UI
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerNumberModified;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoNumberModified;
 
 /*
- * Event triggered when the Card Scanner SDK has identified the card type
+ * Event triggered when the external scan SDK has identified the card type
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentified;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoCardTypeIdentified;
 
 /*
- * Event triggered when the Card Scanner SDK has failed to identify the card type
+ * Event triggered when the external scan SDK has failed to identify the card type
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerCardTypeIdentifyFailed;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoCardTypeIdentifyFailed;
 
 /*
- * Event triggered when the user modified the identified card type in the Card Scanner UI
+ * Event triggered when the user modified the identified card type in the Card Info UI
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerCardTypeModified;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoCardTypeModified;
 
 /*
- * Event triggered when the Card Scanner SDK has scanned the card expiry
+ * Event triggered when the external scan SDK has scanned the card expiry
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerExpiryScanned;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoExpiryScanned;
 
 /*
- * Event triggered when the Card Scanner SDK failed to scan the card expiry
+ * Event triggered when the external scan SDK failed to scan the card expiry
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerExpiryScanFailed;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoExpiryScanFailed;
 
 /*
- * Event triggered when the user modified the scanned card expiry in the Card Scanner UI
+ * Event triggered when the user modified the scanned card expiry in the Card Info UI
  */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardScannerExpiryModified;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoExpiryModified;

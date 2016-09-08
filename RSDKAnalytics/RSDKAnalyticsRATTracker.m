@@ -14,7 +14,7 @@
 NSString *const _RSDKAnalyticsPrefix = @"rat.";
 NSString *const _RSDKAnalyticsGenericType = @"rat.generic";
 
-NSString *const _RSDKAnalyticsCardScannerPrefix = @"_rem_cardscanner_";
+NSString *const _RSDKAnalyticsCardInfoPrefix = @"_rem_cardinfo_";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -421,7 +421,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         json[@"etype"] = eventName;
     }
-    else if ([eventName hasPrefix:_RSDKAnalyticsCardScannerPrefix])
+    else if ([eventName hasPrefix:_RSDKAnalyticsCardInfoPrefix])
     {
         json[@"etype"] = eventName;
     }
