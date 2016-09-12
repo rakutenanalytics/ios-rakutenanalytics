@@ -158,6 +158,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         _startTime = [RSDKAnalyticsRATTracker stringWithDate:NSDate.date];
 
+        /*
+         * Default values for account/application should be 477/1.
+         */
+
+        _accountIdentifier = 477;
+        _applicationIdentifier = 1;
 
         /*
          * Keep track of reachability.
