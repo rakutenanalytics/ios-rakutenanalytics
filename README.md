@@ -48,7 +48,7 @@ The analytics module can be configured to use the staging environment when talki
 
 @code{.swift}
     // Swift:
-    RSDKAnalyticsManager.shared().shouldUseStagingEnvironment = true
+    AnalyticsManager.shared().shouldUseStagingEnvironment = true
 @endcode
 @code{.m}
     // Obj-C:
@@ -59,30 +59,11 @@ The analytics module can be configured to use the staging environment when talki
 
 @subsection analytics-configure-location Location Tracking
 
-@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.
-@warning Apps usually add a code snippet similiar to the one below to their `UIApplicationDelegate`:
-@warning
-@code{.m}
-	- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-	{
-		// ...
-		self.locationManager = CLLocationManager.new;
-		self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
-		return YES;
-	}
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. 
+@warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
+@warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. 
 
-	- (void)applicationDidBecomeActive:(UIApplication *)application
-	{
-		[self.locationManager startUpdatingLocation];
-	}
-
-	- (void)applicationWillResignActive:(UIApplication *)application
-	{
-		[self.locationManager stopUpdatingLocation];
-	}
-@endcode
-
-If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Tracking is enabled by default.
+If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Location tracking is enabled by default.
 
 @code{.swift}
     // Swift:
@@ -156,7 +137,7 @@ The SDK will automatically generate certain attributes about the state of the de
 - `lastKnownLocation` - CLLocation object representing the last known location of the device.
 - `sessionStartDate` - NSDate representing date when a new session is started.
 - `loggedIn` - BOOL representing user's current logged in state.
-- `userIdentifier` - String uniquely identifying the last logged-in user, if any.
+- `userIdentifier` - String uniquely identifying the currently logged-in user, if any.
 - `loginMethod` -  String representing the login method for the last logged-in user if that information is known.
 - `linkIdentifier` - String identifying a tracking code sent by a referrer.
 - `origin` - String identifying the origin of the launch or visit, if it can be determined.
@@ -170,7 +151,6 @@ The SDK will automatically generate certain attributes about the state of the de
 - `lastUpdateDate` - NSDate representing the date the last-run version was launched for the first time.
 
 @section analytics-appstore AppStore Submission Procedure
-@attention This section only applies if you are submitting your App to the AppStore yourself. Apps should normally be submitted to the App Management Group who will assist you with submitting to the AppStore.
 
 Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
 
@@ -201,6 +181,38 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
 
 To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
+
+@subsection analytics-screen-tracking Screen Tracking
+The following code is an example that can be used to track when a view controller loads.
+
+@code{.swift}
+    /* Track view controller launch
+     * "pgn"    Page Name
+     * "pgt"    Page Type ("top", "search", "shop_item", "cart_modify", or "cart_checkout")
+     */
+     
+    // Swift
+    class ViewController: UIViewController {
+        override func viewDidLoad() {
+            RATTracker.shared().event(eventType: "pv", 
+                            parameters:[
+                                "pgn": "Main", 
+                                "pgt": "top"
+                            ]).track()
+        }
+    }
+@endcode
+@code{.m}
+    // Objective-C
+    - (void)viewDidLoad
+    {
+        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv" 
+                        parameters:@{
+                            @"pgn": @"Main",
+                            @"pgt": @"top"
+                        }] track];
+    }
+@endcode
 
 @subsection analytics-ui-interactions UI Interaction
 The following code is an example that can be used to track button clicks.
