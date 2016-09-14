@@ -22,7 +22,7 @@
 #if __has_attribute(swift_name)
 #   if __apple_build_version__ >= 8000000
 #       define RSDKA_SWIFT2_NAME(t)
-#       define RSDKA_SWIFT3_NAME(t) __attribute__((swift_name(#t)))
+#       define RSDKA_SWIFT3_NAME(t)
 #   else
 #       define RSDKA_SWIFT2_NAME(t) __attribute__((swift_name(#t)))
 #       define RSDKA_SWIFT3_NAME(t)
