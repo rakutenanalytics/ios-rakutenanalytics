@@ -13,15 +13,15 @@
 @property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
-@property (nonatomic, readwrite) BOOL loggedIn;
+@property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
+@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic) NSInteger lastVersionLaunches;
+@property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
@@ -120,8 +120,8 @@
     XCTAssertNil(state.lastLaunchDate);
     XCTAssertNil(state.lastUpdateDate);
     XCTAssertTrue(state.lastVersionLaunches == 0);
-    XCTAssertNil(state.loginMethod);
-    XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
+    XCTAssert(state.loginMethod == RSDKAnalyticsOtherLoginMethod);
+    XCTAssert(state.origin == RSDKAnalyticsInternalOrigin);
 }
 
 - (void)testAnalyticsStateWithSetting
@@ -149,7 +149,7 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.latitude == -56.6462520);
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
-    XCTAssertTrue([state.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
+    XCTAssertTrue(state.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
     XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(state.linkIdentifier);
@@ -240,7 +240,7 @@
     XCTAssertNotNil(copy.advertisingIdentifier);
     XCTAssertTrue([copy.advertisingIdentifier isEqualToString:@"adId"]);
 
-    XCTAssertTrue([copy.loginMethod isEqualToString:RSDKAnalyticsOneTapLoginLoginMethod]);
+    XCTAssertTrue(copy.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
     XCTAssertTrue(copy.origin == RSDKAnalyticsExternalOrigin);
 
     XCTAssertNotNil(copy.linkIdentifier);

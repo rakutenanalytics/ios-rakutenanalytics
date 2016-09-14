@@ -11,7 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Hold information about a shop item.
  *
- * @note **Swift 3+:** This class is now called `RSDKAnalyticsRecord.Item`.
+ * @par Swift 3
+ * This class is exposed as **RSDKAnalyticsRecord.Item**.
  *
  * @see
  *  - RSDKAnalyticsRecord::addItem:
@@ -19,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RSDKAnalyticsItem RSDKAnalyticsItem.h <RSDKAnalytics/RSDKAnalyticsItem.h>
  *
- * @deprecated Use RSDKAnalyticsEvent instead. Manually create the parameters holding information about a shop item and pass them to an event object by using RSDKAnalyticsRATTracker::eventWithEventType:parameters:.
+ * @deprecated Use RSDKAnalyticsEvent instead. Manually create the parameters holding information about a shop item and pass them to an event object by using RATTracker::eventWithEventType:parameters:.
  */
-DEPRECATED_MSG_ATTRIBUTE("Use RSDKAnalyticsEvent instead from now on. Manually create the parameters holding information about a shop item and pass them to an event object by using RSDKAnalyticsRATTracker::eventWithEventType:parameters:.")
+DEPRECATED_MSG_ATTRIBUTE("Use RSDKAnalyticsEvent instead from now on. Manually create the parameters holding information about a shop item and pass them to an event object by using RATTracker::eventWithEventType:parameters:.")
 RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.Item) @interface RSDKAnalyticsItem : NSObject<NSSecureCoding, NSCopying>
 
 /**

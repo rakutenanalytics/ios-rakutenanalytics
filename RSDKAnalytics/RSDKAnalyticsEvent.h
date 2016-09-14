@@ -8,28 +8,33 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * A single analytics event. Use RSDKAnalyticsEvent::track: method for tracking an event.
- * Events are tracked by trackers, a custom tracker can be add as a tracker by using RSDKAnalyticsManager::addTracker:error:.
- * If an event is tracked, the tracker will process it by using RSDKAnalyticsTracker::processEvent:state:.
- * When an event is processed, it is added to the database and uploaded to server.
+ * A single analytics event. Use the RSDKAnalyticsEvent::track: method for tracking the event.
+ *
+ * @par Swift 3
+ * This class is exposed as **AnalyticsManager.Event**.
  *
  * @class RSDKAnalyticsEvent RSDKAnalyticsEvent.h <RSDKAnalytics/RSDKAnalyticsEvent.h>
+ * @ingroup AnalyticsCore
  */
-RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.Event) @interface RSDKAnalyticsEvent : NSObject<NSSecureCoding, NSCopying>
+RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager.Event) @interface RSDKAnalyticsEvent : NSObject<NSSecureCoding, NSCopying>
 
-/*
+/**
  * Name of the event.
- * This allows custom trackers to recognize and process standard events.
+ * This allows custom @ref RSDKAnalyticsTracker "trackers" to recognize and process both
+ * @ref AnalyticsEvents "standard events" and custom ones.
  *
- * @attention Unprefixed names are reserved for standard events. For custom events, or
- * events targetting specific trackers, please use a domain notation (e.g. `kobo.pageRead`).
- * The default tracker, RSDKAnalyticsRATTracker processes an event if the event name has a "rat." prefix.
- * A RAT-specific event tracked by RSDKAnalyticsRATTracker can be created 
- * by using RSDKAnalyticsRATTracker::eventWithEventType:parameters:.
+ * @attention Unprefixed names are reserved for @ref AnalyticsEvents "standard events". For custom events, or
+ * events targetting specific @ref RSDKAnalyticsTracker "trackers", please use a domain notation (e.g. `kobo.pageRead`).
+ *
+ * @note The @ref RATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`,
+ * where `etype` is the standard RAT field going by that name. For convenience, you can create RAT-specific
+ * events directly using RATTracker::eventWithEventType:parameters:.
+ *
+ * @see AnalyticsEvents
  */
 @property (nonatomic, readonly, copy) NSString *name;
 
-/*
+/**
  * Optional payload, for passing additional parameters to custom/3rd-party trackers.
  */
 @property (nonatomic, readonly, copy) NSDictionary RSDKA_GENERIC(NSString *, id) *parameters;
@@ -37,102 +42,141 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.Event) @interface RSDKAnalyt
 /**
  * This method for creating a new event object.
  *
- * @attention A RAT-specific event tracked by RSDKAnalyticsRATTracker can be created
- * by using RSDKAnalyticsRATTracker::eventWithEventType:parameters:.
+ * @attention For RAT-specific events, please use RATTracker::eventWithEventType:parameters: instead.
  *
- * @param name  Name of the event, the SDK provides standard events whose names are provided in Event.Name.
+ * @param name  Name of the event. We provides @ref AnalyticsEvents "standard events" as part of our SDK.
  *              For custom events, or events targetting specific trackers, please use a domain notation (e.g. `kobo.pageRead`).
  * @param parameters  Optional payload, for passing additional parameters to custom/3rd-party trackers.
  *
- * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl ) document.
+ * @return A newly-initialized event.
  *
- * @return New RSDKAnalyticsEvent object.
+ * @see AnalyticsEvents
  */
 - (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters NS_DESIGNATED_INITIALIZER;
 
-/*
+/**
  * Convenience method for tracking an event.
- * After calling this method the event is tracked by trackers in tracker list. 
- * An singleton instance of RSDKAnalyticsRATTracker is created and added to tracker list in RSDKAnalyticsManager's initializer.
- * A custom tracker can be add as a tracker by using RSDKAnalyticsManager::addTracker:error:.
- * If an event is tracked, the tracker will process it by using RSDKAnalyticsTracker::processEvent:state:.
- * When an event is processed, it is added to the database and uploaded to server.
+ * This does exactly the same as `[RSDKAnalyticsManager.sharedInstance process:event]`.
  */
 - (void)track;
 @end
 
 /// @internal
-struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Name) RSDKAnalyticsManagerEventName { };
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Name) RSDKAnalyticsEventName { };
 
-/*
+/**
  * Event triggered on first launch after installation or reinstallation.
  * Always followed by a .sessionStart event.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.initialLaunch**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsInitialLaunchEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.initialLaunch);
+RSDKA_EXPORT NSString *const RSDKAnalyticsInitialLaunchEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.initialLaunch);
 
-/*
+/**
  * Event triggered on every launch, as well as resume from background when
  * the life cycle session timeout has been exceeded.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.sessionStart**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsSessionStartEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionStart);
+RSDKA_EXPORT NSString *const RSDKAnalyticsSessionStartEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.sessionStart);
 
-/*
- * Event triggered when the app goes into background or the session times out.
+/**
+ * Event triggered when the app goes into background.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.sessionEnd**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsSessionEndEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.sessionEnd);
+RSDKA_EXPORT NSString *const RSDKAnalyticsSessionEndEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.sessionEnd);
 
-/*
- * Event triggered when a view controller is shown.
- */
-RSDKA_EXPORT NSString *const RSDKAnalyticsPageVisitEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pageVisit);
-
-/*
+/**
  * Event triggered on the first launch after an update.
- * Always followed by a .sessionStart event.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.applicationUpdate**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsApplicationUpdateEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.applicationUpdate);
+RSDKA_EXPORT NSString *const RSDKAnalyticsApplicationUpdateEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.applicationUpdate);
 
-/*
- * Event triggered before .sessionStart if the application's last run resulted in a crash.
- */
-RSDKA_EXPORT NSString *const RSDKAnalyticsCrashEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.crash);
-
-/*
+/**
  * Event triggered when a user logs in.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.login**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsLoginEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.login);
+RSDKA_EXPORT NSString *const RSDKAnalyticsLoginEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.login);
 
-/*
+/**
  * Event triggered when a user logs out.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.logout**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.logout);
+RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.logout);
 
-/*
- * Event triggered when the application handles a push notification.
- */
-RSDKA_EXPORT NSString *const RSDKAnalyticsPushNotificationEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.pushNotification);
-
-/*
+/**
  * Event triggered on first run after app install with or without version change
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.install**.
+ *
+ * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsManagerEventName.install);
+RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.install);
 
 
 /// @internal
-struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.LogoutMethodParameter) RSDKAnalyticsLogoutMethodParameter { };
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Parameter) RSDKAnalyticsParameter { };
+/// @internal
+struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.LogoutMethod) RSDKAnalyticsLogoutMethod { };
+
 
 /**
- * Logout from the current app only.
+ * Parameter for the logout method sent together with a logout event.
  *
- * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.local`.
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Parameter.logoutMethod**.
+ *
+ * @see RSDKAnalyticsLogoutEventName
+ * @see RSDKAnalyticsEventLogoutMethod
+ * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.local);
+RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutMethodEventParameter RSDKA_SWIFT3_NAME(RSDKAnalyticsParameter.logoutMethod);
 
 /**
- * Logout from all Rakuten apps.
+ * Logout method when the user was logged out of the current app only.
  *
- * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsEvent.LogoutMethodParameter.global`.
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.LogoutMethod.local**.
+ *
+ * @see RSDKAnalyticsLogoutEventName
+ * @see RSDKAnalyticsEventLogoutMethod
+ * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethodParameter  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethodParameter.global);
+RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.local);
+
+/**
+ * Logout method when the user was logged out of all apps and the account was deleted from the keychain.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.LogoutMethod.global**.
+ *
+ * @see RSDKAnalyticsLogoutEventName
+ * @see RSDKAnalyticsEventLogoutMethod
+ * @ingroup AnalyticsConstants
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.global);
 
 NS_ASSUME_NONNULL_END

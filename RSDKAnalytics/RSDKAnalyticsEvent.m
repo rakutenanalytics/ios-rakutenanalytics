@@ -5,47 +5,46 @@
 #import "RSDKAnalyticsEvent.h"
 #import "_RSDKAnalyticsHelpers.h"
 
-NSString *const RSDKAnalyticsInitialLaunchEventName         = @"_rem_init_launch";
-NSString *const RSDKAnalyticsSessionStartEventName          = @"_rem_launch";
-NSString *const RSDKAnalyticsSessionEndEventName            = @"_rem_end_session";
-NSString *const RSDKAnalyticsPageVisitEventName             = @"_rem_visit";
-NSString *const RSDKAnalyticsApplicationUpdateEventName     = @"_rem_update";
-NSString *const RSDKAnalyticsCrashEventName                 = @"_rem_crash";
-NSString *const RSDKAnalyticsLoginEventName                 = @"_rem_login";
-NSString *const RSDKAnalyticsLogoutEventName                = @"_rem_logout";
-NSString *const RSDKAnalyticsPushNotificationEventName      = @"_rem_push_notify";
-NSString *const RSDKAnalyticsInstallEventName               = @"_rem_install";
+// Standard event names
+NSString *const RSDKAnalyticsInitialLaunchEventName     = @"_rem_init_launch";
+NSString *const RSDKAnalyticsSessionStartEventName      = @"_rem_launch";
+NSString *const RSDKAnalyticsSessionEndEventName        = @"_rem_end_session";
+NSString *const RSDKAnalyticsApplicationUpdateEventName = @"_rem_update";
+NSString *const RSDKAnalyticsLoginEventName             = @"_rem_login";
+NSString *const RSDKAnalyticsLogoutEventName            = @"_rem_logout";
+NSString *const RSDKAnalyticsInstallEventName           = @"_rem_install";
 
-NSString *const RSDKAnalyticsLocalLogoutMethodParameter     = @"single";
-NSString *const RSDKAnalyticsGlobalLogoutMethodParameter    = @"all";
+// Standard event parameters
+NSString *const RSDKAnalyticsLogoutMethodEventParameter = @"logout_method";
+
+// Standard event parameter values
+NSString *const RSDKAnalyticsLocalLogoutMethod          = @"local";
+NSString *const RSDKAnalyticsGlobalLogoutMethod         = @"global";
+
+
 
 @interface RSDKAnalyticsEvent ()
-
 @property (nonatomic, readwrite, copy) NSString *name;
 @property (nonatomic, readwrite, copy) NSDictionary *parameters;
-
 @end
+
+
 
 @implementation RSDKAnalyticsEvent
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
-#pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
     __builtin_unreachable();
 }
-#pragma clang diagnostic pop
-
 
 - (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
     NSParameterAssert(name.length);
     if ((self = [super init]))
     {
-        _name = name;
-        _parameters = parameters;
+        _name = name.copy;
+        _parameters = parameters.copy;
     }
     return self;
 }

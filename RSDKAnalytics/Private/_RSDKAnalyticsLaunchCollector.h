@@ -6,9 +6,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
+/*
  * This class tracks launch events.
- * This class creates event corressponding to each event, sends it to RSDKAnalyticsManager's instance to process.
+ * It creates event corressponding to each event, sends it to RSDKAnalyticsManager's instance to process.
  */
 RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 
@@ -40,16 +40,14 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 /*
  * The number of launches since last version is being stored in shared preferences.
  */
-@property (nonatomic, readonly) NSInteger lastVersionLaunches;
+@property (nonatomic, readonly) NSUInteger lastVersionLaunches;
 
-/**
+/*
  * Retrieve the shared instance.
- *
- * @note **Swift 3+:** This method is now called `shared()`.
  *
  * @return The shared instance.
  */
-+ (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
++ (instancetype)sharedInstance;
 
 @end
 

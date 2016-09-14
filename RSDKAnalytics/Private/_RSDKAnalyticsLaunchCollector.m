@@ -18,7 +18,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic, readwrite) NSInteger lastVersionLaunches;
+@property (nonatomic, readwrite) NSUInteger lastVersionLaunches;
 @property (nonatomic, readwrite) BOOL isInitialLaunch;
 @property (nonatomic, readwrite) BOOL isInstallLaunch;
 @property (nonatomic, readwrite) BOOL isUpdateLaunch;
@@ -92,15 +92,9 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
             _isInitialLaunch = YES;
         }
 
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        NSString *currentVersion = NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"];
-        _installLaunchDate = [defaults objectForKey:_RSDKAnalyticsInstallLaunchDateKey];
-        _lastUpdateDate = [defaults objectForKey:_RSDKAnalyticsLastUpdateDateKey];
-        _lastLaunchDate = [defaults objectForKey:_RSDKAnalyticsLastLaunchDateKey];
-        _lastVersion = [defaults stringForKey:_RSDKAnalyticsLastVersionKey];
-        _lastVersionLaunches = [defaults integerForKey:_RSDKAnalyticsLastVersionLaunchesKey];
+        [self resetToDefaults];
         _isInstallLaunch = (_installLaunchDate) ? NO : YES;
-        _isUpdateLaunch = ![_lastVersion isEqualToString:currentVersion];
+        _isUpdateLaunch = ![_lastVersion isEqualToString:NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"]];
     }
     return self;
 }
@@ -149,18 +143,34 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     }
 }
 
+- (void)resetToDefaults
+{
+    NSUserDefaults* defaults = NSUserDefaults.standardUserDefaults;
+
+    id object = [defaults objectForKey:_RSDKAnalyticsInstallLaunchDateKey];
+    _installLaunchDate = [object isKindOfClass:NSDate.class] ? object : nil;
+
+    object = [defaults objectForKey:_RSDKAnalyticsLastUpdateDateKey];
+    _lastUpdateDate = [object isKindOfClass:NSDate.class] ? object : nil;
+
+    object = [defaults objectForKey:_RSDKAnalyticsLastLaunchDateKey];
+    _lastLaunchDate = [object isKindOfClass:NSDate.class] ? object : nil;
+
+    _lastVersion = [defaults stringForKey:_RSDKAnalyticsLastVersionKey];
+
+    object = [defaults objectForKey:_RSDKAnalyticsLastVersionLaunchesKey];
+    _lastVersionLaunches = [object isKindOfClass:NSNumber.class] ? [(NSNumber*)object unsignedIntegerValue] : 0;
+}
+
 - (void)update
 {
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    _installLaunchDate = [defaults objectForKey:_RSDKAnalyticsInstallLaunchDateKey];
-    _lastUpdateDate = [defaults objectForKey:_RSDKAnalyticsLastUpdateDateKey];
-    _lastLaunchDate = [defaults objectForKey:_RSDKAnalyticsLastLaunchDateKey];
-    _lastVersion = [defaults stringForKey:_RSDKAnalyticsLastVersionKey];
-    _lastVersionLaunches = [defaults integerForKey:_RSDKAnalyticsLastVersionLaunchesKey];
+    [self resetToDefaults];
 
     // Update values for the next run
     NSDate *now = NSDate.date;
     NSString *currentVersion = NSBundle.mainBundle.infoDictionary[@"CFBundleShortVersionString"];
+    NSUserDefaults* defaults = NSUserDefaults.standardUserDefaults;
+
     if (!_isInitialLaunch && !_installLaunchDate)
     {
         _isInstallLaunch = YES;
@@ -176,7 +186,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     else
     {
         _lastVersionLaunches += 1;
-        [defaults setInteger:_lastVersionLaunches forKey:_RSDKAnalyticsLastVersionLaunchesKey];
+        [defaults setObject:@(_lastVersionLaunches) forKey:_RSDKAnalyticsLastVersionLaunchesKey];
     }
     [defaults setObject:now forKey:_RSDKAnalyticsLastLaunchDateKey];
     [defaults synchronize];

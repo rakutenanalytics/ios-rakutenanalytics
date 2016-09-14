@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Values for RSDKAnalyticsRecord.checkoutStage.
  *
- * @note **Swift 3+:** This enum is now called `RSDKAnalyticsRecord.CheckoutStage`.
+ * @par Swift 3
+ * This type is exposed as **RSDKAnalyticsRecord.CheckoutStage**.
  *
  * @enum RSDKAnalyticsCheckoutStage
  * @ingroup AnalyticsConstants
@@ -22,42 +23,48 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsCheckoutStage)
     /**
      * Invalid value.
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.invalid`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.invalid**.
      */
     RSDKAnalyticsInvalidCheckoutStage RSDKA_SWIFT3_NAME(invalid) = 0,
 
     /**
      * Stage 1 of checking out (login).
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage1Login`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.stage1Login**.
      */
     RSDKAnalyticsCheckoutStage1Login RSDKA_SWIFT3_NAME(stage1Login) = 10,
 
     /**
      * Stage 2 of checking out (shipping details).
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage2ShippingDetails`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.stage2ShippingDetails**.
      */
     RSDKAnalyticsCheckoutStage2ShippingDetails RSDKA_SWIFT3_NAME(stage2ShippingDetails) = 20,
 
     /**
      * Stage 3 of checking out (order summary).
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage3OrderSummary`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.stage3OrderSummary**.
      */
     RSDKAnalyticsCheckoutStage3OrderSummary RSDKA_SWIFT3_NAME(stage3OrderSummary) = 30,
 
     /**
      * Stage 4 of checking out (payment).
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage4Payment`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.stage4Payment**.
      */
     RSDKAnalyticsCheckoutStage4Payment RSDKA_SWIFT3_NAME(stage4Payment) = 40,
 
     /**
      * Stage 5 of checking out (verification).
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.CheckoutStage.stage5Verification`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.CheckoutStage.stage5Verification**.
      */
     RSDKAnalyticsCheckoutStage5Verification RSDKA_SWIFT3_NAME(stage5Verification) = 50,
 } RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.CheckoutStage);
@@ -67,7 +74,8 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsCheckoutStage)
 /**
  * Values for RSDKAnalyticsRecord.searchMethod.
  *
- * @note **Swift 3+:** This enum is now called `RSDKAnalyticsRecord.SearchMethod`.
+ * @par Swift 3
+ * This type is exposed as **RSDKAnalyticsRecord.SearchMethod**.
  *
  * @enum RSDKAnalyticsSearchMethod
  * @ingroup AnalyticsConstants
@@ -77,21 +85,24 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsSearchMethod)
     /**
      * Invalid value.
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.invalid`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.SearchMethod.invalid**.
      */
     RSDKAnalyticsInvalidSearchMethod RSDKA_SWIFT3_NAME(invalid) = 0,
 
     /**
      * `AND` operation.
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.and`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.SearchMethod.and**.
      */
     RSDKAnalyticsSearchMethodAnd RSDKA_SWIFT3_NAME(and) = 1,
 
     /**
      * `OR` operation.
      *
-     * @note **Swift 3+:** This enum value is now called `RSDKAnalyticsRecord.SearchMethod.or`.
+     * @par Swift 3
+     * This value is exposed as **RSDKAnalyticsRecord.SearchMethod.or**.
      */
     RSDKAnalyticsSearchMethodOr RSDKA_SWIFT3_NAME(or) = 2,
 } RSDKA_SWIFT3_NAME(RSDKAnalyticsRecord.SearchMethod);
@@ -101,7 +112,8 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsSearchMethod)
 /**
  * Special value for RSDKAnalyticsRecord.affiliateId, corresponding to an invalid value.
  *
- * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidAffiliateId`.
+ * @par Swift 3
+ * This value is exposed as **RSDKAnalyticsRecord.invalidAffiliateId**.
  *
  * @ingroup AnalyticsConstants
  */
@@ -110,7 +122,8 @@ RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidAffiliateId RSDKA_SWIFT3_NAME(RSD
 /**
  * Special value for RSDKAnalyticsRecord.checkpoints, corresponding to an invalid value.
  *
- * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidCheckpoints`.
+ * @par Swift 3
+ * This value is exposed as **RSDKAnalyticsRecord.invalidCheckpoints**.
  *
  * @ingroup AnalyticsConstants
  */
@@ -119,7 +132,8 @@ RSDKA_EXPORT const int64_t RSDKAnalyticsInvalidCheckpoints RSDKA_SWIFT3_NAME(RSD
 /**
  * Special value for RSDKAnalyticsRecord.cartState, corresponding to an invalid value.
  *
- * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidCartState`.
+ * @par Swift 3
+ * This value is exposed as **RSDKAnalyticsRecord.invalidCartState**.
  *
  * @ingroup AnalyticsConstants
  */
@@ -128,7 +142,8 @@ RSDKA_EXPORT const uint64_t RSDKAnalyticsInvalidCartState RSDKA_SWIFT3_NAME(RSDK
 /**
  * Special value for RSDKAnalyticsRecord.navigationTime, corresponding to an invalid value.
  *
- * @note **Swift 3+:** This value is now called `RSDKAnalyticsRecord.invalidNavigationTime`.
+ * @par Swift 3
+ * This value is exposed as **RSDKAnalyticsRecord.invalidNavigationTime**.
  *
  * @ingroup AnalyticsConstants
  */

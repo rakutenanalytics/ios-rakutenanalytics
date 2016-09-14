@@ -13,63 +13,27 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Main class of the module.
  *
- * @note **Swift 3+:** This class is now called `AnalyticsManager`.
- * This class handles:
  *
- *  - Enabling or disabling **location tracking** with #shouldTrackLastKnownLocation;
- *  - Enabling or disabling **[advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) tracking** with #shouldTrackAdvertisingIdentifier.
- *  - **Spooling** @ref RSDKAnalyticsRecord instances with @ref RSDKAnalyticsManager::spoolRecord:.
- *  - **Gathering system data** that it merges with each record it spools. See the next section.
- *
- * ## Automatically gathered system data
- * The fields below, documented in the [Rakuten Analytics Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl),
- * are automatically merged with the properties of each @ref RSDKAnalyticsRecord that gets spooled:
- *
- *  Field         | Long field name
- *  -------------:|:-------------------------------
- *  `app_name`    | `APPLICATION_NAME`
- *  `app_ver`     | `APPLICATION_VERSION`
- *  `ckp`         | `PERSISTENT_COOKIE`
- *  `cka`         | |
- *  `cks`         | `SESSION_COOKIE`
- *  `dln`         | `DEVICE_LANGUAGE`
- *  `loc`         | `LOCATION`
- *  `ltm`         | `SCRIPT_START_TIME`
- *  `mbat`        | `BATTERY_USAGE`
- *  `mcn`         | `MOBILE_CARRIER_NAME`
- *  `mnetw`       | `MOBILE_NETWORK_TYPE`
- *  `model`       | `MOBILE_DEVICE_BRAND_MODEL`
- *  `mori`        | `MOBILE_ORIENTATION`
- *  `mos`         | `MOBILE_OS`
- *  `online`      | `ONLINE_STATUS`
- *  `powerstatus` | `BATTERY_CHARGING_STATUS`
- *  `res`         | `RESOLUTION`
- *  `ts1`         | `CLIENT_PROVIDED_TIMESTAMP`
- *  `tzo`         | `TIMEZONE`
- *  `ua`          | `USER_AGENT`
- *  `userid`      | `USER_ID`
- *  `ver`         | `VERSION`
+ * @par Swift 3
+ * This class is exposed as **AnalyticsManager**.
  *
  * @class RSDKAnalyticsManager RSDKAnalyticsManager.h <RSDKAnalytics/RSDKAnalyticsManager.h>
+ * @ingroup AnalyticsCore
  */
 RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
  *
- * @note **Swift 3+:** This method is now called `shared()`.
+ * @par Swift 3
+ * This method is exposed as **AnalyticsManager.shared()**.
  *
  * @return The shared instance.
  */
 + (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
 
 /**
- * Process an event. The manager passes the event trackers for processing the event.
- * When an event is processed, it is added to the database then uploaded asynchronously to server, on the background queue.
- *
- * Developers who wish to monitor the module's network activity can do so
- * by listening to the notifications it sends, respectively @ref RSDKAnalyticsWillUploadNotification,
- * @ref RSDKAnalyticsUploadFailureNotification and @ref RSDKAnalyticsUploadSuccessNotification.
+ * Process an event. The manager passes the event to each registered trackers, in turn.
  *
  * @param event  An event will be sent to RAT server.
  */
@@ -77,13 +41,13 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager
 
 /**
  * Add a tracker to tracker list.
- * @param tracker  A tracker, that comforms @protocol RSDKAnalyticsTracker.
- * @param error    A RSDKAnalyticsErrorDomain error.
- * @exception      RSDKAnalyticsTrackerAlreadyPresentError Error if a tracker is already registered.
  *
- * @return YES if class name of the tracker hasn't been registered yet, NO if otherwise.
+ * @par Swift 3
+ * This method is exposed as **.add()**.
+ *
+ * @param tracker  Any object that comforms to the @ref RSDKAnalyticsTracker protocol.
  */
-- (BOOL)addTracker:(id<RSDKAnalyticsTracker>)tracker error:(NSError **)error;
+- (void)addTracker:(id<RSDKAnalyticsTracker>)tracker;
 
 /**
  * Spool a record\. It is first saved on-disk, then uploaded asynchronously
@@ -101,9 +65,9 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager
  *            access group does not match the application's bundle identifier. See @ref device-information-keychain-setup "RSDKDeviceInformation: Setting up the keychain"
  *            for more information.
  *
- * @deprecated Use use RSDKAnalyticsEvent and -[RSDKAnalyticsManager sharedInstance] process:] instead.
+ * @deprecated Use use RSDKAnalyticsEvent and -[RSDKAnalyticsManager process:] instead.
  */
-+ (void)spoolRecord:(RSDKAnalyticsRecord *)record DEPRECATED_MSG_ATTRIBUTE("Please use RSDKAnalyticsEvent and -[RSDKAnalyticsManager sharedInstance] process:] instead.");
++ (void)spoolRecord:(RSDKAnalyticsRecord *)record DEPRECATED_MSG_ATTRIBUTE("Please use RSDKAnalyticsEvent and -[RSDKAnalyticsManager process:] instead.");
 
 
 /**
@@ -111,9 +75,9 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager
  *
  * @return URL of the server.
  *
- * @deprecated Use -[RSDKAnalyticsRATTracker endpointAddress] instead.
+ * @deprecated Use RATTracker.endpointAddress instead.
  */
-+ (NSURL*)endpointAddress DEPRECATED_MSG_ATTRIBUTE("Please use -[RSDKAnalyticsRATTracker endpointAddress] from now on.");
++ (NSURL *)endpointAddress DEPRECATED_MSG_ATTRIBUTE("Please use RATTracker.endpointAddress from now on.");
 
 /**
  * Control whether the SDK should track the device's location or not.
@@ -147,46 +111,5 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RSDKAnalyticsManager
 @property (nonatomic, getter=isLocationTrackingEnabled) BOOL locationTrackingEnabled DEPRECATED_MSG_ATTRIBUTE("Use shouldTrackLastKnownLocation instead");
 
 @end
-
-
-/// @name Notifications
-
-
-/**
- * The SDK sends this notification when it is about to make a request
- * to upload a group of records to RAT servers.
- *
- * `object` is a the JSON payload being uploaded, in its unserialized
- * NSArray form.
- *
- * @ingroup AnalyticsConstants
- */
-
-RSDKA_EXPORT NSString *const RSDKAnalyticsWillUploadNotification;
-
-
-/**
- * The SDK sends this notification after an upload failed.
- *
- * `object` is a the JSON payload that was being uploaded, in its unserialized
- * NSArray form.
- * `userInfo` contains a `NSError` instance under the key `NSUnderlyingErrorKey`, that uses the `NSURLErrorDomain` domain.
- *
- * @ingroup AnalyticsConstants
- */
-
-RSDKA_EXPORT NSString *const RSDKAnalyticsUploadFailureNotification;
-
-
-/**
- * The SDK sends this notification after an upload succeeded.
- *
- * `object` is a the JSON payload that was being uploaded, in its unserialized
- * `NSArray` form.
- *
- * @ingroup AnalyticsConstants
- */
-
-RSDKA_EXPORT NSString *const RSDKAnalyticsUploadSuccessNotification;
 
 NS_ASSUME_NONNULL_END

@@ -11,10 +11,18 @@
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsDatabase.h"
 
+// Externs
+NSString *const RATWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
+NSString *const RATUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
+NSString *const RATUploadSuccessNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_succeeded";
+
+// Deprecated alteregos
+NSString *const RSDKAnalyticsWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
+NSString *const RSDKAnalyticsUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
+NSString *const RSDKAnalyticsUploadSuccessNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_succeeded";
+
 NSString *const _RSDKAnalyticsPrefix = @"rat.";
 NSString *const _RSDKAnalyticsGenericType = @"rat.generic";
-
-NSString *const _RSDKAnalyticsCardInfoPrefix = @"_rem_cardinfo_";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -24,56 +32,27 @@ NSString *const _RSDKAnalyticsCardInfoPrefix = @"_rem_cardinfo_";
  * This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter,
  * and adds an extra RSDKAnalyticsInvalidMobileNetworkType value we do not send.
  */
-
-typedef NS_ENUM(NSInteger, RSDKAnalyticsMobileNetworkType)
+typedef NS_ENUM(NSUInteger, _RATMobileNetworkType)
 {
-    RSDKAnalyticsInvalidMobileNetworkType = 0,
-    RSDKAnalyticsMobileNetworkTypeWiFi    = 1,
-    RSDKAnalyticsMobileNetworkType2G      = 2,
-    RSDKAnalyticsMobileNetworkType3G      = 3,
-    RSDKAnalyticsMobileNetworkType4G      = 4,
+    _RATMobileNetworkTypeWiFi    = 1,
+    _RATMobileNetworkType3G      = 3,
+    _RATMobileNetworkType4G      = 4,
 };
 
 
 /*
  * Reachability status.
  */
-
-typedef NS_ENUM(NSInteger, RSDKAnalyticsReachabilityStatus)
+typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 {
-    RSDKAnalyticsReachabilityStatusUnknown = 0,
-    RSDKAnalyticsReachabilityStatusOffline,
-    RSDKAnalyticsReachabilityStatusConnectedWithWWAN,
-    RSDKAnalyticsReachabilityStatusConnectedWithWiFi,
+    _RATReachabilityStatusOffline,
+    _RATReachabilityStatusConnectedWithWWAN,
+    _RATReachabilityStatusConnectedWithWiFi,
 };
-
-/*
- * This pointer is used as the key for the associated object we set on
- * the class, that is returned by +startTime.
- */
-
-static const void* RSDKAnalyticsStartTimeKey = &RSDKAnalyticsStartTimeKey;
-
-
-/*
- * We wait at least a minute after an upload has been fully processed
- * before attempting to trigger a new one.
- */
-
-const NSTimeInterval RSDKAnalyticsUploadInterval = 60.0;
-
-
-/*
- * Any request that takes more than 30 seconds is canceled.
- */
-
-const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
-
-
 
 ////////////////////////////////////////////////////////////////////////////
 
-@interface RSDKAnalyticsRATTracker ()<CLLocationManagerDelegate>
+@interface RATTracker ()<CLLocationManagerDelegate>
 @property (nonatomic) int64_t accountIdentifier;
 @property (nonatomic) int64_t applicationIdentifier;
 
@@ -83,7 +62,7 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
  * changes in radio access technology, on iOS 7+.
  */
 
-@property(nonatomic, strong) CTTelephonyNetworkInfo *telephonyNetworkInfo;
+@property(nonatomic) CTTelephonyNetworkInfo *telephonyNetworkInfo;
 @property(nonatomic) BOOL isUsingLTE;
 
 
@@ -91,7 +70,7 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
  * Keep track of reachability.
  */
 
-@property (nonatomic, assign) RSDKAnalyticsReachabilityStatus reachabilityStatus;
+@property (nonatomic, nullable) NSNumber *reachabilityStatus;
 
 /*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
@@ -104,41 +83,39 @@ const NSTimeInterval RSDKAnalyticsRequestTimeoutInterval = 30.0;
  */
 
 @property(nonatomic) BOOL uploadRequested;
-@property(nonatomic, strong) NSTimer *uploadTimer;
+@property(nonatomic) NSTimer *uploadTimer;
 
 
 @property(nonatomic, copy) NSString *startTime;
 @end
 
-@implementation RSDKAnalyticsRATTracker
+@implementation RATTracker
 
 static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
 {
-    RSDKAnalyticsReachabilityStatus status;
+    NSNumber *status = nil;
 
-    if ((flags & kSCNetworkReachabilityFlagsReachable) == 0 ||
-        (flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0)
+    if (!(flags & kSCNetworkReachabilityFlagsReachable) || (flags & kSCNetworkReachabilityFlagsConnectionRequired))
     {
-        status = RSDKAnalyticsReachabilityStatusOffline;
+        status = @(_RATReachabilityStatusOffline);
     }
-    else if ((flags & kSCNetworkReachabilityFlagsIsWWAN) != 0)
+    else if ((flags & kSCNetworkReachabilityFlagsIsWWAN))
     {
-
-        status = RSDKAnalyticsReachabilityStatusConnectedWithWWAN;
+        status = @(_RATReachabilityStatusConnectedWithWWAN);
     }
     else
     {
-        status = RSDKAnalyticsReachabilityStatusConnectedWithWiFi;
+        status = @(_RATReachabilityStatusConnectedWithWiFi);
     }
 
-    [RSDKAnalyticsRATTracker sharedInstance].reachabilityStatus = status;
+    [RATTracker sharedInstance].reachabilityStatus = status;
 }
 
 #pragma mark - RSDKAnalyticsTracker
 
 + (instancetype)sharedInstance
 {
-    static RSDKAnalyticsRATTracker *instance = nil;
+    static RATTracker *instance = nil;
     static dispatch_once_t ratTrackerOnceToken;
     dispatch_once(&ratTrackerOnceToken, ^{
         instance = [self.alloc initInstance];
@@ -156,7 +133,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
-        _startTime = [RSDKAnalyticsRATTracker stringWithDate:NSDate.date];
+        _startTime = [RATTracker stringWithDate:NSDate.date];
 
         /*
          * Default values for account/application should be 477/1.
@@ -340,6 +317,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         return nil;
     }
 
+    /*
+     * Core SDK events
+     */
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
         json[@"etype"] = eventName;
@@ -352,44 +332,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         json[@"etype"] = eventName;
         NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        cp[@"days_since_first_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
-        cp[@"days_since_last_use"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
+        cp[@"days_since_first_use"] = @([RATTracker daysPassedSinceDate:state.installLaunchDate]);
+        cp[@"days_since_last_use"] = @([RATTracker daysPassedSinceDate:state.lastLaunchDate]);
         json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
     {
         json[@"etype"] = eventName;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
-    {
-        NSParameterAssert(state.currentPage);
-        json[@"etype"] = @"pv";
-        json[@"pgn"] = [RSDKAnalyticsRATTracker nameWithPage:state.currentPage];
-        if (state.lastVisitedPage)
-        {
-            json[@"ref"] = [RSDKAnalyticsRATTracker nameWithPage:state.lastVisitedPage];
-        }
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
-        switch (state.origin)
-        {
-            case RSDKAnalyticsInternalOrigin:
-                cp[@"ref_type"] = @"internal";
-                break;
-            case RSDKAnalyticsExternalOrigin:
-                cp[@"ref_type"] = @"external";
-                break;
-            case RSDKAnalyticsPushOrigin:
-                cp[@"ref_type"] = @"push";
-                break;
-            default:
-                cp[@"ref_type"] = @"other";
-                break;
-        }
-        if (state.linkIdentifier.length)
-        {
-            cp[@"linkid"] = state.linkIdentifier;
-        }
-        json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
     {
@@ -400,37 +349,52 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             cp[@"previous_version"] = state.lastVersion;
         }
         cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
-        cp[@"days_since_last_upgrade"] = @([RSDKAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
+        cp[@"days_since_last_upgrade"] = @([RATTracker daysPassedSinceDate:state.lastUpdateDate]);
         json[@"cp"] = cp.copy;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsCrashEventName])
-    {
-        json[@"etype"] = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
     {
         json[@"etype"] = eventName;
-        if (state.loginMethod.length)
+        NSString *loginMethod = nil;
+        switch (state.loginMethod)
         {
-            json[@"cp"] = @{@"login_method":state.loginMethod};
+            case RSDKAnalyticsPasswordInputLoginMethod: loginMethod = @"password";      break;
+            case RSDKAnalyticsOneTapLoginLoginMethod:   loginMethod = @"one_tap_login"; break;
+            default: break;
         }
+
+        if (loginMethod) json[@"cp"] = @{@"login_method": loginMethod};
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
     {
         json[@"etype"] = eventName;
-        if (event.parameters[@"logout_method"])
+        NSString *logoutMethod = event.parameters[RSDKAnalyticsLogoutMethodEventParameter];
+        
+        if ([logoutMethod isEqualToString:RSDKAnalyticsLocalLogoutMethod])
         {
-            json[@"cp"] = @{@"logout_method":event.parameters[@"logout_method"]};
+            logoutMethod = @"single";
         }
+        else if ([logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod])
+        {
+            logoutMethod = @"global";
+        }
+        else
+        {
+            logoutMethod = nil;
+        }
+
+        if (logoutMethod) json[@"cp"] = @{@"logout_method": logoutMethod};
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
+    /*
+     * Alpha modules events
+     */
+    else if ([eventName hasPrefix:@"_rem_cardinfo_"])
     {
         json[@"etype"] = eventName;
     }
-    else if ([eventName hasPrefix:_RSDKAnalyticsCardInfoPrefix])
-    {
-        json[@"etype"] = eventName;
-    }
+    /*
+     * RAT-specific events
+     */
     else if ([eventName hasPrefix:_RSDKAnalyticsPrefix])
     {
         // only set json["etype"] if the event name is not rat.generic
@@ -439,6 +403,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             json[@"etype"] = [eventName substringFromIndex:_RSDKAnalyticsPrefix.length];
         }
     }
+    /*
+     * Unsupported events
+     */
     else
     {
         return nil;
@@ -507,8 +474,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         };
     });
 
-
-    id json = [[RSDKAnalyticsRATTracker dictionaryWithEvent:event state:state] mutableCopy];
+    id json = [[RATTracker dictionaryWithEvent:event state:state] mutableCopy];
     if (!json)
     {
         return NO;
@@ -606,26 +572,21 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     json[@"model"] = RSDKDeviceInformation.modelIdentifier;
 
     // {name: "mnetw", longName: "MOBILE_NETWORK_TYPE", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2, 3, 4], userSettable: true}
-    RSDKAnalyticsMobileNetworkType mobileNetworkType;
-
-    switch (self.reachabilityStatus)
+    if (_reachabilityStatus)
     {
-        case RSDKAnalyticsReachabilityStatusConnectedWithWiFi:
-            mobileNetworkType = RSDKAnalyticsMobileNetworkTypeWiFi;
-            break;
+        switch (_reachabilityStatus.unsignedIntegerValue)
+        {
+            case _RATReachabilityStatusConnectedWithWiFi:
+                json[@"mnetw"] = @(_RATMobileNetworkTypeWiFi);
+                break;
 
-        case RSDKAnalyticsReachabilityStatusConnectedWithWWAN:
-            mobileNetworkType = self.isUsingLTE ? RSDKAnalyticsMobileNetworkType4G : RSDKAnalyticsMobileNetworkType3G;
-            break;
+            case _RATReachabilityStatusConnectedWithWWAN:
+                json[@"mnetw"] = @(self.isUsingLTE ? _RATMobileNetworkType4G : _RATMobileNetworkType3G);
+                break;
 
-        default:
-            mobileNetworkType = RSDKAnalyticsInvalidMobileNetworkType;
-            break;
-    }
-
-    if (mobileNetworkType != RSDKAnalyticsInvalidMobileNetworkType)
-    {
-        json[@"mnetw"] = @(mobileNetworkType);
+            default:
+                break;
+        }
     }
 
     // {name: "mori", longName: "MOBILE_ORIENTATION", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2], userSettable: true}
@@ -635,9 +596,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     json[@"mos"] = osVersion;
 
     // {name: "online", longName: "ONLINE_STATUS", fieldType: "BOOLEAN", userSettable: false}
-    if (self.reachabilityStatus != RSDKAnalyticsReachabilityStatusUnknown)
+    if (_reachabilityStatus)
     {
-        json[@"online"] = (self.reachabilityStatus != RSDKAnalyticsReachabilityStatusOffline) ? @YES : @NO;
+        json[@"online"] = (_reachabilityStatus.unsignedIntegerValue != _RATReachabilityStatusOffline) ? @YES : @NO;
     }
 
     // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
@@ -730,7 +691,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          */
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:RSDKAnalyticsUploadInterval
+            self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:60
                                                                 target:self
                                                               selector:@selector(_doBackgroundUpload)
                                                               userInfo:nil
@@ -821,7 +782,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_RSDKAnalyticsEndpointAddress()
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
-                                                       timeoutInterval:RSDKAnalyticsRequestTimeoutInterval];
+                                                       timeoutInterval:30];
 
 
     /*
