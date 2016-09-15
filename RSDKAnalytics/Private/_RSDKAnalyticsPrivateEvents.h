@@ -63,3 +63,14 @@ RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoExpiryScanFailed;
  * Event triggered when the user modified the scanned card expiry in the Card Info UI
  */
 RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventCardInfoExpiryModified;
+
+/**
+ * Discover events
+ */
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPageVisit;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPageTap;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPageRedirect;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPreviewVisit;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPreviewTap;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPreviewRedirect;
+RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventDiscoverPreviewShowMore;
