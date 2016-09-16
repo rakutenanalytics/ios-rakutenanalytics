@@ -21,8 +21,10 @@ NSString *const RSDKAnalyticsWillUploadNotification    = @"com.rakuten.esd.sdk.n
 NSString *const RSDKAnalyticsUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
 NSString *const RSDKAnalyticsUploadSuccessNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_succeeded";
 
-NSString *const _RSDKAnalyticsPrefix = @"rat.";
-NSString *const _RSDKAnalyticsGenericType = @"rat.generic";
+NSString *const _RATEventPrefix      = @"rat.";
+NSString *const _RATETypeParameter   = @"etype";
+NSString *const _RATCPParameter      = @"cp";
+NSString *const _RATGenericEventName = @"rat.generic";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -222,7 +224,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
-    return [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@",_RSDKAnalyticsPrefix,eventType] parameters:parameters];
+    return [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@", _RATEventPrefix, eventType] parameters:parameters];
 }
 
 + (NSString *)stringWithDate:(NSDate *)date
@@ -309,52 +311,49 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 + (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
 {
-    NSMutableDictionary *json = [NSMutableDictionary dictionary];
     NSString *eventName = event.name;
-    
-    if (!eventName.length)
-    {
-        return nil;
-    }
+
+    NSMutableDictionary *result = NSMutableDictionary.new;
+    NSString *etype = nil;
+    NSMutableDictionary *cp = NSMutableDictionary.new;
 
     /*
      * Core SDK events
      */
     if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
-        json[@"etype"] = eventName;
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        etype = eventName;
+
         cp[@"days_since_first_use"] = @([RATTracker daysPassedSinceDate:state.installLaunchDate]);
         cp[@"days_since_last_use"] = @([RATTracker daysPassedSinceDate:state.lastLaunchDate]);
-        json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
     {
-        json[@"etype"] = eventName;
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        etype = eventName;
+
         if (state.lastVersion.length)
         {
             cp[@"previous_version"] = state.lastVersion;
         }
         cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
         cp[@"days_since_last_upgrade"] = @([RATTracker daysPassedSinceDate:state.lastUpdateDate]);
-        json[@"cp"] = cp.copy;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
+
         NSString *loginMethod = nil;
         switch (state.loginMethod)
         {
@@ -363,13 +362,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             default: break;
         }
 
-        if (loginMethod) json[@"cp"] = @{@"login_method": loginMethod};
+        if (loginMethod) cp[@"login_method"] = loginMethod;
     }
     else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
+
         NSString *logoutMethod = event.parameters[RSDKAnalyticsLogoutMethodEventParameter];
-        
         if ([logoutMethod isEqualToString:RSDKAnalyticsLocalLogoutMethod])
         {
             logoutMethod = @"single";
@@ -383,34 +382,40 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             logoutMethod = nil;
         }
 
-        if (logoutMethod) json[@"cp"] = @{@"logout_method": logoutMethod};
+        if (logoutMethod) cp[@"logout_method"] = logoutMethod;
     }
+
     /*
      * Alpha modules events
      */
     else if ([eventName hasPrefix:@"_rem_cardinfo_"])
     {
-        json[@"etype"] = eventName;
+        etype = eventName;
     }
+
     /*
      * RAT-specific events
      */
-    else if ([eventName hasPrefix:_RSDKAnalyticsPrefix])
+    else if ([eventName hasPrefix:_RATEventPrefix])
     {
         // only set json["etype"] if the event name is not rat.generic
-        if (![eventName hasPrefix:_RSDKAnalyticsGenericType])
+        if (![eventName isEqualToString:_RATGenericEventName])
         {
-            json[@"etype"] = [eventName substringFromIndex:_RSDKAnalyticsPrefix.length];
+            etype = [eventName substringFromIndex:_RATEventPrefix.length];
         }
     }
+
     /*
      * Unsupported events
      */
-    else
+    if (!etype)
     {
         return nil;
     }
-    return json.copy;
+
+    result[_RATETypeParameter] = etype;
+    if (cp.count) result[_RATCPParameter] = cp.copy;
+    return result.copy;
 }
 
 - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state

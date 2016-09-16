@@ -10,8 +10,9 @@
 #   define RSDKAnalyticsDebugLog(...) do { } while(0)
 #endif
 
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrefix;
-RSDKA_EXPORT NSString *const _RSDKAnalyticsGenericType;
+RSDKA_EXPORT NSString *const _RATEventPrefix;
+RSDKA_EXPORT NSString *const _RATETypeParameter;
+RSDKA_EXPORT NSString *const _RATGenericEventName;
 
 RSDKA_EXPORT BOOL _RSDKAnalyticsObjects_equal(id objA, id objB);
 RSDKA_EXPORT NSURL *_RSDKAnalyticsEndpointAddress();

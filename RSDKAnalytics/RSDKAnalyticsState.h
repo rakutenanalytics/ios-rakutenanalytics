@@ -66,22 +66,6 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
     RSDKAnalyticsInternalOrigin RSDKA_SWIFT3_NAME(internal) = 0,
 
     /**
-     * The launch or visit originates from another app (i.e. deep-linking).
-     *
-     * @par Swift 3
-     * This value is exposed as **AnalyticsManager.State.Origin.external**.
-     */
-    RSDKAnalyticsExternalOrigin RSDKA_SWIFT3_NAME(external),
-
-    /**
-     * The launch or visit originates from a push notification.
-     *
-     * @par Swift 3
-     * This value is exposed as **AnalyticsManager.State.Origin.push**.
-     */
-    RSDKAnalyticsPushOrigin RSDKA_SWIFT3_NAME(push),
-
-    /**
      * The launch or visit originates from sources other than above.
      *
      * @par Swift 3
@@ -102,46 +86,46 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
  */
 RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyticsState : NSObject<NSCopying>
 
-/*
+/**
  * Globally-unique string updated every time a new session starts.
  */
 @property (nonatomic, readonly, copy) NSString *sessionIdentifier;
 
-/*
+/**
  * Globally-unique string identifying the current device across all Rakuten applications.
  */
 @property (nonatomic, readonly, copy) NSString *deviceIdentifier;
 
-/*
+/**
  * Current app version.
  */
 @property (nonatomic, readonly, copy) NSString *currentVersion;
 
-/*
+/**
  * `CLLocation` object representing the last known location of the device.
  *
  * Only set if that information is available and AnalyticsManager.shouldTrackLastKnownLocation is `true`.
  */
 @property (nonatomic, nullable, readonly, copy) CLLocation *lastKnownLocation;
 
-/*
+/**
  * IDFA.
  *
  * Only set if AnalyticsManager.shouldTrackAdvertisingId is `true`.
  */
 @property (nonatomic, nullable, readonly, copy) NSString *advertisingIdentifier;
 
-/*
+/**
  * This property stores the date when a new session is started.
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *sessionStartDate;
 
-/*
+/**
  * `true` if there's a user currently logged in, `false` otherwise.
  */
 @property (nonatomic, readonly) BOOL isLoggedIn;
 
-/*
+/**
  * String uniquely identifying the last logged-in user, if any.
  *
  * If `loggedIn` is `true`, then trackers can assume that user is
@@ -152,58 +136,43 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  */
 @property (nonatomic, nullable, readonly, copy) NSString *userIdentifier;
 
-/*
+/**
  * The login method for the last logged-in user.
  */
 @property (nonatomic, readonly) RSDKAnalyticsLoginMethod loginMethod;
 
-/*
- * String identifying a tracking code sent by a referrer.
- */
-@property (nonatomic, nullable, readonly, copy) NSString *linkIdentifier;
-
-/*
+/**
  * String identifying the origin of the launch or visit, if it can be determined.
  */
 @property (nonatomic, readonly) RSDKAnalyticsOrigin origin;
 
-/*
- * Last visited view controller.
- */
-@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage;
-
-/*
- * Currently-visited view controller.
- */
-@property (nonatomic, nullable, readonly) UIViewController *currentPage;
-
-/*
+/**
  * Version of the app when it was last run.
  */
 @property (nonatomic, nullable, readonly, copy) NSString *lastVersion;
 
-/*
+/**
  * Number of times the last-run version was launched.
  */
 @property (nonatomic, readonly) NSUInteger lastVersionLaunches;
 
-/*
+/**
  * Date the application was launched for the first time.
  * This is nil on the first launch.
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *initialLaunchDate;
 
-/*
+/**
  * Date the application was installed.
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *installLaunchDate;
 
-/*
+/**
  * Date the application was last launched (prior to this run).
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *lastLaunchDate;
 
-/*
+/**
  * Date the last-run version was launched for the first time.
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *lastUpdateDate;

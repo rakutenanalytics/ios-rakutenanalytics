@@ -16,10 +16,7 @@
 @property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
 @property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
@@ -45,8 +42,6 @@
     CLLocation *location = [[CLLocation alloc] initWithLatitude:-56.6462520 longitude:-36.6462520];
     UIViewController *currentPage = [UIViewController.alloc init];
     currentPage.view.frame = CGRectMake(0, 0, 100, 100);
-    UIViewController *lastVisitedPage = [UIViewController.alloc init];
-    lastVisitedPage.view.frame = CGRectMake(10, 10, 200, 200);
 
     NSDateComponents *dateComponents = [NSDateComponents.alloc init];
     [dateComponents setDay:10];
@@ -78,10 +73,7 @@
     state.sessionStartDate = sessionStartDate;
     state.userIdentifier = @"userId";
     state.loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
-    state.linkIdentifier = @"linkId";
-    state.origin = RSDKAnalyticsExternalOrigin;
-    state.currentPage = currentPage;
-    state.lastVisitedPage = lastVisitedPage;
+    state.origin = RSDKAnalyticsInternalOrigin;
     state.lastVersion = @"1.0";
     state.initialLaunchDate = initialLaunchDate;
     state.lastLaunchDate = lastLaunchDate;
@@ -112,9 +104,6 @@
     XCTAssertNil(state.sessionStartDate);
     XCTAssertTrue(!state.loggedIn);
     XCTAssertNil(state.userIdentifier);
-    XCTAssertNil(state.linkIdentifier);
-    XCTAssertNil(state.lastVisitedPage);
-    XCTAssertNil(state.currentPage);
     XCTAssertNil(state.lastVersion);
     XCTAssertNil(state.initialLaunchDate);
     XCTAssertNil(state.lastLaunchDate);
@@ -150,10 +139,7 @@
     XCTAssertTrue(state.lastKnownLocation.coordinate.longitude == -36.6462520);
 
     XCTAssertTrue(state.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
-    XCTAssertTrue(state.origin == RSDKAnalyticsExternalOrigin);
-
-    XCTAssertNotNil(state.linkIdentifier);
-    XCTAssertTrue([state.linkIdentifier isEqualToString:@"linkId"]);
+    XCTAssertTrue(state.origin == RSDKAnalyticsInternalOrigin);
 
     XCTAssertNotNil(state.sessionStartDate);
     NSDateComponents *components = [_calendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:state.sessionStartDate];
@@ -169,18 +155,6 @@
     XCTAssertTrue(hour == 9);
     XCTAssertTrue(minute == 15);
     XCTAssertTrue(second == 30);
-
-    XCTAssertNotNil(state.lastVisitedPage);
-    XCTAssertTrue(state.lastVisitedPage.view.frame.size.height == 200);
-    XCTAssertTrue(state.lastVisitedPage.view.frame.size.width == 200);
-    XCTAssertTrue(state.lastVisitedPage.view.frame.origin.x == 10);
-    XCTAssertTrue(state.lastVisitedPage.view.frame.origin.y == 10);
-
-    XCTAssertNotNil(state.currentPage);
-    XCTAssertTrue(state.currentPage.view.frame.size.height == 100);
-    XCTAssertTrue(state.currentPage.view.frame.size.width == 100);
-    XCTAssertTrue(state.currentPage.view.frame.origin.x == 0);
-    XCTAssertTrue(state.currentPage.view.frame.origin.y == 0);
 
     XCTAssertNotNil(state.lastVersion);
     XCTAssertTrue([state.lastVersion isEqualToString:@"1.0"]);
@@ -241,10 +215,7 @@
     XCTAssertTrue([copy.advertisingIdentifier isEqualToString:@"adId"]);
 
     XCTAssertTrue(copy.loginMethod == RSDKAnalyticsOneTapLoginLoginMethod);
-    XCTAssertTrue(copy.origin == RSDKAnalyticsExternalOrigin);
-
-    XCTAssertNotNil(copy.linkIdentifier);
-    XCTAssertTrue([copy.linkIdentifier isEqualToString:@"linkId"]);
+    XCTAssertTrue(copy.origin == RSDKAnalyticsInternalOrigin);
 
     XCTAssertNotNil(copy.lastKnownLocation);
     XCTAssertTrue(copy.lastKnownLocation.coordinate.latitude == -56.6462520);
@@ -264,18 +235,6 @@
     XCTAssertTrue(hour == 9);
     XCTAssertTrue(minute == 15);
     XCTAssertTrue(second == 30);
-
-    XCTAssertNotNil(copy.lastVisitedPage);
-    XCTAssertTrue(copy.lastVisitedPage.view.frame.size.height == 200);
-    XCTAssertTrue(copy.lastVisitedPage.view.frame.size.width == 200);
-    XCTAssertTrue(copy.lastVisitedPage.view.frame.origin.x == 10);
-    XCTAssertTrue(copy.lastVisitedPage.view.frame.origin.y == 10);
-
-    XCTAssertNotNil(copy.currentPage);
-    XCTAssertTrue(copy.currentPage.view.frame.size.height == 100);
-    XCTAssertTrue(copy.currentPage.view.frame.size.width == 100);
-    XCTAssertTrue(copy.currentPage.view.frame.origin.x == 0);
-    XCTAssertTrue(copy.currentPage.view.frame.origin.y == 0);
 
     XCTAssertNotNil(copy.lastVersion);
     XCTAssertTrue([copy.lastVersion isEqualToString:@"1.0"]);

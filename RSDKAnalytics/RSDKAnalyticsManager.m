@@ -23,10 +23,7 @@
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
 @property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
@@ -79,15 +76,15 @@ static RSDKAnalyticsManager *_instance = nil;
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record
 {
-    NSString *eventName = _RSDKAnalyticsGenericType;
+    NSString *eventName = _RATGenericEventName;
 
     id parameters = record.propertiesDictionary;
-    NSString *RATEType = parameters[@"etype"];
+    NSString *RATEType = parameters[_RATETypeParameter];
     if (RATEType.length)
     {
-        eventName = [_RSDKAnalyticsPrefix stringByAppendingString:RATEType];
+        eventName = [_RATEventPrefix stringByAppendingString:RATEType];
         parameters = [parameters mutableCopy];
-        [parameters removeObjectForKey:RATEType];
+        [parameters removeObjectForKey:_RATETypeParameter];
     }
 
     [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];

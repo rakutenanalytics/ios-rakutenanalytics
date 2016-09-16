@@ -1,4 +1,3 @@
-#ifndef DOXYGEN
 /*
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
@@ -7,7 +6,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
+/*
  * Internal interface used to centralize access to the analytics database.
  *
  * All the methods below are executed on a background FIFO, so there is no
@@ -17,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
 
-/**
+/*
  * Add a record to the database.
  *
  * @param record      The data to write.
@@ -25,7 +24,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  */
 + (void)addRecord:(NSData *)record completion:(dispatch_block_t)completion;
 
-/**
+/*
  * Fetch a group of records from the database.
  *
  * The completion block is passed an array of records (NSData) as well as an
@@ -37,7 +36,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  */
 + (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *records, NSArray RSDKA_GENERIC(NSNumber *) *identifiers))completion;
 
-/**
+/*
  * Delete some records from the database.
  *
  * @param identifiers  The identifiers of the records to be deleted.
@@ -48,6 +47,3 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif
-

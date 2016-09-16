@@ -15,10 +15,7 @@
 @property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
 @property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
@@ -70,10 +67,7 @@
          ^ self.isLoggedIn
          ^ self.userIdentifier.hash
          ^ self.loginMethod
-         ^ self.linkIdentifier.hash
          ^ self.origin
-         ^ self.lastVisitedPage.hash
-         ^ self.currentPage.hash
          ^ self.lastVersion.hash
          ^ self.lastVersionLaunches
          ^ self.initialLaunchDate.hash
@@ -104,10 +98,7 @@
             && (self.isLoggedIn == other.isLoggedIn)
             && _RSDKAnalyticsObjects_equal(self.userIdentifier, other.userIdentifier)
             && (self.loginMethod == other.loginMethod)
-            && _RSDKAnalyticsObjects_equal(self.linkIdentifier, other.linkIdentifier)
             && (self.origin == other.origin)
-            && _RSDKAnalyticsObjects_equal(self.lastVisitedPage, other.lastVisitedPage)
-            && _RSDKAnalyticsObjects_equal(self.currentPage, other.currentPage)
             && _RSDKAnalyticsObjects_equal(self.lastVersion, other.lastVersion)
             && (self.lastVersionLaunches == other.lastVersionLaunches)
             && _RSDKAnalyticsObjects_equal(self.initialLaunchDate, other.initialLaunchDate)
@@ -127,10 +118,7 @@
     copy.loggedIn = self.isLoggedIn;
     copy.userIdentifier = self.userIdentifier;
     copy.loginMethod = self.loginMethod;
-    copy.linkIdentifier = self.linkIdentifier;
     copy.origin = self.origin;
-    copy.lastVisitedPage = self.lastVisitedPage;
-    copy.currentPage = self.currentPage;
     copy.lastVersion = self.lastVersion;
     copy.lastVersionLaunches = self.lastVersionLaunches;
     copy.initialLaunchDate = self.initialLaunchDate;
