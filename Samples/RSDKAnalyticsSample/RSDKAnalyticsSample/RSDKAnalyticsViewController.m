@@ -28,17 +28,17 @@
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(willUpload:)
-                                               name:RSDKAnalyticsWillUploadNotification
+                                               name:RATWillUploadNotification
                                              object:nil];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(didUpload:)
-                                               name:RSDKAnalyticsUploadSuccessNotification
+                                               name:RATUploadSuccessNotification
                                              object:nil];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(failedToUpload:)
-                                               name:RSDKAnalyticsUploadFailureNotification
+                                               name:RATUploadFailureNotification
                                              object:nil];
 
 
