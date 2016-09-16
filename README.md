@@ -4,19 +4,21 @@ The **analytics** module provides APIs for tracking user activity and automatica
 
 @attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
 
+
 @section analytics-installing Installing
 See the [Ecosystem SDK documentation](https://www.raksdtd.com/ios/) guide for a detailed step-by-step guide on installing the SDK.
 
 Alternatively, you can also use this SDK module as a standalone library. To use the SDK module as a standalone library, your `Podfile` should contain:
 
-@code
-    source 'https://github.com/CocoaPods/Specs.git'
-    source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
+@code{.rb}
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
-    pod 'RSDKAnalytics'
+pod 'RSDKAnalytics'
 @endcode
 
 Run `pod install` to install the module and its dependencies.
+
 
 @section analytics-tutorial Getting started
 @attention This module depends on the [deviceinformation](../deviceinformation-latest) module to retrieve the device's unique identifier. The deviceinformation module also requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
@@ -30,15 +32,18 @@ Run `pod install` to install the module and its dependencies.
 @subsection analytics-configure-rat Configuring RAT
 @attention Applications **MUST** configure their RAT `accountId` and `applicationId` with the methods presented below, or automatic KPI tracking for a number of SDK features (SSO, installs, conversions, etc) will be disabled.
 
+##### Swift 3
+
 @code{.swift}
-    // Swift
     let rat = RATTracker.shared()
-    rat.configure(accountId:     YOUR_RAT_ACCOUNT_ID)
-    rat.configure(applicationId: YOUR_RAT_APPLICATION_ID)
+    rat.configure(withAccountId:     YOUR_RAT_ACCOUNT_ID)
+    rat.configure(withApplicationId: YOUR_RAT_APPLICATION_ID)
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C
-    RATTracker *rat = RSDKAnalyticsRATTracker.sharedInstance;
+    RATTracker *rat = RATTracker.sharedInstance;
     [rat configureWithAccountId:     YOUR_RAT_ACCOUNT_ID];
     [rat configureWithApplicationId: YOUR_RAT_APPLICATION_ID];
 @endcode
@@ -46,112 +51,92 @@ Run `pod install` to install the module and its dependencies.
 @subsection analytics-configure-staging Using the staging environment
 The analytics module can be configured to use the staging environment when talking to the backend by setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
 
+##### Swift 3
+
 @code{.swift}
-    // Swift:
     AnalyticsManager.shared().shouldUseStagingEnvironment = true
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C:
     RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
 @endcode
 
 @note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
 
 @subsection analytics-configure-location Location Tracking
-
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. 
 @warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. 
 
 If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Location tracking is enabled by default.
 
+##### Swift 3
+
 @code{.swift}
-    // Swift:
     AnalyticsManager.shared().shouldTrackLastKnownLocation = false
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C:
     RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
 @endcode
 
-@subsection analytics-recording Recording activity
+@subsection analytics-tracking Tracking events
 Events are created with RSDKAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RSDKAnalyticsEvent::track "track" method.
 
 #### Tracking generic events
 Tracking a generic event relies on a @ref RSDKAnalyticsTracker "tracker" capable of processing the event currently being @ref RSDKAnalyticsManager::addTracker: "registered".
 
+##### Swift 3
+
 @code{.swift}
-    // Swift
     AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C
     [[RSDKAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
 @endcode
 
 #### Tracking RAT-specific events
-A concrete tracker, RSDKAnalyticsRATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RSDKAnalyticsRATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, refer to the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
+A concrete tracker, RATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, refer to the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
+##### Swift 3
+
 @code{.swift}
-    // Swift
     RATTracker.shared().event(eventType: "click", parameters:["pgn": "coupon page"]).track()
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
+    [[RATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
 @endcode
 
 @subsection analytics-standard-events Standard Events
-The SDK will automatically send events to the Rakuten Analytics Tracker for certain actions. The event type parameter for all of these events are prefixed with `_rem_`.
+The SDK will automatically send events to the Rakuten Analytics Tracker for certain actions. The event type parameter for all of these events are prefixed with `_rem_`. We also provide @ref AnalyticsEvents "named constants" for all of those.
 
-#### _rem_init_launch
-Application is launched for the first time ever.
-
-#### _rem_launch
-Application is launched.
-
-#### _rem_end_session
-Application goes into background.
-
-#### _rem_update
-Application is launched and its version number does not match the version number of the previous launch.
-
-#### _rem_login
-User logged in successfully.
-
-#### _rem_logout
-User logged out.
-
-#### _rem_install
-Application version is launched for the first time.
+Event name         | Description
+-------------------|-------------------
+`_rem_init_launch` | Application is launched for the first time ever.
+`_rem_launch`      | Application is launched.
+`_rem_end_session` | Application goes into background.
+`_rem_update`      | Application is launched and its version number does not match the version number of the previous launch.
+`_rem_login`       | User logged in successfully.
+`_rem_logout`      | User logged out.
+`_rem_install`     | Application version is launched for the first time.
 
 #### Automatically Generated State Attributes
-The SDK will automatically generate certain attributes about the state of the device. These attributes are automatically generated and sent with all events that are sent by the @ref RSDKAnalyticsRATTracker including all of the standard events. They are also available as part of the @ref RSDKAnalyticsState object when a @ref analytics-custom-tracker "custom tracker" is created.
+The SDK will automatically generate certain attributes about the @ref RSDKAnalyticsState "state" of the device, and pass them to every registered @ref RSDKAnalyticsTracker "tracker" when asked to process an event.
 
-- `sessionIdentifier` - Globally-unique string updated every time a new session starts.
-- `deviceIdentifier` - Globally-unique string identifying the current device across all Rakuten applications.
-- `currentVersion` - NSString representing the current app version.
-- `advertisingIdentifier` - String representing the advertising identifier (IDFA).
-- `lastKnownLocation` - CLLocation object representing the last known location of the device.
-- `sessionStartDate` - NSDate representing date when a new session is started.
-- `loggedIn` - BOOL representing user's current logged in state.
-- `userIdentifier` - String uniquely identifying the currently logged-in user, if any.
-- `loginMethod` -  String representing the login method for the last logged-in user if that information is known.
-- `linkIdentifier` - String identifying a tracking code sent by a referrer.
-- `origin` - String identifying the origin of the launch or visit, if it can be determined.
-- `lastVisitedPage` - UIViewController reference of the last visited view controller.
-- `currentPage` - UIViewController reference of the current view controller.
-- `lastVersion` - String representing the version of the app when it was last run.
-- `lastVersionLaunches` - Integer representing the number of times the last-run version was launched.
-- `initialLaunchDate` - NSDate representing the date the application was launched for the first time.
-- `installLaunchDate` - NSDate representing the date the application was installed.
-- `lastLaunchDate` - NSDate representing the date application was last launched, prior to the current run.
-- `lastUpdateDate` - NSDate representing the date the last-run version was launched for the first time.
 
 @section analytics-appstore AppStore Submission Procedure
-
 Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
 
 @image html appstore-idfa.png "IDFA usage disclosure" width=80%
@@ -174,439 +159,273 @@ The Rakuten SDK fully complies with Apple requirement below:
 
 The Rakuten SDK only uses the IDFA for `conversion events, estimating the number of unique users, security and fraud detection`.
 
-@section analytics-rat-examples RAT Examples
-@note These examples are all using @ref RSDKAnalyticsRATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
 
-@subsection analytics-kibana Using Kibana to Test and Visualize Analytics
+@section analytics-rat-examples RAT Examples
+@note These examples are all using @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
+
+@subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
 
 To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
 
-@subsection analytics-screen-tracking Screen Tracking
-The following code is an example that can be used to track when a view controller loads.
+@subsection analytics-rat-example-screen-tracking Screen Tracking
+The following code is an example that can be used to track when a view controller is shown. It uses RAT's standard `pv` event and passes the page name and page type in the `pgn` and `pgt` parameters, respectively.
+
+@note Our next version will automatically track screen transitions for you. Stay tuned!
+
+##### Swift 3
 
 @code{.swift}
-    /* Track view controller launch
-     * "pgn"    Page Name
-     * "pgt"    Page Type ("top", "search", "shop_item", "cart_modify", or "cart_checkout")
-     */
-     
-    // Swift
     class ViewController: UIViewController {
-        override func viewDidLoad() {
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated);
             RATTracker.shared().event(eventType: "pv", 
-                            parameters:[
-                                "pgn": "Main", 
-                                "pgt": "top"
-                            ]).track()
+                                     parameters:["pgn": "Main", 
+                                                 "pgt": "top"
+                                                ]).track()
         }
     }
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Objective-C
-    - (void)viewDidLoad
-    {
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv" 
-                        parameters:@{
-                            @"pgn": @"Main",
-                            @"pgt": @"top"
-                        }] track];
+    - (void)viewWillAppear:(BOOL)animated {
+        [super viewWillAppear:animated];
+
+        [[RATTracker.sharedInstance eventWithEventType:@"pv" 
+                                            parameters:@{@"pgn": @"Main",
+                                                         @"pgt": @"top"
+                                                        }] track];
     }
 @endcode
 
-@subsection analytics-ui-interactions UI Interaction
-The following code is an example that can be used to track button clicks.
+@subsection analytics-rat-example-ui-interactions UI Interaction
+The following code is an example that can be used to track button clicks. It uses RAT's standard `click` event and passes the page name, clicked element's id and goal id in the `pgn`, `target` and `gol` parameters, respectively.
+
+##### Swift 3
 
 @code{.swift}
-    /* Track Button Clicks
-     * "pgn"    Page Name
-     * "target" Element clicked
-     * "gol"    Goal Id - Goals are specific strategies you'll leverage to accomplish your business objectives.
-     */
-
-    // Swift
     @IBAction func buttonTapped(sender: UIButton) {
         RATTracker.shared().event(eventType: "click", 
-                        parameters:[
-                            "pgn": "Main", 
-                            "target": "search_btn",
-                            "gol": "Improve marketing effectiveness"
-                        ]).track()
-    }
-@endcode
-@code{.m}
-    // Objective-C
-    - (IBAction)buttonTapped:(UIButton *)sender
-    {
-        [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" 
-                        parameters:@{
-                            @"pgn": @"Main", 
-                            @"target": @"search_btn",
-                            @"gol": @"Improve marketing effectiveness"
-                        }] track];
+                                 parameters:["pgn": "Main", 
+                                             "target": "search_btn",
+                                             "gol": "goal123456"]).track()
     }
 @endcode
 
-@subsection analytics-purchase-data-tracking Purchase Data Tracking
-There are a number of RAT parameters specific to tracking purchase and shopping cart data. If you wish to track shopping cart items using the `itemid`, `genre`, `ino`, and `price` parameters, the data for these must be passed as arrays. The data for the `variation` parameter should be passed as a dictionary. An example is given below:
+##### Objective C
 
-@code{.swift}
-    /* Generate arrays for item data */
-
-    // Swift
-    var arrayOfItemIds = ["shopid/item_1_id", "shopid/item_2_id"]
-    var arrayOfItemGenres = ["item 1 genre", "item 2 genre"]
-    var arrayOfItemQuantities = [1, 3]
-    var arrayOfItemPrices = [50.9, 3.3]
-    var dictionaryOfVariations = ["color": "red", "size": "M"]
-@endcode
 @code{.m}
     // Objective-C
-    id arrayOfItemIds = @[@"shopid/item_1_id", @"shopid/item_2_id"];
-    id arrayOfItemGenres = @[@"item 1 genre", @"item 2 genre"];
-    id arrayOfItemQuantities = @[@1, @3];
-    id arrayOfItemPrices = @[@50.9, @3.3];
-    id dictionaryOfVariations = @{@"color": @"red", @"size": @"M"};
+    - (IBAction)buttonTapped:(UIButton *)sender {
+        [[RATTracker.sharedInstance eventWithEventType:@"click" 
+                                            parameters:@{@"pgn": @"Main", 
+                                                         @"target": @"search_btn",
+                                                         @"gol": @"goal123456"}] track];
+    }
 @endcode
 
-If you wish to use the `chkout` parameter, there are only five integer values that it can be set to.
+@subsection analytics-rat-example-custom-events RAT events with Custom Parameters
+The following is an example of tracking an event with custom parameters. It uses the standard `pv` RAT event we've used in the previous examples, and passes some custom `custom_param_##` parameters in the `cp` dictionary accepted by RAT for this purpose.
+
+##### Swift 3
 
 @code{.swift}
-    /* Checkout stages */
-
-    // Swift
-    let NSNumber CHECKOUT_STAGE1_LOGIN = 10
-    let NSNumber CHECKOUT_STAGE2_SHIPPING_DETAILS = 20
-    let NSNumber CHECKOUT_STAGE3_SUMMARY = 30
-    let NSNumber CHECKOUT_STAGE4_PAYMENT = 40
-    let NSNumber CHECKOUT_STAGE5_VERIFICATION = 50
-@endcode
-@code{.m}
-    // Objective-C
-    const NSNumber *CHECKOUT_STAGE1_LOGIN = @10;
-    const NSNumber *CHECKOUT_STAGE2_SHIPPING_DETAILS = @20;
-    const NSNumber *CHECKOUT_STAGE3_SUMMARY = @30;  
-    const NSNumber *CHECKOUT_STAGE4_PAYMENT = @40;
-    const NSNumber *CHECKOUT_STAGE5_VERIFICATION = @50;
-@endcode
-
-A tracking event can now be sent for each corresponding stage of checkout.
-
-@code{.swift}
-    /* Send checkout tracking event
-     * "pgn"        Page Name
-     * "pgt"        Page Type
-     * "cycode"     Currency Code - must be three characters
-     * "chkout"     Checkout Stage - must be the value 10, 20, 30, 40, or 50
-     * "itemid"     Item IDs in the form "shopid/itemID"
-     * "igenre"     Genre for each item
-     * "ni"         Quanitity of Items for each item
-     * "price"      Price for each item
-     * "variation"  Variations of the items
-     */
-
-    // Swift
     RATTracker.shared().event(eventType: "pv", 
-                    parameters:[
-                        "pgn": "checkout",
-                        "pgt": "cart_checkout",
-                        "cycode": "JPY", 
-                        "chkout": CHECKOUT_STAGE4_PAYMENT,
-                        "itemid": arrayOfItemIds,
-                        "igenre": arrayOfItemGenres, 
-                        "ni": arrayOfItemQuantities, 
-                        "price": arrayOfItemPrices, 
-                        "variation": dictionaryOfVariations
-                    ]).track()
-@endcode
-@code{.m}
-    // Objective-C
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv" 
-                    parameters:@{
-                        @"pgn": @"checkout",
-                        @"pgt": @"cart_checkout",
-                        @"cycode": @"JPY", 
-                        @"chkout": CHECKOUT_STAGE4_PAYMENT,
-                        @"itemid": arrayOfItemIds,
-                        @"igenre": arrayOfItemGenres, 
-                        @"ni": arrayOfItemQuantities, 
-                        @"price": arrayOfItemPrices, 
-                        @"variation": dictionaryOfVariations
-                    }] track];
+                             parameters:["pgn": "Main", 
+                                         "cp": ["custom_param_1": "value",
+                                                "custom_param_2": 10,
+                                                "custom_param_3": true]]).track()
 @endcode
 
-@subsection analytics-custom-events Events with Custom Parameters
-The following code is an example of a tracking event with `cp` (custom parameters) defined. The custom parameters are passed as a dictionary.
+##### Objective C
+
+@code{.m}
+    [[RATTracker.sharedInstance eventWithEventType:@"pv" 
+                                        parameters:@{@"pgn": @"Main", 
+                                                     @"cp": @{@"custom_param_1": @"value",
+                                                              @"custom_param_2": @10,
+                                                              @"custom_param_3": @YES}}] track];
+@endcode
+
+@subsection analytics-rat-example-search-results Tracking search results with RAT
+The code below shows an example of an event you could send to track what results where shown on a search page. It uses the standard `pv` RAT event we've used in the previous examples, plus a number of standard RAT parameters for that. Namely:
+
+RAT param | Description
+----------|---------------
+`lang`    | The language used for the search.
+`sq`      | The search terms.
+`oa`      | `a` for requesting all search terms (AND), `o` for requesting one of them (OR).
+`esq`     | Terms that should be excluded from the results.
+`genre`   | Category for the results.
+`tag`     | An array of tags.
+
+##### Swift 3
 
 @code{.swift}
-    /* Tracking event with custom parameters
-     * "pgn"    Page Name
-     * "cp"     Custom Parameters - passed in as a dictionary
-     */
-
-    // Swift
     RATTracker.shared().event(eventType: "pv", 
-                    parameters:[
-                        "pgn": "Main", 
-                        "cp": [
-                            "custom_param_1": "value",
-                            "custom_param_2": 10,
-                            "custom_param_3": true
-                        ]
-                    ]).track()
-@endcode
-@code{.m}
-    // Objective-C
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv" 
-                    parameters:@{
-                        @"pgn": @"Main", 
-                        @"cp": @{
-                            @"custom_param_1": @"value",
-                            @"custom_param_2": @"value"
-                        }                    
-                    }] track];
+                             parameters:["pgn": "shop_search",
+                                         "pgt": "search",
+                                         "lang": "English", 
+                                         "sq": "search query",
+                                         "oa": "a", 
+                                         "esq": "excluded query", 
+                                         "genre": "category", 
+                                         "tag": ["tag 1", "tag 2"]]).track()
 @endcode
 
-@subsection search-results Search Results
-The following code is an example of a tracking event that could be sent to track search results.
-
-@code{.swift}
-    /* Track search results
-     * "pgn"    Page Name
-     * "pgt"    Page Type
-     * "lang"   Search selected language
-     * "sq"     Search Query
-     * "oa"     Search method - "a" for AND - "o" for OR
-     * "esq"    Excluded search query
-     * "genre"  Genre or category
-     * "tag"    An array of tags
-     */
-
-    // Swift
-    RATTracker.shared().event(eventType: "pv", 
-                    parameters:[
-                        "pgn": "shop_search",
-                        "pgt": "search",
-                        "lang": "English", 
-                        "sq": "search query",
-                        "oa": "a", 
-                        "esq": "excluded query", 
-                        "genre": "category", 
-                        "tag": ["tag 1", "tag 2"]
-                    ]).track()
-@endcode
-@code{.m}
-    // Objective-C
-    [[RSDKAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv" 
-                    parameters:@{
-                        @"pgn": @"shop_search",
-                        @"pgt": @"search",
-                        @"lang": @"English", 
-                        @"sq": @"search query",
-                        @"oa": @"a", 
-                        @"esq": @"excluded query", 
-                        @"genre": @"category", 
-                        @"tag": @[@"tag 1", @"tag 2"]
-                    }] track];
-@endcode
-
-@section analytics-advanced Advanced Usage
-
-@subsection analytics-network-monitoring Notifications for Upload Success and Failure
-You can monitor the module's network activity by listening
-to the @ref RSDKAnalyticsWillUploadNotification, @ref RSDKAnalyticsUploadFailureNotification
-and @ref RSDKAnalyticsUploadSuccessNotification notifications. For example:
+##### Objective C
 
 @code{.m}
-- (void)viewDidLoad
-{
+    [[RATTracker.sharedInstance eventWithEventType:@"pv" 
+                                        parameters:@{@"pgn": @"shop_search",
+                                                     @"pgt": @"search",
+                                                     @"lang": @"English", 
+                                                     @"sq": @"search query",
+                                                     @"oa": @"a", 
+                                                     @"esq": @"excluded query", 
+                                                     @"genre": @"category", 
+                                                     @"tag": @[@"tag 1", @"tag 2"]}] track];
+@endcode
+
+@subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
+You can monitor RATTracker's network activity by listening
+to the @ref RATWillUploadNotification, @ref RATUploadFailureNotification
+and @ref RATUploadSuccessNotification notifications. For example:
+
+@code{.m}
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(failedToUpload:)
-                                               name:RSDKAnalyticsUploadFailureNotification
+                                               name:RATUploadFailureNotification
                                              object:nil];
 }
 
-- (void)failedToUpload:(NSNotification *)notification
-{
+- (void)failedToUpload:(NSNotification *)notification {
     NSArray *records = notification.object;
     NSError *error = notification.userInfo[NSUnderlyingErrorKey];
-    NSLog(@"RSDKAnalytics failed to upload: %@, reason = %@", records, [error description]);
+    NSLog(@"RATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 @endcode
 
+@section analytics-advanced Advanced Usage
 @subsection analytics-configure-idfa IDFA tracking
 The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
+##### Swift 3
+
 @code{.swift}
-    // Swift
     AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
 @endcode
+
+##### Objective C
+
 @code{.m}
-    // Obj-C
     RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
 @endcode
 
 @subsection analytics-custom-tracker Creating a Custom Tracker
-A custom @ref RSDKAnalyticsTracker "tracker" can be @ref RSDKAnalyticsManager::addTracker: "registered" to the @ref RSDKAnalyticsManager "manager". First, a @ref RSDKAnalyticsTracker "tracker" interface and implementation must be defined. RSDKAnalyticsTracker::processEvent will pass a @ref RSDKAnalyticsEvent object which contains the event name and parameters and a @ref RSDKAnalyticsState object which contains attributes automatically generated by the SDK.
+Custom @ref RSDKAnalyticsTracker "trackers" can be @ref RSDKAnalyticsManager::addTracker: "added" to
+the @ref RSDKAnalyticsManager "manager".
+
+Create a class and implement the RSDKAnalyticsTracker protocol. Its [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3)
+method will receive an @ref RSDKAnalyticsEvent "event" with a name and parameters, as well as a @ref RSDKAnalyticsState "state" with attributes automatically
+generated by the SDK.
+
+The custom tracker below just prints a few diagnostic messages. A real one would upload some data to a server.
+
+##### Swift 3
 
 @code{.swift}
-    // Swift
-    class CustomTrackerName: Tracker {
-        func init() -> instancetype {
-            if (self = super.init())
-            {
-                //Code to initialize custom tracker
-                //...
+    public class CustomTracker: NSObject, Tracker {
+        public static let MyEventName = "customtracker.myeventname"
+        public func process(event: AnalyticsManager.Event, state: AnalyticsManager.State) -> Bool {
+            switch event.name {
+            case AnalyticsManager.Event.Name.initialLaunch:
+                print("I've just been launched!")
+                return true
+            case AnalyticsManager.Event.Name.login:
+                print("User with tracking id '\(state.userid)' just logged in!")
+                return true
+            case MyEventName:
+                print("Received my event!")
+                return true
+            // ...
             }
-            return self
-        }
-        
-        func processEvent(event: RSDKAnalyticsEvent, state: RSDKAnalyticsState) {
-            // RSDKAnalyticsEvent contains the event name and parameters
-            var eventName = event.name
-            var json: NSMutableDictionary
-            json.addEntriesFromDictionary(event.parameters)
-                
-            // RSDKAnalyticsEvent contains the event name and parameters
-            NSString *eventName = event.name
-            NSMutableDictionary *json = [NSMutableDictionary dictionary]
-            [json addEntriesFromDictionary:event.parameters]
 
-            // RSDKAnalyticsState will contain the following data
-            var sessionIdentifier = state.sessionIdentifier
-            var deviceIdentifier = state.deviceIdentifier
-            var currentVersion = state.currentVersion
-            var advertisingIdentifier = state.advertisingIdentifier
-            var lastKnownLocation = state.lastKnownLocation
-            var sessionStartDate = state.sessionStartDate
-            var loggedIn = state.loggedIn
-            var userIdentifier = state.userIdentifier
-            var loginMethod = state.loginMethod
-            var linkIdentifier = state.linkIdentifier
-            var origin = state.origin
-            var lastVisitedPage = state.lastVisitedPage
-            var currentPage = state.currentPage
-            var lastVersion = state.lastVersion
-            var lastVersionLaunches = state.lastVersionLaunches
-            var initialLaunchDate = state.initialLaunchDate
-            var installLaunchDate = state.installLaunchDate
-            var lastLaunchDate = state.lastLaunchDate
-            var lastUpdateDate = state.lastUpdateDate
-
-            // Process and send data to custom tracker
-            //...
-
-            return true
+            // Unknown event!?
+            return false
         }
     }
 @endcode
+
+##### Objective C
 
 @code{.m}
-    // Objective-C
-    @interface CustomTrackerName : NSObject<RSDKAnalyticsTracker>
-
+    @interface CustomTracker : NSObject<RSDKAnalyticsTracker>
     @end
-
-    @implementation CustomTrackerName
-    - (instancetype)init
-    {
-        if (self = [super init])
-        {
-            //Code to initialize custom tracker
-            //...
+    
+    NSString *const CustomTrackerMyEventName = @"customtracker.myeventname";
+    
+    @implementation CustomTracker
+    - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state {
+        if ([event.name isEqualToString:RSDKAnalyticsInitialLaunchEventName]) {
+            NSLog(@"I've just been launched!");
+            return YES;
         }
-        return self;
+        else if ([event.name isEqualToString:RSDKAnalyticsLoginEventName]) {
+            NSLog(@"User with tracking id '%@' just logged in!", state.userid);
+            return YES;
+        }
+        else if ([event.name isEqualToString:CustomTrackerMyEventName]) {
+            NSLog(@"Received my event!");
+            return YES;
+        }
+        // ...
+        
+        // Unknown event!?
+        return NO
     }
-    - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
-    {
-        // RSDKAnalyticsEvent contains the event name and parameters
-        NSString *eventName = event.name;
-        NSMutableDictionary *json = [NSMutableDictionary dictionary];
-        [json addEntriesFromDictionary:event.parameters];
-
-        // RSDKAnalyticsState will contain the following data
-        NSString *sessionIdentifier = state.sessionIdentifier;
-        NSString *deviceIdentifier = state.deviceIdentifier;
-        NSString *currentVersion = state.currentVersion;
-        NSString *advertisingIdentifier = state.advertisingIdentifier;
-        CLLocation *lastKnownLocation = state.lastKnownLocation;
-        NSDate *sessionStartDate = state.sessionStartDate;
-        BOOL *loggedIn = state.loggedIn;
-        NSString *userIdentifier = state.userIdentifier;
-        NSString *loginMethod = state.loginMethod;
-        NSString *linkIdentifier = state.linkIdentifier;
-        RSDKAnalyticsOrigin *origin = state.origin;
-        UIViewController *lastVisitedPage = state.lastVisitedPage;
-        UIViewController *currentPage = state.currentPage;
-        NSString *lastVersion = state.lastVersion;
-        NSInteger lastVersionLaunches = state.lastVersionLaunches;
-        NSDate *initialLaunchDate = state.initialLaunchDate;
-        NSDate *installLaunchDate = state.installLaunchDate;
-        NSDate *lastLaunchDate = state.lastLaunchDate;
-        NSDate *lastUpdateDate = state.lastUpdateDate;
-
-        // Process and send data to custom tracker
-        //...
-
-        return YES;
-    }
-
     @end
 @endcode
 
-The custom tracker can then be initialized and added to the @ref RSDKAnalyticsManager "manager".
+The custom tracker can then be added to the RSDKAnalyticsManager:
+
+##### Swift 3
 
 @code{.swift}
-    // Swift
-    // Initialize custom tracker
-    RSDKAnalyticsManager _manager = RSDKAnalyticsManager.shared()
-    NSError error
-    CustomTrackerName *tracker = CustomTrackerName.init()
-
-    // Add custom tracker to manager
-    BOOL success = _manager.addTracker(tracker, &error)
-    if (success) {
-        //Custom tracker added successfully
-    } else {
-        //Handle errors
-    }
+    // Add CustomTracker to the manager
+    RSDKAnalyticsManager.shared().add(CustomTracker())
 
     // Tracking events can now be sent to the custom tracker
-    AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
+    AnalyticsManager.Event(name: CustomTrackerMyEventName, parameters: nil).track()
 @endcode
-@code{.m}
-    // Objective-C
-    // Initialize custom tracker
-    RSDKAnalyticsManager *_manager = RSDKAnalyticsManager.sharedInstance;
-    NSError *error;
-    CustomTrackerName *tracker = [CustomTrackerName.alloc init];
 
-    // Add custom tracker to manager
-    BOOL success = [_manager addTracker:tracker error:&error];
-    if (success) {
-        //Custom tracker added successfully
-    } else {
-        //Handle errors
-    }
+##### Objective C
+
+@code{.m}
+    // Add CustomTracker to the manager
+    // Initialize custom tracker
+    [RSDKAnalyticsManager.sharedInstance addTracker:CustomTracker.new];
 
     // Tracking events can now be sent to the custom tracker
-    [[RSDKAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
+    [[RSDKAnalyticsEvent.alloc initWithName:CustomTrackerMyEventName parameters:nil] track];
 @endcode
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-7-0 2.7.0 (2016-08-xx)
+@subsection analytics-2-7-0 2.7.0 (2016-09-26)
 * Major rewrite.
 * Support for custom event trackers.
-* Automatic KPI tracking from other parts of our SDK.
-* Deprecated RSDKAnalyticsManager::spoolRecords:, RSDKAnalyticsItem and RSDKAnalyticsRecord.
+* Automatic KPI tracking from other parts of our SDK: login/logout, sessions, application lifecycles.
+* Deprecated RSDKAnalyticsManager::spoolRecord:, RSDKAnalyticsItem and RSDKAnalyticsRecord.
 
 @subsection analytics-2-6-0 2.6.0 (2016-07-27)
 * Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.

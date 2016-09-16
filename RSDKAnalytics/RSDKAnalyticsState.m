@@ -5,10 +5,6 @@
 #import "RSDKAnalyticsState.h"
 #import "_RSDKAnalyticsHelpers.h"
 
-NSString *const RSDKAnalyticsOtherLoginMethod = @"other";
-NSString *const RSDKAnalyticsPasswordInputLoginMethod = @"password";
-NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
-
 @interface RSDKAnalyticsState ()
 @property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
 @property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
@@ -16,15 +12,12 @@ NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
 @property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
 @property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
-@property (nonatomic, readwrite) BOOL loggedIn;
+@property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
+@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic) NSInteger lastVersionLaunches;
+@property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
@@ -71,13 +64,10 @@ NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
          ^ self.advertisingIdentifier.hash
          ^ self.lastKnownLocation.hash
          ^ self.sessionStartDate.hash
-         ^ self.loggedIn
+         ^ self.isLoggedIn
          ^ self.userIdentifier.hash
-         ^ self.loginMethod.hash
-         ^ self.linkIdentifier.hash
+         ^ self.loginMethod
          ^ self.origin
-         ^ self.lastVisitedPage.hash
-         ^ self.currentPage.hash
          ^ self.lastVersion.hash
          ^ self.lastVersionLaunches
          ^ self.initialLaunchDate.hash
@@ -105,13 +95,10 @@ NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
             && _RSDKAnalyticsObjects_equal(self.currentVersion, other.currentVersion)
             && ([self.lastKnownLocation distanceFromLocation:other.lastKnownLocation] == 0)
             && _RSDKAnalyticsObjects_equal(self.sessionStartDate, other.sessionStartDate)
-            && (self.loggedIn == other.loggedIn)
+            && (self.isLoggedIn == other.isLoggedIn)
             && _RSDKAnalyticsObjects_equal(self.userIdentifier, other.userIdentifier)
-            && _RSDKAnalyticsObjects_equal(self.loginMethod, other.loginMethod)
-            && _RSDKAnalyticsObjects_equal(self.linkIdentifier, other.linkIdentifier)
+            && (self.loginMethod == other.loginMethod)
             && (self.origin == other.origin)
-            && _RSDKAnalyticsObjects_equal(self.lastVisitedPage, other.lastVisitedPage)
-            && _RSDKAnalyticsObjects_equal(self.currentPage, other.currentPage)
             && _RSDKAnalyticsObjects_equal(self.lastVersion, other.lastVersion)
             && (self.lastVersionLaunches == other.lastVersionLaunches)
             && _RSDKAnalyticsObjects_equal(self.initialLaunchDate, other.initialLaunchDate)
@@ -128,13 +115,10 @@ NSString *const RSDKAnalyticsOneTapLoginLoginMethod = @"one_tap_login";
     copy.advertisingIdentifier = self.advertisingIdentifier;
     copy.lastKnownLocation = self.lastKnownLocation;
     copy.sessionStartDate = self.sessionStartDate;
-    copy.loggedIn = self.loggedIn;
+    copy.loggedIn = self.isLoggedIn;
     copy.userIdentifier = self.userIdentifier;
     copy.loginMethod = self.loginMethod;
-    copy.linkIdentifier = self.linkIdentifier;
     copy.origin = self.origin;
-    copy.lastVisitedPage = self.lastVisitedPage;
-    copy.currentPage = self.currentPage;
     copy.lastVersion = self.lastVersion;
     copy.lastVersionLaunches = self.lastVersionLaunches;
     copy.initialLaunchDate = self.initialLaunchDate;

@@ -4,8 +4,9 @@
  */
 #import <Foundation/Foundation.h>
 
-/**
- * Exports a global. Also works if the SDK is built as a dynamic framework (iOS 8+).
+/*
+ * Exports a global, setting the proper visibility attributes so that it does not
+ * get stripped at linktime.
  */
 #ifdef __cplusplus
 #   define RSDKA_EXPORT extern "C" __attribute__((visibility ("default")))
@@ -13,27 +14,18 @@
 #   define RSDKA_EXPORT extern __attribute__((visibility ("default")))
 #endif
 
-/**
- * Support for Swift renaming.
- *
- * Before Xcode 8, swift_name() wouldn't accept dots so it was impossible to
- * create nested types from ObjC. Hence the two versions of the macro.
+/*
+ * Support for exposing public parts of the API with Swift3-specific names.
+ * Note: We assume Xcode 9 won't support Swift 2 anymore.
  */
-#if __has_attribute(swift_name)
-#   if __apple_build_version__ >= 8000000
-#       define RSDKA_SWIFT2_NAME(t)
-#       define RSDKA_SWIFT3_NAME(t)
-#   else
-#       define RSDKA_SWIFT2_NAME(t) __attribute__((swift_name(#t)))
-#       define RSDKA_SWIFT3_NAME(t)
-#   endif
+#if __has_attribute(swift_name) && ((__apple_build_version__ >= 9000000) || ((__apple_build_version__ >= 8000000) && (SWIFT_SDK_OVERLAY_DISPATCH_EPOCH >= 2)))
+#  define RSDKA_SWIFT3_NAME(n) __attribute__((swift_name(#n)))
 #else
-#   define RSDKA_SWIFT2_NAME(t)
-#   define RSDKA_SWIFT3_NAME(t)
+#  define RSDKA_SWIFT3_NAME(n)
 #endif
 
-/**
- * Xcode 6-compatible generic support
+/*
+ * Xcode 6-compatible generics support
  */
 #if __has_feature(objc_generics)
 #   define RSDKA_GENERIC(...) <__VA_ARGS__>

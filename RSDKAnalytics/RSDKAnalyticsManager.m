@@ -13,13 +13,6 @@
 
 ////////////////////////////////////////////////////////////////////////////
 
-// Externs
-NSString *const RSDKAnalyticsWillUploadNotification    = @"RSDKAnalyticsWillUploadNotification";
-NSString *const RSDKAnalyticsUploadFailureNotification = @"RSDKAnalyticsUploadFailureNotification";
-NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSuccessNotification";
-
-////////////////////////////////////////////////////////////////////////////
-
 @interface RSDKAnalyticsState ()
 @property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
 @property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
@@ -29,13 +22,10 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
 @property (nonatomic, readwrite) BOOL loggedIn;
 @property (nonatomic, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, readwrite) NSString *loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *linkIdentifier;
+@property (nonatomic) RSDKAnalyticsLoginMethod loginMethod;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic) NSInteger lastVersionLaunches;
+@property (nonatomic) NSUInteger lastVersionLaunches;
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
@@ -45,6 +35,7 @@ NSString *const RSDKAnalyticsUploadSuccessNotification = @"RSDKAnalyticsUploadSu
 @interface RSDKAnalyticsManager()<CLLocationManagerDelegate>
 @property (nonatomic, strong) CLLocationManager *locationManager;
 @property (nonatomic) BOOL locationManagerIsUpdating;
+@property (nonatomic, nullable, copy) NSString *deviceIdentifier;
 
 /*
  * Session cookie. We use an UUID automatically created at startup and
@@ -85,10 +76,18 @@ static RSDKAnalyticsManager *_instance = nil;
 
 + (void)spoolRecord:(RSDKAnalyticsRecord *)record
 {
-    NSMutableDictionary *parameters = record.propertiesDictionary.mutableCopy;
-    NSString *eventName = parameters[@"etype"] ? [NSString stringWithFormat:@"%@%@",_RSDKAnalyticsPrefix,parameters[@"etype"]] : _RSDKAnalyticsGenericType;
-    [parameters removeObjectForKey:@"etype"];
-    [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters.copy] track];
+    NSString *eventName = _RATGenericEventName;
+
+    id parameters = record.propertiesDictionary;
+    NSString *RATEType = parameters[_RATETypeParameter];
+    if (RATEType.length)
+    {
+        eventName = [_RATEventPrefix stringByAppendingString:RATEType];
+        parameters = [parameters mutableCopy];
+        [parameters removeObjectForKey:_RATETypeParameter];
+    }
+
+    [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }
 
 //--------------------------------------------------------------------------
@@ -112,17 +111,20 @@ static RSDKAnalyticsManager *_instance = nil;
 
 - (instancetype)initSharedInstance
 {
-    if ((self = [super init]) && _RSDKAnalyticsExternalCollector.sharedInstance && _RSDKAnalyticsLaunchCollector.sharedInstance)
+    if ((self = [super init]))
     {
+        if (!_RSDKAnalyticsExternalCollector.sharedInstance ||
+            !_RSDKAnalyticsLaunchCollector.sharedInstance)
+        {
+            NSAssert(NO, @"Failed to initialize the %@ singleton", NSStringFromClass(self.class));
+            return nil;
+        }
+
+        _shouldTrackLastKnownLocation     = YES;
         _shouldTrackAdvertisingIdentifier = YES;
 
         _trackers = [NSMutableSet set];
-        NSError *error = nil;
-        [self addTracker:RSDKAnalyticsRATTracker.sharedInstance error:&error];
-        if (error)
-        {
-            RSDKAnalyticsDebugLog(@"Error:%@", error.description);
-        }
+        [self addTracker:RATTracker.sharedInstance];
 
         /*
          * Set up the location manager
@@ -290,84 +292,76 @@ static RSDKAnalyticsManager *_instance = nil;
 - (void)process:(RSDKAnalyticsEvent *)event
 {
     NSString *sessionIdentifier = self.sessionCookie;
-    NSString *deviceIdentifier;
-    @try
+    if (!_deviceIdentifier)
     {
-        deviceIdentifier = RSDKDeviceInformation.uniqueDeviceIdentifier;
-    }
-    @catch (NSException *exception)
-    {
-        RSDKAnalyticsDebugLog(@"RSDKDeviceInformation is not properly configured:\n\n%@", exception);
-    }
-    if (deviceIdentifier)
-    {
-        RSDKAnalyticsState *state = [RSDKAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
-                                                                       deviceIdentifier:deviceIdentifier];
-        if (_shouldTrackAdvertisingIdentifier && ASIdentifierManager.sharedManager.isAdvertisingTrackingEnabled)
+        @try
         {
-            NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
-            if (idfa.length)
+            _deviceIdentifier = RSDKDeviceInformation.uniqueDeviceIdentifier;
+        }
+        @catch (NSException *__unused exception) { }
+    }
+    NSAssert(_deviceIdentifier, @"RSDKDeviceInformation is not properly configured!");
+
+    RSDKAnalyticsState *state = [RSDKAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
+                                                                   deviceIdentifier:_deviceIdentifier];
+    if (_shouldTrackAdvertisingIdentifier && ASIdentifierManager.sharedManager.isAdvertisingTrackingEnabled)
+    {
+        NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
+        if (idfa.length)
+        {
+            if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
+                                                withString:@""
+                                                   options:NSRegularExpressionSearch
+                                                     range:NSMakeRange(0, idfa.length)].length)
             {
-                if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
-                                                    withString:@""
-                                                       options:NSRegularExpressionSearch
-                                                         range:NSMakeRange(0, idfa.length)].length)
-                {
-                    // User has not disabled tracking
-                    state.advertisingIdentifier = idfa;
-                }
+                // User has not disabled tracking
+                state.advertisingIdentifier = idfa;
             }
         }
-        state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
-        state.sessionStartDate = self.sessionStartDate ?: nil;
+    }
+    state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
+    state.sessionStartDate = self.sessionStartDate ?: nil;
 
-        // Update state with data from external collector
-        _RSDKAnalyticsExternalCollector *externalCollector = _RSDKAnalyticsExternalCollector.sharedInstance;
-        state.userIdentifier = externalCollector.trackingIdentifier;
-        state.loginMethod = externalCollector.loginMethod;
-        state.loggedIn = externalCollector.loggedIn;
+    // Update state with data from external collector
+    _RSDKAnalyticsExternalCollector *externalCollector = _RSDKAnalyticsExternalCollector.sharedInstance;
+    state.userIdentifier = externalCollector.trackingIdentifier;
+    state.loginMethod = externalCollector.loginMethod;
+    state.loggedIn = externalCollector.isLoggedIn;
 
-        // Update state with data from launch collector
-        _RSDKAnalyticsLaunchCollector *launchCollector = _RSDKAnalyticsLaunchCollector.sharedInstance;
-        state.initialLaunchDate = launchCollector.initialLaunchDate;
-        state.installLaunchDate = launchCollector.installLaunchDate;
-        state.lastUpdateDate = launchCollector.lastUpdateDate;
-        state.lastLaunchDate = launchCollector.lastLaunchDate;
-        state.lastVersion = launchCollector.lastVersion;
-        state.lastVersionLaunches = launchCollector.lastVersionLaunches;
+    // Update state with data from launch collector
+    _RSDKAnalyticsLaunchCollector *launchCollector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    state.initialLaunchDate = launchCollector.initialLaunchDate;
+    state.installLaunchDate = launchCollector.installLaunchDate;
+    state.lastUpdateDate = launchCollector.lastUpdateDate;
+    state.lastLaunchDate = launchCollector.lastLaunchDate;
+    state.lastVersion = launchCollector.lastVersion;
+    state.lastVersionLaunches = launchCollector.lastVersionLaunches;
 
-        BOOL processed = NO;
-        for (id<RSDKAnalyticsTracker> tracker in self.trackers)
+    BOOL processed = NO;
+    for (id<RSDKAnalyticsTracker> tracker in self.trackers)
+    {
+        RSDKAnalyticsDebugLog(@"Using tracker %@", tracker);
+
+        if ([tracker processEvent:event state:state])
         {
-            if ([tracker processEvent:event state:state])
-            {
-                processed = TRUE;
-            }
+            processed = TRUE;
         }
-        if (!processed)
-        {
-            RSDKAnalyticsDebugLog(@"No tracker processed event %@",event.name);
-        }
+    }
+    if (!processed)
+    {
+        RSDKAnalyticsDebugLog(@"No tracker processed event %@",event.name);
     }
 }
 
-- (BOOL)addTracker:(id<RSDKAnalyticsTracker>)tracker error:(NSError **)error
+- (void)addTracker:(id<RSDKAnalyticsTracker>)tracker
 {
     @synchronized(self)
     {
-        if ([self.trackers containsObject:tracker])
+        if (![_trackers containsObject:tracker])
         {
-            if (error != nil)
-            {
-                NSDictionary *userInfo = @{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"A tracker is already registered"]};
-                *error = [NSError errorWithDomain:RSDKAnalyticsErrorDomain
-                                             code:RSDKAnalyticsTrackerAlreadyPresentError
-                                         userInfo:userInfo];
-            }
-            return NO;
+            [_trackers addObject:tracker];
+            RSDKAnalyticsDebugLog(@"Added tracker %@", tracker);
         }
-        [self.trackers addObject:tracker];
-        return YES;
     }
 }
 

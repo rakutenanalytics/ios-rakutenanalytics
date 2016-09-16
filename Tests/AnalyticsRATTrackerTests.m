@@ -5,14 +5,14 @@
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
 
-@interface RSDKAnalyticsRATTracker ()
+@interface RATTracker ()
 @property (nonatomic) int64_t accountIdentifier;
 @property (nonatomic) int64_t applicationIdentifier;
 @end
 
 @interface AnalyticsRATTrackerTests : XCTestCase
 {
-    RSDKAnalyticsRATTracker* _tracker;
+    RATTracker* _tracker;
 }
 @end
 
@@ -21,7 +21,7 @@
 - (void)setUp
 {
     [super setUp];
-    _tracker = RSDKAnalyticsRATTracker.sharedInstance;
+    _tracker = RATTracker.sharedInstance;
 }
 
 - (void)testAnalyticsRATTrackerSharedInstanceIsNotNil
@@ -31,7 +31,7 @@
 
 - (void)testAnalyticsRATTrackerSharedInstanceAreEqual
 {
-    XCTAssertEqualObjects(_tracker, RSDKAnalyticsRATTracker.sharedInstance);
+    XCTAssertEqualObjects(_tracker, RATTracker.sharedInstance);
 }
 
 - (void)testEventWithTypeAndParameters

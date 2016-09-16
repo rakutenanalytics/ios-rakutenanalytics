@@ -53,20 +53,12 @@
 
 - (void)testAnalyticsManagerAddExistingTypeTracker
 {
-    NSError *error = nil;
-    BOOL b = [_manager addTracker:RSDKAnalyticsRATTracker.sharedInstance error:&error];
-    XCTAssertTrue(!b);
-    XCTAssertNotNil(error);
-    XCTAssertTrue([error.domain isEqualToString:RSDKAnalyticsErrorDomain]);
+    XCTAssertNoThrow([_manager addTracker:RATTracker.sharedInstance]);
 }
 
 - (void)testAnalyticsManagerAddNewTypeTracker
 {
-    NSError *error = nil;
-    TestTracker *tracker = [TestTracker.alloc init];
-    BOOL b = [_manager addTracker:tracker error:&error];
-    XCTAssertTrue(b);
-    XCTAssertNil(error);
+    XCTAssertNoThrow([_manager addTracker:TestTracker.new]);
 }
 
 @end

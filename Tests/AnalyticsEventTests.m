@@ -19,7 +19,7 @@
 
 - (RSDKAnalyticsEvent *)defaultEvent
 {
-    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:_RSDKAnalyticsGenericType parameters:@{@"param1":@"value1"}];
+    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:_RATGenericEventName parameters:@{@"param1":@"value1"}];
     return event;
 }
 

@@ -14,9 +14,9 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
 static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
 
 @interface _RSDKAnalyticsExternalCollector ()
-@property (nonatomic) BOOL loggedIn;
+@property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
 @property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
-@property (nonatomic, nullable, readwrite, copy) NSString *loginMethod;
+@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
 @property (nonatomic) NSDictionary                        *cardInfoEventMapping;
 @end
@@ -159,11 +159,11 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.logout.local", _RSDKAnalyticsNotificationBaseName]])
     {
-        params[@"logout_method"] = RSDKAnalyticsLocalLogoutMethodParameter;
+        params[@"logout_method"] = RSDKAnalyticsLocalLogoutMethod;
     }
     else
     {
-        params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethodParameter;
+        params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethod;
     }
     [self.class trackEvent:RSDKAnalyticsLogoutEventName parameters:params.copy];
 }
@@ -206,18 +206,11 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     [defaults synchronize];
 }
 
-- (void)setLoginMethod:(NSString *)loginMethod
+- (void)setLoginMethod:(RSDKAnalyticsLoginMethod)loginMethod
 {
     _loginMethod = loginMethod;
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    if (loginMethod.length)
-    {
-        [defaults setObject:loginMethod forKey:_RSDKAnalyticsLoginMethodKey];
-    }
-    else
-    {
-        [defaults removeObjectForKey:_RSDKAnalyticsLoginMethodKey];
-    }
+    [defaults setObject:@(loginMethod) forKey:_RSDKAnalyticsLoginMethodKey];
     [defaults synchronize];
 }
 
