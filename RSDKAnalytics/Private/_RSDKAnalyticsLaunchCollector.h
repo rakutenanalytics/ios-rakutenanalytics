@@ -3,6 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
+#import <RSDKAnalytics/RSDKAnalyticsState.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,6 +42,21 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
  * The number of launches since last version is being stored in shared preferences.
  */
 @property (nonatomic, readonly) NSUInteger lastVersionLaunches;
+
+/*
+ * String identifying the origin of the launch or visit, if it can be determined.
+ */
+@property (nonatomic, readonly) RSDKAnalyticsOrigin origin;
+
+/*
+ * Last visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage;
+
+/*
+ * Currently-visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *currentPage;
 
 /*
  * Retrieve the shared instance.

@@ -66,6 +66,22 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
     RSDKAnalyticsInternalOrigin RSDKA_SWIFT3_NAME(internal) = 0,
 
     /**
+     * The launch or visit originates from another app (i.e. deep-linking).
+     *
+     * @par Swift 3
+     * This value is exposed as **AnalyticsManager.State.Origin.external**.
+     */
+    RSDKAnalyticsExternalOrigin RSDKA_SWIFT3_NAME(external),
+
+    /**
+     * The launch or visit originates from a push notification.
+     *
+     * @par Swift 3
+     * This value is exposed as **AnalyticsManager.State.Origin.push**.
+     */
+    RSDKAnalyticsPushOrigin RSDKA_SWIFT3_NAME(push),
+
+    /**
      * The launch or visit originates from sources other than above.
      *
      * @par Swift 3
@@ -176,6 +192,17 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  * Date the last-run version was launched for the first time.
  */
 @property (nonatomic, nullable, readonly, copy) NSDate *lastUpdateDate;
+
+/**
+ * Last visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage;
+
+/**
+ * Currently-visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *currentPage;
+
 
 /**
  * Create a new state object.

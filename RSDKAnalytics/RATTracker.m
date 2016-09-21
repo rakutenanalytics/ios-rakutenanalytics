@@ -25,6 +25,8 @@ NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
 NSString *const _RATCPParameter      = @"cp";
 NSString *const _RATGenericEventName = @"rat.generic";
+NSString *const _RATPGNParameter     = @"pgn";
+NSString *const _RATREFParameter     = @"ref";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -324,9 +326,73 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         etype = eventName;
     }
+
     else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
     {
         etype = eventName;
+
+        NSDictionary *map = _RSDKAnalyticsSDKComponentMap();
+        NSMutableArray *sdkInfo = [NSMutableArray array];
+        NSMutableDictionary *appInfo = [NSMutableDictionary dictionary];
+
+        NSDictionary *infoDictionary = NSBundle.mainBundle.infoDictionary;
+        NSString *xcodeVersion = infoDictionary[@"DTXcode"];
+        NSString *sdk = [NSString stringWithFormat:@"iOS %@",infoDictionary[@"DTPlatformVersion"]];
+        NSMutableDictionary *frameworks = [NSMutableDictionary dictionary];
+        NSMutableDictionary *pods = [NSMutableDictionary dictionary];
+
+        NSArray *allFrameworks = [NSBundle allFrameworks];
+        for (NSBundle *bundle in allFrameworks)
+        {
+            NSString *identifier = bundle.bundleIdentifier;
+            if (![identifier hasPrefix:@"com.apple."])
+            {
+                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+                if (version.length)
+                {
+                    frameworks[identifier] = version;
+                }
+            }
+
+            if ([identifier hasPrefix:@"org.cocoapods."])
+            {
+                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+                if (version.length)
+                {
+                    pods[identifier] = version;
+                }
+
+                if ([map objectForKey:identifier])
+                {
+                    [sdkInfo addObject:[NSString stringWithFormat:@"%@/%@",map[identifier], version]];
+                }
+            }
+        }
+
+        if (sdkInfo.count)
+        {
+            cp[@"sdk_info"] = [[sdkInfo valueForKey:@"description"] componentsJoinedByString:@"; "];
+        }
+        if (xcodeVersion.length)
+        {
+            appInfo[@"xcode"] = xcodeVersion;
+        }
+        if (sdk.length)
+        {
+            appInfo[@"sdk"] = sdk;
+        }
+        if (frameworks.count)
+        {
+            appInfo[@"frameworks"] = frameworks.copy;
+        }
+        if (pods.count)
+        {
+            appInfo[@"pods"] = pods.copy;
+        }
+        if (appInfo.count)
+        {
+            cp[@"app_info"] = appInfo.copy;
+        }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
@@ -384,6 +450,37 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         if (logoutMethod) cp[@"logout_method"] = logoutMethod;
     }
+    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
+    {
+        NSParameterAssert(state.currentPage);
+        etype = @"pv";
+
+        // pgn is the value of the page_id standard parameter, if provided. If not, it's the fully-qualified class name of state.currentPage.
+        NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
+        result[_RATPGNParameter] = (pageIdentifier.length) ? pageIdentifier : [RATTracker nameWithPage:state.currentPage];
+    
+        if (state.lastVisitedPage)
+        {
+            result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
+        }
+        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
+        switch (state.origin)
+        {
+            case RSDKAnalyticsInternalOrigin:
+                cp[@"ref_type"] = @"internal";
+                break;
+            case RSDKAnalyticsExternalOrigin:
+                cp[@"ref_type"] = @"external";
+                break;
+            case RSDKAnalyticsPushOrigin:
+                cp[@"ref_type"] = @"push";
+                break;
+            default:
+                cp[@"ref_type"] = @"other";
+                break;
+        }
+        //result[@"cp"] = cp.copy;
+    }
 
     /*
      * Alpha modules events
@@ -404,10 +501,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             etype = [eventName substringFromIndex:_RATEventPrefix.length];
         }
 
+
         // only add the event's parameters if the event was a RAT event
         if (event.parameters.count)
         {
-            [result addEntriesFromDictionary:event.parameters];
+            // remove "page_id" field from parameters, because it is already added.
+            NSMutableDictionary *parameters = [event.parameters mutableCopy];
+            if ([event.name isEqualToString:RSDKAnalyticsPageVisitEventName] && parameters[@"page_id"])
+            {
+                [parameters removeObjectForKey:@"page_id"];
+            }
+            [result addEntriesFromDictionary:parameters];
         }
     }
 

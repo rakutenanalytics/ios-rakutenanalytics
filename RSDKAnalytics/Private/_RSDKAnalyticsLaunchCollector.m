@@ -4,6 +4,7 @@
  */
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
+#import "_RSDKAnalyticsTrackingPageView.h"
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -22,6 +23,10 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, readwrite) BOOL isInitialLaunch;
 @property (nonatomic, readwrite) BOOL isInstallLaunch;
 @property (nonatomic, readwrite) BOOL isUpdateLaunch;
+@property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
+@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
+
 @end
 
 @implementation _RSDKAnalyticsLaunchCollector
@@ -65,6 +70,12 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
                                                  selector:@selector(didLaunch:)
                                                      name:UIApplicationDidFinishLaunchingNotification
                                                    object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didVisit:)
+                                                     name:_RSDKAnalyticsPrivateEventViewDidAppear
+                                                   object:nil];
+
 
         // check initLaunchDate exists in keychain
         NSMutableDictionary *query = NSMutableDictionary.new;
@@ -140,6 +151,20 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isUpdateLaunch = NO;
         return;
+    }
+}
+
+- (void)didVisit:(NSNotification *)notification
+{
+    if (_currentPage)
+    {
+        [_RSDKAnalyticsLaunchCollector sharedInstance].lastVisitedPage = _currentPage;
+    }
+    if ([notification.object isKindOfClass:[UIViewController class]])
+    {
+        UIViewController *page = [notification object];
+        _currentPage = page;
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
     }
 }
 

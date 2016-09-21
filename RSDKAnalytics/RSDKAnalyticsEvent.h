@@ -136,6 +136,16 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutEventName  RSDKA_SWIFT3_NAME(RSD
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.install);
 
+/**
+ * Event triggered when a view controller is shown.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.pageVisit**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsPageVisitEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.pageVisit);
+
 
 /// @internal
 struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Parameter) RSDKAnalyticsParameter { };
