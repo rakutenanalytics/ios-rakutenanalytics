@@ -10,6 +10,7 @@
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsDatabase.h"
+#import <WebKit/WebKit.h>
 
 // Externs
 NSString *const RATWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
@@ -297,7 +298,21 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     /*
      * FIXME (2): For UIWebView, WKWebView and SFSafariViewController, the
      * current page's URL should be used instead.
+     * As my investigation, we can only obtain the URL from UIWebView and SFSafariViewController 
+     * with the webViewDidFinishLoad:(UIWebView *)webView of UIWebViewDelegate and
+     * safariViewController:(SFSafariViewController *)controller activityItemsForURL:(NSURL *)URL title:(nullable NSString *)title of SFSafariViewControllerDelegate
      */
+
+    /*
+     * FIXME (3): what should be sent if the UIViewController's view contains more than 2 webviews ?
+     */
+    for (UIView *subView in [page.view subviews])
+    {
+        if ([subView isKindOfClass:[WKWebView class]])
+        {
+            return ((WKWebView *)subView).URL.absoluteString;
+        }
+    }
     return NSStringFromClass([page class]);
 }
 
@@ -463,7 +478,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
         }
-        NSMutableDictionary *cp = [NSMutableDictionary dictionary];
         switch (state.origin)
         {
             case RSDKAnalyticsInternalOrigin:
@@ -479,7 +493,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 cp[@"ref_type"] = @"other";
                 break;
         }
-        //result[@"cp"] = cp.copy;
     }
 
     /*
@@ -501,11 +514,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             etype = [eventName substringFromIndex:_RATEventPrefix.length];
         }
 
-
         // only add the event's parameters if the event was a RAT event
         if (event.parameters.count)
         {
-            // remove "page_id" field from parameters, because it is already added.
+            // remove "page_id" field from parameters, because it is already added to 'pgn' field.
             NSMutableDictionary *parameters = [event.parameters mutableCopy];
             if ([event.name isEqualToString:RSDKAnalyticsPageVisitEventName] && parameters[@"page_id"])
             {
