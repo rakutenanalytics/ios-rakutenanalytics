@@ -403,6 +403,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             etype = [eventName substringFromIndex:_RATEventPrefix.length];
         }
+
+        // only add the event's parameters if the event was a RAT event
+        if (event.parameters.count)
+        {
+            [result addEntriesFromDictionary:event.parameters];
+        }
     }
 
     /*
@@ -414,7 +420,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     result[_RATETypeParameter] = etype;
-    if (cp.count) result[_RATCPParameter] = cp.copy;
+    if (cp.count)
+    {
+        // If the event already had a 'cp' field, those values take precedence
+        if (result[_RATCPParameter])
+        {
+            [cp addEntriesFromDictionary:result[_RATCPParameter]];
+        }
+
+        result[_RATCPParameter] = cp.copy;
+    }
+
     return result.copy;
 }
 
@@ -483,11 +499,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     if (!json)
     {
         return NO;
-    }
-
-    if (event.parameters.count)
-    {
-        [json addEntriesFromDictionary:event.parameters];
     }
 
     if (!json[@"acc"])
