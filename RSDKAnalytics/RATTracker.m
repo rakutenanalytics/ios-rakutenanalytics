@@ -375,7 +375,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else if ([logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod])
         {
-            logoutMethod = @"global";
+            logoutMethod = @"all";
         }
         else
         {
