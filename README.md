@@ -492,7 +492,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * Added internal tracking (for SDK KPIs)
 
 @subsection analytics-2-2-1 2.2.1 (2014-10-09)
-* Fixed for iOS 8
+* Fixed bugs on iOS 8
 
 @subsection analytics-2-2-0 2.2.0 (2014-09-22)
 * Added `RSDKAnalyticsItem`.
