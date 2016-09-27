@@ -334,7 +334,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         NSDictionary *infoDictionary = NSBundle.mainBundle.infoDictionary;
         NSString *xcodeVersion = infoDictionary[@"DTXcode"];
-        if (infoDictionary[@"DTXcodeBuild"])
+        if (xcodeVersion && infoDictionary[@"DTXcodeBuild"])
         {
             xcodeVersion = [NSString stringWithFormat:@"%@.%@", xcodeVersion, infoDictionary[@"DTXcodeBuild"]];
         }
