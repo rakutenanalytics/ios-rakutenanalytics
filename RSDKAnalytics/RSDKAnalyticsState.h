@@ -80,14 +80,6 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
      * This value is exposed as **AnalyticsManager.State.Origin.push**.
      */
     RSDKAnalyticsPushOrigin RSDKA_SWIFT3_NAME(push),
-
-    /**
-     * The launch or visit originates from sources other than above.
-     *
-     * @par Swift 3
-     * This value is exposed as **AnalyticsManager.State.Origin.other**.
-     */
-    RSDKAnalyticsOtherOrigin RSDKA_SWIFT3_NAME(other),
 } RSDKA_SWIFT3_NAME(RSDKAnalyticsState.Origin);
 
 /**

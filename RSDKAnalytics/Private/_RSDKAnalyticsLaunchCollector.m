@@ -71,12 +71,6 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
                                                      name:UIApplicationDidFinishLaunchingNotification
                                                    object:nil];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(didVisit:)
-                                                     name:_RSDKAnalyticsPrivateEventViewDidAppear
-                                                   object:nil];
-
-
         // check initLaunchDate exists in keychain
         NSMutableDictionary *query = NSMutableDictionary.new;
         query[(__bridge id)kSecClass]       = (__bridge id)kSecClassGenericPassword;
@@ -154,18 +148,14 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     }
 }
 
-- (void)didVisit:(NSNotification *)notification
+- (void)didVisitPage:(UIViewController *)page
 {
     if (_currentPage)
     {
         [_RSDKAnalyticsLaunchCollector sharedInstance].lastVisitedPage = _currentPage;
     }
-    if ([notification.object isKindOfClass:[UIViewController class]])
-    {
-        UIViewController *page = [notification object];
-        _currentPage = page;
-        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
-    }
+    _currentPage = page;
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
 }
 
 - (void)resetToDefaults

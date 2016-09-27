@@ -65,6 +65,12 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
  */
 + (instancetype)sharedInstance;
 
+/*
+ * This method is called when the swizzling method _swizzled_viewDidAppear in _RSDKAnalyticsTrackingPageView is called.
+ * The _swizzled_viewDidAppear is called when the view of an UIViewController is shown.
+ */
+- (void)didVisitPage:(UIViewController *)page;
+
 @end
 
 NS_ASSUME_NONNULL_END

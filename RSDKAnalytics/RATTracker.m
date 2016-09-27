@@ -295,24 +295,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * names just for analytics?
      */
 
-    /*
-     * FIXME (2): For UIWebView, WKWebView and SFSafariViewController, the
-     * current page's URL should be used instead.
-     * As my investigation, we can only obtain the URL from UIWebView and SFSafariViewController 
-     * with the webViewDidFinishLoad:(UIWebView *)webView of UIWebViewDelegate and
-     * safariViewController:(SFSafariViewController *)controller activityItemsForURL:(NSURL *)URL title:(nullable NSString *)title of SFSafariViewControllerDelegate
-     */
-
-    /*
-     * FIXME (3): what should be sent if the UIViewController's view contains more than 2 webviews ?
-     */
-    for (UIView *subView in [page.view subviews])
-    {
-        if ([subView isKindOfClass:[WKWebView class]])
-        {
-            return ((WKWebView *)subView).URL.absoluteString;
-        }
-    }
     return NSStringFromClass([page class]);
 }
 
@@ -352,7 +334,20 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         NSDictionary *infoDictionary = NSBundle.mainBundle.infoDictionary;
         NSString *xcodeVersion = infoDictionary[@"DTXcode"];
-        NSString *sdk = [NSString stringWithFormat:@"iOS %@",infoDictionary[@"DTPlatformVersion"]];
+        if (infoDictionary[@"DTXcodeBuild"])
+        {
+            xcodeVersion = [NSString stringWithFormat:@"%@.%@", xcodeVersion, infoDictionary[@"DTXcodeBuild"]];
+        }
+        NSString *sdk = infoDictionary[@"DTSDKName"];
+        if (!sdk)
+        {
+            NSString *platform = infoDictionary[@"DTPlatformName"];
+            NSString *version = infoDictionary[@"DTPlatformVersion"];
+            if (platform && version)
+            {
+                sdk = [platform stringByAppendingString:version];
+            }
+        }
         NSMutableDictionary *frameworks = [NSMutableDictionary dictionary];
         NSMutableDictionary *pods = [NSMutableDictionary dictionary];
 
@@ -403,6 +398,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         if (pods.count)
         {
             appInfo[@"pods"] = pods.copy;
+        }
+        if (infoDictionary[@"MinimumOSVersion"])
+        {
+            appInfo[@"deployment_target"] = infoDictionary[@"MinimumOSVersion"];
         }
         if (appInfo.count)
         {
@@ -488,9 +487,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 break;
             case RSDKAnalyticsPushOrigin:
                 cp[@"ref_type"] = @"push";
-                break;
-            default:
-                cp[@"ref_type"] = @"other";
                 break;
         }
     }

@@ -6,12 +6,6 @@
 #import <objc/runtime.h>
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
-// ViewDidAppear event
-/*
- * Event triggered when the view is shown. This private event is collected by _RSDKAnalyticsLaunchCollector
- */
-RSDKA_EXPORT NSString *const _RSDKAnalyticsPrivateEventViewDidAppear;
-
 @interface _RSDKAnalyticsSwizzleBaseClass : NSObject
 + (void)swizzleSelector:(SEL)swizzleSelector targetSelector:(SEL)targetSelector class:(Class)class;
 @end

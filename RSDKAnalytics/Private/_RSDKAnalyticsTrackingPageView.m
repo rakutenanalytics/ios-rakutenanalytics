@@ -7,11 +7,6 @@
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import <UIKit/UIKit.h>
 
-/*
- * ViewDidAppear events
- */
-NSString *const _RSDKAnalyticsPrivateEventViewDidAppear = @"com.rakuten.esd.sdk.private.notification.viewDidAppear";
-
 @interface _RSDKAnalyticsLaunchCollector ()
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @end
@@ -48,7 +43,7 @@ NSString *const _RSDKAnalyticsPrivateEventViewDidAppear = @"com.rakuten.esd.sdk.
 
     if ([self respondsToSelector:@selector(_swizzled_viewDidAppear:)])
     {
-        [NSNotificationCenter.defaultCenter postNotificationName:_RSDKAnalyticsPrivateEventViewDidAppear object:self];
+        [_RSDKAnalyticsLaunchCollector.sharedInstance didVisitPage:self];
         [self _swizzled_viewDidAppear:animated];
     }
 }

@@ -10,7 +10,7 @@ BOOL _RSDKAnalyticsObjects_equal(id objA, id objB)
     return (!objA && !objB) || (objA && objB && [objA isEqual:objB]);
 }
 
-NSURL *_RSDKAnalyticsEndpointAddress()
+NSURL *_RSDKAnalyticsEndpointAddress(void)
 {
     static NSURL *productionURL, *stagingURL;
     static dispatch_once_t once;
@@ -23,7 +23,7 @@ NSURL *_RSDKAnalyticsEndpointAddress()
     return useStaging ? stagingURL : productionURL;
 }
 
-NSBundle *_RSDKAnalyticsAssetsBundle()
+NSBundle *_RSDKAnalyticsAssetsBundle(void)
 {
     static NSBundle *bundle;
     static dispatch_once_t onceToken;
@@ -41,9 +41,15 @@ NSBundle *_RSDKAnalyticsAssetsBundle()
     return bundle;
 }
 
-NSDictionary *_RSDKAnalyticsSDKComponentMap()
+NSDictionary *_RSDKAnalyticsSDKComponentMap(void)
 {
-    NSBundle *bundle = _RSDKAnalyticsAssetsBundle();
-    NSString *filePath = [bundle pathForResource:@"_RSDKAnalyticsREMModules" ofType:@"plist"];
-    return [[NSDictionary alloc] initWithContentsOfFile:filePath];
+    static NSDictionary *map;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^
+                  {
+                      NSBundle *bundle = _RSDKAnalyticsAssetsBundle();
+                      NSString *filePath = [bundle pathForResource:@"_RSDKAnalyticsREMModules" ofType:@"plist"];
+                      map = [[NSDictionary alloc] initWithContentsOfFile:filePath];
+                  });
+    return map;
 }
