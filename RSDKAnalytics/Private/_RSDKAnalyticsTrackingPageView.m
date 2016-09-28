@@ -43,7 +43,7 @@
 
     if ([self isKindOfClass:[UIViewController class]] && [self respondsToSelector:@selector(_swizzled_viewDidAppear:)])
     {
-        [_RSDKAnalyticsLaunchCollector.sharedInstance didVisitPage:self];
+        [_RSDKAnalyticsLaunchCollector.sharedInstance didVisitPage:(UIViewController *)self];
         [self _swizzled_viewDidAppear:animated];
     }
 }

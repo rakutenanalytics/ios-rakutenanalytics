@@ -40,6 +40,11 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager.Event) @interface RSDKAnalyticsE
 @property (nonatomic, readonly, copy) NSDictionary RSDKA_GENERIC(NSString *, id) *parameters;
 
 /**
+ * @internal
+ */
+- (instancetype)init NS_UNAVAILABLE;
+
+/**
  * This method for creating a new event object.
  *
  * @attention For RAT-specific events, please use RATTracker::eventWithEventType:parameters: instead.

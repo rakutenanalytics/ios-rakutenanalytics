@@ -195,6 +195,10 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  */
 @property (nonatomic, nullable, readonly) UIViewController *currentPage;
 
+/**
+ * @internal
+ */
+- (instancetype)init NS_UNAVAILABLE;
 
 /**
  * Create a new state object.

@@ -16,8 +16,6 @@ target 'RSDKAnalyticsSample' do
   pod 'FontAwesomeKit/FontAwesome', '~> 2.1'
   pod 'HockeySDK',                  '~> 3.8'
 
-  # for test
-  pod 'RakutenMobileSDK', '~> 2.10'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
