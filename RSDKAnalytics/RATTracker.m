@@ -304,7 +304,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         return 0;
     }
     NSCalendar *calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    return [calendar components:NSDayCalendarUnit fromDate:date toDate:NSDate.date options:0].day;
+    return [calendar components:NSCalendarUnitDay fromDate:date toDate:NSDate.date options:0].day;
 }
 
 + (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
@@ -885,7 +885,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     });
 
 
-    [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsWillUploadNotification
+    [NSNotificationCenter.defaultCenter postNotificationName:RATWillUploadNotification
                                                       object:recordGroup];
 
     NSMutableData *postBody = NSMutableData.new;
@@ -952,7 +952,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  * Success!
                  */
 
-                [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsUploadSuccessNotification
+                [NSNotificationCenter.defaultCenter postNotificationName:RATUploadSuccessNotification
                                                                   object:recordGroup];
 
 
@@ -982,7 +982,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             userInfo = @{NSUnderlyingErrorKey: error};
         }
 
-        [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsUploadFailureNotification
+        [NSNotificationCenter.defaultCenter postNotificationName:RATUploadFailureNotification
                                                           object:recordGroup
                                                         userInfo:userInfo];
 

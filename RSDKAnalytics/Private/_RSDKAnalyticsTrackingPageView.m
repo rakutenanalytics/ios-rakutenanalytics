@@ -41,7 +41,7 @@
         return;
     }
 
-    if ([self respondsToSelector:@selector(_swizzled_viewDidAppear:)])
+    if ([self isKindOfClass:[UIViewController class]] && [self respondsToSelector:@selector(_swizzled_viewDidAppear:)])
     {
         [_RSDKAnalyticsLaunchCollector.sharedInstance didVisitPage:self];
         [self _swizzled_viewDidAppear:animated];

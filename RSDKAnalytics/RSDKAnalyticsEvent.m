@@ -34,11 +34,14 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod         = @"global";
 
 @implementation RSDKAnalyticsEvent
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-designated-initializers"
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
     __builtin_unreachable();
 }
+#pragma clang diagnostic pop
 
 - (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
 {
