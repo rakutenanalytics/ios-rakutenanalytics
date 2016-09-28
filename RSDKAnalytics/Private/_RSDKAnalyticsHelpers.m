@@ -48,7 +48,7 @@ NSDictionary *_RSDKAnalyticsSDKComponentMap(void)
     dispatch_once(&onceToken, ^
                   {
                       NSBundle *bundle = _RSDKAnalyticsAssetsBundle();
-                      NSString *filePath = [bundle pathForResource:@"_RSDKAnalyticsREMModules" ofType:@"plist"];
+                      NSString *filePath = [bundle pathForResource:@"REMModulesMap" ofType:@"plist"];
                       map = [[NSDictionary alloc] initWithContentsOfFile:filePath];
                   });
     return map;

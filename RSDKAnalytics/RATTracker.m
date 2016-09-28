@@ -10,7 +10,6 @@
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsDatabase.h"
-#import <WebKit/WebKit.h>
 
 // Externs
 NSString *const RATWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
@@ -513,13 +512,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         // only add the event's parameters if the event was a RAT event
         if (event.parameters.count)
         {
-            // remove "page_id" field from parameters, because it is already added to 'pgn' field.
-            NSMutableDictionary *parameters = [event.parameters mutableCopy];
-            if ([event.name isEqualToString:RSDKAnalyticsPageVisitEventName] && parameters[@"page_id"])
-            {
-                [parameters removeObjectForKey:@"page_id"];
-            }
-            [result addEntriesFromDictionary:parameters];
+            [result addEntriesFromDictionary:event.parameters];
         }
     }
 
