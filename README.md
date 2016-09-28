@@ -421,7 +421,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-7-0 2.7.0 (2016-09-26)
+@subsection analytics-2-7-0 2.7.0 (2016-09-28)
 * Major rewrite.
 * Support for custom event trackers.
 * Automatic KPI tracking from other parts of our SDK: login/logout, sessions, application lifecycles.
