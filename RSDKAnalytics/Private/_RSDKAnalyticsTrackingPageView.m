@@ -46,6 +46,13 @@
         [_RSDKAnalyticsLaunchCollector.sharedInstance didVisitPage:(UIViewController *)self];
         [self _swizzled_viewDidAppear:animated];
     }
+
+    // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
+    RSDKAnalyticsOrigin origin = _RSDKAnalyticsLaunchCollector.sharedInstance.origin;
+    if (origin == RSDKAnalyticsExternalOrigin || origin == RSDKAnalyticsPushOrigin)
+    {
+        _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsInternalOrigin;
+    }
 }
 
 #pragma mark - UIApplicationDelegate swizzled methods

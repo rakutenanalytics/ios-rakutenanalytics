@@ -404,7 +404,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         if (appInfo.count)
         {
-            cp[@"app_info"] = appInfo.copy;
+            // these values should be converted to string.
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:appInfo options:0 error:0];
+            NSString * appInfoString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            cp[@"app_info"] = appInfoString;
         }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])

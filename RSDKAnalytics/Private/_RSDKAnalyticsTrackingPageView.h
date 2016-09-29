@@ -6,7 +6,7 @@
 #import <objc/runtime.h>
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 
-@interface _RSDKAnalyticsSwizzleBaseClass : NSObject
+RSDKA_EXPORT @interface _RSDKAnalyticsSwizzleBaseClass : NSObject
 + (void)swizzleSelector:(SEL)swizzleSelector targetSelector:(SEL)targetSelector class:(Class)class;
 @end
 
@@ -18,5 +18,5 @@
  * application:handleActionWithIdentifier:forRemoteNotification:completionHandler: 
  * and UIViewController's viewDidAppear:.
  */
-@interface _RSDKAnalyticsTrackingPageView : _RSDKAnalyticsSwizzleBaseClass<UIApplicationDelegate>
+RSDKA_EXPORT @interface _RSDKAnalyticsTrackingPageView : _RSDKAnalyticsSwizzleBaseClass<UIApplicationDelegate>
 @end

@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsLoginMethod)
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
 {
     /**
-     * The launch or visit originates from within the app itself.
+     * The visit originates from within the app itself.
      *
      * @par Swift 3
      * This value is exposed as **AnalyticsManager.State.Origin.internal**.
@@ -66,7 +66,7 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
     RSDKAnalyticsInternalOrigin RSDKA_SWIFT3_NAME(internal) = 0,
 
     /**
-     * The launch or visit originates from another app (i.e. deep-linking).
+     * The visit originates from another app (i.e. deep-linking).
      *
      * @par Swift 3
      * This value is exposed as **AnalyticsManager.State.Origin.external**.
@@ -74,7 +74,7 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
     RSDKAnalyticsExternalOrigin RSDKA_SWIFT3_NAME(external),
 
     /**
-     * The launch or visit originates from a push notification.
+     * The visit originates from a push notification.
      *
      * @par Swift 3
      * This value is exposed as **AnalyticsManager.State.Origin.push**.
