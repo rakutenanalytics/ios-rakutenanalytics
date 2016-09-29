@@ -156,6 +156,12 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     }
     _currentPage = page;
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
+
+    // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
+    if (_origin == RSDKAnalyticsExternalOrigin || _origin == RSDKAnalyticsPushOrigin)
+    {
+        _origin = RSDKAnalyticsInternalOrigin;
+    }
 }
 
 - (void)resetToDefaults
