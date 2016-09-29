@@ -30,7 +30,7 @@ Run `pod install` to install the module and its dependencies.
 * Support email for administrative tasks: dev-rat@mail.rakuten.com
 
 @subsection analytics-configure-rat Configuring RAT
-@attention Applications **MUST** configure their RAT `accountId` and `applicationId` with the methods presented below, or automatic KPI tracking for a number of SDK features (SSO, installs, conversions, etc) will be disabled.
+@attention Applications **MUST** configure their RAT `accountId` and `applicationId` with the methods presented below, or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled.
 
 ##### Swift 3
 
@@ -67,7 +67,7 @@ The analytics module can be configured to use the staging environment when talki
 
 @subsection analytics-configure-location Location Tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. 
-@warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Note that monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
+@warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. 
 
 If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Location tracking is enabled by default.
@@ -103,7 +103,7 @@ Tracking a generic event relies on a @ref RSDKAnalyticsTracker "tracker" capable
 @endcode
 
 #### Tracking RAT-specific events
-A concrete tracker, RATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, refer to the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
+A concrete tracker, RATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
@@ -161,7 +161,7 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 
 
 @section analytics-rat-examples RAT Examples
-@note These examples are all using @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
+@note These examples all use @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
 
 @subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
@@ -227,7 +227,7 @@ The following code is an example that can be used to track button clicks. It use
 @endcode
 
 @subsection analytics-rat-example-custom-events RAT events with Custom Parameters
-The following is an example of tracking an event with custom parameters. It uses the standard `pv` RAT event we've used in the previous examples, and passes some custom `custom_param_##` parameters in the `cp` dictionary accepted by RAT for this purpose.
+The following is an example of tracking an event with custom parameters. It uses the standard `pv` RAT event used in the previous examples, and passes some custom `custom_param_##` parameters in the `cp` dictionary accepted by RAT for this purpose.
 
 ##### Swift 3
 
@@ -250,7 +250,7 @@ The following is an example of tracking an event with custom parameters. It uses
 @endcode
 
 @subsection analytics-rat-example-search-results Tracking search results with RAT
-The code below shows an example of an event you could send to track what results where shown on a search page. It uses the standard `pv` RAT event we've used in the previous examples, plus a number of standard RAT parameters for that. Namely:
+The code below shows an example of an event you could send to track what results where shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
 
 RAT param | Description
 ----------|---------------
@@ -332,14 +332,13 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 @endcode
 
 @subsection analytics-custom-tracker Creating a Custom Tracker
-Custom @ref RSDKAnalyticsTracker "trackers" can be @ref RSDKAnalyticsManager::addTracker: "added" to
-the @ref RSDKAnalyticsManager "manager".
+Custom @ref RSDKAnalyticsTracker "trackers" can be @ref RSDKAnalyticsManager::addTracker: "added" to the @ref RSDKAnalyticsManager "manager".
 
 Create a class and implement the RSDKAnalyticsTracker protocol. Its [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3)
-method will receive an @ref RSDKAnalyticsEvent "event" with a name and parameters, as well as a @ref RSDKAnalyticsState "state" with attributes automatically
+method will receive an @ref RSDKAnalyticsEvent "event" with a name and parameters, and a @ref RSDKAnalyticsState "state" with attributes automatically
 generated by the SDK.
 
-The custom tracker below just prints a few diagnostic messages. A real one would upload some data to a server.
+The custom tracker in the code sample below only prints a few diagnostic messages. A real custom tracker would upload data to a server.
 
 ##### Swift 3
 
@@ -440,7 +439,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @subsection analytics-2-5-6 2.5.6 (2016-06-24)
 * [REMI-1052](https://jira.rakuten-it.com/jira/browse/REM-1052) Fixed wrong version number being sent.
-* Fix Xcode 6 build.
+* Fixed Xcode 6 build.
 
 @subsection analytics-2-5-5 2.5.5 (2016-06-06)
 * Added all the system frameworks used by the module to both its `podspec` and its `modulemap`, so they get weakly-linked automatically.
@@ -465,7 +464,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * Better Swift support.
 
 @subsection analytics-2-4-0 2.4.0 (2015-04-21)
-* `SDK-2947` Fixes bugs and comply with new requirements.
+* `SDK-2947` Fixed bugs and comply with new requirements.
 
 @subsection analytics-2-3-4 2.3.4 (2015-04-01)
 * `SDK-2901` Cocoapods 0.36 now requires `source`.
@@ -478,7 +477,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * `SDK-2859` Handle device information exceptions.
 
 @subsection analytics-2-3-1 2.3.1 (2015-03-08)
-* Fix sample build error.
+* Fixed sample build error.
 
 @subsection analytics-2-3-0 2.3.0 (2015-03-07)
 * Fixed bad value for session cookie.
@@ -493,14 +492,14 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * Added internal tracking (for SDK KPIs)
 
 @subsection analytics-2-2-1 2.2.1 (2014-10-09)
-* Fixes for iOS 8
+* Fixed bugs on iOS 8
 
 @subsection analytics-2-2-0 2.2.0 (2014-09-22)
-* Add `RSDKAnalyticsItem`.
+* Added `RSDKAnalyticsItem`.
 * The `ts1` RAT field is now expressed in seconds (previously in milliseconds).
 
 @subsection analytics-2-1-0 2.1.0 (2014-06-24)
-* Remove dependency on [FXReachability](https://github.com/nicklockwood/FXReachability)
+* Removed dependency on [FXReachability](https://github.com/nicklockwood/FXReachability)
 * Added `RSDKAnalyticsRecord.easyId` property.
 
 @subsection analytics-2-0-0 2.0.0 (2014-06-13)
