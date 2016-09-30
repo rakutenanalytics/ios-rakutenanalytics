@@ -25,6 +25,8 @@ NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
 NSString *const _RATCPParameter      = @"cp";
 NSString *const _RATGenericEventName = @"rat.generic";
+NSString *const _RATPGNParameter     = @"pgn";
+NSString *const _RATREFParameter     = @"ref";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -292,10 +294,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      * names just for analytics?
      */
 
-    /*
-     * FIXME (2): For UIWebView, WKWebView and SFSafariViewController, the
-     * current page's URL should be used instead.
-     */
     return NSStringFromClass([page class]);
 }
 
@@ -306,7 +304,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         return 0;
     }
     NSCalendar *calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    return [calendar components:NSDayCalendarUnit fromDate:date toDate:NSDate.date options:0].day;
+    return [calendar components:NSCalendarUnitDay fromDate:date toDate:NSDate.date options:0].day;
 }
 
 + (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
@@ -324,9 +322,91 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         etype = eventName;
     }
+
     else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
     {
         etype = eventName;
+
+        NSDictionary *map = _RSDKAnalyticsSDKComponentMap();
+        NSMutableArray *sdkInfo = [NSMutableArray array];
+        NSMutableDictionary *appInfo = [NSMutableDictionary dictionary];
+
+        NSDictionary *infoDictionary = NSBundle.mainBundle.infoDictionary;
+        NSString *xcodeVersion = infoDictionary[@"DTXcode"];
+        if (xcodeVersion && infoDictionary[@"DTXcodeBuild"])
+        {
+            xcodeVersion = [NSString stringWithFormat:@"%@.%@", xcodeVersion, infoDictionary[@"DTXcodeBuild"]];
+        }
+        NSString *sdk = infoDictionary[@"DTSDKName"];
+        if (!sdk)
+        {
+            NSString *platform = infoDictionary[@"DTPlatformName"];
+            NSString *version = infoDictionary[@"DTPlatformVersion"];
+            if (platform && version)
+            {
+                sdk = [platform stringByAppendingString:version];
+            }
+        }
+        NSMutableDictionary *frameworks = [NSMutableDictionary dictionary];
+        NSMutableDictionary *pods = [NSMutableDictionary dictionary];
+
+        NSArray *allFrameworks = [NSBundle allFrameworks];
+        for (NSBundle *bundle in allFrameworks)
+        {
+            NSString *identifier = bundle.bundleIdentifier;
+            if (![identifier hasPrefix:@"com.apple."])
+            {
+                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+                if (version.length)
+                {
+                    frameworks[identifier] = version;
+                }
+            }
+
+            if ([identifier hasPrefix:@"org.cocoapods."])
+            {
+                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+                if (version.length)
+                {
+                    pods[identifier] = version;
+                }
+
+                if ([map objectForKey:identifier])
+                {
+                    [sdkInfo addObject:[NSString stringWithFormat:@"%@/%@",map[identifier], version]];
+                }
+            }
+        }
+
+        if (sdkInfo.count)
+        {
+            cp[@"sdk_info"] = [[sdkInfo valueForKey:@"description"] componentsJoinedByString:@"; "];
+        }
+        if (xcodeVersion.length)
+        {
+            appInfo[@"xcode"] = xcodeVersion;
+        }
+        if (sdk.length)
+        {
+            appInfo[@"sdk"] = sdk;
+        }
+        if (frameworks.count)
+        {
+            appInfo[@"frameworks"] = frameworks.copy;
+        }
+        if (pods.count)
+        {
+            appInfo[@"pods"] = pods.copy;
+        }
+        if (infoDictionary[@"MinimumOSVersion"])
+        {
+            appInfo[@"deployment_target"] = infoDictionary[@"MinimumOSVersion"];
+        }
+        if (appInfo.count)
+        {
+            // this value should be converted to string.
+            cp[@"app_info"] = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:appInfo options:0 error:0] encoding:NSUTF8StringEncoding];
+        }
     }
     else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
@@ -383,6 +463,32 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
 
         if (logoutMethod) cp[@"logout_method"] = logoutMethod;
+    }
+    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
+    {
+        NSParameterAssert(state.currentPage);
+        etype = @"pv";
+
+        // pgn is the value of the page_id standard parameter, if provided. If not, it's the fully-qualified class name of state.currentPage.
+        NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
+        result[_RATPGNParameter] = (pageIdentifier.length) ? pageIdentifier : [RATTracker nameWithPage:state.currentPage];
+    
+        if (state.lastVisitedPage)
+        {
+            result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
+        }
+        switch (state.origin)
+        {
+            case RSDKAnalyticsInternalOrigin:
+                cp[@"ref_type"] = @"internal";
+                break;
+            case RSDKAnalyticsExternalOrigin:
+                cp[@"ref_type"] = @"external";
+                break;
+            case RSDKAnalyticsPushOrigin:
+                cp[@"ref_type"] = @"push";
+                break;
+        }
     }
 
     /*
@@ -780,7 +886,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     });
 
 
-    [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsWillUploadNotification
+    [NSNotificationCenter.defaultCenter postNotificationName:RATWillUploadNotification
                                                       object:recordGroup];
 
     NSMutableData *postBody = NSMutableData.new;
@@ -847,7 +953,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  * Success!
                  */
 
-                [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsUploadSuccessNotification
+                [NSNotificationCenter.defaultCenter postNotificationName:RATUploadSuccessNotification
                                                                   object:recordGroup];
 
 
@@ -877,7 +983,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             userInfo = @{NSUnderlyingErrorKey: error};
         }
 
-        [NSNotificationCenter.defaultCenter postNotificationName:RSDKAnalyticsUploadFailureNotification
+        [NSNotificationCenter.defaultCenter postNotificationName:RATUploadFailureNotification
                                                           object:recordGroup
                                                         userInfo:userInfo];
 

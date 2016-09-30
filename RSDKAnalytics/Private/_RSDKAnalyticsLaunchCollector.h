@@ -3,6 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
+#import <RSDKAnalytics/RSDKAnalyticsState.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,11 +44,32 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 @property (nonatomic, readonly) NSUInteger lastVersionLaunches;
 
 /*
+ * String identifying the origin of the launch or visit, if it can be determined.
+ */
+@property (nonatomic, readonly) RSDKAnalyticsOrigin origin;
+
+/*
+ * Last visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage;
+
+/*
+ * Currently-visited view controller.
+ */
+@property (nonatomic, nullable, readonly) UIViewController *currentPage;
+
+/*
  * Retrieve the shared instance.
  *
  * @return The shared instance.
  */
 + (instancetype)sharedInstance;
+
+/*
+ * This method is called when the swizzling method _swizzled_viewDidAppear in _RSDKAnalyticsTrackingPageView is called.
+ * The _swizzled_viewDidAppear is called when the view of an UIViewController is shown.
+ */
+- (void)didVisitPage:(UIViewController *)page;
 
 @end
 

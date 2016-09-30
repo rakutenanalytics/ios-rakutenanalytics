@@ -30,6 +30,9 @@ Pod::Spec.new do |s|
   s.private_header_files = [
     'RSDKAnalytics/Private/**/*.h'
   ]
+  s.resource_bundles = {
+    'RSDKAnalyticsAssets' => ['RSDKAnalytics/Assets/*']
+  }
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
   s.dependency 'RSDKDeviceInformation', '~> 1.4'

@@ -40,6 +40,11 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager.Event) @interface RSDKAnalyticsE
 @property (nonatomic, readonly, copy) NSDictionary RSDKA_GENERIC(NSString *, id) *parameters;
 
 /**
+ * @internal
+ */
+- (instancetype)init NS_UNAVAILABLE;
+
+/**
  * This method for creating a new event object.
  *
  * @attention For RAT-specific events, please use RATTracker::eventWithEventType:parameters: instead.
@@ -135,6 +140,16 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutEventName  RSDKA_SWIFT3_NAME(RSD
  * @ingroup AnalyticsEvents
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsInstallEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.install);
+
+/**
+ * Event triggered when a view controller is shown.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.pageVisit**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsPageVisitEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.pageVisit);
 
 
 /// @internal

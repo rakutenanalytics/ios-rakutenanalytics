@@ -4,6 +4,7 @@
  */
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
+#import "_RSDKAnalyticsTrackingPageView.h"
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -22,6 +23,10 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, readwrite) BOOL isInitialLaunch;
 @property (nonatomic, readwrite) BOOL isInstallLaunch;
 @property (nonatomic, readwrite) BOOL isUpdateLaunch;
+@property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
+@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
+
 @end
 
 @implementation _RSDKAnalyticsLaunchCollector
@@ -141,6 +146,20 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         _isUpdateLaunch = NO;
         return;
     }
+}
+
+- (void)didVisitPage:(UIViewController *)page
+{
+    if (_currentPage)
+    {
+        [_RSDKAnalyticsLaunchCollector sharedInstance].lastVisitedPage = _currentPage;
+    }
+    _currentPage = page;
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
+
+    // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
+    _origin = RSDKAnalyticsInternalOrigin;
+
 }
 
 - (void)resetToDefaults

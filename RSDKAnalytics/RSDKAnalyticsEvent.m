@@ -13,6 +13,8 @@ NSString *const RSDKAnalyticsApplicationUpdateEventName = @"_rem_update";
 NSString *const RSDKAnalyticsLoginEventName             = @"_rem_login";
 NSString *const RSDKAnalyticsLogoutEventName            = @"_rem_logout";
 NSString *const RSDKAnalyticsInstallEventName           = @"_rem_install";
+NSString *const RSDKAnalyticsPageVisitEventName         = @"_rem_visit";
+
 
 // Standard event parameters
 NSString *const RSDKAnalyticsLogoutMethodEventParameter = @"logout_method";
@@ -27,8 +29,6 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod         = @"global";
 @property (nonatomic, readwrite, copy) NSString *name;
 @property (nonatomic, readwrite, copy) NSDictionary *parameters;
 @end
-
-
 
 @implementation RSDKAnalyticsEvent
 

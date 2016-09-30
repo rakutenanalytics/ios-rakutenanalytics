@@ -30,6 +30,8 @@
 @property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
+@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @end
 
 @interface RSDKAnalyticsManager()<CLLocationManagerDelegate>
@@ -336,6 +338,9 @@ static RSDKAnalyticsManager *_instance = nil;
     state.lastLaunchDate = launchCollector.lastLaunchDate;
     state.lastVersion = launchCollector.lastVersion;
     state.lastVersionLaunches = launchCollector.lastVersionLaunches;
+    state.lastVisitedPage = launchCollector.lastVisitedPage;
+    state.currentPage = launchCollector.currentPage;
+    state.origin = launchCollector.origin;
 
     BOOL processed = NO;
     for (id<RSDKAnalyticsTracker> tracker in self.trackers)

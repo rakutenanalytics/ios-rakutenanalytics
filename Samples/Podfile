@@ -4,7 +4,8 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 workspace 'Samples.xcworkspace'
 project 'RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj'
 
-platform :ios, "7.0"
+platform :ios, "8.0"
+use_frameworks!
 
 target 'RSDKAnalyticsSample' do
   pod 'RSDKAnalytics', :path => '../RSDKAnalytics.podspec'
@@ -14,6 +15,7 @@ target 'RSDKAnalyticsSample' do
   pod 'RESideMenu',                 '~> 4.0'
   pod 'FontAwesomeKit/FontAwesome', '~> 2.1'
   pod 'HockeySDK',                  '~> 3.8'
+
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
