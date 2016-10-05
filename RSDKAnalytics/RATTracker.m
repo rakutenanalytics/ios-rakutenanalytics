@@ -1004,7 +1004,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     [_RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
      {
          typeof(weakSelf) __strong strongSelf = weakSelf;
-         if (records.count)
+         if (records)
          {
              [strongSelf _doBackgroundUploadWithRecords:records identifiers:identifiers];
          }

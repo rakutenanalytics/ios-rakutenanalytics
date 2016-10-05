@@ -34,7 +34,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
  *
  * @param completion  The block to call once the records have been fetched.
  */
-+ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *records, NSArray RSDKA_GENERIC(NSNumber *) *identifiers))completion;
++ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable records, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
 
 /*
  * Delete some records from the database.
