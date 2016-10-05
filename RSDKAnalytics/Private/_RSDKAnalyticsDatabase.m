@@ -156,7 +156,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
             typeof(callerQueue) __strong queue = callerQueue;
             [queue addOperationWithBlock:^
             {
-                completion(records, primaryKeys);
+                completion(records.count ? records : nil, primaryKeys.count ? primaryKeys : nil);
             }];
         }
     }];
@@ -247,6 +247,7 @@ static sqlite3 *openOrCreateDatabase(NSString *name)
 {
     NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
     NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:name];
+
     sqlite3 *result = 0;
 
     /*
@@ -254,7 +255,7 @@ static sqlite3 *openOrCreateDatabase(NSString *name)
      */
     if (sqlite3_open(databasePath.UTF8String, &result) != SQLITE_OK)
     {
-        [NSException raise:NSInternalInconsistencyException format:@"Failed to open database: %@", databasePath];
+        RSDKAnalyticsDebugLog(@"Failed to open database: %@", databasePath);
         return 0;
     }
 
@@ -266,13 +267,12 @@ static sqlite3 *openOrCreateDatabase(NSString *name)
     if (sqlite3_exec(result, query.UTF8String, 0, 0, 0) != SQLITE_OK)
     {
         sqlite3_close(result);
-        [NSException raise:NSInternalInconsistencyException format:@"Failed to create table: %s", sqlite3_errmsg(result)];
+        RSDKAnalyticsDebugLog(@"Failed to create table: %s", sqlite3_errmsg(result));
         return 0;
     }
 
-
     /*
-     * Close database upon end of thread.
+     * Close database upon end of process.
      */
     atexit_b(^{
         sqlite3_close(result);
@@ -283,16 +283,20 @@ static sqlite3 *openOrCreateDatabase(NSString *name)
 
 + (sqlite3*)database
 {
-    static sqlite3 *productionDatabase = 0;
-    static sqlite3 *stagingDatabase    = 0;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^
+    if ([RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment])
     {
-        productionDatabase = openOrCreateDatabase(RSDKAnalyticsProductionDatabaseName);
-        stagingDatabase    = openOrCreateDatabase(RSDKAnalyticsStagingDatabaseName);
-    });
-
-    return [RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment] ? stagingDatabase : productionDatabase;
+        static sqlite3 *db = 0;
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{ db = openOrCreateDatabase(RSDKAnalyticsStagingDatabaseName); });
+        return db;
+    }
+    else
+    {
+        static sqlite3 *db = 0;
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{ db = openOrCreateDatabase(RSDKAnalyticsProductionDatabaseName); });
+        return db;
+    }
 }
 
 @end
