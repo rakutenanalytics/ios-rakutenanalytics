@@ -28,11 +28,22 @@ RSDKA_EXPORT @interface _RSDKAnalyticsExternalCollector : NSObject
 @property (nonatomic, readonly) RSDKAnalyticsLoginMethod loginMethod;
 
 /*
+ * The payload from remote push notification is being stored in shared preferences.
+ */
+@property (nonatomic, readonly) NSDictionary *pushNotificationPayload;
+
+/*
  * Retrieve the shared instance.
  *
  * @return The shared instance.
  */
 + (instancetype)sharedInstance;
+
+/*
+ * When the when the remote notification arrives, if the application is in foreground this method will be called.
+ * If the application is not in foreground, this method will be called after the next _rem_vist event is triggerred.
+ */
+- (void)triggerPushEvent;
 
 @end
 

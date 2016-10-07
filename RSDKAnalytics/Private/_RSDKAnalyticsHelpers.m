@@ -53,3 +53,25 @@ NSDictionary *_RSDKAnalyticsSDKComponentMap(void)
                   });
     return map;
 }
+
+NSString *_RSDKAnalyticsStringWithObject(id object)
+{
+    if (![object isKindOfClass:NSString.class])
+    {
+        if ([object isKindOfClass:NSNull.class])
+        {
+            return nil;
+        }
+        else if ([object respondsToSelector:@selector(stringValue)])
+        {
+            object = [object stringValue];
+        }
+        else if (object)
+        {
+            [NSException raise:NSInvalidArgumentException format:@"Cannot be coerced to a NSString: %@", object];
+            object = nil;
+        }
+    }
+
+    return [object length] ? object : nil;
+}

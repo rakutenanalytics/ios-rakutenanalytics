@@ -3,6 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import "_RSDKAnalyticsLaunchCollector.h"
+#import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
 #import "_RSDKAnalyticsTrackingPageView.h"
 
@@ -152,14 +153,18 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 {
     if (_currentPage)
     {
-        [_RSDKAnalyticsLaunchCollector sharedInstance].lastVisitedPage = _currentPage;
+        _RSDKAnalyticsLaunchCollector.sharedInstance.lastVisitedPage = _currentPage;
     }
     _currentPage = page;
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
 
+    // For push event, after the _rem_visit event is triggered, a _rem_push_notify event will be triggered.
+    if (_origin == RSDKAnalyticsPushOrigin)
+    {
+        [_RSDKAnalyticsExternalCollector.sharedInstance triggerPushEvent];
+    }
     // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
     _origin = RSDKAnalyticsInternalOrigin;
-
 }
 
 - (void)resetToDefaults

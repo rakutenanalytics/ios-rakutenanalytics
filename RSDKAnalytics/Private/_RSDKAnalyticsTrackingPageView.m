@@ -5,10 +5,15 @@
 
 #import "_RSDKAnalyticsTrackingPageView.h"
 #import "_RSDKAnalyticsLaunchCollector.h"
+#import "_RSDKAnalyticsExternalCollector.h"
 #import <UIKit/UIKit.h>
 
 @interface _RSDKAnalyticsLaunchCollector ()
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
+@end
+
+@interface _RSDKAnalyticsExternalCollector ()
+@property (nonatomic, nullable, readwrite, copy) NSDictionary *pushNotificationPayload;
 @end
 
 @implementation _RSDKAnalyticsSwizzleBaseClass
@@ -83,12 +88,26 @@
     return ret;
 }
 
-- (void)_swizzled_application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler
+- (void)_swizzled_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
-    _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsPushOrigin;
-    if ([self respondsToSelector:@selector(_swizzled_application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)])
+    // store push notification payload.
+    _RSDKAnalyticsExternalCollector.sharedInstance.pushNotificationPayload = userInfo;
+    
+    // If the app is already in foreground, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
+    if (application.applicationState == UIApplicationStateActive || application.applicationState == UIApplicationStateInactive)
     {
-        [self _swizzled_application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:completionHandler];
+        // emit push_event
+        [_RSDKAnalyticsExternalCollector.sharedInstance triggerPushEvent];
+    }
+    else
+    {
+        // set the origin to push type for the next _rem_visit event
+        _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsPushOrigin;
+    }
+
+    if ([self respondsToSelector:@selector(_swizzled_application:didReceiveRemoteNotification:fetchCompletionHandler:)])
+    {
+        [self _swizzled_application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
     }
 }
 
@@ -111,8 +130,8 @@
                                          targetSelector:@selector(application:continueUserActivity:restorationHandler:)
                                                   class:cls];
 
-        [_RSDKAnalyticsTrackingPageView swizzleSelector:@selector(_swizzled_application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
-                                         targetSelector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+        [_RSDKAnalyticsTrackingPageView swizzleSelector:@selector(_swizzled_application:didReceiveRemoteNotification:fetchCompletionHandler:)
+                                         targetSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                                                   class:cls];
     });
 
