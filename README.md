@@ -420,8 +420,10 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-7-1 2.7.1 (2016-10-10)
+@subsection analytics-2-7-1 2.7.1 (2016-10-11)
 * [REM-17208](https://jira.rakuten-it.com/jira/browse/REM-17208): Fixed a crash happening for some Ichiba users when the RAT tracker cannot properly create its backing store because SQLite is in a corrupt state. Instead of a runtime assertion, we're now silently ignoring the error and disabling tracking through RAT for the session instead.
+* [REM-16279](https://jira.rakuten-it.com/jira/browse/REM-16279) & [REM-16280](https://jira.rakuten-it.com/jira/browse/REM-16280) Add cp.sdk_info and cp.app_info parameters to _rem_install event.
+* [REM-14062](https://jira.rakuten-it.com/jira/browse/REM-14062) Track _rem_visit event.
 
 @subsection analytics-2-7-0 2.7.0 (2016-09-28)
 * Major rewrite.
