@@ -28,8 +28,11 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
-
-static const NSString *const _RATTableName      = @"RAKUTEN_ANALYTICS_TABLE";
+static NS_INLINE const NSString *const _RATTableName()
+{
+    BOOL useStaging = [RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment];
+    return useStaging ? @"RAT_STAGING" : @"RAKUTEN_ANALYTICS_TABLE";
+}
 static const unsigned int    _RATTableBlobLimit = 5000u;
 static const unsigned int    _RATBatchSize      = 16u;
 
@@ -781,7 +784,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     typeof(self) __weak weakSelf = self;
     [_RSDKAnalyticsDatabase insertBlob:jsonData
-                                  into:_RATTableName
+                                  into:_RATTableName()
                                  limit:_RATTableBlobLimit
                                   then:^{
         typeof(weakSelf) __strong strongSelf = weakSelf;
@@ -969,7 +972,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  */
 
                 [_RSDKAnalyticsDatabase deleteBlobsWithIdentifiers:identifiers
-                                                                in:_RATTableName
+                                                                in:_RATTableName()
                                                               then:^{
                     // Send the rest of the records
                     typeof(weakSelf) __strong strongSelf = weakSelf;
@@ -1009,7 +1012,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
     typeof(self) __weak weakSelf = self;
     [_RSDKAnalyticsDatabase fetchBlobs:_RATBatchSize
-                                  from:_RATTableName
+                                  from:_RATTableName()
                                   then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
         typeof(weakSelf) __strong strongSelf = weakSelf;
         if (blobs)
