@@ -10,102 +10,132 @@
 
 ////////////////////////////////////////////////////////////////////////////
 
+static NSString *const RSDKAnalyticsDatabaseName = @"RSDKAnalytics.db";
 
 /*
- * The maximum number of records in a record group sent to the server.
+ * Our global background queue (singleton, created in [_RSDKAnalyticsDatabase load].
  */
-
-static const NSUInteger RSDKAnalyticsRecordGroupSize = 16;
-
+static NSOperationQueue *_queue = nil;
 
 /*
- * The maximum number of records kept in the database.
+ * Prepare a table for access.
  *
- * The specification says 256, but this is because of browsers
- * restrictions that do not apply to native applications. Since
- * our implementation always buffer records before uploading them,
- * it's better to increase that limit to a more reasonnable amount
- * that minimizes the chances of losing data if the application
- * calls [RSDKAnalyticsManager spoolRecord:] very frequently.
+ * @param table  The name of the table we want to access.
+ * @return The SQLite handler.
  */
+static sqlite3 *prepareTable(NSString *table)
+{
+    assert(NSOperationQueue.currentQueue == _queue);
 
-static const NSUInteger RSDKAnalyticsHistorySize = 5000;
+    static sqlite3 *result = 0;
+    if (!result)
+    {
+        NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:RSDKAnalyticsDatabaseName];
 
+        if (sqlite3_open(databasePath.UTF8String, &result) == SQLITE_OK)
+        {
+            atexit_b(^{
+                sqlite3_close(result);
+            });
+        }
+        else
+        {
+            RSDKAnalyticsDebugLog(@"Failed to open database: %@", databasePath);
+            sqlite3_close(result);
+            result = 0;
+            return 0;
+        }
+    }
 
-/*
- * The SQLite database name.
- */
+    static NSMutableSet *tables = nil;
+    if (![tables containsObject:table])
+    {
+        if (!tables)
+        {
+            tables = NSMutableSet.new;
+        }
 
-static NSString *const RSDKAnalyticsProductionDatabaseName = @"RSDKAnalytics.db";
-static NSString *const RSDKAnalyticsStagingDatabaseName    = @"RSDKAnalyticsSTG.db";
+        NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", table];
+        if (sqlite3_exec(result, query.UTF8String, 0, 0, 0) != SQLITE_OK)
+        {
+            RSDKAnalyticsDebugLog(@"Failed to create table: %s", sqlite3_errmsg(result));
+            return 0;
+        }
+        [tables addObject:table];
+    }
 
-
-/*
- * The SQLite table name.
- */
-
-static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
-
+    return result;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-@interface _RSDKAnalyticsDatabase ()
-+ (NSOperationQueue *)queue;
-+ (sqlite3*)database;
-@end
-
 @implementation _RSDKAnalyticsDatabase
++ (void)load
+{
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        _queue = NSOperationQueue.new;
+        _queue.name = @"com.rakuten.esd.sdk.analytics.database";
+        _queue.maxConcurrentOperationCount = 1;
+        atexit_b(^{
+            _queue = nil;
+        });
+    });
+}
+
+//--------------------------------------------------------------------------
++ (void)insertBlob:(NSData *)blob
+              into:(NSString *)table
+             limit:(unsigned int)maximumNumberOfBlobs
+              then:(dispatch_block_t)completion
+{
+    [self insertBlobs:@[blob.copy] into:table limit:maximumNumberOfBlobs then:completion];
+}
 
 //--------------------------------------------------------------------------
 
-+ (void)addRecord:(NSData *)record completion:(dispatch_block_t)completion
++ (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+               into:(NSString *)table
+              limit:(unsigned int)maximumNumberOfBlobs
+               then:(dispatch_block_t)completion
 {
+    // Make params immutable, otherwise they could be modified before getting accessed later on the queue
+    blobs = [NSArray.alloc initWithArray:blobs copyItems:YES];
+    table = table.copy;
+
     NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
-    [self.queue addOperationWithBlock:^
-    {
-        sqlite3 *database = self.database;
-        if (record.length && database)
+    [_queue addOperationWithBlock:^{
+        sqlite3 *db = prepareTable(table);
+        if (db && sqlite3_exec(db, "begin exclusive transaction", 0, 0, 0) == SQLITE_OK)
         {
-            static NSString *insertQuery;
-            static NSString *purgeQuery;
-            static dispatch_once_t once;
-            dispatch_once(&once, ^
+            NSString *query = [NSString stringWithFormat:@"insert into %@ (data) values(?)", table];
+            for (NSData *blob in blobs)
             {
-                insertQuery = [NSString stringWithFormat:@"insert into %@ (data) values(?)",
-                               RSDKAnalyticsTableName];
-
-                purgeQuery = [NSString stringWithFormat:@"delete from %1$@ where id not in (select id from %1$@ order by id desc limit %2$u)",
-                              RSDKAnalyticsTableName,
-                              MAX(0u, (unsigned int) RSDKAnalyticsHistorySize - 1)];
-            });
-
-            sqlite3_stmt *statement;
-            if (sqlite3_prepare_v2(database, insertQuery.UTF8String, -1, &statement, 0) == SQLITE_OK)
-            {
-                /*
-                 * Try to delete old records.
-                 *
-                 * <New size> + 1 (this record) should be less than or equal to RSDKAnalyticsHistorySize.
-                 */
-
-                sqlite3_exec(database, purgeQuery.UTF8String, 0, 0, 0);
-
-                if (sqlite3_bind_blob(statement, 1, record.bytes, (int)record.length, 0) == SQLITE_OK)
+                sqlite3_stmt *statement;
+                if (sqlite3_prepare_v2(db, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
                 {
-                    /*
-                     * FIXME: What can we do if this fails? It is a *very* unlikely scenario.
-                     * Should we delete the database and start afresh?
-                     */
-
-                    sqlite3_step(statement);
+                    if (sqlite3_bind_blob(statement, 1, blob.bytes, (int)blob.length, 0) == SQLITE_OK)
+                    {
+                        sqlite3_step(statement);
+                        sqlite3_clear_bindings(statement);
+                    }
+                    sqlite3_reset(statement);
+                    sqlite3_finalize(statement);
                 }
-                sqlite3_finalize(statement);
             }
+
+            if (maximumNumberOfBlobs)
+            {
+                query = [NSString stringWithFormat:@"delete from %1$@ where id not in (select id from %1$@ order by id desc limit %2$u)", table, maximumNumberOfBlobs];
+                sqlite3_exec(db, query.UTF8String, 0, 0, 0);
+            }
+
+            sqlite3_exec(db, "commit transaction", 0, 0, 0);
         }
 
-        if (completion)
-        {
+        if (completion) {
             typeof(callerQueue) __strong queue = callerQueue;
             [queue addOperationWithBlock:completion];
         }
@@ -114,28 +144,29 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
-+ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *records, NSArray RSDKA_GENERIC(NSNumber *) *identifiers))completion
++ (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion
 {
-    NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
-    [self.queue addOperationWithBlock:^
-    {
-        NSMutableArray *records = [NSMutableArray arrayWithCapacity:RSDKAnalyticsRecordGroupSize];
-        NSMutableArray *primaryKeys = [NSMutableArray arrayWithCapacity:RSDKAnalyticsRecordGroupSize];
+    // Make params immutable, otherwise they could be modified before getting accessed later on the queue
+    table = table.copy;
 
-        sqlite3 *database = self.database;
-        if (database)
+    NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+    [_queue addOperationWithBlock:^{
+        sqlite3 *db = prepareTable(table);
+
+        NSMutableArray *blobs       = nil;
+        NSMutableArray *identifiers = nil;
+
+        if (db && maximumNumberOfBlobs > 0)
         {
-            static NSString *query;
-            static dispatch_once_t once;
-            dispatch_once(&once, ^
-            {
-                query = [NSString stringWithFormat:@"select * from %@ limit %u",
-                         RSDKAnalyticsTableName,
-                         MAX(0u, (unsigned int) RSDKAnalyticsRecordGroupSize)];
-            });
+            blobs       = [NSMutableArray arrayWithCapacity:maximumNumberOfBlobs];
+            identifiers = [NSMutableArray arrayWithCapacity:maximumNumberOfBlobs];
+
+            NSString *query = [NSString stringWithFormat:@"select * from %@ limit %u", table, maximumNumberOfBlobs];
 
             sqlite3_stmt *statement;
-            if (sqlite3_prepare_v2(database, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
+            if (sqlite3_prepare_v2(db, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
             {
                 int code;
                 while ((code = sqlite3_step(statement)) == SQLITE_ROW)
@@ -144,8 +175,8 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
                     const void *bytes = sqlite3_column_blob(statement, 1);
                     NSUInteger length = (NSUInteger)sqlite3_column_bytes(statement, 1);
 
-                    [records addObject:[NSData dataWithBytes:bytes length:length]];
-                    [primaryKeys addObject:@(primaryKey)];
+                    [blobs       addObject:[NSData dataWithBytes:bytes length:length]];
+                    [identifiers addObject:@(primaryKey)];
                 }
                 sqlite3_finalize(statement);
             }
@@ -156,7 +187,7 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
             typeof(callerQueue) __strong queue = callerQueue;
             [queue addOperationWithBlock:^
             {
-                completion(records.count ? records : nil, primaryKeys.count ? primaryKeys : nil);
+                completion(blobs.count ? blobs : nil, identifiers.count ? identifiers : nil);
             }];
         }
     }];
@@ -164,52 +195,35 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 //--------------------------------------------------------------------------
 
-+ (void)deleteRecordsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers completion:(dispatch_block_t)completion
++ (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+                                in:(NSString *)table
+                              then:(dispatch_block_t)completion
 {
+    // Make params immutable, otherwise they could be modified before getting accessed later on the queue
+    identifiers = [NSArray.alloc initWithArray:identifiers copyItems:YES];
+    table = table.copy;
+
     NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
-    [self.queue addOperationWithBlock:^
-    {
-        sqlite3 *database = self.database;
-        if (identifiers.count && database)
+    [_queue addOperationWithBlock:^{
+        sqlite3 *db = prepareTable(table);
+
+        if (db && sqlite3_exec(db, "begin exclusive transaction", 0, 0, 0) == SQLITE_OK)
         {
-            if (sqlite3_exec(database, "begin exclusive transaction", 0, 0, 0) != SQLITE_OK)
+            NSString *query = [NSString stringWithFormat:@"delete from %@ where id=?", table];
+            for (NSNumber *identifier in identifiers)
             {
-                RSDKAnalyticsDebugLog(@"Failed to begin transaction: %s", sqlite3_errmsg(database));
-            }
-            else
-            {
-                static NSString *query;
-                static dispatch_once_t once;
-                dispatch_once(&once, ^
-                {
-                    query = [NSString stringWithFormat:@"delete from %@ where id=?", RSDKAnalyticsTableName];
-                });
-
                 sqlite3_stmt *statement;
-                if (sqlite3_prepare_v2(database, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
+                if (sqlite3_prepare_v2(db, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
                 {
-                    for (NSNumber *identifier in identifiers)
-                    {
-                        sqlite3_bind_int64(statement, 1, identifier.longLongValue);
-
-                        sqlite3_step(statement);
-                        if (sqlite3_reset(statement) != SQLITE_OK)
-                        {
-                            break;
-                        }
-                    }
+                    sqlite3_bind_int64(statement, 1, identifier.longLongValue);
+                    sqlite3_step(statement);
+                    sqlite3_clear_bindings(statement);
+                    sqlite3_reset(statement);
                     sqlite3_finalize(statement);
                 }
-
-                if(sqlite3_exec(database, "commit transaction", 0, 0, 0) != SQLITE_OK)
-                {
-                    /*
-                     * FIXME: What can we do? It is a *very* unlikely scenario.
-                     * Should we delete the database and start afresh?
-                     */
-                    RSDKAnalyticsDebugLog(@"Analytics: Failed to commit transaction: %s", sqlite3_errmsg(database));
-                }
             }
+
+            sqlite3_exec(db, "commit transaction", 0, 0, 0);
         }
 
         if (completion)
@@ -221,83 +235,6 @@ static NSString *const RSDKAnalyticsTableName = @"RAKUTEN_ANALYTICS_TABLE";
 }
 
 //--------------------------------------------------------------------------
-
-+ (NSOperationQueue *)queue
-{
-    static NSOperationQueue *queue;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^
-    {
-        queue = NSOperationQueue.new;
-        queue.name = @"com.rakuten.esd.sdk.analytics.database";
-
-        /*
-         * Make the queue a FIFO so we don't need to worry about
-         * concurrency issues.
-         */
-
-        queue.maxConcurrentOperationCount = 1;
-    });
-    return queue;
-}
-
-//--------------------------------------------------------------------------
-
-static sqlite3 *openOrCreateDatabase(NSString *name)
-{
-    NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:name];
-
-    sqlite3 *result = 0;
-
-    /*
-     * Open the database
-     */
-    if (sqlite3_open(databasePath.UTF8String, &result) != SQLITE_OK)
-    {
-        RSDKAnalyticsDebugLog(@"Failed to open database: %@", databasePath);
-        return 0;
-    }
-
-
-    /*
-     * Create our table if it does exist yet.
-     */
-    NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", RSDKAnalyticsTableName];
-    if (sqlite3_exec(result, query.UTF8String, 0, 0, 0) != SQLITE_OK)
-    {
-        sqlite3_close(result);
-        RSDKAnalyticsDebugLog(@"Failed to create table: %s", sqlite3_errmsg(result));
-        return 0;
-    }
-
-    /*
-     * Close database upon end of process.
-     */
-    atexit_b(^{
-        sqlite3_close(result);
-    });
-
-    return result;
-}
-
-+ (sqlite3*)database
-{
-    if ([RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment])
-    {
-        static sqlite3 *db = 0;
-        static dispatch_once_t once;
-        dispatch_once(&once, ^{ db = openOrCreateDatabase(RSDKAnalyticsStagingDatabaseName); });
-        return db;
-    }
-    else
-    {
-        static sqlite3 *db = 0;
-        static dispatch_once_t once;
-        dispatch_once(&once, ^{ db = openOrCreateDatabase(RSDKAnalyticsProductionDatabaseName); });
-        return db;
-    }
-}
 
 @end
 

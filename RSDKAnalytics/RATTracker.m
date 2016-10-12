@@ -28,6 +28,11 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
+
+static const NSString *const _RATTableName      = @"RAKUTEN_ANALYTICS_TABLE";
+static const unsigned int    _RATTableBlobLimit = 5000u;
+static const unsigned int    _RATBatchSize      = 16u;
+
 ////////////////////////////////////////////////////////////////////////////
 
 // Private constants
@@ -775,11 +780,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
 
     typeof(self) __weak weakSelf = self;
-    [_RSDKAnalyticsDatabase addRecord:jsonData completion:^
-     {
-         typeof(weakSelf) __strong strongSelf = weakSelf;
-         [strongSelf _scheduleBackgroundUpload];
-     }];
+    [_RSDKAnalyticsDatabase insertBlob:jsonData
+                                  into:_RATTableName
+                                 limit:_RATTableBlobLimit
+                                  then:^{
+        typeof(weakSelf) __strong strongSelf = weakSelf;
+        [strongSelf _scheduleBackgroundUpload];
+    }];
     return YES;
 }
 
@@ -961,13 +968,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  * Delete the records from the local database.
                  */
 
-                [_RSDKAnalyticsDatabase deleteRecordsWithIdentifiers:identifiers
-                                                          completion:^
-                 {
-                     // Send the rest of records
-                     typeof(weakSelf) __strong strongSelf = weakSelf;
-                     [strongSelf _doBackgroundUpload];
-                 }];
+                [_RSDKAnalyticsDatabase deleteBlobsWithIdentifiers:identifiers
+                                                                in:_RATTableName
+                                                              then:^{
+                    // Send the rest of the records
+                    typeof(weakSelf) __strong strongSelf = weakSelf;
+                    [strongSelf _doBackgroundUpload];
+                }];
                 return;
             }
 
@@ -1001,18 +1008,19 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
      */
 
     typeof(self) __weak weakSelf = self;
-    [_RSDKAnalyticsDatabase fetchRecordGroup:^(NSArray *records, NSArray *identifiers)
-     {
-         typeof(weakSelf) __strong strongSelf = weakSelf;
-         if (records)
-         {
-             [strongSelf _doBackgroundUploadWithRecords:records identifiers:identifiers];
-         }
-         else
-         {
-             [strongSelf _backgroupUploadEnded];
-         }
-     }];
+    [_RSDKAnalyticsDatabase fetchBlobs:_RATBatchSize
+                                  from:_RATTableName
+                                  then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
+        typeof(weakSelf) __strong strongSelf = weakSelf;
+        if (blobs)
+        {
+            [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
+        }
+        else
+        {
+            [strongSelf _backgroupUploadEnded];
+        }
+    }];
 }
 
 //--------------------------------------------------------------------------

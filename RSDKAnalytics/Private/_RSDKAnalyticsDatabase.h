@@ -17,33 +17,52 @@ NS_ASSUME_NONNULL_BEGIN
 RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
 
 /*
- * Add a record to the database.
+ * Insert a new, single blob into a table.
  *
- * @param record      The data to write.
- * @param completion  The block to call once the record has been added.
+ * @param blob                  Blob to insert.
+ * @param table                 Name of the destination table.
+ * @param maximumNumberOfBlobs  Maximum number of blobs to keep in the table.
+ * @param completion            Block to call upon completion.
  */
-+ (void)addRecord:(NSData *)record completion:(dispatch_block_t)completion;
++ (void)insertBlob:(NSData *)blob
+              into:(NSString *)table
+             limit:(unsigned int)maximumNumberOfBlobs
+              then:(dispatch_block_t)completion;
 
 /*
- * Fetch a group of records from the database.
+ * Insert multiple new blobs into a table, in a single transaction.
  *
- * The completion block is passed an array of records (NSData) as well as an
- * array of unique record identifiers (each record's primary key in the
- * database). Both arrays have equal lengths, which may be 0 if the database
- * was empty.
- *
- * @param completion  The block to call once the records have been fetched.
+ * @param blobs                 Blobs to insert.
+ * @param table                 Name of the destination table.
+ * @param maximumNumberOfBlobs  Maximum number of blobs to keep in the table.
+ * @param completion            Block to call upon completion.
  */
-+ (void)fetchRecordGroup:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable records, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
++ (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+               into:(NSString *)table
+              limit:(unsigned int)maximumNumberOfBlobs
+               then:(dispatch_block_t)completion;
 
 /*
- * Delete some records from the database.
+ * Try to fetch a number of blobs from a table, from the most ancient to the most recent.
  *
- * @param identifiers  The identifiers of the records to be deleted.
- * @param completion   The block to call once the records have been deleted.
+ * @param maximumNumberOfBlobs  Maximum number of blobs we want to read.
+ * @param table                 Name of the table.
+ * @param completion            Block to call upon completion.
  */
-+ (void)deleteRecordsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers completion:(dispatch_block_t)completion;
++ (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
 
+/*
+ * Delete blobs with the given identifier from a table.
+ *
+ * @param identifiers  Blob identifiers.
+ * @param table        Name of the table.
+ * @param completion   Block to call upon completion.
+ */
++ (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+                                in:(NSString *)table
+                              then:(dispatch_block_t)completion;
 @end
 
 NS_ASSUME_NONNULL_END
