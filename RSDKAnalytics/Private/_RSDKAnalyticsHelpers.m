@@ -75,3 +75,28 @@ NSString *_RSDKAnalyticsStringWithObject(id object)
 
     return [object length] ? object : nil;
 }
+
+void _RSDKAnalyticsTraverseObjectWithSearchKeys(id object, NSArray *searchKeys, NSMutableDictionary *result)
+{
+    if ([object isKindOfClass:[NSDictionary class]])
+    {
+        for (NSString *key in searchKeys)
+        {
+            if ([object objectForKey:key])
+            {
+                [result setObject:[object objectForKey:key] forKey:key];
+            }
+        }
+        for (id child in [object allObjects])
+        {
+            _RSDKAnalyticsTraverseObjectWithSearchKeys(child, searchKeys, result);
+        }
+    }
+    else if ([object isKindOfClass:[NSArray class]])
+    {
+        for (id child in object)
+        {
+            _RSDKAnalyticsTraverseObjectWithSearchKeys(child, searchKeys, result);
+        }
+    }
+}

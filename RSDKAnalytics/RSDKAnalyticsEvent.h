@@ -153,13 +153,15 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsPageVisitEventName  RSDKA_SWIFT3_NAME(
 
 /**
  * Event triggered when a push notification is received.
+ * This event has a parameter named RSDKAnalyticPushNotificationTrackingIdentifierParameter
  *
  * @par Swift 3
- * This value is exposed as **AnalyticsManager.Event.Name.pushNotify**.
+ * This value is exposed as **AnalyticsManager.Event.Name.pushNotification**.
  *
+ * @see RSDKAnalyticPushNotificationTrackingIdentifierParameter
  * @ingroup AnalyticsEvents
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticsPushNotifyEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.pushNotify);
+RSDKA_EXPORT NSString *const RSDKAnalyticsPushNotificationEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.pushNotification);
 
 /// @internal
 struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.Parameter) RSDKAnalyticsParameter { };
@@ -180,15 +182,15 @@ struct RSDKA_SWIFT3_NAME(RSDKAnalyticsEvent.LogoutMethod) RSDKAnalyticsLogoutMet
 RSDKA_EXPORT NSString *const RSDKAnalyticsLogoutMethodEventParameter RSDKA_SWIFT3_NAME(RSDKAnalyticsParameter.logoutMethod);
 
 /**
- * Parameter for the tracking identifier sent together with a push notify event.
+ * Parameter for the tracking identifier sent together with a push notification event.
  *
  * @par Swift 3
  * This value is exposed as **AnalyticsManager.Event.Parameter.pushTrackingIdentifier**.
  *
- * @see RSDKAnalyticsPushNotifyEventName
+ * @see RSDKAnalyticsPushNotificationEventName
  * @ingroup AnalyticsConstants
  */
-RSDKA_EXPORT NSString *const RSDKAnalyticPushNotifyTrackingIdentifierParameter RSDKA_SWIFT3_NAME(RSDKAnalyticsParameter.pushTrackingIdentifier);
+RSDKA_EXPORT NSString *const RSDKAnalyticPushNotificationTrackingIdentifierParameter RSDKA_SWIFT3_NAME(RSDKAnalyticsParameter.pushTrackingIdentifier);
 
 /**
  * Logout method when the user was logged out of the current app only.

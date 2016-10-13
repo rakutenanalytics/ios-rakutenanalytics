@@ -11,7 +11,6 @@
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
 static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginMethod";
-static NSString *const _RSDKAnalyticsPushNotificationPayloadKey = @"com.rakuten.esd.sdk.properties.analytics.pushInformation.payload";
 
 static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
 
@@ -20,9 +19,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 @property (nonatomic, nullable, readwrite, copy) NSString     *trackingIdentifier;
 @property (nonatomic, readwrite) RSDKAnalyticsLoginMethod     loginMethod;
 @property (nonatomic, nullable, readwrite, copy) NSString     *logoutMethod;
-@property (nonatomic, nullable, readwrite, copy) NSDictionary *pushNotificationPayload;
 @property (nonatomic) NSDictionary                            *cardInfoEventMapping;
-@property (nonatomic) NSMutableDictionary                     *result;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -178,36 +175,6 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     [self.class trackEvent:_cardInfoEventMapping[key]];
 }
 
-- (void)triggerPushEvent
-{
-    if (!_pushNotificationPayload) return;
-
-    _result = NSMutableDictionary.new;
-    [self traverseObject:_pushNotificationPayload searchKeys:@[@"rid", @"notification_id", @"message", @"title"]];
-    NSString *pushEventTrackingIdentifier;
-    if (_RSDKAnalyticsStringWithObject(_result[@"rid"]).length)
-    {
-        pushEventTrackingIdentifier = [NSString stringWithFormat:@"rid:%@",_RSDKAnalyticsStringWithObject(_result[@"rid"])];
-    }
-    else if (_RSDKAnalyticsStringWithObject(_result[@"notification_id"]).length)
-    {
-        pushEventTrackingIdentifier = [NSString stringWithFormat:@"nid:%@",_RSDKAnalyticsStringWithObject(_result[@"notification_id"])];
-    }
-    else if (_RSDKAnalyticsStringWithObject(_result[@"message"]).length)
-    {
-        pushEventTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(_result[@"message"])];
-    }
-    else if (_RSDKAnalyticsStringWithObject(_result[@"title"]).length)
-    {
-        pushEventTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(_result[@"title"])];
-    }
-
-    if (pushEventTrackingIdentifier.length)
-    {
-        [self.class trackEvent:RSDKAnalyticsPushNotifyEventName parameters:@{RSDKAnalyticPushNotifyTrackingIdentifierParameter:pushEventTrackingIdentifier}];
-    }
-}
-
 #pragma mark - store & retrieve login/logout state & tracking identifier.
 
 - (void)update
@@ -248,21 +215,6 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     [defaults synchronize];
 }
 
-- (void)setPushNotificationPayload:(NSDictionary *)pushNotificationPayload
-{
-    _pushNotificationPayload = pushNotificationPayload;
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    if (pushNotificationPayload.count)
-    {
-        [defaults setObject:pushNotificationPayload forKey:_RSDKAnalyticsPushNotificationPayloadKey];
-    }
-    else
-    {
-        [defaults removeObjectForKey:_RSDKAnalyticsPushNotificationPayloadKey];
-    }
-    [defaults synchronize];
-}
-
 #pragma mark - Tracking helpers
 
 + (void)trackEvent:(NSString *)eventName
@@ -274,32 +226,4 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 {
     [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }
-
-#pragma - helpers
-
-- (void)traverseObject:(id)object searchKeys:(NSArray *)searchKeys
-{
-    if ([object isKindOfClass:[NSDictionary class]])
-    {
-        for (NSString *key in searchKeys)
-        {
-            if ([object objectForKey:key])
-            {
-                [_result setObject:[object objectForKey:key] forKey:key];
-            }
-        }
-        for (id child in [object allObjects])
-        {
-            [self traverseObject:child searchKeys:searchKeys];
-        }
-    }
-    else if ([object isKindOfClass:[NSArray class]])
-    {
-        for (id child in object)
-        {
-            [self traverseObject:child searchKeys:searchKeys];
-        }
-    }
-}
-
 @end

@@ -59,6 +59,12 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 @property (nonatomic, nullable, readonly) UIViewController *currentPage;
 
 /*
+ * The identifier is computed from push payload.
+ * It is used for tracking push notification. It is also sent together with a push notification event.
+ */
+@property (nonatomic, nullable, readonly) NSString *pushTrackingIdentifier;
+
+/*
  * Retrieve the shared instance.
  *
  * @return The shared instance.
@@ -70,6 +76,14 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
  * The _swizzled_viewDidAppear is called when the view of an UIViewController is shown.
  */
 - (void)didVisitPage:(UIViewController *)page;
+
+/*
+ * When the remote notification arrives, this method will compute the tracking identifier from the push payload. 
+ * If the application is in foreground this method will emit the push event with the computed tracking identifier.
+ * If the application is not in foreground, this method will store the computed tracking identifier on memory, and set the origin to push type.
+ * The push event will be triggerred with the tracking identifier after the next _rem_visit event is triggerred.
+ */
+- (void)processPushNotificationPayload:(NSDictionary *)userInfo;
 
 @end
 

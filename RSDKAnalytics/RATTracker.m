@@ -490,10 +490,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 break;
         }
     }
-    else if ([eventName isEqualToString:RSDKAnalyticsPushNotifyEventName])
+    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
     {
         etype = eventName;
-        NSString *trackingIdentifier = event.parameters[RSDKAnalyticPushNotifyTrackingIdentifierParameter];
+        NSString *trackingIdentifier = event.parameters[RSDKAnalyticPushNotificationTrackingIdentifierParameter];
         if (trackingIdentifier.length)
         {
             cp[@"push_notify_value"] = trackingIdentifier;

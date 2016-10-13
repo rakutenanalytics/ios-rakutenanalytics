@@ -14,12 +14,12 @@ NSString *const RSDKAnalyticsLoginEventName             = @"_rem_login";
 NSString *const RSDKAnalyticsLogoutEventName            = @"_rem_logout";
 NSString *const RSDKAnalyticsInstallEventName           = @"_rem_install";
 NSString *const RSDKAnalyticsPageVisitEventName         = @"_rem_visit";
-NSString *const RSDKAnalyticsPushNotifyEventName        = @"_rem_push_notify";
+NSString *const RSDKAnalyticsPushNotificationEventName  = @"_rem_push_notify";
 
 
 // Standard event parameters
-NSString *const RSDKAnalyticsLogoutMethodEventParameter              = @"logout_method";
-NSString *const RSDKAnalyticPushNotifyTrackingIdentifierParameter    = @"tracking_id";
+NSString *const RSDKAnalyticsLogoutMethodEventParameter                    = @"logout_method";
+NSString *const RSDKAnalyticPushNotificationTrackingIdentifierParameter    = @"tracking_id";
 
 // Standard event parameter values
 NSString *const RSDKAnalyticsLocalLogoutMethod          = @"local";

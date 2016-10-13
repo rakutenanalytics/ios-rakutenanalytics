@@ -3,9 +3,8 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import "_RSDKAnalyticsLaunchCollector.h"
-#import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
-#import "_RSDKAnalyticsTrackingPageView.h"
+#import "_RSDKAnalyticsHelpers.h"
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -27,7 +26,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
-
+@property (nonatomic, nullable, readwrite, copy) NSString *pushTrackingIdentifier;
 @end
 
 @implementation _RSDKAnalyticsLaunchCollector
@@ -161,10 +160,58 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     // For push event, after the _rem_visit event is triggered, a _rem_push_notify event will be triggered.
     if (_origin == RSDKAnalyticsPushOrigin)
     {
-        [_RSDKAnalyticsExternalCollector.sharedInstance triggerPushEvent];
+        [self triggerPushEvent];
     }
     // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
     _origin = RSDKAnalyticsInternalOrigin;
+}
+
+- (void)triggerPushEvent
+{
+    if (_pushTrackingIdentifier.length)
+    {
+        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPushNotificationEventName parameters:@{RSDKAnalyticPushNotificationTrackingIdentifierParameter:_pushTrackingIdentifier}] track];
+    }
+}
+
+- (void)processPushNotificationPayload:(NSDictionary *)userInfo
+{
+    // Compute push tracking identifier
+    NSMutableDictionary *filterResult = NSMutableDictionary.new;
+    _RSDKAnalyticsTraverseObjectWithSearchKeys(userInfo, @[@"rid", @"notification_id", @"message", @"title"], filterResult);
+
+    NSString *pushTrackingIdentifier = nil;
+    if (_RSDKAnalyticsStringWithObject(filterResult[@"rid"]).length)
+    {
+        pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@",_RSDKAnalyticsStringWithObject(filterResult[@"rid"])];
+    }
+    else if (_RSDKAnalyticsStringWithObject(filterResult[@"notification_id"]).length)
+    {
+        pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@",_RSDKAnalyticsStringWithObject(filterResult[@"notification_id"])];
+    }
+    else if (_RSDKAnalyticsStringWithObject(filterResult[@"message"]).length)
+    {
+        pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(filterResult[@"message"])];
+    }
+    else if (_RSDKAnalyticsStringWithObject(filterResult[@"title"]).length)
+    {
+        pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(filterResult[@"title"])];
+    }
+
+    _pushTrackingIdentifier = pushTrackingIdentifier;
+
+    // If the app is already in foreground, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+    if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
+    {
+        // emit push_event
+        [_RSDKAnalyticsLaunchCollector.sharedInstance triggerPushEvent];
+    }
+    else
+    {
+        // set the origin to push type for the next _rem_visit event
+        _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsPushOrigin;
+    }
 }
 
 - (void)resetToDefaults
