@@ -15,11 +15,19 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
 static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
 
 @interface _RSDKAnalyticsExternalCollector ()
-@property (nonatomic, readwrite, getter=isLoggedIn) BOOL      loggedIn;
-@property (nonatomic, nullable, readwrite, copy) NSString     *trackingIdentifier;
-@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod     loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString     *logoutMethod;
-@property (nonatomic) NSDictionary                            *cardInfoEventMapping;
+/*
+ * Mutable properties
+ */
+@property (nonatomic, readwrite, getter=isLoggedIn) BOOL   loggedIn;
+@property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
+@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod  loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
+
+/*
+ * Private properties
+ */
+@property (nonatomic) NSDictionary                        *cardInfoEventMapping;
+@property (nonatomic) NSDictionary                        *discoverEventMapping;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -42,7 +50,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 - (instancetype)init
 {
     [self doesNotRecognizeSelector:_cmd];
-    return nil;
+    __builtin_unreachable();
 }
 
 - (instancetype)initInstance
@@ -52,6 +60,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         [self addLoginObservers];
         [self addLogoutObservers];
         [self addCardInfoObservers];
+        [self addDiscoverObservers];
         
         [self update];
     }
@@ -101,6 +110,29 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(receiveCardInfoNotification:)
+                                                     name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
+                                                   object:nil];
+    }
+}
+
+- (void)addDiscoverObservers
+{
+    NSString *eventBase = [NSString stringWithFormat:@"%@.discover.", _RSDKAnalyticsNotificationBaseName];
+    
+    _discoverEventMapping =  @{
+                              @"visitPreview"           : _RSDKAnalyticsPrivateEventDiscoverPreviewVisit,
+                              @"tapPreview"             : _RSDKAnalyticsPrivateEventDiscoverPreviewTap,
+                              @"redirectPreview"        : _RSDKAnalyticsPrivateEventDiscoverPreviewRedirect,
+                              @"tapShowMore"            : _RSDKAnalyticsPrivateEventDiscoverPreviewShowMore,
+                              @"visitPage"              : _RSDKAnalyticsPrivateEventDiscoverPageVisit,
+                              @"tapPage"                : _RSDKAnalyticsPrivateEventDiscoverPageTap,
+                              @"redirectPage"           : _RSDKAnalyticsPrivateEventDiscoverPageRedirect
+                              };
+    
+    for (NSString *notification in _discoverEventMapping)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(receiveDiscoverNotification:)
                                                      name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
                                                    object:nil];
     }
@@ -175,6 +207,33 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     [self.class trackEvent:_cardInfoEventMapping[key]];
 }
 
+- (void)receiveDiscoverNotification:(NSNotification *)notification
+{
+    NSString *eventSuffix = [notification.name substringFromIndex:[NSString stringWithFormat:@"%@.discover.", _RSDKAnalyticsNotificationBaseName].length];
+    
+    NSArray *eventsRequiringOnlyIdentifier = @[@"tapPage", @"tapPreview"];
+    NSArray *eventsRequiringIdentifierAndRedirectString = @[@"redirectPage", @"redirectPreview"];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithCapacity:2];
+    
+    if ([eventsRequiringIdentifierAndRedirectString containsObject:eventSuffix] &&
+             [notification.object isKindOfClass:NSDictionary.class] &&
+             [notification.object[@"identifier"] isKindOfClass:NSString.class] &&
+             [notification.object[@"url"] isKindOfClass:NSString.class])
+    {
+        parameters[@"prApp"] = notification.object[@"identifier"];
+        parameters[@"prStoreUrl"] = notification.object[@"url"];
+    }
+    else if ([eventsRequiringOnlyIdentifier containsObject:eventSuffix] &&
+             [notification.object isKindOfClass:NSString.class] &&
+             ((NSString *)notification.object).length)
+    {
+        parameters[@"prApp"] = notification.object;
+    }
+    
+    [self.class trackEvent:_discoverEventMapping[eventSuffix] parameters:parameters.count ? parameters : nil];
+}
+
 #pragma mark - store & retrieve login/logout state & tracking identifier.
 
 - (void)update
@@ -215,7 +274,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     [defaults synchronize];
 }
 
-#pragma mark - Tracking helpers
+#pragma mark - Helpers
 
 + (void)trackEvent:(NSString *)eventName
 {

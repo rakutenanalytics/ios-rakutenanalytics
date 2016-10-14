@@ -499,6 +499,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             cp[@"push_notify_value"] = trackingIdentifier;
         }
     }
+    else if ([eventName hasPrefix:@"_rem_discover_"])
+    {
+        etype = eventName;
+        
+        NSString *prApp = event.parameters[@"prApp"];
+        if (prApp.length)
+        {
+            cp[@"prApp"] = prApp;
+        }
+        
+        NSString *prStoreUrl = event.parameters[@"prStoreUrl"];
+        if (prStoreUrl.length)
+        {
+            cp[@"prStoreUrl"] = prStoreUrl;
+        }
+    }
 
     /*
      * Alpha modules events
