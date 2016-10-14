@@ -6,6 +6,7 @@
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
 #import <RSDKAnalytics/_RSDKAnalyticsPrivateEvents.h>
 #import <RSDKAnalytics/RSDKAnalyticsState.h>
+#import "_RSDKAnalyticsHelpers.h"
 
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RSDKAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
@@ -14,11 +15,11 @@ static NSString *const _RSDKAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.prop
 static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
 
 @interface _RSDKAnalyticsExternalCollector ()
-@property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
-@property (nonatomic, nullable, readwrite, copy) NSString *trackingIdentifier;
-@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod loginMethod;
-@property (nonatomic, nullable, readwrite, copy) NSString *logoutMethod;
-@property (nonatomic) NSDictionary                        *cardInfoEventMapping;
+@property (nonatomic, readwrite, getter=isLoggedIn) BOOL      loggedIn;
+@property (nonatomic, nullable, readwrite, copy) NSString     *trackingIdentifier;
+@property (nonatomic, readwrite) RSDKAnalyticsLoginMethod     loginMethod;
+@property (nonatomic, nullable, readwrite, copy) NSString     *logoutMethod;
+@property (nonatomic) NSDictionary                            *cardInfoEventMapping;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -159,11 +160,11 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.logout.local", _RSDKAnalyticsNotificationBaseName]])
     {
-        params[@"logout_method"] = RSDKAnalyticsLocalLogoutMethod;
+        params[RSDKAnalyticsLogoutMethodEventParameter] = RSDKAnalyticsLocalLogoutMethod;
     }
     else
     {
-        params[@"logout_method"] = RSDKAnalyticsGlobalLogoutMethod;
+        params[RSDKAnalyticsLogoutMethodEventParameter] = RSDKAnalyticsGlobalLogoutMethod;
     }
     [self.class trackEvent:RSDKAnalyticsLogoutEventName parameters:params.copy];
 }
@@ -225,5 +226,4 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 {
     [[RSDKAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }
-
 @end

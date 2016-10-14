@@ -83,12 +83,17 @@
     return ret;
 }
 
-- (void)_swizzled_application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler
+- (void)_swizzled_application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
-    _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsPushOrigin;
-    if ([self respondsToSelector:@selector(_swizzled_application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)])
+
+    if (userInfo)
     {
-        [self _swizzled_application:application handleActionWithIdentifier:identifier forRemoteNotification:userInfo completionHandler:completionHandler];
+        [_RSDKAnalyticsLaunchCollector.sharedInstance processPushNotificationPayload:userInfo];
+    }
+
+    if ([self respondsToSelector:@selector(_swizzled_application:didReceiveRemoteNotification:fetchCompletionHandler:)])
+    {
+        [self _swizzled_application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
     }
 }
 
@@ -111,8 +116,8 @@
                                          targetSelector:@selector(application:continueUserActivity:restorationHandler:)
                                                   class:cls];
 
-        [_RSDKAnalyticsTrackingPageView swizzleSelector:@selector(_swizzled_application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
-                                         targetSelector:@selector(application:handleActionWithIdentifier:forRemoteNotification:completionHandler:)
+        [_RSDKAnalyticsTrackingPageView swizzleSelector:@selector(_swizzled_application:didReceiveRemoteNotification:fetchCompletionHandler:)
+                                         targetSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                                                   class:cls];
     });
 
