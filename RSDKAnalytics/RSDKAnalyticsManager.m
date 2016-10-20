@@ -349,7 +349,7 @@ static RSDKAnalyticsManager *_instance = nil;
 
         if ([tracker processEvent:event state:state])
         {
-            processed = TRUE;
+            processed = YES;
         }
     }
     if (!processed)
