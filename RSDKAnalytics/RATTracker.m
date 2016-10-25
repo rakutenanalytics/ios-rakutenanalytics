@@ -620,7 +620,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             carrierName = carrier.carrierName.copy;
             carrierName = [carrierName substringToIndex:MIN(32ul, carrierName.length)];
 
-            if (!carrierName.length)
+            if (!carrierName.length || !carrier.mobileNetworkCode.length)
             {
                 carrierName = nil;
             }
