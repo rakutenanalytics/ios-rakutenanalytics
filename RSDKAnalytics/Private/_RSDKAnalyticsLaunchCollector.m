@@ -200,9 +200,9 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 
     _pushTrackingIdentifier = pushTrackingIdentifier;
 
-    // If the app is already in foreground, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
+    // If the app is already in foreground before user tap on the notification, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
+    if (state == UIApplicationStateActive)
     {
         // emit push_event
         [_RSDKAnalyticsLaunchCollector.sharedInstance triggerPushEvent];
