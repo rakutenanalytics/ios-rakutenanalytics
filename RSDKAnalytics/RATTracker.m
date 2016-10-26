@@ -523,6 +523,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             cp[@"prStoreUrl"] = prStoreUrl;
         }
     }
+    else if ([eventName hasPrefix:@"ssodialog."])
+    {
+        UIViewController *currentPage = state.currentPage;
+        NSParameterAssert(currentPage);
+        etype = [NSString stringWithFormat:@"%@.%@", NSStringFromClass([currentPage class]), [eventName substringFromIndex:@"ssodialog.".length]];
+    }
 
     /*
      * Alpha modules events
