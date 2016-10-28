@@ -830,14 +830,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     @synchronized(self)
     {
-        // If a background upload has already been scheduled or is underway,
-        // just set uploadRequested to YES and return
-        if (self.uploadTimer.isValid)
-        {
-            self.uploadRequested = YES;
-            return;
-        }
-
         /*
          * REMI-1105: Using NSTimer.scheduledTimer() won't work from the background
          *            queue we're executing on. We could use NSTimer's designated
@@ -848,14 +840,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          */
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            
+            // If a background upload has already been scheduled or is underway,
+            // just set uploadRequested to YES and return
+            if (self.uploadTimer.isValid)
+            {
+                self.uploadRequested = YES;
+                return;
+            }
+            
             self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:60
                                                                 target:self
                                                               selector:@selector(_doBackgroundUpload)
                                                               userInfo:nil
                                                                repeats:NO];
+            self.uploadRequested = NO;
         });
-
-        self.uploadRequested = NO;
     }
 }
 
