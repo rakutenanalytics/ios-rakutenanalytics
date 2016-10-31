@@ -260,7 +260,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
      * The format of event name is .ssodialog.<help|privacypolicy|forgotpassword|register>
      * The prefix .ssodialog is used to determine the events from SSO Dialog.
      */
-    [self.class trackEvent:eventSuffix];
+    [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id":eventSuffix}];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.

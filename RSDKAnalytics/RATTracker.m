@@ -478,13 +478,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         etype = @"pv";
 
         // pgn is the value of the page_id standard parameter, if provided. If not, it's the fully-qualified class name of state.currentPage.
+        NSString *currentPageName = [RATTracker nameWithPage:state.currentPage];
         NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
-        result[_RATPGNParameter] = (pageIdentifier.length) ? pageIdentifier : [RATTracker nameWithPage:state.currentPage];
-    
-        if (state.lastVisitedPage)
+        if ([pageIdentifier hasPrefix:@"ssodialog."])
         {
-            result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
+            result[_RATPGNParameter] = [NSString stringWithFormat:@"%@.%@", currentPageName, [pageIdentifier substringFromIndex:@"ssodialog.".length]];
+            result[_RATREFParameter] = currentPageName;
         }
+        else
+        {
+            result[_RATPGNParameter] = (pageIdentifier.length) ? pageIdentifier : currentPageName;
+            if (state.lastVisitedPage)
+            {
+                result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
+            }
+        }
+
         switch (state.origin)
         {
             case RSDKAnalyticsInternalOrigin:
@@ -522,12 +531,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             cp[@"prStoreUrl"] = prStoreUrl;
         }
-    }
-    else if ([eventName hasPrefix:@"ssodialog."])
-    {
-        UIViewController *currentPage = state.currentPage;
-        NSParameterAssert(currentPage);
-        etype = [NSString stringWithFormat:@"%@.%@", NSStringFromClass([currentPage class]), [eventName substringFromIndex:@"ssodialog.".length]];
     }
 
     /*
