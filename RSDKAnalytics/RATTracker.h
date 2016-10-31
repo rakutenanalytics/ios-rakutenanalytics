@@ -68,6 +68,13 @@ RSDKA_EXPORT @interface RATTracker : NSObject<RSDKAnalyticsTracker>
  */
 - (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters;
 
+/**
+ * This is the URL of RAT server which this module uploads records to.
+ *
+ * @return URL of the server.
+ */
++ (NSURL *)endpointAddress;
+
 @end
 
 /// @name Notifications

@@ -237,6 +237,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@", _RATEventPrefix, eventType] parameters:parameters];
 }
 
++ (NSURL *)endpointAddress
+{
+    return _RSDKAnalyticsEndpointAddress();
+}
+
 + (NSString *)stringWithDate:(NSDate *)date
 {
     /*
