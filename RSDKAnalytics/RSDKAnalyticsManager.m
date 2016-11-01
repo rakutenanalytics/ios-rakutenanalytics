@@ -96,7 +96,7 @@ static RSDKAnalyticsManager *_instance = nil;
 
 + (NSURL*)endpointAddress
 {
-    return _RSDKAnalyticsEndpointAddress();
+    return [RATTracker endpointAddress];
 }
 
 //--------------------------------------------------------------------------
