@@ -828,8 +828,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)_scheduleBackgroundUpload
 {
-    @synchronized(self)
-    {
+    /*
+     * REMI-1105: Using NSTimer.scheduledTimer() won't work from the background
+     *            queue we're executing on. We could use NSTimer's designated
+     *            initializer instead, and manually add the timer to the main
+     *            run loop, but the documentation of NSRunLoop state its methods
+     *            should always be called from the main thread because the class
+     *            is not thread safe.
+     */
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
         // If a background upload has already been scheduled or is underway,
         // just set uploadRequested to YES and return
         if (self.uploadTimer.isValid)
@@ -837,26 +846,14 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             self.uploadRequested = YES;
             return;
         }
-
-        /*
-         * REMI-1105: Using NSTimer.scheduledTimer() won't work from the background
-         *            queue we're executing on. We could use NSTimer's designated
-         *            initializer instead, and manually add the timer to the main
-         *            run loop, but the documentation of NSRunLoop state its methods
-         *            should always be called from the main thread because the class
-         *            is not thread safe.
-         */
-
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:60
-                                                                target:self
-                                                              selector:@selector(_doBackgroundUpload)
-                                                              userInfo:nil
-                                                               repeats:NO];
-        });
-
+        
+        self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:60
+                                                            target:self
+                                                          selector:@selector(_doBackgroundUpload)
+                                                          userInfo:nil
+                                                           repeats:NO];
         self.uploadRequested = NO;
-    }
+    });
 }
 
 //--------------------------------------------------------------------------
