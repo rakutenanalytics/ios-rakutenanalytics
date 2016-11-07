@@ -2,7 +2,7 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
+#import <RSDKAnalytics/RSDKAnalytics.h>
 
 #if DEBUG
 #   define RSDKAnalyticsDebugLog(...) NSLog(@"[RMSDK] Analytics: %@", ([NSString stringWithFormat:__VA_ARGS__]))
@@ -19,4 +19,3 @@ RSDKA_EXPORT NSURL *_RSDKAnalyticsEndpointAddress(void);
 RSDKA_EXPORT NSDictionary *_RSDKAnalyticsSDKComponentMap(void);
 RSDKA_EXPORT NSString *_RSDKAnalyticsStringWithObject(id object);
 RSDKA_EXPORT void _RSDKAnalyticsTraverseObjectWithSearchKeys(id object, NSArray *searchKeys, NSMutableDictionary *result);
-

@@ -4,6 +4,7 @@
  */
 #import "_RSDKAnalyticsHelpers.h"
 #import <RSDKAnalytics/RSDKAnalyticsManager.h>
+#import <objc/runtime.h>
 
 BOOL _RSDKAnalyticsObjects_equal(id objA, id objB)
 {

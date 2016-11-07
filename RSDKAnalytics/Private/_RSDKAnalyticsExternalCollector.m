@@ -155,28 +155,25 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     if ([notification.object isKindOfClass:[NSString class]])
     {
         NSString *trackingIdentifier = [notification object];
-        [_RSDKAnalyticsExternalCollector sharedInstance].trackingIdentifier = trackingIdentifier;
+        self.trackingIdentifier = trackingIdentifier;
     }
     
-    if (![_RSDKAnalyticsExternalCollector sharedInstance].loggedIn)
-    {
-        [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = YES;
-    }
-    
+    self.loggedIn = YES;
+
     // For login we want to provide the logged-in state with each event, and each event tracker can know how the user logged in, so the loginMethod should be persisted.
     
     NSString *base = [NSString stringWithFormat:@"%@.login.", _RSDKAnalyticsNotificationBaseName];
     if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@password", base]])
     {
-        [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsPasswordInputLoginMethod;
+        self.loginMethod = RSDKAnalyticsPasswordInputLoginMethod;
     }
     else if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@one_tap", base]])
     {
-        [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
+        self.loginMethod = RSDKAnalyticsOneTapLoginLoginMethod;
     }
     else
     {
-        [_RSDKAnalyticsExternalCollector sharedInstance].loginMethod = RSDKAnalyticsOtherLoginMethod;
+        self.loginMethod = RSDKAnalyticsOtherLoginMethod;
     }
     [self.class trackEvent:RSDKAnalyticsLoginEventName];
 }
@@ -184,11 +181,8 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 - (void)receiveLogoutNotification:(NSNotification *)notification
 {
     [self update];
-    if ([_RSDKAnalyticsExternalCollector sharedInstance].loggedIn)
-    {
-        [_RSDKAnalyticsExternalCollector sharedInstance].loggedIn = NO;
-    }
-    [_RSDKAnalyticsExternalCollector sharedInstance].trackingIdentifier = nil;
+    self.loggedIn = NO;
+    self.trackingIdentifier = nil;
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if ([notification.name isEqualToString:[NSString stringWithFormat:@"%@.logout.local", _RSDKAnalyticsNotificationBaseName]])
     {
@@ -239,39 +233,49 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 - (void)update
 {
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    _loggedIn = [defaults boolForKey:_RSDKAnalyticsLoginStateKey];
+    _loggedIn           = [defaults boolForKey:_RSDKAnalyticsLoginStateKey];
+    _loginMethod        = [(NSNumber *)[defaults objectForKey:_RSDKAnalyticsLoginMethodKey] unsignedIntegerValue];
     _trackingIdentifier = [defaults stringForKey:_RSDKAnalyticsTrackingIdentifierKey];
 }
 
 - (void)setLoggedIn:(BOOL)loggedIn
 {
-    _loggedIn = loggedIn;
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:loggedIn forKey:_RSDKAnalyticsLoginStateKey];
-    [defaults synchronize];
+    if (loggedIn != _loggedIn)
+    {
+        _loggedIn = loggedIn;
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:loggedIn forKey:_RSDKAnalyticsLoginStateKey];
+        [defaults synchronize];
+    }
 }
 
 - (void)setTrackingIdentifier:(NSString *)trackingIdentifier
 {
-    _trackingIdentifier = trackingIdentifier;
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    if (trackingIdentifier.length)
+    if (!_RSDKAnalyticsObjects_equal(trackingIdentifier, _trackingIdentifier))
     {
-        [defaults setObject:trackingIdentifier forKey:_RSDKAnalyticsTrackingIdentifierKey];
+        _trackingIdentifier = trackingIdentifier.copy;
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        if (trackingIdentifier.length)
+        {
+            [defaults setObject:trackingIdentifier forKey:_RSDKAnalyticsTrackingIdentifierKey];
+        }
+        else
+        {
+            [defaults removeObjectForKey:_RSDKAnalyticsTrackingIdentifierKey];
+        }
+        [defaults synchronize];
     }
-    else
-    {
-        [defaults removeObjectForKey:_RSDKAnalyticsTrackingIdentifierKey];
-    }
-    [defaults synchronize];
 }
 
 - (void)setLoginMethod:(RSDKAnalyticsLoginMethod)loginMethod
 {
-    _loginMethod = loginMethod;
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@(loginMethod) forKey:_RSDKAnalyticsLoginMethodKey];
-    [defaults synchronize];
+    if (loginMethod != _loginMethod)
+    {
+        _loginMethod = loginMethod;
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@(loginMethod) forKey:_RSDKAnalyticsLoginMethodKey];
+        [defaults synchronize];
+    }
 }
 
 #pragma mark - Helpers
