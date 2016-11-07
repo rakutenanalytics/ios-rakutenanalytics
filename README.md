@@ -420,7 +420,13 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-x-x-x x.x.x (????-??-??)
+@subsection analytics-2-8-0 2.8.0 (2016-11-07)
+* [REM-16656](https://jira.rakuten-it.com/jira/browse/REM-16656): Add collection and tracking of Discover events to Analytics module.
+* [REM-14422](https://jira.rakuten-it.com/jira/browse/REM-14422): Add tracking of push notifications to standard event tracking.
+* [REM-17621](https://jira.rakuten-it.com/jira/browse/REM-17621): Fix initial launch events being fired twice.
+* Added the missing endpointAddress property to RATTracker.
+* Fixed issue where Easy ID was being sent even though user was logged out.
+* Fixed the case where a device has no SIM and the carrier name always displayed the wrong carrier name, and the module sent that wrong name to the server.
 * Fixed an incorrect debug message in Xcode console stating that no tracker processed a RAT event, when the RAT tracker did in fact process the event successfully.
 
 @subsection analytics-2-7-1 2.7.1 (2016-10-11)
