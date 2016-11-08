@@ -11,6 +11,10 @@
                     replacing:(SEL)originalSelector
                 onlyIfPresent:(BOOL)onlyIfPresent
 {
+    NSParameterAssert(newSelector);
+    NSParameterAssert(originalSelector);
+    if (!recipient) return NO;
+
     Method newMethod      = class_getInstanceMethod(self,      newSelector);
     Method originalMethod = class_getInstanceMethod(recipient, originalSelector);
     SEL resultSelector    = originalSelector;
