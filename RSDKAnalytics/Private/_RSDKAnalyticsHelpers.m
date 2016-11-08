@@ -5,7 +5,7 @@
 #import "_RSDKAnalyticsHelpers.h"
 #import <RSDKAnalytics/RSDKAnalyticsManager.h>
 
-BOOL _RSDKAnalyticsObjects_equal(id objA, id objB)
+BOOL _RSDKAnalyticsObjectsEqual(id objA, id objB)
 {
     return (!objA && !objB) || (objA && objB && [objA isEqual:objB]);
 }

@@ -251,7 +251,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)setTrackingIdentifier:(NSString *)trackingIdentifier
 {
-    if (!_RSDKAnalyticsObjects_equal(trackingIdentifier, _trackingIdentifier))
+    if (!_RSDKAnalyticsObjectsEqual(trackingIdentifier, _trackingIdentifier))
     {
         _trackingIdentifier = trackingIdentifier.copy;
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];

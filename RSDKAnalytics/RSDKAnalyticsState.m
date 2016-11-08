@@ -88,24 +88,24 @@
     else
     {
         RSDKAnalyticsState *other = object;
-        return _RSDKAnalyticsObjects_equal(self.advertisingIdentifier, other.advertisingIdentifier)
-            && _RSDKAnalyticsObjects_equal(self.sessionIdentifier, other.sessionIdentifier)
-            && _RSDKAnalyticsObjects_equal(self.deviceIdentifier, other.deviceIdentifier)
-            && _RSDKAnalyticsObjects_equal(self.currentVersion, other.currentVersion)
+        return _RSDKAnalyticsObjectsEqual(self.advertisingIdentifier, other.advertisingIdentifier)
+            && _RSDKAnalyticsObjectsEqual(self.sessionIdentifier, other.sessionIdentifier)
+            && _RSDKAnalyticsObjectsEqual(self.deviceIdentifier, other.deviceIdentifier)
+            && _RSDKAnalyticsObjectsEqual(self.currentVersion, other.currentVersion)
             && ([self.lastKnownLocation distanceFromLocation:other.lastKnownLocation] == 0)
-            && _RSDKAnalyticsObjects_equal(self.sessionStartDate, other.sessionStartDate)
+            && _RSDKAnalyticsObjectsEqual(self.sessionStartDate, other.sessionStartDate)
             && (self.isLoggedIn == other.isLoggedIn)
-            && _RSDKAnalyticsObjects_equal(self.userIdentifier, other.userIdentifier)
+            && _RSDKAnalyticsObjectsEqual(self.userIdentifier, other.userIdentifier)
             && (self.loginMethod == other.loginMethod)
             && (self.origin == other.origin)
-            && _RSDKAnalyticsObjects_equal(self.lastVersion, other.lastVersion)
+            && _RSDKAnalyticsObjectsEqual(self.lastVersion, other.lastVersion)
             && (self.lastVersionLaunches == other.lastVersionLaunches)
-            && _RSDKAnalyticsObjects_equal(self.initialLaunchDate, other.initialLaunchDate)
-            && _RSDKAnalyticsObjects_equal(self.installLaunchDate, other.installLaunchDate)
-            && _RSDKAnalyticsObjects_equal(self.lastLaunchDate, other.lastLaunchDate)
-            && _RSDKAnalyticsObjects_equal(self.lastUpdateDate, other.lastUpdateDate)
-            && _RSDKAnalyticsObjects_equal(self.lastVisitedPage, other.lastVisitedPage)
-            && _RSDKAnalyticsObjects_equal(self.currentPage, other.currentPage);
+            && _RSDKAnalyticsObjectsEqual(self.initialLaunchDate, other.initialLaunchDate)
+            && _RSDKAnalyticsObjectsEqual(self.installLaunchDate, other.installLaunchDate)
+            && _RSDKAnalyticsObjectsEqual(self.lastLaunchDate, other.lastLaunchDate)
+            && _RSDKAnalyticsObjectsEqual(self.lastUpdateDate, other.lastUpdateDate)
+            && _RSDKAnalyticsObjectsEqual(self.lastVisitedPage, other.lastVisitedPage)
+            && _RSDKAnalyticsObjectsEqual(self.currentPage, other.currentPage);
     }
 }
 
