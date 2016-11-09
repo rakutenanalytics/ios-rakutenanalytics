@@ -131,6 +131,14 @@ Event name         | Description
 `_rem_login`       | User logged in successfully.
 `_rem_logout`      | User logged out.
 `_rem_install`     | Application version is launched for the first time.
+`_rem_visit`       | A view controller is shown. Application developers can also emit this event manually if they wish so, for instance to track "pages" that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.
+`_rem_push_notify` | A push notification is received. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
+
+##### Push notification tracking identifier
+The value for the `tracking_id` parameter of the `_rem_push_notify` event is computed like this:
+* If the notification payload contains a value named `rid`, `tracking_id` takes the value `rid:<value>`.
+* Else, if the notification payload contains a value named `notification_id`, `tracking_id` takes the value `nid:<value>`.
+* Else, `tracking_id` uses the message or title of the push notification and takes the value `msg:<SHA256(message or title)>`.
 
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RSDKAnalyticsState "state" of the device, and pass them to every registered @ref RSDKAnalyticsTracker "tracker" when asked to process an event.

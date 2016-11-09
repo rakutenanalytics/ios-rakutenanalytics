@@ -86,6 +86,22 @@
 }
 
 - (void)_r_autotrack_application:(UIApplication *)application
+    didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
+{
+    RSDKAnalyticsDebugLog(@"Application did receive remote notification %@", userInfo);
+
+    if (userInfo && !_RSDKAnalyticsNotificationsAreHandledByUNDelegate())
+    {
+        [_RSDKAnalyticsLaunchCollector.sharedInstance processPushNotificationPayload:userInfo
+                                                                          userAction:nil
+                                                                            userText:nil];
+    }
+
+    // If we're executing this, the original method exists
+    [self _r_autotrack_application:application didReceiveRemoteNotification:userInfo];
+}
+
+- (void)_r_autotrack_application:(UIApplication *)application
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
@@ -150,7 +166,12 @@
                                                   toClass:recipient
                                                 replacing:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
                                             onlyIfPresent:YES];
-    
+
+    [_RSDKAnalyticsClassManipulator addMethodWithSelector:@selector(_r_autotrack_application:didReceiveRemoteNotification:)
+                                                  toClass:recipient
+                                                replacing:@selector(application:didReceiveRemoteNotification:)
+                                            onlyIfPresent:YES];
+
     [self _r_autotrack_setApplicationDelegate:delegate];
 }
 

@@ -2,9 +2,11 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import "_RSDKAnalyticsLaunchCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
+#import "_RSDKAnalyticsLaunchCollector.h"
 #import "_RSDKAnalyticsHelpers.h"
+
+#import <CommonCrypto/CommonDigest.h>
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -190,36 +192,39 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
                               userText:(NSString *)userText
 {
     // Compute push tracking identifier
-    NSMutableDictionary *filterResult = NSMutableDictionary.new;
-    _RSDKAnalyticsTraverseObjectWithSearchKeys(userInfo, @[@"rid", @"notification_id", @"message", @"title"], filterResult);
+    NSMutableDictionary *values = NSMutableDictionary.new;
+    _RSDKAnalyticsTraverseObjectWithSearchKeys(userInfo, @[@"rid", @"notification_id", @"message", @"title"], values);
 
-    NSString *pushTrackingIdentifier = nil;
-    if (_RSDKAnalyticsStringWithObject(filterResult[@"rid"]).length)
+    NSString *value;
+    if ((value = _RSDKAnalyticsStringWithObject(values[@"rid"])))
     {
-        pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@",_RSDKAnalyticsStringWithObject(filterResult[@"rid"])];
+        _pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@", value];
     }
-    else if (_RSDKAnalyticsStringWithObject(filterResult[@"notification_id"]).length)
+    else if ((value = _RSDKAnalyticsStringWithObject(values[@"notification_id"])))
     {
-        pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@",_RSDKAnalyticsStringWithObject(filterResult[@"notification_id"])];
+        _pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@", value];
     }
-    else if (_RSDKAnalyticsStringWithObject(filterResult[@"message"]).length)
+    else if ((value = _RSDKAnalyticsStringWithObject(values[@"message"]) ?: _RSDKAnalyticsStringWithObject(values[@"title"])))
     {
-        pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(filterResult[@"message"])];
-    }
-    else if (_RSDKAnalyticsStringWithObject(filterResult[@"title"]).length)
-    {
-        pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(filterResult[@"title"])];
+        NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+        NSMutableData *digest = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
+        CC_SHA256(data.bytes, (CC_LONG) data.length, digest.mutableBytes);
+
+        NSMutableString *hexDigest = [NSMutableString stringWithCapacity:digest.length * 2];
+        const unsigned char *bytes = digest.bytes;
+        for (NSUInteger byteIndex = 0; byteIndex < digest.length; ++byteIndex) {
+            [hexDigest appendFormat:@"%02x", (unsigned int) bytes[byteIndex]];
+        }
+        _pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@", hexDigest];
     }
 
     // TODO: track user action & text
     (void)userAction;
     (void)userText;
 
-    _pushTrackingIdentifier = pushTrackingIdentifier;
-
     // If the app is already in foreground before user tap on the notification, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
-    if (state == UIApplicationStateActive)
+    if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
     {
         // emit push_event
         [self triggerPushEvent];
