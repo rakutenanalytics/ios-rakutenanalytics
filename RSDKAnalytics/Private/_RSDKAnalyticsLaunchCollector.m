@@ -148,13 +148,24 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     }
 }
 
-- (void)didVisitPage:(UIViewController *)page
+- (void)didPresentViewController:(UIViewController *)viewController
 {
+    /*
+     * Only consider as "pages" view controllers that are not known shells used
+     * only for presenting other view controllers:
+     */
+    if ([viewController isKindOfClass:[UINavigationController class]] ||
+        [viewController isKindOfClass:[UISplitViewController class]] ||
+        [viewController isKindOfClass:[UIPageViewController class]])
+    {
+        return;
+    }
+
     if (_currentPage)
     {
-        _RSDKAnalyticsLaunchCollector.sharedInstance.lastVisitedPage = _currentPage;
+        self.lastVisitedPage = _currentPage;
     }
-    _currentPage = page;
+    _currentPage = viewController;
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
 
     // For push event, after the _rem_visit event is triggered, a _rem_push_notify event will be triggered.
@@ -175,6 +186,8 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 }
 
 - (void)processPushNotificationPayload:(NSDictionary *)userInfo
+                            userAction:(NSString *)userAction
+                              userText:(NSString *)userText
 {
     // Compute push tracking identifier
     NSMutableDictionary *filterResult = NSMutableDictionary.new;
@@ -198,6 +211,10 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@",_RSDKAnalyticsStringWithObject(filterResult[@"title"])];
     }
 
+    // TODO: track user action & text
+    (void)userAction;
+    (void)userText;
+
     _pushTrackingIdentifier = pushTrackingIdentifier;
 
     // If the app is already in foreground before user tap on the notification, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
@@ -205,12 +222,12 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     if (state == UIApplicationStateActive)
     {
         // emit push_event
-        [_RSDKAnalyticsLaunchCollector.sharedInstance triggerPushEvent];
+        [self triggerPushEvent];
     }
     else
     {
         // set the origin to push type for the next _rem_visit event
-        _RSDKAnalyticsLaunchCollector.sharedInstance.origin = RSDKAnalyticsPushOrigin;
+        self.origin = RSDKAnalyticsPushOrigin;
     }
 }
 

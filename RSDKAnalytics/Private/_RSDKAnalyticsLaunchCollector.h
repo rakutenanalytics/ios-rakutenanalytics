@@ -75,7 +75,7 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
  * This method is called when the swizzling method _swizzled_viewDidAppear in _RSDKAnalyticsTrackingPageView is called.
  * The _swizzled_viewDidAppear is called when the view of an UIViewController is shown.
  */
-- (void)didVisitPage:(UIViewController *)page;
+- (void)didPresentViewController:(UIViewController *)viewController;
 
 /*
  * When the remote notification arrives, this method will compute the tracking identifier from the push payload. 
@@ -83,7 +83,9 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
  * If the application is not in foreground, this method will store the computed tracking identifier on memory, and set the origin to push type.
  * The push event will be triggerred with the tracking identifier after the next _rem_visit event is triggerred.
  */
-- (void)processPushNotificationPayload:(NSDictionary *)userInfo;
+- (void)processPushNotificationPayload:(NSDictionary *)userInfo
+                            userAction:(NSString *__nullable)userAction
+                              userText:(NSString *__nullable)userText;
 
 @end
 

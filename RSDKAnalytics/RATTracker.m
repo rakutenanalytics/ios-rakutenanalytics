@@ -28,7 +28,7 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
-static NS_INLINE const NSString *const _RATTableName()
+NS_INLINE NSString *const _RATTableName()
 {
     BOOL useStaging = [RSDKAnalyticsManager.sharedInstance shouldUseStagingEnvironment];
     return useStaging ? @"RAT_STAGING" : @"RAKUTEN_ANALYTICS_TABLE";

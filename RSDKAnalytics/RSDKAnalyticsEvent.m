@@ -71,7 +71,7 @@ NSString *const RSDKAnalyticsGlobalLogoutMethod         = @"global";
     else
     {
         RSDKAnalyticsEvent *other = object;
-        return _RSDKAnalyticsObjects_equal(self.name, other.name) && _RSDKAnalyticsObjects_equal(self.parameters, other.parameters);
+        return _RSDKAnalyticsObjectsEqual(self.name, other.name) && _RSDKAnalyticsObjectsEqual(self.parameters, other.parameters);
     }
 }
 
