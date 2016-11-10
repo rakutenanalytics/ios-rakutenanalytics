@@ -217,6 +217,11 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         }
         _pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@", hexDigest];
     }
+    else
+    {
+        // Could not determine a tracking id, so bailing out…
+        return;
+    }
 
     // TODO: track user action & text
     (void)userAction;
