@@ -42,7 +42,7 @@ platform :ios do
     gym(
       output_directory: './artifacts/device',
       workspace: "Samples/Samples.xcworkspace",
-      provisioning_profile_path: 'fastlane/R_Enterprise4th_151111.mobileprovision',
+      provisioning_profile_path: 'fastlane/R_Enterprise5th_161102.mobileprovision',
       codesigning_identity: 'iPhone Distribution',
       export_method: 'enterprise',
       export_team_id: '5J4GVGN58B',
