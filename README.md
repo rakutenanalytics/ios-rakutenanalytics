@@ -132,7 +132,7 @@ Event name         | Description
 `_rem_logout`      | User logged out.
 `_rem_install`     | Application version is launched for the first time.
 `_rem_visit`       | A view controller is shown. Application developers can also emit this event manually if they wish so, for instance to track "pages" that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.
-`_rem_push_notify` | A push notification is received. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
+`_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
 
 ##### Push notification tracking identifier
 The value for the `tracking_id` parameter of the `_rem_push_notify` event is computed like this:
@@ -175,38 +175,6 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
 
 To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
-
-@subsection analytics-rat-example-screen-tracking Screen Tracking
-The following code is an example that can be used to track when a view controller is shown. It uses RAT's standard `pv` event and passes the page name and page type in the `pgn` and `pgt` parameters, respectively.
-
-@note Our next version will automatically track screen transitions for you. Stay tuned!
-
-##### Swift 3
-
-@code{.swift}
-    class ViewController: UIViewController {
-        override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated);
-            RATTracker.shared().event(eventType: "pv", 
-                                     parameters:["pgn": "Main", 
-                                                 "pgt": "top"
-                                                ]).track()
-        }
-    }
-@endcode
-
-##### Objective C
-
-@code{.m}
-    - (void)viewWillAppear:(BOOL)animated {
-        [super viewWillAppear:animated];
-
-        [[RATTracker.sharedInstance eventWithEventType:@"pv" 
-                                            parameters:@{@"pgn": @"Main",
-                                                         @"pgt": @"top"
-                                                        }] track];
-    }
-@endcode
 
 @subsection analytics-rat-example-ui-interactions UI Interaction
 The following code is an example that can be used to track button clicks. It uses RAT's standard `click` event and passes the page name, clicked element's id and goal id in the `pgn`, `target` and `gol` parameters, respectively.
