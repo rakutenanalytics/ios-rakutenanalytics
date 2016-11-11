@@ -396,10 +396,11 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-8-0 2.8.0 (2016-11-07)
-* [REM-16656](https://jira.rakuten-it.com/jira/browse/REM-16656): Add collection and tracking of Discover events to Analytics module.
-* [REM-14422](https://jira.rakuten-it.com/jira/browse/REM-14422): Add tracking of push notifications to standard event tracking.
-* [REM-17621](https://jira.rakuten-it.com/jira/browse/REM-17621): Fix initial launch events being fired twice.
+@subsection analytics-2-8-0 2.8.0 (2016-11-11)
+* [REM-16656](https://jira.rakuten-it.com/jira/browse/REM-16656): Added collection and tracking of Discover events to Analytics module.
+* [REM-14422](https://jira.rakuten-it.com/jira/browse/REM-14422): Added tracking of push notifications to standard event tracking.
+* [REM-17621](https://jira.rakuten-it.com/jira/browse/REM-17621): Fixed initial launch events being fired twice.
+* [REM-17862](https://jira.rakuten-it.com/jira/browse/REM-17862): Fixed issue where AppDelegate swizzling disabled deep linking.
 * Added the missing endpointAddress property to RATTracker.
 * Fixed issue where Easy ID was being sent even though user was logged out.
 * Fixed the case where a device has no SIM and the carrier name always displayed the wrong carrier name, and the module sent that wrong name to the server.
