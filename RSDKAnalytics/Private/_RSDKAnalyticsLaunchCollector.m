@@ -170,11 +170,6 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     _currentPage = viewController;
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
 
-    // For push event, after the _rem_visit event is triggered, a _rem_push_notify event will be triggered.
-    if (_origin == RSDKAnalyticsPushOrigin)
-    {
-        [self triggerPushEvent];
-    }
     // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
     _origin = RSDKAnalyticsInternalOrigin;
 }
@@ -227,14 +222,19 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     (void)userAction;
     (void)userText;
 
-    // If the app is already in foreground before user tap on the notification, emit a _rem_push_notify right away. The next _rem_visit event will not have a push type.
+    /*
+     * If the app is already in foreground (state is active or inactive), emit a _rem_push_notify right away.
+     * And if user tap on the notification, the state of application changes from background to inactive. 
+     * In this case, the origin will be set to push. 
+     * And the next _rem_visit event will have a push type.
+     */
     UIApplicationState state = [UIApplication sharedApplication].applicationState;
     if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
     {
         // emit push_event
         [self triggerPushEvent];
     }
-    else
+    if (state != UIApplicationStateActive)
     {
         // set the origin to push type for the next _rem_visit event
         self.origin = RSDKAnalyticsPushOrigin;
