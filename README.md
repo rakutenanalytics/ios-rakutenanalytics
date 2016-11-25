@@ -396,6 +396,11 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
+@subsection analytics-2-8-1 2.8.1 (2016-11-29)
+* [REM-17889](https://jira.rakuten-it.com/jira/browse/REM-17889): Fixed potential security issue where full push notification message was sent to RAT.
+* [REM-17890](https://jira.rakuten-it.com/jira/browse/REM-17890): Fixed missing event after a push notification while app is active.
+* [REM-17927](https://jira.rakuten-it.com/jira/browse/REM-17927): Fixed missing `ref_type` attribute on `pv` RAT event after a push notification.
+
 @subsection analytics-2-8-0 2.8.0 (2016-11-11)
 * [REM-16656](https://jira.rakuten-it.com/jira/browse/REM-16656): Added collection and tracking of Discover events to Analytics module.
 * [REM-14422](https://jira.rakuten-it.com/jira/browse/REM-14422): Added tracking of push notifications to standard event tracking.

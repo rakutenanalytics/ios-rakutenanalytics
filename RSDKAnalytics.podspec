@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
-  s.version      = "2.8.0"
+  s.version      = "2.8.1"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "Analytics module of the Rakuten Ecosystem Mobile SDK"
   s.homepage     = "https://www.raksdtd.com/"
@@ -35,6 +35,6 @@ Pod::Spec.new do |s|
   }
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
-  s.dependency 'RSDKDeviceInformation', '~> 1.4'
+  s.dependency 'RSDKDeviceInformation', '~> 1.5'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
