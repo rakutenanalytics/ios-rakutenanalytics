@@ -186,36 +186,57 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
                             userAction:(NSString *)userAction
                               userText:(NSString *)userText
 {
-    // Compute push tracking identifier
-    NSMutableDictionary *values = NSMutableDictionary.new;
-    _RSDKAnalyticsTraverseObjectWithSearchKeys(userInfo, @[@"rid", @"notification_id", @"message", @"title"], values);
+    id aps = userInfo[@"aps"];
+    if (![aps isKindOfClass:NSDictionary.class]) aps = nil;
 
-    NSString *value;
-    if ((value = _RSDKAnalyticsStringWithObject(values[@"rid"])))
+    /*
+     * First, look for a string at .rid
+     */
+    NSString *rid = userInfo[@"rid"];
+    if ([rid isKindOfClass:NSString.class])
     {
-        _pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@", value];
-    }
-    else if ((value = _RSDKAnalyticsStringWithObject(values[@"notification_id"])))
-    {
-        _pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@", value];
-    }
-    else if ((value = _RSDKAnalyticsStringWithObject(values[@"message"]) ?: _RSDKAnalyticsStringWithObject(values[@"title"])))
-    {
-        NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
-        NSMutableData *digest = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
-        CC_SHA256(data.bytes, (CC_LONG) data.length, digest.mutableBytes);
-
-        NSMutableString *hexDigest = [NSMutableString stringWithCapacity:digest.length * 2];
-        const unsigned char *bytes = digest.bytes;
-        for (NSUInteger byteIndex = 0; byteIndex < digest.length; ++byteIndex) {
-            [hexDigest appendFormat:@"%02x", (unsigned int) bytes[byteIndex]];
-        }
-        _pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@", hexDigest];
+        _pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@", rid];
     }
     else
     {
-        // Could not determine a tracking id, so bailing out…
-        return;
+        /*
+         * If not found, look for a string at .notification_id
+         */
+        NSString *nid = userInfo[@"notification_id"];
+        if ([nid isKindOfClass:NSString.class])
+        {
+            _pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@", nid];
+        }
+        else
+        {
+            /*
+             * Otherwise, fallback to .aps.alert if that's a string, or, if that's
+             * a dictionary, for either .aps.alert.body or .aps.alert.title
+             */
+            NSString *msg = aps[@"alert"];
+            if ([msg isKindOfClass:NSDictionary.class])
+            {
+                id content = (id)msg;
+                msg = content[@"body"] ?: content[@"title"];
+            }
+
+            if (![msg isKindOfClass:NSString.class])
+            {
+                // Could not determine a tracking id, so bailing out…
+                return;
+            }
+
+            NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
+            NSMutableData *digest = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
+            CC_SHA256(data.bytes, (CC_LONG) data.length, digest.mutableBytes);
+
+            NSMutableString *hexDigest = [NSMutableString stringWithCapacity:digest.length * 2];
+            const unsigned char *bytes = digest.bytes;
+            for (NSUInteger byteIndex = 0; byteIndex < digest.length; ++byteIndex) {
+                [hexDigest appendFormat:@"%02x", (unsigned int) bytes[byteIndex]];
+            }
+            _pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@", hexDigest];
+        }
     }
 
     // TODO: track user action & text
