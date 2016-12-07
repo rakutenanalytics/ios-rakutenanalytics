@@ -64,6 +64,8 @@
                                                     replacing:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
                                                 onlyIfPresent:YES];
     }
+    
+    [self _r_autotrack_setUserNotificationCenterDelegate:delegate];
 }
 
 #pragma mark -
