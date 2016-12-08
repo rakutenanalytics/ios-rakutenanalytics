@@ -19,13 +19,16 @@ platform :ios do
       scheme: 'Tests',
       device: 'REM SDK Unit Tests',
       code_coverage: true)
-    # Doesn't work for now
-    #xcov(
-    #  include_test_targets: true,
-    #  project: 'Pods/Pods.xcodeproj',
-    #  derived_data_path: "#{Dir.pwd}/../build/RSDKAnalytics",
-    #  scheme: 'RSDKAnalytics',
-    #  output_directory: './artifacts/coverage')
+    
+    slather(
+      output_directory: './artifacts/coverage',
+      scheme: 'Tests',
+      cobertura_xml: true,
+      proj: './CI.xcodeproj',
+      workspace: './CI.xcworkspace',
+      binary_basename: 'RSDKAnalytics',
+      ignore: '../*')
+
   end
 
   desc "Build a sample"
