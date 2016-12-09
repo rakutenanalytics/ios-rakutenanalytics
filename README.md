@@ -140,6 +140,14 @@ The value for the `tracking_id` parameter of the `_rem_push_notify` event is com
 * Else, if the notification payload contains a value named `notification_id`, `tracking_id` takes the value `nid:<value>`.
 * Else, `tracking_id` uses the message or title of the push notification and takes the value `msg:<SHA256(message or title)>`.
 
+#### Requirements
+The below table shows the required components of each standard event which is tracked automatically by the **analytics** module.
+
+Event name         | Required components
+-------------------|-------------------
+`_rem_login`       | **authentication** module (3.10.1 or later).
+`_rem_logout`      | **authentication** module (3.10.1 or later).
+
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RSDKAnalyticsState "state" of the device, and pass them to every registered @ref RSDKAnalyticsTracker "tracker" when asked to process an event.
 
