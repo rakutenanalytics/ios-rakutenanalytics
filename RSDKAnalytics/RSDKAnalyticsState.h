@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
  * This type is exposed as **AnalyticsManager.State.LoginMethod**.
  *
  * @see RSDKAnalyticsState.loginMethod
+ * @enum RSDKAnalyticsLoginMethod
+ * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsLoginMethod)
 {
@@ -54,6 +56,8 @@ typedef NS_ENUM(NSUInteger, RSDKAnalyticsLoginMethod)
  * This type is exposed as **AnalyticsManager.State.Origin**.
  *
  * @see RSDKAnalyticsState.origin
+ * @enum RSDKAnalyticsOrigin
+ * @ingroup AnalyticsConstants
  */
 typedef NS_ENUM(NSUInteger, RSDKAnalyticsOrigin)
 {
