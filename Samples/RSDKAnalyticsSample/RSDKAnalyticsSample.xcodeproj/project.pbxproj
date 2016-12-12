@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -127,7 +127,8 @@
 				ORGANIZATIONNAME = "Rakuten, Inc.";
 				TargetAttributes = {
 					697AAE16192DA4FA006EF197 = {
-						DevelopmentTeam = 5J4GVGN58B;
+						DevelopmentTeam = 87CT3T3CK2;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -301,10 +302,14 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1.1612.12022137;
+				DEVELOPMENT_TEAM = 87CT3T3CK2;
 				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.rakuten.ios.sdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "515cba76-16b3-4f83-ab47-ebc5b0c9f08b";
+				PROVISIONING_PROFILE_SPECIFIER = Rakuten_Dev151211;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WRAPPER_EXTENSION = app;
@@ -320,10 +325,14 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CURRENT_PROJECT_VERSION = 1.1612.12022137;
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
 				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "jp.co.rakuten.ios.sdk.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9f416027-7f7b-4705-ac06-27c26c6c37bc";
+				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise5th_161102;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				WRAPPER_EXTENSION = app;

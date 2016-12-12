@@ -7,6 +7,7 @@ platform :ios do
   before_all do
     get_changelog_from_git
     get_version_from_date
+    xcversion(version: "~> 8.0")
   end
 
   desc "Run unit tests"
@@ -43,9 +44,9 @@ platform :ios do
 
     # Build sample
     gym(
+      configuration: "Release",
       output_directory: './artifacts/device',
       workspace: "Samples/Samples.xcworkspace",
-      provisioning_profile_path: 'fastlane/R_Enterprise5th_161102.mobileprovision',
       codesigning_identity: 'iPhone Distribution',
       export_method: 'enterprise',
       export_team_id: '5J4GVGN58B',
