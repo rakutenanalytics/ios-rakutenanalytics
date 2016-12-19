@@ -6,7 +6,8 @@ use_frameworks!
 
 target 'Tests' do
   pod 'RSDKAnalytics', :path => './RSDKAnalytics.podspec'
-  pod "OCMock"
+  pod 'OCMock'
+  pod 'OHHTTPStubs'
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
