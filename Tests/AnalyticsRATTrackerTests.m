@@ -35,6 +35,8 @@
 @property (nonatomic) int64_t  accountIdentifier;
 @property (nonatomic) int64_t  applicationIdentifier;
 @property (nonatomic) NSTimer *uploadTimer;
+
+- (void)_doBackgroundUpload;
 @end
 
 @interface AnalyticsRATTrackerTests : XCTestCase
@@ -145,7 +147,7 @@
 {
     id classMock = OCMClassMock([_RSDKAnalyticsDatabase class]);
     
-    OCMStub([classMock insertBlob:[OCMArg any] into:[OCMArg any] limit:5000u then:[OCMArg any]])._andCall(self, @selector(stubInsertBlob:into:limit:then:));
+    OCMStub([classMock insertBlob:[OCMArg any] into:[OCMArg any] limit:5000u then:[OCMArg any]]).andCall(self, @selector(stubInsertBlob:into:limit:then:));
     
     XCTAssertTrue([_tracker processEvent:event state:state ?: [self defaultState]]);
     XCTAssertTrue([_jsonDataObject[key] isEqualToString:value]);
