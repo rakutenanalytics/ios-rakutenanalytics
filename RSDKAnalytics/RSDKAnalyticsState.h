@@ -210,7 +210,7 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RSDKAnalyticsManager.State) @interface RSDKAnalyt
  * @param sessionIdentifier Globally-unique string updated every time a new session starts.
  * @param deviceIdentifier  Globally-unique string identifying the current device across all Rakuten applications.
  *
- * @return New RSDKAnalyticsEvent object.
+ * @return New RSDKAnalyticsState object.
  */
 - (instancetype)initWithSessionIdentifier:(NSString *)sessionIdentifier
                          deviceIdentifier:(NSString *)deviceIdentifier NS_DESIGNATED_INITIALIZER;
