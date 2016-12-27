@@ -6,10 +6,10 @@
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import <AdSupport/ASIdentifierManager.h>
 
-@interface RSDKAnalyticsRecordTests : XCTestCase
+@interface AnalyticsRecordTests : XCTestCase
 @end
 
-@implementation RSDKAnalyticsRecordTests
+@implementation AnalyticsRecordTests
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
