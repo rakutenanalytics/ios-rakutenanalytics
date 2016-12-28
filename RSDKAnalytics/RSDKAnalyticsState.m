@@ -59,7 +59,6 @@
          ^ self.deviceIdentifier.hash
          ^ self.currentVersion.hash
          ^ self.advertisingIdentifier.hash
-         ^ self.lastKnownLocation.hash
          ^ self.sessionStartDate.hash
          ^ self.isLoggedIn
          ^ self.userIdentifier.hash

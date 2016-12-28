@@ -82,6 +82,16 @@
     return state;
 }
 
+- (void)testInitThrows
+{
+    SEL initSelector = @selector(init);
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    XCTAssertThrowsSpecificNamed([RSDKAnalyticsState.alloc performSelector:initSelector], NSException, NSInvalidArgumentException);
+#pragma clang diagnostic pop
+}
+
 - (void)testAnalyticsStateWithoutSetting
 {
     id mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
@@ -267,6 +277,21 @@
     XCTAssertTrue(day == 11);
 
     XCTAssertTrue(copy.lastVersionLaunches == 10);
+}
+
+- (void)testEquality
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = state.copy;
+    XCTAssertTrue([state isEqual:state]);
+    XCTAssertTrue([state isEqual:other]);
+    XCTAssertEqual(state.hash, state.hash);
+    XCTAssertEqual(state.hash, other.hash);
+    XCTAssertNotEqual(state, other);
+    other.userIdentifier = @"other";
+    XCTAssertNotEqual(state.hash, other.hash);
+    XCTAssertNotEqualObjects(state, other);
+    XCTAssertNotEqualObjects(state, UIView.new);
 }
 
 @end

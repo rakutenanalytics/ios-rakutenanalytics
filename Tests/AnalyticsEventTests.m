@@ -28,6 +28,16 @@
     return event;
 }
 
+- (void)testInitThrows
+{
+    SEL initSelector = @selector(init);
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    XCTAssertThrowsSpecificNamed([RSDKAnalyticsEvent.alloc performSelector:initSelector], NSException, NSInvalidArgumentException);
+#pragma clang diagnostic pop
+}
+
 - (void)testAnalyticsEventDefault
 {
     RSDKAnalyticsEvent *event = [self defaultEvent];
@@ -51,9 +61,15 @@
 {
     RSDKAnalyticsEvent *event = [self defaultEvent];
     RSDKAnalyticsEvent *anotherEvent = [self defaultEvent];
-    XCTAssertEqual(event, event);
+    XCTAssertTrue([event isEqual:event]);
+    XCTAssertTrue([event isEqual:anotherEvent]);
     XCTAssertNotEqual(event, anotherEvent);
     XCTAssertEqualObjects(event, anotherEvent);
+    XCTAssertEqual(event.hash, event.hash);
+    XCTAssertEqual(event.hash, anotherEvent.hash);
+    [anotherEvent setValue:@"another" forKey:@"name"];
+    XCTAssertNotEqual(event.hash, anotherEvent.hash);
+    XCTAssertNotEqualObjects(event, anotherEvent);
     XCTAssertNotEqualObjects(event, UIView.new);
 }
 
@@ -65,6 +81,26 @@
     RSDKAnalyticsEvent *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
     XCTAssertEqualObjects(unarchived, event);
+}
+
+- (void)testSecureCoding
+{
+    RSDKAnalyticsEvent *event = [self defaultEvent];
+    
+    NSMutableData *data = [NSMutableData data];
+    NSKeyedArchiver *secureEncoder = [NSKeyedArchiver.alloc initForWritingWithMutableData:data];
+    secureEncoder.requiresSecureCoding = YES;
+    
+    NSString *key = @"event";
+    [secureEncoder encodeObject:event forKey:key];
+    [secureEncoder finishEncoding];
+    
+    NSKeyedUnarchiver *secureDecoder = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    secureDecoder.requiresSecureCoding = YES;
+    RSDKAnalyticsEvent *decodedEvent = [secureDecoder decodeObjectOfClass:[RSDKAnalyticsEvent class] forKey:key];
+    [secureDecoder finishDecoding];
+    
+    XCTAssertEqualObjects(event, decodedEvent);
 }
 
 - (void)testTracking

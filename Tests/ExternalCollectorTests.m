@@ -37,12 +37,7 @@
 
 - (void)testInitThrows
 {
-    SEL initSelector = @selector(init);
-    
-#pragma clang diagnostic push 
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    XCTAssertThrowsSpecificNamed([_RSDKAnalyticsExternalCollector.sharedInstance performSelector:initSelector], NSException, NSInvalidArgumentException);
-#pragma clang diagnostic pop    
+    XCTAssertThrowsSpecificNamed([_RSDKAnalyticsExternalCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
 - (void) testDealloc
