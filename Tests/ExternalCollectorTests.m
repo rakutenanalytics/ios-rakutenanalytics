@@ -40,17 +40,6 @@
     XCTAssertThrowsSpecificNamed([_RSDKAnalyticsExternalCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
-- (void) testDealloc
-{
-    __weak _RSDKAnalyticsExternalCollector *weakCollector;
-    @autoreleasepool
-    {
-        _RSDKAnalyticsExternalCollector *collector = [_RSDKAnalyticsExternalCollector.alloc initInstance];
-        weakCollector = collector;
-    }
-    XCTAssertNil(weakCollector);
-}
-
 /* Note:
  * The ExternalCollector singleton is initialised and observers are added when the AnalyticsManager's
  * `load` class method is called therefore it isn't possible to 'spy' on NSNotification's

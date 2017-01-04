@@ -28,16 +28,6 @@
     return event;
 }
 
-- (void)testInitThrows
-{
-    SEL initSelector = @selector(init);
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    XCTAssertThrowsSpecificNamed([RSDKAnalyticsEvent.alloc performSelector:initSelector], NSException, NSInvalidArgumentException);
-#pragma clang diagnostic pop
-}
-
 - (void)testAnalyticsEventDefault
 {
     RSDKAnalyticsEvent *event = [self defaultEvent];
@@ -48,7 +38,7 @@
     XCTAssertTrue([event.parameters[@"param1"] isEqualToString:@"value1"]);
 }
 
-- (void)testCopy
+- (void)testCopiesAreEqual
 {
     RSDKAnalyticsEvent *event = [self defaultEvent];
     RSDKAnalyticsEvent *copy = [event copy];
@@ -57,20 +47,40 @@
     XCTAssertNotEqual(event, copy);
 }
 
-- (void)testEquality
+- (void)testEventsWithSamePropertiesAreEqual
 {
     RSDKAnalyticsEvent *event = [self defaultEvent];
-    RSDKAnalyticsEvent *anotherEvent = [self defaultEvent];
-    XCTAssertTrue([event isEqual:event]);
-    XCTAssertTrue([event isEqual:anotherEvent]);
-    XCTAssertNotEqual(event, anotherEvent);
-    XCTAssertEqualObjects(event, anotherEvent);
-    XCTAssertEqual(event.hash, event.hash);
-    XCTAssertEqual(event.hash, anotherEvent.hash);
-    [anotherEvent setValue:@"another" forKey:@"name"];
-    XCTAssertNotEqual(event.hash, anotherEvent.hash);
-    XCTAssertNotEqualObjects(event, anotherEvent);
+    RSDKAnalyticsEvent *other = [self defaultEvent];
+    XCTAssertEqualObjects(event, other);
+}
+
+- (void)testEventsWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsEvent *event = [self defaultEvent];
+    RSDKAnalyticsEvent *other = [RSDKAnalyticsEvent.alloc initWithName:_RATGenericEventName parameters:@{@"param1":@"value2"}];
+    XCTAssertNotEqualObjects(event, other);
+}
+
+- (void)testEventIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsEvent *event = [self defaultEvent];
     XCTAssertNotEqualObjects(event, UIView.new);
+}
+
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsEvent *event = [self defaultEvent];
+    RSDKAnalyticsEvent *other = [self defaultEvent];
+    XCTAssertEqualObjects(event, other);
+    XCTAssertEqual(event.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenObjectsNotEqual
+{
+    RSDKAnalyticsEvent *event = [self defaultEvent];
+    RSDKAnalyticsEvent *other = [RSDKAnalyticsEvent.alloc initWithName:_RATGenericEventName parameters:@{@"param1":@"value1", @"param2":@"value2"}];
+    XCTAssertNotEqualObjects(event, other);
+    XCTAssertNotEqual(event.hash, other.hash);
 }
 
 - (void)testCoding
@@ -81,6 +91,8 @@
     RSDKAnalyticsEvent *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
     
     XCTAssertEqualObjects(unarchived, event);
+    XCTAssertEqualObjects(unarchived.name, event.name);
+    XCTAssertEqualObjects(unarchived.parameters, event.parameters);
 }
 
 - (void)testSecureCoding
@@ -101,6 +113,8 @@
     [secureDecoder finishDecoding];
     
     XCTAssertEqualObjects(event, decodedEvent);
+    XCTAssertEqualObjects(event.name, decodedEvent.name);
+    XCTAssertEqualObjects(event.parameters, event.parameters);
 }
 
 - (void)testTracking

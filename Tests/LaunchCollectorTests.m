@@ -60,17 +60,6 @@
     XCTAssertThrowsSpecificNamed([_RSDKAnalyticsLaunchCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
-- (void) testDealloc
-{
-    __weak _RSDKAnalyticsLaunchCollector *weakCollector;
-    @autoreleasepool
-    {
-        _RSDKAnalyticsLaunchCollector *collector = [_RSDKAnalyticsLaunchCollector.alloc initInstance];
-        weakCollector = collector;
-    }
-    XCTAssertNil(weakCollector);
-}
-
 - (void)testInitialLaunch
 {
     _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;

@@ -41,33 +41,51 @@
     XCTAssertNil(item.tags);
 }
 
-- (void)testEquality
+- (void)testItemsWithSamePropertiesAreEqual
 {
     RSDKAnalyticsItem *item = [self defaultItem];
     RSDKAnalyticsItem *other = [self defaultItem];
-    XCTAssertTrue([item isEqual:item]);
-    XCTAssertTrue([item isEqual:other]);
-    XCTAssertNotEqual(item, other);
     XCTAssertEqualObjects(item, other);
-    XCTAssertEqual(item.hash, item.hash);
-    XCTAssertEqual(item.hash, other.hash);
+}
+
+- (void)testItemsWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsItem *item = [self defaultItem];
+    RSDKAnalyticsItem *other = [self defaultItem];
     other.identifier = @"other";
-    other.quantity = 100;
-    XCTAssertNotEqual(item.hash, other.hash);
     XCTAssertNotEqualObjects(item, other);
+}
+
+- (void)testItemIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsItem *item = [self defaultItem];
     XCTAssertNotEqualObjects(item, UIView.new);
 }
 
-- (void)testCopy
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsItem *item = [self defaultItem];
+    RSDKAnalyticsItem *other = [self defaultItem];
+    XCTAssertEqualObjects(item, other);
+    XCTAssertEqual(item.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenObjectsNotEqual
+{
+    RSDKAnalyticsItem *item = [self defaultItem];
+    RSDKAnalyticsItem *other = [self defaultItem];
+    other.identifier = @"other";
+    XCTAssertNotEqualObjects(item, other);
+    XCTAssertNotEqual(item.hash, other.hash);
+}
+
+- (void)testCopiesAreEqual
 {
     RSDKAnalyticsItem *item = [self defaultItem];
     RSDKAnalyticsItem *copy = item.copy;
     
     XCTAssertEqualObjects(item, copy);
     XCTAssertNotEqual(item, copy);
-    
-    item.quantity = 100;
-    XCTAssertNotEqualObjects(item, copy);
 }
 
 - (void)testCoding
@@ -103,7 +121,8 @@
 - (void)testDescription
 {
     RSDKAnalyticsItem *item = [self defaultItem];
-    XCTAssertTrue([item.description containsString:@"quantity = 5"]);
+    item.quantity = 100;
+    XCTAssertTrue([item.description containsString:@"quantity = 100"]);
 }
 
 #pragma clang diagnostic pop

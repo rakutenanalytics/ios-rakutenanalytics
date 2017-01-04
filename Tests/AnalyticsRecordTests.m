@@ -250,19 +250,50 @@
     XCTAssertNotEqualObjects(record, copy);
 }
 
-- (void)testEquality
+- (void)testCopiesAreEqual
 {
     RSDKAnalyticsRecord *record = [self defaultRecord];
-    RSDKAnalyticsRecord *anotherRecord = [self defaultRecord];
-    XCTAssertTrue([record isEqual:record]);
-    XCTAssertTrue([record isEqual:anotherRecord]);
-    XCTAssertEqual(record.hash, record.hash);
-    XCTAssertEqual(record.hash, anotherRecord.hash);
-    XCTAssertNotEqual(record, anotherRecord);
-    anotherRecord.userId = @"another user";
-    XCTAssertNotEqual(record.hash, anotherRecord.hash);
-    XCTAssertNotEqualObjects(record, anotherRecord);
+    RSDKAnalyticsRecord *copy = record.copy;
+    
+    XCTAssertEqualObjects(record, copy);
+    XCTAssertNotEqual(record, copy);
+}
+
+- (void)testRecordsWithSamePropertiesAreEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    XCTAssertEqualObjects(record, other);
+}
+
+- (void)testRecordsWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    other.serviceId = 10;
+    XCTAssertNotEqualObjects(record, other);
+}
+
+- (void)testRecordIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
     XCTAssertNotEqualObjects(record, UIView.new);
+}
+
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    XCTAssertEqualObjects(record, other);
+    XCTAssertEqual(record.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenObjectsNotEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:1];
+    XCTAssertNotEqualObjects(record, other);
+    XCTAssertNotEqual(record.hash, other.hash);
 }
 
 #pragma clang diagnostic pop

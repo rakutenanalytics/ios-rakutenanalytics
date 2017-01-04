@@ -82,16 +82,6 @@
     return state;
 }
 
-- (void)testInitThrows
-{
-    SEL initSelector = @selector(init);
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    XCTAssertThrowsSpecificNamed([RSDKAnalyticsState.alloc performSelector:initSelector], NSException, NSInvalidArgumentException);
-#pragma clang diagnostic pop
-}
-
 - (void)testAnalyticsStateWithoutSetting
 {
     id mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
@@ -279,19 +269,42 @@
     XCTAssertTrue(copy.lastVersionLaunches == 10);
 }
 
-- (void)testEquality
+- (void)testStatesWithSamePropertiesAreEqual
 {
     RSDKAnalyticsState *state = [self defaultState];
-    RSDKAnalyticsState *other = state.copy;
-    XCTAssertTrue([state isEqual:state]);
-    XCTAssertTrue([state isEqual:other]);
-    XCTAssertEqual(state.hash, state.hash);
-    XCTAssertEqual(state.hash, other.hash);
-    XCTAssertNotEqual(state, other);
-    other.userIdentifier = @"other";
-    XCTAssertNotEqual(state.hash, other.hash);
+    RSDKAnalyticsState *other = [self defaultState];
+    XCTAssertEqualObjects(state, other);
+}
+
+- (void)testStatesWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                                   deviceIdentifier:@"differentDeviceId"];
     XCTAssertNotEqualObjects(state, other);
+}
+
+- (void)testStateIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsState *state = [self defaultState];
     XCTAssertNotEqualObjects(state, UIView.new);
+}
+
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = [self defaultState];
+    XCTAssertEqualObjects(state, other);
+    XCTAssertEqual(state.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenPropertiesAreDifferent
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                                   deviceIdentifier:@"differentDeviceId"];
+    XCTAssertNotEqualObjects(state, other);
+    XCTAssertNotEqual(state.hash, other.hash);
 }
 
 @end
