@@ -59,7 +59,9 @@
          ^ self.deviceIdentifier.hash
          ^ self.currentVersion.hash
          ^ self.advertisingIdentifier.hash
-         ^ self.lastKnownLocation.hash
+         // CLLocation's hash method gives different hash values for objects with identical properties so use a
+         // hash of its string description instead
+         ^ self.lastKnownLocation.description.hash
          ^ self.sessionStartDate.hash
          ^ self.isLoggedIn
          ^ self.userIdentifier.hash

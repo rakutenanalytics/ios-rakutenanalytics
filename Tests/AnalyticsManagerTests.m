@@ -4,14 +4,13 @@
  */
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsHelpers.h"
+#import <RSDKDeviceInformation/RSDKDeviceInformation.h>
+#import <OCMock/OCMock.h>
 
 @interface TestTracker : NSObject<RSDKAnalyticsTracker>
-
 @end
 
 @implementation TestTracker
-
 - (instancetype)init
 {
     if (self = [super init])
@@ -25,7 +24,15 @@
 {
     return YES;
 }
+@end
 
+@interface RSDKAnalyticsManager ()
+@property (nonatomic, nullable, copy) NSString *deviceIdentifier;
+@property (nonatomic) BOOL locationManagerIsUpdating;
+@property (nonatomic, strong) CLLocationManager *locationManager;
+
+- (instancetype)initSharedInstance;
+- (void)_startStopMonitoringLocationIfNeeded;
 @end
 
 @interface AnalyticsManagerTests : XCTestCase
@@ -37,9 +44,20 @@
 
 @implementation AnalyticsManagerTests
 
-- (void)setUp {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+- (void)setUp
+{
     [super setUp];
     _manager = RSDKAnalyticsManager.sharedInstance;
+    _manager.deviceIdentifier = @"deviceIdentifier";
+    _manager.shouldTrackLastKnownLocation = NO;
+}
+
+- (void)testInitThrows
+{
+    XCTAssertThrowsSpecificNamed([RSDKAnalyticsManager.alloc init], NSException, NSInvalidArgumentException);
 }
 
 - (void)testAnalyticsManagerSharedInstanceIsNotNil
@@ -62,21 +80,82 @@
     XCTAssertNoThrow([_manager addTracker:TestTracker.new]);
 }
 
-- (void)testFilterPushPayload
+- (void)testSpoolRecord
 {
-    NSDictionary *dict = @{@"A1":@{@"A2":@"a2"},
-                           @"B1":@{@"B2":@{@"B3":@"b3",
-                                           @"B4":@"b4",
-                                           @"B5":@{@"B6":@"b6",
-                                                   @"B7":@"b7"}}},
-                           @"C1":@"c1"};
-
-    NSMutableDictionary *filterResult = NSMutableDictionary.new;
-    _RSDKAnalyticsTraverseObjectWithSearchKeys(dict, @[@"B3", @"A2", @"A3", @"B7"], filterResult);
-    XCTAssertTrue([filterResult[@"A2"] isEqualToString:@"a2"]);
-    XCTAssertTrue([filterResult[@"B3"] isEqualToString:@"b3"]);
-    XCTAssertTrue([filterResult[@"B7"] isEqualToString:@"b7"]);
-    XCTAssertNil(filterResult[@"A3"]);
+    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0
+                                                                 serviceId:0];
+    
+    // The RSDKAnalyticsEvent created as a result of spooling the record will
+    // be named "rat.<eventType>"
+    record.eventType = @"etype";
+    
+    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    
+    [RSDKAnalyticsManager spoolRecord:record];
+    
+    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        RSDKAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event);
+        BOOL expected = ([event.name isEqualToString:@"rat.etype"]);
+        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
+        return expected;
+    }]]);
+    [mockManager stopMocking];
 }
+
+- (void)testEndpointAddress
+{
+    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
+    XCTAssertTrue([[RSDKAnalyticsManager endpointAddress].absoluteString isEqualToString:@"https://stg.rat.rakuten.co.jp/"]);
+}
+
+- (void)testProcessMethodThrowsWhenDeviceIdentifierIsNil
+{
+    _manager.deviceIdentifier = nil;
+    
+    id deviceInformationMock = OCMClassMock(RSDKDeviceInformation.class);
+    OCMStub([deviceInformationMock uniqueDeviceIdentifier]).andReturn(nil);
+    
+    XCTAssertThrows([_manager process:[RSDKAnalyticsEvent.alloc initWithName:@"event" parameters:nil]]);
+    
+    [deviceInformationMock stopMocking];
+}
+
+- (void)testStartMonitoringLocation
+{
+    id locationManagerMock = OCMClassMock(CLLocationManager.class);
+    
+    OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
+    
+    [_manager setLocationTrackingEnabled:YES];
+    
+    XCTAssertTrue(_manager.locationManagerIsUpdating);
+    
+    [locationManagerMock stopMocking];
+}
+
+- (void)testStopMonitoringLocation
+{
+    id locationManagerMock = OCMClassMock(CLLocationManager.class);
+    
+    OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
+    
+    _manager.shouldTrackLastKnownLocation = YES;
+    
+    [locationManagerMock stopMocking];
+    
+    _manager.shouldTrackLastKnownLocation = NO;
+    
+    XCTAssertFalse(_manager.locationManagerIsUpdating);
+}
+
+- (void)testStopMonitoringLocationOnResignActive
+{
+    _manager.locationManagerIsUpdating = YES;
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationWillResignActiveNotification object:self];
+    XCTAssertFalse(_manager.locationManagerIsUpdating);
+}
+
+#pragma clang diagnostic pop
 
 @end

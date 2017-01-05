@@ -269,4 +269,42 @@
     XCTAssertTrue(copy.lastVersionLaunches == 10);
 }
 
+- (void)testStatesWithSamePropertiesAreEqual
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = state.copy;
+    XCTAssertEqualObjects(state, other);
+}
+
+- (void)testStatesWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                                   deviceIdentifier:@"differentDeviceId"];
+    XCTAssertNotEqualObjects(state, other);
+}
+
+- (void)testStateIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    XCTAssertNotEqualObjects(state, UIView.new);
+}
+
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = state.copy;
+    XCTAssertEqualObjects(state, other);
+    XCTAssertEqual(state.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenPropertiesAreDifferent
+{
+    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *other = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                                   deviceIdentifier:@"differentDeviceId"];
+    XCTAssertNotEqualObjects(state, other);
+    XCTAssertNotEqual(state.hash, other.hash);
+}
+
 @end

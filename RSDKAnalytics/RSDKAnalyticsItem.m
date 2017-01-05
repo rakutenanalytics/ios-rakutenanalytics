@@ -3,6 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalytics.h>
+#import "_RSDKAnalyticsHelpers.h"
 
 @implementation RSDKAnalyticsItem
 
@@ -11,6 +12,35 @@
     RSDKAnalyticsItem *item = RSDKAnalyticsItem.new;
     item.identifier = identifier;
     return item;
+}
+
+#pragma mark - NSObject
+
+- (NSUInteger)hash
+{
+    return self.identifier.hash ^ self.genre.hash ^ self.variation.hash ^ self.tags.hash ^ self.quantity;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
+        return YES;
+    }
+    else if (![object isMemberOfClass:[self class]] || (self.hash != [object hash]))
+    {
+        return NO;
+    }
+    else
+    {
+        RSDKAnalyticsItem *other = object;
+        return _RSDKAnalyticsObjectsEqual(self.identifier, other.identifier) &&
+               _RSDKAnalyticsObjectsEqual(self.genre, other.genre) &&
+               _RSDKAnalyticsObjectsEqual(self.variation, other.variation) &&
+               _RSDKAnalyticsObjectsEqual(self.tags, other.tags) &&
+               self.quantity == other.quantity &&
+               self.price == other.price;
+    }
 }
 
 #pragma mark - NSSecureCoding

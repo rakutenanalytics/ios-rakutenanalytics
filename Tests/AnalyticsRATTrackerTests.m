@@ -507,11 +507,13 @@
                                                            repeats:NO];
     
     [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
-
-        OCMVerify([notificationCenterSpy postNotificationName:RATUploadFailureNotification
-                                                       object:OCMOCK_ANY
-                                                     userInfo:[OCMArg checkWithSelector:@selector(assertExpectedNotification:)
-                                                                               onObject:self]]);
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            OCMVerify([notificationCenterSpy postNotificationName:RATUploadFailureNotification
+                                                           object:OCMOCK_ANY
+                                                         userInfo:[OCMArg checkWithSelector:@selector(assertExpectedNotification:)
+                                                                                   onObject:self]]);
+        });
     }];
     
     [notificationCenterSpy stopMocking];

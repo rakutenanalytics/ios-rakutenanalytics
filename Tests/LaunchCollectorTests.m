@@ -57,23 +57,7 @@
 
 - (void)testInitThrows
 {
-    SEL initSelector = @selector(init);
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    XCTAssertThrowsSpecificNamed([_RSDKAnalyticsLaunchCollector.sharedInstance performSelector:initSelector], NSException, NSInvalidArgumentException);
-#pragma clang diagnostic pop
-}
-
-- (void) testDealloc
-{
-    __weak _RSDKAnalyticsLaunchCollector *weakCollector;
-    @autoreleasepool
-    {
-        _RSDKAnalyticsLaunchCollector *collector = [_RSDKAnalyticsLaunchCollector.alloc initInstance];
-        weakCollector = collector;
-    }
-    XCTAssertNil(weakCollector);
+    XCTAssertThrowsSpecificNamed([_RSDKAnalyticsLaunchCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
 - (void)testInitialLaunch

@@ -6,6 +6,10 @@
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import <AdSupport/ASIdentifierManager.h>
 
+@interface RSDKAnalyticsRecord ()
+@property (nonatomic) int64_t  serviceId;
+@end
+
 @interface AnalyticsRecordTests : XCTestCase
 @end
 
@@ -30,6 +34,47 @@
     });
 
     return veryLongString;
+}
+
+- (RSDKAnalyticsRecord *)defaultRecord
+{
+    id arrayOfStrings = @[@"A", @"B"];
+    id arrayOfNumbers = @[@1, @2];
+    id dictionary = @{@"A": arrayOfStrings, @"B": arrayOfNumbers};
+    
+    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0
+                                                                 serviceId:0];
+    record.affiliateId = 1;
+    record.campaignCode = @"campaign_code";
+    record.customParameters = dictionary;
+    record.eventType = @"etype";
+    record.selectedTags = @[@"tag1", @"tag2"];
+    record.componentId = @[@"comp1", @"comp2"];
+    record.componentTop = @[@1, @2];
+    record.scrollDivId = @[@"scroll", @"div", @"id"];
+    record.scrollViewed = @[@"scroll", @"viewed"];
+    record.customParameters = @{@"param1":@"1", @"param2":@"2"};
+
+    RSDKAnalyticsItem *item1 = [RSDKAnalyticsItem itemWithIdentifier:@"A"];
+    RSDKAnalyticsItem *item2 = [RSDKAnalyticsItem itemWithIdentifier:@"B"];
+    item1.quantity = 1;
+    item2.quantity = 2;
+    item1.genre = @"A";
+    item2.genre = @"B";
+    item1.price = 1;
+    item2.price = 2;
+    item1.variation = dictionary;
+    item2.variation = dictionary;
+    
+    [record addItem:item1];
+    [record addItem:item2];
+    
+    return record;
+}
+
+- (void)testInitThrows
+{
+    XCTAssertThrowsSpecificNamed([RSDKAnalyticsRecord.alloc init], NSException, NSInvalidArgumentException);
 }
 
 - (void)testRecordWithZeroAccountId
@@ -184,7 +229,7 @@
 
 - (void)testCodingDecoding
 {
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:2];
+    RSDKAnalyticsRecord *record = [self defaultRecord];
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:record];
     RSDKAnalyticsRecord *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -192,15 +237,65 @@
     XCTAssertEqualObjects(unarchived.propertiesDictionary, record.propertiesDictionary);
 }
 
-- (void)testObjectEquality
+- (void)testCopying
 {
-    RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:2];
-
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:record];
-    RSDKAnalyticsRecord *unarchived = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-
-    XCTAssertEqualObjects(unarchived, record);
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *copy = record.copy;
+    
+    XCTAssertEqualObjects(record, copy);
+    XCTAssertNotEqual(record, copy);
+    
+    copy.serviceId = 3;
+    
+    XCTAssertNotEqualObjects(record, copy);
 }
+
+- (void)testCopiesAreEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *copy = record.copy;
+    
+    XCTAssertEqualObjects(record, copy);
+    XCTAssertNotEqual(record, copy);
+}
+
+- (void)testRecordsWithSamePropertiesAreEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    XCTAssertEqualObjects(record, other);
+}
+
+- (void)testRecordsWithDifferentPropertiesAreNotEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    other.serviceId = 10;
+    XCTAssertNotEqualObjects(record, other);
+}
+
+- (void)testRecordIsNotEqualToDifferentObject
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    XCTAssertNotEqualObjects(record, UIView.new);
+}
+
+- (void)testHashIsIdenticalWhenObjectsEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [self defaultRecord];
+    XCTAssertEqualObjects(record, other);
+    XCTAssertEqual(record.hash, other.hash);
+}
+
+- (void)testHashIsDifferentWhenObjectsNotEqual
+{
+    RSDKAnalyticsRecord *record = [self defaultRecord];
+    RSDKAnalyticsRecord *other = [RSDKAnalyticsRecord recordWithAccountId:1 serviceId:1];
+    XCTAssertNotEqualObjects(record, other);
+    XCTAssertNotEqual(record.hash, other.hash);
+}
+
 #pragma clang diagnostic pop
 
 @end

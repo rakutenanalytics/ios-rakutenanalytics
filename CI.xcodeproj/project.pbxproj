@@ -13,6 +13,8 @@
 		5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */; };
 		693B580B1B7C6159008C5E86 /* AnalyticsRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 693B580A1B7C6159008C5E86 /* AnalyticsRecordTests.m */; };
 		69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69E1BBCE1DADC17A00127885 /* DatabaseTests.m */; };
+		6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */; };
+		6D9445A91E1CE41300EF8D46 /* HelperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9445A81E1CE41300EF8D46 /* HelperTests.m */; };
 		6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */; };
 		6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */; };
 /* End PBXBuildFile section */
@@ -27,6 +29,8 @@
 		693B580C1B7C6159008C5E86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		694C86ED1D89191500E7C7BE /* SwiftInterop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftInterop.swift; sourceTree = "<group>"; };
 		69E1BBCE1DADC17A00127885 /* DatabaseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseTests.m; sourceTree = "<group>"; };
+		6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsItemTests.m; sourceTree = "<group>"; };
+		6D9445A81E1CE41300EF8D46 /* HelperTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelperTests.m; sourceTree = "<group>"; };
 		6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalCollectorTests.m; sourceTree = "<group>"; };
 		6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchCollectorTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,6 +75,8 @@
 				69E1BBCE1DADC17A00127885 /* DatabaseTests.m */,
 				6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */,
 				6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */,
+				6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */,
+				6D9445A81E1CE41300EF8D46 /* HelperTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -145,11 +151,13 @@
 				5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */,
 				5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */,
 				693B580B1B7C6159008C5E86 /* AnalyticsRecordTests.m in Sources */,
+				6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
 				5A3BC1741D362A0A00BBCA54 /* AnalyticsStateTests.m in Sources */,
 				69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* AnalyticsEventTests.m in Sources */,
+				6D9445A91E1CE41300EF8D46 /* HelperTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
