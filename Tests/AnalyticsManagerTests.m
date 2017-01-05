@@ -4,6 +4,7 @@
  */
 @import XCTest;
 #import <RSDKAnalytics/RSDKAnalytics.h>
+#import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import <OCMock/OCMock.h>
 
 @interface TestTracker : NSObject<RSDKAnalyticsTracker>
@@ -111,7 +112,13 @@
 - (void)testProcessMethodThrowsWhenDeviceIdentifierIsNil
 {
     _manager.deviceIdentifier = nil;
+    
+    id deviceInformationMock = OCMClassMock(RSDKDeviceInformation.class);
+    OCMStub([deviceInformationMock uniqueDeviceIdentifier]).andReturn(nil);
+    
     XCTAssertThrows([_manager process:[RSDKAnalyticsEvent.alloc initWithName:@"event" parameters:nil]]);
+    
+    [deviceInformationMock stopMocking];
 }
 
 - (void)testStartMonitoringLocation
