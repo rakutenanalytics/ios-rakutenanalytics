@@ -17,6 +17,4 @@ RSDKA_EXPORT NSString *const _RATGenericEventName;
 RSDKA_EXPORT BOOL _RSDKAnalyticsObjectsEqual(id objA, id objB);
 RSDKA_EXPORT NSURL *_RSDKAnalyticsEndpointAddress(void);
 RSDKA_EXPORT NSDictionary *_RSDKAnalyticsSDKComponentMap(void);
-RSDKA_EXPORT NSString *_RSDKAnalyticsStringWithObject(id object);
-RSDKA_EXPORT void _RSDKAnalyticsTraverseObjectWithSearchKeys(id object, NSArray *searchKeys, NSMutableDictionary *result);
 
