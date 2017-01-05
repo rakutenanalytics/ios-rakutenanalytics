@@ -272,7 +272,7 @@
 - (void)testStatesWithSamePropertiesAreEqual
 {
     RSDKAnalyticsState *state = [self defaultState];
-    RSDKAnalyticsState *other = [self defaultState];
+    RSDKAnalyticsState *other = state.copy;
     XCTAssertEqualObjects(state, other);
 }
 
@@ -293,7 +293,7 @@
 - (void)testHashIsIdenticalWhenObjectsEqual
 {
     RSDKAnalyticsState *state = [self defaultState];
-    RSDKAnalyticsState *other = [self defaultState];
+    RSDKAnalyticsState *other = state.copy;
     XCTAssertEqualObjects(state, other);
     XCTAssertEqual(state.hash, other.hash);
 }
