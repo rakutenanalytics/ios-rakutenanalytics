@@ -29,6 +29,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 @property (nonatomic) NSDictionary                        *cardInfoEventMapping;
 @property (nonatomic) NSDictionary                        *discoverEventMapping;
 @property (nonatomic) NSArray                             *ssoDialogEvents;
+@property (nonatomic) NSArray                             *ssoDialogClassNames;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -142,15 +143,22 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)addSSODialogObservers
 {
-    NSString *eventBase = [NSString stringWithFormat:@"%@.ssodialog.", _RSDKAnalyticsNotificationBaseName];
-
+    _ssoDialogClassNames = @[@"RBuiltinLoginDialog", @"RBuiltinLogoutDialog", @"RBuiltinAccountSelectionDialog"];
     _ssoDialogEvents =  @[@"help", @"privacypolicy", @"forgotpassword", @"register"];
 
-    for (NSString *notification in _ssoDialogEvents)
+    NSMutableArray *notifications = [NSMutableArray array];
+    for (NSString *dialogName in _ssoDialogClassNames)
+    {
+        for (NSString *events in _ssoDialogEvents)
+        {
+            [notifications addObject:[NSString stringWithFormat:@"%@.%@", dialogName, events]];
+        }
+    }
+    for (NSString *notification in notifications)
     {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(receiveSSODialogNotification:)
-                                                     name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
+                                                     name:[NSString stringWithFormat:@"%@.%@", _RSDKAnalyticsNotificationBaseName, notification]
                                                    object:nil];
     }
 }
