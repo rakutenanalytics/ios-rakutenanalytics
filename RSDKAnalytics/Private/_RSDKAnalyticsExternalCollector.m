@@ -28,8 +28,6 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
  */
 @property (nonatomic) NSDictionary                        *cardInfoEventMapping;
 @property (nonatomic) NSDictionary                        *discoverEventMapping;
-@property (nonatomic) NSArray                             *ssoDialogEvents;
-@property (nonatomic) NSArray                             *ssoDialogClassNames;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -143,24 +141,10 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)addSSODialogObservers
 {
-    _ssoDialogClassNames = @[@"RBuiltinLoginDialog", @"RBuiltinLogoutDialog", @"RBuiltinAccountSelectionDialog"];
-    _ssoDialogEvents =  @[@"help", @"privacypolicy", @"forgotpassword", @"register"];
-
-    NSMutableArray *notifications = [NSMutableArray array];
-    for (NSString *dialogName in _ssoDialogClassNames)
-    {
-        for (NSString *events in _ssoDialogEvents)
-        {
-            [notifications addObject:[NSString stringWithFormat:@"%@.%@", dialogName, events]];
-        }
-    }
-    for (NSString *notification in notifications)
-    {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveSSODialogNotification:)
-                                                     name:[NSString stringWithFormat:@"%@.%@", _RSDKAnalyticsNotificationBaseName, notification]
-                                                   object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveSSODialogNotification:)
+                                                 name:[NSString stringWithFormat:@"%@.ssodialog", _RSDKAnalyticsNotificationBaseName]
+                                               object:nil];
 }
 
 
@@ -256,13 +240,18 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)receiveSSODialogNotification:(NSNotification *)notification
 {
-    NSString *eventSuffix = [notification.name substringFromIndex:[NSString stringWithFormat:@"%@.", _RSDKAnalyticsNotificationBaseName].length];
+    NSString *pageIdentifier = nil;
+    if ([notification.object isKindOfClass:[NSString class]])
+    {
+        pageIdentifier = [notification object];
+    }
 
-    /* 
-     * The format of event name is .ssodialog.<help|privacypolicy|forgotpassword|register>
-     * The prefix .ssodialog is used to determine the events from SSO Dialog.
-     */
-    [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id":eventSuffix}];
+    NSMutableDictionary *parameters = NSMutableDictionary.new;
+    if (pageIdentifier.length)
+    {
+        parameters[@"page_id"] = pageIdentifier;
+    }
+    [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:parameters];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.
