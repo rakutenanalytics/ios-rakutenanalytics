@@ -18,7 +18,7 @@ platform :ios do
       skip_build: true,
       output_directory: './artifacts/unit-tests',
       scheme: 'Tests',
-      device: 'REM SDK Unit Tests',
+      device: 'REM SDK Unit Tests iOS 10',
       code_coverage: true)
     
     slather(
