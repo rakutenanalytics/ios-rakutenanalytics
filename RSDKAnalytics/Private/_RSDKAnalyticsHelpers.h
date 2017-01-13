@@ -18,3 +18,14 @@ RSDKA_EXPORT BOOL _RSDKAnalyticsObjectsEqual(id objA, id objB);
 RSDKA_EXPORT NSURL *_RSDKAnalyticsEndpointAddress(void);
 RSDKA_EXPORT NSDictionary *_RSDKAnalyticsSDKComponentMap(void);
 
+
+NS_INLINE BOOL _RSDKAnalyticsIsAppleClass(Class cls)
+{
+    return [[NSBundle bundleForClass:cls].bundleIdentifier hasPrefix:@"com.apple."];
+}
+
+NS_INLINE BOOL _RSDKAnalyticsIsApplePrivateClass(Class cls)
+{
+    return [NSStringFromClass(cls) hasPrefix:@"_"] && _RSDKAnalyticsIsAppleClass(cls);
+}
+

@@ -16,7 +16,7 @@ NSString *const RATWillUploadNotification    = @"com.rakuten.esd.sdk.notificatio
 NSString *const RATUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
 NSString *const RATUploadSuccessNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_succeeded";
 
-// Deprecated alteregos
+// Deprecated aliases
 NSString *const RSDKAnalyticsWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
 NSString *const RSDKAnalyticsUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
 NSString *const RSDKAnalyticsUploadSuccessNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_succeeded";
@@ -27,6 +27,44 @@ NSString *const _RATCPParameter      = @"cp";
 NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
+
+// Recursively try to find a URL in a view hierarchy
+static NSURL *findURLForView(UIView *view)
+{
+    NSURL *url = nil;
+    if (view) do
+    {
+        SEL urlSelector = @selector(URL);
+        if ([view respondsToSelector:urlSelector])
+        {
+            url = [view performSelector:urlSelector];
+            if ([url isKindOfClass:NSURL.class]) break;
+
+            url = nil;
+        }
+
+        for (UIView *subview in view.subviews)
+        {
+            if ((url = findURLForView(subview))) break;
+        }
+    } while(0);
+
+    if ((url = url.absoluteURL))
+    {
+        /*
+         * If a URL is found, only keep a safe subpart of it (scheme+host+path) since
+         * query parameters etc may have sensitive information (access tokens…).
+         */
+        NSURLComponents *fullComponents = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+        NSURLComponents *components = [NSURLComponents new];
+        components.scheme = fullComponents.scheme;
+        components.host   = fullComponents.host;
+        components.path   = fullComponents.path;
+        url = components.URL.absoluteURL;
+    }
+
+    return url;
+}
 
 NS_INLINE NSString *const _RATTableName()
 {
@@ -74,8 +112,8 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
  * changes in radio access technology, on iOS 7+.
  */
 
-@property(nonatomic) CTTelephonyNetworkInfo *telephonyNetworkInfo;
-@property(nonatomic) BOOL isUsingLTE;
+@property (nonatomic) CTTelephonyNetworkInfo *telephonyNetworkInfo;
+@property (nonatomic) BOOL isUsingLTE;
 
 
 /*
@@ -83,6 +121,16 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
  */
 
 @property (nonatomic, nullable) NSNumber *reachabilityStatus;
+
+/*
+ * The identifer of the last-tracked visited page, if any.
+ */
+@property (nonatomic, copy, nullable) NSString *lastVisitedPageIdentifier;
+
+/*
+ * Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
+ */
+@property (nonatomic, copy, nullable) NSNumber *carriedOverOrigin;
 
 /*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
@@ -94,11 +142,11 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
  * so that we know we have to restart our timer at that point.
  */
 
-@property(nonatomic) BOOL uploadRequested;
-@property(nonatomic) NSTimer *uploadTimer;
+@property (nonatomic) BOOL            uploadRequested;
+@property (nonatomic) NSTimer        *uploadTimer;
+@property (nonatomic) NSTimeInterval  uploadTimerInterval;
 
-
-@property(nonatomic, copy) NSString *startTime;
+@property (nonatomic, copy) NSString *startTime;
 @end
 
 @implementation RATTracker
@@ -146,6 +194,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     if (self = [super init])
     {
         _startTime = [RATTracker stringWithDate:NSDate.date];
+        _uploadTimerInterval = 60;
 
         /*
          * Default values for account/application should be 477/1.
@@ -320,273 +369,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return [calendar components:NSCalendarUnitDay fromDate:date toDate:NSDate.date options:0].day;
 }
 
-+ (NSDictionary *)dictionaryWithEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
-{
-    NSString *eventName = event.name;
-
-    NSMutableDictionary *result = NSMutableDictionary.new;
-    NSString *etype = nil;
-    NSMutableDictionary *cp = NSMutableDictionary.new;
-
-    /*
-     * Core SDK events
-     */
-    if ([eventName isEqualToString:RSDKAnalyticsInitialLaunchEventName])
-    {
-        etype = eventName;
-    }
-
-    else if ([eventName isEqualToString:RSDKAnalyticsInstallEventName])
-    {
-        etype = eventName;
-
-        NSDictionary *map = _RSDKAnalyticsSDKComponentMap();
-        NSMutableArray *sdkInfo = [NSMutableArray array];
-        NSMutableDictionary *appInfo = [NSMutableDictionary dictionary];
-
-        NSDictionary *infoDictionary = NSBundle.mainBundle.infoDictionary;
-        NSString *xcodeVersion = infoDictionary[@"DTXcode"];
-        if (xcodeVersion && infoDictionary[@"DTXcodeBuild"])
-        {
-            xcodeVersion = [NSString stringWithFormat:@"%@.%@", xcodeVersion, infoDictionary[@"DTXcodeBuild"]];
-        }
-        NSString *sdk = infoDictionary[@"DTSDKName"];
-        if (!sdk)
-        {
-            NSString *platform = infoDictionary[@"DTPlatformName"];
-            NSString *version = infoDictionary[@"DTPlatformVersion"];
-            if (platform && version)
-            {
-                sdk = [platform stringByAppendingString:version];
-            }
-        }
-        NSMutableDictionary *frameworks = [NSMutableDictionary dictionary];
-        NSMutableDictionary *pods = [NSMutableDictionary dictionary];
-
-        NSArray *allFrameworks = [NSBundle allFrameworks];
-        for (NSBundle *bundle in allFrameworks)
-        {
-            NSString *identifier = bundle.bundleIdentifier;
-            if (![identifier hasPrefix:@"com.apple."])
-            {
-                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-                if (version.length)
-                {
-                    frameworks[identifier] = version;
-                }
-            }
-
-            if ([identifier hasPrefix:@"org.cocoapods."])
-            {
-                NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-                if (version.length)
-                {
-                    pods[identifier] = version;
-                }
-
-                if ([map objectForKey:identifier])
-                {
-                    [sdkInfo addObject:[NSString stringWithFormat:@"%@/%@",map[identifier], version]];
-                }
-            }
-        }
-
-        if (sdkInfo.count)
-        {
-            cp[@"sdk_info"] = [[sdkInfo valueForKey:@"description"] componentsJoinedByString:@"; "];
-        }
-        if (xcodeVersion.length)
-        {
-            appInfo[@"xcode"] = xcodeVersion;
-        }
-        if (sdk.length)
-        {
-            appInfo[@"sdk"] = sdk;
-        }
-        if (frameworks.count)
-        {
-            appInfo[@"frameworks"] = frameworks.copy;
-        }
-        if (pods.count)
-        {
-            appInfo[@"pods"] = pods.copy;
-        }
-        if (infoDictionary[@"MinimumOSVersion"])
-        {
-            appInfo[@"deployment_target"] = infoDictionary[@"MinimumOSVersion"];
-        }
-        if (appInfo.count)
-        {
-            // this value should be converted to string.
-            cp[@"app_info"] = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:appInfo options:0 error:0] encoding:NSUTF8StringEncoding];
-        }
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsSessionStartEventName])
-    {
-        etype = eventName;
-
-        cp[@"days_since_first_use"] = @([RATTracker daysPassedSinceDate:state.installLaunchDate]);
-        cp[@"days_since_last_use"] = @([RATTracker daysPassedSinceDate:state.lastLaunchDate]);
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsSessionEndEventName])
-    {
-        etype = eventName;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
-    {
-        etype = eventName;
-
-        if (state.lastVersion.length)
-        {
-            cp[@"previous_version"] = state.lastVersion;
-        }
-        cp[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
-        cp[@"days_since_last_upgrade"] = @([RATTracker daysPassedSinceDate:state.lastUpdateDate]);
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsLoginEventName])
-    {
-        etype = eventName;
-
-        NSString *loginMethod = nil;
-        switch (state.loginMethod)
-        {
-            case RSDKAnalyticsPasswordInputLoginMethod: loginMethod = @"password";      break;
-            case RSDKAnalyticsOneTapLoginLoginMethod:   loginMethod = @"one_tap_login"; break;
-            default: break;
-        }
-
-        if (loginMethod) cp[@"login_method"] = loginMethod;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsLogoutEventName])
-    {
-        etype = eventName;
-
-        NSString *logoutMethod = event.parameters[RSDKAnalyticsLogoutMethodEventParameter];
-        if ([logoutMethod isEqualToString:RSDKAnalyticsLocalLogoutMethod])
-        {
-            logoutMethod = @"single";
-        }
-        else if ([logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod])
-        {
-            logoutMethod = @"all";
-        }
-        else
-        {
-            logoutMethod = nil;
-        }
-
-        if (logoutMethod) cp[@"logout_method"] = logoutMethod;
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsPageVisitEventName])
-    {
-        etype = @"pv";
-
-        // pgn is the value of the page_id standard parameter, if provided. If not, it's the fully-qualified class name of state.currentPage.
-        NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
-        if (!pageIdentifier.length && state.currentPage)
-        {
-            pageIdentifier = [RATTracker nameWithPage:state.currentPage];
-        }
-
-        if (pageIdentifier.length)
-        {
-            result[_RATPGNParameter] = pageIdentifier;
-        }
-
-        if (state.lastVisitedPage)
-        {
-            result[_RATREFParameter] = [RATTracker nameWithPage:state.lastVisitedPage];
-        }
-
-        switch (state.origin)
-        {
-            case RSDKAnalyticsInternalOrigin:
-                cp[@"ref_type"] = @"internal";
-                break;
-            case RSDKAnalyticsExternalOrigin:
-                cp[@"ref_type"] = @"external";
-                break;
-            case RSDKAnalyticsPushOrigin:
-                cp[@"ref_type"] = @"push";
-                break;
-        }
-    }
-    else if ([eventName isEqualToString:RSDKAnalyticsPushNotificationEventName])
-    {
-        etype = eventName;
-        NSString *trackingIdentifier = event.parameters[RSDKAnalyticPushNotificationTrackingIdentifierParameter];
-        if (trackingIdentifier.length)
-        {
-            cp[@"push_notify_value"] = trackingIdentifier;
-        }
-    }
-    else if ([eventName hasPrefix:@"_rem_discover_"])
-    {
-        etype = eventName;
-        
-        NSString *prApp = event.parameters[@"prApp"];
-        if (prApp.length)
-        {
-            cp[@"prApp"] = prApp;
-        }
-        
-        NSString *prStoreUrl = event.parameters[@"prStoreUrl"];
-        if (prStoreUrl.length)
-        {
-            cp[@"prStoreUrl"] = prStoreUrl;
-        }
-    }
-
-    /*
-     * Alpha modules events
-     */
-    else if ([eventName hasPrefix:@"_rem_cardinfo_"])
-    {
-        etype = eventName;
-    }
-
-    /*
-     * RAT-specific events
-     */
-    else if ([eventName hasPrefix:_RATEventPrefix])
-    {
-        // only set json["etype"] if the event name is not rat.generic
-        if (![eventName isEqualToString:_RATGenericEventName])
-        {
-            etype = [eventName substringFromIndex:_RATEventPrefix.length];
-        }
-
-        // only add the event's parameters if the event was a RAT event
-        if (event.parameters.count)
-        {
-            [result addEntriesFromDictionary:event.parameters];
-        }
-    }
-
-    /*
-     * Unsupported events
-     */
-    if (!etype)
-    {
-        return nil;
-    }
-
-    result[_RATETypeParameter] = etype;
-    if (cp.count)
-    {
-        // If the event already had a 'cp' field, those values take precedence
-        if (result[_RATCPParameter])
-        {
-            [cp addEntriesFromDictionary:result[_RATCPParameter]];
-        }
-
-        result[_RATCPParameter] = cp.copy;
-    }
-
-    return result.copy;
-}
-
-- (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
+- (void)addAutomaticFields:(NSMutableDictionary *)payload state:(RSDKAnalyticsState *)state
 {
     static NSString *osVersion;
     static UIDevice *device;
@@ -596,23 +379,18 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     static NSString *applicationName;
     static NSString *bundleVersion;
     static dispatch_once_t once;
-    dispatch_once(&once, ^
-    {
+    dispatch_once(&once, ^{
         CGSize screenSize = UIScreen.mainScreen.bounds.size;
-        screenResolution = [NSString stringWithFormat:@"%0.fx%0.f", screenSize.width, screenSize.height];
+        screenResolution = [NSString stringWithFormat:@"%ux%u", (unsigned) ceil(screenSize.width), (unsigned) ceil(screenSize.height)];
 
         device = UIDevice.currentDevice;
         osVersion = [NSString stringWithFormat:@"%@ %@", device.systemName, device.systemVersion];
-
 
         /*
          * This is needed to enable access to the battery getters below.
          */
 
-        if (!device.isBatteryMonitoringEnabled)
-        {
-            device.batteryMonitoringEnabled = YES;
-        }
+        device.batteryMonitoringEnabled = YES;
 
 
         /*
@@ -629,7 +407,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          * Listen to changes in carrier.
          */
 
-        void (^assignCarrierName)(CTCarrier *) = ^(CTCarrier *carrier){
+        void (^assignCarrierName)(CTCarrier *) = ^(CTCarrier *carrier) {
             carrierName = carrier.carrierName.copy;
             carrierName = [carrierName substringToIndex:MIN(32ul, carrierName.length)];
 
@@ -641,23 +419,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         CTTelephonyNetworkInfo *telephonyNetworkInfo = self.telephonyNetworkInfo;
         assignCarrierName(telephonyNetworkInfo.subscriberCellularProvider);
-        telephonyNetworkInfo.subscriberCellularProviderDidUpdateNotifier = ^(CTCarrier *carrier)
-        {
+        telephonyNetworkInfo.subscriberCellularProviderDidUpdateNotifier = ^(CTCarrier *carrier) {
             assignCarrierName(carrier);
         };
     });
 
-    id json = [[RATTracker dictionaryWithEvent:event state:state] mutableCopy];
-    if (!json)
-    {
-        return NO;
-    }
-
-    if (!json[@"acc"])
+    // MARK: acc
+    if (!payload[@"acc"])
     {
         if (self.accountIdentifier)
         {
-            json[@"acc"] = @(self.accountIdentifier);
+            payload[@"acc"] = @(self.accountIdentifier);
         }
         else
         {
@@ -665,11 +437,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
     }
 
-    if (!json[@"aid"])
+    // MARK: aid
+    if (!payload[@"aid"])
     {
         if (self.applicationIdentifier)
         {
-            json[@"aid"] = @(self.applicationIdentifier);
+            payload[@"aid"] = @(self.applicationIdentifier);
         }
         else
         {
@@ -677,25 +450,24 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
     }
 
-    // Add all the other automatic parameters
     if (device.batteryState != UIDeviceBatteryStateUnknown)
     {
-        // {name: "powerstatus", longName: "BATTERY_CHARGING_STATUS", fieldType: "INT", definitionLevel: "APP", validValues: [0, 1 ], userSettable: true}
-        json[@"powerstatus"] = @(device.batteryState != UIDeviceBatteryStateUnplugged ? 1 : 0);
+        // MARK: powerstatus
+        payload[@"powerstatus"] = @(device.batteryState != UIDeviceBatteryStateUnplugged ? 1 : 0);
 
-        // {name: "mbat", longName: "BATTERY_USAGE", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
-        json[@"mbat"] = [NSString stringWithFormat:@"%0.f", device.batteryLevel * 100];
+        // MARK: mbat
+        payload[@"mbat"] = [NSString stringWithFormat:@"%0.f", device.batteryLevel * 100];
     }
 
-    // {name: "dln", longName: "DEVICE_LANGUAGE", fieldType: "STRING", definitionLevel: "APP", maxLength: 16, minLength: 0, userSettable: true}
+    // MARK: dln
     NSString *preferredLocaleLanguage = NSLocale.preferredLanguages.firstObject;
     NSString *localeLanguageCode = [[NSLocale localeWithLocaleIdentifier:preferredLocaleLanguage] objectForKey:NSLocaleLanguageCode];
 
     NSString *preferredLocalizationLanguage = NSBundle.mainBundle.preferredLocalizations.firstObject;
     NSString *bundleLanguageCode = [[NSLocale localeWithLocaleIdentifier:preferredLocalizationLanguage] objectForKey:NSLocaleLanguageCode];
-    json[@"dln"] = bundleLanguageCode ?: localeLanguageCode;
+    payload[@"dln"] = bundleLanguageCode ?: localeLanguageCode;
 
-    // {name: "loc", longName: "LOCATION", fieldType: "JSON"}
+    // MARK: loc
     CLLocationCoordinate2D coordinate = kCLLocationCoordinate2DInvalid;
     CLLocation *location = state.lastKnownLocation;
     if (location)
@@ -706,50 +478,47 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         id locationDic = [NSMutableDictionary dictionary];
 
-        // {name: "accu", longName: "ACCURACY", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
-        // According to RAL.js, unit is metre.
+        // MARK: loc.accu
         locationDic[@"accu"] = @(MAX(0.0, location.horizontalAccuracy));
 
-        // {name: "altitude", longName: "ALTITUDE", fieldType: "DOUBLE", userSettable: false}
+        // MARK: loc.altitude
         locationDic[@"altitude"] = @(location.altitude);
 
-        // {name: "tms", longName: "GPS_TIMESTAMP", fieldType: "INT", minValue: 0, userSettable: false}
-        // According to RAL.js it's in milliseconds since the unix epoch
+        // MARK: loc.tms
         locationDic[@"tms"] = @(MAX(0ll, (int64_t) round(location.timestamp.timeIntervalSince1970 * 1000.0)));
 
-        // {name: "lat", longName: "LATITUDE", fieldType: "DOUBLE", minValue: -90.0, maxValue: 90.0, userSettable: false}
+        // MARK: loc.lat
         locationDic[@"lat"] = @(MIN(90.0, MAX(-90.0, coordinate.latitude)));
 
-        // {name: "long", longName: "LONGITUDE", fieldType: "DOUBLE", minValue: -180.0, maxValue: 180.0, userSettable: false}
+        // MARK: loc.long
         locationDic[@"long"] = @(MIN(180.0, MAX(-180.0, coordinate.longitude)));
 
-        // {name: "speed", longName: "SPEED", fieldType: "DOUBLE", minValue: 0.0, userSettable: false}
+        // MARK: loc.speed
         locationDic[@"speed"] = @(MAX(0.0, location.speed));
 
-        //{name: "loc", longName: "LOCATION", fieldType: "JSON", comment: "Location related field group"}
-        json[@"loc"] = locationDic;
+        payload[@"loc"] = locationDic;
     }
 
-    // {name: "mcn", longName: "MOBILE_CARRIER_NAME", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
+    // MARK: mcn
     if (carrierName)
     {
-        json[@"mcn"] = carrierName;
+        payload[@"mcn"] = carrierName;
     }
 
-    // {name: "model", longName: "MOBILE_DEVICE_BRAND_MODEL", fieldType: "STRING", definitionLevel: "APP", maxLength: 48, minLength: 0, userSettable: true}
-    json[@"model"] = RSDKDeviceInformation.modelIdentifier;
+    // MARK: model
+    payload[@"model"] = RSDKDeviceInformation.modelIdentifier;
 
-    // {name: "mnetw", longName: "MOBILE_NETWORK_TYPE", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2, 3, 4], userSettable: true}
+    // MARK: mnetw
     if (_reachabilityStatus)
     {
         switch (_reachabilityStatus.unsignedIntegerValue)
         {
             case _RATReachabilityStatusConnectedWithWiFi:
-                json[@"mnetw"] = @(_RATMobileNetworkTypeWiFi);
+                payload[@"mnetw"] = @(_RATMobileNetworkTypeWiFi);
                 break;
 
             case _RATReachabilityStatusConnectedWithWWAN:
-                json[@"mnetw"] = @(self.isUsingLTE ? _RATMobileNetworkType4G : _RATMobileNetworkType3G);
+                payload[@"mnetw"] = @(self.isUsingLTE ? _RATMobileNetworkType4G : _RATMobileNetworkType3G);
                 break;
 
             default:
@@ -757,67 +526,345 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
     }
 
-    // {name: "mori", longName: "MOBILE_ORIENTATION", fieldType: "INT", definitionLevel: "APP", validValues: [1, 2], userSettable: true}
-    json[@"mori"] = @(UIDeviceOrientationIsLandscape(device.orientation) ? 2 : 1);
+    // MARK: mori
+    payload[@"mori"] = @(UIDeviceOrientationIsLandscape(device.orientation) ? 2 : 1);
 
-    // {name: "mos", longName: "MOBILE_OS", fieldType: "STRING", definitionLevel: "APP", maxLength: 32, minLength: 0, userSettable: true}
-    json[@"mos"] = osVersion;
+    // MARK: mos
+    payload[@"mos"] = osVersion;
 
-    // {name: "online", longName: "ONLINE_STATUS", fieldType: "BOOLEAN", userSettable: false}
+    // MARK: online
     if (_reachabilityStatus)
     {
-        json[@"online"] = (_reachabilityStatus.unsignedIntegerValue != _RATReachabilityStatusOffline) ? @YES : @NO;
+        payload[@"online"] = (_reachabilityStatus.unsignedIntegerValue != _RATReachabilityStatusOffline) ? @YES : @NO;
     }
 
-    // {name: "ckp", longName: "PERSISTENT_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
-    if (state.deviceIdentifier) {
-        json[@"ckp"] = state.deviceIdentifier;
+    // MARK: ckp
+    if (state.deviceIdentifier)
+    {
+        payload[@"ckp"] = state.deviceIdentifier;
     }
 
-    // {name: "ua", longName: "USER_AGENT", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
-    json[@"ua"] = userAgent;
+    // MARK: ua
+    payload[@"ua"] = userAgent;
 
-    // {name: "app_name", longName: "APPLICATION_NAME", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
-    json[@"app_name"] = applicationName;
+    // MARK: app_name
+    payload[@"app_name"] = applicationName;
 
-    // {name: "app_ver", longName: "APPLICATION_VERSION", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: false}
-    json[@"app_ver"] = bundleVersion;
+    // MARK: app_ver
+    payload[@"app_ver"] = bundleVersion;
 
-    // {name: "res", longName: "RESOLUTION", fieldType: "STRING", maxLength: 12, minLength: 0, userSettable: false }
-    json[@"res"] = screenResolution;
+    // MARK: res
+    payload[@"res"] = screenResolution;
 
-    // {name: "ltm", longName: "SCRIPT_START_TIME", fieldType: "STRING", maxLength: 20, minLength: 0, regex: "\\d\\d\\d\\d-\\d\\d\\-\\d\\d \\d\\d:\\d\\d:\\d\\d", userSettable: false}
-    json[@"ltm"] = self.startTime;
+    // MARK: ltm
+    payload[@"ltm"] = self.startTime;
 
-    // {name: "cks", longName: "SESSION_COOKIE", definitionLevel: "TrackingServer", fieldType: "STRING", maxLength: 1024, minLength: 0, userSettable: true}
-    json[@"cks"] = state.sessionIdentifier;
+    // MARK: cks
+    payload[@"cks"] = state.sessionIdentifier;
 
-    // {name: "ts1", longName: "CLIENT_PROVIDED_TIMESTAMP", definitionLevel: "APP", fieldType: "INT", minValue: 0, userSettable: true}
-    // Unit is seconds. Up to version 2.1.0 it was milliseconds.
-    json[@"ts1"] = @(MAX(0ll, (int64_t) round(NSDate.date.timeIntervalSince1970)));
+    // MARK: ts1
+    payload[@"ts1"] = @(MAX(0ll, (int64_t) round(NSDate.date.timeIntervalSince1970)));
 
-    // {name: "tzo", longName: "TIMEZONE", fieldType: "DOUBLE", minValue: -12.0, maxValue: 12.0, userSettable: false}
-    json[@"tzo"] = @(NSTimeZone.localTimeZone.secondsFromGMT / 3600.0);
+    // MARK: tzo
+    payload[@"tzo"] = @(NSTimeZone.localTimeZone.secondsFromGMT / 3600.0);
 
-    // {name: "ver", longName: "VERSION", fieldType: "STRING", maxLength: 32, minLength: 0, userSettable: false}
-    json[@"ver"] = RSDKAnalyticsVersion;
+    // MARK: ver
+    payload[@"ver"] = RSDKAnalyticsVersion;
 
-    // {name: "cka", longName: "COOKIE_ADVERTISING", fieldType: "STRING", userSettable: false}
-    if ([RSDKAnalyticsManager sharedInstance].shouldTrackAdvertisingIdentifier) {
-        if (state.advertisingIdentifier.length)
+    // MARK: cka
+    if ([RSDKAnalyticsManager sharedInstance].shouldTrackAdvertisingIdentifier && state.advertisingIdentifier.length)
+    {
+        payload[@"cka"] = state.advertisingIdentifier;
+    }
+
+    // MARK: userid
+    if (state.userIdentifier.length && !((NSString *)payload[@"userid"]).length)
+    {
+        payload[@"userid"] = state.userIdentifier;
+    }
+}
+
+- (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state
+{
+    NSMutableDictionary *payload = NSMutableDictionary.new;
+    NSMutableDictionary *extra   = NSMutableDictionary.new;
+
+    payload[_RATETypeParameter] = event.name;
+
+    /*
+     * Core SDK events
+     */
+
+    if ([event.name isEqualToString:RSDKAnalyticsInitialLaunchEventName])
+    {
+        // MARK: _rem_init_launch
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsInstallEventName])
+    {
+        // MARK: _rem_install
+
+        // Collect build environment (Xcode version and build SDK)
+        NSDictionary *info = NSBundle.mainBundle.infoDictionary;
+        NSString *xcodeVersion = info[@"DTXcode"];
+        NSString *xcodeBuild   = info[@"DTXcodeBuild"];
+        if (xcodeBuild)
         {
-            json[@"cka"] = state.advertisingIdentifier;
+            xcodeVersion = [xcodeVersion stringByAppendingFormat:@".%@", xcodeBuild];
+        }
+
+        NSString *buildSDK = info[@"DTSDKName"];
+        if (!buildSDK)
+        {
+            buildSDK = info[@"DTPlatformName"];
+            NSString *version = info[@"DTPlatformVersion"];
+            if (version)
+            {
+                buildSDK = [buildSDK stringByAppendingString:version];
+            }
+        }
+
+        // Collect information on frameworks shipping with the app
+        NSDictionary *sdkComponentMap = _RSDKAnalyticsSDKComponentMap();
+        NSMutableArray *sdkComponents = [NSMutableArray array];
+        NSMutableDictionary *otherFrameworks = [NSMutableDictionary dictionary];
+        for (NSBundle *bundle in NSBundle.allFrameworks)
+        {
+            NSString *identifier = bundle.bundleIdentifier;
+
+            if (!identifier || [identifier hasPrefix:@"com.apple."]) continue;
+
+            NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+            if ([sdkComponentMap objectForKey:identifier])
+            {
+                [sdkComponents addObject:[NSString stringWithFormat:@"%@/%@", sdkComponentMap[identifier], version]];
+            }
+            else
+            {
+                otherFrameworks[identifier] = version;
+            }
+        }
+
+        NSMutableDictionary *appInfo = [NSMutableDictionary dictionary];
+        if (xcodeVersion.length)       appInfo[@"xcode"] = xcodeVersion;
+        if (buildSDK.length)           appInfo[@"sdk"] = buildSDK;
+        if (otherFrameworks.count)     appInfo[@"frameworks"] = otherFrameworks;
+        if (info[@"MinimumOSVersion"]) appInfo[@"deployment_target"] = info[@"MinimumOSVersion"];
+
+
+        if (sdkComponents.count)
+        {
+            extra[@"sdk_info"] = [sdkComponents componentsJoinedByString:@"; "];
+        }
+
+
+        if (appInfo.count)
+        {
+            extra[@"app_info"] = [NSString.alloc initWithData:[NSJSONSerialization dataWithJSONObject:appInfo options:0 error:0] encoding:NSUTF8StringEncoding];
         }
     }
-
-    // {name: "userid", longName: "USER_ID", fieldType: "STRING", maxLength: 200, minLength: 0}
-    if (state.userIdentifier.length && ![(NSString *)json[@"userid"] length])
+    else if ([event.name isEqualToString:RSDKAnalyticsSessionStartEventName])
     {
-        json[@"userid"] = state.userIdentifier;
+        // MARK: _rem_launch
+        extra[@"days_since_first_use"] = @([RATTracker daysPassedSinceDate:state.installLaunchDate]);
+        extra[@"days_since_last_use"] = @([RATTracker daysPassedSinceDate:state.lastLaunchDate]);
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsSessionEndEventName])
+    {
+        // MARK: _rem_end_session
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsApplicationUpdateEventName])
+    {
+        // MARK: _rem_update
+
+        if (state.lastVersion.length)
+        {
+            extra[@"previous_version"] = state.lastVersion;
+        }
+        extra[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
+        extra[@"days_since_last_upgrade"] = @([RATTracker daysPassedSinceDate:state.lastUpdateDate]);
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsLoginEventName])
+    {
+        // MARK: _rem_login
+        NSString *loginMethod = nil;
+        switch (state.loginMethod)
+        {
+            case RSDKAnalyticsPasswordInputLoginMethod: loginMethod = @"password";      break;
+            case RSDKAnalyticsOneTapLoginLoginMethod:   loginMethod = @"one_tap_login"; break;
+            default: break;
+        }
+
+        if (loginMethod) extra[@"login_method"] = loginMethod;
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsLogoutEventName])
+    {
+        // MARK: _rem_logout
+
+        NSString *logoutMethod = event.parameters[RSDKAnalyticsLogoutMethodEventParameter];
+        if ([logoutMethod isEqualToString:RSDKAnalyticsLocalLogoutMethod])
+        {
+            logoutMethod = @"single";
+        }
+        else if ([logoutMethod isEqualToString:RSDKAnalyticsGlobalLogoutMethod])
+        {
+            logoutMethod = @"all";
+        }
+        else
+        {
+            logoutMethod = nil;
+        }
+
+        if (logoutMethod) extra[@"logout_method"] = logoutMethod;
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsPageVisitEventName])
+    {
+        // MARK: _rem_visit
+
+        // Override etype
+        payload[_RATETypeParameter] = @"pv";
+
+        UIViewController *currentPage = state.currentPage;
+        if (!currentPage) return NO;
+
+        Class     pageClass      = currentPage.class;
+        NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
+        NSString *pageTitle      = currentPage.navigationItem.title ?: currentPage.title;
+        NSURL    *pageURL        = findURLForView(currentPage.view).absoluteURL;
+
+        pageIdentifier = pageIdentifier.length ? pageIdentifier : nil;
+        pageTitle      = pageTitle.length      ? pageTitle      : nil;
+
+        if (!pageIdentifier)
+        {
+            if ([[NSBundle bundleForClass:pageClass].bundleIdentifier hasPrefix:@"com.apple."] &&
+                     !pageURL && !pageTitle)
+            {
+                // Apple class with no title and no URL −should not count as a page visit.
+                pageIdentifier = nil;
+            }
+            else
+            {
+                // Custom view controller class with no title.
+                pageIdentifier = NSStringFromClass(currentPage.class);
+            }
+        }
+
+        // If no page id was found, simply ignore this view controller.
+        if (!pageIdentifier.length)
+        {
+            // If this originated from a push notification or an inbound URL, keep that for next call.
+            if (state.origin != RSDKAnalyticsInternalOrigin)
+            {
+                self.carriedOverOrigin = @(state.origin);
+            }
+            return nil;
+        }
+
+        payload[_RATPGNParameter] = pageIdentifier;
+
+        NSString *lastVisitedPageIdentifier = self.lastVisitedPageIdentifier;
+        if (lastVisitedPageIdentifier.length) payload[_RATREFParameter] = lastVisitedPageIdentifier;
+        self.lastVisitedPageIdentifier = pageIdentifier;
+
+        /*
+         * If this transition was internal but a previous (skipped) transition
+         * originated from a push notification or an inbound URL, use the correct origin.
+         */
+        NSUInteger origin = state.origin;
+        if (origin == RSDKAnalyticsInternalOrigin && self.carriedOverOrigin)
+        {
+            origin = self.carriedOverOrigin.unsignedIntegerValue;
+            self.carriedOverOrigin = nil;
+        }
+
+        switch (origin)
+        {
+            case RSDKAnalyticsInternalOrigin: extra[@"ref_type"] = @"internal"; break;
+            case RSDKAnalyticsExternalOrigin: extra[@"ref_type"] = @"external"; break;
+            case RSDKAnalyticsPushOrigin:     extra[@"ref_type"] = @"push";     break;
+        }
+
+        if (pageTitle)
+        {
+            extra[@"title"] = pageTitle;
+        }
+
+        if (pageURL)
+        {
+            extra[@"url"] = pageURL.absoluteString;
+        }
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsPushNotificationEventName])
+    {
+        // MARK: _rem_push_notify
+        NSString *trackingIdentifier = event.parameters[RSDKAnalyticPushNotificationTrackingIdentifierParameter];
+        if (!trackingIdentifier.length) return NO;
+
+        extra[@"push_notify_value"] = trackingIdentifier;
+    }
+    else if ([event.name hasPrefix:@"_rem_discover_"])
+    {
+        // MARK: _rem_discover_＊
+
+        NSString *prApp = event.parameters[@"prApp"];
+        if (prApp.length) extra[@"prApp"] = prApp;
+
+        NSString *prStoreUrl = event.parameters[@"prStoreUrl"];
+        if (prStoreUrl.length) extra[@"prStoreUrl"] = prStoreUrl;
     }
 
+    /*
+     * Alpha modules events
+     */
+
+    else if ([event.name hasPrefix:@"_rem_cardinfo_"])
+    {
+        // MARK: _rem_cardinfo_＊
+    }
+
+    /*
+     * RAT-specific events
+     */
+
+    // MARK: rat.＊
+    else if ([event.name hasPrefix:_RATEventPrefix])
+    {
+        if (event.parameters.count) [payload addEntriesFromDictionary:event.parameters];
+
+        NSString *etype = event.parameters[_RATETypeParameter];
+        if (!etype.length && ![event.name isEqualToString:_RATGenericEventName])
+        {
+            etype = [event.name substringFromIndex:_RATEventPrefix.length];
+        }
+
+        if (!etype.length) return NO;
+
+        payload[_RATETypeParameter] = etype;
+    }
+
+    /*
+     * Unsupported events
+     */
+    else
+    {
+        return NO;
+    }
+
+    if (extra.count)
+    {
+        // If the event already had a 'cp' field, those values take precedence
+        if (payload[_RATCPParameter])
+        {
+            [extra addEntriesFromDictionary:payload[_RATCPParameter]];
+        }
+
+        payload[_RATCPParameter] = extra;
+    }
+
+    [self addAutomaticFields:payload state:state];
+
     // Add record to database and schedule an upload
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:json options:0 error:0];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:0];
     RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
 
     typeof(self) __weak weakSelf = self;
@@ -860,7 +907,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             return;
         }
         
-        self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:60
+        self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:self.uploadTimerInterval
                                                             target:self
                                                           selector:@selector(_doBackgroundUpload)
                                                           userInfo:nil

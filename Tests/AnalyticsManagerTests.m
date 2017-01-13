@@ -80,6 +80,22 @@
     XCTAssertNoThrow([_manager addTracker:TestTracker.new]);
 }
 
+- (void)testProcessEvent
+{
+    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:@"foo" parameters:nil];
+
+    id mock = OCMPartialMock(RATTracker.sharedInstance);
+    OCMExpect([mock processEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isEqual:event];
+    }] state:OCMOCK_ANY]);
+    OCMStub([mock processEvent:OCMOCK_ANY state:OCMOCK_ANY]).andReturn(YES);
+
+    [RSDKAnalyticsManager.sharedInstance process:event];
+
+    OCMVerifyAll(mock);
+    [mock stopMocking];
+}
+
 - (void)testSpoolRecord
 {
     RSDKAnalyticsRecord *record = [RSDKAnalyticsRecord recordWithAccountId:0
@@ -89,18 +105,17 @@
     // be named "rat.<eventType>"
     record.eventType = @"etype";
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
-    
+    id mock = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    OCMExpect([mock process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        RSDKAnalyticsEvent *event = obj;
+        return [event.name isEqualToString:@"rat.etype"];
+    }]]);
+    OCMStub([mock process:OCMOCK_ANY]);
+
     [RSDKAnalyticsManager spoolRecord:record];
     
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:@"rat.etype"]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
-    [mockManager stopMocking];
+    OCMVerifyAll(mock);
+    [mock stopMocking];
 }
 
 - (void)testEndpointAddress
