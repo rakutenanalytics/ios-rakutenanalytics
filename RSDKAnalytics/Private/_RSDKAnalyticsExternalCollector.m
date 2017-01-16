@@ -28,7 +28,6 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
  */
 @property (nonatomic) NSDictionary                        *cardInfoEventMapping;
 @property (nonatomic) NSDictionary                        *discoverEventMapping;
-@property (nonatomic) NSArray                             *ssoDialogEvents;
 @end
 
 @implementation _RSDKAnalyticsExternalCollector
@@ -142,17 +141,10 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)addSSODialogObservers
 {
-    NSString *eventBase = [NSString stringWithFormat:@"%@.ssodialog.", _RSDKAnalyticsNotificationBaseName];
-
-    _ssoDialogEvents =  @[@"help", @"privacypolicy", @"forgotpassword", @"register"];
-
-    for (NSString *notification in _ssoDialogEvents)
-    {
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(receiveSSODialogNotification:)
-                                                     name:[NSString stringWithFormat:@"%@%@", eventBase, notification]
-                                                   object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveSSODialogNotification:)
+                                                 name:[_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".ssodialog"]
+                                               object:nil];
 }
 
 
@@ -248,13 +240,18 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 
 - (void)receiveSSODialogNotification:(NSNotification *)notification
 {
-    NSString *eventSuffix = [notification.name substringFromIndex:[NSString stringWithFormat:@"%@.", _RSDKAnalyticsNotificationBaseName].length];
+    NSString *pageIdentifier = nil;
+    if ([notification.object isKindOfClass:[NSString class]])
+    {
+        pageIdentifier = [notification object];
+    }
 
-    /* 
-     * The format of event name is .ssodialog.<help|privacypolicy|forgotpassword|register>
-     * The prefix .ssodialog is used to determine the events from SSO Dialog.
-     */
-    [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id":eventSuffix}];
+    NSMutableDictionary *parameters = NSMutableDictionary.new;
+    if (pageIdentifier.length)
+    {
+        parameters[@"page_id"] = pageIdentifier;
+    }
+    [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:parameters];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.
