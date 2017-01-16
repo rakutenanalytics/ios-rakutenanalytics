@@ -143,7 +143,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(receiveSSODialogNotification:)
-                                                 name:[NSString stringWithFormat:@"%@.ssodialog", _RSDKAnalyticsNotificationBaseName]
+                                                 name:[_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".ssodialog"]
                                                object:nil];
 }
 

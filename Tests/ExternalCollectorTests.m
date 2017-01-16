@@ -191,18 +191,16 @@
 - (void)testSSODialogCollector
 {
     id mockCollector = OCMClassMock(_RSDKAnalyticsExternalCollector.class);
-    
-    _RSDKAnalyticsLaunchCollector.sharedInstance.currentPage = UIViewController.new;
+    Class aClass = [UIViewController class];
     
     for (NSString *event in @[@"help", @"privacypolicy", @"forgotpassword", @"register"])
     {
-        [NSNotificationCenter.defaultCenter postNotificationName:[NSString stringWithFormat:@"com.rakuten.esd.sdk.events.ssodialog.%@", event]
-                                                          object:nil];
+        NSString *eventToVerify = [NSString stringWithFormat:@"%@.%@",aClass,event];
+        [NSNotificationCenter.defaultCenter postNotificationName:@"com.rakuten.esd.sdk.events.ssodialog"
+                                                          object:[NSString stringWithFormat:@"%@.%@",aClass,event]];
         
-        NSString *eventToVerify = [NSString stringWithFormat:@"ssodialog.%@", event];
         OCMVerify([mockCollector trackEvent:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id":eventToVerify}]);
     }
-    
     [mockCollector stopMocking];
 }
 

@@ -347,19 +347,30 @@
     XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
 }
 
-- (void)testProcessSSODialogPageVisitEvent
+- (void)testProcessPageVisitEventWithPageId
 {
-    NSString *ssoPageEvent = @"ssodialog.aSSODialogEvent";
-    NSString *pageRef = [NSString stringWithFormat:@"%@.aSSODialogEvent", NSStringFromClass(CurrentPage.class)];
-    
+    NSString *pageIdentifier = @"PageVisitEvent.aPageIdentifier";
     [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:@{@"page_id":ssoPageEvent}]
+                                                           parameters:@{@"page_id":pageIdentifier}]
                      withState:nil
                       hasValue:@"pv"
                         forKey:@"etype"];
     
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:pageRef]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(CurrentPage.class)]);
+    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:pageIdentifier]);
+    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
+    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
+}
+
+- (void)testProcessPageVisitEventWithoutPageId
+{
+    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
+                                                           parameters:nil]
+                     withState:nil
+                      hasValue:@"pv"
+                        forKey:@"etype"];
+
+    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:NSStringFromClass(CurrentPage.class)]);
+    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
     XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
 }
 
