@@ -121,33 +121,30 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 {
     [self update];
 
-    // Equivalent to installation or reinstallation. Also triggers a session start.
+    // Equivalent to installation or reinstallation.
     if (_isInitialLaunch)
     {
         [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInitialLaunchEventName parameters:nil] track];
-        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInitialLaunch = NO;
-        return;
     }
 
-    // Triggered on first run after app install with or without version change. Also triggers a session start.
-    if (_isInstallLaunch)
+    // Triggered on first run after app install with or without version change.
+    else if (_isInstallLaunch)
     {
         [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil] track];
-        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isInstallLaunch = NO;
-        return;
     }
 
-    // Triggered on first run after upgrade (anytime the version number changes). Also triggers a session start.
-    if (_isUpdateLaunch)
+    // Triggered on first run after upgrade (anytime the version number changes).
+    else if (_isUpdateLaunch)
     {
         [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil] track];
         [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsApplicationUpdateEventName parameters:nil] track];
-        [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
         _isUpdateLaunch = NO;
-        return;
     }
+
+    // Trigger a session start.
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
 }
 
 - (void)didPresentViewController:(UIViewController *)viewController

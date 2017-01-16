@@ -404,6 +404,9 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
+@subsection analytics-2.8-2 2.8.2 (in progress)
+* [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): Fixed `_rem_launch` event not being triggered for most launches.
+
 @subsection analytics-2-8-1 2.8.1 (2016-11-29)
 * [REM-17889](https://jira.rakuten-it.com/jira/browse/REM-17889): Fixed potential security issue where full push notification message was sent to RAT.
 * [REM-17890](https://jira.rakuten-it.com/jira/browse/REM-17890): Fixed missing event after a push notification while app is active.
