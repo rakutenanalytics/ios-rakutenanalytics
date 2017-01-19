@@ -2,8 +2,8 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import "_RSDKAnalyticsHelpers.h"
 #import <RSDKAnalytics/RSDKAnalyticsManager.h>
+#import "_RSDKAnalyticsHelpers.h"
 
 BOOL _RSDKAnalyticsObjectsEqual(id objA, id objB)
 {

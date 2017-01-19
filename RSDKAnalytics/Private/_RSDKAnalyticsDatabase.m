@@ -2,9 +2,8 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import "_RSDKAnalyticsDatabase.h"
-#import <RSDKAnalytics/RSDKAnalytics.h>
 #import <sqlite3.h>
+#import "_RSDKAnalyticsDatabase.h"
 #import "_RSDKAnalyticsHelpers.h"
 
 

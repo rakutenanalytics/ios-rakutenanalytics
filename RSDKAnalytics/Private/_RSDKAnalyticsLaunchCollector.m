@@ -2,11 +2,10 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
+#import <CommonCrypto/CommonDigest.h>
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import "_RSDKAnalyticsHelpers.h"
-
-#import <CommonCrypto/CommonDigest.h>
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";

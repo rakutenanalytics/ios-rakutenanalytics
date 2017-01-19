@@ -7,6 +7,7 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreLocation/CoreLocation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#import <WebKit/WebKit.h>
 #import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsDatabase.h"
@@ -32,22 +33,15 @@ NSString *const _RATREFParameter     = @"ref";
 static NSURL *findURLForView(UIView *view)
 {
     NSURL *url = nil;
-    if (view) do
+
+    if ([view isKindOfClass:[UIWebView class]])
     {
-        SEL urlSelector = @selector(URL);
-        if ([view respondsToSelector:urlSelector])
-        {
-            url = [view performSelector:urlSelector];
-            if ([url isKindOfClass:NSURL.class]) break;
-
-            url = nil;
-        }
-
-        for (UIView *subview in view.subviews)
-        {
-            if ((url = findURLForView(subview))) break;
-        }
-    } while(0);
+        url = ((UIWebView *)view).request.URL;
+    }
+    else if ([WKWebView class] && [view isKindOfClass:[WKWebView class]])
+    {
+        url = ((WKWebView *)view).URL;
+    }
 
     if ((url = url.absoluteURL))
     {
@@ -61,6 +55,13 @@ static NSURL *findURLForView(UIView *view)
         components.host   = fullComponents.host;
         components.path   = fullComponents.path;
         url = components.URL.absoluteURL;
+    }
+    else
+    {
+        for (UIView *subview in view.subviews)
+        {
+            if ((url = findURLForView(subview))) break;
+        }
     }
 
     return url;
