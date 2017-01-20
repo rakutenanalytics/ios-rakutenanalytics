@@ -122,15 +122,11 @@
     RSDKAnalyticsEvent *event = [self defaultEvent];
 
     id mock = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
-    OCMExpect([mock process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [event isEqual:obj];
-    }]]);
-    OCMStub([mock process:OCMOCK_ANY]);
-
     [event track];
 
-    OCMVerifyAll(mock);
-
+    OCMVerify([mock process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [event isEqual:obj];
+    }]]);
     [mock stopMocking];
 }
 

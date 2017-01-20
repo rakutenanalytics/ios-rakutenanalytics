@@ -85,14 +85,12 @@
     RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:@"foo" parameters:nil];
 
     id mock = OCMPartialMock(RATTracker.sharedInstance);
-    OCMExpect([mock processEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
-        return [obj isEqual:event];
-    }] state:OCMOCK_ANY]);
-    OCMStub([mock processEvent:OCMOCK_ANY state:OCMOCK_ANY]).andReturn(YES);
-
     [RSDKAnalyticsManager.sharedInstance process:event];
 
-    OCMVerifyAll(mock);
+    OCMVerify([mock processEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return [obj isEqual:event];
+    }] state:OCMOCK_ANY]);
+
     [mock stopMocking];
 }
 
@@ -106,15 +104,13 @@
     record.eventType = @"etype";
     
     id mock = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
-    OCMExpect([mock process:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [RSDKAnalyticsManager spoolRecord:record];
+
+    OCMVerify([mock process:[OCMArg checkWithBlock:^BOOL(id obj) {
         RSDKAnalyticsEvent *event = obj;
         return [event.name isEqualToString:@"rat.etype"];
     }]]);
-    OCMStub([mock process:OCMOCK_ANY]);
 
-    [RSDKAnalyticsManager spoolRecord:record];
-    
-    OCMVerifyAll(mock);
     [mock stopMocking];
 }
 

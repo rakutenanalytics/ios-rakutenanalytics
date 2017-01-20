@@ -758,7 +758,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             {
                 self.carriedOverOrigin = @(state.origin);
             }
-            return nil;
+            return NO;
         }
 
         payload[_RATPGNParameter] = pageIdentifier;

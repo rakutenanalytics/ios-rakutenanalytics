@@ -256,6 +256,9 @@
 - (void)tearDown
 {
     [OHHTTPStubs removeAllStubs];
+    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+        [mock stopMocking];
+    }];
 
     _mocks    = nil;
     _tracker  = nil;
@@ -353,9 +356,9 @@
     id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsSessionStartEventName];
 
     NSInteger daysSinceFirstUse = [[payload valueForKeyPath:@"cp.days_since_first_use"] integerValue];
-    NSInteger daysSinceLastUse  = [[payload valueForKeyPath:@"cp.days_since_first_use"] integerValue];
-    XCTAssertGreaterThan(daysSinceFirstUse, 0);
-    XCTAssertGreaterThan(daysSinceLastUse,  0);
+    NSInteger daysSinceLastUse  = [[payload valueForKeyPath:@"cp.days_since_last_use"] integerValue];
+    XCTAssertGreaterThanOrEqual(daysSinceLastUse, 0);
+    XCTAssertEqual(daysSinceLastUse, daysSinceFirstUse - 2);
 }
 
 - (void)testProcessSessionEndEvent
