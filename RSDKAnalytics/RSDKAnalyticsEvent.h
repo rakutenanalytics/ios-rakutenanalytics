@@ -3,7 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <RSDKAnalytics/RSDKAnalyticsDefines.h>
-#import "RSDKAnalyticsManager.h"
+#import <RSDKAnalytics/RSDKAnalyticsManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

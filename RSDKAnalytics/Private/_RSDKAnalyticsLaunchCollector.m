@@ -2,11 +2,10 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
+#import <CommonCrypto/CommonDigest.h>
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
 #import "_RSDKAnalyticsLaunchCollector.h"
 #import "_RSDKAnalyticsHelpers.h"
-
-#import <CommonCrypto/CommonDigest.h>
 
 static NSString *const _RSDKAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RSDKAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -149,13 +148,52 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 
 - (void)didPresentViewController:(UIViewController *)viewController
 {
+    UIView   *view   = viewController.view;
+    UIWindow *window = view.window;
+
     /*
-     * Only consider as "pages" view controllers that are not known shells used
-     * only for presenting other view controllers:
+     * Don't treat as pages view controllers known to be just
+     * content-less chromes around other view controllers.
+     * Note: won't catch third-party content-less containers.
      */
     if ([viewController isKindOfClass:[UINavigationController class]] ||
         [viewController isKindOfClass:[UISplitViewController class]] ||
-        [viewController isKindOfClass:[UIPageViewController class]])
+        [viewController isKindOfClass:[UIPageViewController class]] ||
+        [viewController isKindOfClass:[UITabBarController class]])
+    {
+        return;
+    }
+    
+    /*
+     * Don't treat system popups as pages.
+     * Before iOS9, pop-overs will be caught further below because they used a _UIPopoverView
+     * and that class matches the criteria for Apple private classes.
+     */
+    if ([view isKindOfClass:UIAlertView.class] ||
+        [view isKindOfClass:UIActionSheet.class] ||
+        ([UIAlertController class] && [viewController isKindOfClass:[UIAlertController class]]))
+    {
+        return;
+    }
+
+    /*
+     * Don't treat private classes as pages if they come from system frameworks.
+     * Note: Won't catch private class not adhering to the _ prefix standard.
+     */
+    if (_RSDKAnalyticsIsApplePrivateClass(viewController.class) ||
+        _RSDKAnalyticsIsApplePrivateClass(view.class) ||
+        _RSDKAnalyticsIsApplePrivateClass(window.class))
+    {
+        return;
+    }
+
+    /*
+     * Allow UIWindow subclasses except those from system frameworks
+     * (so that view controllers presented in e.g. UITextEffectWindow are not
+     * counting as pages).
+     * This catches most keyboard windows.
+     */
+    if (![window isMemberOfClass:UIWindow.class] && _RSDKAnalyticsIsAppleClass(window.class))
     {
         return;
     }
@@ -165,6 +203,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         self.lastVisitedPage = _currentPage;
     }
     _currentPage = viewController;
+
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
 
     // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.

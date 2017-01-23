@@ -2,12 +2,9 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import <UIKit/UIKit.h>
 #import "_RSDKAnalyticsClassManipulator.h"
 
-#if __has_include(<UserNotifications/UserNotifications.h>)
-#import <UserNotifications/UserNotifications.h>
-#define RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
+#ifdef RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
 
 NS_ASSUME_NONNULL_BEGIN
 

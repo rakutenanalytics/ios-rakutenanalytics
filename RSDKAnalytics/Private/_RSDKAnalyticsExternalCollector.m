@@ -2,10 +2,9 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import "_RSDKAnalyticsExternalCollector.h"
 #import <RSDKAnalytics/RSDKAnalyticsEvent.h>
-#import <RSDKAnalytics/_RSDKAnalyticsPrivateEvents.h>
-#import <RSDKAnalytics/RSDKAnalyticsState.h>
+#import "_RSDKAnalyticsExternalCollector.h"
+#import "_RSDKAnalyticsPrivateEvents.h"
 #import "_RSDKAnalyticsHelpers.h"
 
 static NSString *const _RSDKAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";

@@ -2,7 +2,6 @@
  * © Rakuten, Inc.
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
-#import <RSDKAnalytics/RSDKAnalyticsDefines.h>
 #import <RSDKAnalytics/RSDKAnalyticsState.h>
 
 NS_ASSUME_NONNULL_BEGIN

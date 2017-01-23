@@ -3,6 +3,7 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /*
  * Exports a global, setting the proper visibility attributes so that it does not
@@ -31,4 +32,12 @@
 #   define RSDKA_GENERIC(...) <__VA_ARGS__>
 #else
 #   define RSDKA_GENERIC(...)
+#endif
+
+/*
+ * iOS 10 user notifications
+ */
+#if __has_include(<UserNotifications/UserNotifications.h>)
+#import <UserNotifications/UserNotifications.h>
+#define RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
 #endif

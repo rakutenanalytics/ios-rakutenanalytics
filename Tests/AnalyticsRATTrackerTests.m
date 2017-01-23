@@ -10,6 +10,100 @@
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
+#pragma mark - Database Mock 
+
+@interface MockedDatabase : NSObject
+@property (nonatomic) NSMutableOrderedSet *keys;
+@property (nonatomic) NSMutableDictionary *rows;
+@property (nonatomic) NSDictionary        *latestAddedJSON;
+@end
+
+@implementation MockedDatabase
+- (instancetype)init
+{
+    if ((self = [super init]))
+    {
+        _keys = NSMutableOrderedSet.new;
+        _rows = NSMutableDictionary.new;
+    }
+    return self;
+}
+
+- (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+               into:(NSString *)table
+              limit:(unsigned int)maximumNumberOfBlobs
+               then:(dispatch_block_t)completion
+{
+    for (NSData *blob in blobs)
+    {
+        static unsigned row = 0;
+
+        NSNumber *key = @(++row);
+        [_keys addObject:key];
+        _rows[key] = blob.copy;
+        _latestAddedJSON = [NSJSONSerialization JSONObjectWithData:blob options:0 error:0];
+    }
+
+    if (completion)
+    {
+        NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            typeof(callerQueue) __strong queue = callerQueue;
+            [queue addOperationWithBlock:completion];
+        });
+    }
+}
+
+- (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion
+{
+    NSMutableArray *blobs       = NSMutableArray.new;
+    NSMutableArray *identifiers = NSMutableArray.new;
+
+    NSArray *keys = _keys.array;
+    if (keys.count)
+    {
+        keys = [keys subarrayWithRange:NSMakeRange(0, MIN(keys.count, maximumNumberOfBlobs))];
+        for (NSNumber *key in keys)
+        {
+            [identifiers addObject:key];
+            [blobs       addObject:_rows[key]];
+        }
+    }
+
+    if (completion)
+    {
+        NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            typeof(callerQueue) __strong queue = callerQueue;
+            [queue addOperationWithBlock:^{
+                completion(blobs.count ? blobs : nil, identifiers.count ? identifiers : nil);
+            }];
+        });
+    }
+}
+
+- (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+                                in:(NSString *)table
+                              then:(dispatch_block_t)completion
+{
+    [_keys removeObjectsInArray:identifiers];
+    [_rows removeObjectsForKeys:identifiers];
+
+    if (completion)
+    {
+        NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            typeof(callerQueue) __strong queue = callerQueue;
+            [queue addOperationWithBlock:completion];
+        });
+    };
+}
+@end
+
+#pragma mark - Module Internals
+
 @interface RSDKAnalyticsState ()
 @property (nonatomic, readwrite, copy)              NSString                    *sessionIdentifier;
 @property (nonatomic, readwrite, copy)              NSString                    *deviceIdentifier;
@@ -34,17 +128,22 @@
 @interface RATTracker ()
 @property (nonatomic) int64_t  accountIdentifier;
 @property (nonatomic) int64_t  applicationIdentifier;
+@property (nonatomic, copy, nullable) NSString *lastVisitedPageIdentifier;
+@property (nonatomic, copy, nullable) NSNumber *carriedOverOrigin;
 @property (nonatomic) NSTimer *uploadTimer;
-
-- (void)_doBackgroundUpload;
+@property (nonatomic) NSTimeInterval  uploadTimerInterval;
+- (instancetype)initInstance;
 @end
 
+#pragma mark - Unit Tests
+
 @interface AnalyticsRATTrackerTests : XCTestCase
-{
-    RATTracker      *_tracker;
-    NSCalendar      *_calendar;
-    NSDictionary    *_jsonDataObject;
-}
+@property (nonatomic)       MockedDatabase      *database;
+@property (nonatomic)       RATTracker          *tracker;
+@property (nonatomic)       NSMutableArray      *mocks;
+
+@property (nonatomic, copy) RSDKAnalyticsEvent  *defaultEvent;
+@property (nonatomic, copy) RSDKAnalyticsState  *defaultState;
 @end
 
 @interface CurrentPage: UIViewController
@@ -64,412 +163,371 @@
 - (void)setUp
 {
     [super setUp];
-    _calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    _tracker = RATTracker.sharedInstance;
+    _mocks = NSMutableArray.new;
+
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:-56.6462520 longitude:-36.6462520];
+    CurrentPage *currentPage = [CurrentPage.alloc init];
+    currentPage.view.frame = CGRectMake(0, 0, 100, 100);
+
+    NSDateComponents *dateComponents = [NSDateComponents.alloc init];
+    dateComponents.calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    dateComponents.day    = 10;
+    dateComponents.month  = 6;
+    dateComponents.year   = 2016;
+    dateComponents.hour   = 9;
+    dateComponents.minute = 15;
+    dateComponents.second = 30;
+    NSDate *sessionStartDate = dateComponents.date;
+
+    dateComponents.day = 1;
+    NSDate *initialLaunchDate = dateComponents.date;
+
+    dateComponents.day = 3;
+    NSDate *lastLaunchDate = dateComponents.date;
+
+    dateComponents.day = 2;
+    NSDate *lastUpdateDate = dateComponents.date;
+
+    _defaultState = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                       deviceIdentifier:@"deviceId"];
+    _defaultState.advertisingIdentifier = @"adId";
+    _defaultState.lastKnownLocation     = location;
+    _defaultState.sessionStartDate      = sessionStartDate;
+    _defaultState.userIdentifier        = @"userId";
+    _defaultState.loginMethod           = RSDKAnalyticsOneTapLoginLoginMethod;
+    _defaultState.origin                = RSDKAnalyticsInternalOrigin;
+    _defaultState.lastVersion           = @"1.0";
+    _defaultState.initialLaunchDate     = initialLaunchDate;
+    _defaultState.installLaunchDate     = [initialLaunchDate dateByAddingTimeInterval:-10];
+    _defaultState.lastLaunchDate        = lastLaunchDate;
+    _defaultState.lastUpdateDate        = lastUpdateDate;
+    _defaultState.lastVersionLaunches   = 10;
+    _defaultState.currentPage           = currentPage;
+    _defaultState.lastVisitedPage       = LastVisitedPage.new;
+
+    _defaultEvent = [RSDKAnalyticsEvent.alloc initWithName:[_RATEventPrefix stringByAppendingString:@"defaultEvent"]
+                                                parameters:@{@"param1": @"value1"}];
+
+    // Mock the main bundle
+    id bundleMock = OCMClassMock(NSBundle.class);
+    [[[[bundleMock stub] classMethod] andReturn:[NSBundle bundleForClass:RATTracker.class]] mainBundle];
+    [self addMock:bundleMock];
+
+    // No request should be emitted to RAT unless it's properly mocked
+    // in the relevant test
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        XCTAssertNotEqualObjects(request.URL.absoluteURL,
+                                 RATTracker.endpointAddress,
+                                 @"Missing HTTP mock!");
+        [self description]; // capture self strongly for the assert above to work
+        return NO;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        return nil;
+    }];
+
+    // Mock the database
+    _database = MockedDatabase.new;
+    id dbMock = OCMClassMock(_RSDKAnalyticsDatabase.class);
+
+    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
+      andCall:@selector(insertBlobs:into:limit:then:) onObject:_database]
+     insertBlobs:OCMOCK_ANY into:OCMOCK_ANY limit:0 then:OCMOCK_ANY];
+
+    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
+      andCall:@selector(fetchBlobs:from:then:) onObject:_database]
+     fetchBlobs:0 from:OCMOCK_ANY then:OCMOCK_ANY];
+
+    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
+      andCall:@selector(deleteBlobsWithIdentifiers:in:then:) onObject:_database]
+     deleteBlobsWithIdentifiers:OCMOCK_ANY in:OCMOCK_ANY then:OCMOCK_ANY];
+
+    [self addMock:dbMock];
+
+    // Mock the RATTracker singleton so that each test gets a fresh one
+    _tracker = [RATTracker.alloc initInstance];
+    _tracker.uploadTimerInterval = 2;
+    id trackerMock = OCMClassMock(RATTracker.class);
+
+    [[[[trackerMock stub] classMethod] andReturn:_tracker] sharedInstance];
+
+    [self addMock:trackerMock];
 }
 
 - (void)tearDown
 {
     [OHHTTPStubs removeAllStubs];
+    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+        [mock stopMocking];
+    }];
+
+    _mocks    = nil;
+    _tracker  = nil;
+    _database = nil;
 }
 
-#pragma mark - Helpers
+#pragma mark Helpers
 
-- (RSDKAnalyticsState *)defaultState
+- (void)addMock:(id)mock
 {
-    CLLocation *location = [[CLLocation alloc] initWithLatitude:-56.6462520 longitude:-36.6462520];
-    CurrentPage *currentPage = [CurrentPage.alloc init];
-    currentPage.view.frame = CGRectMake(0, 0, 100, 100);
-    
-    NSDateComponents *dateComponents = [NSDateComponents.alloc init];
-    [dateComponents setDay:10];
-    [dateComponents setMonth:6];
-    [dateComponents setYear:2016];
-    [dateComponents setHour:9];
-    [dateComponents setMinute:15];
-    [dateComponents setSecond:30];
-    NSDate *sessionStartDate = [_calendar dateFromComponents:dateComponents];
-    
-    [dateComponents setDay:10];
-    [dateComponents setMonth:6];
-    [dateComponents setYear:2016];
-    NSDate *initialLaunchDate = [_calendar dateFromComponents:dateComponents];
-    
-    [dateComponents setDay:12];
-    [dateComponents setMonth:7];
-    [dateComponents setYear:2016];
-    NSDate *lastLaunchDate = [_calendar dateFromComponents:dateComponents];
-    
-    [dateComponents setDay:11];
-    [dateComponents setMonth:7];
-    [dateComponents setYear:2016];
-    NSDate *lastUpdateDate = [_calendar dateFromComponents:dateComponents];
-    
-    RSDKAnalyticsState *state       = [RSDKAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
-                                                                         deviceIdentifier:@"deviceId"];
-    state.advertisingIdentifier     = @"adId";
-    state.lastKnownLocation         = location;
-    state.sessionStartDate          = sessionStartDate;
-    state.userIdentifier            = @"userId";
-    state.loginMethod               = RSDKAnalyticsOneTapLoginLoginMethod;
-    state.origin                    = RSDKAnalyticsInternalOrigin;
-    state.lastVersion               = @"1.0";
-    state.initialLaunchDate         = initialLaunchDate;
-    state.installLaunchDate         = [initialLaunchDate dateByAddingTimeInterval:-10];
-    state.lastLaunchDate            = lastLaunchDate;
-    state.lastUpdateDate            = lastUpdateDate;
-    state.lastVersionLaunches       = 10;
-    state.currentPage               = currentPage;
-    state.lastVisitedPage           = LastVisitedPage.new;
-    return state;
+    [_mocks addObject:mock];
 }
 
-- (RSDKAnalyticsEvent *)defaultEvent
+- (NSDictionary *)assertProcessEvent:(RSDKAnalyticsEvent *)event
+                               state:(RSDKAnalyticsState *)state
+                          expectType:(NSString *)etype
 {
-    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@defaultEvent", _RATEventPrefix] parameters:@{@"param1":@"value1"}];
-    return event;
-}
-
-- (void)stubInsertBlob:(NSData *)blob
-                  into:(NSString *)table
-                 limit:(unsigned int)maximumNumberOfBlobs
-                  then:(dispatch_block_t)completion
-{
-    if (!blob) { return; }
-    
-    _jsonDataObject = [NSJSONSerialization JSONObjectWithData:blob options:0 error:0] ?: nil;
-}
-
-- (void)assertProcessedEvent:(RSDKAnalyticsEvent *)event
-                   withState:(RSDKAnalyticsState *)state
-                    hasValue:(NSString *)value
-                      forKey:(NSString *)key
-{
-    id classMock = OCMClassMock([_RSDKAnalyticsDatabase class]);
-    
-    OCMStub([classMock insertBlob:[OCMArg any] into:[OCMArg any] limit:5000u then:[OCMArg any]]).andCall(self, @selector(stubInsertBlob:into:limit:then:));
-    
-    XCTAssertTrue([_tracker processEvent:event state:state ?: [self defaultState]]);
-    XCTAssertTrue([_jsonDataObject[key] isEqualToString:value]);
-    
-    [classMock stopMocking];
+    XCTAssertNotNil(event);
+    XCTAssert([RATTracker.sharedInstance processEvent:event state:state]);
+    id payload = _database.latestAddedJSON;
+    XCTAssertNotNil(payload);
+    if (etype) XCTAssertEqualObjects(payload[@"etype"], etype);
+    return payload;
 }
 
 - (BOOL)assertExpectedNotification:(NSDictionary *)userInfo
 {
     NSError *error = userInfo[NSUnderlyingErrorKey];
-    XCTAssertTrue([error.userInfo[NSLocalizedDescriptionKey] isEqualToString:@"invalid_response"]);
+    XCTAssertEqualObjects(error.localizedDescription, @"invalid_response");
     return YES;
 }
 
-#pragma mark - Tests
+#pragma mark Tests
 
 - (void)testAnalyticsRATTrackerSharedInstanceIsNotNil
 {
-    XCTAssertNotNil(_tracker);
+    XCTAssertNotNil(RATTracker.sharedInstance);
 }
 
 - (void)testAnalyticsRATTrackerSharedInstanceAreEqual
 {
-    XCTAssertEqualObjects(_tracker, RATTracker.sharedInstance);
+    XCTAssertEqualObjects(RATTracker.sharedInstance, RATTracker.sharedInstance);
 }
 
 - (void)testInitThrowsException
 {
-    XCTAssertThrowsSpecificNamed([RATTracker.alloc init], NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed([RATTracker new], NSException, NSInvalidArgumentException);
 }
 
 - (void)testEventWithTypeAndParameters
 {
-    RSDKAnalyticsEvent *event = [_tracker eventWithEventType:@"login" parameters:@{@"acc":@555}];
+    NSDictionary *params = @{@"acc":@555};
+    RSDKAnalyticsEvent *event = [RATTracker.sharedInstance eventWithEventType:@"login" parameters:params];
     XCTAssertNotNil(event);
-    XCTAssertTrue([event.name isEqualToString:@"rat.login"]);    
+    XCTAssertEqualObjects(event.name,       @"rat.login");
+    XCTAssertEqualObjects(event.parameters, params);
 }
 
 - (void)testConfigureWithApplicationId
 {
-    [_tracker configureWithApplicationId:555];
-    XCTAssertTrue(_tracker.applicationIdentifier == 555);
+    [RATTracker.sharedInstance configureWithApplicationId:555];
+    XCTAssertEqual(RATTracker.sharedInstance.applicationIdentifier, 555);
 }
 
 - (void)testConfigureWithAccountId
 {
-    [_tracker configureWithAccountId:333];
-    XCTAssertTrue(_tracker.accountIdentifier == 333);
+    [RATTracker.sharedInstance configureWithAccountId:333];
+    XCTAssertEqual(RATTracker.sharedInstance.accountIdentifier, 333);
 }
 
 - (void)testProcessValidRATEvent
 {
-    [self assertProcessedEvent:[self defaultEvent]
-                     withState:nil
-                      hasValue:@"defaultEvent"
-                        forKey:@"etype"];
+    [self assertProcessEvent:_defaultEvent state:_defaultState expectType:@"defaultEvent"];
 }
 
 - (void)testProcessInitialLaunchEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInitialLaunchEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsInitialLaunchEventName
-                        forKey:@"etype"];
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInitialLaunchEventName parameters:nil];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsInitialLaunchEventName];
 }
 
 - (void)testProcessInstallEvent
 {
-    id mockBundle = [OCMockObject niceMockForClass:[NSBundle class]];
-    NSBundle *correctMainBundle = [NSBundle bundleForClass:RATTracker.class];
-    [[[[mockBundle stub] classMethod] andReturn:correctMainBundle] mainBundle];
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsInstallEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"app_info"] containsString:@"xcode"]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"app_info"] containsString:@"iphonesimulator"]);
-    
-    [mockBundle stopMocking];
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsInstallEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsInstallEventName];
+
+    id appInfo = [payload valueForKeyPath:@"cp.app_info"];
+    XCTAssert([appInfo containsString:@"xcode"]);
+    XCTAssert([appInfo containsString:@"iphonesimulator"]);
 }
 
 - (void)testProcessSessionStartEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsSessionStartEventName
-                        forKey:@"etype"];
-    
-    NSInteger daysSinceFirstUse = [_jsonDataObject[@"cp"][@"days_since_first_use"] integerValue];
-    NSInteger daysSinceLastUse = [_jsonDataObject[@"cp"][@"days_since_last_use"] integerValue];
-    XCTAssertTrue(daysSinceFirstUse > 0);
-    XCTAssertTrue(daysSinceLastUse > 0);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsSessionStartEventName];
+
+    NSInteger daysSinceFirstUse = [[payload valueForKeyPath:@"cp.days_since_first_use"] integerValue];
+    NSInteger daysSinceLastUse  = [[payload valueForKeyPath:@"cp.days_since_last_use"] integerValue];
+    XCTAssertGreaterThanOrEqual(daysSinceLastUse, 0);
+    XCTAssertEqual(daysSinceLastUse, daysSinceFirstUse - 2);
 }
 
 - (void)testProcessSessionEndEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionEndEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsSessionEndEventName
-                        forKey:@"etype"];
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionEndEventName parameters:nil];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsSessionEndEventName];
 }
 
 - (void)testProcessApplicationUpdateEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsApplicationUpdateEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsApplicationUpdateEventName
-                        forKey:@"etype"];
-    
-    NSInteger launchesSinceUpgrade = [_jsonDataObject[@"cp"][@"launches_since_last_upgrade"] integerValue];
-    NSInteger daysSinceUpgrade = [_jsonDataObject[@"cp"][@"days_since_last_upgrade"] integerValue];
-    XCTAssertTrue(launchesSinceUpgrade > 0);
-    XCTAssertTrue(daysSinceUpgrade > 0);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsApplicationUpdateEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsApplicationUpdateEventName];
+
+    NSInteger launchesSinceUpgrade = [[payload valueForKeyPath:@"cp.launches_since_last_upgrade"] integerValue];
+    NSInteger daysSinceUpgrade     = [[payload valueForKeyPath:@"cp.days_since_last_upgrade"] integerValue];
+    XCTAssertGreaterThan(launchesSinceUpgrade, 0);
+    XCTAssertGreaterThan(daysSinceUpgrade,     0);
 }
 
 - (void)testProcessOneTapLoginEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsLoginEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"login_method"] isEqualToString:@"one_tap_login"]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"one_tap_login");
 }
 
 - (void)testProcessPasswordLoginEvent
 {
-    RSDKAnalyticsState *state = [self defaultState];
+    RSDKAnalyticsState *state = _defaultState.copy;
     state.loginMethod = RSDKAnalyticsPasswordInputLoginMethod;
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil]
-                     withState:state
-                      hasValue:RSDKAnalyticsLoginEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"login_method"] isEqualToString:@"password"]);
+
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:state expectType:RSDKAnalyticsLoginEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"password");
 }
 
 - (void)testProcessLocalLogoutEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName
-                                                           parameters:@{RSDKAnalyticsLogoutMethodEventParameter:RSDKAnalyticsLocalLogoutMethod}]
-                     withState:nil
-                      hasValue:RSDKAnalyticsLogoutEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"logout_method"] isEqualToString:@"single"]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:@{RSDKAnalyticsLogoutMethodEventParameter:RSDKAnalyticsLocalLogoutMethod}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLogoutEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"single");
 }
 
 - (void)testProcessGlobalLogoutEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName
-                                                           parameters:@{RSDKAnalyticsLogoutMethodEventParameter:RSDKAnalyticsGlobalLogoutMethod}]
-                     withState:nil
-                      hasValue:RSDKAnalyticsLogoutEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"logout_method"] isEqualToString:@"all"]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:@{RSDKAnalyticsLogoutMethodEventParameter:RSDKAnalyticsGlobalLogoutMethod}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLogoutEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"all");
 }
 
 - (void)testProcessEmptyLogoutEvent
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName
-                                                           parameters:nil]
-                     withState:nil
-                      hasValue:RSDKAnalyticsLogoutEventName
-                        forKey:@"etype"];
-    
-    XCTAssertNil(_jsonDataObject[@"cp"][@"logout_method"]);
-}
-
-- (void)testProcessInternalPageVisitEventWithParam
-{
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:@{@"page_id":@"TestPage1"}]
-                     withState:nil
-                      hasValue:@"pv"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:@"TestPage1"]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
-}
-
-- (void)testProcessInternalPageVisitEventNoParam
-{
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:nil]
-                     withState:nil
-                      hasValue:@"pv"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:NSStringFromClass(CurrentPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLogoutEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLogoutEventName];
+    XCTAssertNil([payload valueForKeyPath:@"cp.logout_method"]);
 }
 
 - (void)testProcessPageVisitEventWithPageId
 {
-    NSString *pageIdentifier = @"PageVisitEvent.aPageIdentifier";
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:@{@"page_id":pageIdentifier}]
-                     withState:nil
-                      hasValue:@"pv"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:pageIdentifier]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
+    NSString *pageId = @"TestPage";
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
 }
 
 - (void)testProcessPageVisitEventWithoutPageId
 {
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:nil]
-                     withState:nil
-                      hasValue:@"pv"
-                        forKey:@"etype"];
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], NSStringFromClass(CurrentPage.class));
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
+}
 
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:NSStringFromClass(CurrentPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"internal"]);
+- (void)testProcessPageWithRef
+{
+    NSString *firstPage  = @"FirstPage",
+             *secondPage = @"SecondPage";
+
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id": firstPage}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], firstPage);
+    XCTAssertNil([payload valueForKeyPath:@"ref"]);
+
+    event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id": secondPage}];
+    payload = [self assertProcessEvent:event state:_defaultState expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], secondPage);
+    XCTAssertEqualObjects([payload valueForKeyPath:@"ref"], firstPage);
 }
 
 - (void)testProcessExternalPageVisitEvent
 {
-    RSDKAnalyticsState *state = [self defaultState];
+    NSString *pageId = @"TestPage";
+    RSDKAnalyticsState *state = _defaultState.copy;
     state.origin = RSDKAnalyticsExternalOrigin;
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:@{@"page_id":@"TestPage2"}]
-                     withState:state
-                      hasValue:@"pv"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:@"TestPage2"]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"external"]);
+
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
+    id payload = [self assertProcessEvent:event state:state expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"external");
 }
 
 - (void)testProcessPushPageVisitEvent
 {
-    RSDKAnalyticsState *state = [self defaultState];
+    NSString *pageId = @"TestPage";
+    RSDKAnalyticsState *state = _defaultState.copy;
     state.origin = RSDKAnalyticsPushOrigin;
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName
-                                                           parameters:@{@"page_id":@"TestPage3"}]
-                     withState:state
-                      hasValue:@"pv"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"pgn"] isEqualToString:@"TestPage3"]);
-    XCTAssertTrue([_jsonDataObject[@"ref"] isEqualToString:NSStringFromClass(LastVisitedPage.class)]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"ref_type"] isEqualToString:@"push"]);
+
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
+    id payload = [self assertProcessEvent:event state:state expectType:@"pv"];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"push");
 }
 
 - (void)testProcessPushEvent
 {
     NSString *trackingIdentifier = @"trackingIdentifier";
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPushNotificationEventName
-                                                           parameters:@{RSDKAnalyticPushNotificationTrackingIdentifierParameter : trackingIdentifier}]
-                     withState:nil
-                      hasValue:RSDKAnalyticsPushNotificationEventName
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][@"push_notify_value"] isEqualToString:trackingIdentifier]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPushNotificationEventName
+                                           parameters:@{RSDKAnalyticPushNotificationTrackingIdentifierParameter: trackingIdentifier}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsPushNotificationEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], trackingIdentifier);
 }
 
 - (void)testProcessDiscoverEvent
 {
     NSString *discoverEvent = @"_rem_discover_event";
-    NSString *appNameKey    = @"prApp";
     NSString *appName       = @"appName";
-    NSString *storeURLKey   = @"prStoreUrl";
     NSString *storeURL      = @"storeUrl";
     
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:discoverEvent
-                                                           parameters:@{appNameKey : appName, storeURLKey: storeURL}]
-                     withState:nil
-                      hasValue:discoverEvent
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"cp"][appNameKey] isEqualToString:appName]);
-    XCTAssertTrue([_jsonDataObject[@"cp"][storeURLKey] isEqualToString:storeURL]);
+    id event = [RSDKAnalyticsEvent.alloc initWithName:discoverEvent
+                                           parameters:@{@"prApp" : appName, @"prStoreUrl": storeURL}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:discoverEvent];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prApp"], appName);
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prStoreUrl"], storeURL);
 }
 
 - (void)testProcessCardInfoEvent
 {
     NSString *cardInfoEvent = @"_rem_cardinfo_event";
-    
-    [self assertProcessedEvent:[RSDKAnalyticsEvent.alloc initWithName:cardInfoEvent
-                                                           parameters:nil]
-                     withState:nil
-                      hasValue:cardInfoEvent
-                        forKey:@"etype"];
+    id event = [RSDKAnalyticsEvent.alloc initWithName:cardInfoEvent parameters:nil];
+    [self assertProcessEvent:event state:_defaultState expectType:cardInfoEvent];
 }
 
 - (void)testProcessInvalidEventFails
 {
-    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:@"unknown" parameters:@{@"param1":@"value1"}];
-    XCTAssertFalse([_tracker processEvent:event state:[self defaultState]]);
+    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:@"unknown" parameters:nil];
+    XCTAssertFalse([RATTracker.sharedInstance processEvent:event state:[self defaultState]]);
 }
 
 - (void)testDeviceBatteryStateReportedInJSON
 {
     id deviceSpy = OCMPartialMock(UIDevice.currentDevice);
+    [self addMock:deviceSpy];
     
     OCMStub([deviceSpy batteryState]).andReturn(UIDeviceBatteryStateUnplugged);
     OCMStub([deviceSpy batteryLevel]).andReturn(0.5);
     
-    [self assertProcessedEvent:[self defaultEvent]
-                     withState:nil
-                      hasValue:@"defaultEvent"
-                        forKey:@"etype"];
-    
-    XCTAssertTrue([_jsonDataObject[@"powerstatus"] integerValue] == 0);
-    XCTAssertTrue([_jsonDataObject[@"mbat"] floatValue] == 50);
-    
-    [deviceSpy stopMocking];
+    id payload = [self assertProcessEvent:_defaultEvent state:_defaultState expectType:nil];
+    NSNumber *powerstatus = payload[@"powerstatus"],
+             *mbat        = payload[@"mbat"];
+
+    XCTAssertNotNil(powerstatus);
+    XCTAssertNotNil(mbat);
+
+    XCTAssert([powerstatus isKindOfClass:NSNumber.class]);
+    XCTAssert([mbat        isKindOfClass:NSString.class]);
+
+    XCTAssertEqual(powerstatus.integerValue, 0);
+    XCTAssertEqual(mbat.floatValue,          50);
 }
 
 - (void)testSendEventToRAT
@@ -479,55 +537,45 @@
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:RATTracker.endpointAddress.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
-        [sent fulfill];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [sent fulfill];
+        });
+
         return [OHHTTPStubsResponse responseWithData:[NSData data] statusCode:200 headers:nil];
     }];
     
-    [_tracker processEvent:[self defaultEvent] state:[self defaultState]];
-    
-    // Reduce RATTracker's upload timer from 60s to 1s
-    _tracker.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                                            target:_tracker
-                                                          selector:@selector(_doBackgroundUpload)
-                                                          userInfo:nil
-                                                           repeats:NO];
-    
+    [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testSendEventToRATServerError
 {
     XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
-    
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:RATTracker.endpointAddress.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
-        [sent fulfill];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [sent fulfill];
+        });
         return [OHHTTPStubsResponse responseWithData:[NSData data] statusCode:500 headers:nil];
     }];
-    
-    id notificationCenterSpy = OCMPartialMock(NSNotificationCenter.defaultCenter);
-    
-    [_tracker processEvent:[self defaultEvent] state:[self defaultState]];
-    
-    // Reduce RATTracker's upload timer from 60s to 0.1s
-    _tracker.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
-                                                            target:_tracker
-                                                          selector:@selector(_doBackgroundUpload)
-                                                          userInfo:nil
-                                                           repeats:NO];
-    
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            OCMVerify([notificationCenterSpy postNotificationName:RATUploadFailureNotification
-                                                           object:OCMOCK_ANY
-                                                         userInfo:[OCMArg checkWithSelector:@selector(assertExpectedNotification:)
-                                                                                   onObject:self]]);
-        });
+
+    XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
+    NSOperationQueue *queue = [NSOperationQueue new];
+    id cb = [NSNotificationCenter.defaultCenter addObserverForName:RATUploadFailureNotification
+                                                            object:nil
+                                                             queue:queue
+                                                        usingBlock:^(NSNotification *note)
+    {
+        NSError *error = note.userInfo[NSUnderlyingErrorKey];
+        XCTAssertEqualObjects(error.localizedDescription, @"invalid_response");
+
+        [notified fulfill];
     }];
-    
-    [notificationCenterSpy stopMocking];
+
+    [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [NSNotificationCenter.defaultCenter removeObserver:cb];
 }
 
 @end
