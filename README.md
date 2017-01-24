@@ -404,8 +404,20 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2.8-2 2.8.2 (in progress)
-* [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): Fixed `_rem_launch` event not being triggered for most launches.
+@subsection analytics-2-8-2 2.8.2 (in progress)
+* [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): The @ref RSDKAnalyticsSessionStartEventName "launch event" was not being triggered for most launches.
+* [REM-18565](https://jira.rakuten-it.com/jira/browse/REM-18565): The `page_id` parameter was completely ignored by the @ref RATTracker "RAT tracker" when processing a @ref RSDKAnalyticsPageVisitEventName "visit event".
+* [REM-18384](https://jira.rakuten-it.com/jira/browse/REM-18384): The library was blocking calls to `-[UNNotificationCenterDelegate userNotificationCenter:willPresentNotification:withCompletionHandler]`, effectively disabling the proper handling of user notifications on iOS 10+ in apps that relied on the new `UserNotifications` framework.
+* [REM-18438](https://jira.rakuten-it.com/jira/browse/REM-18438), [REM-18437](https://jira.rakuten-it.com/jira/browse/REM-18437) & [REM-18436](https://jira.rakuten-it.com/jira/browse/REM-18436): The library is now smarter as to what should trigger a @ref RSDKAnalyticsPageVisitEventName "visit event".
+    * Won't trigger the event anymore:
+        * Common chromes: `UINavigationController`, `UISplitViewController`, `UIPageViewController` and `UITabBarController` view controllers.
+        * System popups: `UIAlertView`, `UIActionSheet`, `UIAlertController` & `_UIPopoverView`.
+        * Apple-private views, windows and view controllers.
+        * Subclasses of `UIWindow` that are not provided by the app.
+    * Furthermore, the @ref RATTracker "RAT tracker" additionally ignores view controllers that have no title, no navigation item title, and for which no URL was found on any webview part of their view hierarchy at the time `-viewDidLoad` was called, unless they have been subclassed by the application.
+        * For view controllers with either a title, navigation item title or URL, the library now adds the `cp.title` and `cp.url` fields to the `pv` event sent to RAT.
+* Fixed missing automatic import of the `UserNotifications` framework on iOS 10+.
+* Fixed bogus imports in a few header files.
 
 @subsection analytics-2-8-1 2.8.1 (2016-11-29)
 * [REM-17889](https://jira.rakuten-it.com/jira/browse/REM-17889): Fixed potential security issue where full push notification message was sent to RAT.
