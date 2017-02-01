@@ -1057,9 +1057,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 [_RSDKAnalyticsDatabase deleteBlobsWithIdentifiers:identifiers
                                                                 in:_RATTableName()
                                                               then:^{
-                    // Send the rest of the records
+                    // To throttle uploads, we schedule a new upload to send the rest of the records.
                     typeof(weakSelf) __strong strongSelf = weakSelf;
-                    [strongSelf _doBackgroundUpload];
+                    [strongSelf _scheduleBackgroundUpload];
                 }];
                 return;
             }
