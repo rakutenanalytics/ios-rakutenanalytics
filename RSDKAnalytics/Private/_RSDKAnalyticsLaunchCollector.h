@@ -48,11 +48,6 @@ RSDKA_EXPORT @interface _RSDKAnalyticsLaunchCollector : NSObject
 @property (nonatomic, readonly) RSDKAnalyticsOrigin origin;
 
 /*
- * Last visited view controller.
- */
-@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage;
-
-/*
  * Currently-visited view controller.
  */
 @property (nonatomic, nullable, readonly) UIViewController *currentPage;

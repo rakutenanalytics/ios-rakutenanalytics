@@ -122,7 +122,6 @@
 @property (nonatomic, nullable, readwrite, copy)    NSDate                      *lastLaunchDate;
 @property (nonatomic, nullable, readwrite, copy)    NSDate                      *lastUpdateDate;
 @property (nonatomic, nullable, readwrite)          UIViewController            *currentPage;
-@property (nonatomic, nullable, readwrite)          UIViewController            *lastVisitedPage;
 @end
 
 @interface RATTracker ()
@@ -150,12 +149,6 @@
 @end
 
 @implementation CurrentPage
-@end
-
-@interface LastVisitedPage: UIViewController
-@end
-
-@implementation LastVisitedPage
 @end
 
 @implementation AnalyticsRATTrackerTests
@@ -203,7 +196,6 @@
     _defaultState.lastUpdateDate        = lastUpdateDate;
     _defaultState.lastVersionLaunches   = 10;
     _defaultState.currentPage           = currentPage;
-    _defaultState.lastVisitedPage       = LastVisitedPage.new;
 
     _defaultEvent = [RSDKAnalyticsEvent.alloc initWithName:[_RATEventPrefix stringByAppendingString:@"defaultEvent"]
                                                 parameters:@{@"param1": @"value1"}];
