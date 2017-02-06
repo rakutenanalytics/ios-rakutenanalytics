@@ -404,7 +404,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-8-2 2.8.2 (in progress)
+@subsection analytics-2-8-2 2.8.2 (2017-02-06)
 * [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): The @ref RSDKAnalyticsSessionStartEventName "launch event" was not being triggered for most launches.
 * [REM-18565](https://jira.rakuten-it.com/jira/browse/REM-18565): The `page_id` parameter was completely ignored by the @ref RATTracker "RAT tracker" when processing a @ref RSDKAnalyticsPageVisitEventName "visit event".
 * [REM-18384](https://jira.rakuten-it.com/jira/browse/REM-18384): The library was blocking calls to `-[UNNotificationCenterDelegate userNotificationCenter:willPresentNotification:withCompletionHandler]`, effectively disabling the proper handling of user notifications on iOS 10+ in apps that relied on the new `UserNotifications` framework.
