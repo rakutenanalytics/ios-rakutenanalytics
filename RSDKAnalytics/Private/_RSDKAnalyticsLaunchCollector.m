@@ -25,7 +25,6 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 @property (nonatomic, readwrite) BOOL isInstallLaunch;
 @property (nonatomic, readwrite) BOOL isUpdateLaunch;
 @property (nonatomic, readwrite) RSDKAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *pushTrackingIdentifier;
 @end
@@ -198,15 +197,19 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         return;
     }
 
-    if (_currentPage)
-    {
-        self.lastVisitedPage = _currentPage;
-    }
+    /*
+     * Keep a strong reference to the view controller in the launch collector only for the
+     * time the event is being processed. Note that it will be carried on by the analytics
+     * manager state, too.
+     */
     _currentPage = viewController;
-
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsPageVisitEventName parameters:nil] track];
+    _currentPage = nil;
 
-    // Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external call or push notification.
+    /*
+     * Reset the origin to RSDKAnalyticsInternalOrigin for the next page visit after each external
+     * call or push notification.
+     */
     _origin = RSDKAnalyticsInternalOrigin;
 }
 

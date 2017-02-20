@@ -22,7 +22,6 @@
 @property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
 @property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
-@property (nonatomic, nullable, readwrite) UIViewController *lastVisitedPage;
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @end
 
@@ -73,7 +72,6 @@
          ^ self.installLaunchDate.hash
          ^ self.lastLaunchDate.hash
          ^ self.lastUpdateDate.hash
-         ^ self.lastVisitedPage.hash
          ^ self.currentPage.hash;
 }
 
@@ -106,7 +104,6 @@
             && _RSDKAnalyticsObjectsEqual(self.installLaunchDate, other.installLaunchDate)
             && _RSDKAnalyticsObjectsEqual(self.lastLaunchDate, other.lastLaunchDate)
             && _RSDKAnalyticsObjectsEqual(self.lastUpdateDate, other.lastUpdateDate)
-            && _RSDKAnalyticsObjectsEqual(self.lastVisitedPage, other.lastVisitedPage)
             && _RSDKAnalyticsObjectsEqual(self.currentPage, other.currentPage);
     }
 }
@@ -128,7 +125,6 @@
     copy.installLaunchDate = self.installLaunchDate;
     copy.lastLaunchDate = self.lastLaunchDate;
     copy.lastUpdateDate = self.lastUpdateDate;
-    copy.lastVisitedPage = self.lastVisitedPage;
     copy.currentPage = self.currentPage;
     return copy;
 }

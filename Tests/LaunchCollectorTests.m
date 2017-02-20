@@ -24,7 +24,6 @@
 @property (nonatomic, readwrite)                    BOOL                    isInstallLaunch;
 @property (nonatomic, readwrite)                    BOOL                    isUpdateLaunch;
 @property (nonatomic, readwrite)                    RSDKAnalyticsOrigin     origin;
-@property (nonatomic, nullable, readwrite)          UIViewController        *lastVisitedPage;
 @property (nonatomic, nullable, readwrite)          UIViewController        *currentPage;
 @property (nonatomic, nullable, readwrite, copy)    NSString                *pushTrackingIdentifier;
 

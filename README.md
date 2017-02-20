@@ -66,9 +66,9 @@ The analytics module can be configured to use the staging environment when talki
 @note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
 
 @subsection analytics-configure-location Location Tracking
-@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application. 
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
 @warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
-@warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates. 
+@warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
 
 If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Location tracking is enabled by default.
 
@@ -131,8 +131,19 @@ Event name         | Description
 `_rem_login`       | User logged in successfully.
 `_rem_logout`      | User logged out.
 `_rem_install`     | Application version is launched for the first time.
-`_rem_visit`       | A view controller is shown. Application developers can also emit this event manually if they wish so, for instance to track "pages" that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.
+`_rem_visit`       | A new page is shown. Application developers can also emit this event manually if they wish so, for instance to track pages that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.
 `_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
+
+##### How page views are automatically tracked
+We use method swizzling to automatically trigger a @ref RSDKAnalyticsPageVisitEventName "visit event" every time a new view controller is presented, unless:
+    * The view controller is one of the known "chromes" used to coordinate "content" view controllers, i.e. one of `UINavigationController`, `UISplitViewController`, `UIPageViewController` and `UITabBarController`.
+    * The view controller is showing a system popup, i.e. `UIAlertView`, `UIActionSheet`, `UIAlertController` or `_UIPopoverView`.
+    * Either the view controller, its view or the window it's attached to is an instance of an Apple-private class, i.e. a class whose name has a `_` prefix and which comes from a system framework. This prevents many on-screen system accessories from generating bogus page views.
+    * The class of the window the view controller is attached to is a subclass of `UIWindow` coming from a system framework, i.e. the window is not a normal application window. Certain on-screen system accessories, such as the system keyboard's autocompletion word picker, would otherwise trigger events as well.
+
+Those @ref RSDKAnalyticsPageVisitEventName "visit events" are available to all @ref RSDKAnalyticsTracker "trackers", and the view controller being the event's subject can be found in the @ref RSDKAnalyticsState::currentPage "currentPage" property of the @ref RSDKAnalyticsState "event state" passed to RSDKAnalyticsTracker::processEvent:state:.
+
+The @ref RATTracker "RAT tracker" furthermore ignores view controllers that have no title, no navigation item title, and for which no URL was found on any webview part of their view hierarchy at the time `-viewDidLoad` was called, unless they have been subclassed by the application or one of the frameworks embedded in the application. This filters out events that would give no information about what page was visited in the application, such as events reporting a page named `UIViewController`. For view controllers with either a title, navigation item title or URL, the library also sets the `cp.title` and `cp.url` fields to the `pv` event it sends to RAT.
 
 ##### Push notification tracking identifier
 The value for the `tracking_id` parameter of the `_rem_push_notify` event is computed like this:
@@ -191,8 +202,8 @@ The following code is an example that can be used to track button clicks. It use
 
 @code{.swift}
     @IBAction func buttonTapped(sender: UIButton) {
-        RATTracker.shared().event(eventType: "click", 
-                                 parameters:["pgn": "Main", 
+        RATTracker.shared().event(eventType: "click",
+                                 parameters:["pgn": "Main",
                                              "target": "search_btn",
                                              "gol": "goal123456"]).track()
     }
@@ -203,8 +214,8 @@ The following code is an example that can be used to track button clicks. It use
 @code{.m}
     // Objective-C
     - (IBAction)buttonTapped:(UIButton *)sender {
-        [[RATTracker.sharedInstance eventWithEventType:@"click" 
-                                            parameters:@{@"pgn": @"Main", 
+        [[RATTracker.sharedInstance eventWithEventType:@"click"
+                                            parameters:@{@"pgn": @"Main",
                                                          @"target": @"search_btn",
                                                          @"gol": @"goal123456"}] track];
     }
@@ -216,8 +227,8 @@ The following is an example of tracking an event with custom parameters. It uses
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "pv", 
-                             parameters:["pgn": "Main", 
+    RATTracker.shared().event(eventType: "pv",
+                             parameters:["pgn": "Main",
                                          "cp": ["custom_param_1": "value",
                                                 "custom_param_2": 10,
                                                 "custom_param_3": true]]).track()
@@ -226,8 +237,8 @@ The following is an example of tracking an event with custom parameters. It uses
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"pv" 
-                                        parameters:@{@"pgn": @"Main", 
+    [[RATTracker.sharedInstance eventWithEventType:@"pv"
+                                        parameters:@{@"pgn": @"Main",
                                                      @"cp": @{@"custom_param_1": @"value",
                                                               @"custom_param_2": @10,
                                                               @"custom_param_3": @YES}}] track];
@@ -248,28 +259,28 @@ RAT param | Description
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "pv", 
+    RATTracker.shared().event(eventType: "pv",
                              parameters:["pgn": "shop_search",
                                          "pgt": "search",
-                                         "lang": "English", 
+                                         "lang": "English",
                                          "sq": "search query",
-                                         "oa": "a", 
-                                         "esq": "excluded query", 
-                                         "genre": "category", 
+                                         "oa": "a",
+                                         "esq": "excluded query",
+                                         "genre": "category",
                                          "tag": ["tag 1", "tag 2"]]).track()
 @endcode
 
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"pv" 
+    [[RATTracker.sharedInstance eventWithEventType:@"pv"
                                         parameters:@{@"pgn": @"shop_search",
                                                      @"pgt": @"search",
-                                                     @"lang": @"English", 
+                                                     @"lang": @"English",
                                                      @"sq": @"search query",
-                                                     @"oa": @"a", 
-                                                     @"esq": @"excluded query", 
-                                                     @"genre": @"category", 
+                                                     @"oa": @"a",
+                                                     @"esq": @"excluded query",
+                                                     @"genre": @"category",
                                                      @"tag": @[@"tag 1", @"tag 2"]}] track];
 @endcode
 
@@ -354,9 +365,9 @@ The custom tracker in the code sample below only prints a few diagnostic message
 @code{.m}
     @interface CustomTracker : NSObject<RSDKAnalyticsTracker>
     @end
-    
+
     NSString *const CustomTrackerMyEventName = @"customtracker.myeventname";
-    
+
     @implementation CustomTracker
     - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state {
         if ([event.name isEqualToString:RSDKAnalyticsInitialLaunchEventName]) {
@@ -372,7 +383,7 @@ The custom tracker in the code sample below only prints a few diagnostic message
             return YES;
         }
         // ...
-        
+
         // Unknown event!?
         return NO
     }
@@ -403,6 +414,9 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+
+@subsection analytics-2-9-0 2.9.0 (in progress)
+* [REM-19145](https://jira.rakuten-it.com/jira/browse/REM-19145): Reduced the memory footprint of automatic page view tracking by half by not keeping a strong reference to the previous view controller anymore. This comes with a minor change: RSDKAnalyticsState::lastVisitedPage is now deprecated, and always `nil`.
 
 @subsection analytics-2-8-2 2.8.2 (2017-02-06)
 * [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): The @ref RSDKAnalyticsSessionStartEventName "launch event" was not being triggered for most launches.
