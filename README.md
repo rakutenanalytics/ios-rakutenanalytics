@@ -415,7 +415,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-9-0 2.9.0 (in progress)
+@subsection analytics-2-9-0 2.9.0 (2017-03-30)
 * [REM-19145](https://jira.rakuten-it.com/jira/browse/REM-19145): Reduced the memory footprint of automatic page view tracking by half by not keeping a strong reference to the previous view controller anymore. This comes with a minor change: RSDKAnalyticsState::lastVisitedPage is now deprecated, and always `nil`.
 
 @subsection analytics-2-8-2 2.8.2 (2017-02-06)
