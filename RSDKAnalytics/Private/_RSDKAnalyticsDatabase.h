@@ -53,6 +53,19 @@ RSDKA_EXPORT @interface _RSDKAnalyticsDatabase : NSObject
               from:(NSString *)table
               then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
 
+//REM-21402 - [Special Analytics build for Ichiba] Send events immediately
+/*
+ * Try to fetch a number of blobs from a table, from the most ancient to the most recent.
+ *
+ * @param maximumNumberOfBlobs  Maximum number of blobs we want to read.
+ * @param table                 Name of the table.
+ * @param sendingIdentifiers    A set of identifiers which are being sent.
+ * @param completion            Block to call upon completion.
+ */
++ (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table sendingIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)sendingIdentifiers
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
+
 /*
  * Delete blobs with the given identifier from a table.
  *

@@ -192,6 +192,54 @@ static sqlite3 *prepareTable(NSString *table)
     }];
 }
 
++ (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table sendingIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)sendingIdentifiers
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion
+{
+    // Make params immutable, otherwise they could be modified before getting accessed later on the queue
+    table = table.copy;
+
+    NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+    [_queue addOperationWithBlock:^{
+        sqlite3 *db = prepareTable(table);
+
+        NSMutableArray *blobs       = nil;
+        NSMutableArray *identifiers = nil;
+
+        if (db && maximumNumberOfBlobs > 0)
+        {
+            blobs       = [NSMutableArray arrayWithCapacity:maximumNumberOfBlobs];
+            identifiers = [NSMutableArray arrayWithCapacity:maximumNumberOfBlobs];
+
+            NSString *query = [NSString stringWithFormat:@"select * from %@ where id not in ('%@') limit %u", table, [sendingIdentifiers componentsJoinedByString:@"','"], maximumNumberOfBlobs];
+            sqlite3_stmt *statement;
+            if (sqlite3_prepare_v2(db, query.UTF8String, -1, &statement, 0) == SQLITE_OK)
+            {
+                int code;
+                while ((code = sqlite3_step(statement)) == SQLITE_ROW)
+                {
+                    int64_t primaryKey = sqlite3_column_int64(statement, 0);
+                    const void *bytes = sqlite3_column_blob(statement, 1);
+                    NSUInteger length = (NSUInteger)sqlite3_column_bytes(statement, 1);
+
+                    [blobs       addObject:[NSData dataWithBytes:bytes length:length]];
+                    [identifiers addObject:@(primaryKey)];
+                }
+                sqlite3_finalize(statement);
+            }
+        }
+
+        if (completion)
+        {
+            typeof(callerQueue) __strong queue = callerQueue;
+            [queue addOperationWithBlock:^
+             {
+                 completion(blobs.count ? blobs : nil, identifiers.count ? identifiers : nil);
+             }];
+        }
+    }];
+}
+
 //--------------------------------------------------------------------------
 
 + (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers

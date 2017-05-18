@@ -84,6 +84,36 @@
     }
 }
 
+- (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+              from:(NSString *)table sendingIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)sendingIdentifiers
+              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion
+{
+    NSMutableArray *blobs       = NSMutableArray.new;
+    NSMutableArray *identifiers = NSMutableArray.new;
+
+    NSArray *keys = _keys.array;
+    if (keys.count)
+    {
+        keys = [keys subarrayWithRange:NSMakeRange(0, MIN(keys.count, maximumNumberOfBlobs))];
+        for (NSNumber *key in keys)
+        {
+            [identifiers addObject:key];
+            [blobs       addObject:_rows[key]];
+        }
+    }
+
+    if (completion)
+    {
+        NSOperationQueue * __weak callerQueue = NSOperationQueue.currentQueue;
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            typeof(callerQueue) __strong queue = callerQueue;
+            [queue addOperationWithBlock:^{
+                completion(blobs.count ? blobs : nil, identifiers.count ? identifiers : nil);
+            }];
+        });
+    }
+}
+
 - (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
                                 in:(NSString *)table
                               then:(dispatch_block_t)completion
@@ -228,6 +258,10 @@
     [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
       andCall:@selector(fetchBlobs:from:then:) onObject:_database]
      fetchBlobs:0 from:OCMOCK_ANY then:OCMOCK_ANY];
+
+    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
+      andCall:@selector(fetchBlobs:from:sendingIdentifiers:then:) onObject:_database]
+     fetchBlobs:0 from:OCMOCK_ANY sendingIdentifiers:@[] then:OCMOCK_ANY];
 
     [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
       andCall:@selector(deleteBlobsWithIdentifiers:in:then:) onObject:_database]
@@ -524,35 +558,36 @@
 
 - (void)testSendEventToRAT
 {
-    XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
-    
+    __block XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:RATTracker.endpointAddress.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [sent fulfill];
+            sent = nil;
         });
-
         return [OHHTTPStubsResponse responseWithData:[NSData data] statusCode:200 headers:nil];
     }];
-    
+
     [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
+
 - (void)testSendEventToRATServerError
 {
-    XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
+    __block XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:RATTracker.endpointAddress.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [sent fulfill];
+            sent = nil;
         });
         return [OHHTTPStubsResponse responseWithData:[NSData data] statusCode:500 headers:nil];
     }];
 
-    XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
+    __block XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
     NSOperationQueue *queue = [NSOperationQueue new];
     id cb = [NSNotificationCenter.defaultCenter addObserverForName:RATUploadFailureNotification
                                                             object:nil
@@ -561,8 +596,8 @@
     {
         NSError *error = note.userInfo[NSUnderlyingErrorKey];
         XCTAssertEqualObjects(error.localizedDescription, @"invalid_response");
-
         [notified fulfill];
+        notified = nil;
     }];
 
     [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
