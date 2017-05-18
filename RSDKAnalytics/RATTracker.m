@@ -73,7 +73,7 @@ NS_INLINE NSString *const _RATTableName()
     return useStaging ? @"RAT_STAGING" : @"RAKUTEN_ANALYTICS_TABLE";
 }
 static const unsigned int    _RATTableBlobLimit = 5000u;
-static const unsigned int    _RATBatchSize      = 16u;
+static const unsigned int    _RATBatchSize      = 1u;
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -148,6 +148,11 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic) NSTimeInterval  uploadTimerInterval;
 
 @property (nonatomic, copy) NSString *startTime;
+
+@property (nonatomic) NSMutableSet RSDKA_GENERIC(NSNumber *) *sendingIdentifiers;
+@property (nonatomic) NSOperationQueue                       *eventsQueue;
+@property (nonatomic) NSInteger                               fireCount;
+@property (nonatomic) BOOL                                    isBusyFetchingDBRecords;
 @end
 
 @implementation RATTracker
@@ -196,6 +201,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         _startTime = [RATTracker stringWithDate:NSDate.date];
         _uploadTimerInterval = 60;
+
+        _sendingIdentifiers = NSMutableSet.new;
+        _fireCount = 0;
+        _isBusyFetchingDBRecords = NO;
+
+        _eventsQueue = NSOperationQueue.new;
+        _eventsQueue.name = @"com.rakuten.esd.sdk.analytics.trackerEvents";
+        _eventsQueue.maxConcurrentOperationCount = 1;
+        atexit_b(^{
+            _eventsQueue = nil;
+        });
 
         /*
          * Default values for account/application should be 477/1.
@@ -874,7 +890,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                  limit:_RATTableBlobLimit
                                   then:^{
         typeof(weakSelf) __strong strongSelf = weakSelf;
-        [strongSelf _scheduleBackgroundUpload];
+        strongSelf.fireCount ++;
+        if (strongSelf.isBusyFetchingDBRecords == NO)
+        {
+            [strongSelf _doBackgroundUpload];
+        }
     }];
     return YES;
 }
@@ -1059,7 +1079,15 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                               then:^{
                     // To throttle uploads, we schedule a new upload to send the rest of the records.
                     typeof(weakSelf) __strong strongSelf = weakSelf;
-                    [strongSelf _scheduleBackgroundUpload];
+
+                    /*
+                     * Remove identifiers from sendingIdentifiers when upload successful
+                     */
+                    @synchronized (strongSelf)
+                    {
+                        [strongSelf removeArray:identifiers fromSet:strongSelf.sendingIdentifiers];
+                    }
+                    [strongSelf _backgroupUploadEnded];
                 }];
                 return;
             }
@@ -1068,6 +1096,14 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                         code:NSURLErrorUnknown
                                     userInfo:@{NSLocalizedDescriptionKey: @"invalid_response",
                                                NSLocalizedFailureReasonErrorKey: [NSString stringWithFormat:@"Expected status code == 200, got %ld", (long)httpResponse.statusCode]}];
+        }
+
+        /*
+         * Remove identifiers from sendingIdentifiers when upload failed
+         */
+        @synchronized (strongSelf)
+        {
+            [strongSelf removeArray:identifiers fromSet:strongSelf.sendingIdentifiers];
         }
 
         id userInfo = nil;
@@ -1092,21 +1128,42 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     /*
      * Get a group of records and start uploading them.
      */
+    @synchronized (self)
+    {
+        self.isBusyFetchingDBRecords = YES;
+        self.fireCount--;
+        NSArray *array = [self.sendingIdentifiers allObjects];
+        typeof(self) __weak weakSelf = self;
+        [_RSDKAnalyticsDatabase fetchBlobs:_RATBatchSize
+                                      from:_RATTableName() sendingIdentifiers:array
+                                      then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
 
-    typeof(self) __weak weakSelf = self;
-    [_RSDKAnalyticsDatabase fetchBlobs:_RATBatchSize
-                                  from:_RATTableName()
-                                  then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
-        typeof(weakSelf) __strong strongSelf = weakSelf;
-        if (blobs)
-        {
-            [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
-        }
-        else
-        {
-            [strongSelf _backgroupUploadEnded];
-        }
-    }];
+          typeof(weakSelf) __strong strongSelf = weakSelf;
+
+          if (identifiers.count)
+          {
+              [strongSelf.sendingIdentifiers addObjectsFromArray:identifiers];
+              strongSelf.uploadRequested = YES;
+          }
+
+          strongSelf.isBusyFetchingDBRecords = NO;
+          if (strongSelf.fireCount > 0)
+          {
+              [_eventsQueue addOperationWithBlock:^{
+                  [strongSelf _doBackgroundUpload];
+              }];
+          }
+
+          if (blobs)
+          {
+              [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
+          }
+          else
+          {
+              [strongSelf _backgroupUploadEnded];
+          }
+      }];
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -1126,6 +1183,16 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     */
 
     [self _scheduleBackgroundUpload];
+}
+
+//--------------------------------------------------------------------------
+
+- (void)removeArray:(NSArray RSDKA_GENERIC(NSNumber *) *)array fromSet:(NSMutableSet RSDKA_GENERIC(NSNumber *) *)set
+{
+    for (NSNumber *identifier in array)
+    {
+        [set removeObject:identifier];
+    }
 }
 
 @end
