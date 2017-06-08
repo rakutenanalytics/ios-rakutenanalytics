@@ -8,6 +8,24 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * Strategy that defines how a @ref RATTracker delivers tracking data to the backend.
+ *
+ * To set a custom strategy, conform an object to this protocol and set it on the tracker with #configureWithDeliveryStrategy:
+ *
+ * @protocol RATDeliveryStrategy RATTracker.h <RSDKAnalytics/RATTracker.h>
+ */
+RSDKA_EXPORT @protocol RATDeliveryStrategy <NSObject>
+
+/**
+ * Called by RATTracker when it processes an event.
+ *
+ * @return Delivery delay in seconds. Value should be >= 0 and <= 60.
+ */
+- (NSInteger)batchingDelay;
+
+@end
+
+/**
  * Concrete implementation of @ref RSDKAnalyticsTracker that sends events to RAT.
  *
  * @attention Application developers **MUST** configure the instance by calling RATTracker::configureWithAccountId:
@@ -54,6 +72,13 @@ RSDKA_EXPORT @interface RATTracker : NSObject<RSDKAnalyticsTracker>
  * for more information.
  */
 - (void)configureWithApplicationId:(int64_t)applicationIdentifier;
+
+/**
+ * Method for configuring delivery strategy.
+ *
+ * @param deliveryStrategy  Object that conforms to the **RATDeliveryStrategy** protocol
+ */
+- (void)configureWithDeliveryStrategy:(id<RATDeliveryStrategy>)deliveryStrategy;
 
 /**
  * Create a RAT specific event.

@@ -107,6 +107,7 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic) int64_t accountIdentifier;
 @property (nonatomic) int64_t applicationIdentifier;
 
+@property (nonatomic, weak) id<RATDeliveryStrategy> deliveryStrategyProvider;
 
 /*
  * We need to keep an instance of CTTelephonyNetworkInfo around to track
@@ -172,6 +173,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     [RATTracker sharedInstance].reachabilityStatus = status;
 }
 
+- (void)setUploadTimerInterval:(NSTimeInterval)delay
+{
+    _uploadTimerInterval = (MIN(MAX(0, delay), 60)); // cap timer interval 0-60s
+}
+
 #pragma mark - RSDKAnalyticsTracker
 
 + (instancetype)sharedInstance
@@ -195,7 +201,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     if (self = [super init])
     {
         _startTime = [RATTracker stringWithDate:NSDate.date];
-        _uploadTimerInterval = 60;
+        _uploadTimerInterval = 60.0; // default is 60 seconds
 
         /*
          * Default values for account/application should be 477/1.
@@ -280,6 +286,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 - (void)configureWithApplicationId:(int64_t)applicationIdentifier
 {
     self.applicationIdentifier = applicationIdentifier;
+}
+
+- (void)configureWithDeliveryStrategy:(id<RATDeliveryStrategy>)deliveryStrategy
+{
+    self.deliveryStrategyProvider = deliveryStrategy;
 }
 
 - (RSDKAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
@@ -867,16 +878,38 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // Add record to database and schedule an upload
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:0];
     RSDKAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
+    
+    [self _storeAndSendEventData:jsonData];
+    
+    return YES;
+}
 
+- (void)_storeAndSendEventData:(NSData *)jsonData
+{
     typeof(self) __weak weakSelf = self;
     [_RSDKAnalyticsDatabase insertBlob:jsonData
                                   into:_RATTableName()
                                  limit:_RATTableBlobLimit
                                   then:^{
+    
         typeof(weakSelf) __strong strongSelf = weakSelf;
-        [strongSelf _scheduleBackgroundUpload];
+
+        if ([strongSelf.deliveryStrategyProvider respondsToSelector:@selector(batchingDelay)])
+        {
+            strongSelf.uploadTimerInterval = [strongSelf.deliveryStrategyProvider batchingDelay];
+        }
+
+        // Upload immediately if batching delay is 0 and a request isn't in progress
+        if (strongSelf.uploadTimerInterval <= 0 && !strongSelf.uploadRequested)
+        {
+            strongSelf.uploadRequested = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{ [strongSelf _doBackgroundUpload]; });
+        }
+        else
+        {
+            [strongSelf _scheduleBackgroundUpload];
+        }
     }];
-    return YES;
 }
 
 //--------------------------------------------------------------------------
@@ -1045,6 +1078,16 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                 /*
                  * Success!
                  */
+#if DEBUG
+                NSMutableString *logMessage = [NSMutableString stringWithCapacity:20];
+                [logMessage appendString:@"Successfully sent events to RAT:"];
+                
+                [recordGroup enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
+                }];
+                
+                RSDKAnalyticsDebugLog(logMessage);
+#endif
 
                 [NSNotificationCenter.defaultCenter postNotificationName:RATUploadSuccessNotification
                                                                   object:recordGroup];
@@ -1092,7 +1135,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     /*
      * Get a group of records and start uploading them.
      */
-
+    
     typeof(self) __weak weakSelf = self;
     [_RSDKAnalyticsDatabase fetchBlobs:_RATBatchSize
                                   from:_RATTableName()
@@ -1100,10 +1143,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         typeof(weakSelf) __strong strongSelf = weakSelf;
         if (blobs)
         {
+            RSDKAnalyticsDebugLog(@"Records fetched from DB, now upload them");
             [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
         }
         else
         {
+            RSDKAnalyticsDebugLog(@"No records found in DB so end upload");
             [strongSelf _backgroupUploadEnded];
         }
     }];
