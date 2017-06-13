@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Strategy that defines how a @ref RATTracker delivers tracking data to the backend.
  *
- * To set a custom strategy, conform an object to this protocol and set it on the tracker with #configureWithDeliveryStrategy:
+ * To set a custom strategy, conform an object to this protocol and set it on the tracker with RATTracker::configureWithDeliveryStrategy:
  *
  * @protocol RATDeliveryStrategy RATTracker.h <RSDKAnalytics/RATTracker.h>
  */
