@@ -331,7 +331,7 @@ The @ref RATTracker "RAT Tracker" collects events and send them to the RAT backe
 
 ### Example 1: Configure batching interval of 10 seconds
 
-##### Swift
+##### Swift 3
 
 @code{.swift}
 public class CustomClass: NSObject, RATDeliveryStrategy {
@@ -374,13 +374,13 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
 #### - 10 second batching between 10 and 30 seconds after app launch
 #### - 60 second batching after 30 seconds after app launch 
 
-##### Swift
+##### Swift 3
 
 @code{.swift}
 
 public class CustomClass: NSObject, RATDeliveryStrategy {
     
-    private var startTime: TimeInterval
+    fileprivate var startTime: TimeInterval
     
     override init() {
         startTime = NSDate().timeIntervalSinceReferenceDate
