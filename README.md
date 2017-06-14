@@ -326,6 +326,138 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
     RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
 @endcode
 
+@subsection analytics-delivery-strategy Configure the RAT Tracker Delivery Strategy
+The @ref RATTracker "RAT Tracker" collects events and send them to the RAT backend in batches, the batching interval is 60 seconds by default. You can configure a different delivery strategy at runtime by conforming an object to the @ref RATDeliveryStrategy "RAT Delivery Strategy" protocol and setting your object on the tracker with the RATTracker::configureWithDeliveryStrategy: method.
+
+### Example 1: Configure batching interval of 10 seconds
+
+##### Swift 3
+
+@code{.swift}
+public class CustomClass: NSObject, RATDeliveryStrategy {
+    
+    public func setup() {
+        RATTracker.shared().configure(with: self)
+    }
+    
+    // MARK: RATDeliveryStrategy
+    public func batchingDelay() -> Int {
+        return 10
+    }
+}
+@endcode
+
+##### Objective C
+
+@code{.m}
+@interface CustomClass : NSObject<RATDeliveryStrategy>
+@end
+
+@implementation CustomClass
+
+- (void)setup
+{
+    [RATTracker.sharedInstance configureWithDeliveryStrategy:self];
+}
+
+#pragma mark - RATDeliveryStrategy
+- (NSInteger)batchingDelay
+{
+    return 10;
+}
+
+@end
+@endcode
+
+### Example 2: Dynamic batching interval 
+#### - no batching for the first 10 seconds after app launch
+#### - 10 second batching between 10 and 30 seconds after app launch
+#### - 60 second batching after 30 seconds after app launch 
+
+##### Swift 3
+
+@code{.swift}
+
+public class CustomClass: NSObject, RATDeliveryStrategy {
+    
+    fileprivate var startTime: TimeInterval
+    
+    override init() {
+        startTime = NSDate().timeIntervalSinceReferenceDate
+        super.init()
+    }
+    
+    public func setup() {
+        RATTracker.shared().configure(with: self)
+    }
+    
+    // MARK: RATDeliveryStrategy
+    public func batchingDelay() -> Int {
+        
+        let secondsSinceStart = NSDate().timeIntervalSinceReferenceDate - startTime
+        
+        if (secondsSinceStart < 10)
+        {
+            return 0
+        }
+        else if (secondsSinceStart < 30)
+        {
+            return 10
+        }
+        else
+        {
+            return 60
+        }
+    }
+}
+
+@endcode
+
+##### Objective C
+
+@code{.m}
+
+@interface CustomClass : NSObject<RATDeliveryStrategy>
+@property (nonatomic) NSTimeInterval startTime;
+@end
+
+@implementation CustomClass
+
+- (instancetype)init
+{
+    if (self = [super init])
+    {
+        _startTime = [NSDate timeIntervalSinceReferenceDate];
+    }
+    return self;
+}
+
+- (void)setup
+{
+    [RATTracker.sharedInstance configureWithDeliveryStrategy:self];
+}
+
+#pragma mark - RATDeliveryStrategy
+- (NSInteger)batchingDelay
+{
+    NSTimeInterval secondsSinceStart = [NSDate timeIntervalSinceReferenceDate] - _startTime;
+
+    if (secondsSinceStart < 10)
+    {
+        return 0;
+    }
+    else if (secondsSinceStart < 30)
+    {
+        return 10;
+    }
+    else
+    {
+        return 60;
+    }
+}
+
+@endcode
+
 @subsection analytics-custom-tracker Creating a Custom Tracker
 Custom @ref RSDKAnalyticsTracker "trackers" can be @ref RSDKAnalyticsManager::addTracker: "added" to the @ref RSDKAnalyticsManager "manager".
 
@@ -414,6 +546,9 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+
+@subsection analytics-2-10-0 2.10.0 (2017-06-15)
+* [REM-21497](https://jira.rakuten-it.com/jira/browse/REM-21497): Added RATTracker::configureWithDeliveryStrategy: API so that applications can configure the batching delay for sending events. The default batching delay is 60 seconds which is unchanged from previous module versions.
 
 @subsection analytics-2-9-0 2.9.0 (2017-03-30)
 * [REM-19145](https://jira.rakuten-it.com/jira/browse/REM-19145): Reduced the memory footprint of automatic page view tracking by half by not keeping a strong reference to the previous view controller anymore. This comes with a minor change: RSDKAnalyticsState::lastVisitedPage is now deprecated, and always `nil`.
