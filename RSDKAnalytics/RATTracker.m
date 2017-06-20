@@ -145,6 +145,7 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
  */
 
 @property (nonatomic) BOOL            uploadRequested;
+@property (nonatomic) BOOL            zeroBatchingDelayUploadInProgress;
 @property (nonatomic) NSTimer        *uploadTimer;
 @property (nonatomic) NSTimeInterval  uploadTimerInterval;
 
@@ -893,23 +894,32 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                   then:^{
     
         typeof(weakSelf) __strong strongSelf = weakSelf;
-
-        if ([strongSelf.deliveryStrategyProvider respondsToSelector:@selector(batchingDelay)])
-        {
-            strongSelf.uploadTimerInterval = [strongSelf.deliveryStrategyProvider batchingDelay];
-        }
-
-        // Upload immediately if batching delay is 0 and a request isn't in progress
-        if (strongSelf.uploadTimerInterval <= 0 && !strongSelf.uploadRequested)
-        {
-            strongSelf.uploadRequested = YES;
-            dispatch_async(dispatch_get_main_queue(), ^{ [strongSelf _doBackgroundUpload]; });
-        }
-        else
-        {
-            [strongSelf _scheduleBackgroundUpload];
-        }
+        [strongSelf _scheduleUploadOrPerformImmediately];
     }];
+}
+
+- (void)_scheduleUploadOrPerformImmediately
+{
+    if ([self.deliveryStrategyProvider respondsToSelector:@selector(batchingDelay)])
+    {
+        _uploadTimerInterval = [self.deliveryStrategyProvider batchingDelay];
+    }
+    
+    /*
+     * Upload immediately if batching delay is 0 and a request isn't in progress.
+     * Otherwise, schedule the upload in background.
+     */
+    if (_uploadTimerInterval <= 0 &&
+        !_uploadTimer.isValid &&
+        !_zeroBatchingDelayUploadInProgress)
+    {
+        _zeroBatchingDelayUploadInProgress = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{ [self _doBackgroundUpload]; });
+    }
+    else
+    {
+        [self _scheduleBackgroundUpload];
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -917,7 +927,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 /*
  * Schedule a new background upload, if none has already been scheduled or is
  * currently being processed. Otherwise it just sets 'uploadRequested' to YES
- * so that scheduling happens next time -_backgroupUploadEnded gets called.
+ * so that scheduling happens next time -_backgroundUploadEnded gets called.
  */
 
 - (void)_scheduleBackgroundUpload
@@ -940,8 +950,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             self.uploadRequested = YES;
             return;
         }
-        
-        self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:self.uploadTimerInterval
+        self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:self.uploadTimerInterval == 0 ? 10.0 : self.uploadTimerInterval
                                                             target:self
                                                           selector:@selector(_doBackgroundUpload)
                                                           userInfo:nil
@@ -957,13 +966,15 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
  * If uploadRequested has been set, it schedules another upload.
  */
 
-- (void)_backgroupUploadEnded
+- (void)_backgroundUploadEnded
 {
     @synchronized(self)
     {
         // It's time to invalidate our timer to clear the way for new uploads to get scheduled.
         [self.uploadTimer invalidate];
         self.uploadTimer = nil;
+        
+        self.zeroBatchingDelayUploadInProgress = NO;
 
         // If another upload has been requested, schedule it
         if (!self.uploadRequested)
@@ -1080,7 +1091,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  */
 #if DEBUG
                 NSMutableString *logMessage = [NSMutableString stringWithCapacity:20];
-                [logMessage appendString:@"Successfully sent events to RAT:"];
+                [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to RAT from Tracker %@:",strongSelf.description]];
                 
                 [recordGroup enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
@@ -1102,7 +1113,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                               then:^{
                     // To throttle uploads, we schedule a new upload to send the rest of the records.
                     typeof(weakSelf) __strong strongSelf = weakSelf;
-                    [strongSelf _scheduleBackgroundUpload];
+                    
+                    [strongSelf _scheduleUploadOrPerformImmediately];
                 }];
                 return;
             }
@@ -1123,7 +1135,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                           object:recordGroup
                                                         userInfo:userInfo];
 
-        [strongSelf _backgroupUploadEnded];
+        [strongSelf _backgroundUploadEnded];
     }];
     [dataTask resume];
 }
@@ -1149,7 +1161,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         else
         {
             RSDKAnalyticsDebugLog(@"No records found in DB so end upload");
-            [strongSelf _backgroupUploadEnded];
+            [strongSelf _backgroundUploadEnded];
         }
     }];
 }
@@ -1169,8 +1181,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     * Schedule a background upload attempt when the app becomes
     * active.
     */
-
-    [self _scheduleBackgroundUpload];
+    
+    // FIXME: when the LaunchCollector spools its launch/resume events, a background upload will
+    // be scheduled so we possibly no longer need this here
+    [self _scheduleUploadOrPerformImmediately];
 }
 
 @end

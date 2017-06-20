@@ -568,39 +568,26 @@
 
 - (void)testSendEventToRAT
 {
-    // FIXME: We have to nil the expectation after calling 'fulfill' because duplicate events can be sent.
-    // Calling an expectation multiple times results in a 'NSInternalInconsistencyException'.
-    // This workaround can be removed when REM-21934 is fixed.
-    __block XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
+    XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
     
     [self stubRATResponseWithStatusCode:200 completionHandler:^{
-        
         [sent fulfill];
-        sent = nil;
     }];
     
     RATTracker.sharedInstance.uploadTimerInterval = 2.0;
     [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
-        
-        sent = nil;
-    }];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testSendEventToRATServerError
 {
-    // FIXME: We have to nil the expectation after calling 'fulfill' because duplicate events can be sent.
-    // Calling an expectation multiple times results in a 'NSInternalInconsistencyException'.
-    // This workaround can be removed when REM-21934 is fixed.
-    __block XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
+    XCTestExpectation *sent = [self expectationWithDescription:@"sent"];
     
     [self stubRATResponseWithStatusCode:500 completionHandler:^{
-        
         [sent fulfill];
-        sent = nil;
     }];
 
-    __block XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
+    XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
     NSOperationQueue *queue = [NSOperationQueue new];
     id cb = [NSNotificationCenter.defaultCenter addObserverForName:RATUploadFailureNotification
                                                             object:nil
@@ -609,18 +596,12 @@
     {
         NSError *error = note.userInfo[NSUnderlyingErrorKey];
         XCTAssertEqualObjects(error.localizedDescription, @"invalid_response");
-
         [notified fulfill];
-        notified = nil;
     }];
 
     RATTracker.sharedInstance.uploadTimerInterval = 2.0;
     [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
-    [self waitForExpectationsWithTimeout:5.0 handler:^(NSError * _Nullable error) {
-        
-        sent = nil;
-        notified = nil;
-    }];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [NSNotificationCenter.defaultCenter removeObserver:cb];
 }
 
@@ -672,10 +653,7 @@
 
 - (void)testThatWithAZeroSecondsBatchingDelayTheTrackerSendsEventToRAT
 {
-    // FIXME: We have to nil the expectation after calling 'fulfill' because duplicate events can be sent.
-    // Calling an expectation multiple times results in a 'NSInternalInconsistencyException'.
-    // This workaround can be removed when REM-21934 is fixed.
-    __block XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
+    XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
     
     RATTracker.sharedInstance.uploadTimerInterval = 0;
     [self stubRATResponseWithStatusCode:200 completionHandler:^{
@@ -687,24 +665,17 @@
             XCTAssertEqual(_database.rows.count, 0);
             
             [wait fulfill];
-            wait = nil;
         });
     }];
     
     [RATTracker.sharedInstance processEvent:_defaultEvent state:_defaultState];
     
-    [self waitForExpectationsWithTimeout:4.0 handler:^(NSError * _Nullable error) {
-        
-        wait = nil;
-    }];
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
 }
 
 - (void)testThatWithAGreaterThanZeroSecondsBatchingDelayTheTrackerWaitsBeforeSendingEventToRAT
 {
-    // FIXME: We have to nil the expectation after calling 'fulfill' because duplicate events can be sent.
-    // Calling an expectation multiple times results in a 'NSInternalInconsistencyException'.
-    // This workaround can be removed when REM-21934 is fixed.
-    __block XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
+    XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
     
     RATTracker.sharedInstance.uploadTimerInterval = 30;
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
@@ -716,19 +687,14 @@
         XCTAssertEqual(_database.rows.count, 1);
         
         [wait fulfill];
-        wait = nil;
     });
     
     [RATTracker.sharedInstance processEvent:_defaultEvent state:_defaultState];
     
-    [self waitForExpectationsWithTimeout:4.0 handler:^(NSError * _Nullable error) {
-        
-        wait = nil;
-    }];
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
 }
 
-// FIXME: Fixing REM-21934 should mean this test will pass and can be enabled
-- (void)DISABLE_testThatWithAZeroSecondsBatchDelayDuplicateEventsAreNotSentWhenAppBecomesActive
+- (void)testThatWithAZeroSecondsBatchDelayWeDoNotSendDuplicateEventsWhenAppBecomesActive
 {
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
     
@@ -743,10 +709,7 @@
         uploadsToRAT++;
     }];
 
-    // FIXME: We have to nil the expectation after calling 'fulfill' because duplicate events can be sent.
-    // Calling an expectation multiple times results in a 'NSInternalInconsistencyException'.
-    // This workaround can be removed when REM-21934 is fixed.
-    __block XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
+    XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
     
     id cbDidBecomeActive = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                                            object:nil
@@ -757,21 +720,19 @@
         [RATTracker.sharedInstance processEvent:_defaultEvent state:_defaultState];
 
         // Wait for events to be sent
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             XCTAssertEqual(uploadsToRAT, 1);
+            XCTAssertEqual(_database.keys.count, 0);
+            XCTAssertEqual(_database.rows.count, 0);
             
             [notified fulfill];
-            notified = nil;
         });
     }];
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidBecomeActiveNotification object:self];
     
-    [self waitForExpectationsWithTimeout:6.0 handler:^(NSError * _Nullable error) {
-        
-        notified = nil;
-    }];
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
     [NSNotificationCenter.defaultCenter removeObserver:cbDidUploadToRAT];
     [NSNotificationCenter.defaultCenter removeObserver:cbDidBecomeActive];
 }
