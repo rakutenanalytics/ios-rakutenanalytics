@@ -52,10 +52,6 @@ platform :ios do
       export_team_id: '5J4GVGN58B',
       scheme: 'RSDKAnalyticsSample')
 
-    hockey(
-      api_token: '1f6056ff485f410d856f0bca668c2c07',
-      notes_type: '0',
-      notes: lane_context[SharedValues::R_CHANGELOG_FROM_GIT])
   end
 
   desc "Build everything"

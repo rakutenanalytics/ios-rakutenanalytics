@@ -16,7 +16,6 @@ target 'RSDKAnalyticsSample' do
   # Latest publish version, 2.2, still suffers from https://github.com/PrideChung/FontAwesomeKit/issues/26
   # The fix has been mrged, tho, so we're using the currently-latest commit
   pod 'FontAwesomeKit/FontAwesome', :git => 'https://github.com/PrideChung/FontAwesomeKit', :commit => 'ffcc61b71c'
-  pod 'HockeySDK',                  '~> 3.8'
 
 end
 
