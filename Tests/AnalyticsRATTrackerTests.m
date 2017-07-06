@@ -720,7 +720,7 @@
         [RATTracker.sharedInstance processEvent:_defaultEvent state:_defaultState];
 
         // Wait for events to be sent
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             XCTAssertEqual(uploadsToRAT, 1);
             XCTAssertEqual(_database.keys.count, 0);
@@ -732,7 +732,7 @@
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidBecomeActiveNotification object:self];
     
-    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [NSNotificationCenter.defaultCenter removeObserver:cbDidUploadToRAT];
     [NSNotificationCenter.defaultCenter removeObserver:cbDidBecomeActive];
 }
