@@ -950,6 +950,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             self.uploadRequested = YES;
             return;
         }
+        
+        // If timer interval is zero and we got here it means that there is an upload in progress.
+        // Therefore, schedule a timer with a 10s delay which is short-ish but long enough that the
+        // in progress upload will likely complete before the timer fires.
         self.uploadTimer = [NSTimer scheduledTimerWithTimeInterval:self.uploadTimerInterval == 0 ? 10.0 : self.uploadTimerInterval
                                                             target:self
                                                           selector:@selector(_doBackgroundUpload)
