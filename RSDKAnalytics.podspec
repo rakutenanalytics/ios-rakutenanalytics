@@ -8,13 +8,16 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "7.0"
   s.requires_arc = true
-  s.xcconfig     = {
+  
+  options = {
     'CLANG_ENABLE_MODULES'    => 'YES',
     'CLANG_MODULES_AUTOLINK'  => 'YES',
     'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
     'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
   }
+  s.pod_target_xcconfig  = options
+  s.user_target_xcconfig = options
 
   s.weak_frameworks      = [
     'Foundation',
