@@ -547,6 +547,9 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
+@subsection analytics-2-10-1 2.10.1 (2017-09-04)
+* [REM-21934](https://jira.rakuten-it.com/jira/browse/REM-21934): Fixed duplicate `_rem_push_notify` event sent to RAT.
+
 @subsection analytics-2-10-0 2.10.0 (2017-06-21)
 * [REM-21497](https://jira.rakuten-it.com/jira/browse/REM-21497): Added RATTracker::configureWithDeliveryStrategy: API so that applications can configure the batching delay for sending events. The default batching delay is 60 seconds which is unchanged from previous module versions.
 
