@@ -547,7 +547,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 
 @section analytics-changelog Changelog
 
-@subsection analytics-2-10-1 2.10.1 (2017-09-04)
+@subsection analytics-2-10-1 2.10.1 (2017-09-06)
 * [REM-21934](https://jira.rakuten-it.com/jira/browse/REM-21934): Fixed duplicate `_rem_push_notify` event sent to RAT.
 
 @subsection analytics-2-10-0 2.10.0 (2017-06-21)
