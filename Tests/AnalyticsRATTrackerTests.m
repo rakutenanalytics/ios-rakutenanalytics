@@ -450,6 +450,22 @@
     XCTAssertNil([payload valueForKeyPath:@"cp.logout_method"]);
 }
 
+- (void)testProcessPasswordLoginFailureEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginFailureEventName parameters:@{@"type":@"password_login", @"rae_error" : @"invalid_grant"}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginFailureEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"password_login");
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_grant");
+}
+
+- (void)testProcessSSOLoginFailureEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginFailureEventName parameters:@{@"type":@"sso_login", @"rae_error" : @"invalid_scope"}];
+    id payload = [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginFailureEventName];
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"sso_login");
+    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_scope");
+}
+
 - (void)testProcessPageVisitEventWithPageId
 {
     NSString *pageId = @"TestPage";

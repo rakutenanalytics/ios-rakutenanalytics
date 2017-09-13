@@ -709,6 +709,26 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         if (loginMethod) extra[@"login_method"] = loginMethod;
     }
+    else if ([event.name isEqualToString:RSDKAnalyticsLoginFailureEventName])
+    {
+        // MARK: _rem_login_Failure
+        NSString *loginType = nil;
+        NSString *errorMessage = nil;
+        NSString *loginFailureType = event.parameters[@"type"];
+        NSString *loginError = event.parameters[@"rae_error"];
+        if ([loginFailureType isKindOfClass:NSString.class] || loginFailureType.length)
+        {
+            loginType = loginFailureType;
+        }
+        if ([loginError isKindOfClass:NSString.class] || loginError.length)
+        {
+            errorMessage = loginError;
+        }
+        
+        if (loginType) extra[@"type"] = loginType;
+        if (loginError) extra[@"rae_error"] = loginError;
+    
+    }
     else if ([event.name isEqualToString:RSDKAnalyticsLogoutEventName])
     {
         // MARK: _rem_logout

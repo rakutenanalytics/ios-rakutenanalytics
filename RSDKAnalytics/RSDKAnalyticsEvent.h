@@ -121,6 +121,18 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsApplicationUpdateEventName  RSDKA_SWIF
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsLoginEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.login);
 
+
+/**
+ * Event triggered when a user login fails.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.loginFailure**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLoginFailureEventName  RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.loginFailure);
+
+
 /**
  * Event triggered when a user logs out.
  *
