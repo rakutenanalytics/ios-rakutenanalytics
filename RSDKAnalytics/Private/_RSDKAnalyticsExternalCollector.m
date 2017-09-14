@@ -208,6 +208,10 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         {
             parameters[@"rae_error"] = notification.object[@"rae_error"];
             parameters[@"type"] = notification.object[@"type"];
+            if (notification.object[@"rae_error_message"])
+            {
+                parameters[@"rae_error_message"] = notification.object[@"rae_error_message"];
+            }
         }
         
         [self.class trackEvent:RSDKAnalyticsLoginFailureEventName parameters:parameters.count ? parameters : nil];
