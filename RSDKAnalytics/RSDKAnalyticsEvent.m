@@ -11,6 +11,7 @@ NSString *const RSDKAnalyticsSessionStartEventName      = @"_rem_launch";
 NSString *const RSDKAnalyticsSessionEndEventName        = @"_rem_end_session";
 NSString *const RSDKAnalyticsApplicationUpdateEventName = @"_rem_update";
 NSString *const RSDKAnalyticsLoginEventName             = @"_rem_login";
+NSString *const RSDKAnalyticsLoginFailureEventName      = @"_rem_login_failure";
 NSString *const RSDKAnalyticsLogoutEventName            = @"_rem_logout";
 NSString *const RSDKAnalyticsInstallEventName           = @"_rem_install";
 NSString *const RSDKAnalyticsPageVisitEventName         = @"_rem_visit";

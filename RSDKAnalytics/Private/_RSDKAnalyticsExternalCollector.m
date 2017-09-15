@@ -57,6 +57,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     if (self = [super init])
     {
         [self addLoginObservers];
+        [self addLoginFailureObservers];
         [self addLogoutObservers];
         [self addCardInfoObservers];
         [self addDiscoverObservers];
@@ -76,6 +77,14 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         NSString *eventName = [NSString stringWithFormat:@"%@.login.%@", _RSDKAnalyticsNotificationBaseName, event];
         [self addNotificationName:eventName selector:@selector(receiveLoginNotification:)];
     }
+}
+
+- (void)addLoginFailureObservers
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveLoginFailureNotification:)
+                                                 name:[_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".login.failure"]
+                                               object:nil];
 }
 
 - (void)addLogoutObservers
@@ -185,6 +194,28 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         self.loginMethod = RSDKAnalyticsOtherLoginMethod;
     }
     [self.class trackEvent:RSDKAnalyticsLoginEventName];
+}
+- (void)receiveLoginFailureNotification:(NSNotification *)notification
+{
+    [self update];
+    if ([notification.name isEqualToString:[_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".login.failure"]])
+    {
+        self.loggedIn = NO;
+        self.trackingIdentifier = nil;
+        NSMutableDictionary *parameters = [NSMutableDictionary new];
+        
+        if([notification.object isKindOfClass:[NSDictionary class]])
+        {
+            parameters[@"rae_error"] = notification.object[@"rae_error"];
+            parameters[@"type"] = notification.object[@"type"];
+            if (notification.object[@"rae_error_message"])
+            {
+                parameters[@"rae_error_message"] = notification.object[@"rae_error_message"];
+            }
+        }
+        
+        [self.class trackEvent:RSDKAnalyticsLoginFailureEventName parameters:parameters.count ? parameters : nil];
+    }
 }
 
 - (void)receiveLogoutNotification:(NSNotification *)notification
