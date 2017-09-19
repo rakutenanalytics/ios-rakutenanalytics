@@ -62,6 +62,7 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         [self addCardInfoObservers];
         [self addDiscoverObservers];
         [self addSSODialogObservers];
+        [self addCredentialsObservers];
         
         [self update];
     }
@@ -155,6 +156,16 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
                                                object:nil];
 }
 
+- (void)addCredentialsObservers
+{
+    for (NSString *notification in
+         @[@"ssocredentialfound",
+           @"logincredentialfound"])
+    {
+        NSString *eventName = [NSString stringWithFormat:@"%@.%@", _RSDKAnalyticsNotificationBaseName, notification];
+        [self addNotificationName:eventName selector:@selector(receiveCredentialsNotification:)];
+    }
+}
 
 - (void)addNotificationName:(NSString *)name selector:(SEL)aSelector
 {
@@ -282,6 +293,29 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         parameters[@"page_id"] = pageIdentifier;
     }
     [self.class trackEvent:RSDKAnalyticsPageVisitEventName parameters:parameters];
+}
+
+- (void)receiveCredentialsNotification:(NSNotification *)notification
+{
+    NSString *eventName = nil;
+    NSMutableDictionary *parameters = NSMutableDictionary.new;
+    
+    if ([notification.name isEqualToString:[_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".ssocredentialfound"]])
+    {
+        eventName = RSDKAnalyticsSSOCredentialFoundEventName;
+    }
+    else
+    {
+        eventName = RSDKAnalyticsLoginCredentialFoundEventName;
+    }
+    
+    if ([notification.object isKindOfClass:NSDictionary.class] &&
+        [notification.object[@"source"] isKindOfClass:NSString.class])
+    {
+        parameters[@"source"] = notification.object[@"source"];
+    }
+    
+    [self.class trackEvent:eventName parameters:parameters];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.

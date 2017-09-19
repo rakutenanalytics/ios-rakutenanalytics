@@ -6,17 +6,19 @@
 #import "_RSDKAnalyticsHelpers.h"
 
 // Standard event names
-NSString *const RSDKAnalyticsInitialLaunchEventName     = @"_rem_init_launch";
-NSString *const RSDKAnalyticsSessionStartEventName      = @"_rem_launch";
-NSString *const RSDKAnalyticsSessionEndEventName        = @"_rem_end_session";
-NSString *const RSDKAnalyticsApplicationUpdateEventName = @"_rem_update";
-NSString *const RSDKAnalyticsLoginEventName             = @"_rem_login";
-NSString *const RSDKAnalyticsLoginFailureEventName      = @"_rem_login_failure";
-NSString *const RSDKAnalyticsLogoutEventName            = @"_rem_logout";
-NSString *const RSDKAnalyticsInstallEventName           = @"_rem_install";
-NSString *const RSDKAnalyticsPageVisitEventName         = @"_rem_visit";
-NSString *const RSDKAnalyticsPushNotificationEventName  = @"_rem_push_notify";
-
+NSString *const RSDKAnalyticsInitialLaunchEventName         = @"_rem_init_launch";
+NSString *const RSDKAnalyticsSessionStartEventName          = @"_rem_launch";
+NSString *const RSDKAnalyticsSessionEndEventName            = @"_rem_end_session";
+NSString *const RSDKAnalyticsApplicationUpdateEventName     = @"_rem_update";
+NSString *const RSDKAnalyticsLoginEventName                 = @"_rem_login";
+NSString *const RSDKAnalyticsLoginFailureEventName          = @"_rem_login_failure";
+NSString *const RSDKAnalyticsLogoutEventName                = @"_rem_logout";
+NSString *const RSDKAnalyticsInstallEventName               = @"_rem_install";
+NSString *const RSDKAnalyticsPageVisitEventName             = @"_rem_visit";
+NSString *const RSDKAnalyticsPushNotificationEventName      = @"_rem_push_notify";
+NSString *const RSDKAnalyticsSSOCredentialFoundEventName    = @"_rem_sso_credential_found";
+NSString *const RSDKAnalyticsLoginCredentialFoundEventName  = @"_rem_login_credential_found";
+NSString *const RSDKAnalyticsCredentialStrategiesEventName  = @"_rem_credential_strategies";
 
 // Standard event parameters
 NSString *const RSDKAnalyticsLogoutMethodEventParameter                    = @"logout_method";
