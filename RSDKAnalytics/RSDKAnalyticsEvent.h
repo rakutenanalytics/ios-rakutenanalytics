@@ -228,4 +228,34 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsLocalLogoutMethod  RSDKA_SWIFT3_NAME(R
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsGlobalLogoutMethod  RSDKA_SWIFT3_NAME(RSDKAnalyticsLogoutMethod.global);
 
+/**
+ * Event triggered when an SSO credential is found.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.SSOCredentialFound**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsSSOCredentialFoundEventName RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.SSOCredentialFound);
+
+/**
+ * Event triggered when a login credential is found.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.loginCredentialFound**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsLoginCredentialFoundEventName RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.loginCredentialFound);
+
+/**
+ * Event triggered at launch to track credential strategies.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.credentialStrategies**.
+ *
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsCredentialStrategiesEventName RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.credentialStrategies);
+
 NS_ASSUME_NONNULL_END

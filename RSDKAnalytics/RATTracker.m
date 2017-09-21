@@ -852,6 +852,27 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         NSString *prStoreUrl = event.parameters[@"prStoreUrl"];
         if (prStoreUrl.length) extra[@"prStoreUrl"] = prStoreUrl;
     }
+    else if ([event.name isEqualToString:RSDKAnalyticsSSOCredentialFoundEventName])
+    {
+        // MARK: _rem_sso_credential_found
+        
+        NSString *source = event.parameters[@"source"];
+        if (source.length) extra[@"source"] = source;
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsLoginCredentialFoundEventName])
+    {
+        // MARK: _rem_login_credential_found
+        
+        NSString *source = event.parameters[@"source"];
+        if (source.length) extra[@"source"] = source;
+    }
+    else if ([event.name isEqualToString:RSDKAnalyticsCredentialStrategiesEventName])
+    {
+        // MARK: _rem_credential_strategies
+        
+        NSDictionary *strategies = event.parameters[@"strategies"];
+        if (strategies.count) extra[@"strategies"] = strategies;
+    }
 
     /*
      * Alpha modules events

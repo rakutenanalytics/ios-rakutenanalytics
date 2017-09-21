@@ -143,6 +143,10 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
 
     // Trigger a session start.
     [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSessionStartEventName parameters:nil] track];
+
+    // Track the credentials status.
+    NSDictionary *parameters = @{@"strategies":@{@"password-manager":[self isPasswordExtensionAvailable] ? @"true" : @"false"}};
+    [[RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCredentialStrategiesEventName parameters:parameters] track];
 }
 
 - (void)didPresentViewController:(UIViewController *)viewController
@@ -348,6 +352,21 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
     }
     [defaults setObject:now forKey:_RSDKAnalyticsLastLaunchDateKey];
     [defaults synchronize];
+}
+
+- (BOOL)isPasswordExtensionAvailable
+{
+    if ([NSExtensionItem class]) {
+        NSArray*  schemes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"LSApplicationQueriesSchemes"];
+        if( schemes && [schemes isKindOfClass:NSArray.class]) {
+            for ( NSString* scheme in schemes) {
+                if([scheme isEqualToString:@"org-appextension-feature-password-management"]) {
+                    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"org-appextension-feature-password-management://"]];
+                }
+            }
+        }
+    }
+    return NO;
 }
 
 @end

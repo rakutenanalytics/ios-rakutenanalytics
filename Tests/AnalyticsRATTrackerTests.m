@@ -552,6 +552,30 @@
     [self assertProcessEvent:event state:_defaultState expectType:cardInfoEvent];
 }
 
+- (void)testSSOCredentialFoundEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSSOCredentialFoundEventName parameters:@{@"source":@"device"}];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsSSOCredentialFoundEventName];
+}
+
+- (void)testLoginCredentialFoundIcloudEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginCredentialFoundEventName parameters:@{@"source":@"icloud"}];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginCredentialFoundEventName];
+}
+
+- (void)testLoginCredentialFoundPwEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginCredentialFoundEventName parameters:@{@"source":@"password-manager"}];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginCredentialFoundEventName];
+}
+
+- (void)testCredentialStrategiesEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCredentialStrategiesEventName parameters:@{@"strategies":@{@"password-manager":@"true"}}];
+    [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsCredentialStrategiesEventName];
+}
+
 - (void)testProcessInvalidEventFails
 {
     RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:@"unknown" parameters:nil];

@@ -204,4 +204,20 @@
     [mockCollector stopMocking];
 }
 
+- (void)testCredentialsCollector
+{
+    id mockCollector = OCMClassMock(_RSDKAnalyticsExternalCollector.class);
+    
+    for (NSString *notification in
+         @[@"ssocredentialfound",
+           @"logincredentialfound"])
+    {
+        NSString *eventToVerify = [NSString stringWithFormat:@"%@.%@", @"com.rakuten.esd.sdk.events", notification];
+        [NSNotificationCenter.defaultCenter postNotificationName:eventToVerify
+                                                          object:nil];
+        
+        OCMVerify([mockCollector trackEvent:OCMOCK_ANY parameters:OCMOCK_ANY]);
+    }
+}
+
 @end
