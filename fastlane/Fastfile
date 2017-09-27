@@ -1,5 +1,4 @@
 opt_out_usage
-# Update_fastlane
 fastlane_version "1.37.0"
 
 # Import base_config from git
