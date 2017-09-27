@@ -20,9 +20,16 @@ NSString *const RSDKAnalyticsSSOCredentialFoundEventName    = @"_rem_sso_credent
 NSString *const RSDKAnalyticsLoginCredentialFoundEventName  = @"_rem_login_credential_found";
 NSString *const RSDKAnalyticsCredentialStrategiesEventName  = @"_rem_credential_strategies";
 
+// Custom event name
+NSString *const RSDKAnalyticsCustomEventName                = @"_analytics_custom";
+
 // Standard event parameters
 NSString *const RSDKAnalyticsLogoutMethodEventParameter                    = @"logout_method";
 NSString *const RSDKAnalyticPushNotificationTrackingIdentifierParameter    = @"tracking_id";
+
+// Custom event parameters
+NSString *const RSDKAnalyticsCustomEventNameParameter                    = @"eventName";
+NSString *const RSDKAnalyticsCustomEventDataParameter                    = @"eventData";
 
 // Standard event parameter values
 NSString *const RSDKAnalyticsLocalLogoutMethod          = @"local";

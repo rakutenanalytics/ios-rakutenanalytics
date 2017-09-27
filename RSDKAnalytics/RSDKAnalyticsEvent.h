@@ -258,4 +258,39 @@ RSDKA_EXPORT NSString *const RSDKAnalyticsLoginCredentialFoundEventName RSDKA_SW
  */
 RSDKA_EXPORT NSString *const RSDKAnalyticsCredentialStrategiesEventName RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.credentialStrategies);
 
+/**
+ * Event used to package an event name and its data.
+ * This event has parameters RSDKAnalyticsCustomEventNameParameter and RSDKAnalyticsCustomEventDataParameter
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Name.custom**.
+ *
+ * @see RSDKAnalyticsCustomEventNameParameter
+ * @see RSDKAnalyticsCustomEventDataParameter
+ * @ingroup AnalyticsEvents
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsCustomEventName RSDKA_SWIFT3_NAME(RSDKAnalyticsEventName.custom);
+
+/**
+ * Parameter for the event name sent with a custom event.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Parameter.eventName**.
+ *
+ * @see RSDKAnalyticsCustomEventName
+ * @ingroup AnalyticsConstants
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsCustomEventNameParameter;
+
+/**
+ * Parameter for the event data sent with a custom event.
+ *
+ * @par Swift 3
+ * This value is exposed as **AnalyticsManager.Event.Parameter.eventData**.
+ *
+ * @see RSDKAnalyticsCustomEventName
+ * @ingroup AnalyticsConstants
+ */
+RSDKA_EXPORT NSString *const RSDKAnalyticsCustomEventDataParameter;
+
 NS_ASSUME_NONNULL_END

@@ -873,6 +873,22 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         NSDictionary *strategies = event.parameters[@"strategies"];
         if (strategies.count) extra[@"strategies"] = strategies;
     }
+    else if ([event.name isEqualToString:RSDKAnalyticsCustomEventName])
+    {
+        // MARK: _analytics_custom (wrapper for event name and its data)
+        
+        NSString *eventName = event.parameters[RSDKAnalyticsCustomEventNameParameter];
+        if (![eventName isKindOfClass:NSString.class] || !eventName.length) return NO;
+        
+        payload[_RATETypeParameter] = eventName;
+        
+        NSDictionary *parameters = [event.parameters[RSDKAnalyticsCustomEventDataParameter] copy];
+        
+        if ([parameters isKindOfClass:NSDictionary.class] && parameters.count)
+        {
+            [extra addEntriesFromDictionary:parameters];
+        }
+    }
 
     /*
      * Alpha modules events
