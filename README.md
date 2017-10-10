@@ -546,6 +546,8 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-2-11-0 2.11.0 (2017-10-10)
+* [REM-23653](https://jira.rakuten-it.com/jira/browse/REM-23653): Track Shared Web Credentials usage.
 
 @subsection analytics-2-10-1 2.10.1 (2017-09-06)
 * [REM-21934](https://jira.rakuten-it.com/jira/browse/REM-21934): Fixed duplicate `_rem_push_notify` event sent to RAT.
