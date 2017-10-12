@@ -63,13 +63,14 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         [self addDiscoverObservers];
         [self addSSODialogObservers];
         [self addCredentialsObservers];
+        [self addCustomEventObserver];
         
         [self update];
     }
     return self;
 }
 
-#pragma mark - Add notification observers
+#pragma mark - Notification observers
 
 - (void)addLoginObservers
 {
@@ -165,6 +166,12 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
         NSString *eventName = [NSString stringWithFormat:@"%@.%@", _RSDKAnalyticsNotificationBaseName, notification];
         [self addNotificationName:eventName selector:@selector(receiveCredentialsNotification:)];
     }
+}
+
+- (void)addCustomEventObserver
+{
+    NSString *eventName = [_RSDKAnalyticsNotificationBaseName stringByAppendingString:@".custom"];
+    [self addNotificationName:eventName selector:@selector(receiveCustomEventNotification:)];
 }
 
 - (void)addNotificationName:(NSString *)name selector:(SEL)aSelector
@@ -316,6 +323,14 @@ static NSString *const _RSDKAnalyticsNotificationBaseName = @"com.rakuten.esd.sd
     }
     
     [self.class trackEvent:eventName parameters:parameters];
+}
+
+- (void)receiveCustomEventNotification:(NSNotification *)notification
+{
+    NSDictionary *object = notification.object;
+    if (![object isKindOfClass:NSDictionary.class]) return;
+
+    [self.class trackEvent:RSDKAnalyticsCustomEventName parameters:notification.object];
 }
 
 #pragma mark - store & retrieve login/logout state & tracking identifier.

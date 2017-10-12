@@ -220,4 +220,14 @@
     }
 }
 
+- (void)testCustomEventCollector
+{
+    id mockCollector = OCMClassMock(_RSDKAnalyticsExternalCollector.class);
+    
+    NSDictionary *expected = @{@"eventName":@"blah",@"eventData":@{@"foo":@"bar"}};
+    [NSNotificationCenter.defaultCenter postNotificationName:@"com.rakuten.esd.sdk.events.custom" object:expected];
+    
+    OCMVerify([mockCollector trackEvent:RSDKAnalyticsCustomEventName parameters:expected]);
+}
+
 @end

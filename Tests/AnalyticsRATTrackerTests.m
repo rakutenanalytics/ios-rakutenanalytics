@@ -552,28 +552,48 @@
     [self assertProcessEvent:event state:_defaultState expectType:cardInfoEvent];
 }
 
-- (void)testSSOCredentialFoundEvent
+- (void)testProcessSSOCredentialFoundEvent
 {
     id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsSSOCredentialFoundEventName parameters:@{@"source":@"device"}];
     [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsSSOCredentialFoundEventName];
 }
 
-- (void)testLoginCredentialFoundIcloudEvent
+- (void)testProcessLoginCredentialFoundIcloudEvent
 {
     id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginCredentialFoundEventName parameters:@{@"source":@"icloud"}];
     [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginCredentialFoundEventName];
 }
 
-- (void)testLoginCredentialFoundPwEvent
+- (void)testProcessLoginCredentialFoundPwEvent
 {
     id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsLoginCredentialFoundEventName parameters:@{@"source":@"password-manager"}];
     [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsLoginCredentialFoundEventName];
 }
 
-- (void)testCredentialStrategiesEvent
+- (void)testProcessCredentialStrategiesEvent
 {
     id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCredentialStrategiesEventName parameters:@{@"strategies":@{@"password-manager":@"true"}}];
     [self assertProcessEvent:event state:_defaultState expectType:RSDKAnalyticsCredentialStrategiesEventName];
+}
+
+- (void)testProcessCustomEvent
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCustomEventName parameters:@{@"eventName":@"etypeName", @"eventData":@{@"foo":@"bar"}}];
+    NSDictionary *payload = [self assertProcessEvent:event state:_defaultState expectType:@"etypeName"];
+    XCTAssertEqualObjects(payload[@"cp"][@"foo"], @"bar");
+}
+
+- (void)testProcessCustomEventNoData
+{
+    id event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCustomEventName parameters:@{@"eventName":@"etypeName"}];
+    NSDictionary *payload = [self assertProcessEvent:event state:_defaultState expectType:@"etypeName"];
+    XCTAssertNil(payload[@"cp"]);
+}
+
+- (void)testProcessInvalidCustomEventFails
+{
+    RSDKAnalyticsEvent *event = [RSDKAnalyticsEvent.alloc initWithName:RSDKAnalyticsCustomEventName parameters:@{@"blah":@"name", @"eventData":@{@"foo":@"bar"}}];
+    XCTAssertFalse([RATTracker.sharedInstance processEvent:event state:[self defaultState]]);
 }
 
 - (void)testProcessInvalidEventFails

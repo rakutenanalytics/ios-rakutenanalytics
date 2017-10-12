@@ -6,6 +6,7 @@ use_frameworks!
 
 target 'Tests' do
   pod 'RSDKAnalytics', :path => './RSDKAnalytics.podspec'
+  pod 'RAnalyticsBroadcast', :path => './RAnalyticsBroadcast.podspec'
   pod 'OCMock'
   pod 'OHHTTPStubs'
 end

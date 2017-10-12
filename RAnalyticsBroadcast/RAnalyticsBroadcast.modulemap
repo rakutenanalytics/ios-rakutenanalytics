@@ -1,0 +1,6 @@
+framework module RAnalyticsBroadcast {
+  umbrella header "RAnalyticsBroadcast.h"
+
+  export *
+  module * { export * }
+}

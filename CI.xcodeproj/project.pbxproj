@@ -22,6 +22,7 @@
 		6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */; };
 		6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */; };
 		6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */; };
+		6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsItemTests.m; sourceTree = "<group>"; };
 		6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalCollectorTests.m; sourceTree = "<group>"; };
 		6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchCollectorTests.m; sourceTree = "<group>"; };
+		6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventBroadcasterTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */,
 				6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
+				6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 			files = (
 				5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */,
 				5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */,
+				6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */,
 				693B580B1B7C6159008C5E86 /* AnalyticsRecordTests.m in Sources */,
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
 				6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */,
