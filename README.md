@@ -6,7 +6,7 @@ The **analytics** module provides APIs for tracking user activity and automatica
 
 
 @section analytics-installing Installing
-See the [Ecosystem SDK documentation](https://www.raksdtd.com/ios/) guide for a detailed step-by-step guide on installing the SDK.
+See the [Ecosystem SDK documentation](https://www.raksdtd.com/ios-sdk/sdk-latest/#introduction) for a detailed step-by-step guide to installing the SDK.
 
 Alternatively, you can also use this SDK module as a standalone library. To use the SDK module as a standalone library, your `Podfile` should contain:
 
