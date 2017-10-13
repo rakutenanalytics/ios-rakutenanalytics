@@ -446,7 +446,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RSDKAnalyticsDebugLog(@"There is no value for 'acc' field, please configure it by using configureWithAccountId: method");
+            RSDKAnalyticsErrorLog(@"There is no value for 'acc' field, please configure it by using configureWithAccountId: method");
         }
     }
 
@@ -459,7 +459,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RSDKAnalyticsDebugLog(@"There is no value for 'aid' field, please configure it by using configureWithApplicationId: method");
+            RSDKAnalyticsErrorLog(@"There is no value for 'aid' field, please configure it by using configureWithApplicationId: method");
         }
     }
 
