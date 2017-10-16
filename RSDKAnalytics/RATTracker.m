@@ -1165,7 +1165,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                     [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
                 }];
                 
-                RSDKAnalyticsDebugLog(logMessage);
+                RSDKAnalyticsDebugLog(@"%@", logMessage);
 #endif
 
                 [NSNotificationCenter.defaultCenter postNotificationName:RATUploadSuccessNotification
