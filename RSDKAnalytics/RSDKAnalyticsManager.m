@@ -211,7 +211,7 @@ static RSDKAnalyticsManager *_instance = nil;
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    RSDKAnalyticsDebugLog(@"Failed to acquire device location: %@", error.localizedDescription);
+    RSDKAnalyticsErrorLog(@"Failed to acquire device location: %@", error.localizedDescription);
 }
 
 //--------------------------------------------------------------------------

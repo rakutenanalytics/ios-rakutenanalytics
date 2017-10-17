@@ -40,7 +40,7 @@ static sqlite3 *prepareTable(NSString *table)
         }
         else
         {
-            RSDKAnalyticsDebugLog(@"Failed to open database: %@", databasePath);
+            RSDKAnalyticsErrorLog(@"Failed to open database: %@", databasePath);
             sqlite3_close(result);
             result = 0;
             return 0;
@@ -58,7 +58,7 @@ static sqlite3 *prepareTable(NSString *table)
         NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", table];
         if (sqlite3_exec(result, query.UTF8String, 0, 0, 0) != SQLITE_OK)
         {
-            RSDKAnalyticsDebugLog(@"Failed to create table: %s", sqlite3_errmsg(result));
+            RSDKAnalyticsErrorLog(@"Failed to create table: %s", sqlite3_errmsg(result));
             return 0;
         }
         [tables addObject:table];
