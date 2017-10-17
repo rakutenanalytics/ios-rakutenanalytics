@@ -1,62 +1,11 @@
-opt_out_usage
-fastlane_version "1.37.0"
-
 # Import base_config from git
 import_from_git(url: 'https://gitpub.rakuten-it.com/scm/eco/ci-fastlane.git')
 
-default_platform :ios
 platform :ios do
-  desc "Run unit tests"
-  lane :tests do |options|
-    cocoapods
-    scan(
-      clean: true,
-      skip_build: true,
-      output_directory: './artifacts/unit-tests',
-      scheme: 'Tests',
-      device: 'REM SDK Unit Tests iOS 10',
-      code_coverage: true)
-    
-    slather(
-      output_directory: './artifacts/coverage',
-      scheme: 'Tests',
-      cobertura_xml: true,
-      proj: './CI.xcodeproj',
-      workspace: './CI.xcworkspace',
-      binary_basename: 'RSDKAnalytics',
-      ignore: '../*')
-
-  end
-
-  desc "Build a sample"
-  lane :sample do |options|
-
-    # Increment version
-    increment_build_number(build_number: lane_context[SharedValues::R_VERSION_FROM_DATE], xcodeproj: "Samples/RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj")
-    increment_version_number(version_number: lane_context[SharedValues::R_VERSION_FROM_DATE], xcodeproj: "Samples/RSDKAnalyticsSample/RSDKAnalyticsSample.xcodeproj")
-
-    # Install pods
-    cocoapods(podfile: "Samples/Podfile", repo_update: false)
-
-    # Build sample
-    gym(
-      configuration: "Release",
-      output_directory: './artifacts/device',
-      workspace: "Samples/Samples.xcworkspace",
-      codesigning_identity: 'iPhone Distribution',
-      export_method: 'enterprise',
-      export_team_id: '5J4GVGN58B',
-      scheme: 'RSDKAnalyticsSample')
-
-  end
-
   desc "Build everything"
   lane :ci do |options|
-    ENV['FL_COCOAPODS_VERBOSE'] = "1"
-
-    tests(options)
-    sample(options)
+    shared_ci(options)
   end
-
 end
+
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
