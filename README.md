@@ -84,6 +84,9 @@ If you want to prevent our SDK from tracking the last known location, you can se
     RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
 @endcode
 
+@subsection analytics-enable-debug-log Enable Debug Log
+To enable verbose debug logging for the Analytics module you have to create a boolean **RMSDKEnableDebugLogging** key set to `YES` in your app's info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
+
 @subsection analytics-tracking Tracking events
 Events are created with RSDKAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RSDKAnalyticsEvent::track "track" method.
 
@@ -546,6 +549,9 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-2-12-0 2.12.0 (2017-11-13)
+* [REM-24171](https://jira.rakuten-it.com/jira/browse/REM-24171): Disable debug log for Analytics module.
+
 @subsection analytics-2-11-0 2.11.0 (2017-10-10)
 * [REM-23653](https://jira.rakuten-it.com/jira/browse/REM-23653): Track Shared Web Credentials usage.
 

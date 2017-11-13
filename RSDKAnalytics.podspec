@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name         = "RSDKAnalytics"
-  s.version      = "2.11.0"
+  s.version      = "2.12.0"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "Analytics module of the Rakuten Ecosystem Mobile SDK"
-  s.homepage     = "https://www.raksdtd.com/ios-sdk/"
+  s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "7.0"
