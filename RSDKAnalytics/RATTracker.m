@@ -29,6 +29,11 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
+
+static const NSUInteger      RATRpCookieRequestInitialTimeOut       = 10u; //10s as initial timeout request
+static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2
+static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 10 mins as the time out
+
 // Recursively try to find a URL in a view hierarchy
 static NSURL *findURLForView(UIView *view)
 {
@@ -150,6 +155,13 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic) NSTimeInterval  uploadTimerInterval;
 
 @property (nonatomic, copy) NSString *startTime;
+
+/*
+ * session is used to retrieve the cookie details on initialize
+*/
+@property (nonatomic) NSURLSession *session;
+@property (nonatomic) NSURLSessionConfiguration *sessionConfig;
+@property (nonatomic) NSInteger newTimeoutInterval;
 @end
 
 @implementation RATTracker
@@ -242,7 +254,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                          CFRelease(reachability);
                      });
         });
-
+        
+        _sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        _session = [NSURLSession sessionWithConfiguration:_sessionConfig];
+        _sessionConfig.timeoutIntervalForRequest = RATRpCookieRequestInitialTimeOut;
+        _newTimeoutInterval = RATRpCookieRequestInitialTimeOut;
+        
+        [self _fetchRATRpCookie];
         /*
          * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
          */
@@ -272,6 +290,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                  object:nil];
     }
     return self;
+}
+
+- (void)_fetchRATRpCookie
+{
+    [self getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error)
+    {
+        if (error)
+        {
+            RSDKAnalyticsDebugLog(@"%@", error);
+        }
+    }];
 }
 
 - (void)dealloc
@@ -1234,6 +1263,70 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }];
 }
 
+//--------------------------------------------------------------------------
+
+- (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie *cookie, NSError *error))completionHandler
+{
+    __block NSHTTPCookie *rpCookie = nil;
+    NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Cannot get the cookie",
+                               NSLocalizedFailureReasonErrorKey: @"Invalid/NoCookie details available"};
+    NSError *error = [NSError errorWithDomain:NSURLErrorDomain
+                                         code:NSURLErrorUnknown
+                                     userInfo:userInfo];
+    
+    rpCookie = [self getRpCookieFromCookieStorage];
+    
+    if(rpCookie == nil)
+    {
+        [self getRpCookieFromRATCompletionHandler:^(NSHTTPCookie *cookie) {
+            rpCookie = cookie;
+            completionHandler(rpCookie, rpCookie ? nil : error);
+        }];
+    }
+    else
+    {
+        completionHandler(rpCookie, nil);
+    }
+}
+
+- (NSHTTPCookie *)getRpCookieFromCookieStorage
+{
+    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:_RSDKAnalyticsEndpointAddress()];
+    NSHTTPCookie *rpCookie = nil;
+    
+    for(NSHTTPCookie *cookie in cookies)
+    {
+        if([cookie.name isEqualToString:@"Rp"] && [cookie.expiresDate timeIntervalSinceNow] > 0)
+        {
+            rpCookie = cookie;
+            break;
+        }
+    }
+    return rpCookie;
+}
+
+- (void)getRpCookieFromRATCompletionHandler:(void (^)(NSHTTPCookie *cookie))completionHandler
+{
+    __weak typeof (self) weakSelf = self;
+    
+    [[_session dataTaskWithURL:_RSDKAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+      {
+          if(error)
+          {
+              // If failed retry fetch
+              // NewInterval = Newinterval + (Backoffmultiplier * InitialRequestTimeOut)
+              _newTimeoutInterval += + (RATRpCookieRequestBackOffMultiplier * RATRpCookieRequestInitialTimeOut);
+              
+              // Retry till the RequestEndTimeout
+              if (_newTimeoutInterval <= RATRpCookieRequestMaximumTimeOut)
+              {
+                  _sessionConfig.timeoutIntervalForRequest = _newTimeoutInterval;
+                  [weakSelf _fetchRATRpCookie];
+              }
+          }
+          completionHandler([weakSelf getRpCookieFromCookieStorage]);
+      }] resume];
+}
 //--------------------------------------------------------------------------
 
 - (void)_checkLTE

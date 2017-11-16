@@ -221,18 +221,6 @@
     [[[[bundleMock stub] classMethod] andReturn:[NSBundle bundleForClass:RATTracker.class]] mainBundle];
     [self addMock:bundleMock];
 
-    // No request should be emitted to RAT unless it's properly mocked
-    // in the relevant test
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        XCTAssertNotEqualObjects(request.URL.absoluteURL,
-                                 RATTracker.endpointAddress,
-                                 @"Missing HTTP mock!");
-        [self description]; // capture self strongly for the assert above to work
-        return NO;
-    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
-        return nil;
-    }];
-
     // Mock the database
     _database = MockedDatabase.new;
     id dbMock = OCMClassMock(_RSDKAnalyticsDatabase.class);
@@ -258,6 +246,18 @@
     [[[[trackerMock stub] classMethod] andReturn:_tracker] sharedInstance];
 
     [self addMock:trackerMock];
+
+    // No request should be emitted to RAT unless it's properly mocked
+    // in the relevant test
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        XCTAssertNotEqualObjects(request.URL.absoluteURL,
+                                 RATTracker.endpointAddress,
+                                 @"Missing HTTP mock!");
+        [self description]; // capture self strongly for the assert above to work
+        return NO;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        return nil;
+    }];
 }
 
 - (void)tearDown
@@ -663,6 +663,153 @@
     [RATTracker.sharedInstance processEvent:[self defaultEvent] state:[self defaultState]];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [NSNotificationCenter.defaultCenter removeObserver:cb];
+}
+
+- (void)testCookieIsSavedOnRATInstance
+{
+    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
+    // Clear all the cookies if exist any
+    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
+    {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
+    
+    NSString* const cookieName = @"TestCookieName";
+    NSString* const cookieValue = @"TestCookieValue";
+    
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return YES;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        NSString* cookie = [NSString stringWithFormat:@"%@=%@;", cookieName, cookieValue];
+        NSDictionary* headers = @{@"Set-Cookie": cookie};
+        return [OHHTTPStubsResponse responseWithData:[NSData new]
+                                          statusCode:200
+                                             headers:headers];
+    }];
+    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] getCookiesForTask:[[NSURLSession sharedSession] dataTaskWithURL:_RSDKAnalyticsEndpointAddress()] completionHandler:^(NSArray<NSHTTPCookie *> * _Nullable cookies)
+         {
+             XCTAssertEqualObjects(cookieName, cookies[0].name);
+             XCTAssertEqualObjects(cookieValue, cookies[0].value);
+             [OHHTTPStubs removeAllStubs];
+             [expectation fulfill];
+         }];
+    });
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+}
+
+- (void)DISABLED_testGetRpCookieWithError
+{
+    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
+    
+    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
+    {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
+    
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return YES;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        return [OHHTTPStubsResponse responseWithData:[NSData new]
+                                          statusCode:500
+                                             headers:nil];
+    }];
+    
+    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+            
+            XCTAssertNil(cookie);
+            XCTAssertNotNil(error);
+            [OHHTTPStubs removeAllStubs];
+            [expectation fulfill];
+        }];
+    });
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+}
+
+- (void)DISABLED_testGetRpCookieWithExpiredCookie
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
+    
+    [self setRpCookieWithName:@"Rp" Value:@"TestCookieValue" ExpiryDate:[[NSDate date] dateByAddingTimeInterval: +86400.0]];
+    
+    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+            
+            XCTAssertNil(cookie);
+            XCTAssertNotNil(error);
+            [OHHTTPStubs removeAllStubs];
+            [expectation fulfill];
+        }];
+    });
+    
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+}
+- (void)DISABLED_testGetRpCookieWithOutExpiredCookie
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
+    
+    [self setRpCookieWithName:@"Rp" Value:@"CookieValue" ExpiryDate:[[NSDate date] dateByAddingTimeInterval: 86400.0]];
+    
+    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+            
+            XCTAssertNotNil(cookie);
+            XCTAssertNil(error);
+            [OHHTTPStubs removeAllStubs];
+            [expectation fulfill];
+        }];
+    });
+    
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+}
+
+- (void)DISABLED_testGetRpCookieReturnWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
+    
+    [self setRpCookieWithName:@"Rp" Value:@"TestCookieValue" ExpiryDate:[[NSDate date] dateByAddingTimeInterval: -86400.0]];
+    
+    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+            
+            XCTAssertNil(cookie);
+            XCTAssertNotNil(error);
+            [OHHTTPStubs removeAllStubs];
+            [expectation fulfill];
+        }];
+    });
+    
+    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+}
+
+#pragma mark Helper function for RpCookie
+
+- (void)setRpCookieWithName:(NSString *)cookieName Value:(NSString *)cookieValue ExpiryDate:(NSDate *)expiryDate
+{
+    // Clear all the cookies if exist any
+    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
+    {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        return YES;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        
+        /*
+         * FIXME: Mocking not working exactly, as the session only is not getting set and expiresDate also set to null always
+         */
+       NSString* cookie = [NSString stringWithFormat:@"%@=%@; expiresDate=%@; session-only=%@; domain=.rakuten.co.jp;", cookieName, cookieValue, [NSNumber numberWithBool:NO], [NSString stringWithFormat:@"%@", expiryDate]];
+        NSDictionary* headers = @{@"Set-Cookie": cookie};
+        return [OHHTTPStubsResponse responseWithData:[NSData new]
+                                          statusCode:200
+                                             headers:headers];
+    }];
 }
 
 #pragma mark Test batch delay handling and setting delivery strategy
