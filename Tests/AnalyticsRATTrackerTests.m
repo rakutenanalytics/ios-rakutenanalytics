@@ -221,18 +221,6 @@
     [[[[bundleMock stub] classMethod] andReturn:[NSBundle bundleForClass:RATTracker.class]] mainBundle];
     [self addMock:bundleMock];
 
-    // No request should be emitted to RAT unless it's properly mocked
-    // in the relevant test
-    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        XCTAssertNotEqualObjects(request.URL.absoluteURL,
-                                 RATTracker.endpointAddress,
-                                 @"Missing HTTP mock!");
-        [self description]; // capture self strongly for the assert above to work
-        return NO;
-    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
-        return nil;
-    }];
-
     // Mock the database
     _database = MockedDatabase.new;
     id dbMock = OCMClassMock(_RSDKAnalyticsDatabase.class);
@@ -258,6 +246,23 @@
     [[[[trackerMock stub] classMethod] andReturn:_tracker] sharedInstance];
 
     [self addMock:trackerMock];
+
+    // No request should be emitted to RAT unless it's properly mocked
+    // in the relevant test
+    [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
+        XCTAssertNotEqualObjects(request.URL.absoluteURL,
+                                 RATTracker.endpointAddress,
+                                 @"Missing HTTP mock!");
+        [self description]; // capture self strongly for the assert above to work
+        return NO;
+    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+        return nil;
+    }];
+    
+    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
+    {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
 }
 
 - (void)tearDown

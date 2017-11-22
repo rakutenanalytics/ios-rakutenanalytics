@@ -100,6 +100,16 @@ RSDKA_EXPORT @interface RATTracker : NSObject<RSDKAnalyticsTracker>
  */
 + (NSURL *)endpointAddress;
 
+/**
+ * Will pass valid Rp cookie to completionHandler as soon as it is available.
+ *
+ * If a valid cookie is cached it will be returned immediately. Otherwise a new cookie will be retrieved
+ * from RAT, which might take time or be delayed depending on network connectivity.
+ *
+ * @param completionHandler  Returns valid cookie or nil cookie and an error in case of failure
+ */
+- (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie *cookie, NSError *error))completionHandler;
+
 @end
 
 /// @name Notifications
