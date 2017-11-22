@@ -23,20 +23,23 @@
 
 @implementation AnalyticsRATRpCookieTests
 
-- (void)testCookieIsSavedOnRATInstance
+- (void)setUp
 {
-    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
     // Clear all the cookies if exist any
     for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
     {
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
     }
-    
+}
+
+- (void)testCookieIsSavedOnRATInstanceInitialization
+{
+    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
     NSString* const cookieName = @"TestCookieName";
     NSString* const cookieValue = @"TestCookieValue";
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return YES;
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@;", cookieName, cookieValue];
         NSDictionary* headers = @{@"Set-Cookie": cookie};
@@ -50,7 +53,6 @@
          {
              XCTAssertEqualObjects(cookieName, cookies[0].name);
              XCTAssertEqualObjects(cookieValue, cookies[0].value);
-             [OHHTTPStubs removeAllStubs];
              [expectation fulfill];
          }];
     });
@@ -61,13 +63,8 @@
 {
     __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
     
-    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
-    {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
-    }
-    
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return YES;
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithData:[NSData new]
                                           statusCode:500
@@ -80,7 +77,6 @@
             
             XCTAssertNil(cookie);
             XCTAssertNotNil(error);
-            [OHHTTPStubs removeAllStubs];
             [expectation fulfill];
         }];
     });
@@ -99,14 +95,13 @@
             
             XCTAssertNil(cookie);
             XCTAssertNotNil(error);
-            [OHHTTPStubs removeAllStubs];
             [expectation fulfill];
         }];
     });
     
     [self waitForExpectationsWithTimeout:4.0 handler:nil];
 }
-- (void)testGetRpCookieWithValidExpiredCookie
+- (void)testGetRpCookieWithValidCookie
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
     
@@ -119,7 +114,6 @@
             XCTAssertNotNil(cookie);
             XCTAssertNil(error);
             XCTAssertEqualObjects(@"CookieValue", cookie.value);
-            [OHHTTPStubs removeAllStubs];
             [expectation fulfill];
         }];
     });
@@ -131,13 +125,8 @@
 
 - (void)setRpCookieWithName:(NSString *)cookieName Value:(NSString *)cookieValue ExpiryDate:(NSString *)expiryDate
 {
-    // Clear all the cookies if exist any
-    for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
-    {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
-    }
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return YES;
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@; path=/; expires=%@; session-only=%@; domain=.rakuten.co.jp", cookieName, cookieValue, expiryDate, [NSNumber numberWithBool:NO]];
         NSDictionary* headers = @{@"Set-Cookie": cookie};
