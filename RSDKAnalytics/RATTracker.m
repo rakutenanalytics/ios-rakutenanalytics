@@ -30,7 +30,7 @@ NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
 
-static const NSUInteger      RATRpCookieRequestInitialTimeOut       = 10u; //10s as initial timeout request
+static const NSTimeInterval  RATRpCookieRequestInitialRetryInterval = 10u; //10s as initial timeout request
 static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2
 static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 10 mins as the time out
 
@@ -159,10 +159,10 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 /*
  * session is used to retrieve the cookie details on initialize
 */
-@property (nonatomic) NSURLSession *session;
-@property (nonatomic) NSURLSessionConfiguration *sessionConfig;
-@property (nonatomic) NSInteger newTimeoutInterval;
-@property (nonatomic) dispatch_queue_t rpCookieQue;
+
+@property (nonatomic) NSTimeInterval   RATRpCookieRequestRetryInterval;
+@property (nonatomic) dispatch_queue_t rpCookieQueue;
+@property (nonatomic) NSUInteger       rpCookieRequestRetryCount;
 @end
 
 @implementation RATTracker
@@ -256,11 +256,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                      });
         });
         
-        _sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        _session = [NSURLSession sessionWithConfiguration:_sessionConfig];
-        _sessionConfig.timeoutIntervalForRequest = RATRpCookieRequestInitialTimeOut;
-        _newTimeoutInterval = RATRpCookieRequestInitialTimeOut;
-        _rpCookieQue = dispatch_queue_create("RSDKAnalytics.rpcookie", DISPATCH_QUEUE_SERIAL);
+        _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;
+        _rpCookieRequestRetryCount = 0;
+        _rpCookieQueue = dispatch_queue_create("com.rakuten.tech.analytics.rpcookie", DISPATCH_QUEUE_SERIAL);
         
         [self _fetchRATRpCookie];
         /*
@@ -1311,25 +1309,26 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     __weak typeof (self) weakSelf = self;
     
-    [[_session dataTaskWithURL:_RSDKAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    [[[NSURLSession sharedSession] dataTaskWithURL:_RSDKAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
       {
           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
           if(error || httpResponse.statusCode != 200)
           {
               // If failed retry fetch
-              _newTimeoutInterval += RATRpCookieRequestBackOffMultiplier * RATRpCookieRequestInitialTimeOut;
+              _rpCookieRequestRetryCount++;
+              
+              _RATRpCookieRequestRetryInterval = MIN(RATRpCookieRequestMaximumTimeOut, pow(RATRpCookieRequestBackOffMultiplier, _rpCookieRequestRetryCount) * RATRpCookieRequestInitialRetryInterval);
               
               // Retry till the RATRpCookieRequestMaximumTimeOut
-              if (_newTimeoutInterval <= RATRpCookieRequestMaximumTimeOut)
+              if (_RATRpCookieRequestRetryInterval < RATRpCookieRequestMaximumTimeOut)
               {
-                  _sessionConfig.timeoutIntervalForRequest = _newTimeoutInterval;
-                
-                  dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_newTimeoutInterval * NSEC_PER_SEC));
-                  dispatch_after(delay, _rpCookieQue, ^(void){
+                  dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_RATRpCookieRequestRetryInterval * NSEC_PER_SEC));
+                  dispatch_after(delay, _rpCookieQueue, ^(void){
                       [weakSelf _fetchRATRpCookie];
                   });
               }
           }
+          _rpCookieRequestRetryCount = 0;
           completionHandler([weakSelf getRpCookieFromCookieStorage]);
       }] resume];
 }
