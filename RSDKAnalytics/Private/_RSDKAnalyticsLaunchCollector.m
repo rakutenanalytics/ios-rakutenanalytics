@@ -292,8 +292,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
      * In this case, the origin will be set to push. 
      * And the next _rem_visit event will have a push type.
      */
-    UIApplication *sharedApplicationObj = _RSDKAnalyticsSharedApplication();
-    UIApplicationState state = sharedApplicationObj.applicationState;
+    UIApplicationState state = _RSDKAnalyticsSharedApplication().applicationState;
     if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
     {
         // emit push_event
@@ -362,8 +361,7 @@ static NSString *const _RSDKAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.
         if( schemes && [schemes isKindOfClass:NSArray.class]) {
             for ( NSString* scheme in schemes) {
                 if([scheme isEqualToString:@"org-appextension-feature-password-management"]) {
-                    UIApplication *sharedApplicationObj = _RSDKAnalyticsSharedApplication();
-                    return [sharedApplicationObj canOpenURL:[NSURL URLWithString:@"org-appextension-feature-password-management://"]];
+                    return [_RSDKAnalyticsSharedApplication() canOpenURL:[NSURL URLWithString:@"org-appextension-feature-password-management://"]];
                 }
             }
         }

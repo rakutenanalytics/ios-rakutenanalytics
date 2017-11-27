@@ -40,7 +40,7 @@ NS_INLINE BOOL _RSDKAnalyticsIsApplePrivateClass(Class cls)
 NS_INLINE UIApplication *_RSDKAnalyticsSharedApplication(void)
 {
     Class UIApplicationClass = [UIApplication class];
-    SEL sharedApplicationSelector = NSSelectorFromString(@"sharedApplication");
+    SEL sharedApplicationSelector = @selector(sharedApplication);
     if ([UIApplicationClass respondsToSelector:sharedApplicationSelector])
     {
         return [UIApplicationClass performSelector:sharedApplicationSelector];
