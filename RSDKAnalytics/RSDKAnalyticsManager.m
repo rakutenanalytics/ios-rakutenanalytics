@@ -250,10 +250,11 @@ static RSDKAnalyticsManager *_instance = nil;
     }
 #endif
 
+    UIApplication *sharedApplicationObj = _RSDKAnalyticsSharedApplication();
     if (self.shouldTrackLastKnownLocation &&
         CLLocationManager.locationServicesEnabled &&
         (status == kCLAuthorizationStatusAuthorizedAlways ||
-         (status == kCLAuthorizationStatusAuthorizedWhenInUse && UIApplication.sharedApplication.applicationState == UIApplicationStateActive)
+         (status == kCLAuthorizationStatusAuthorizedWhenInUse && sharedApplicationObj.applicationState == UIApplicationStateActive)
         ))
     {
         [self _startMonitoringLocation];
