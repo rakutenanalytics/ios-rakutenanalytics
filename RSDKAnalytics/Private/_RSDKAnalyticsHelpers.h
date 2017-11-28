@@ -35,3 +35,16 @@ NS_INLINE BOOL _RSDKAnalyticsIsApplePrivateClass(Class cls)
     return [NSStringFromClass(cls) hasPrefix:@"_"] && _RSDKAnalyticsIsAppleClass(cls);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+NS_INLINE UIApplication *_RSDKAnalyticsSharedApplication(void)
+{
+    Class UIApplicationClass = [UIApplication class];
+    SEL sharedApplicationSelector = @selector(sharedApplication);
+    if ([UIApplicationClass respondsToSelector:sharedApplicationSelector])
+    {
+        return [UIApplicationClass performSelector:sharedApplicationSelector];
+    }
+    return nil;
+}
+#pragma clang diagnostic pop

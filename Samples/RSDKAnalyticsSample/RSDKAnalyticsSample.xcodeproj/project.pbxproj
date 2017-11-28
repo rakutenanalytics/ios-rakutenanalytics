@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */; };
+		5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */; };
+		5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */; };
+		5AB2B8381FC3F64C0017CF83 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */; };
 		6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */; };
 		694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */; };
@@ -18,7 +22,37 @@
 		697AAE36192DA4FB006EF197 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE35192DA4FB006EF197 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5AB2B8361FC3F64C0017CF83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 697AAE0F192DA4FA006EF197 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AB2B82A1FC3F64A0017CF83;
+			remoteInfo = AnalyticsTodayExt;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5AB2B83C1FC3F64C0017CF83 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5AB2B8381FC3F64C0017CF83 /* AnalyticsTodayExt.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AnalyticsTodayExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		5AB2B82F1FC3F64C0017CF83 /* TodayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayViewController.h; sourceTree = "<group>"; };
+		5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
+		5AB2B8331FC3F64C0017CF83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		5AB2B8351FC3F64C0017CF83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRootViewController.m; sourceTree = "<group>"; };
 		6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRootViewController.h; sourceTree = "<group>"; };
 		6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecordForm.h; sourceTree = "<group>"; };
@@ -39,6 +73,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5AB2B8281FC3F64A0017CF83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D980D5940B3D4E25B5B27794 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -49,11 +91,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */ = {
+			isa = PBXGroup;
+			children = (
+				5AB2B82F1FC3F64C0017CF83 /* TodayViewController.h */,
+				5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */,
+				5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */,
+				5AB2B8351FC3F64C0017CF83 /* Info.plist */,
+			);
+			path = AnalyticsTodayExt;
+			sourceTree = "<group>";
+		};
 		697AAE0E192DA4FA006EF197 = {
 			isa = PBXGroup;
 			children = (
 				697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */,
+				5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */,
 				697AAE18192DA4FA006EF197 /* Products */,
+				CECCB6190E493107EA41038F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,6 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */,
+				5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -96,9 +152,34 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		CECCB6190E493107EA41038F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AB2B83B1FC3F64C0017CF83 /* Build configuration list for PBXNativeTarget "AnalyticsTodayExt" */;
+			buildPhases = (
+				5AB2B8271FC3F64A0017CF83 /* Sources */,
+				5AB2B8281FC3F64A0017CF83 /* Frameworks */,
+				5AB2B8291FC3F64A0017CF83 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AnalyticsTodayExt;
+			productName = AnalyticsTodayExt;
+			productReference = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */;
@@ -106,10 +187,12 @@
 				697AAE13192DA4FA006EF197 /* Sources */,
 				697AAE15192DA4FA006EF197 /* Resources */,
 				D980D5940B3D4E25B5B27794 /* Frameworks */,
+				5AB2B83C1FC3F64C0017CF83 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5AB2B8371FC3F64C0017CF83 /* PBXTargetDependency */,
 			);
 			name = RSDKAnalyticsSample;
 			productName = RSDKAnalyticsSample;
@@ -126,6 +209,10 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Rakuten, Inc.";
 				TargetAttributes = {
+					5AB2B82A1FC3F64A0017CF83 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Manual;
+					};
 					697AAE16192DA4FA006EF197 = {
 						DevelopmentTeam = 87CT3T3CK2;
 						ProvisioningStyle = Manual;
@@ -151,11 +238,20 @@
 			projectRoot = "";
 			targets = (
 				697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */,
+				5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5AB2B8291FC3F64A0017CF83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		697AAE15192DA4FA006EF197 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -169,6 +265,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5AB2B8271FC3F64A0017CF83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		697AAE13192DA4FA006EF197 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,7 +288,23 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		5AB2B8371FC3F64C0017CF83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */;
+			targetProxy = 5AB2B8361FC3F64C0017CF83 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
+		5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5AB2B8331FC3F64C0017CF83 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		697AAE23192DA4FB006EF197 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -204,6 +324,71 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5AB2B8391FC3F64C0017CF83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5AB2B83A1FC3F64C0017CF83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
+				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise6th_171006;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		697AAE4A192DA4FB006EF197 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -302,6 +487,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.1612.12022137;
 				DEVELOPMENT_TEAM = 87CT3T3CK2;
@@ -325,6 +511,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 1.1612.12022137;
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
@@ -342,6 +529,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5AB2B83B1FC3F64C0017CF83 /* Build configuration list for PBXNativeTarget "AnalyticsTodayExt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AB2B8391FC3F64C0017CF83 /* Debug */,
+				5AB2B83A1FC3F64C0017CF83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RSDKAnalyticsSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
