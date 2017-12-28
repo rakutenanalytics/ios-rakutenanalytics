@@ -6,7 +6,7 @@ The **analytics** module provides APIs for tracking user activity and automatica
 
 
 @section analytics-installing Installing
-See the [Ecosystem SDK documentation](https://www.raksdtd.com/ios-sdk/sdk-latest/#introduction) for a detailed step-by-step guide to installing the SDK.
+See the [Ecosystem SDK documentation](/ios-sdk/sdk-latest/#introduction) for a detailed step-by-step guide to installing the SDK.
 
 Alternatively, you can also use this SDK module as a standalone library. To use the SDK module as a standalone library, your `Podfile` should contain:
 
@@ -549,6 +549,10 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-2-13-0 2.13.0 (2017-12-29)
+* [REM-24194](https://jira.rakuten-it.com/jira/browse/REM-24194):Add support for App Extensions.
+* [REM-24746](https://jira.rakuten-it.com/jira/browse/REM-24746):Send Rp cookie to RAT.
+
 @subsection analytics-2-12-0 2.12.0 (2017-11-13)
 * [REM-24171](https://jira.rakuten-it.com/jira/browse/REM-24171): Disable debug log for Analytics module.
 
