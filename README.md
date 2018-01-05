@@ -549,7 +549,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
-@subsection analytics-2-13-0 2.13.0 (2017-12-29)
+@subsection analytics-2-13-0 2.13.0 (2018-01-09)
 * [REM-24194](https://jira.rakuten-it.com/jira/browse/REM-24194):Add support for App Extensions.
 * [REM-24746](https://jira.rakuten-it.com/jira/browse/REM-24746):Send Rp cookie to RAT.
 
