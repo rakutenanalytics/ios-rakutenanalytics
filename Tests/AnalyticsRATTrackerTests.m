@@ -369,6 +369,50 @@
     XCTAssertEqual(RATTracker.sharedInstance.accountIdentifier, 333);
 }
 
+- (void)testThatPlistAccountIdKeyIsUsedWhenSet
+{
+    // setUp() already mocks mainBundle so need to remove
+    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+        [mock stopMocking];
+    }];
+    
+    NSInteger expected = 10;
+    id mockBundle = OCMPartialMock(NSBundle.mainBundle);
+    OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAccountIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
+    
+    // need a freshly allocated instance so that the plist is read
+    _tracker = [RATTracker.alloc initInstance];
+    
+    XCTAssertEqual(_tracker.accountIdentifier, expected);
+}
+
+- (void)testThatDefaultAccountIdIsUsedWhenPlistKeyIsNotSet
+{
+    XCTAssertEqual(RATTracker.sharedInstance.accountIdentifier, 477);
+}
+
+- (void)testThatPlistApplicationIdKeyIsUsedWhenSet
+{
+    // setUp() already mocks mainBundle so need to remove
+    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+        [mock stopMocking];
+    }];
+    
+    NSInteger expected = 10;
+    id mockBundle = OCMPartialMock(NSBundle.mainBundle);
+    OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAppIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
+    
+    // need a freshly allocated instance so that the plist is read
+    _tracker = [RATTracker.alloc initInstance];
+    
+    XCTAssertEqual(_tracker.applicationIdentifier, expected);
+}
+
+- (void)testThatDefaultApplicationIdIsUsedWhenPlistKeyIsNotSet
+{
+    XCTAssertEqual(RATTracker.sharedInstance.applicationIdentifier, 1);
+}
+
 #pragma mark Test processing events
 
 - (void)testProcessValidRATEvent

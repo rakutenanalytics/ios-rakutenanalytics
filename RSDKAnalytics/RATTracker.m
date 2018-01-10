@@ -218,11 +218,15 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         _uploadTimerInterval = 60.0; // default is 60 seconds
 
         /*
-         * Default values for account/application should be 477/1.
+         * Attempt to read the IDs from the app's plist
+         * If not found, use 477/1 as default values for account/application ID.
          */
 
-        _accountIdentifier = 477;
-        _applicationIdentifier = 1;
+        NSNumber *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATAccountIdentifier"];
+        _accountIdentifier = plistObj ? plistObj.longLongValue : 477; // int64_t is typedef'd long long
+
+        plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATAppIdentifier"];
+        _applicationIdentifier = plistObj ? plistObj.longLongValue : 1;
 
         /*
          * Keep track of reachability.
@@ -475,7 +479,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RSDKAnalyticsErrorLog(@"There is no value for 'acc' field, please configure it by using configureWithAccountId: method");
+            RSDKAnalyticsErrorLog(@"There is no value for 'acc' field, please configure it by setting a 'RATAccountIdentifier' key to YOUR_RAT_ACCOUNT_ID in your app's Info.plist");
         }
     }
 
@@ -488,7 +492,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RSDKAnalyticsErrorLog(@"There is no value for 'aid' field, please configure it by using configureWithApplicationId: method");
+            RSDKAnalyticsErrorLog(@"There is no value for 'aid' field, please configure it by setting a 'RATAppIdentifier' key to YOUR_RAT_APPLICATION_ID in your app's Info.plist");
         }
     }
 
