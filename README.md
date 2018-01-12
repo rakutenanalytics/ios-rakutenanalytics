@@ -30,7 +30,16 @@ Run `pod install` to install the module and its dependencies.
 * Support email for administrative tasks: dev-rat@mail.rakuten.com
 
 @subsection analytics-configure-rat Configuring RAT
-@attention Applications **MUST** configure their RAT `accountId` and `applicationId` with the methods presented below, or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled.
+@attention Applications **MUST** configure their RAT `accountId` and `applicationId` or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled. The recommended configuration method is to set keys in your app's **Info.plist** which will ensure that events sent to RAT before the app has finished launching will use the correct identifiers:
+
+##### Plist Configuration
+
+Key         | Value (Number type)
+-------------------|-------------------
+`RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID`
+`RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID`
+
+@attention The RAT `accountId` and `applicationId` can also be configured using the **deprecated** methods below.
 
 ##### Swift 3
 
