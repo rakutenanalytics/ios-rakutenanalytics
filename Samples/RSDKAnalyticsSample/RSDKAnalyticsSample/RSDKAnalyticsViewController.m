@@ -150,5 +150,10 @@
     RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = cell.switchControl.on;
 }
 
+- (void)useStagingChanged:(FXFormSwitchCell *)cell
+{
+    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = cell.switchControl.on;
+}
+
 @end
 
