@@ -2,9 +2,25 @@
 import_from_git(url: 'https://gitpub.rakuten-it.com/scm/eco/ci-fastlane.git')
 
 platform :ios do
+  desc 'Build samples'
+  lane :samples do |options|
+    {
+      :RSDKAnalyticsSample         => ["RSDKAnalyticsSample", "RSDKAnalyticsSampleSwift"]
+    }.each do |project, schemes|
+      ENV['REM_FL_SAMPLE_PROJECT'] = "Samples/#{project}/#{project}.xcodeproj"
+      ENV['REM_FL_SAMPLE_WORKSPACE'] = "Samples/#{project}/#{project}.xcworkspace"
+      ENV['REM_FL_SAMPLE_PODFILE'] = "Samples/#{project}/Podfile"
+      schemes.each do |scheme|
+        ENV['REM_FL_SAMPLE_SCHEME'] = scheme
+        shared_sample(options)
+      end
+    end
+  end
+
   desc "Build everything"
   lane :ci do |options|
-    shared_ci(options)
+    shared_tests(options)
+    samples(options)
   end
 end
 

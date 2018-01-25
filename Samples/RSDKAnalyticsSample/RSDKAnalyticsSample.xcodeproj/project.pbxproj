@@ -7,10 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A7D6385201827520025F4F1 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */; };
+		5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */; };
+		5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */; };
 		5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */; };
 		5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */; };
 		5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */; };
 		5AB2B8381FC3F64C0017CF83 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */; };
+		5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CBE2016CE8A0028CEBC /* Main.storyboard */; };
+		5AB66CC22016CE8A0028CEBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
+		5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
+		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
 		6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */; };
 		6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */; };
 		694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */; };
@@ -47,12 +55,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
+		5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
 		5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AnalyticsTodayExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
 		5AB2B82F1FC3F64C0017CF83 /* TodayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayViewController.h; sourceTree = "<group>"; };
 		5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
 		5AB2B8331FC3F64C0017CF83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		5AB2B8351FC3F64C0017CF83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSDKAnalyticsSampleSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5AB66CBF2016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5AB66CC12016CE8A0028CEBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5AB66CC42016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRootViewController.m; sourceTree = "<group>"; };
 		6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRootViewController.h; sourceTree = "<group>"; };
 		6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecordForm.h; sourceTree = "<group>"; };
@@ -81,6 +99,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5AB66CB52016CE890028CEBC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D980D5940B3D4E25B5B27794 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -102,11 +127,28 @@
 			path = AnalyticsTodayExt;
 			sourceTree = "<group>";
 		};
+		5AB66CB92016CE8A0028CEBC /* RSDKAnalyticsSampleSwift */ = {
+			isa = PBXGroup;
+			children = (
+				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
+				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
+				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
+				5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */,
+				5AB66CC62016CE8A0028CEBC /* Info.plist */,
+				5AB66CD820171F730028CEBC /* TableViewController.swift */,
+				5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */,
+				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
+				5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */,
+			);
+			path = RSDKAnalyticsSampleSwift;
+			sourceTree = "<group>";
+		};
 		697AAE0E192DA4FA006EF197 = {
 			isa = PBXGroup;
 			children = (
 				697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */,
 				5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */,
+				5AB66CB92016CE8A0028CEBC /* RSDKAnalyticsSampleSwift */,
 				697AAE18192DA4FA006EF197 /* Products */,
 				CECCB6190E493107EA41038F /* Frameworks */,
 			);
@@ -117,6 +159,7 @@
 			children = (
 				697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */,
 				5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */,
+				5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -180,6 +223,23 @@
 			productReference = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		5AB66CB72016CE890028CEBC /* RSDKAnalyticsSampleSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSampleSwift" */;
+			buildPhases = (
+				5AB66CB42016CE890028CEBC /* Sources */,
+				5AB66CB52016CE890028CEBC /* Frameworks */,
+				5AB66CB62016CE890028CEBC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RSDKAnalyticsSampleSwift;
+			productName = RSDKAnalyticsSampleSwift;
+			productReference = 5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */;
+			productType = "com.apple.product-type.application";
+		};
 		697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */;
@@ -206,11 +266,16 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = RSDKAnalytics;
+				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Rakuten, Inc.";
 				TargetAttributes = {
 					5AB2B82A1FC3F64A0017CF83 = {
 						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Manual;
+					};
+					5AB66CB72016CE890028CEBC = {
+						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Manual;
 					};
 					697AAE16192DA4FA006EF197 = {
@@ -239,6 +304,7 @@
 			targets = (
 				697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */,
 				5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */,
+				5AB66CB72016CE890028CEBC /* RSDKAnalyticsSampleSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -249,6 +315,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AB66CB62016CE890028CEBC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */,
+				5AB66CC22016CE8A0028CEBC /* Assets.xcassets in Resources */,
+				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +346,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AB66CB42016CE890028CEBC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A7D6385201827520025F4F1 /* BaseTableViewCell.swift in Sources */,
+				5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */,
+				5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */,
+				5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */,
+				5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +391,22 @@
 				5AB2B8331FC3F64C0017CF83 /* Base */,
 			);
 			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+		5AB66CBE2016CE8A0028CEBC /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5AB66CBF2016CE8A0028CEBC /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5AB66CC42016CE8A0028CEBC /* Base */,
+			);
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		697AAE23192DA4FB006EF197 /* InfoPlist.strings */ = {
@@ -385,6 +489,76 @@
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise6th_171006;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5AB66CC72016CE8A0028CEBC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RSDKAnalyticsSampleSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5AB66CC82016CE8A0028CEBC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RSDKAnalyticsSampleSwift;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
+				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise6th_171006;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -534,6 +708,15 @@
 			buildConfigurations = (
 				5AB2B8391FC3F64C0017CF83 /* Debug */,
 				5AB2B83A1FC3F64C0017CF83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSampleSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AB66CC72016CE8A0028CEBC /* Debug */,
+				5AB66CC82016CE8A0028CEBC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
