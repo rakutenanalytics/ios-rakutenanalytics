@@ -7,6 +7,7 @@ use_frameworks!
 target 'Tests' do
   pod 'RSDKAnalytics', :path => './RSDKAnalytics.podspec'
   pod 'RAnalyticsBroadcast', :path => './RAnalyticsBroadcast.podspec'
+  pod 'RDeviceIdentifier', :inhibit_warnings => true, :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
   pod 'OCMock'
   pod 'OHHTTPStubs'
 end

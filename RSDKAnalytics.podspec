@@ -38,6 +38,6 @@ Pod::Spec.new do |s|
   }
   s.module_map           = 'RSDKAnalytics/RSDKAnalytics.modulemap'
 
-  s.dependency 'RSDKDeviceInformation', '~> 1.5'
+  s.dependency 'RDeviceIdentifier', '~> 1.0'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
