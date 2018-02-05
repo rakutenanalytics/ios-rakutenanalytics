@@ -120,18 +120,6 @@
     XCTAssertTrue([[RSDKAnalyticsManager endpointAddress].absoluteString isEqualToString:@"https://stg.rat.rakuten.co.jp/"]);
 }
 
-- (void)testProcessMethodThrowsWhenDeviceIdentifierIsNil
-{
-    _manager.deviceIdentifier = nil;
-    
-    id deviceInformationMock = OCMClassMock(RDeviceIdentifier.class);
-    OCMStub([deviceInformationMock uniqueDeviceIdentifier]).andReturn(nil);
-    
-    XCTAssertThrows([_manager process:[RSDKAnalyticsEvent.alloc initWithName:@"event" parameters:nil]]);
-    
-    [deviceInformationMock stopMocking];
-}
-
 - (void)testStartMonitoringLocation
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);

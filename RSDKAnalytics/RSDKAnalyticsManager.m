@@ -301,7 +301,10 @@ static RSDKAnalyticsManager *_instance = nil;
         }
         @catch (NSException *__unused exception) { }
     }
-    NSAssert(_deviceIdentifier, @"RSDKDeviceInformation is not properly configured!");
+    if (!_deviceIdentifier)
+    {
+        RSDKAnalyticsErrorLog(@"RDeviceIdentifier is not properly configured!");
+    }
 
     RSDKAnalyticsState *state = [RSDKAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
