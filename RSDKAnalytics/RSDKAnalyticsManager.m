@@ -5,7 +5,7 @@
 @import Darwin.POSIX.sys;
 
 #import <AdSupport/AdSupport.h>
-#import <RSDKDeviceInformation/RSDKDeviceInformation.h>
+#import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import <RSDKAnalytics/RSDKAnalytics.h>
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsLaunchCollector.h"
@@ -297,11 +297,14 @@ static RSDKAnalyticsManager *_instance = nil;
     {
         @try
         {
-            _deviceIdentifier = RSDKDeviceInformation.uniqueDeviceIdentifier;
+            _deviceIdentifier = RDeviceIdentifier.uniqueDeviceIdentifier;
         }
         @catch (NSException *__unused exception) { }
     }
-    NSAssert(_deviceIdentifier, @"RSDKDeviceInformation is not properly configured!");
+    if (!_deviceIdentifier)
+    {
+        RSDKAnalyticsErrorLog(@"RDeviceIdentifier is not properly configured!");
+    }
 
     RSDKAnalyticsState *state = [RSDKAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];

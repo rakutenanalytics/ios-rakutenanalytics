@@ -8,7 +8,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <WebKit/WebKit.h>
-#import <RSDKDeviceInformation/RSDKDeviceInformation.h>
+#import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import "_RSDKAnalyticsHelpers.h"
 #import "_RSDKAnalyticsDatabase.h"
 
@@ -552,7 +552,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: model
-    payload[@"model"] = RSDKDeviceInformation.modelIdentifier;
+    payload[@"model"] = RDeviceIdentifier.modelIdentifier;
 
     // MARK: mnetw
     if (_reachabilityStatus)

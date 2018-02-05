@@ -4,7 +4,6 @@
 #import "../RSDKAnalytics/Private/_RSDKAnalyticsExternalCollector.h"
 #import "../RSDKAnalytics/Private/_RSDKAnalyticsLaunchCollector.h"
 #import "../RSDKAnalytics/Private/_RSDKAnalyticsPrivateEvents.h"
-#import <RSDKDeviceInformation/RSDKDeviceInformation.h>
 #import <OCMock/OCMock.h>
 
 @interface _RSDKAnalyticsExternalCollector ()
