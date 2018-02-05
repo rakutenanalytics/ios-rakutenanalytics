@@ -1,9 +1,9 @@
 @tableofcontents
+@attention This module supports iOS 7.0 and above. It has been tested with iOS 8.4 and above.
 @section analytics-module Introduction
 The **analytics** module provides APIs for tracking user activity and automatically sends reports to the Rakuten Analytics servers.
 
 @attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
-
 
 @section analytics-installing Installing
 See the [Ecosystem SDK documentation](/ios-sdk/sdk-latest/#introduction) for a detailed step-by-step guide to installing the SDK.
@@ -347,11 +347,11 @@ The @ref RATTracker "RAT Tracker" collects events and send them to the RAT backe
 
 @code{.swift}
 public class CustomClass: NSObject, RATDeliveryStrategy {
-    
+
     public func setup() {
         RATTracker.shared().configure(with: self)
     }
-    
+
     // MARK: RATDeliveryStrategy
     public func batchingDelay() -> Int {
         return 10
@@ -381,33 +381,33 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
 @end
 @endcode
 
-### Example 2: Dynamic batching interval 
+### Example 2: Dynamic batching interval
 #### - no batching for the first 10 seconds after app launch
 #### - 10 second batching between 10 and 30 seconds after app launch
-#### - 60 second batching after 30 seconds after app launch 
+#### - 60 second batching after 30 seconds after app launch
 
 ##### Swift 3
 
 @code{.swift}
 
 public class CustomClass: NSObject, RATDeliveryStrategy {
-    
+
     fileprivate var startTime: TimeInterval
-    
+
     override init() {
         startTime = NSDate().timeIntervalSinceReferenceDate
         super.init()
     }
-    
+
     public func setup() {
         RATTracker.shared().configure(with: self)
     }
-    
+
     // MARK: RATDeliveryStrategy
     public func batchingDelay() -> Int {
-        
+
         let secondsSinceStart = NSDate().timeIntervalSinceReferenceDate - startTime
-        
+
         if (secondsSinceStart < 10)
         {
             return 0
