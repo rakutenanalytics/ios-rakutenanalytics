@@ -21,9 +21,7 @@ Run `pod install` to install the module and its dependencies.
 
 
 @section analytics-tutorial Getting started
-@attention This module depends on the [deviceinformation](../deviceinformation-latest) module to retrieve the device's unique identifier. The deviceinformation module also requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
-
-@attention Without the deviceinformation module, RSDKAnalyticsManager::spoolRecord: raises a `NSObjectInaccessibleException`.
+@attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information. If the keychain access is not done properly, RSDKAnalyticsManager::spoolRecord: will raises a `NSObjectInaccessibleException`.
 
 @subsection analytics-register Registering a new application
 * [Registration Form](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Introduction+Application+Form) (from `r-intra`)
