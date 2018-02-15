@@ -88,6 +88,7 @@
 		697AAE32192DA4FB006EF197 /* RSDKAnalyticsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsViewController.h; sourceTree = "<group>"; };
 		697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsViewController.m; sourceTree = "<group>"; };
 		697AAE35192DA4FB006EF197 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		6D26EBD020352CFE009FE1F7 /* RSDKAnalyticsSampleSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RSDKAnalyticsSampleSwift.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +131,7 @@
 		5AB66CB92016CE8A0028CEBC /* RSDKAnalyticsSampleSwift */ = {
 			isa = PBXGroup;
 			children = (
+				6D26EBD020352CFE009FE1F7 /* RSDKAnalyticsSampleSwift.entitlements */,
 				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
 				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
 				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
@@ -277,6 +279,11 @@
 					5AB66CB72016CE890028CEBC = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 					697AAE16192DA4FA006EF197 = {
 						DevelopmentTeam = 87CT3T3CK2;
@@ -508,6 +515,7 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSampleSwift/RSDKAnalyticsSampleSwift.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -542,6 +550,7 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSampleSwift/RSDKAnalyticsSampleSwift.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
