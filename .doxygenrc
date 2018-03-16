@@ -1,8 +1,9 @@
 # This file will get merged with ~/Doxyfile before running Doxygen
-PROJECT_NAME     = RSDKAnalytics
+PROJECT_NAME     = RAnalytics
 PROJECT_BRIEF    = "Analytics module of the Rakuten Ecosystem Mobile SDK"
-INPUT           += RSDKAnalytics
-IGNORE_PREFIX    = RSDKAnalytics
+INPUT           += RAnalytics
+IGNORE_PREFIX    = RAnalytics
+PREDEFINED		+= "RSDKA_SWIFT3_NAME(s)="
 TAGFILES         = "$(HOME)/remsdk-tagfiles/deviceinformation-1.5.tag=../deviceinformation-1.5"
 
 
