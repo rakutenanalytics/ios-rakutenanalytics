@@ -11,6 +11,7 @@
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
 		5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */; };
+		5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */; };
 		5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */; };
 		5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */; };
 		5AF1B93F20478F5900BD0E3E /* SenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF1B93E20478F5900BD0E3E /* SenderTests.m */; };
@@ -41,6 +42,7 @@
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
 		5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATTrackerTests.m; sourceTree = "<group>"; };
+		5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDKTrackerTests.m; sourceTree = "<group>"; };
 		5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockedDatabase.h; sourceTree = "<group>"; };
 		5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockedDatabase.m; sourceTree = "<group>"; };
 		5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackerTests.h; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
 				6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */,
 				5AF1B93E20478F5900BD0E3E /* SenderTests.m */,
+				5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */,
 				5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */,
 				5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */,
 				5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */,
@@ -260,6 +263,7 @@
 				5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
+				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
