@@ -1,18 +1,18 @@
 @import XCTest;
-#import <RSDKAnalytics/RSDKAnalytics.h>
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsHelpers.h"
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsExternalCollector.h"
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsLaunchCollector.h"
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsPrivateEvents.h"
+#import <RAnalytics/RAnalytics.h>
+#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsPrivateEvents.h"
 #import <OCMock/OCMock.h>
 
-@interface _RSDKAnalyticsExternalCollector ()
+@interface _RAnalyticsExternalCollector ()
 + (void)trackEvent:(NSString *)eventName;
 + (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters;
 - (instancetype)initInstance;
 @end
 
-@interface _RSDKAnalyticsLaunchCollector ()
+@interface _RAnalyticsLaunchCollector ()
 @property (nonatomic, nullable, readwrite, copy)    NSDate                  *initialLaunchDate;
 @property (nonatomic, nullable, readwrite, copy)    NSDate                  *installLaunchDate;
 @property (nonatomic, nullable, readwrite, copy)    NSDate                  *lastUpdateDate;
@@ -22,7 +22,7 @@
 @property (nonatomic, readwrite)                    BOOL                    isInitialLaunch;
 @property (nonatomic, readwrite)                    BOOL                    isInstallLaunch;
 @property (nonatomic, readwrite)                    BOOL                    isUpdateLaunch;
-@property (nonatomic, readwrite)                    RSDKAnalyticsOrigin     origin;
+@property (nonatomic, readwrite)                    RAnalyticsOrigin     origin;
 @property (nonatomic, nullable, readwrite)          UIViewController        *currentPage;
 @property (nonatomic, nullable, readwrite, copy)    NSString                *pushTrackingIdentifier;
 
@@ -30,12 +30,12 @@
 - (void)resetToDefaults;
 @end
 
-@interface RSDKAnalyticsManager ()
+@interface RAnalyticsManager ()
 @property (nonatomic, nullable, copy) NSString *deviceIdentifier;
 @end
 
 @interface LaunchCollectorTests : XCTestCase
-@property (nonatomic) _RSDKAnalyticsLaunchCollector *collector;
+@property (nonatomic) _RAnalyticsLaunchCollector *collector;
 @end
 
 @implementation LaunchCollectorTests
@@ -44,35 +44,35 @@
 {
     [super setUp];
     
-    _RSDKAnalyticsLaunchCollector *collector    = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector    = _RAnalyticsLaunchCollector.sharedInstance;
     collector.isInitialLaunch                   = NO;
     collector.isUpdateLaunch                    = NO;
     collector.isInstallLaunch                   = NO;
     collector.pushTrackingIdentifier            = nil;
     
-    RSDKAnalyticsManager.sharedInstance.deviceIdentifier = @"deviceIdentifier";
+    RAnalyticsManager.sharedInstance.deviceIdentifier = @"deviceIdentifier";
 }
 
 - (void)testInitThrows
 {
-    XCTAssertThrowsSpecificNamed([_RSDKAnalyticsLaunchCollector.alloc init], NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed([_RAnalyticsLaunchCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
 - (void)testInitialLaunch
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     collector.isInitialLaunch = YES;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
 
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
                                                       object:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsInitialLaunchEventName] ||
-                         [event.name isEqualToString:RSDKAnalyticsSessionStartEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsInitialLaunchEventName] ||
+                         [event.name isEqualToString:RAnalyticsSessionStartEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
@@ -82,19 +82,19 @@
 
 - (void)testInstallLaunch
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     collector.isInstallLaunch = YES;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
                                                       object:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsInstallEventName] ||
-                         [event.name isEqualToString:RSDKAnalyticsSessionStartEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsInstallEventName] ||
+                         [event.name isEqualToString:RAnalyticsSessionStartEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
@@ -104,20 +104,20 @@
 
 - (void)testUpdateLaunch
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     collector.isUpdateLaunch = YES;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
                                                       object:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsInstallEventName] ||
-                         [event.name isEqualToString:RSDKAnalyticsSessionStartEventName] ||
-                         [event.name isEqualToString:RSDKAnalyticsApplicationUpdateEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsInstallEventName] ||
+                         [event.name isEqualToString:RAnalyticsSessionStartEventName] ||
+                         [event.name isEqualToString:RAnalyticsApplicationUpdateEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
@@ -127,15 +127,15 @@
 
 - (void)testResume
 {
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationWillEnterForegroundNotification
                                                       object:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsSessionStartEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsSessionStartEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
@@ -144,15 +144,15 @@
 
 - (void)testSuspend
 {
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
                                                       object:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsSessionEndEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsSessionEndEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
@@ -161,57 +161,57 @@
 
 - (void)testPresentTrackedVC
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
-    collector.origin = RSDKAnalyticsPushOrigin; // to check origin result against
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+    collector.origin = RAnalyticsPushOrigin; // to check origin result against
     
     UIViewController *vc = UIViewController.new;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [collector didPresentViewController:vc];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsPageVisitEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPageVisitEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
         return expected;
     }]]);
-    XCTAssertTrue(collector.origin == RSDKAnalyticsInternalOrigin);
+    XCTAssertTrue(collector.origin == RAnalyticsInternalOrigin);
     [mockManager stopMocking];
 }
 
 - (void)testPresentUntrackedVC
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
-    collector.origin = RSDKAnalyticsPushOrigin; // to check origin result against
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+    collector.origin = RAnalyticsPushOrigin; // to check origin result against
     
     UINavigationController *vc = UINavigationController.new;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [collector didPresentViewController:vc];
     
-    OCMReject([mockManager process:[OCMArg isKindOfClass:RSDKAnalyticsEvent.class]]);
+    OCMReject([mockManager process:[OCMArg isKindOfClass:RAnalyticsEvent.class]]);
     
-    XCTAssertTrue(collector.origin == RSDKAnalyticsPushOrigin);
+    XCTAssertTrue(collector.origin == RAnalyticsPushOrigin);
     [mockManager stopMocking];
 }
 
 - (void)assertPushWithTrackingIdentifier:(NSString *)trackingIdentifier payload:(NSDictionary *)payload
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [collector processPushNotificationPayload:payload userAction:nil userText:nil];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsPushNotificationEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        XCTAssertTrue([event.parameters[RSDKAnalyticPushNotificationTrackingIdentifierParameter] hasPrefix:trackingIdentifier]);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] hasPrefix:trackingIdentifier]);
         return expected;
     }]]);
     XCTAssertTrue([collector.pushTrackingIdentifier hasPrefix:trackingIdentifier]);
@@ -249,13 +249,13 @@
 
 - (void)testPushNotTrackable
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [collector processPushNotificationPayload:@{@"foo":@"bar"} userAction:nil userText:nil];
     
-    OCMReject([mockManager process:[OCMArg isKindOfClass:RSDKAnalyticsEvent.class]]);
+    OCMReject([mockManager process:[OCMArg isKindOfClass:RAnalyticsEvent.class]]);
     
     XCTAssertNil(collector.pushTrackingIdentifier);
     [mockManager stopMocking];
@@ -263,7 +263,7 @@
 
 - (void)testResetToDefaults
 {
-    _RSDKAnalyticsLaunchCollector *collector = _RSDKAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
     collector.installLaunchDate     = [NSDate date];
     collector.lastUpdateDate        = [NSDate date];
     collector.lastLaunchDate        = [NSDate date];

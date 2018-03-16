@@ -1,6 +1,6 @@
 #import "TodayViewController.h"
 #import <NotificationCenter/NotificationCenter.h>
-#import <RSDKAnalytics/RSDKAnalytics.h>
+#import <RAnalytics/RAnalytics.h>
 
 @interface TodayViewController () <NCWidgetProviding>
 

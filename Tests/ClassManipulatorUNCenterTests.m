@@ -1,16 +1,12 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
- */
 @import XCTest;
 #if __has_include(<UserNotifications/UserNotifications.h>)
 #import <UserNotifications/UserNotifications.h>
-#import <RSDKAnalytics/RSDKAnalytics.h>
+#import <RAnalytics/RAnalytics.h>
 #import <OCMock/OCMock.h>
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsLaunchCollector.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
 
-@interface _RSDKAnalyticsLaunchCollector()
-@property (nonatomic) RSDKAnalyticsOrigin origin;
+@interface _RAnalyticsLaunchCollector()
+@property (nonatomic) RAnalyticsOrigin origin;
 @end
 
 @interface UNDelegate : NSObject <UNUserNotificationCenterDelegate>
@@ -73,16 +69,16 @@
     [response setValue:UNNotificationDefaultActionIdentifier forKey:@"actionIdentifier"];
     [response setValue:notification forKey:@"notification"];
     
-    id mockManager = OCMPartialMock(RSDKAnalyticsManager.sharedInstance);
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];
     
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RSDKAnalyticsEvent *event = obj;
+        RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RSDKAnalyticsPushNotificationEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        XCTAssertTrue([event.parameters[RSDKAnalyticPushNotificationTrackingIdentifierParameter] isEqualToString:@"rid:1234abcd"]);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] isEqualToString:@"rid:1234abcd"]);
         return expected;
     }]]);
     

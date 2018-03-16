@@ -6,29 +6,35 @@ The **analytics** module provides APIs for tracking user activity and automatica
 @attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
 
 @section analytics-installing Installing
-See the [Ecosystem SDK documentation](/ios-sdk/sdk-latest/#introduction) for a detailed step-by-step guide to installing the SDK.
-
-Alternatively, you can also use this SDK module as a standalone library. To use the SDK module as a standalone library, your `Podfile` should contain:
+To use the module in its default configuration your `Podfile` should contain:
 
 @code{.rb}
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
-pod 'RSDKAnalytics'
+pod 'RAnalytics'
 @endcode
 
 Run `pod install` to install the module and its dependencies.
 
+@attention The analytics module is separated into `Core`, `RAT` and `Util` subspecs. The default subspec is `RAT` which depends on `Core`. If you do not want automatic user tracking sent to RAT you should use the `Core` subspec in your Podfile:
+
+@code{.rb}
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
+
+pod 'RAnalytics/Core'
+@endcode
 
 @section analytics-tutorial Getting started
-@attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information. If the keychain access is not done properly, RSDKAnalyticsManager::spoolRecord: will raises a `NSObjectInaccessibleException`.
+@attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
 
 @subsection analytics-register Registering a new application
 * [Registration Form](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Introduction+Application+Form) (from `r-intra`)
 * Support email for administrative tasks: dev-rat@mail.rakuten.com
 
 @subsection analytics-configure-rat Configuring RAT
-@attention Applications **MUST** configure their RAT `accountId` and `applicationId` or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled. The recommended configuration method is to set keys in your app's **Info.plist** which will ensure that events sent to RAT before the app has finished launching will use the correct identifiers:
+@attention Applications **MUST** configure their RAT `accountId` and `applicationId` or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled. The recommended configuration method is to set keys in your app's **Info.plist** which will ensure that if events are sent to RAT before the app has finished launching they will use the correct identifiers:
 
 ##### Plist Configuration
 
@@ -37,26 +43,8 @@ Key         | Value (Number type)
 `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID`
 `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID`
 
-@attention The RAT `accountId` and `applicationId` can also be configured using the **deprecated** methods below.
-
-##### Swift 3
-
-@code{.swift}
-    let rat = RATTracker.shared()
-    rat.configure(withAccountId:     YOUR_RAT_ACCOUNT_ID)
-    rat.configure(withApplicationId: YOUR_RAT_APPLICATION_ID)
-@endcode
-
-##### Objective C
-
-@code{.m}
-    RATTracker *rat = RATTracker.sharedInstance;
-    [rat configureWithAccountId:     YOUR_RAT_ACCOUNT_ID];
-    [rat configureWithApplicationId: YOUR_RAT_APPLICATION_ID];
-@endcode
-
 @subsection analytics-configure-staging Using the staging environment
-The analytics module can be configured to use the staging environment when talking to the backend by setting RSDKAnalyticsManager::shouldUseStagingEnvironment to `YES`:
+The analytics module can be configured to use the staging environment when talking to the backend by setting RAnalyticsManager::shouldUseStagingEnvironment to `YES`:
 
 ##### Swift 3
 
@@ -67,17 +55,15 @@ The analytics module can be configured to use the staging environment when talki
 ##### Objective C
 
 @code{.m}
-    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
+    RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
 @endcode
 
-@note Currently, the RAT staging server requires an ATS exception. See [RATQ-329](https://jira.rakuten-it.com/jira/browse/RATQ-329) for more information and tracking progress.
-
 @subsection analytics-configure-location Location Tracking
-@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RSDKAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
-@warning Your app must first request permission to use location services for a valid reason, as shown at [Requesting Permission to Use Location Services](https://developer.apple.com/reference/corelocation/cllocationmanager?language=objc#1669513). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
+@warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
 
-If you want to prevent our SDK from tracking the last known location, you can set RSDKAnalyticsManager::shouldTrackLastKnownLocation to `NO`. Location tracking is enabled by default.
+Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `NO`:
 
 ##### Swift 3
 
@@ -88,17 +74,17 @@ If you want to prevent our SDK from tracking the last known location, you can se
 ##### Objective C
 
 @code{.m}
-    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
+    RAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
 @endcode
 
 @subsection analytics-enable-debug-log Enable Debug Log
 To enable verbose debug logging for the Analytics module you have to create a boolean **RMSDKEnableDebugLogging** key set to `YES` in your app's info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
 
 @subsection analytics-tracking Tracking events
-Events are created with RSDKAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RSDKAnalyticsEvent::track "track" method.
+Events are created with RAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RAnalyticsEvent::track "track" method.
 
 #### Tracking generic events
-Tracking a generic event relies on a @ref RSDKAnalyticsTracker "tracker" capable of processing the event currently being @ref RSDKAnalyticsManager::addTracker: "registered".
+Tracking a generic event relies on a @ref RAnalyticsTracker "tracker" capable of processing the event currently being @ref RAnalyticsManager::addTracker: "registered".
 
 ##### Swift 3
 
@@ -109,7 +95,7 @@ Tracking a generic event relies on a @ref RSDKAnalyticsTracker "tracker" capable
 ##### Objective C
 
 @code{.m}
-    [[RSDKAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
+    [[RAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
 @endcode
 
 #### Tracking RAT-specific events
@@ -129,6 +115,20 @@ A concrete tracker, RATTracker, is automatically registered and interacts with t
     [[RATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
 @endcode
 
+@note You can override the `acc` and `aid` default values by including those keys in the `parameters` dictionary when you create an event.
+
+##### Swift 3
+
+@code{.swift}
+    RATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
+@endcode
+
+##### Objective C
+
+@code{.m}
+    [[RATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"acc": @123}] track];
+@endcode
+
 @subsection analytics-standard-events Standard Events
 The SDK will automatically send events to the Rakuten Analytics Tracker for certain actions. The event type parameter for all of these events are prefixed with `_rem_`. We also provide @ref AnalyticsEvents "named constants" for all of those.
 
@@ -145,13 +145,13 @@ Event name         | Description
 `_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
 
 ##### How page views are automatically tracked
-We use method swizzling to automatically trigger a @ref RSDKAnalyticsPageVisitEventName "visit event" every time a new view controller is presented, unless:
+We use method swizzling to automatically trigger a @ref RAnalyticsPageVisitEventName "visit event" every time a new view controller is presented, unless:
     * The view controller is one of the known "chromes" used to coordinate "content" view controllers, i.e. one of `UINavigationController`, `UISplitViewController`, `UIPageViewController` and `UITabBarController`.
     * The view controller is showing a system popup, i.e. `UIAlertView`, `UIActionSheet`, `UIAlertController` or `_UIPopoverView`.
     * Either the view controller, its view or the window it's attached to is an instance of an Apple-private class, i.e. a class whose name has a `_` prefix and which comes from a system framework. This prevents many on-screen system accessories from generating bogus page views.
     * The class of the window the view controller is attached to is a subclass of `UIWindow` coming from a system framework, i.e. the window is not a normal application window. Certain on-screen system accessories, such as the system keyboard's autocompletion word picker, would otherwise trigger events as well.
 
-Those @ref RSDKAnalyticsPageVisitEventName "visit events" are available to all @ref RSDKAnalyticsTracker "trackers", and the view controller being the event's subject can be found in the @ref RSDKAnalyticsState::currentPage "currentPage" property of the @ref RSDKAnalyticsState "event state" passed to RSDKAnalyticsTracker::processEvent:state:.
+Those @ref RAnalyticsPageVisitEventName "visit events" are available to all @ref RAnalyticsTracker "trackers", and the view controller being the event's subject can be found in the @ref RAnalyticsState::currentPage "currentPage" property of the @ref RAnalyticsState "event state" passed to RAnalyticsTracker::processEvent:state:.
 
 The @ref RATTracker "RAT tracker" furthermore ignores view controllers that have no title, no navigation item title, and for which no URL was found on any webview part of their view hierarchy at the time `-viewDidLoad` was called, unless they have been subclassed by the application or one of the frameworks embedded in the application. This filters out events that would give no information about what page was visited in the application, such as events reporting a page named `UIViewController`. For view controllers with either a title, navigation item title or URL, the library also sets the `cp.title` and `cp.url` fields to the `pv` event it sends to RAT.
 
@@ -170,7 +170,7 @@ Event name         | Required components
 `_rem_logout`      | **authentication** module (3.10.1 or later).
 
 #### Automatically Generated State Attributes
-The SDK will automatically generate certain attributes about the @ref RSDKAnalyticsState "state" of the device, and pass them to every registered @ref RSDKAnalyticsTracker "tracker" when asked to process an event.
+The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
 
 
 @section analytics-appstore AppStore Submission Procedure
@@ -198,7 +198,7 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 
 
 @section analytics-rat-examples RAT Examples
-@note These examples all use @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RSDKAnalyticsEvent should be used instead.
+@note These examples all use @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RAnalyticsEvent should be used instead.
 
 @subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
@@ -255,7 +255,7 @@ The following is an example of tracking an event with custom parameters. It uses
 @endcode
 
 @subsection analytics-rat-example-search-results Tracking search results with RAT
-The code below shows an example of an event you could send to track what results where shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
+The code below shows an example of an event you could send to track which results get shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
 
 RAT param | Description
 ----------|---------------
@@ -295,9 +295,9 @@ RAT param | Description
 @endcode
 
 @subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
-You can monitor RATTracker's network activity by listening
-to the @ref RATWillUploadNotification, @ref RATUploadFailureNotification
-and @ref RATUploadSuccessNotification notifications. For example:
+You can monitor the tracker network activity by listening
+to the @ref RAnalyticsWillUploadNotification, @ref RAnalyticsUploadFailureNotification
+and @ref RAnalyticsUploadSuccessNotification notifications. For example:
 
 @code{.m}
 - (void)viewDidLoad {
@@ -305,7 +305,7 @@ and @ref RATUploadSuccessNotification notifications. For example:
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(failedToUpload:)
-                                               name:RATUploadFailureNotification
+                                               name:RAnalyticsUploadFailureNotification
                                              object:nil];
 }
 
@@ -322,7 +322,7 @@ and @ref RATUploadSuccessNotification notifications. For example:
 
 @section analytics-advanced Advanced Usage
 @subsection analytics-configure-idfa IDFA tracking
-The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
 ##### Swift 3
 
@@ -333,50 +333,26 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 ##### Objective C
 
 @code{.m}
-    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
+    RAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
 @endcode
 
-@subsection analytics-delivery-strategy Configure the RAT Tracker Delivery Strategy
-The @ref RATTracker "RAT Tracker" collects events and send them to the RAT backend in batches, the batching interval is 60 seconds by default. You can configure a different delivery strategy at runtime by conforming an object to the @ref RATDeliveryStrategy "RAT Delivery Strategy" protocol and setting your object on the tracker with the RATTracker::configureWithDeliveryStrategy: method.
+@subsection analytics-batching-delay Configure the Tracker Batching Delay
+A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. The default batching delay is 60 seconds. You can configure a different delay with the RAnalyticsTracker::setBatchingDelay: and RAnalyticsTracker::setBatchingDelayWithBlock: methods.
 
 ### Example 1: Configure batching interval of 10 seconds
 
 ##### Swift 3
 
 @code{.swift}
-public class CustomClass: NSObject, RATDeliveryStrategy {
 
-    public func setup() {
-        RATTracker.shared().configure(with: self)
-    }
-
-    // MARK: RATDeliveryStrategy
-    public func batchingDelay() -> Int {
-        return 10
-    }
-}
+    RATTracker.shared().set(batchingDelay: 10.0)
 @endcode
 
 ##### Objective C
 
 @code{.m}
-@interface CustomClass : NSObject<RATDeliveryStrategy>
-@end
 
-@implementation CustomClass
-
-- (void)setup
-{
-    [RATTracker.sharedInstance configureWithDeliveryStrategy:self];
-}
-
-#pragma mark - RATDeliveryStrategy
-- (NSInteger)batchingDelay
-{
-    return 10;
-}
-
-@end
+    [RATTracker.sharedInstance setBatchingDelay:10.0];
 @endcode
 
 ### Example 2: Dynamic batching interval
@@ -388,7 +364,7 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
 
 @code{.swift}
 
-public class CustomClass: NSObject, RATDeliveryStrategy {
+public class CustomClass: NSObject {
 
     fileprivate var startTime: TimeInterval
 
@@ -398,26 +374,22 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
     }
 
     public func setup() {
-        RATTracker.shared().configure(with: self)
-    }
+        RATTracker.shared().set(batchingDelayBlock: { () -> TimeInterval in
+            let secondsSinceStart = NSDate().timeIntervalSinceReferenceDate - startTime
 
-    // MARK: RATDeliveryStrategy
-    public func batchingDelay() -> Int {
-
-        let secondsSinceStart = NSDate().timeIntervalSinceReferenceDate - startTime
-
-        if (secondsSinceStart < 10)
-        {
-            return 0
-        }
-        else if (secondsSinceStart < 30)
-        {
-            return 10
-        }
-        else
-        {
-            return 60
-        }
+            if (secondsSinceStart < 10)
+            {
+                return 0
+            }
+            else if (secondsSinceStart < 30)
+            {
+                return 10
+            }
+            else
+            {
+                return 60
+            }
+        })
     }
 }
 
@@ -427,7 +399,7 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
 
 @code{.m}
 
-@interface CustomClass : NSObject<RATDeliveryStrategy>
+@interface CustomClass : NSObject
 @property (nonatomic) NSTimeInterval startTime;
 @end
 
@@ -444,35 +416,31 @@ public class CustomClass: NSObject, RATDeliveryStrategy {
 
 - (void)setup
 {
-    [RATTracker.sharedInstance configureWithDeliveryStrategy:self];
-}
+    [RATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
+        NSTimeInterval secondsSinceStart = [NSDate timeIntervalSinceReferenceDate] - _startTime;
 
-#pragma mark - RATDeliveryStrategy
-- (NSInteger)batchingDelay
-{
-    NSTimeInterval secondsSinceStart = [NSDate timeIntervalSinceReferenceDate] - _startTime;
-
-    if (secondsSinceStart < 10)
-    {
-        return 0;
-    }
-    else if (secondsSinceStart < 30)
-    {
-        return 10;
-    }
-    else
-    {
-        return 60;
-    }
+        if (secondsSinceStart < 10)
+        {
+            return 0;
+        }
+        else if (secondsSinceStart < 30)
+        {
+            return 10;
+        }
+        else
+        {
+            return 60;
+        }
+    }];
 }
 
 @endcode
 
-@subsection analytics-custom-tracker Creating a Custom Tracker
-Custom @ref RSDKAnalyticsTracker "trackers" can be @ref RSDKAnalyticsManager::addTracker: "added" to the @ref RSDKAnalyticsManager "manager".
+@section analytics-custom-tracker Creating a Custom Tracker
+Custom @ref RAnalyticsTracker "trackers" can be @ref RAnalyticsManager::addTracker: "added" to the @ref RAnalyticsManager "manager".
 
-Create a class and implement the RSDKAnalyticsTracker protocol. Its [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3)
-method will receive an @ref RSDKAnalyticsEvent "event" with a name and parameters, and a @ref RSDKAnalyticsState "state" with attributes automatically
+Create a class and implement the RAnalyticsTracker protocol. Its [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3)
+method will receive an @ref RAnalyticsEvent "event" with a name and parameters, and a @ref RAnalyticsState "state" with attributes automatically
 generated by the SDK.
 
 The custom tracker in the code sample below only prints a few diagnostic messages. A real custom tracker would upload data to a server.
@@ -505,18 +473,18 @@ The custom tracker in the code sample below only prints a few diagnostic message
 ##### Objective C
 
 @code{.m}
-    @interface CustomTracker : NSObject<RSDKAnalyticsTracker>
+    @interface CustomTracker : NSObject<RAnalyticsTracker>
     @end
 
     NSString *const CustomTrackerMyEventName = @"customtracker.myeventname";
 
     @implementation CustomTracker
-    - (BOOL)processEvent:(RSDKAnalyticsEvent *)event state:(RSDKAnalyticsState *)state {
-        if ([event.name isEqualToString:RSDKAnalyticsInitialLaunchEventName]) {
+    - (BOOL)processEvent:(RAnalyticsEvent *)event state:(RAnalyticsState *)state {
+        if ([event.name isEqualToString:RAnalyticsInitialLaunchEventName]) {
             NSLog(@"I've just been launched!");
             return YES;
         }
-        else if ([event.name isEqualToString:RSDKAnalyticsLoginEventName]) {
+        else if ([event.name isEqualToString:RAnalyticsLoginEventName]) {
             NSLog(@"User with tracking id '%@' just logged in!", state.userid);
             return YES;
         }
@@ -532,13 +500,13 @@ The custom tracker in the code sample below only prints a few diagnostic message
     @end
 @endcode
 
-The custom tracker can then be added to the RSDKAnalyticsManager:
+The custom tracker can then be added to the RAnalyticsManager:
 
 ##### Swift 3
 
 @code{.swift}
     // Add CustomTracker to the manager
-    RSDKAnalyticsManager.shared().add(CustomTracker())
+    RAnalyticsManager.shared().add(CustomTracker())
 
     // Tracking events can now be sent to the custom tracker
     AnalyticsManager.Event(name: CustomTrackerMyEventName, parameters: nil).track()
@@ -549,13 +517,19 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 @code{.m}
     // Add CustomTracker to the manager
     // Initialize custom tracker
-    [RSDKAnalyticsManager.sharedInstance addTracker:CustomTracker.new];
+    [RAnalyticsManager.sharedInstance addTracker:CustomTracker.new];
 
     // Tracking events can now be sent to the custom tracker
-    [[RSDKAnalyticsEvent.alloc initWithName:CustomTrackerMyEventName parameters:nil] track];
+    [[RAnalyticsEvent.alloc initWithName:CustomTrackerMyEventName parameters:nil] track];
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-3-0-0 3.0.0 (in-progress)
+* [REM-25315](https://jira.rakuten-it.com/jira/browse/REM-25315): Read RAT Account ID and Application ID from app's info.plist.
+* [REM-25524](https://jira.rakuten-it.com/jira/browse/REM-25524) / [REM-25547](https://jira.rakuten-it.com/jira/browse/REM-25547): Add Swift sample app and update Objective-C sample app to match latest analytics module API.
+* [REM-25864](https://jira.rakuten-it.com/jira/browse/REM-25864): Redesign module and separate functionality into `Core`, `RAT` and `Util` CocoaPods subspecs.
+* [REM-25317](https://jira.rakuten-it.com/jira/browse/REM-25317): Add SDK @ref RAnalyticsTracker "Tracker" to track build information and non-Apple frameworks usage.
+
 @subsection analytics-2-13-0 2.13.0 (2018-01-11)
 * [REM-24194](https://jira.rakuten-it.com/jira/browse/REM-24194):Add support for App Extensions.
 * [REM-24746](https://jira.rakuten-it.com/jira/browse/REM-24746):Send Rp cookie to RAT.
@@ -576,10 +550,10 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * [REM-19145](https://jira.rakuten-it.com/jira/browse/REM-19145): Reduced the memory footprint of automatic page view tracking by half by not keeping a strong reference to the previous view controller anymore. This comes with a minor change: RSDKAnalyticsState::lastVisitedPage is now deprecated, and always `nil`.
 
 @subsection analytics-2-8-2 2.8.2 (2017-02-06)
-* [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): The @ref RSDKAnalyticsSessionStartEventName "launch event" was not being triggered for most launches.
-* [REM-18565](https://jira.rakuten-it.com/jira/browse/REM-18565): The `page_id` parameter was completely ignored by the @ref RATTracker "RAT tracker" when processing a @ref RSDKAnalyticsPageVisitEventName "visit event".
+* [REM-18839](https://jira.rakuten-it.com/jira/browse/REM-18839): The `RSDKAnalyticsSessionStartEventName` "launch event" was not being triggered for most launches.
+* [REM-18565](https://jira.rakuten-it.com/jira/browse/REM-18565): The `page_id` parameter was completely ignored by the @ref RATTracker "RAT tracker" when processing a `RSDKAnalyticsPageVisitEventName` "visit event".
 * [REM-18384](https://jira.rakuten-it.com/jira/browse/REM-18384): The library was blocking calls to `-[UNNotificationCenterDelegate userNotificationCenter:willPresentNotification:withCompletionHandler]`, effectively disabling the proper handling of user notifications on iOS 10+ in apps that relied on the new `UserNotifications` framework.
-* [REM-18438](https://jira.rakuten-it.com/jira/browse/REM-18438), [REM-18437](https://jira.rakuten-it.com/jira/browse/REM-18437) & [REM-18436](https://jira.rakuten-it.com/jira/browse/REM-18436): The library is now smarter as to what should trigger a @ref RSDKAnalyticsPageVisitEventName "visit event".
+* [REM-18438](https://jira.rakuten-it.com/jira/browse/REM-18438), [REM-18437](https://jira.rakuten-it.com/jira/browse/REM-18437) & [REM-18436](https://jira.rakuten-it.com/jira/browse/REM-18436): The library is now smarter as to what should trigger a `RSDKAnalyticsPageVisitEventName` "visit event".
     * Won't trigger the event anymore:
         * Common chromes: `UINavigationController`, `UISplitViewController`, `UIPageViewController` and `UITabBarController` view controllers.
         * System popups: `UIAlertView`, `UIActionSheet`, `UIAlertController` & `_UIPopoverView`.
@@ -617,7 +591,7 @@ The custom tracker can then be added to the RSDKAnalyticsManager:
 * Deprecated RSDKAnalyticsManager::spoolRecord:, RSDKAnalyticsItem and RSDKAnalyticsRecord.
 
 @subsection analytics-2-6-0 2.6.0 (2016-07-27)
-* Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting @ref RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.
+* Added the automatic tracking of the advertising identifier (IDFA) if not turned off explicitly by setting RSDKAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`. It is sent as the `cka` standard RAT parameter.
 * In addition to `ua` (user agent), the library now also sends the `app_name` and `app_ver` parameters to RAT. The information in those fields is essentially the same as in `ua`, but is split in order to optimize queries and aggregation of KPIs on the backend.
 * [REM-12024](https://jira.rakuten-it.com/jira/browse/REM-12024): Added RSDKAnalyticsManager::shouldUseStagingEnvironment.
 * Deprecated `locationTrackingEnabled` and `isLocationTrackingEnabled` (in RSDKAnalyticsManager). Please use RSDKAnalyticsManager::shouldTrackLastKnownLocation instead.
