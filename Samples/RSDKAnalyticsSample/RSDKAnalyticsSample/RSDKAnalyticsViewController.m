@@ -1,10 +1,6 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
- */
 #import "RSDKAnalyticsViewController.h"
 #import "RSDKAnalyticsRecordForm.h"
-#import <RSDKAnalytics/RSDKAnalytics.h>
+#import <RAnalytics/RAnalytics.h>
 #import <FontAwesomeKit/FAKFontAwesome.h>
 #import <SVProgressHUD/SVProgressHUD.h>
 
@@ -28,17 +24,17 @@
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(willUpload:)
-                                               name:RATWillUploadNotification
+                                               name:RAnalyticsWillUploadNotification
                                              object:nil];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(didUpload:)
-                                               name:RATUploadSuccessNotification
+                                               name:RAnalyticsUploadSuccessNotification
                                              object:nil];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(failedToUpload:)
-                                               name:RATUploadFailureNotification
+                                               name:RAnalyticsUploadFailureNotification
                                              object:nil];
 
 
@@ -83,14 +79,8 @@
 
 - (IBAction)spool
 {
-    RSDKAnalyticsRecordForm *form = self.formController.form;
-    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = form.trackLocation;
-    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = form.trackIDFA;
-    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = form.useStaging;
-
-    [RSDKAnalyticsManager.sharedInstance process:form.event];
-
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
+    [[RATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar"}] track];
 }
 
 #pragma mark - Notification handlers
@@ -142,17 +132,35 @@
 
 - (void)trackIDFAChanged:(FXFormSwitchCell *)cell
 {
-    RSDKAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = cell.switchControl.on;
+    RAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = cell.switchControl.on;
 }
 
 - (void)trackLocationChanged:(FXFormSwitchCell *)cell
 {
-    RSDKAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = cell.switchControl.on;
+    RAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = cell.switchControl.on;
 }
 
 - (void)useStagingChanged:(FXFormSwitchCell *)cell
 {
-    RSDKAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = cell.switchControl.on;
+    RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = cell.switchControl.on;
+}
+
+- (void)accountIdFieldChanged:(FXFormTextFieldCell *)cell
+{
+    NSString *acc = cell.textField.text;
+    if (acc.length)
+    {
+        [RATTracker.sharedInstance configureWithAccountId:[acc longLongValue]];
+    }
+}
+
+- (void)serviceIdFieldChanged:(FXFormTextFieldCell *)cell
+{
+    NSString *aid = cell.textField.text;
+    if (aid.length)
+    {
+        [RATTracker.sharedInstance configureWithApplicationId:[aid longLongValue]];
+    }
 }
 
 @end

@@ -1,0 +1,17 @@
+framework module RAnalytics {
+  umbrella header "RAnalytics.h"
+
+  export *
+  module * { export * }
+
+  link "sqlite3"
+  link "z"
+
+  link framework "Foundation"
+  link framework "UIKit"
+  link framework "CoreGraphics"
+  link framework "CoreLocation"
+  link framework "CoreTelephony"
+  link framework "SystemConfiguration"
+  link framework "AdSupport"
+}

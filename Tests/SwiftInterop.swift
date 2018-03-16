@@ -1,5 +1,5 @@
 import XCTest
-import RSDKAnalytics
+import RAnalytics
 import RSDKDeviceInformation
 
 public class SwiftInterop : XCTestCase {
@@ -90,7 +90,7 @@ public class SwiftInterop : XCTestCase {
         manager.shouldTrackLastKnownLocation = true
         manager.shouldTrackAdvertisingIdentifier = true
 
-        AnalyticsManager.spoolRecord(RSDKAnalyticsRecord(accountId: 477, serviceId: 999))
+        AnalyticsManager.spoolRecord(RAnalyticsRecord(accountId: 477, serviceId: 999))
 
         let tracker = Tracker3()
         manager.add(tracker)
@@ -110,21 +110,21 @@ public class SwiftInterop : XCTestCase {
     }
 
     #else
-    public class Tracker2 : NSObject, RSDKAnalyticsTracker {
-        public var lastEvent : RSDKAnalyticsEvent?
-        public var lastState : RSDKAnalyticsState?
-        public func processEvent(event: RSDKAnalyticsEvent, state: RSDKAnalyticsState) -> Bool {
+    public class Tracker2 : NSObject, RAnalyticsTracker {
+        public var lastEvent : RAnalyticsEvent?
+        public var lastState : RAnalyticsState?
+        public func processEvent(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
             switch state.origin {
-            case RSDKAnalyticsOrigin.InternalOrigin: break
-            case RSDKAnalyticsOrigin.ExternalOrigin: break
-            case RSDKAnalyticsOrigin.PushOrigin: break
-            case RSDKAnalyticsOrigin.OtherOrigin: break
+            case RAnalyticsOrigin.InternalOrigin: break
+            case RAnalyticsOrigin.ExternalOrigin: break
+            case RAnalyticsOrigin.PushOrigin: break
+            case RAnalyticsOrigin.OtherOrigin: break
             }
 
             switch state.loginMethod {
-            case RSDKAnalyticsLoginMethod.OneTapLoginLoginMethod:   break
-            case RSDKAnalyticsLoginMethod.PasswordInputLoginMethod: break
-            case RSDKAnalyticsLoginMethod.OtherLoginMethod:         break
+            case RAnalyticsLoginMethod.OneTapLoginLoginMethod:   break
+            case RAnalyticsLoginMethod.PasswordInputLoginMethod: break
+            case RAnalyticsLoginMethod.OtherLoginMethod:         break
             }
 
             if let _ = event.parameters["boo"] as? NSNumber {
@@ -136,24 +136,24 @@ public class SwiftInterop : XCTestCase {
             }
 
             switch event.name {
-            case RSDKAnalyticsInitialLaunchEventName:
-                lastEvent = (event.copy() as! RSDKAnalyticsEvent)
-                lastState = (state.copy() as! RSDKAnalyticsState)
+            case RAnalyticsInitialLaunchEventName:
+                lastEvent = (event.copy() as! RAnalyticsEvent)
+                lastState = (state.copy() as! RAnalyticsState)
                 return true
-            case RSDKAnalyticsSessionStartEventName: break
-            case RSDKAnalyticsSessionEndEventName: break
-            case RSDKAnalyticsApplicationUpdateEventName: break
-            case RSDKAnalyticsLoginEventName: break
-            case RSDKAnalyticsLogoutEventName:
-                if let logoutMethod = event.parameters[RSDKAnalyticsLogoutMethodEventParameter] as? String {
+            case RAnalyticsSessionStartEventName: break
+            case RAnalyticsSessionEndEventName: break
+            case RAnalyticsApplicationUpdateEventName: break
+            case RAnalyticsLoginEventName: break
+            case RAnalyticsLogoutEventName:
+                if let logoutMethod = event.parameters[RAnalyticsLogoutMethodEventParameter] as? String {
                     switch logoutMethod {
-                    case RSDKAnalyticsLocalLogoutMethod: break;
-                    case RSDKAnalyticsGlobalLogoutMethod: break;
+                    case RAnalyticsLocalLogoutMethod: break;
+                    case RAnalyticsGlobalLogoutMethod: break;
                     default: break;
                     }
                 }
                 break
-            case RSDKAnalyticsInstallEventName: break
+            case RAnalyticsInstallEventName: break
             default: break
             }
 
@@ -165,7 +165,7 @@ public class SwiftInterop : XCTestCase {
 
     func assignMockDeviceIdentifier(deviceIdentifier : String?) {
         // Ignore warning about unknown selector
-        RSDKAnalyticsManager.sharedInstance().performSelector(Selector("setDeviceIdentifier:"), withObject:deviceIdentifier)
+        RAnalyticsManager.sharedInstance().performSelector(Selector("setDeviceIdentifier:"), withObject:deviceIdentifier)
     }
     public override func setUp() {
         assignMockDeviceIdentifier("Test")
@@ -181,10 +181,10 @@ public class SwiftInterop : XCTestCase {
         rat.configureWithAccountId(477)
         rat.configureWithApplicationId(999)
 
-        var event : RSDKAnalyticsEvent = rat.eventWithEventType("foo", parameters: ["bar" : "baz"])
+        var event : RAnalyticsEvent = rat.eventWithEventType("foo", parameters: ["bar" : "baz"])
         XCTAssertNotNil(event)
 
-        let manager = RSDKAnalyticsManager.sharedInstance()
+        let manager = RAnalyticsManager.sharedInstance()
         XCTAssertNotNil(manager)
         XCTAssertFalse(manager.shouldUseStagingEnvironment)
         XCTAssert(manager.shouldTrackLastKnownLocation)
@@ -193,7 +193,7 @@ public class SwiftInterop : XCTestCase {
         manager.shouldTrackLastKnownLocation = true
         manager.shouldTrackAdvertisingIdentifier = true
 
-        RSDKAnalyticsManager.spoolRecord(RSDKAnalyticsRecord(accountId: 477, serviceId: 999))
+        RAnalyticsManager.spoolRecord(RAnalyticsRecord(accountId: 477, serviceId: 999))
 
         let tracker = Tracker2()
         manager.addTracker(tracker)
@@ -201,15 +201,15 @@ public class SwiftInterop : XCTestCase {
         XCTAssertNil(tracker.lastEvent)
         XCTAssertNil(tracker.lastState)
 
-        event = RSDKAnalyticsEvent(name: RSDKAnalyticsInitialLaunchEventName, parameters: nil)
+        event = RAnalyticsEvent(name: RAnalyticsInitialLaunchEventName, parameters: nil)
         manager.process(event)
         XCTAssertNotNil(tracker.lastEvent)
         XCTAssertNotNil(tracker.lastState)
 
         let nc = NSNotificationCenter.defaultCenter()
-        nc.postNotificationName(RATWillUploadNotification, object:nil)
-        nc.postNotificationName(RATUploadFailureNotification, object:nil)
-        nc.postNotificationName(RATUploadSuccessNotification, object:nil)
+        nc.postNotificationName(RAnalyticsWillUploadNotification, object:nil)
+        nc.postNotificationName(RAnalyticsUploadFailureNotification, object:nil)
+        nc.postNotificationName(RAnalyticsUploadSuccessNotification, object:nil)
     }
     #endif
 }

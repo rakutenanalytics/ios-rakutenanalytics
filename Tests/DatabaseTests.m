@@ -1,10 +1,6 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
- */
 @import XCTest;
-#import <RSDKAnalytics/RSDKAnalytics.h>
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics.h>
+#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
 
 @interface DatabaseTests : XCTestCase
 @end
@@ -32,7 +28,7 @@
 
         // Mark the blob's first byte so we can identify it later on
         ((unsigned char *) bigBlob.mutableBytes)[0] = i;
-        [_RSDKAnalyticsDatabase insertBlob:bigBlob into:table limit:3 then:^{
+        [_RAnalyticsDatabase insertBlob:bigBlob into:table limit:3 then:^{
             [e fulfill];
         }];
     }
@@ -40,7 +36,7 @@
 
     XCTestExpectation *fetch = [self expectationWithDescription:@"Fetch expectation"];
     NSArray *__block fetchedIdentifiers = nil;
-    [_RSDKAnalyticsDatabase fetchBlobs:10 from:table then:^(NSArray<NSData *>* blobs, NSArray<NSNumber *>* identifiers) {
+    [_RAnalyticsDatabase fetchBlobs:10 from:table then:^(NSArray<NSData *>* blobs, NSArray<NSNumber *>* identifiers) {
         XCTAssertNotNil(blobs);
         XCTAssertNotNil(identifiers);
 
@@ -67,13 +63,13 @@
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     XCTestExpectation *purge = [self expectationWithDescription:@"Purge expectation"];
-    [_RSDKAnalyticsDatabase deleteBlobsWithIdentifiers:fetchedIdentifiers in:table then:^{
+    [_RAnalyticsDatabase deleteBlobsWithIdentifiers:fetchedIdentifiers in:table then:^{
         [purge fulfill];
     }];
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     fetch = [self expectationWithDescription:@"Second Fetch expectation"];
-    [_RSDKAnalyticsDatabase fetchBlobs:10 from:table then:^(NSArray<NSData *>* blobs, NSArray<NSNumber *>* identifiers) {
+    [_RAnalyticsDatabase fetchBlobs:10 from:table then:^(NSArray<NSData *>* blobs, NSArray<NSNumber *>* identifiers) {
         XCTAssertNil(blobs);
         XCTAssertNil(identifiers);
         [fetch fulfill];
@@ -88,15 +84,15 @@
     {
         NSString *table = [NSString stringWithFormat:@"testInsertionInMultipleTables%@_%i", @(millisecondsSince1970), i];
         XCTestExpectation *e = [self expectationWithDescription:[NSString stringWithFormat:@"Insert expectation #%i", i]];
-        [_RSDKAnalyticsDatabase insertBlobs:@[[@"The"   dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"quick" dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"brown" dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"fox"   dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"jumps" dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"over"  dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"the"   dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"lazy"  dataUsingEncoding:NSUTF8StringEncoding],
-                                              [@"dog"   dataUsingEncoding:NSUTF8StringEncoding]] into:table limit:3 then:^{
+        [_RAnalyticsDatabase insertBlobs:@[[@"The"   dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"quick" dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"brown" dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"fox"   dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"jumps" dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"over"  dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"the"   dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"lazy"  dataUsingEncoding:NSUTF8StringEncoding],
+                                           [@"dog"   dataUsingEncoding:NSUTF8StringEncoding]] into:table limit:3 then:^{
             [e fulfill];
         }];
     }

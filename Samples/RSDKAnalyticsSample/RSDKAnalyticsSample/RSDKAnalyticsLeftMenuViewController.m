@@ -1,7 +1,3 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
- */
 #import "RSDKAnalyticsLeftMenuViewController.h"
 #import "RSDKAnalyticsViewController.h"
 #import "RSDKAnalyticsRecordForm.h"
@@ -76,7 +72,7 @@ static const CGFloat RSDKAnalyticsLeftMenuViewControllerRowHeight = RSDKAnalytic
                 });
 
                 [SVProgressHUD showImage:infoImage
-                                  status:[NSString stringWithFormat:@"RSDKAnalytics v%@", RSDKAnalyticsVersion]];
+                                  status:[NSString stringWithFormat:@"RAnalytics v%@", RAnalyticsVersion]];
             }
             break;
         case 5: // Settings

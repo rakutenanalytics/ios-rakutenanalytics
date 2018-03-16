@@ -3,10 +3,10 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 @import XCTest;
-#import <RSDKAnalytics/RSDKAnalytics.h>
-#import <RSDKAnalytics/RSDKAnalyticsState.h>
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsHelpers.h"
-#import "../RSDKAnalytics/Private/_RSDKAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics.h>
+#import <RAnalytics/RAnalyticsState.h>
+#import "../RAnalytics/Private/_RAnalyticsHelpers.h"
+#import "../RAnalytics/Private/_RAnalyticsDatabase.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
@@ -49,7 +49,7 @@
     }];
     RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] getCookiesForTask:[[NSURLSession sharedSession] dataTaskWithURL:_RSDKAnalyticsEndpointAddress()] completionHandler:^(NSArray<NSHTTPCookie *> * _Nullable cookies)
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] getCookiesForTask:[[NSURLSession sharedSession] dataTaskWithURL:_RAnalyticsEndpointAddress()] completionHandler:^(NSArray<NSHTTPCookie *> * _Nullable cookies)
          {
              XCTAssertEqualObjects(cookieName, cookies[0].name);
              XCTAssertEqualObjects(cookieValue, cookies[0].value);

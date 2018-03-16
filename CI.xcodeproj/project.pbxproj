@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5A3BC1721D3629EB00BBCA54 /* AnalyticsEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */; };
-		5A3BC1741D362A0A00BBCA54 /* AnalyticsStateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */; };
-		5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */; };
-		5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */; };
-		693B580B1B7C6159008C5E86 /* AnalyticsRecordTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 693B580A1B7C6159008C5E86 /* AnalyticsRecordTests.m */; };
+		5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* EventTests.m */; };
+		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
+		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
+		5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */; };
+		5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */; };
+		5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */; };
+		5AF1B93F20478F5900BD0E3E /* SenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF1B93E20478F5900BD0E3E /* SenderTests.m */; };
 		69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69E1BBCE1DADC17A00127885 /* DatabaseTests.m */; };
 		6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */; };
 		6D63A7A11E1F975E00F89009 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D63A7A01E1F975E00F89009 /* main.m */; };
@@ -19,7 +21,6 @@
 		6D63A7AA1E1F975E00F89009 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D63A7A81E1F975E00F89009 /* Main.storyboard */; };
 		6D63A7AC1E1F975E00F89009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D63A7AB1E1F975E00F89009 /* Assets.xcassets */; };
 		6D63A7AF1E1F975E00F89009 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D63A7AD1E1F975E00F89009 /* LaunchScreen.storyboard */; };
-		6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */; };
 		6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */; };
 		6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */; };
 		6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */; };
@@ -36,12 +37,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsEventTests.m; sourceTree = "<group>"; };
-		5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsStateTests.m; sourceTree = "<group>"; };
-		5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsManagerTests.m; sourceTree = "<group>"; };
-		5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsRATTrackerTests.m; sourceTree = "<group>"; };
+		5A3BC1711D3629EB00BBCA54 /* EventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTests.m; sourceTree = "<group>"; };
+		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
+		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
+		5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATTrackerTests.m; sourceTree = "<group>"; };
+		5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockedDatabase.h; sourceTree = "<group>"; };
+		5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockedDatabase.m; sourceTree = "<group>"; };
+		5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackerTests.h; sourceTree = "<group>"; };
+		5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackerTests.m; sourceTree = "<group>"; };
+		5AF1B93E20478F5900BD0E3E /* SenderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SenderTests.m; sourceTree = "<group>"; };
 		693B58081B7C6159008C5E86 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		693B580A1B7C6159008C5E86 /* AnalyticsRecordTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnalyticsRecordTests.m; sourceTree = "<group>"; };
 		693B580C1B7C6159008C5E86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		694C86ED1D89191500E7C7BE /* SwiftInterop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftInterop.swift; sourceTree = "<group>"; };
 		69E1BBCE1DADC17A00127885 /* DatabaseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseTests.m; sourceTree = "<group>"; };
@@ -54,7 +59,6 @@
 		6D63A7AB1E1F975E00F89009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D63A7AE1E1F975E00F89009 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6D63A7B01E1F975E00F89009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsItemTests.m; sourceTree = "<group>"; };
 		6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalCollectorTests.m; sourceTree = "<group>"; };
 		6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchCollectorTests.m; sourceTree = "<group>"; };
 		6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventBroadcasterTests.m; sourceTree = "<group>"; };
@@ -101,17 +105,20 @@
 			children = (
 				694C86ED1D89191500E7C7BE /* SwiftInterop.swift */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
-				693B580A1B7C6159008C5E86 /* AnalyticsRecordTests.m */,
-				5A3BC1711D3629EB00BBCA54 /* AnalyticsEventTests.m */,
-				5A3BC1731D362A0A00BBCA54 /* AnalyticsStateTests.m */,
-				5A6E8AD41D45E095001960DC /* AnalyticsManagerTests.m */,
-				5A6E8AD61D45E2A6001960DC /* AnalyticsRATTrackerTests.m */,
+				5A3BC1711D3629EB00BBCA54 /* EventTests.m */,
+				5A3BC1731D362A0A00BBCA54 /* StateTests.m */,
+				5A6E8AD41D45E095001960DC /* ManagerTests.m */,
+				5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */,
 				69E1BBCE1DADC17A00127885 /* DatabaseTests.m */,
 				6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */,
 				6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */,
-				6D9445A61E139FFA00EF8D46 /* AnalyticsItemTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
 				6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */,
+				5AF1B93E20478F5900BD0E3E /* SenderTests.m */,
+				5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */,
+				5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */,
+				5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */,
+				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -241,17 +248,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A6E8AD51D45E095001960DC /* AnalyticsManagerTests.m in Sources */,
-				5A6E8AD71D45E2A6001960DC /* AnalyticsRATTrackerTests.m in Sources */,
+				5AF1B93F20478F5900BD0E3E /* SenderTests.m in Sources */,
+				5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */,
+				5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */,
 				6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */,
-				693B580B1B7C6159008C5E86 /* AnalyticsRecordTests.m in Sources */,
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
-				6D9445A71E139FFA00EF8D46 /* AnalyticsItemTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
-				5A3BC1741D362A0A00BBCA54 /* AnalyticsStateTests.m in Sources */,
+				5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */,
+				5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */,
 				69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */,
+				5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
-				5A3BC1721D3629EB00BBCA54 /* AnalyticsEventTests.m in Sources */,
+				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

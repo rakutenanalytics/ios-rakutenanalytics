@@ -1,5 +1,5 @@
 import UIKit
-import RSDKAnalytics
+import RAnalytics
 
 struct GlobalConstants {
     static let kStaging = "Staging"

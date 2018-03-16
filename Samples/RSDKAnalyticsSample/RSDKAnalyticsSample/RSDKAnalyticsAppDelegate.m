@@ -1,8 +1,4 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Mobile SDK Team | SDTD" <prj-rmsdk@mail.rakuten.com>
- */
-#import "RSDKAnalytics.h"
+#import "RAnalytics.h"
 #import "RSDKAnalyticsAppDelegate.h"
 
 /////////////////////////////////////////////////////////////////
