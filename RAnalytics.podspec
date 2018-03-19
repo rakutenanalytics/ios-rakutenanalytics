@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RAnalytics"
-  s.version      = "2.13.0"
+  s.version      = "3.0.0"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "Analytics module of the Rakuten Ecosystem Mobile SDK"
   s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "7.0"
   s.requires_arc = true
-  
+
   options = {
     'CLANG_ENABLE_MODULES'    => 'YES',
     'CLANG_MODULES_AUTOLINK'  => 'YES',
