@@ -19,27 +19,22 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig  = options
   s.user_target_xcconfig = options
 
-  s.subspec 'Util' do |ss|
-    ss.source_files = 'RAnalytics/{Util/,Util/Private/}*.{h,m}'
-    ss.private_header_files = 'RAnalytics/Util/Private/*.h'
-    ss.weak_frameworks = [
-      'Foundation',
-    ]
-    ss.libraries = 'sqlite3', 'z'
-  end
-
   s.subspec 'Core' do |ss|
-    ss.source_files = 'RAnalytics/{Core/,Core/Private/}*.{h,m}'
-    ss.private_header_files = 'RAnalytics/Core/Private/*.h'
+    ss.source_files = [
+      'RAnalytics/RAnalytics.{h,m}',
+      'RAnalytics/{Core/,Core/Private/,Util/,Util/Private/}*.{h,m}'
+    ]
+    ss.private_header_files = 'RAnalytics/{Core,Util}/Private/*.h'
     ss.resource_bundles = { 'RAnalyticsAssets' => ['RAnalytics/Core/Assets/*'] }
     ss.weak_frameworks = [
+      'Foundation',
       'UIKit',
       'CoreGraphics',
       'CoreLocation',
       'AdSupport'
     ]
     ss.dependency 'RDeviceIdentifier', '~> 1.0'
-    ss.dependency 'RAnalytics/Util'
+    ss.libraries = 'sqlite3', 'z'
   end
 
   s.subspec 'RAT' do |ss|

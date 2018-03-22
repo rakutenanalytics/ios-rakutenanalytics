@@ -1,6 +1,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+typedef NSTimeInterval(^BatchingDelayBlock)(void);
+
 /*
  * Exports a global, setting the proper visibility attributes so that it does not
  * get stripped at linktime.

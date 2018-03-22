@@ -1,12 +1,10 @@
-// Util
-#import <RAnalytics/RAnalyticsDefines.h>
-#import <RAnalytics/RAnalyticsSender.h>
-
 // Core
+#import <RAnalytics/RAnalyticsDefines.h>
 #import <RAnalytics/RAnalyticsManager.h>
 #import <RAnalytics/RAnalyticsTracker.h>
 #import <RAnalytics/RAnalyticsEvent.h>
 #import <RAnalytics/RAnalyticsState.h>
+#import <RAnalytics/RAnalyticsSender.h>
 
 // RAT
 #if __has_include(<RAnalytics/RATTracker.h>)
