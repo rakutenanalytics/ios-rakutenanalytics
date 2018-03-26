@@ -2,8 +2,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSTimeInterval(^BatchingDelayBlock)(void);
-
 /**
  * A sender saves the data to the database firstly then schedule to send the data in the database to the server.
  * The data will be removed from the database if the sender upload them to the server successfully.
