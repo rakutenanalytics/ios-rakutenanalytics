@@ -92,18 +92,6 @@
     XCTAssertEqualObjects(event.parameters, params);
 }
 
-- (void)testConfigureWithApplicationId
-{
-    [RATTracker.sharedInstance configureWithApplicationId:555];
-    XCTAssertEqual(RATTracker.sharedInstance.applicationIdentifier, 555);
-}
-
-- (void)testConfigureWithAccountId
-{
-    [RATTracker.sharedInstance configureWithAccountId:333];
-    XCTAssertEqual(RATTracker.sharedInstance.accountIdentifier, 333);
-}
-
 - (void)testThatPlistAccountIdKeyIsUsedWhenSet
 {
     // setUp() already mocks mainBundle so need to remove

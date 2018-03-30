@@ -7,6 +7,8 @@
 /////////////////////////////////////////////////////////////////
 
 @interface RSDKAnalyticsViewController ()
+@property (nonatomic) uint64_t accountId;
+@property (nonatomic) int64_t serviceId;
 @end
 
 @implementation RSDKAnalyticsViewController
@@ -80,7 +82,10 @@
 - (IBAction)spool
 {
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
-    [[RATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar"}] track];
+    [[RATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar",
+                                                                               @"acc":@(self.accountId),
+                                                                               @"aid":@(self.serviceId)
+                                                                               }] track];
 }
 
 #pragma mark - Notification handlers
@@ -150,7 +155,7 @@
     NSString *acc = cell.textField.text;
     if (acc.length)
     {
-        [RATTracker.sharedInstance configureWithAccountId:[acc longLongValue]];
+        self.accountId = [acc longLongValue];
     }
 }
 
@@ -159,7 +164,7 @@
     NSString *aid = cell.textField.text;
     if (aid.length)
     {
-        [RATTracker.sharedInstance configureWithApplicationId:[aid longLongValue]];
+        self.serviceId = [aid longLongValue];
     }
 }
 

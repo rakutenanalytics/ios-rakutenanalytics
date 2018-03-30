@@ -10,6 +10,10 @@ struct GlobalConstants {
 }
 
 class TableViewController: UITableViewController, BaseCellDelegate {
+
+    var accountId: Int64 = 0
+    var serviceId: Int64 = 0
+
     @IBOutlet weak var spoolButton: UIBarButtonItem!
 
     let titles: [String] = [GlobalConstants.kStaging, GlobalConstants.kLocationTracking, GlobalConstants.kIDFATracking, GlobalConstants.kRATAccountID, GlobalConstants.kRATAppID]
@@ -17,6 +21,8 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
+        self.accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as! Int64
+        self.serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as! Int64
     }
 
     func update(_ dict: [String : Any]) {
@@ -39,7 +45,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             let value = value as! String
             if !value.isEmpty {
                 let accountId = Int64(value)!
-                RATTracker.shared().configure(withAccountId: accountId)
+                self.accountId = accountId
             }
         }
 
@@ -47,13 +53,15 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             let value = value as! String
             if !value.isEmpty {
                 let appId = Int64(value)!
-                RATTracker.shared().configure(withApplicationId: appId)
+                self.serviceId = appId
             }
         }
     }
 
     @IBAction func spool(_ sender: Any) {
-        RATTracker.shared().event(withEventType: "SampleEvent", parameters: ["foo": "bar"]).track()
+        RATTracker.shared().event(withEventType: "SampleEvent", parameters: ["foo": "bar",
+                                                                             "acc": self.accountId,
+                                                                             "aid": self.serviceId]).track()
     }
 
     // MARK: - Table view data source

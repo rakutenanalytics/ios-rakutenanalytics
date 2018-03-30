@@ -947,16 +947,4 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     self.isUsingLTE = [self.telephonyNetworkInfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE];
 }
 
-#pragma - Deprecated methods
-
-- (void)configureWithAccountId:(int64_t)accountIdentifier
-{
-    self.accountIdentifier = accountIdentifier;
-}
-
-- (void)configureWithApplicationId:(int64_t)applicationIdentifier
-{
-    self.applicationIdentifier = applicationIdentifier;
-}
-
 @end
