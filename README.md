@@ -17,7 +17,7 @@ pod 'RAnalytics'
 
 Run `pod install` to install the module and its dependencies.
 
-@attention The analytics module is separated into `Core`, `RAT` and `Util` subspecs. The default subspec is `RAT` which depends on `Core`. If you do not want automatic user tracking sent to RAT you should use the `Core` subspec in your Podfile:
+@attention The analytics module since version 3.0.0 is separated into `Core` and `RAT` subspecs. The default subspec is `RAT` which depends on `Core`. If you do not want automatic user tracking sent to RAT you should use the `Core` subspec in your Podfile:
 
 @code{.rb}
 source 'https://github.com/CocoaPods/Specs.git'
@@ -172,6 +172,18 @@ Event name         | Required components
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
 
+@section analytics-migratev2v3 Migrating from v2 to v3
+- 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
+- Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
+- See @ref analytics-configure-rat "Configuring RAT" for the new plist approach for setting account ID and application ID. This replaces the deleted methods [configureWithAccountId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat) / [configureWithApplicationId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat)
+- To depend on RAnalytics rather than RSDKAnalytics your Podfile should contain:
+
+@code{.rb}
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
+
+pod 'RAnalytics'
+@endcode
 
 @section analytics-appstore AppStore Submission Procedure
 Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
@@ -180,7 +192,7 @@ Apple requests that you **disclose your usage of the advertising identifier (IDF
 
 #### 1. Serve advertisements within the app.
 Check this box if any of the following options apply to your app:
-- You app contains advertisements.
+- Your app contains advertisements.
 - You are using the **[discover](../discover-latest)** SDK module.
 
 #### 2. Attribute this app installation to a previously served advertisement
@@ -527,7 +539,7 @@ The custom tracker can then be added to the RAnalyticsManager:
 @subsection analytics-3-0-0 3.0.0 (in-progress)
 * [REM-25315](https://jira.rakuten-it.com/jira/browse/REM-25315): Read RAT Account ID and Application ID from app's info.plist.
 * [REM-25524](https://jira.rakuten-it.com/jira/browse/REM-25524) / [REM-25547](https://jira.rakuten-it.com/jira/browse/REM-25547): Add Swift sample app and update Objective-C sample app to match latest analytics module API.
-* [REM-25864](https://jira.rakuten-it.com/jira/browse/REM-25864): Redesign module and separate functionality into `Core`, `RAT` and `Util` CocoaPods subspecs.
+* [REM-25864](https://jira.rakuten-it.com/jira/browse/REM-25864): Redesign module and separate functionality into `Core` and `RAT` CocoaPods subspecs.
 * [REM-25317](https://jira.rakuten-it.com/jira/browse/REM-25317): Add SDK @ref RAnalyticsTracker "Tracker" to track build information and non-Apple frameworks usage.
 
 @subsection analytics-2-13-0 2.13.0 (2018-01-11)
