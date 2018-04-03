@@ -59,9 +59,9 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }
 
     @IBAction func spool(_ sender: Any) {
-        RATTracker.shared().event(withEventType: "SampleEvent", parameters: ["foo": "bar",
-                                                                             "acc": self.accountId,
-                                                                             "aid": self.serviceId]).track()
+        RAnalyticsRATTracker.shared().event(withEventType: "SampleEvent", parameters: ["foo": "bar",
+                                                                                       "acc": self.accountId,
+                                                                                       "aid": self.serviceId]).track()
     }
 
     // MARK: - Table view data source

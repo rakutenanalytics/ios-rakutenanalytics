@@ -7,8 +7,8 @@
 #import <RAnalytics/RAnalyticsSender.h>
 
 // RAT
-#if __has_include(<RAnalytics/RATTracker.h>)
-#import <RAnalytics/RATTracker.h>
+#if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)
+#import <RAnalytics/RAnalyticsRATTracker.h>
 #endif
 
 /// @internal

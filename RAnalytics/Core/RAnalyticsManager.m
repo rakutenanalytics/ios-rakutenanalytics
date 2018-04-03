@@ -98,7 +98,7 @@ static RAnalyticsManager *_instance = nil;
         [self addTracker:_SDKTracker.sharedInstance];
 
 #if __has_include(<RAnalytics/RATTracker.h>)
-        [self addTracker:RATTracker.sharedInstance];
+        [self addTracker:RAnalyticsRATTracker.sharedInstance];
 #endif
         /*
          * Set up the location manager

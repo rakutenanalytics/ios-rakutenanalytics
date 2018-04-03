@@ -68,7 +68,7 @@
 
 - (void)testAnalyticsManagerAddExistingTypeTracker
 {
-    XCTAssertNoThrow([_manager addTracker:RATTracker.sharedInstance]);
+    XCTAssertNoThrow([_manager addTracker:RAnalyticsRATTracker.sharedInstance]);
 }
 
 - (void)testAnalyticsManagerAddNewTypeTracker
@@ -80,7 +80,7 @@
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:@"foo" parameters:nil];
 
-    id mock = OCMPartialMock(RATTracker.sharedInstance);
+    id mock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance);
     [RAnalyticsManager.sharedInstance process:event];
 
     OCMVerify([mock processEvent:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -93,13 +93,13 @@
 - (void)testUsingStagingEndpointAddress
 {
     RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
-    XCTAssertTrue([[RATTracker endpointAddress].absoluteString isEqualToString:@"https://stg.rat.rakuten.co.jp/"]);
+    XCTAssertTrue([[RAnalyticsRATTracker endpointAddress].absoluteString isEqualToString:@"https://stg.rat.rakuten.co.jp/"]);
 }
 
 - (void)testUsingProductionEndpointAddress
 {
     RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = NO;
-    XCTAssertTrue([[RATTracker endpointAddress].absoluteString isEqualToString:@"https://rat.rakuten.co.jp/"]);
+    XCTAssertTrue([[RAnalyticsRATTracker endpointAddress].absoluteString isEqualToString:@"https://rat.rakuten.co.jp/"]);
 }
 
 - (void)testStartMonitoringLocation
