@@ -52,42 +52,6 @@ RSDKA_EXPORT @interface RATTracker : NSObject<RAnalyticsTracker>
  * @param completionHandler  Returns valid cookie or nil cookie and an error in case of failure
  */
 - (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie *cookie, NSError *error))completionHandler;
-
-/**
- * Method for configuring account identifier.
- *
- * @deprecated Please set the 'RATAccountIdentifier' key to your RAT account ID in your app's Info.plist instead.
- *
- * @par Swift 3
- * This method is exposed as **.configure(withAccountId:)**.
- *
- * @param accountIdentifier       Account identifier, e.g.\ `1` for Rakuten Ichiba Japan, `3` for Rakuten Books, etc.
- *
- * @note The value set by this method will override any RATAccountIdentifier key value.
- *
- * @note Account identifier will be sent as the **acc** (`ACCOUNT_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- */
-- (void)configureWithAccountId:(int64_t)accountIdentifier DEPRECATED_MSG_ATTRIBUTE("Please set the RATAccountIdentifier key to your RAT account ID in your app's Info.plist instead.");
-
-/**
- * Method for configuring application identifier.
- *
- * @deprecated Please set the 'RATAppIdentifier' key to your RAT application ID in your app's Info.plist instead.
- *
- * @par Swift 3
- * This method is exposed as **.configure(withApplicationId:)**.
- *
- * @param applicationIdentifier       Application identifier, e.g.\ `14` for Singapore Mall.
- *
- * @note The value set by this method will override any RATAppIdentifier key value.
- *
- * @note Application identifier will be sent as the **aid** (`SERVICE_ID`) RAT parameter. See
- * the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl)
- * for more information.
- */
-- (void)configureWithApplicationId:(int64_t)applicationIdentifier DEPRECATED_MSG_ATTRIBUTE("Please set the RATAppIdentifier key to your RAT application ID in your app's Info.plist instead.");
 @end
 
 NS_ASSUME_NONNULL_END
