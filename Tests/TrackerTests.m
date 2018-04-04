@@ -156,7 +156,7 @@
 - (void)stubRATResponseWithStatusCode:(int)status completionHandler:(void (^)(void))completion
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString isEqualToString:RATTracker.endpointAddress.absoluteString];
+        return [request.URL.absoluteString isEqualToString:RAnalyticsRATTracker.endpointAddress.absoluteString];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
         dispatch_async(dispatch_get_main_queue(), ^{
 

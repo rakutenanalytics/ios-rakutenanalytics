@@ -9,15 +9,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @attention Application developers **MUST** configure the instance by setting
  * the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
  *
- * @class RATTracker RATTracker.h <RAnalytics/RATTracker.h>
+ * @class RAnalyticsRATTracker RAnalyticsRATTracker.h <RAnalytics/RAnalyticsRATTracker.h>
  */
-RSDKA_EXPORT @interface RATTracker : NSObject<RAnalyticsTracker>
+RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
 
 /**
  * Retrieve the shared instance.
  *
  * @par Swift 3
- * This method is exposed as **RATTracker.shared()**.
+ * This method is exposed as **RAnalyticsRATTracker.shared()**.
  *
  * @return The shared instance.
  */

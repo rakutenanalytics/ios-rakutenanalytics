@@ -82,10 +82,10 @@
 - (IBAction)spool
 {
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
-    [[RATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar",
-                                                                               @"acc":@(self.accountId),
-                                                                               @"aid":@(self.serviceId)
-                                                                               }] track];
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar",
+                                                                                         @"acc":@(self.accountId),
+                                                                                         @"aid":@(self.serviceId)
+                                                                                         }] track];
 }
 
 #pragma mark - Notification handlers

@@ -99,20 +99,20 @@ Tracking a generic event relies on a @ref RAnalyticsTracker "tracker" capable of
 @endcode
 
 #### Tracking RAT-specific events
-A concrete tracker, RATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
+A concrete tracker, RAnalyticsRATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RAnalyticsRATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "click", parameters:["pgn": "coupon page"]).track()
+    RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["pgn": "coupon page"]).track()
 @endcode
 
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
 @endcode
 
 @note You can override the `acc` and `aid` default values by including those keys in the `parameters` dictionary when you create an event.
@@ -120,13 +120,13 @@ A concrete tracker, RATTracker, is automatically registered and interacts with t
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
+    RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
 @endcode
 
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"acc": @123}] track];
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"acc": @123}] track];
 @endcode
 
 @subsection analytics-standard-events Standard Events
@@ -153,7 +153,7 @@ We use method swizzling to automatically trigger a @ref RAnalyticsPageVisitEvent
 
 Those @ref RAnalyticsPageVisitEventName "visit events" are available to all @ref RAnalyticsTracker "trackers", and the view controller being the event's subject can be found in the @ref RAnalyticsState::currentPage "currentPage" property of the @ref RAnalyticsState "event state" passed to RAnalyticsTracker::processEvent:state:.
 
-The @ref RATTracker "RAT tracker" furthermore ignores view controllers that have no title, no navigation item title, and for which no URL was found on any webview part of their view hierarchy at the time `-viewDidLoad` was called, unless they have been subclassed by the application or one of the frameworks embedded in the application. This filters out events that would give no information about what page was visited in the application, such as events reporting a page named `UIViewController`. For view controllers with either a title, navigation item title or URL, the library also sets the `cp.title` and `cp.url` fields to the `pv` event it sends to RAT.
+The @ref RAnalyticsRATTracker "RAT tracker" furthermore ignores view controllers that have no title, no navigation item title, and for which no URL was found on any webview part of their view hierarchy at the time `-viewDidLoad` was called, unless they have been subclassed by the application or one of the frameworks embedded in the application. This filters out events that would give no information about what page was visited in the application, such as events reporting a page named `UIViewController`. For view controllers with either a title, navigation item title or URL, the library also sets the `cp.title` and `cp.url` fields to the `pv` event it sends to RAT.
 
 ##### Push notification tracking identifier
 The value for the `tracking_id` parameter of the `_rem_push_notify` event is computed like this:
@@ -176,6 +176,7 @@ The SDK will automatically generate certain attributes about the @ref RAnalytics
 - 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
 - Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
 - See @ref analytics-configure-rat "Configuring RAT" for the new plist approach for setting account ID and application ID. This replaces the deleted methods [configureWithAccountId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat) / [configureWithApplicationId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat)
+- If you use the Analytics module directly in your app source (e.g. to track custom events) you will need to change all references (header imports, method calls etc.) from `RSDKAnalytics` to `RAnalytics`. Also, if you call `RATTracker` methods you will need to change those references to `RAnalyticsRATTracker`. This renaming was required so that module versions v2 and v3 can co-exist in an app binary.
 - To depend on RAnalytics rather than RSDKAnalytics your Podfile should contain:
 
 @code{.rb}
@@ -210,7 +211,7 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 
 
 @section analytics-rat-examples RAT Examples
-@note These examples all use @ref RATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RAnalyticsEvent should be used instead.
+@note These examples all use @ref RAnalyticsRATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RAnalyticsEvent should be used instead.
 
 @subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
 [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
@@ -224,7 +225,7 @@ The following code is an example that can be used to track button clicks. It use
 
 @code{.swift}
     @IBAction func buttonTapped(sender: UIButton) {
-        RATTracker.shared().event(eventType: "click",
+        RAnalyticsRATTracker.shared().event(eventType: "click",
                                  parameters:["pgn": "Main",
                                              "target": "search_btn",
                                              "gol": "goal123456"]).track()
@@ -236,7 +237,7 @@ The following code is an example that can be used to track button clicks. It use
 @code{.m}
     // Objective-C
     - (IBAction)buttonTapped:(UIButton *)sender {
-        [[RATTracker.sharedInstance eventWithEventType:@"click"
+        [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click"
                                             parameters:@{@"pgn": @"Main",
                                                          @"target": @"search_btn",
                                                          @"gol": @"goal123456"}] track];
@@ -249,7 +250,7 @@ The following is an example of tracking an event with custom parameters. It uses
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "pv",
+    RAnalyticsRATTracker.shared().event(eventType: "pv",
                              parameters:["pgn": "Main",
                                          "cp": ["custom_param_1": "value",
                                                 "custom_param_2": 10,
@@ -259,7 +260,7 @@ The following is an example of tracking an event with custom parameters. It uses
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"pv"
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
                                         parameters:@{@"pgn": @"Main",
                                                      @"cp": @{@"custom_param_1": @"value",
                                                               @"custom_param_2": @10,
@@ -281,7 +282,7 @@ RAT param | Description
 ##### Swift 3
 
 @code{.swift}
-    RATTracker.shared().event(eventType: "pv",
+    RAnalyticsRATTracker.shared().event(eventType: "pv",
                              parameters:["pgn": "shop_search",
                                          "pgt": "search",
                                          "lang": "English",
@@ -295,7 +296,7 @@ RAT param | Description
 ##### Objective C
 
 @code{.m}
-    [[RATTracker.sharedInstance eventWithEventType:@"pv"
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
                                         parameters:@{@"pgn": @"shop_search",
                                                      @"pgt": @"search",
                                                      @"lang": @"English",
@@ -324,7 +325,7 @@ and @ref RAnalyticsUploadSuccessNotification notifications. For example:
 - (void)failedToUpload:(NSNotification *)notification {
     NSArray *records = notification.object;
     NSError *error = notification.userInfo[NSUnderlyingErrorKey];
-    NSLog(@"RATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
+    NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
 }
 
 - (void)dealloc {
@@ -357,14 +358,14 @@ A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend i
 
 @code{.swift}
 
-    RATTracker.shared().set(batchingDelay: 10.0)
+    RAnalyticsRATTracker.shared().set(batchingDelay: 10.0)
 @endcode
 
 ##### Objective C
 
 @code{.m}
 
-    [RATTracker.sharedInstance setBatchingDelay:10.0];
+    [RAnalyticsRATTracker.sharedInstance setBatchingDelay:10.0];
 @endcode
 
 ### Example 2: Dynamic batching interval
@@ -386,7 +387,7 @@ public class CustomClass: NSObject {
     }
 
     public func setup() {
-        RATTracker.shared().set(batchingDelayBlock: { () -> TimeInterval in
+        RAnalyticsRATTracker.shared().set(batchingDelayBlock: { () -> TimeInterval in
             let secondsSinceStart = NSDate().timeIntervalSinceReferenceDate - startTime
 
             if (secondsSinceStart < 10)
@@ -428,7 +429,7 @@ public class CustomClass: NSObject {
 
 - (void)setup
 {
-    [RATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
+    [RAnalyticsRATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
         NSTimeInterval secondsSinceStart = [NSDate timeIntervalSinceReferenceDate] - _startTime;
 
         if (secondsSinceStart < 10)

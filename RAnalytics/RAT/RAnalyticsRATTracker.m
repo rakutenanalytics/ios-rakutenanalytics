@@ -93,7 +93,7 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 
 ////////////////////////////////////////////////////////////////////////////
 
-@interface RATTracker ()
+@interface RAnalyticsRATTracker ()
 @property (nonatomic) int64_t accountIdentifier;
 @property (nonatomic) int64_t applicationIdentifier;
 
@@ -135,7 +135,7 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic) NSUInteger       rpCookieRequestRetryCount;
 @end
 
-@implementation RATTracker
+@implementation RAnalyticsRATTracker
 
 static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
 {
@@ -154,14 +154,14 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         status = @(_RATReachabilityStatusConnectedWithWiFi);
     }
 
-    [RATTracker sharedInstance].reachabilityStatus = status;
+    [RAnalyticsRATTracker sharedInstance].reachabilityStatus = status;
 }
 
 #pragma mark - RAnalyticsTracker
 
 + (instancetype)sharedInstance
 {
-    static RATTracker *instance = nil;
+    static RAnalyticsRATTracker *instance = nil;
     static dispatch_once_t ratTrackerOnceToken;
     dispatch_once(&ratTrackerOnceToken, ^{
         instance = [self.alloc initInstance];
@@ -179,7 +179,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
-        _startTime = [RATTracker stringWithDate:NSDate.date];
+        _startTime = [RAnalyticsRATTracker stringWithDate:NSDate.date];
 
         /*
          * Attempt to read the IDs from the app's plist
@@ -605,8 +605,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([event.name isEqualToString:RAnalyticsSessionStartEventName])
     {
         // MARK: _rem_launch
-        extra[@"days_since_first_use"] = @([RATTracker daysPassedSinceDate:state.installLaunchDate]);
-        extra[@"days_since_last_use"] = @([RATTracker daysPassedSinceDate:state.lastLaunchDate]);
+        extra[@"days_since_first_use"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
+        extra[@"days_since_last_use"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
     }
     else if ([event.name isEqualToString:RAnalyticsSessionEndEventName])
     {
@@ -621,7 +621,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             extra[@"previous_version"] = state.lastVersion;
         }
         extra[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
-        extra[@"days_since_last_upgrade"] = @([RATTracker daysPassedSinceDate:state.lastUpdateDate]);
+        extra[@"days_since_last_upgrade"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
     }
     else if ([event.name isEqualToString:RAnalyticsLoginEventName])
     {

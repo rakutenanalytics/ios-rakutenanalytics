@@ -5,14 +5,14 @@
 @import XCTest;
 #import <RAnalytics/RAnalytics.h>
 #import <RAnalytics/RAnalyticsState.h>
-#import "../RAnalytics/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Private/_RAnalyticsDatabase.h"
+#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
 #import <XCTest/XCTest.h>
 
-@interface RATTracker ()
+@interface RAnalyticsRATTracker ()
 - (instancetype)initInstance;
 @end
 
@@ -39,7 +39,7 @@
     NSString* const cookieValue = @"TestCookieValue";
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@;", cookieName, cookieValue];
         NSDictionary* headers = @{@"Set-Cookie": cookie};
@@ -47,7 +47,7 @@
                                           statusCode:200
                                              headers:headers];
     }];
-    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] getCookiesForTask:[[NSURLSession sharedSession] dataTaskWithURL:_RAnalyticsEndpointAddress()] completionHandler:^(NSArray<NSHTTPCookie *> * _Nullable cookies)
          {
@@ -64,16 +64,16 @@
     __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithData:[NSData new]
                                           statusCode:500
                                              headers:nil];
     }];
     
-    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
             
             XCTAssertNil(cookie);
             XCTAssertNotNil(error);
@@ -89,9 +89,9 @@
     
     [self setRpCookieWithName:@"Rp" Value:@"CookieValue" ExpiryDate:@"Fri, 16-Nov-16 16:59:07 GMT"];
     
-    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
             
             XCTAssertNil(cookie);
             XCTAssertNotNil(error);
@@ -107,9 +107,9 @@
     
     [self setRpCookieWithName:@"Rp" Value:@"CookieValue" ExpiryDate:@"Fri, 16-Nov-20 16:59:07 GMT"];
     
-    RATTracker __unused *trackerInstance = [[RATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
+        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error) {
             
             XCTAssertNotNil(cookie);
             XCTAssertNil(error);
@@ -126,7 +126,7 @@
 - (void)setRpCookieWithName:(NSString *)cookieName Value:(NSString *)cookieValue ExpiryDate:(NSString *)expiryDate
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RATTracker endpointAddress]]];
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
     } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@; path=/; expires=%@; session-only=%@; domain=.rakuten.co.jp", cookieName, cookieValue, expiryDate, [NSNumber numberWithBool:NO]];
         NSDictionary* headers = @{@"Set-Cookie": cookie};

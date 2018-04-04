@@ -73,7 +73,7 @@ public class SwiftInterop : XCTestCase {
     }
 
     public func testSwift3Interop() {
-        let rat : RATTracker = RATTracker.shared()
+        let rat : RAnalyticsRATTracker = RAnalyticsRATTracker.shared()
         XCTAssertNotNil(rat)
         rat.configure(withAccountId: 477)
         rat.configure(withApplicationId: 999)
@@ -176,7 +176,7 @@ public class SwiftInterop : XCTestCase {
     }
 
     public func testSwift2Interop() {
-        let rat : RATTracker = RATTracker.sharedInstance()
+        let rat : RAnalyticsRATTracker = RAnalyticsRATTracker.sharedInstance()
         XCTAssertNotNil(rat)
         rat.configureWithAccountId(477)
         rat.configureWithApplicationId(999)

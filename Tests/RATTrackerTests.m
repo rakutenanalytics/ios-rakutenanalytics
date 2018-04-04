@@ -12,7 +12,7 @@
 @property (nonatomic, readwrite)                    RAnalyticsOrigin          origin;
 @end
 
-@interface RATTracker ()
+@interface RAnalyticsRATTracker ()
 @property (nonatomic) int64_t                   accountIdentifier;
 @property (nonatomic) int64_t                   applicationIdentifier;
 @property (nonatomic, copy, nullable) NSString *lastVisitedPageIdentifier;
@@ -51,9 +51,9 @@
     // Clear any still running timers because they can break our async batching delay tests
     for (id<RAnalyticsTracker> t in RAnalyticsManager.sharedInstance.trackers)
     {
-        if ([t isKindOfClass:RATTracker.class])
+        if ([t isKindOfClass:RAnalyticsRATTracker.class])
         {
-            RATTracker *rT = (RATTracker *)t;
+            RAnalyticsRATTracker *rT = (RAnalyticsRATTracker *)t;
             [self invalidateTimerOfSender:rT.sender];
         }
     }
@@ -63,30 +63,30 @@
 #pragma mark TrackerTestConfiguration protocol
 - (id<RAnalyticsTracker>)testedTracker
 {
-    return [RATTracker.alloc initInstance];
+    return [RAnalyticsRATTracker.alloc initInstance];
 }
 
 #pragma mark Test initialisation and configuration
 
 - (void)testAnalyticsRATTrackerSharedInstanceIsNotNil
 {
-    XCTAssertNotNil(RATTracker.sharedInstance);
+    XCTAssertNotNil(RAnalyticsRATTracker.sharedInstance);
 }
 
 - (void)testAnalyticsRATTrackerSharedInstanceAreEqual
 {
-    XCTAssertEqualObjects(RATTracker.sharedInstance, RATTracker.sharedInstance);
+    XCTAssertEqualObjects(RAnalyticsRATTracker.sharedInstance, RAnalyticsRATTracker.sharedInstance);
 }
 
 - (void)testInitThrowsException
 {
-    XCTAssertThrowsSpecificNamed([RATTracker new], NSException, NSInvalidArgumentException);
+    XCTAssertThrowsSpecificNamed([RAnalyticsRATTracker new], NSException, NSInvalidArgumentException);
 }
 
 - (void)testEventWithTypeAndParameters
 {
     NSDictionary *params = @{@"acc":@555};
-    RAnalyticsEvent *event = [RATTracker.sharedInstance eventWithEventType:@"login" parameters:params];
+    RAnalyticsEvent *event = [RAnalyticsRATTracker.sharedInstance eventWithEventType:@"login" parameters:params];
     XCTAssertNotNil(event);
     XCTAssertEqualObjects(event.name,       @"rat.login");
     XCTAssertEqualObjects(event.parameters, params);
@@ -104,14 +104,14 @@
     OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAccountIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
     
     // need a freshly allocated instance so that the plist is read
-    RATTracker *tracker = [RATTracker.alloc initInstance];
+    RAnalyticsRATTracker *tracker = [RAnalyticsRATTracker.alloc initInstance];
     
     XCTAssertEqual(tracker.accountIdentifier, expected);
 }
 
 - (void)testThatDefaultAccountIdIsUsedWhenPlistKeyIsNotSet
 {
-    XCTAssertEqual(RATTracker.sharedInstance.accountIdentifier, 477);
+    XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.accountIdentifier, 477);
 }
 
 - (void)testThatPlistApplicationIdKeyIsUsedWhenSet
@@ -126,14 +126,14 @@
     OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAppIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
     
     // need a freshly allocated instance so that the plist is read
-    RATTracker *tracker = [RATTracker.alloc initInstance];
+    RAnalyticsRATTracker *tracker = [RAnalyticsRATTracker.alloc initInstance];
     
     XCTAssertEqual(tracker.applicationIdentifier, expected);
 }
 
 - (void)testThatDefaultApplicationIdIsUsedWhenPlistKeyIsNotSet
 {
-    XCTAssertEqual(RATTracker.sharedInstance.applicationIdentifier, 1);
+    XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.applicationIdentifier, 1);
 }
 
 #pragma mark Test processing events
@@ -367,13 +367,13 @@
 - (void)testProcessInvalidCustomEventFails
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsCustomEventName parameters:@{@"blah":@"name", @"eventData":@{@"foo":@"bar"}}];
-    XCTAssertFalse([RATTracker.sharedInstance processEvent:event state:[self defaultState]]);
+    XCTAssertFalse([RAnalyticsRATTracker.sharedInstance processEvent:event state:[self defaultState]]);
 }
 
 - (void)testProcessInvalidEventFails
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:@"unknown" parameters:nil];
-    XCTAssertFalse([RATTracker.sharedInstance processEvent:event state:[self defaultState]]);
+    XCTAssertFalse([RAnalyticsRATTracker.sharedInstance processEvent:event state:[self defaultState]]);
 }
 
 - (void)testDeviceBatteryStateReportedInJSON
@@ -406,16 +406,16 @@
 
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
 
-    [RATTracker.sharedInstance setBatchingDelay:15.0];
+    [RAnalyticsRATTracker.sharedInstance setBatchingDelay:15.0];
 
-    [RATTracker.sharedInstance processEvent:self.defaultEvent state:self.defaultState];
+    [RAnalyticsRATTracker.sharedInstance processEvent:self.defaultEvent state:self.defaultState];
 
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
         [wait fulfill];
         NSTimeInterval expectedDelay = 15.0;
-        XCTAssertEqual(RATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
@@ -427,18 +427,18 @@
 
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
 
-    [RATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
+    [RAnalyticsRATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
         return 10.0;
     }];
 
-    [RATTracker.sharedInstance processEvent:self.defaultEvent state:self.defaultState];
+    [RAnalyticsRATTracker.sharedInstance processEvent:self.defaultEvent state:self.defaultState];
 
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
         [wait fulfill];
         NSTimeInterval expectedDelay = 10.0;
-        XCTAssertEqual(RATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
