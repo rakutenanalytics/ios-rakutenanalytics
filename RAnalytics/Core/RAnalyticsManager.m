@@ -97,7 +97,7 @@ static RAnalyticsManager *_instance = nil;
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
 
-#if __has_include(<RAnalytics/RATTracker.h>)
+#if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)
         [self addTracker:RAnalyticsRATTracker.sharedInstance];
 #endif
         /*

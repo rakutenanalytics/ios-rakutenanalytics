@@ -22,9 +22,9 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager.Event) @interface RAnalyticsEven
  * @attention Unprefixed names are reserved for @ref AnalyticsEvents "standard events". For custom events, or
  * events targetting specific @ref RAnalyticsTracker "trackers", please use a domain notation (e.g. `kobo.pageRead`).
  *
- * @note The @ref RATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`,
+ * @note The @ref RAnalyticsRATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`,
  * where `etype` is the standard RAT field going by that name. For convenience, you can create RAT-specific
- * events directly using RATTracker::eventWithEventType:parameters:.
+ * events directly using RAnalyticsRATTracker::eventWithEventType:parameters:.
  *
  * @see AnalyticsEvents
  */
@@ -43,7 +43,7 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager.Event) @interface RAnalyticsEven
 /**
  * This method for creating a new event object.
  *
- * @attention For RAT-specific events, please use RATTracker::eventWithEventType:parameters: instead.
+ * @attention For RAT-specific events, please use RAnalyticsRATTracker::eventWithEventType:parameters: instead.
  *
  * @param name  Name of the event. We provides @ref AnalyticsEvents "standard events" as part of our SDK.
  *              For custom events, or events targetting specific trackers, please use a domain notation (e.g. `kobo.pageRead`).

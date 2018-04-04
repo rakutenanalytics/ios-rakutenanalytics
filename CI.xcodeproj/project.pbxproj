@@ -11,6 +11,7 @@
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
 		5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */; };
+		5AB254A320744B1900BF3EE9 /* AnalyticsRATRpCookieTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB254A220744B1800BF3EE9 /* AnalyticsRATRpCookieTests.m */; };
 		5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */; };
 		5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */; };
 		5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */; };
@@ -42,6 +43,7 @@
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
 		5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATTrackerTests.m; sourceTree = "<group>"; };
+		5AB254A220744B1800BF3EE9 /* AnalyticsRATRpCookieTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsRATRpCookieTests.m; sourceTree = "<group>"; };
 		5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDKTrackerTests.m; sourceTree = "<group>"; };
 		5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockedDatabase.h; sourceTree = "<group>"; };
 		5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockedDatabase.m; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 		693B58091B7C6159008C5E86 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5AB254A220744B1800BF3EE9 /* AnalyticsRATRpCookieTests.m */,
 				694C86ED1D89191500E7C7BE /* SwiftInterop.swift */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
 				5A3BC1711D3629EB00BBCA54 /* EventTests.m */,
@@ -257,6 +260,7 @@
 				6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */,
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
+				5AB254A320744B1900BF3EE9 /* AnalyticsRATRpCookieTests.m in Sources */,
 				5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */,
 				5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */,
 				69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */,
