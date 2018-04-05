@@ -34,5 +34,7 @@
 	<string>authentication</string>
 	<key>org.cocoapods.RakutenIdInformationClient</key>
 	<string>api-rae-idinformation</string>
+	<key>org.cocoapods.StitchSDK</key>
+	<string>stitch</string>
 </dict>
 </plist>
