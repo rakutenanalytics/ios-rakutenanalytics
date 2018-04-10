@@ -120,14 +120,12 @@
     id locationManagerMock = OCMClassMock(CLLocationManager.class);
     
     OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
-    
-    _manager.shouldTrackLastKnownLocation = YES;
-    
-    [locationManagerMock stopMocking];
-    
+        
     _manager.shouldTrackLastKnownLocation = NO;
     
     XCTAssertFalse(_manager.locationManagerIsUpdating);
+
+    [locationManagerMock stopMocking];
 }
 
 - (void)testStopMonitoringLocationOnResignActive
