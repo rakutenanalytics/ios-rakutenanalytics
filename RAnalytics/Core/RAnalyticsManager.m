@@ -212,7 +212,7 @@ static RAnalyticsManager *_instance = nil;
     }
 #endif
 
-    if (/* self.shouldTrackLastKnownLocation && */
+    if (self.shouldTrackLastKnownLocation &&
         CLLocationManager.locationServicesEnabled &&
         (status == kCLAuthorizationStatusAuthorizedAlways ||
         (status == kCLAuthorizationStatusAuthorizedWhenInUse && _RAnalyticsSharedApplication().applicationState == UIApplicationStateActive)
