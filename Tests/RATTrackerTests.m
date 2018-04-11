@@ -19,6 +19,7 @@
 @property (nonatomic, copy, nullable) NSNumber *carriedOverOrigin;
 @property (nonatomic) RAnalyticsSender      *sender;
 - (instancetype)initInstance;
+- (NSNumber *)positiveIntegerNumberWithObject:(id)object;
 @end
 
 @interface RAnalyticsSender ()
@@ -157,6 +158,7 @@
     XCTAssert([appInfo containsString:@"xcode"]);
     XCTAssert([appInfo containsString:@"iphonesimulator"]);
 }
+
 
 - (void)testProcessSessionStartEvent
 {
@@ -443,4 +445,145 @@
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
 }
+
+#pragma mark Test number validation
+- (void)testNumberValidationWithNil
+{
+    XCTAssertNil([RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:nil]);
+}
+
+- (void)testNumberValidationWithIntegerNumber
+{
+    NSInteger num = 123;
+    NSNumber *integerNumber = [NSNumber numberWithInteger:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(123)]);
+}
+
+- (void)testNumberValidationWithChar
+{
+    char num = 'a';
+    NSNumber *integerNumber = [NSNumber numberWithChar:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(97)]);
+}
+
+- (void)testNumberValidationWithPositiveInt16Number
+{
+    int16_t num = 123;
+    NSNumber *integerNumber = [NSNumber numberWithShort:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(123)]);
+}
+
+- (void)testNumberValidationWithPositiveInt32Number
+{
+    int32_t num = 123;
+    NSNumber *integerNumber = [NSNumber numberWithLong:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(123)]);
+}
+
+- (void)testNumberValidationWithPositiveInt64Number
+{
+    int64_t num = 123;
+    NSNumber *integerNumber = [NSNumber numberWithLong:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(123)]);
+}
+
+- (void)testNumberValidationWithSignedChar
+{
+    int8_t num = -6;
+    NSNumber *integerNumber = [NSNumber numberWithChar:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithNegativeInt16Number
+{
+    int16_t num = -123;
+    NSNumber *integerNumber = [NSNumber numberWithShort:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithNegativeInt32Number
+{
+    int32_t num = -123;
+    NSNumber *integerNumber = [NSNumber numberWithLong:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithNegativeInt64Number
+{
+    int64_t num = -123;
+    NSNumber *integerNumber = [NSNumber numberWithLong:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithZeroNumber
+{
+    int64_t num = 0;
+    NSNumber *integerNumber = [NSNumber numberWithLong:num];
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:integerNumber];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithFloatNumber
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@(123.4)];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithString
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"123"];
+    XCTAssertNotNil(number);
+    XCTAssertTrue([number isEqualToNumber:@(123)]);
+}
+
+- (void)testNumberValidationWithStringIncludingWhiteSpace
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"12 3"];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithStringLikeAFloatNumber
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"12.3"];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithStringLikeZeroNumber
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"0"];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithStringLikeNegativeNumber
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"-10"];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithStringLeadingByZero
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"01"];
+    XCTAssertNil(number);
+}
+
+- (void)testNumberValidationWithStringIncludingCharacter
+{
+    NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"12e3"];
+    XCTAssertNil(number);
+}
+
 @end

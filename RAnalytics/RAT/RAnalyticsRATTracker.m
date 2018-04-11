@@ -418,7 +418,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     });
 
     // MARK: acc
-    if (!payload[@"acc"])
+    NSNumber *acc = [self positiveIntegerNumberWithObject:payload[@"acc"]];
+    if (acc)
+    {
+        payload[@"acc"] = acc;
+    }
+    else
     {
         if (self.accountIdentifier)
         {
@@ -431,7 +436,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: aid
-    if (!payload[@"aid"])
+    NSNumber *aid = [self positiveIntegerNumberWithObject:payload[@"aid"]];
+    if (aid)
+    {
+        payload[@"aid"] = aid;
+    }
+    else
     {
         if (self.applicationIdentifier)
         {
@@ -945,6 +955,27 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 - (void)_checkLTE
 {
     self.isUsingLTE = [self.telephonyNetworkInfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE];
+}
+
+- (NSNumber *)positiveIntegerNumberWithObject:(id)object
+{
+    if ([object isKindOfClass:NSNumber.class])
+    {
+        if((strcmp([object objCType], @encode(float))) != 0 && (strcmp([object objCType], @encode(double))) != 0 && [object longLongValue] > 0)
+        {
+            return object;
+        }
+    }
+    else if ([object isKindOfClass:NSString.class])
+    {
+        NSString *text = object;
+        NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:text];
+        if([[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet: charSet] && [text characterAtIndex:0] != '0' && [text longLongValue] > 0)
+        {
+            return @(text.longLongValue);
+        }
+    }
+    return nil;
 }
 
 @end
