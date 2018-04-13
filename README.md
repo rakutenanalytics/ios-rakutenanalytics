@@ -537,7 +537,7 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
-@subsection analytics-3-0-0 3.0.0 (2018-04-09)
+@subsection analytics-3-0-0 3.0.0 (2018-04-13)
 * [REM-25315](https://jira.rakuten-it.com/jira/browse/REM-25315): Read RAT Account ID and Application ID from app's info.plist.
 * [REM-25524](https://jira.rakuten-it.com/jira/browse/REM-25524) / [REM-25547](https://jira.rakuten-it.com/jira/browse/REM-25547): Add Swift sample app and update Objective-C sample app to match latest analytics module API.
 * [REM-25864](https://jira.rakuten-it.com/jira/browse/REM-25864): Redesign module and separate functionality into `Core` and `RAT` CocoaPods subspecs.
