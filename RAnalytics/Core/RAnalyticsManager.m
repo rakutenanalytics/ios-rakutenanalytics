@@ -98,7 +98,20 @@ static RAnalyticsManager *_instance = nil;
         [self addTracker:_SDKTracker.sharedInstance];
 
 #if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)
-        [self addTracker:RAnalyticsRATTracker.sharedInstance];
+        // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
+        // always rely solely on header availability so we also do a runtime check
+        
+        Class ratTrackerClass = NSClassFromString(@"RAnalyticsRATTracker");
+        SEL selector = NSSelectorFromString(@"sharedInstance");
+        
+        if ([ratTrackerClass respondsToSelector:selector])
+        {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            id ratTracker = [ratTrackerClass performSelector:selector];
+            [self addTracker:ratTracker];
+#pragma clang diagnostic pop
+        }
 #endif
         /*
          * Set up the location manager
