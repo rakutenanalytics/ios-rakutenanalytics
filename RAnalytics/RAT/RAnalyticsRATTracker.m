@@ -21,6 +21,8 @@ static const NSTimeInterval  RATRpCookieRequestInitialRetryInterval = 10u; //10s
 static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2
 static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 10 mins as the time out
 
+const char* _RATReachabilityHost = "8.8.8.8"; // Google DNS Server
+
 // Recursively try to find a URL in a view hierarchy
 static NSURL *findURLForView(UIView *view)
 {
@@ -200,7 +202,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         static SCNetworkReachabilityRef reachability;
         static dispatch_once_t oncet;
         dispatch_once(&oncet, ^{
-            reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, endpoint.host.UTF8String);
+            reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, _RATReachabilityHost);
             SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
             SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
 
