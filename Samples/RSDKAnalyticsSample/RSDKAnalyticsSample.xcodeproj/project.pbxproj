@@ -453,7 +453,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -486,7 +485,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -520,7 +518,6 @@
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -557,7 +554,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

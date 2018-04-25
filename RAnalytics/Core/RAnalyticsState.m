@@ -33,7 +33,6 @@
                          deviceIdentifier:(NSString *)deviceIdentifier
 {
     NSParameterAssert(sessionIdentifier.length);
-    NSParameterAssert(deviceIdentifier.length);
 
     if (self = [super init])
     {
