@@ -208,12 +208,12 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(RAnalyticsManager.State) @interface RAnalyticsSta
  * Create a new state object.
  *
  * @param sessionIdentifier Globally-unique string updated every time a new session starts.
- * @param deviceIdentifier  Globally-unique string identifying the current device across all Rakuten applications.
+ * @param deviceIdentifier  Globally-unique string identifying the current device across all Rakuten applications. Optional, because the app may not have enabled keychain sharing.
  *
  * @return New RAnalyticsState object.
  */
 - (instancetype)initWithSessionIdentifier:(NSString *)sessionIdentifier
-                         deviceIdentifier:(NSString *)deviceIdentifier NS_DESIGNATED_INITIALIZER;
+                         deviceIdentifier:(NSString *__nullable)deviceIdentifier NS_DESIGNATED_INITIALIZER;
 
 @end
 

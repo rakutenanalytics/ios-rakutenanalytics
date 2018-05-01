@@ -30,6 +30,10 @@
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location services are required</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location services are required</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location services are required</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Enable location tracking.</string>
 	<key>UIMainStoryboardFile</key>
