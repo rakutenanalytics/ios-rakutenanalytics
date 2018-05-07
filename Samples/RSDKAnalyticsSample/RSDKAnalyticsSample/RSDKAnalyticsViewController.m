@@ -7,8 +7,8 @@
 /////////////////////////////////////////////////////////////////
 
 @interface RSDKAnalyticsViewController ()
-@property (nonatomic) uint64_t accountId;
-@property (nonatomic) int64_t serviceId;
+@property (nonatomic) NSObject *accountId;
+@property (nonatomic) NSObject *serviceId;
 @end
 
 @implementation RSDKAnalyticsViewController
@@ -81,10 +81,11 @@
 
 - (IBAction)spool
 {
+    RSDKAnalyticsRecordForm *form = self.formController.form;
     [SVProgressHUD showSuccessWithStatus:@"Spooled!"];
     [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"SampleEvent" parameters:@{@"foo":@"bar",
-                                                                                         @"acc":@(self.accountId),
-                                                                                         @"aid":@(self.serviceId)
+                                                                                         @"acc":self.accountId ?: @(form.accountId),
+                                                                                         @"aid":self.serviceId ?: @(form.serviceId)
                                                                                          }] track];
 }
 
@@ -155,7 +156,7 @@
     NSString *acc = cell.textField.text;
     if (acc.length)
     {
-        self.accountId = [acc longLongValue];
+        self.accountId = acc;
     }
 }
 
@@ -164,7 +165,7 @@
     NSString *aid = cell.textField.text;
     if (aid.length)
     {
-        self.serviceId = [aid longLongValue];
+        self.serviceId = aid;
     }
 }
 
