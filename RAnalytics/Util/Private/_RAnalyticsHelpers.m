@@ -8,14 +8,14 @@ BOOL _RAnalyticsObjectsEqual(id objA, id objB)
 
 NSURL *_RAnalyticsEndpointAddress(void)
 {
-    NSString *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATBaseURL"];
+    NSString *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATEndpoint"];
     
-    NSURL* userRAEURL = plistObj.length != 0 ? [NSURL URLWithString:plistObj] : nil;
+    NSURL* userRATURL = plistObj.length != 0 ? [NSURL URLWithString:plistObj] : nil;
     NSURL* RAEProductionURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
     NSURL* RAEStagingURL    = [NSURL URLWithString:@"https://stg.rat.rakuten.co.jp/"];
     
-    if (userRAEURL) {
-        return userRAEURL;
+    if (userRATURL) {
+        return userRATURL;
     }
     
     #pragma clang diagnostic push

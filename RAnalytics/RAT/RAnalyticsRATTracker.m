@@ -61,11 +61,7 @@ static NSURL *findURLForView(UIView *view)
     return url;
 }
 
-NS_INLINE NSString *const _RATTableName()
-{
-    BOOL useStaging = [RAnalyticsManager.sharedInstance shouldUseStagingEnvironment];
-    return useStaging ? @"RAT_STAGING" : @"RAKUTEN_ANALYTICS_TABLE";
-}
+NSString* const _RATTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -227,7 +223,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         });
 
         // create a sender.
-        _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint databaseTableName:_RATTableName()];
+        _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint databaseTableName:_RATTableName];
         [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
         
         _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;

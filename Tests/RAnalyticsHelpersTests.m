@@ -12,7 +12,7 @@ describe(@"RAnalyticsHelpers", ^{
         });
         
         it(@"should return user-defined RAT url if user set RAT url in app info.plist", ^{
-            [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@"https://example.com" withArguments:@"RATBaseURL"];
+            [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@"https://example.com" withArguments:@"RATEndpoint"];
             
             NSURL* url = _RAnalyticsEndpointAddress();
             
