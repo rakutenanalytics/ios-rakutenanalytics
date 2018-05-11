@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 165C4AA720A56ABE00920439 /* RAnalyticsHelpersTests.m */; };
 		5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* EventTests.m */; };
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		165C4AA720A56ABE00920439 /* RAnalyticsHelpersTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsHelpersTests.m; sourceTree = "<group>"; };
 		5A3BC1711D3629EB00BBCA54 /* EventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTests.m; sourceTree = "<group>"; };
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */,
 				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
 				6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */,
+				165C4AA720A56ABE00920439 /* RAnalyticsHelpersTests.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				69E1BBCF1DADC17A00127885 /* DatabaseTests.m in Sources */,
 				5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
+				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
 				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
 			);

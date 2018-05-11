@@ -46,8 +46,11 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RAnalyticsManager : 
 
 /**
  * Control whether to use the staging environment or not. Defaults to `NO`.
+ *
+ * @deprecated Deprecated. Clients should set RAT endpoint URL in info.plist under RATBaseURL key.
+ *             If base URL is not set, staging property will take effect.
  */
-@property (nonatomic) BOOL shouldUseStagingEnvironment;
+@property (nonatomic) BOOL shouldUseStagingEnvironment DEPRECATED_MSG_ATTRIBUTE("Clients should set RAT endpoint URL in info.plist under RATBaseURL key");
 
 /**
  * Control whether the SDK should track the device's location or not.
