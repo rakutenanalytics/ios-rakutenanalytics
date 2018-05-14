@@ -4,11 +4,7 @@
 #import "RAnalyticsSender.h"
 #import "_SDKTracker.h"
 
-NS_INLINE NSString *const _SDKTableName()
-{
-    BOOL useStaging = [RAnalyticsManager.sharedInstance shouldUseStagingEnvironment];
-    return useStaging ? @"SDK_STAGING" : @"RAKUTEN_ANALYTICS_SDK_TABLE";
-}
+NSString* const _SDKTableName = @"RAKUTEN_ANALYTICS_SDK_TABLE";
 
 @interface _SDKTracker ()
 @property (nonatomic) RAnalyticsSender *sender;
@@ -37,7 +33,7 @@ NS_INLINE NSString *const _SDKTableName()
     if (self = [super init])
     {
         // create a sender.
-        _sender = [[RAnalyticsSender alloc] initWithEndpoint:_RAnalyticsEndpointAddress() databaseTableName:_SDKTableName()];
+        _sender = [[RAnalyticsSender alloc] initWithEndpoint:_RAnalyticsEndpointAddress() databaseTableName:_SDKTableName];
         [_sender setBatchingDelayBlock:^NSTimeInterval{
             return 60.0;
         }]; // default is 1 minute.

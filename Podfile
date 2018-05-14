@@ -13,6 +13,7 @@ abstract_target 'Common' do
 
   target 'Tests' do
     pod 'RAnalytics', :path => './RAnalytics.podspec'
+    pod 'Kiwi', '~> 3.0.0'
   end
 
   target 'CoreTests' do

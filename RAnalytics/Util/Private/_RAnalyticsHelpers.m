@@ -8,15 +8,22 @@ BOOL _RAnalyticsObjectsEqual(id objA, id objB)
 
 NSURL *_RAnalyticsEndpointAddress(void)
 {
-    static NSURL *productionURL, *stagingURL;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^
-                  {
-                      productionURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
-                      stagingURL    = [NSURL URLWithString:@"https://stg.rat.rakuten.co.jp/"];
-                  });
+    NSString *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATEndpoint"];
+    
+    NSURL* userRATURL = plistObj.length != 0 ? [NSURL URLWithString:plistObj] : nil;
+    NSURL* RAEProductionURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
+    NSURL* RAEStagingURL    = [NSURL URLWithString:@"https://stg.rat.rakuten.co.jp/"];
+    
+    if (userRATURL) {
+        return userRATURL;
+    }
+    
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL useStaging = [RAnalyticsManager sharedInstance].shouldUseStagingEnvironment;
-    return useStaging ? stagingURL : productionURL;
+    #pragma clang diagnostic pop
+    return useStaging ? RAEStagingURL : RAEProductionURL;
+    
 }
 
 NSBundle *_RAnalyticsAssetsBundle(void)
