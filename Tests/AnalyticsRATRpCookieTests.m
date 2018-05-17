@@ -3,14 +3,13 @@
  * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
  */
 @import XCTest;
-#import <RAnalytics/RAnalytics.h>
-#import <RAnalytics/RAnalyticsState.h>
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
-#import <XCTest/XCTest.h>
+#import <RAnalytics/RAnalytics.h>
+#import <RAnalytics/RAnalyticsState.h>
+
+#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 @interface RAnalyticsRATTracker ()
 - (instancetype)initInstance;
@@ -142,3 +141,4 @@
 }
 
 @end
+

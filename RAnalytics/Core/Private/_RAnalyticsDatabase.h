@@ -1,3 +1,4 @@
+#import <sqlite3.h>
 #import <RAnalytics/RAnalyticsDefines.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -13,6 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
 
 /*
+ * Creates DB manager instance with SQLite connection
+ *
+ * @param connection SQLite DB connection
+ */
++(_RAnalyticsDatabase*)databaseWithConnection:(sqlite3*)connection;
+
+/*
  * Insert a new, single blob into a table.
  *
  * @param blob                  Blob to insert.
@@ -20,7 +28,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param maximumNumberOfBlobs  Maximum number of blobs to keep in the table.
  * @param completion            Block to call upon completion.
  */
-+ (void)insertBlob:(NSData *)blob
+- (void)insertBlob:(NSData *)blob
               into:(NSString *)table
              limit:(unsigned int)maximumNumberOfBlobs
               then:(dispatch_block_t)completion;
@@ -33,7 +41,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param maximumNumberOfBlobs  Maximum number of blobs to keep in the table.
  * @param completion            Block to call upon completion.
  */
-+ (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+- (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
                into:(NSString *)table
               limit:(unsigned int)maximumNumberOfBlobs
                then:(dispatch_block_t)completion;
@@ -45,7 +53,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param table                 Name of the table.
  * @param completion            Block to call upon completion.
  */
-+ (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+- (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
               from:(NSString *)table
               then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
 
@@ -56,9 +64,17 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param table        Name of the table.
  * @param completion   Block to call upon completion.
  */
-+ (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+- (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
                                 in:(NSString *)table
                               then:(dispatch_block_t)completion;
+
 @end
+
+/*
+ * Creates connection to the actual DB used by SDK.
+ * DB created in user documents folder.
+ * DB name is RSDKAnalytics.db
+ */
+sqlite3* mkAnalyticsDBConnection(void);
 
 NS_ASSUME_NONNULL_END

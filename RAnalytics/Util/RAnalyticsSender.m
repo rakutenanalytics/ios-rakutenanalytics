@@ -13,6 +13,7 @@ static const unsigned int    _RATBatchSize      = 16u;
 
 @property (copy, nonatomic) NSURL          *endpoint;
 @property (copy, nonatomic) NSString       *databaseTableName;
+@property (nonatomic) _RAnalyticsDatabase* database;
 
 /*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
@@ -39,6 +40,7 @@ static const unsigned int    _RATBatchSize      = 16u;
     {
         _endpoint = endpoint;
         _databaseTableName = databaseTableName;
+        _database = [_RAnalyticsDatabase databaseWithConnection:mkAnalyticsDBConnection()];
 
         /*
          * Listen to new session start event
@@ -72,13 +74,13 @@ static const unsigned int    _RATBatchSize      = 16u;
 - (void)_storeAndSendEventData:(NSData *)jsonData
 {
     typeof(self) __weak weakSelf = self;
-    [_RAnalyticsDatabase insertBlob:jsonData
-                               into:_databaseTableName
-                              limit:_RATTableBlobLimit
-                               then:^{
-                                      typeof(weakSelf) __strong strongSelf = weakSelf;
-                                      [strongSelf _scheduleUploadOrPerformImmediately];
-                                  }];
+    [_database insertBlob:jsonData
+                     into:_databaseTableName
+                    limit:_RATTableBlobLimit
+                     then:^{
+                         typeof(weakSelf) __strong strongSelf = weakSelf;
+                         [strongSelf _scheduleUploadOrPerformImmediately];
+                     }];
 }
 
 - (void)_scheduleUploadOrPerformImmediately
@@ -113,21 +115,21 @@ static const unsigned int    _RATBatchSize      = 16u;
      */
 
     typeof(self) __weak weakSelf = self;
-    [_RAnalyticsDatabase fetchBlobs:_RATBatchSize
-                               from:_databaseTableName
-                               then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
-                                      typeof(weakSelf) __strong strongSelf = weakSelf;
-                                      if (blobs)
-                                      {
-                                          RAnalyticsDebugLog(@"Records fetched from DB, now upload them");
-                                          [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
-                                      }
-                                      else
-                                      {
-                                          RAnalyticsDebugLog(@"No records found in DB so end upload");
-                                          [strongSelf _backgroundUploadEnded];
-                                      }
-                                  }];
+    [_database fetchBlobs:_RATBatchSize
+                     from:_databaseTableName
+                     then:^(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers) {
+                         typeof(weakSelf) __strong strongSelf = weakSelf;
+                         if (blobs)
+                         {
+                             RAnalyticsDebugLog(@"Records fetched from DB, now upload them");
+                             [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
+                         }
+                         else
+                         {
+                             RAnalyticsDebugLog(@"No records found in DB so end upload");
+                             [strongSelf _backgroundUploadEnded];
+                         }
+                     }];
 }
 
 /*
@@ -248,7 +250,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                    * Delete the records from the local database.
                                                    */
 
-                                                  [_RAnalyticsDatabase deleteBlobsWithIdentifiers:identifiers
+                                                  [_database deleteBlobsWithIdentifiers:identifiers
                                                                                                in:_databaseTableName
                                                                                              then:^{
                                                                                                  // To throttle uploads, we schedule a new upload to send the rest of the records.

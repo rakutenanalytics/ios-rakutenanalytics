@@ -1,8 +1,10 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
+
+#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
+
 #import "TrackerTests.h"
 
 #pragma mark - Module Internals
@@ -99,14 +101,14 @@
     [self.mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
         [mock stopMocking];
     }];
-    
+
     NSInteger expected = 10;
     id mockBundle = OCMPartialMock(NSBundle.mainBundle);
     OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAccountIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
-    
+
     // need a freshly allocated instance so that the plist is read
     RAnalyticsRATTracker *tracker = [RAnalyticsRATTracker.alloc initInstance];
-    
+
     XCTAssertEqual(tracker.accountIdentifier, expected);
 }
 
@@ -121,14 +123,14 @@
     [self.mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
         [mock stopMocking];
     }];
-    
+
     NSInteger expected = 10;
     id mockBundle = OCMPartialMock(NSBundle.mainBundle);
     OCMStub([mockBundle objectForInfoDictionaryKey:@"RATAppIdentifier"]).andReturn([NSNumber numberWithLongLong:expected]);
-    
+
     // need a freshly allocated instance so that the plist is read
     RAnalyticsRATTracker *tracker = [RAnalyticsRATTracker.alloc initInstance];
-    
+
     XCTAssertEqual(tracker.applicationIdentifier, expected);
 }
 
@@ -313,7 +315,7 @@
     NSString *discoverEvent = @"_rem_discover_event";
     NSString *appName       = @"appName";
     NSString *storeURL      = @"storeUrl";
-    
+
     id event = [RAnalyticsEvent.alloc initWithName:discoverEvent
                                            parameters:@{@"prApp" : appName, @"prStoreUrl": storeURL}];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:discoverEvent];
@@ -382,10 +384,10 @@
 {
     id deviceSpy = OCMPartialMock(UIDevice.currentDevice);
     [self addMock:deviceSpy];
-    
+
     OCMStub([deviceSpy batteryState]).andReturn(UIDeviceBatteryStateUnplugged);
     OCMStub([deviceSpy batteryLevel]).andReturn(0.5);
-    
+
     id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
     NSNumber *powerstatus = payload[@"powerstatus"],
              *mbat        = payload[@"mbat"];
@@ -587,3 +589,4 @@
 }
 
 @end
+

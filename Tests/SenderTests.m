@@ -3,7 +3,8 @@
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import <OCMock/OCMock.h>
 #import "MockedDatabase.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
+
+#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 
 @interface RAnalyticsSender()
 @property (copy, nonatomic) NSURL          *endpoint;
@@ -26,24 +27,15 @@
     _mocks = NSMutableArray.new;
     _payload = @{@"key":@"value"};
 
-    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"] databaseTableName:@"testTableName"];
-
     // Mock the database
     _database = MockedDatabase.new;
+    
     id dbMock = OCMClassMock(_RAnalyticsDatabase.class);
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(insertBlobs:into:limit:then:) onObject:_database]
-     insertBlobs:OCMOCK_ANY into:OCMOCK_ANY limit:0 then:OCMOCK_ANY];
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(fetchBlobs:from:then:) onObject:_database]
-     fetchBlobs:0 from:OCMOCK_ANY then:OCMOCK_ANY];
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(deleteBlobsWithIdentifiers:in:then:) onObject:_database]
-     deleteBlobsWithIdentifiers:OCMOCK_ANY in:OCMOCK_ANY then:OCMOCK_ANY];
     [self addMock:dbMock];
+    
+    OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
+    
+    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"] databaseTableName:@"testTableName"];
 }
 
 - (void)tearDown {
