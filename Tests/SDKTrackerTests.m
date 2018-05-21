@@ -1,9 +1,11 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
+
 #import "../RAnalytics/Core/Private/_SDKTracker.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
+
 #import "TrackerTests.h"
 
 #pragma mark - Module Internals
@@ -86,3 +88,4 @@
     XCTAssert([appInfo containsString:@"iphonesimulator"]);
 }
 @end
+

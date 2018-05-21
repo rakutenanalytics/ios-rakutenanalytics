@@ -1,8 +1,9 @@
 #import "TrackerTests.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Util/Private/_RAnalyticsDatabase.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
+
+#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 
 @interface RAnalyticsState ()
 @property (nonatomic, readwrite, copy)              NSString                    *sessionIdentifier;
@@ -85,21 +86,11 @@
 
     // Mock the database
     _database = MockedDatabase.new;
+    
     id dbMock = OCMClassMock(_RAnalyticsDatabase.class);
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(insertBlobs:into:limit:then:) onObject:_database]
-     insertBlobs:OCMOCK_ANY into:OCMOCK_ANY limit:0 then:OCMOCK_ANY];
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(fetchBlobs:from:then:) onObject:_database]
-     fetchBlobs:0 from:OCMOCK_ANY then:OCMOCK_ANY];
-
-    [[[[[dbMock stub] classMethod] ignoringNonObjectArgs]
-      andCall:@selector(deleteBlobsWithIdentifiers:in:then:) onObject:_database]
-     deleteBlobsWithIdentifiers:OCMOCK_ANY in:OCMOCK_ANY then:OCMOCK_ANY];
-
     [self addMock:dbMock];
+    
+    OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
 
     // Mock the SDKTracker singleton so that each test gets a fresh one
     _tracker = [self testedTracker];
@@ -168,3 +159,4 @@
 }
 
 @end
+
