@@ -3,7 +3,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RAnalytics/RAnalytics.h>
 #import <OCMock/OCMock.h>
-#import "../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
 
 @interface _RAnalyticsLaunchCollector()
 @property (nonatomic) RAnalyticsOrigin origin;

@@ -34,20 +34,6 @@
                ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16E4817C20B3A789006CB857"
-               BuildableName = "FunctionalTests.xctest"
-               BlueprintName = "FunctionalTests"
-               ReferencedContainer = "container:CI.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -67,6 +53,11 @@
                BlueprintName = "UnitTests"
                ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "RAnalyticsDatabaseFunctionalTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
          <TestableReference
             skipped = "NO">
@@ -75,16 +66,6 @@
                BlueprintIdentifier = "6D7573892074C59E006AAC66"
                BuildableName = "CoreTests.xctest"
                BlueprintName = "CoreTests"
-               ReferencedContainer = "container:CI.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "16E4817C20B3A789006CB857"
-               BuildableName = "FunctionalTests.xctest"
-               BlueprintName = "FunctionalTests"
                ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </TestableReference>

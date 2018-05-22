@@ -4,7 +4,7 @@
 #import <OCMock/OCMock.h>
 #import "MockedDatabase.h"
 
-#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 
 @interface RAnalyticsSender()
 @property (copy, nonatomic) NSURL          *endpoint;

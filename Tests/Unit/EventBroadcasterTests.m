@@ -1,7 +1,7 @@
 @import XCTest;
 #import <RAnalyticsBroadcast/RAnalyticsBroadcast.h>
 #import <RAnalytics/RAnalytics.h>
-#import "../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
 #import <OCMock/OCMock.h>
 
 @interface _RAnalyticsExternalCollector ()

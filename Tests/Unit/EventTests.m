@@ -1,7 +1,7 @@
 @import XCTest;
 #import <RAnalytics/RAnalytics.h>
 #import <OCMock/OCMock.h>
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 @interface RAnalyticsManager ()
 @property (nonatomic, nullable, copy) NSString *deviceIdentifier;

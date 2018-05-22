@@ -9,7 +9,7 @@
 #import <RAnalytics/RAnalytics.h>
 #import <RAnalytics/RAnalyticsState.h>
 
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 @interface RAnalyticsRATTracker ()
 - (instancetype)initInstance;

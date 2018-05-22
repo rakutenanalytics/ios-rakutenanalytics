@@ -1,6 +1,6 @@
 #import <Kiwi/Kiwi.h>
 #import <RAnalytics/RAnalytics.h>
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 SPEC_BEGIN(RAnalyticsHelpersTests)
 
