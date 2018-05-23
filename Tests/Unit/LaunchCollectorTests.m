@@ -1,9 +1,9 @@
 @import XCTest;
 #import <RAnalytics/RAnalytics.h>
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
-#import "../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
-#import "../RAnalytics/Core/Private/_RAnalyticsPrivateEvents.h"
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsPrivateEvents.h"
 #import <OCMock/OCMock.h>
 
 @interface _RAnalyticsExternalCollector ()

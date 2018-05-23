@@ -7,11 +7,11 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "693B58071B7C6159008C5E86"
@@ -21,11 +21,11 @@
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6D7573892074C59E006AAC66"
@@ -62,26 +62,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "693B58071B7C6159008C5E86"
-               BuildableName = "UnitTests.xctest"
-               BlueprintName = "UnitTests"
-               ReferencedContainer = "container:CI.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6D7573892074C59E006AAC66"
-               BuildableName = "CoreTests.xctest"
-               BlueprintName = "CoreTests"
-               ReferencedContainer = "container:CI.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "16E4817C20B3A789006CB857"
                BuildableName = "FunctionalTests.xctest"
                BlueprintName = "FunctionalTests"
@@ -89,15 +69,6 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "693B58071B7C6159008C5E86"
-            BuildableName = "UnitTests.xctest"
-            BlueprintName = "UnitTests"
-            ReferencedContainer = "container:CI.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -115,9 +86,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "693B58071B7C6159008C5E86"
-            BuildableName = "UnitTests.xctest"
-            BlueprintName = "UnitTests"
+            BlueprintIdentifier = "16E4817C20B3A789006CB857"
+            BuildableName = "FunctionalTests.xctest"
+            BlueprintName = "FunctionalTests"
             ReferencedContainer = "container:CI.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -133,9 +104,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "693B58071B7C6159008C5E86"
-            BuildableName = "UnitTests.xctest"
-            BlueprintName = "UnitTests"
+            BlueprintIdentifier = "16E4817C20B3A789006CB857"
+            BuildableName = "FunctionalTests.xctest"
+            BlueprintName = "FunctionalTests"
             ReferencedContainer = "container:CI.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

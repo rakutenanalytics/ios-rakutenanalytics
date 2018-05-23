@@ -1,6 +1,6 @@
 @import XCTest;
 #import <RAnalytics/RAnalytics.h>
-#import "../RAnalytics/Core/Private/_SDKTracker.h"
+#import "../../RAnalytics/Core/Private/_SDKTracker.h"
 
 @interface RAnalyticsManager()<CLLocationManagerDelegate>
 @property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;

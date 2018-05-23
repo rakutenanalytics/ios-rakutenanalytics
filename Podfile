@@ -10,10 +10,14 @@ abstract_target 'Common' do
   pod 'RDeviceIdentifier', :inhibit_warnings => true, :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
   pod 'OCMock'
   pod 'OHHTTPStubs'
+  pod 'Kiwi', '~> 3.0.0'
 
-  target 'Tests' do
+  target 'UnitTests' do
     pod 'RAnalytics', :path => './RAnalytics.podspec'
-    pod 'Kiwi', '~> 3.0.0'
+  end
+
+  target 'FunctionalTests' do
+      pod 'RAnalytics', :path => './RAnalytics.podspec'
   end
 
   target 'CoreTests' do

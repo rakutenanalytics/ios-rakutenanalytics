@@ -2,8 +2,8 @@
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
-#import "../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 
 @interface RAnalyticsState ()
 @property (nonatomic, readwrite, copy)              NSString                    *sessionIdentifier;
