@@ -11,18 +11,19 @@ NSData* mkAnotherEvent(void);
 SPEC_BEGIN(RAnalyticsDatabaseFunctionalTests)
 
 describe(@"RAnalyticsDatabase", ^{
+    NSString *databaseName = @"RSDKAnalytics.db";
     __block NSString* databasePath;
     __block sqlite3* connection;
     
     beforeAll(^{
         NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-        databasePath = [documentsDirectoryPath stringByAppendingPathComponent:@"RSDKAnalytics.db"];
+        databasePath = [documentsDirectoryPath stringByAppendingPathComponent:databaseName];
 
         [[NSFileManager defaultManager] removeItemAtPath:databasePath error:nil];
     });
     
     beforeEach(^{
-        connection = mkAnalyticsDBConnection();
+        connection = mkAnalyticsDBConnectionWithName(databaseName);
     });
     
     afterEach(^{

@@ -33,19 +33,19 @@ static const unsigned int    _RATBatchSize      = 16u;
 
 @implementation RAnalyticsSender
 
-- (instancetype)initWithEndpoint:(NSURL *)endpoint databaseTableName:(NSString *)databaseTableName
+- (instancetype)initWithEndpoint:(NSURL *)endpoint databaseName:(NSString *)databaseName databaseTableName:(NSString *)tableName
 {
-    if (!endpoint.absoluteString.length || !databaseTableName.length) return nil;
+    if (!endpoint.absoluteString.length || !databaseName.length || !tableName.length) return nil;
     if (self = [super init])
     {
         _endpoint = endpoint;
-        _databaseTableName = databaseTableName;
-        _database = [_RAnalyticsDatabase databaseWithConnection:mkAnalyticsDBConnection()];
-
+        _databaseTableName = tableName;
+        _database = [_RAnalyticsDatabase databaseWithConnection:mkAnalyticsDBConnectionWithName(databaseName)];
+        
         /*
          * Listen to new session start event
          */
-
+        
         [NSNotificationCenter.defaultCenter addObserver:self
                                                selector:@selector(_startNewSessionEvent)
                                                    name:UIApplicationDidBecomeActiveNotification
@@ -121,12 +121,12 @@ static const unsigned int    _RATBatchSize      = 16u;
                          typeof(weakSelf) __strong strongSelf = weakSelf;
                          if (blobs)
                          {
-                             RAnalyticsDebugLog(@"Records fetched from DB, now upload them");
+                             RAnalyticsDebugLog(@"Records fetched from DB table %@, now upload them", _databaseTableName);
                              [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
                          }
                          else
                          {
-                             RAnalyticsDebugLog(@"No records found in DB so end upload");
+                             RAnalyticsDebugLog(@"No records found in DB table %@ so end upload", _databaseTableName);
                              [strongSelf _backgroundUploadEnded];
                          }
                      }];
@@ -234,7 +234,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                    */
 #if DEBUG
                                                   NSMutableString *logMessage = [NSMutableString stringWithCapacity:20];
-                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to RAT from Tracker %@:",strongSelf.description]];
+                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to RAT from %@:",strongSelf.description]];
 
                                                   [recordGroup enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                                                       [logMessage appendFormat:@"\n%@ %@", @(idx), obj];

@@ -34,6 +34,8 @@
         [locationManager requestAlwaysAuthorization];
     }
     self.locationManager = locationManager;
+    
+    [RAnalyticsRATTracker.sharedInstance setBatchingDelay:10];
 
     return YES;
 }

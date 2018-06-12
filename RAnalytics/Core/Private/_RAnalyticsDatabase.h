@@ -73,8 +73,11 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
 /*
  * Creates connection to the actual DB used by SDK.
  * DB created in user documents folder.
- * DB name is RSDKAnalytics.db
+ *
+ * @param databaseName  Name of database to create
+ *
+ * @return sqlite connection
  */
-sqlite3* mkAnalyticsDBConnection(void);
+sqlite3* mkAnalyticsDBConnectionWithName(NSString *databaseName);
 
 NS_ASSUME_NONNULL_END
