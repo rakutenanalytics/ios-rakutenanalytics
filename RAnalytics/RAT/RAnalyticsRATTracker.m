@@ -16,7 +16,6 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
-
 static const NSTimeInterval  RATRpCookieRequestInitialRetryInterval = 10u; //10s as initial timeout request
 static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2
 static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 10 mins as the time out
@@ -61,6 +60,7 @@ static NSURL *findURLForView(UIView *view)
     return url;
 }
 
+NSString* const _RATDatabaseName = @"RSDKAnalytics.db";
 NSString* const _RATTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 ////////////////////////////////////////////////////////////////////////////
@@ -223,7 +223,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         });
 
         // create a sender.
-        _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint databaseTableName:_RATTableName];
+        _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint
+                                                databaseName:_RATDatabaseName
+                                           databaseTableName:_RATTableName];
         [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
         
         _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;

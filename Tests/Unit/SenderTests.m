@@ -2,6 +2,7 @@
 #import <RAnalytics/RAnalyticsSender.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import <OCMock/OCMock.h>
+#import <Kiwi/Kiwi.h>
 #import "MockedDatabase.h"
 
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
@@ -9,6 +10,7 @@
 @interface RAnalyticsSender()
 @property (copy, nonatomic) NSURL          *endpoint;
 @property (copy, nonatomic) NSString       *databaseTableName;
+@property (nonatomic) _RAnalyticsDatabase  *database;
 @property (nonatomic) NSTimeInterval        uploadTimerInterval;
 @property (nonatomic) NSTimer              *uploadTimer;
 @end
@@ -35,7 +37,7 @@
     
     OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
     
-    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"] databaseTableName:@"testTableName"];
+    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"] databaseName:@"dbName.db" databaseTableName:@"testTableName"];
 }
 
 - (void)tearDown {
@@ -213,7 +215,7 @@
                                                                            queue:queue
                                                                       usingBlock:^(NSNotification * _Nonnull note)
                            {
-                               uploadsToRAT++;
+                               if ([((NSArray *)note.object).firstObject isEqual:_payload]) uploadsToRAT++;
                            }];
 
     XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
@@ -247,3 +249,66 @@
 }
 
 @end
+
+SPEC_BEGIN(SenderDatabaseTests)
+describe(@"initWithEndpoint:databaseName:databaseTableName:", ^{
+    NSURL *endpointURL = [NSURL URLWithString:@"https://www.example.com"];
+    
+    it(@"should create a database connection when a database name is passed as param", ^{
+        RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
+                                                               databaseName:@"databaseName"
+                                                          databaseTableName:@"tableName"];
+        
+        [[sender.database should] beNonNil];
+    });
+    context(@"failed initialization", ^{
+        it(@"should fail intialization when nil endpoint is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:nil
+                                                                   databaseName:@"databaseName"
+                                                              databaseTableName:@"tableName"];
+            
+            [[sender.database should] beNil];
+        });
+        
+        it(@"should fail intialization when zero-length endpoint is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:[NSURL URLWithString:@""]
+                                                                   databaseName:@"databaseName"
+                                                              databaseTableName:@"tableName"];
+            
+            [[sender.database should] beNil];
+        });
+        
+        it(@"should fail intialization when nil db name is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
+                                                                   databaseName:nil
+                                                              databaseTableName:nil];
+            
+            [[sender.database should] beNil];
+        });
+        
+        it(@"should fail intialization when zero-length db name is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
+                                                                   databaseName:@""
+                                                              databaseTableName:@"tableName"];
+            
+            [[sender.database should] beNil];
+        });
+        
+        it(@"should fail intialization when nil table name is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
+                                                                   databaseName:@"databaseName"
+                                                              databaseTableName:nil];
+            
+            [[sender.database should] beNil];
+        });
+        
+        it(@"should fail intialization when zero-length table name is passed as param", ^{
+            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
+                                                                   databaseName:@"databaseName"
+                                                              databaseTableName:@""];
+            
+            [[sender.database should] beNil];
+        });
+    });
+});
+SPEC_END

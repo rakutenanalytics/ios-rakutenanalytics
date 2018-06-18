@@ -6,6 +6,18 @@
 
 /////////////////////////////////////////////////////////////////
 
+static void perform_on_main_thread(dispatch_block_t block)
+{
+    if ([NSThread isMainThread])
+    {
+        block();
+    }
+    else
+    {
+        dispatch_async(dispatch_get_main_queue(), block);
+    }
+}
+
 @interface RSDKAnalyticsViewController ()
 @property (nonatomic) NSObject *accountId;
 @property (nonatomic) NSObject *serviceId;
@@ -94,9 +106,6 @@
 - (void)willUpload:(NSNotification *)notification
 {
     NSArray *records = notification.object;
-    NSLog(@"RSDKAnalytics will upload: %@", records);
-
-    // TODO: show pending uploads in the UI
 
     static UIImage *image;
     static dispatch_once_t once;
@@ -107,18 +116,19 @@
         image = [icon imageWithSize:CGSizeMake(56, 56)];
     });
 
-    [SVProgressHUD showImage:image
-                      status:[NSString stringWithFormat:@"Uploading %lu records…", (unsigned long)records.count]];
+    perform_on_main_thread(^{
+        [SVProgressHUD showImage:image
+                          status:[NSString stringWithFormat:@"Uploading %lu records…", (unsigned long)records.count]];
+    });
 }
 
 - (void)didUpload:(NSNotification *)notification
 {
     NSArray *records = notification.object;
-    NSLog(@"RSDKAnalytics did upload: %@", records);
 
-    // TODO: show completed uploads in the UI
-
-    [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"Uploaded %lu records!", (unsigned long)records.count]];
+    perform_on_main_thread(^{
+        [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"Uploaded %lu records!", (unsigned long)records.count]];
+    });
 }
 
 - (void)failedToUpload:(NSNotification *)notification
@@ -126,12 +136,13 @@
     NSArray *records = notification.object;
     NSError *error = notification.userInfo[NSUnderlyingErrorKey];
     NSLog(@"RSDKAnalytics failed to upload: %@, reason = %@", records, error);
+    
+    perform_on_main_thread(^{
+        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"Failed to upload %lu records:\n%@",
+                                            (unsigned long)records.count,
+                                            error.localizedDescription]];
+    });
 
-    // TODO: show failed uploads in the UI
-
-    [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"Failed to upload %lu records:\n%@",
-                                        (unsigned long)records.count,
-                                        error.localizedDescription]];
 }
 
 #pragma mark - FXFormFieldCell actions

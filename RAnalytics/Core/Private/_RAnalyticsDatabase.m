@@ -1,8 +1,6 @@
 #import "_RAnalyticsDatabase.h"
 #import "_RAnalyticsHelpers.h"
 
-NSString* const RAnalyticsDatabaseName = @"RSDKAnalytics.db";
-
 NSString* const RAnalyticsDBErrorDomain = @"RAnalyticsDBErrorDomain";
 NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
 
@@ -79,6 +77,10 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                     sqlite3_reset(statement);
                     sqlite3_finalize(statement);
                 }
+                else
+                {
+                    RAnalyticsErrorLog(@"insertBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection));
+                }
             }
             
             if (maximumNumberOfBlobs)
@@ -137,6 +139,10 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                 }
                 sqlite3_finalize(statement);
             }
+            else
+            {
+                RAnalyticsErrorLog(@"fetchBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection));
+            }
         }
         
         if (completion) {
@@ -181,6 +187,10 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                     sqlite3_reset(statement);
                     sqlite3_finalize(statement);
                 }
+                else
+                {
+                    RAnalyticsErrorLog(@"deleteBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection));
+                }
             }
             
             sqlite3_exec(sself->_connection, "commit transaction", 0, 0, 0);
@@ -205,7 +215,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
         NSString *query = [NSString stringWithFormat:@"create table if not exists %@ (id integer primary key, data blob)", table];
         
         if (sqlite3_exec(_connection, query.UTF8String, 0, 0, 0) != SQLITE_OK) {
-            NSString* message = [NSString stringWithFormat:@"Failed to create table: %s", sqlite3_errmsg(_connection)];
+            NSString* message = [NSString stringWithFormat:@"Failed to create table: %s code %d", sqlite3_errmsg(_connection), sqlite3_errcode(_connection)];
             
             RAnalyticsErrorLog(@"%@", message);
                                                             
@@ -221,9 +231,9 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
 
 @end
 
-sqlite3* mkAnalyticsDBConnection() {
+sqlite3* mkAnalyticsDBConnectionWithName(NSString *databaseName) {
     NSString *documentsDirectoryPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-    NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:RAnalyticsDatabaseName];
+    NSString *databasePath = [documentsDirectoryPath stringByAppendingPathComponent:databaseName];
     
     sqlite3* connection = 0;
     

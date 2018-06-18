@@ -16,14 +16,15 @@ NS_ASSUME_NONNULL_BEGIN
 RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsSender) @interface RAnalyticsSender : NSObject
 
 /**
- *  Initialize a new sender.
+ *  Initialize a new sender
  *
  *  @param endpoint              `[Required]` The endpoint to use.
+ *  @param databaseName          `[Required]` The name of the database to create.
  *  @param tableName             `[Required]` The name of the table in the database where the sender saves the data.
  *
  *  @return Initialized instance, or `nil` if initialization failed.
  */
-- (instancetype)initWithEndpoint:(NSURL *)endpoint databaseTableName:(NSString *)tableName;
+- (instancetype)initWithEndpoint:(NSURL *)endpoint databaseName:(NSString *)databaseName databaseTableName:(NSString *)tableName;
 
 /**
  * Send the data which is generated from the JSON object to the server.
