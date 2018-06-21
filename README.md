@@ -43,20 +43,8 @@ Key         | Value (Number type)
 `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID`
 `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID`
 
-@subsection analytics-configure-staging Using the staging environment
-The analytics module can be configured to use the staging environment when talking to the backend by setting RAnalyticsManager::shouldUseStagingEnvironment to `YES`:
-
-##### Swift 3
-
-@code{.swift}
-    AnalyticsManager.shared().shouldUseStagingEnvironment = true
-@endcode
-
-##### Objective C
-
-@code{.m}
-    RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
-@endcode
+@subsection analytics-configure-endpoint Configure a custom endpoint
+To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
 
 @subsection analytics-configure-location Location Tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
@@ -537,6 +525,13 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-3-1-0 3.1.0 (2018-06-25)
+* [SDKCF-158](https://jira.rakuten-it.com/jira/browse/SDKCF-158): Make RAT endpoint configurable in plist
+* [SDKCF-149](https://jira.rakuten-it.com/jira/browse/SDKCF-149): Make keychain sharing optional
+* [SDKCF-68](https://jira.rakuten-it.com/jira/browse/SDKCF-68): Support multiple app targets using different subspecs
+* [SDKCF-18](https://jira.rakuten-it.com/jira/browse/SDKCF-18): Add type validation for acc and aid values
+* [SDKCF-99](https://jira.rakuten-it.com/jira/browse/SDKCF-99) Fixed bug where "online":false status is shown in payload for some RAT events on iOS 8
+
 @subsection analytics-3-0-0 3.0.0 (2018-04-13)
 * [REM-25315](https://jira.rakuten-it.com/jira/browse/REM-25315): Read RAT Account ID and Application ID from app's info.plist.
 * [REM-25524](https://jira.rakuten-it.com/jira/browse/REM-25524) / [REM-25547](https://jira.rakuten-it.com/jira/browse/REM-25547): Add Swift sample app and update Objective-C sample app to match latest analytics module API.
