@@ -21,7 +21,7 @@ RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
  *
  * @return The shared instance.
  */
-+ (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
++ (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
 
 /**
  * Create a RAT specific event.

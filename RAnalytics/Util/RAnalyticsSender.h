@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RAnalyticsSender RAnalyticsSender.h <RAnalytics/RAnalyticsSender.h>
  */
-RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsSender) @interface RAnalyticsSender : NSObject
+RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsSender) @interface RAnalyticsSender : NSObject
 
 /**
  *  Initialize a new sender

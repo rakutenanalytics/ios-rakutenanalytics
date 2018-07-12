@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @class RAnalyticsManager RAnalyticsManager.h <RAnalytics/RAnalyticsManager.h>
  * @ingroup AnalyticsCore
  */
-RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RAnalyticsManager : NSObject
+RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
@@ -25,7 +25,7 @@ RSDKA_EXPORT RSDKA_SWIFT3_NAME(AnalyticsManager) @interface RAnalyticsManager : 
  *
  * @return The shared instance.
  */
-+ (instancetype)sharedInstance RSDKA_SWIFT3_NAME(shared());
++ (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
 
 /**
  * Process an event. The manager passes the event to each registered trackers, in turn.
