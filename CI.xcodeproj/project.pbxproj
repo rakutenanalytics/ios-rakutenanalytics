@@ -15,6 +15,7 @@
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
 		5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */; };
+		5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A895AE920F724D500D2E771 /* SwiftInterop.swift */; };
 		5AB254A320744B1900BF3EE9 /* AnalyticsRATRpCookieTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB254A220744B1800BF3EE9 /* AnalyticsRATRpCookieTests.m */; };
 		5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */; };
 		5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */; };
@@ -67,6 +68,8 @@
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
 		5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RATTrackerTests.m; sourceTree = "<group>"; };
+		5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnitTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		5A895AE920F724D500D2E771 /* SwiftInterop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftInterop.swift; sourceTree = "<group>"; };
 		5AB254A220744B1800BF3EE9 /* AnalyticsRATRpCookieTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsRATRpCookieTests.m; sourceTree = "<group>"; };
 		5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDKTrackerTests.m; sourceTree = "<group>"; };
 		5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockedDatabase.h; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 				6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */,
 				69E1BBCE1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m */,
 				165C4AA720A56ABE00920439 /* RAnalyticsHelpersTests.m */,
+				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
+				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -303,6 +308,7 @@
 					};
 					693B58071B7C6159008C5E86 = {
 						CreatedOnToolsVersion = 7.0;
+						LastSwiftMigration = 0940;
 						TestTargetID = 6D63A79C1E1F975E00F89009;
 					};
 					6D63A79C1E1F975E00F89009 = {
@@ -397,6 +403,7 @@
 				69E1BBCF1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m in Sources */,
 				5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
+				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
 				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
@@ -560,6 +567,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -596,6 +604,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -603,12 +612,14 @@
 		693B580E1B7C6159008C5E86 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Unit/UnitTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Host.app/Host";
 			};
 			name = Debug;
@@ -616,11 +627,13 @@
 		693B580F1B7C6159008C5E86 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.Tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Unit/UnitTests-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Host.app/Host";
 			};
 			name = Release;

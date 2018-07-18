@@ -18,9 +18,9 @@ typedef NSTimeInterval(^BatchingDelayBlock)(void);
  * Note: We assume Xcode 9 won't support Swift 2 anymore.
  */
 #if __has_attribute(swift_name) && ((__apple_build_version__ >= 9000000) || ((__apple_build_version__ >= 8000000) && (SWIFT_SDK_OVERLAY_DISPATCH_EPOCH >= 2)))
-#  define RSDKA_SWIFT3_NAME(n) __attribute__((swift_name(#n)))
+#  define RSDKA_SWIFT_NAME(n) __attribute__((swift_name(#n)))
 #else
-#  define RSDKA_SWIFT3_NAME(n)
+#  define RSDKA_SWIFT_NAME(n)
 #endif
 
 /*
