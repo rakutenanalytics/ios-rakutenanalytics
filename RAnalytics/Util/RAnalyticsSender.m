@@ -159,9 +159,12 @@ static const unsigned int    _RATBatchSize      = 16u;
         NSMutableArray *builder = [NSMutableArray arrayWithCapacity:records.count];
         for (NSData *recordData in records)
         {
-            [builder addObject:[NSJSONSerialization JSONObjectWithData:recordData
-                                                               options:0
-                                                                 error:NULL]];
+            id object = [NSJSONSerialization JSONObjectWithData:recordData
+                                                        options:0
+                                                          error:NULL];
+            if(object) {
+                [builder addObject:object];
+            }
         }
         builder.copy;
     });
