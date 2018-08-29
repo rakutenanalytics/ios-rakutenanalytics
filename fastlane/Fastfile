@@ -1,5 +1,5 @@
 # Import base_config from git
-import_from_git(url: 'https://gitpub.rakuten-it.com/scm/eco/ci-fastlane.git')
+import_from_git(url: 'https://github.com/rakutentech/ios-buildconfig.git')
 
 platform :ios do
   desc 'Build samples'
