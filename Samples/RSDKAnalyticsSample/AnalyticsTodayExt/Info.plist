@@ -27,5 +27,11 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widget-extension</string>
 	</dict>
+	<key>RMSDKEnableDebugLogging</key>
+	<true/>
+	<key>RATAppIdentifier</key>
+	<integer>123</integer>
+	<key>RATAccountIdentifier</key>
+	<integer>111</integer>
 </dict>
 </plist>
