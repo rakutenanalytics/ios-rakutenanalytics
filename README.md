@@ -160,6 +160,43 @@ Event name         | Required components
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
 
+@subsection analytics-appex Support for App Extensions
+The SDK can be added as a dependency to an App Extension target (e.g. Today Widget) and will compile successfully. The SDK's APIs such as @ref RAnalyticsEvent::track "track" (to track a custom event) can be used from an App Extension. 
+
+#### Requirements
+
+App Extensions need to follow the requirements at @ref analytics-configure-rat "Configuring RAT".
+
+* You MUST configure your RAT `accountId` and `applicationId` in the **App Extension** info.plist (in addition to your main app's info.plist)
+* To send events to a different endpoint you can set a `RATEndpoint` key in the **App Extension** info.plist
+* To enable debug logging you can create a boolean `RMSDKEnableDebugLogging` key set to YES in the **App Extension** info.plist
+
+#### Viewing events in Kibana
+
+[Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to visualize your data in real time.
+
+@note To search for App Extension events in kibana use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
+
+#### Limitations
+
+A known limitation due to app sandboxing is that the SDK cannot automatically fill the `userid` (normally contains a logged-in user's encrypted easy id) field in the payload of automatically tracked events such as `_rem_launch` when an event is sent by an App Extension.
+
+#### Track encrypted easy id
+
+To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using RAuthenticationAccount::loadAccountWithName:service:error: and then manually set the `userid` key to the loaded account's RAuthenticationAccount::trackingIdentifier :
+
+##### Swift 3
+
+@code{.swift}
+RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
+@endcode
+
+##### Objective C
+
+@code{.m}
+[[RAnalyticsRATTracker.sharedInstance eventWithEventType: @"custom_name" parameters: @{@"userid": account.trackingIdentifier}] track];
+@endcode
+
 @section analytics-migratev2v3 Migrating from v2 to v3
 - 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
 - Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.

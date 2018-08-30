@@ -17,6 +17,7 @@
 }
 
 - (IBAction)track:(id)sender {
+    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"widget_event" parameters:nil] track];
 }
 
 
