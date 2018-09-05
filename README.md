@@ -562,12 +562,16 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-3-1-1 3.1.1 (2018-09-05)
+* [SDKCF-619](https://jira.rakuten-it.com/jira/browse/SDKCF-619): Check object is valid before adding it to record array. Fixes crash observed in customer's Crashlytics report
+* [SDKCF-612](https://jira.rakuten-it.com/jira/browse/SDKCF-612): Add README section about tracking events from App Extension targets
+
 @subsection analytics-3-1-0 3.1.0 (2018-06-25)
 * [SDKCF-158](https://jira.rakuten-it.com/jira/browse/SDKCF-158): Make RAT endpoint configurable in plist
 * [SDKCF-149](https://jira.rakuten-it.com/jira/browse/SDKCF-149): Make keychain sharing optional
 * [SDKCF-68](https://jira.rakuten-it.com/jira/browse/SDKCF-68): Support multiple app targets using different subspecs
 * [SDKCF-18](https://jira.rakuten-it.com/jira/browse/SDKCF-18): Add type validation for acc and aid values
-* [SDKCF-99](https://jira.rakuten-it.com/jira/browse/SDKCF-99) Fixed bug where "online":false status is shown in payload for some RAT events on iOS 8
+* [SDKCF-99](https://jira.rakuten-it.com/jira/browse/SDKCF-99): Fixed bug where "online":false status is shown in payload for some RAT events on iOS 8
 
 @subsection analytics-3-0-0 3.0.0 (2018-04-13)
 * [REM-25315](https://jira.rakuten-it.com/jira/browse/REM-25315): Read RAT Account ID and Application ID from app's info.plist.
@@ -576,8 +580,8 @@ The custom tracker can then be added to the RAnalyticsManager:
 * [REM-25317](https://jira.rakuten-it.com/jira/browse/REM-25317): Add SDK @ref RAnalyticsTracker "Tracker" to track build information and non-Apple frameworks usage.
 
 @subsection analytics-2-13-0 2.13.0 (2018-01-11)
-* [REM-24194](https://jira.rakuten-it.com/jira/browse/REM-24194):Add support for App Extensions.
-* [REM-24746](https://jira.rakuten-it.com/jira/browse/REM-24746):Send Rp cookie to RAT.
+* [REM-24194](https://jira.rakuten-it.com/jira/browse/REM-24194): Add support for App Extensions.
+* [REM-24746](https://jira.rakuten-it.com/jira/browse/REM-24746): Send Rp cookie to RAT.
 
 @subsection analytics-2-12-0 2.12.0 (2017-11-13)
 * [REM-24171](https://jira.rakuten-it.com/jira/browse/REM-24171): Disable debug log for Analytics module.
