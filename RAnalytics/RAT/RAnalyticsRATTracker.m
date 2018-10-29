@@ -818,9 +818,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         if (![eventName isKindOfClass:NSString.class] || !eventName.length) return NO;
         
         payload[_RATETypeParameter] = eventName;
-        
+
+        NSDictionary *topLevelObject = [event.parameters[RAnalyticsCustomEventTopLevelObjectParameter] copy];
+        if ([topLevelObject isKindOfClass:NSDictionary.class] && topLevelObject.count) {
+            [payload addEntriesFromDictionary:topLevelObject];
+        }
+
         NSDictionary *parameters = [event.parameters[RAnalyticsCustomEventDataParameter] copy];
-        
         if ([parameters isKindOfClass:NSDictionary.class] && parameters.count)
         {
             [extra addEntriesFromDictionary:parameters];
@@ -876,7 +880,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     [self addAutomaticFields:payload state:state];
-
     [_sender sendJSONOject:payload];
     return YES;
 }

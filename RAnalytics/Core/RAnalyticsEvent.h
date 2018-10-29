@@ -288,5 +288,6 @@ RSDKA_EXPORT NSString *const RAnalyticsCustomEventNameParameter;
  * @ingroup AnalyticsConstants
  */
 RSDKA_EXPORT NSString *const RAnalyticsCustomEventDataParameter;
+RSDKA_EXPORT NSString *const RAnalyticsCustomEventTopLevelObjectParameter;
 
 NS_ASSUME_NONNULL_END

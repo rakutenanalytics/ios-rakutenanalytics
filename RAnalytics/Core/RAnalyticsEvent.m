@@ -26,6 +26,7 @@ NSString *const RAnalyticsPushNotificationTrackingIdentifierParameter    = @"tra
 // Custom event parameters
 NSString *const RAnalyticsCustomEventNameParameter                    = @"eventName";
 NSString *const RAnalyticsCustomEventDataParameter                    = @"eventData";
+NSString *const RAnalyticsCustomEventTopLevelObjectParameter          = @"topLevelObject";
 
 // Standard event parameter values
 NSString *const RAnalyticsLocalLogoutMethod          = @"local";
