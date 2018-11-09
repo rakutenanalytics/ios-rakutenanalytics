@@ -35,6 +35,20 @@ describe(@"RAnalyticsHelpers", ^{
             [[url should] equal:[NSURL URLWithString:@"https://stg.rat.rakuten.co.jp/"]];
         });
     });
+    
+    describe(@"_RAnalyticsIsAppleClass", ^{
+        it(@"should return true if the class is an Apple class", ^{
+            [[theValue(_RAnalyticsIsAppleClass(UIViewController.class)) should] beYes];
+        });
+        
+        it(@"should return false if the class is a non-Apple class", ^{
+            [[theValue(_RAnalyticsIsAppleClass(RAnalyticsManager.class)) should] beNo];
+        });
+        
+        it(@"should return false if the class pointer is Nil", ^{
+            [[theValue(_RAnalyticsIsAppleClass(Nil)) should] beNo];
+        });
+    });
 });
 
 SPEC_END

@@ -23,6 +23,13 @@ NS_INLINE BOOL _RAnalyticsEnableDebugLogging()
 
 NS_INLINE BOOL _RAnalyticsIsAppleClass(Class cls)
 {
+    // bundleForClass:nil used to return the NSBundle.mainBundle but since Xcode 10.1
+    // it causes a EXC_BAD_ACCESS crash on device (not simulator). This workaround is
+    // needed until Apple release a fix for https://bugs.swift.org/browse/SR-9188
+    if (cls == Nil) {
+        return NO;
+    }
+    
     return [[NSBundle bundleForClass:cls].bundleIdentifier hasPrefix:@"com.apple."];
 }
 
