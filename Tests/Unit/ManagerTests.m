@@ -22,6 +22,10 @@
 }
 @end
 
+@interface RAnalyticsState ()
+@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
+@end
+
 @interface RAnalyticsManager ()
 @property (nonatomic, nullable, copy) NSString *deviceIdentifier;
 @property (nonatomic) BOOL locationManagerIsUpdating;
@@ -105,24 +109,24 @@
 - (void)testStartMonitoringLocation
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);
-    
+
     OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
-    
+
     _manager.shouldTrackLastKnownLocation = YES;
-    
+
     XCTAssertTrue(_manager.locationManagerIsUpdating);
-    
+
     [locationManagerMock stopMocking];
 }
 
 - (void)testStopMonitoringLocation
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);
-    
+
     OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
-        
+
     _manager.shouldTrackLastKnownLocation = NO;
-    
+
     XCTAssertFalse(_manager.locationManagerIsUpdating);
 
     [locationManagerMock stopMocking];
@@ -133,6 +137,38 @@
     _manager.locationManagerIsUpdating = YES;
     [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationWillResignActiveNotification object:self];
     XCTAssertFalse(_manager.locationManagerIsUpdating);
+}
+
+- (void)testPageViewIsTrackedWhenShouldTrackPageViewIsTrue
+{
+    // Assert that page view event is processed by RAT Tracker when the AnalyticsManager's shouldTrackPageView property is true
+
+    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                             deviceIdentifier:@"deviceId"];
+    UIViewController *currentPage = UIViewController.new;
+    state.currentPage = currentPage;
+    id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": @"TestPage"}];
+
+    id mock = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    OCMStub([mock shouldTrackPageView]).andReturn(YES);
+    XCTAssertTrue([RAnalyticsRATTracker.sharedInstance processEvent:event state:state]);
+    [mock stopMocking];
+}
+
+- (void)testPageViewIsNotTrackedWhenShouldTrackPageViewIsFalse
+{
+    // Assert that page view event is not processed by RAT Tracker when the AnalyticsManager's shouldTrackPageView property is false
+
+    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+                                                             deviceIdentifier:@"deviceId"];
+    UIViewController *currentPage = UIViewController.new;
+    state.currentPage = currentPage;
+    id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": @"TestPage"}];
+
+    id mock = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    OCMStub([mock shouldTrackPageView]).andReturn(NO);
+    XCTAssertFalse([RAnalyticsRATTracker.sharedInstance processEvent:event state:state]);
+    [mock stopMocking];
 }
 
 #pragma clang diagnostic pop

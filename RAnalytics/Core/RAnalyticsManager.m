@@ -93,6 +93,7 @@ static RAnalyticsManager *_instance = nil;
 
         _shouldTrackLastKnownLocation     = YES;
         _shouldTrackAdvertisingIdentifier = YES;
+        _shouldTrackPageView              = YES;
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -100,10 +101,10 @@ static RAnalyticsManager *_instance = nil;
 #if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
         // always rely solely on header availability so we also do a runtime check
-        
+
         Class ratTrackerClass = NSClassFromString(@"RAnalyticsRATTracker");
         SEL selector = NSSelectorFromString(@"sharedInstance");
-        
+
         if ([ratTrackerClass respondsToSelector:selector])
         {
 #pragma clang diagnostic push
@@ -371,4 +372,3 @@ static RAnalyticsManager *_instance = nil;
 }
 
 @end
-
