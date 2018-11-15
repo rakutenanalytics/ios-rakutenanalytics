@@ -227,11 +227,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                                 databaseName:_RATDatabaseName
                                            databaseTableName:_RATTableName];
         [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
-        
+
         _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;
         _rpCookieRequestRetryCount = 0;
         _rpCookieQueue = dispatch_queue_create("com.rakuten.tech.analytics.rpcookie", DISPATCH_QUEUE_SERIAL);
-        
+
         [self _fetchRATRpCookie];
         /*
          * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
@@ -245,7 +245,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
              */
 
             [self _checkLTE];
-            
+
             [NSNotificationCenter.defaultCenter addObserver:self
                                                    selector:@selector(_checkLTE)
                                                        name:CTRadioAccessTechnologyDidChangeNotification
@@ -592,7 +592,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([event.name isEqualToString:RAnalyticsInstallEventName])
     {
         // MARK: _rem_install
-        
+
         NSDictionary *appAndSDKDict = _RAnalyticsApplicationInfoAndSDKComponents();
         NSDictionary *appInfo = appAndSDKDict[_RAnalyticsAppInfoKey];
         NSDictionary *sdkInfo = appAndSDKDict[_RAnalyticsSDKInfoKey];
@@ -667,11 +667,11 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         {
             failureReason = loginFailureReason;
         }
-        
+
         if (loginType) extra[@"type"] = loginType;
         if (errorMessage) extra[@"rae_error"] = errorMessage;
         if (failureReason) extra[@"rae_error_message"] = failureReason;
-    
+
     }
     else if ([event.name isEqualToString:RAnalyticsLogoutEventName])
     {
@@ -693,7 +693,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         if (logoutMethod) extra[@"logout_method"] = logoutMethod;
     }
-    else if ([event.name isEqualToString:RAnalyticsPageVisitEventName])
+    else if ([event.name isEqualToString:RAnalyticsPageVisitEventName] &&
+             [RAnalyticsManager sharedInstance].shouldTrackPageView)
     {
         // MARK: _rem_visit
 
@@ -792,31 +793,31 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([event.name isEqualToString:RAnalyticsSSOCredentialFoundEventName])
     {
         // MARK: _rem_sso_credential_found
-        
+
         NSString *source = event.parameters[@"source"];
         if (source.length) extra[@"source"] = source;
     }
     else if ([event.name isEqualToString:RAnalyticsLoginCredentialFoundEventName])
     {
         // MARK: _rem_login_credential_found
-        
+
         NSString *source = event.parameters[@"source"];
         if (source.length) extra[@"source"] = source;
     }
     else if ([event.name isEqualToString:RAnalyticsCredentialStrategiesEventName])
     {
         // MARK: _rem_credential_strategies
-        
+
         NSDictionary *strategies = event.parameters[@"strategies"];
         if (strategies.count) extra[@"strategies"] = strategies;
     }
     else if ([event.name isEqualToString:RAnalyticsCustomEventName])
     {
         // MARK: _analytics_custom (wrapper for event name and its data)
-        
+
         NSString *eventName = event.parameters[RAnalyticsCustomEventNameParameter];
         if (![eventName isKindOfClass:NSString.class] || !eventName.length) return NO;
-        
+
         payload[_RATETypeParameter] = eventName;
 
         NSDictionary *topLevelObject = [event.parameters[RAnalyticsCustomEventTopLevelObjectParameter] copy];
@@ -894,9 +895,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain
                                          code:NSURLErrorUnknown
                                      userInfo:userInfo];
-    
+
     rpCookie = [self getRpCookieFromCookieStorage];
-    
+
     if(rpCookie == nil)
     {
         [self getRpCookieFromRATCompletionHandler:^(NSHTTPCookie *cookie) {
@@ -914,7 +915,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:_RAnalyticsEndpointAddress()];
     NSHTTPCookie *rpCookie = nil;
-    
+
     for(NSHTTPCookie *cookie in cookies)
     {
         if([cookie.name isEqualToString:@"Rp"] && [cookie.expiresDate timeIntervalSinceNow] > 0)
@@ -929,7 +930,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 - (void)getRpCookieFromRATCompletionHandler:(void (^)(NSHTTPCookie *cookie))completionHandler
 {
     __weak typeof (self) weakSelf = self;
-    
+
     [[[NSURLSession sharedSession] dataTaskWithURL:_RAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
       {
           NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
@@ -937,9 +938,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
           {
               // If failed retry fetch
               _rpCookieRequestRetryCount++;
-              
+
               _RATRpCookieRequestRetryInterval = MIN(RATRpCookieRequestMaximumTimeOut, pow(RATRpCookieRequestBackOffMultiplier, _rpCookieRequestRetryCount) * RATRpCookieRequestInitialRetryInterval);
-              
+
               // Retry till the RATRpCookieRequestMaximumTimeOut
               if (_RATRpCookieRequestRetryInterval < RATRpCookieRequestMaximumTimeOut)
               {

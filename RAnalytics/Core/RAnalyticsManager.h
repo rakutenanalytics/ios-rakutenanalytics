@@ -53,6 +53,11 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 @property (nonatomic) BOOL shouldUseStagingEnvironment DEPRECATED_MSG_ATTRIBUTE("Clients should set RAT endpoint URL in info.plist under RATEndpoint key");
 
 /**
+ * Control whether the SDK should track page views. Defaults to `YES`.
+ */
+@property (nonatomic) BOOL shouldTrackPageView;
+
+/**
  * Control whether the SDK should track the device's location or not.
  *
  * This property is set to `YES` by default, which means @ref RAnalyticsManager will
