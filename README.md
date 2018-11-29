@@ -562,6 +562,11 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-3-2-0 3.2.0 (2018-11-29)
+* [SDKCF-16](https://jira.rakuten-it.com/jira/browse/SDKCF-16): Add an option to disable PageView (PV) tracking
+* [SDKCF-759](https://jira.rakuten-it.com/jira/browse/SDKCF-759): Allow the SDK to send Performance Tracking info to RAT
+* [SDKCF-801](https://jira.rakuten-it.com/jira/browse/SDKCF-801): Fix a bug where RAnalyticsIsAppleClass crash in Xcode 10.1
+
 @subsection analytics-3-1-1 3.1.1 (2018-09-05)
 * [SDKCF-619](https://jira.rakuten-it.com/jira/browse/SDKCF-619): Check object is valid before adding it to record array. Fixes crash observed in customer's Crashlytics report
 * [SDKCF-612](https://jira.rakuten-it.com/jira/browse/SDKCF-612): Add README section about tracking events from App Extension targets
