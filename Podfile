@@ -2,7 +2,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 install! 'cocoapods', :deterministic_uuids => false
-platform :ios, '8.0'
+platform :ios, '10.0'
 use_frameworks!
 
 abstract_target 'Common' do

@@ -3,7 +3,7 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 workspace 'RSDKAnalyticsSample.xcworkspace'
 
-platform :ios, "8.0"
+platform :ios, "10.0"
 use_frameworks!
 
 abstract_target 'Common' do
