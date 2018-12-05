@@ -1,5 +1,5 @@
 @tableofcontents
-@attention This module supports iOS 7.0 and above. It has been tested with iOS 8.4 and above.
+@attention This module supports iOS 10.0 and above. It has been tested with iOS 10.0 and above.
 @section analytics-module Introduction
 The **analytics** module provides APIs for tracking user activity and automatically sends reports to the Rakuten Analytics servers.
 
@@ -562,6 +562,9 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-4-0-0 4.0.0 (in progress)
+* [SDKCF-740](https://jira.rakuten-it.com/jira/browse/SDKCF-740): Drop support for OS version below 10.0
+
 @subsection analytics-3-2-0 3.2.0 (2018-11-29)
 * [SDKCF-16](https://jira.rakuten-it.com/jira/browse/SDKCF-16): Add an option to disable PageView (PV) tracking
 * [SDKCF-759](https://jira.rakuten-it.com/jira/browse/SDKCF-759): Allow the SDK to send Performance Tracking info to RAT
