@@ -186,15 +186,6 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(RAnalyticsManager.State) @interface RAnalyticsStat
 @property (nonatomic, nullable, readonly, copy) NSDate *lastUpdateDate;
 
 /**
- * Last visited view controller.
- *
- * @deprecated Deprecated, and always nil. Trackers that wish to keep track of history should
- *             keep a reference to the internal identifier they tracked for previous events.
- */
-@property (nonatomic, nullable, readonly) UIViewController *lastVisitedPage
-    DEPRECATED_MSG_ATTRIBUTE("Always nil. Trackers should track .currentPage to manage history");
-
-/**
  * Currently-visited view controller.
  */
 @property (nonatomic, nullable, readonly) UIViewController *currentPage;
