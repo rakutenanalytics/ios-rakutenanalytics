@@ -562,8 +562,8 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
-@subsection analytics-4-0-0 4.0.0 (in progress)
-* [SDKCF-740](https://jira.rakuten-it.com/jira/browse/SDKCF-740): Drop support for OS version below 10.0
+@subsection analytics-4-0-0 4.0.0 (2019-01-16)
+* [SDKCF-740](https://jira.rakuten-it.com/jira/browse/SDKCF-740): Drop support for iOS versions below iOS 10.0
 
 @subsection analytics-3-2-0 3.2.0 (2018-11-29)
 * [SDKCF-16](https://jira.rakuten-it.com/jira/browse/SDKCF-16): Add an option to disable PageView (PV) tracking
