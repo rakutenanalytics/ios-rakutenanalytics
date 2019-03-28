@@ -29,12 +29,12 @@ pod 'RAnalytics/Core'
 @section analytics-tutorial Getting started
 @attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
 
-@subsection analytics-register Registering a new application
-* [Registration Form](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Introduction+Application+Form) (from `r-intra`)
-* Support email for administrative tasks: dev-rat@mail.rakuten.com
+@subsection analytics-register RAT Account
+* You must have an account ID and an application ID to track events using the Rakuten Analytics Tracker. See [RAT Credentials](https://developers.rakuten.com/intra/rakuten-ecosystem-mobile/overview/getting_started_with_rem_sdk#rat_credentials) to apply for credentials.
+* If you have any questions you can check the [FAQ page](https://developers.rakuten.com/intra/rakuten-ecosystem-mobile/rem-faq/faq) or contact us via the [inquiry form](https://developers.rakuten.net/hc/en-us/requests/new?ticket_form_id=399907).
 
 @subsection analytics-configure-rat Configuring RAT
-@attention Applications **MUST** configure their RAT `accountId` and `applicationId` or automatic KPI tracking for a number of SDK features — such as SSO, installs, and conversions — will be disabled. The recommended configuration method is to set keys in your app's **Info.plist** which will ensure that if events are sent to RAT before the app has finished launching they will use the correct identifiers:
+@attention Applications **MUST** configure their RAT `accountId` and `applicationId` in their info.plist as follows:
 
 ##### Plist Configuration
 
@@ -45,6 +45,11 @@ Key         | Value (Number type)
 
 @subsection analytics-configure-endpoint Configure a custom endpoint
 To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
+
+@subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
+RAT's [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) and [Kibana STG](https://rat.intra.rakuten-it.com/stg-kibana/app/kibana#/discover?_g=()) sites can be used to test your analytics and to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999` or `app_name:<your bundle id>`.
+
+To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
 
 @subsection analytics-configure-location Location Tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
@@ -87,7 +92,7 @@ Tracking a generic event relies on a @ref RAnalyticsTracker "tracker" capable of
 @endcode
 
 #### Tracking RAT-specific events
-A concrete tracker, RAnalyticsRATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RAnalyticsRATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Specification](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Spec).
+A concrete tracker, RAnalyticsRATTracker, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use RAnalyticsRATTracker::eventWithEventType:parameters: for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Parameter Spec](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Specifications).
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
@@ -173,7 +178,7 @@ App Extensions need to follow the requirements at @ref analytics-configure-rat "
 
 #### Viewing events in Kibana
 
-[Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to visualize your data in real time.
+RAT's [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) and [Kibana STG](https://rat.intra.rakuten-it.com/stg-kibana/app/kibana#/discover?_g=()) sites can be used to visualize your data in real time.
 
 @note To search for App Extension events in kibana use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
 
@@ -237,11 +242,6 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 
 @section analytics-rat-examples RAT Examples
 @note These examples all use @ref RAnalyticsRATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RAnalyticsEvent should be used instead.
-
-@subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
-[Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) can be used to test your analytics or to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999`.
-
-To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
 
 @subsection analytics-rat-example-ui-interactions UI Interaction
 The following code is an example that can be used to track button clicks. It uses RAT's standard `click` event and passes the page name, clicked element's id and goal id in the `pgn`, `target` and `gol` parameters, respectively.
