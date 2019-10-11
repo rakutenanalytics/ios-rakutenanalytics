@@ -12,17 +12,19 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 @property (nonatomic) NSTimeInterval   RATRpCookieRequestRetryInterval;
 @property (nonatomic) dispatch_queue_t rpCookieQueue;
 @property (nonatomic) NSUInteger       rpCookieRequestRetryCount;
+@property (strong, nonatomic) NSHTTPCookieStorage *cookieStorage;
 @end
 
 @implementation RAnalyticsRpCookieFetcher
 
-- (instancetype)init
+- (instancetype)initWithCookieStorage:(NSHTTPCookieStorage *)cookieStorage
 {
     self = [super init];
     if (self) {
         _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;
         _rpCookieRequestRetryCount = 0;
         _rpCookieQueue = dispatch_queue_create("com.rakuten.tech.analytics.rpcookie", DISPATCH_QUEUE_SERIAL);
+        _cookieStorage = cookieStorage;
     }
     return self;
 }
