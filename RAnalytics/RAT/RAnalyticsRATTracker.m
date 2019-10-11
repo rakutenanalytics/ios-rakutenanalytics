@@ -8,6 +8,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
 #import "RAnalyticsSender.h"
+#import "RAnalyticsRpCookieFetcher.h"
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
@@ -15,10 +16,6 @@ NSString *const _RATCPParameter      = @"cp";
 NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
-
-static const NSTimeInterval  RATRpCookieRequestInitialRetryInterval = 10u; //10s as initial timeout request
-static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2
-static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 10 mins as the time out
 
 const char* _RATReachabilityHost = "8.8.8.8"; // Google DNS Server
 
@@ -125,12 +122,11 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic, copy) NSString *startTime;
 
 /*
- * session is used to retrieve the cookie details on initialize
+ * RPCookie fetcher is used to retrieve the cookie details on initialize
 */
 
-@property (nonatomic) NSTimeInterval   RATRpCookieRequestRetryInterval;
-@property (nonatomic) dispatch_queue_t rpCookieQueue;
-@property (nonatomic) NSUInteger       rpCookieRequestRetryCount;
+@property (nonatomic, strong) RAnalyticsRpCookieFetcher *rpCookieFetcher;
+
 @end
 
 @implementation RAnalyticsRATTracker
@@ -228,11 +224,15 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                            databaseTableName:_RATTableName];
         [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
 
-        _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;
-        _rpCookieRequestRetryCount = 0;
-        _rpCookieQueue = dispatch_queue_create("com.rakuten.tech.analytics.rpcookie", DISPATCH_QUEUE_SERIAL);
-
-        [self _fetchRATRpCookie];
+        _rpCookieFetcher = [[RAnalyticsRpCookieFetcher alloc] init];
+        [_rpCookieFetcher getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error)
+         {
+             if (error)
+             {
+                 RAnalyticsDebugLog(@"%@", error);
+             }
+         }];
+        
         /*
          * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
          */
@@ -256,15 +256,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return self;
 }
 
-- (void)_fetchRATRpCookie
-{
-    [self getRpCookieCompletionHandler:^(NSHTTPCookie *cookie, NSError *error)
-    {
-        if (error)
-        {
-            RAnalyticsDebugLog(@"%@", error);
-        }
-    }];
+- (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error))completionHandler {
+    [_rpCookieFetcher getRpCookieCompletionHandler:completionHandler];
 }
 
 - (void)dealloc
@@ -885,75 +878,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return YES;
 }
 
-#pragma - RPCookie
-
-- (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie *cookie, NSError *error))completionHandler
-{
-    __block NSHTTPCookie *rpCookie = nil;
-    NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Cannot get RATRp cookie from RAT Server/CookieStorage",
-                               NSLocalizedFailureReasonErrorKey: @"Invalid/NoCookie details available"};
-    NSError *error = [NSError errorWithDomain:NSURLErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:userInfo];
-
-    rpCookie = [self getRpCookieFromCookieStorage];
-
-    if(rpCookie == nil)
-    {
-        [self getRpCookieFromRATCompletionHandler:^(NSHTTPCookie *cookie) {
-            rpCookie = cookie;
-            completionHandler(rpCookie, rpCookie ? nil : error);
-        }];
-    }
-    else
-    {
-        completionHandler(rpCookie, nil);
-    }
-}
-
-- (NSHTTPCookie *)getRpCookieFromCookieStorage
-{
-    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:_RAnalyticsEndpointAddress()];
-    NSHTTPCookie *rpCookie = nil;
-
-    for(NSHTTPCookie *cookie in cookies)
-    {
-        if([cookie.name isEqualToString:@"Rp"] && [cookie.expiresDate timeIntervalSinceNow] > 0)
-        {
-            rpCookie = cookie;
-            break;
-        }
-    }
-    return rpCookie;
-}
-
-- (void)getRpCookieFromRATCompletionHandler:(void (^)(NSHTTPCookie *cookie))completionHandler
-{
-    __weak typeof (self) weakSelf = self;
-
-    [[[NSURLSession sharedSession] dataTaskWithURL:_RAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-      {
-          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-          if(error || httpResponse.statusCode != 200)
-          {
-              // If failed retry fetch
-              _rpCookieRequestRetryCount++;
-
-              _RATRpCookieRequestRetryInterval = MIN(RATRpCookieRequestMaximumTimeOut, pow(RATRpCookieRequestBackOffMultiplier, _rpCookieRequestRetryCount) * RATRpCookieRequestInitialRetryInterval);
-
-              // Retry till the RATRpCookieRequestMaximumTimeOut
-              if (_RATRpCookieRequestRetryInterval < RATRpCookieRequestMaximumTimeOut)
-              {
-                  dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_RATRpCookieRequestRetryInterval * NSEC_PER_SEC));
-                  dispatch_after(delay, _rpCookieQueue, ^(void){
-                      [weakSelf _fetchRATRpCookie];
-                  });
-              }
-          }
-          _rpCookieRequestRetryCount = 0;
-          completionHandler([weakSelf getRpCookieFromCookieStorage]);
-      }] resume];
-}
 //--------------------------------------------------------------------------
 
 - (void)_checkLTE
