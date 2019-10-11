@@ -55,7 +55,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 
 - (NSHTTPCookie * _Nullable)getRpCookieFromCookieStorage
 {
-    NSArray *cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:_RAnalyticsEndpointAddress()];
+    NSArray *cookies = [_cookieStorage cookiesForURL:_RAnalyticsEndpointAddress()];
     NSHTTPCookie *rpCookie = nil;
     
     for(NSHTTPCookie *cookie in cookies)
