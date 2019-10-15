@@ -224,7 +224,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                                            databaseTableName:_RATTableName];
         [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
 
-        _rpCookieFetcher = [[RAnalyticsRpCookieFetcher alloc] init];
+        _rpCookieFetcher = [[RAnalyticsRpCookieFetcher alloc] initWithCookieStorage:[NSHTTPCookieStorage sharedHTTPCookieStorage]];
         [_rpCookieFetcher getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error)
          {
              if (error)

@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithCookieStorage:(NSHTTPCookieStorage *)cookieStorage;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 /**
  * Will pass valid Rp cookie to completionHandler as soon as it is available.
  *
