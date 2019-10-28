@@ -1,7 +1,7 @@
 @tableofcontents
 @attention This module supports iOS 10.0 and above. It has been tested with iOS 10.0 and above.
 @section analytics-module Introduction
-The **analytics** module provides APIs for tracking user activity and automatically sends reports to the Rakuten Analytics servers.
+The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the [Rakuten Analytics Tracker](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Home) (RAT) service.
 
 @attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
 
@@ -47,7 +47,9 @@ Key         | Value (Number type)
 To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
 
 @subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
-RAT's [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) and [Kibana STG](https://rat.intra.rakuten-it.com/stg-kibana/app/kibana#/discover?_g=()) sites can be used to test your analytics and to visualize your data in real time. To find all analytics data for your app, you can search for your Application ID by using a search query similar to `aid:999` or `app_name:<your bundle id>`.
+RAT's [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) STG and PROD sites can be used to check events sent by your app. 
+
+To find all analytics data for your app, you can search for your Application Identifier `aid:999` or `app_name:<your bundle id>`.
 
 To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
 
@@ -176,11 +178,9 @@ App Extensions need to follow the requirements at @ref analytics-configure-rat "
 * To send events to a different endpoint you can set a `RATEndpoint` key in the **App Extension** info.plist
 * To enable debug logging you can create a boolean `RMSDKEnableDebugLogging` key set to YES in the **App Extension** info.plist
 
-#### Viewing events in Kibana
+#### Viewing App Extension events in Kibana
 
-RAT's [Kibana](http://grp01.kibana.geap.intra.rakuten-it.com/) and [Kibana STG](https://rat.intra.rakuten-it.com/stg-kibana/app/kibana#/discover?_g=()) sites can be used to visualize your data in real time.
-
-@note To search for App Extension events in kibana use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
+To search for App Extension events in [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
 
 #### Limitations
 
@@ -562,6 +562,9 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-4-1-0 4.1.0 (2019-10-28)
+* [SDKCF-1523](https://jira.rakuten-it.com/jira/browse/SDKCF-1523): Move RP cookie fetch functionality from RAT subspec to Core subspec so that it is available to modules that only have a dependency on Core
+
 @subsection analytics-4-0-0 4.0.0 (2019-01-16)
 * [SDKCF-740](https://jira.rakuten-it.com/jira/browse/SDKCF-740): Drop support for iOS versions below iOS 10.0
 
