@@ -496,10 +496,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: mcn
-    if (carrierName)
-    {
-        payload[@"mcn"] = carrierName;
-    }
+    payload[@"mcn"] = carrierName.length ? carrierName : @"";
 
     // MARK: model
     payload[@"model"] = RDeviceIdentifier.modelIdentifier;

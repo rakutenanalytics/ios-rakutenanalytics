@@ -402,6 +402,17 @@
     XCTAssertEqual(mbat.floatValue,          50);
 }
 
+- (void)test_givenNetworkIsWiFi_whenEventIsProcessed_thenJsonMcnValueIsEmptyString
+{
+    // Given (network is WiFi because tests run on simulator)
+
+    // When
+    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
+
+    // Then
+    XCTAssertEqualObjects(payload[@"mcn"], @"");
+}
+
 #pragma mark Test batch delay handling and setting delivery strategy
 
 - (void)testRATTrackerWithBatchingDelay
