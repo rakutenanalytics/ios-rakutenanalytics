@@ -237,7 +237,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                    */
 #if DEBUG
                                                   NSMutableString *logMessage = [NSMutableString stringWithCapacity:20];
-                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to RAT from %@:",strongSelf.description]];
+                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to %@ from %@:", strongSelf.endpoint, strongSelf.description]];
 
                                                   [recordGroup enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                                                       [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
