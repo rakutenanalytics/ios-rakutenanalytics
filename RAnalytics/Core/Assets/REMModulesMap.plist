@@ -36,5 +36,9 @@
 	<string>api-rae-idinformation</string>
 	<key>org.cocoapods.StitchSDK</key>
 	<string>stitch</string>
+	<key>org.cocoapods.RPushPNP</key>
+	<string>pushpnp</string>
+	<key>org.cocoapods.RRemoteConfig</key>
+	<string>remote-config</string>
 </dict>
 </plist>
