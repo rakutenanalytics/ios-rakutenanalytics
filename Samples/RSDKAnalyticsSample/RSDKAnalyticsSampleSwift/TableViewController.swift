@@ -25,42 +25,42 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
-        self.accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as! Int64
-        self.serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as! Int64
+        guard let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int64, let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
+            return
+        }
+        self.accountId = accountId
+        self.serviceId = serviceId
     }
 
     func update(_ dict: [String : Any]) {
-        if let value = dict[GlobalConstants.kLocationTracking] {
-            let value = value as! Bool
-            AnalyticsManager.shared().shouldTrackLastKnownLocation = value
+        if let value = dict[GlobalConstants.kLocationTracking],
+            let flag = value as? Bool {
+            AnalyticsManager.shared().shouldTrackLastKnownLocation = flag
         }
 
-        if let value = dict[GlobalConstants.kIDFATracking] {
-            let value = value as! Bool
-            AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = value
+        if let value = dict[GlobalConstants.kIDFATracking],
+            let flag = value as? Bool {
+            AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = flag
         }
 
-        if let value = dict[GlobalConstants.kRATAccountID] {
-            let value = value as! String
-            if !value.isEmpty {
-                let accountId = Int64(value)!
-                self.accountId = accountId
-            }
+        if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String,
+            let accountId = Int64(accountIdString),
+            !accountIdString.isEmpty {
+            self.accountId = accountId
         }
 
-        if let value = dict[GlobalConstants.kRATAppID] {
-            let value = value as! String
-            if !value.isEmpty {
-                let appId = Int64(value)!
-                self.serviceId = appId
-            }
+        if let appIdString = dict[GlobalConstants.kRATAppID] as? String,
+            let appId = Int64(appIdString),
+            !appIdString.isEmpty {
+            self.serviceId = appId
         }
     }
 
     @IBAction func spool(_ sender: Any) {
-        RAnalyticsRATTracker.shared().event(withEventType: "SampleEvent", parameters: ["foo": "bar",
-                                                                                       "acc": self.accountId,
-                                                                                       "aid": self.serviceId]).track()
+        RAnalyticsRATTracker.shared().event(withEventType: "SampleEvent",
+                                            parameters: ["foo": "bar",
+                                                         "acc": self.accountId,
+                                                         "aid": self.serviceId]).track()
     }
 
     // MARK: - Table view data source
