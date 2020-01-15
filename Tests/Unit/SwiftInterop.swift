@@ -67,10 +67,8 @@ public class SwiftInterop : XCTestCase {
 
         let manager = AnalyticsManager.shared()
         XCTAssertNotNil(manager)
-        manager.shouldUseStagingEnvironment = false
         manager.shouldTrackLastKnownLocation = true
         manager.shouldTrackAdvertisingIdentifier = true
-        XCTAssertFalse(manager.shouldUseStagingEnvironment)
         XCTAssert(manager.shouldTrackLastKnownLocation)
         XCTAssert(manager.shouldTrackAdvertisingIdentifier)
 

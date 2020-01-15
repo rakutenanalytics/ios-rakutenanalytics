@@ -94,18 +94,6 @@
     [mock stopMocking];
 }
 
-- (void)testUsingStagingEndpointAddress
-{
-    RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = YES;
-    XCTAssertTrue([[RAnalyticsRATTracker endpointAddress].absoluteString isEqualToString:@"https://stg.rat.rakuten.co.jp/"]);
-}
-
-- (void)testUsingProductionEndpointAddress
-{
-    RAnalyticsManager.sharedInstance.shouldUseStagingEnvironment = NO;
-    XCTAssertTrue([[RAnalyticsRATTracker endpointAddress].absoluteString isEqualToString:@"https://rat.rakuten.co.jp/"]);
-}
-
 - (void)testStartMonitoringLocation
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);

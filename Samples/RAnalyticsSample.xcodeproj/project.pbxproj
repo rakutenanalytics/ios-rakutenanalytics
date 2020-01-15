@@ -13,25 +13,16 @@
 		5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */; };
 		5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */; };
 		5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */; };
-		5AB2B8381FC3F64C0017CF83 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */; };
 		5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CBE2016CE8A0028CEBC /* Main.storyboard */; };
-		5AB66CC22016CE8A0028CEBC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
 		5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
-		6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */; };
-		6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */; };
-		694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */; };
-		697AAE25192DA4FB006EF197 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE23192DA4FB006EF197 /* InfoPlist.strings */; };
-		697AAE27192DA4FB006EF197 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE26192DA4FB006EF197 /* main.m */; };
-		697AAE2B192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */; };
-		697AAE2E192DA4FB006EF197 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE2C192DA4FB006EF197 /* Main.storyboard */; };
-		697AAE34192DA4FB006EF197 /* RSDKAnalyticsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */; };
-		697AAE36192DA4FB006EF197 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 697AAE35192DA4FB006EF197 /* Images.xcassets */; };
+		6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5AB2B8361FC3F64C0017CF83 /* PBXContainerItemProxy */ = {
+		6D2B866123D5A56C00960D85 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 697AAE0F192DA4FA006EF197 /* Project object */;
 			proxyType = 1;
@@ -41,13 +32,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5AB2B83C1FC3F64C0017CF83 /* Embed App Extensions */ = {
+		6D2B866323D5A56C00960D85 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				5AB2B8381FC3F64C0017CF83 /* AnalyticsTodayExt.appex in Embed App Extensions */,
+				6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,31 +55,14 @@
 		5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
 		5AB2B8331FC3F64C0017CF83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		5AB2B8351FC3F64C0017CF83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSDKAnalyticsSampleSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AB66CB82016CE890028CEBC /* RAnalyticsSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RAnalyticsSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5AB66CBF2016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5AB66CC12016CE8A0028CEBC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5AB66CC42016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
-		6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRootViewController.m; sourceTree = "<group>"; };
-		6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRootViewController.h; sourceTree = "<group>"; };
-		6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsRecordForm.h; sourceTree = "<group>"; };
-		6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsRecordForm.m; sourceTree = "<group>"; };
-		692BDF75194068FC000884D8 /* RSDKAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = RSDKAnalyticsSample.entitlements; sourceTree = "<group>"; };
-		694B0BC5193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsLeftMenuViewController.h; sourceTree = "<group>"; };
-		694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsLeftMenuViewController.m; sourceTree = "<group>"; };
-		697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RSDKAnalyticsSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		697AAE22192DA4FB006EF197 /* RSDKAnalyticsSample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RSDKAnalyticsSample-Info.plist"; sourceTree = "<group>"; };
-		697AAE24192DA4FB006EF197 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		697AAE26192DA4FB006EF197 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		697AAE29192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsAppDelegate.h; sourceTree = "<group>"; };
-		697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsAppDelegate.m; sourceTree = "<group>"; };
-		697AAE2D192DA4FB006EF197 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		697AAE32192DA4FB006EF197 /* RSDKAnalyticsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSDKAnalyticsViewController.h; sourceTree = "<group>"; };
-		697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RSDKAnalyticsViewController.m; sourceTree = "<group>"; };
-		697AAE35192DA4FB006EF197 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		6D26EBD020352CFE009FE1F7 /* RSDKAnalyticsSampleSwift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RSDKAnalyticsSampleSwift.entitlements; sourceTree = "<group>"; };
+		6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSample.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,13 +75,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5AB66CB52016CE890028CEBC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D980D5940B3D4E25B5B27794 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -128,10 +95,10 @@
 			path = AnalyticsTodayExt;
 			sourceTree = "<group>";
 		};
-		5AB66CB92016CE8A0028CEBC /* RSDKAnalyticsSampleSwift */ = {
+		5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */ = {
 			isa = PBXGroup;
 			children = (
-				6D26EBD020352CFE009FE1F7 /* RSDKAnalyticsSampleSwift.entitlements */,
+				6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */,
 				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
 				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
 				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
@@ -142,15 +109,14 @@
 				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
 				5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */,
 			);
-			path = RSDKAnalyticsSampleSwift;
+			path = RAnalyticsSample;
 			sourceTree = "<group>";
 		};
 		697AAE0E192DA4FA006EF197 = {
 			isa = PBXGroup;
 			children = (
-				697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */,
 				5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */,
-				5AB66CB92016CE8A0028CEBC /* RSDKAnalyticsSampleSwift */,
+				5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */,
 				697AAE18192DA4FA006EF197 /* Products */,
 				CECCB6190E493107EA41038F /* Frameworks */,
 			);
@@ -159,42 +125,10 @@
 		697AAE18192DA4FA006EF197 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */,
 				5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */,
-				5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */,
+				5AB66CB82016CE890028CEBC /* RAnalyticsSample.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		697AAE20192DA4FB006EF197 /* RSDKAnalyticsSample */ = {
-			isa = PBXGroup;
-			children = (
-				692BDF75194068FC000884D8 /* RSDKAnalyticsSample.entitlements */,
-				697AAE35192DA4FB006EF197 /* Images.xcassets */,
-				697AAE2C192DA4FB006EF197 /* Main.storyboard */,
-				697AAE29192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.h */,
-				697AAE2A192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m */,
-				694B0BC5193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.h */,
-				694B0BC6193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m */,
-				6909CDA21932C8D600E6E399 /* RSDKAnalyticsRecordForm.h */,
-				6909CDA31932C8D600E6E399 /* RSDKAnalyticsRecordForm.m */,
-				6906DAAC19331C0C002074F5 /* RSDKAnalyticsRootViewController.h */,
-				6906DAAB19331C0C002074F5 /* RSDKAnalyticsRootViewController.m */,
-				697AAE32192DA4FB006EF197 /* RSDKAnalyticsViewController.h */,
-				697AAE33192DA4FB006EF197 /* RSDKAnalyticsViewController.m */,
-				697AAE21192DA4FB006EF197 /* Supporting Files */,
-			);
-			path = RSDKAnalyticsSample;
-			sourceTree = "<group>";
-		};
-		697AAE21192DA4FB006EF197 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				697AAE22192DA4FB006EF197 /* RSDKAnalyticsSample-Info.plist */,
-				697AAE23192DA4FB006EF197 /* InfoPlist.strings */,
-				697AAE26192DA4FB006EF197 /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		CECCB6190E493107EA41038F /* Frameworks */ = {
@@ -225,41 +159,24 @@
 			productReference = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		5AB66CB72016CE890028CEBC /* RSDKAnalyticsSampleSwift */ = {
+		5AB66CB72016CE890028CEBC /* RAnalyticsSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSampleSwift" */;
+			buildConfigurationList = 5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RAnalyticsSample" */;
 			buildPhases = (
 				5AB66CB42016CE890028CEBC /* Sources */,
 				6D69AB6623D0105200C13E1A /* SwiftLint */,
 				5AB66CB52016CE890028CEBC /* Frameworks */,
 				5AB66CB62016CE890028CEBC /* Resources */,
+				6D2B866323D5A56C00960D85 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6D2B866223D5A56C00960D85 /* PBXTargetDependency */,
 			);
-			name = RSDKAnalyticsSampleSwift;
+			name = RAnalyticsSample;
 			productName = RSDKAnalyticsSampleSwift;
-			productReference = 5AB66CB82016CE890028CEBC /* RSDKAnalyticsSampleSwift.app */;
-			productType = "com.apple.product-type.application";
-		};
-		697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */;
-			buildPhases = (
-				697AAE13192DA4FA006EF197 /* Sources */,
-				697AAE15192DA4FA006EF197 /* Resources */,
-				D980D5940B3D4E25B5B27794 /* Frameworks */,
-				5AB2B83C1FC3F64C0017CF83 /* Embed App Extensions */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5AB2B8371FC3F64C0017CF83 /* PBXTargetDependency */,
-			);
-			name = RSDKAnalyticsSample;
-			productName = RSDKAnalyticsSample;
-			productReference = 697AAE17192DA4FA006EF197 /* RSDKAnalyticsSample.app */;
+			productReference = 5AB66CB82016CE890028CEBC /* RAnalyticsSample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -286,22 +203,14 @@
 							};
 						};
 					};
-					697AAE16192DA4FA006EF197 = {
-						DevelopmentTeam = 87CT3T3CK2;
-						ProvisioningStyle = Manual;
-						SystemCapabilities = {
-							com.apple.Keychain = {
-								enabled = 1;
-							};
-						};
-					};
 				};
 			};
-			buildConfigurationList = 697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RSDKAnalyticsSample" */;
+			buildConfigurationList = 697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RAnalyticsSample" */;
 			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -310,9 +219,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				697AAE16192DA4FA006EF197 /* RSDKAnalyticsSample */,
+				5AB66CB72016CE890028CEBC /* RAnalyticsSample */,
 				5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */,
-				5AB66CB72016CE890028CEBC /* RSDKAnalyticsSampleSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -330,19 +238,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */,
 				5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */,
-				5AB66CC22016CE8A0028CEBC /* Assets.xcassets in Resources */,
 				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		697AAE15192DA4FA006EF197 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				697AAE36192DA4FB006EF197 /* Images.xcassets in Resources */,
-				697AAE2E192DA4FB006EF197 /* Main.storyboard in Resources */,
-				697AAE25192DA4FB006EF197 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,26 +288,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		697AAE13192DA4FA006EF197 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				697AAE34192DA4FB006EF197 /* RSDKAnalyticsViewController.m in Sources */,
-				6906DAAD19331C0C002074F5 /* RSDKAnalyticsRootViewController.m in Sources */,
-				697AAE27192DA4FB006EF197 /* main.m in Sources */,
-				697AAE2B192DA4FB006EF197 /* RSDKAnalyticsAppDelegate.m in Sources */,
-				6909CDA41932C8D600E6E399 /* RSDKAnalyticsRecordForm.m in Sources */,
-				694B0BC7193331F6000E0563 /* RSDKAnalyticsLeftMenuViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5AB2B8371FC3F64C0017CF83 /* PBXTargetDependency */ = {
+		6D2B866223D5A56C00960D85 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */;
-			targetProxy = 5AB2B8361FC3F64C0017CF83 /* PBXContainerItemProxy */;
+			targetProxy = 6D2B866123D5A56C00960D85 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -438,22 +323,6 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		697AAE23192DA4FB006EF197 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				697AAE24192DA4FB006EF197 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		697AAE2C192DA4FB006EF197 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				697AAE2D192DA4FB006EF197 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -479,7 +348,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -511,7 +380,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise8th_190902;
@@ -523,7 +392,6 @@
 		5AB66CC72016CE8A0028CEBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -535,17 +403,17 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSampleSwift/RSDKAnalyticsSampleSwift.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RAnalyticsSample/RAnalyticsSample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
+				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RSDKAnalyticsSampleSwift;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
+				PRODUCT_NAME = RAnalyticsSample;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -557,7 +425,6 @@
 		5AB66CC82016CE8A0028CEBC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -569,19 +436,19 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSampleSwift/RSDKAnalyticsSampleSwift.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RAnalyticsSample/RAnalyticsSample.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				INFOPLIST_FILE = RSDKAnalyticsSampleSwift/Info.plist;
+				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RSDKAnalyticsSampleSwift;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
+				PRODUCT_NAME = RAnalyticsSample;
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise8th_190902;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -679,54 +546,6 @@
 			};
 			name = Release;
 		};
-		697AAE4D192DA4FB006EF197 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
-				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
-				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.1612.12022137;
-				DEVELOPMENT_TEAM = 87CT3T3CK2;
-				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "515cba76-16b3-4f83-ab47-ebc5b0c9f08b";
-				PROVISIONING_PROFILE_SPECIFIER = Rakuten_Dev151211;
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Debug;
-		};
-		697AAE4E192DA4FB006EF197 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
-				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
-				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
-				CODE_SIGN_ENTITLEMENTS = RSDKAnalyticsSample/RSDKAnalyticsSample.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 1.1612.12022137;
-				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				INFOPLIST_FILE = "RSDKAnalyticsSample/RSDKAnalyticsSample-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.ios.sdk.RSDKAnalyticsSample;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
-				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise8th_190902;
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -739,7 +558,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSampleSwift" */ = {
+		5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RAnalyticsSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5AB66CC72016CE8A0028CEBC /* Debug */,
@@ -748,20 +567,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RSDKAnalyticsSample" */ = {
+		697AAE12192DA4FA006EF197 /* Build configuration list for PBXProject "RAnalyticsSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				697AAE4A192DA4FB006EF197 /* Debug */,
 				697AAE4B192DA4FB006EF197 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		697AAE4C192DA4FB006EF197 /* Build configuration list for PBXNativeTarget "RSDKAnalyticsSample" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				697AAE4D192DA4FB006EF197 /* Debug */,
-				697AAE4E192DA4FB006EF197 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
