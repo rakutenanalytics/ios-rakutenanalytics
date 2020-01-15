@@ -2,7 +2,6 @@ import UIKit
 import RAnalytics
 
 struct GlobalConstants {
-    static let kStaging = "Staging"
     static let kLocationTracking = "Location_Tracking"
     static let kIDFATracking = "IDFA_Tracking"
     static let kRATAccountID = "RAT_Account_ID"
@@ -16,7 +15,12 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
 
-    let titles: [String] = [GlobalConstants.kStaging, GlobalConstants.kLocationTracking, GlobalConstants.kIDFATracking, GlobalConstants.kRATAccountID, GlobalConstants.kRATAppID]
+    let titles: [String] = [
+        GlobalConstants.kLocationTracking,
+        GlobalConstants.kIDFATracking,
+        GlobalConstants.kRATAccountID,
+        GlobalConstants.kRATAppID
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,11 +30,6 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }
 
     func update(_ dict: [String : Any]) {
-        if let value = dict[GlobalConstants.kStaging] {
-            let value = value as! Bool
-            AnalyticsManager.shared().shouldUseStagingEnvironment = value
-        }
-
         if let value = dict[GlobalConstants.kLocationTracking] {
             let value = value as! Bool
             AnalyticsManager.shared().shouldTrackLastKnownLocation = value
@@ -76,7 +75,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: BaseTableViewCell
-        let cellIdentifier = indexPath.row < 3 ? "SwitchTableViewCell" : "TextFieldTableViewCell"
+        let cellIdentifier = indexPath.row < 2 ? "SwitchTableViewCell" : "TextFieldTableViewCell"
         cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! BaseTableViewCell
         cell.delegate = self
         cell.title = self.titles[indexPath.row]
