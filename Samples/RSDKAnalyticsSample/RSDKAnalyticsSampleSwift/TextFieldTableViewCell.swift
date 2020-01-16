@@ -6,11 +6,13 @@ class TextFieldTableViewCell: BaseTableViewCell {
     override func update(title: String?) {
         super.update(title: title)
         if title == GlobalConstants.kRATAccountID {
-            let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as! Int
-            self.textField.text = String(accountId)
+            if let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int {
+                self.textField.text = String(accountId)
+            }
         } else if title == GlobalConstants.kRATAppID {
-            let appId = Bundle.main.infoDictionary?["RATAppIdentifier"] as! Int
-            self.textField.text = String(appId)
+            if let appId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int {
+                self.textField.text = String(appId)
+            }
         }
     }
 

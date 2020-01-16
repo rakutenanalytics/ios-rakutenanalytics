@@ -40,5 +40,7 @@
 	<string>pushpnp</string>
 	<key>org.cocoapods.RRemoteConfig</key>
 	<string>remote-config</string>
+	<key>org.cocoapods.InAppMessaging</key>
+	<string>inappmessaging</string>
 </dict>
 </plist>

@@ -1,6 +1,6 @@
 import UIKit
 
-protocol BaseCellDelegate {
+protocol BaseCellDelegate: AnyObject {
     func update(_ dict: [String: Any])
 }
 
@@ -8,9 +8,9 @@ protocol BaseCellDelegate {
 
     var titleLabel: UILabel = UILabel()
 
-    var delegate: BaseCellDelegate?
+    weak var delegate: BaseCellDelegate?
 
-    var title:String? {
+    var title: String? {
         didSet {
             self.update(title: title)
         }
@@ -25,8 +25,20 @@ protocol BaseCellDelegate {
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.titleLabel)
 
-        let leadingConstraint = NSLayoutConstraint(item: self.titleLabel, attribute: .leading, relatedBy: .equal, toItem: self.contentView, attribute: .leading, multiplier: 1.0, constant: 16.0)
-        let verConstraint = NSLayoutConstraint(item: self.titleLabel, attribute: .centerY, relatedBy: .equal, toItem: self.contentView, attribute: .centerY, multiplier: 1.0, constant: 0.0)
+        let leadingConstraint = NSLayoutConstraint(item: self.titleLabel,
+                                                   attribute: .leading,
+                                                   relatedBy: .equal,
+                                                   toItem: self.contentView,
+                                                   attribute: .leading,
+                                                   multiplier: 1.0,
+                                                   constant: 16.0)
+        let verConstraint = NSLayoutConstraint(item: self.titleLabel,
+                                               attribute: .centerY,
+                                               relatedBy: .equal,
+                                               toItem: self.contentView,
+                                               attribute: .centerY,
+                                               multiplier: 1.0,
+                                               constant: 0.0)
         self.contentView.addConstraints([leadingConstraint, verConstraint])
     }
 

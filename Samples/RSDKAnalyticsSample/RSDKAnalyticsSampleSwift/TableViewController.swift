@@ -25,14 +25,15 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
-        guard let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int64, let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
+        guard let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int64,
+            let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
             return
         }
         self.accountId = accountId
         self.serviceId = serviceId
     }
 
-    func update(_ dict: [String : Any]) {
+    func update(_ dict: [String: Any]) {
         if let value = dict[GlobalConstants.kLocationTracking],
             let flag = value as? Bool {
             AnalyticsManager.shared().shouldTrackLastKnownLocation = flag
@@ -74,9 +75,10 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: BaseTableViewCell
         let cellIdentifier = indexPath.row < 2 ? "SwitchTableViewCell" : "TextFieldTableViewCell"
-        cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! BaseTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? BaseTableViewCell else {
+            return UITableViewCell()
+        }
         cell.delegate = self
         cell.title = self.titles[indexPath.row]
         return cell
