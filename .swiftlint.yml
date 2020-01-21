@@ -1,5 +1,6 @@
 included:
-  - RAnalyticsSample
+  - Samples/RAnalyticsSample # path when run from CI
+  - RAnalyticsSample # path when run as an Xcode build phase
 
 disabled_rules:
 - trailing_whitespace
@@ -10,6 +11,7 @@ opt_in_rules:
 
 excluded:
 - Carthage
+- Samples/Pods
 - Pods
 - SwiftLint/Common/3rdPartyLib
 
