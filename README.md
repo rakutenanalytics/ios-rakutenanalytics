@@ -167,41 +167,6 @@ Event name         | Required components
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
 
-@subsection analytics-appex Support for App Extensions
-The SDK can be added as a dependency to an App Extension target (e.g. Today Widget) and will compile successfully. The SDK's APIs such as @ref RAnalyticsEvent::track "track" (to track a custom event) can be used from an App Extension. 
-
-#### Requirements
-
-App Extensions need to follow the requirements at @ref analytics-configure-rat "Configuring RAT".
-
-* You MUST configure your RAT `accountId` and `applicationId` in the **App Extension** info.plist (in addition to your main app's info.plist)
-* To send events to a different endpoint you can set a `RATEndpoint` key in the **App Extension** info.plist
-* To enable debug logging you can create a boolean `RMSDKEnableDebugLogging` key set to YES in the **App Extension** info.plist
-
-#### Viewing App Extension events in Kibana
-
-To search for App Extension events in [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
-
-#### Limitations
-
-A known limitation due to app sandboxing is that the SDK cannot automatically fill the `userid` (normally contains a logged-in user's encrypted easy id) field in the payload of automatically tracked events such as `_rem_launch` when an event is sent by an App Extension.
-
-#### Track encrypted easy id
-
-To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using RAuthenticationAccount::loadAccountWithName:service:error: and then manually set the `userid` key to the loaded account's RAuthenticationAccount::trackingIdentifier :
-
-##### Swift 3
-
-@code{.swift}
-RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-[[RAnalyticsRATTracker.sharedInstance eventWithEventType: @"custom_name" parameters: @{@"userid": account.trackingIdentifier}] track];
-@endcode
-
 @section analytics-migratev2v3 Migrating from v2 to v3
 - 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
 - Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
@@ -292,72 +257,6 @@ The following is an example of tracking an event with custom parameters. It uses
                                                               @"custom_param_3": @YES}}] track];
 @endcode
 
-@subsection analytics-rat-example-search-results Tracking search results with RAT
-The code below shows an example of an event you could send to track which results get shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
-
-RAT param | Description
-----------|---------------
-`lang`    | The language used for the search.
-`sq`      | The search terms.
-`oa`      | `a` for requesting all search terms (AND), `o` for requesting one of them (OR).
-`esq`     | Terms that should be excluded from the results.
-`genre`   | Category for the results.
-`tag`     | An array of tags.
-
-##### Swift 3
-
-@code{.swift}
-    RAnalyticsRATTracker.shared().event(eventType: "pv",
-                             parameters:["pgn": "shop_search",
-                                         "pgt": "search",
-                                         "lang": "English",
-                                         "sq": "search query",
-                                         "oa": "a",
-                                         "esq": "excluded query",
-                                         "genre": "category",
-                                         "tag": ["tag 1", "tag 2"]]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
-                                        parameters:@{@"pgn": @"shop_search",
-                                                     @"pgt": @"search",
-                                                     @"lang": @"English",
-                                                     @"sq": @"search query",
-                                                     @"oa": @"a",
-                                                     @"esq": @"excluded query",
-                                                     @"genre": @"category",
-                                                     @"tag": @[@"tag 1", @"tag 2"]}] track];
-@endcode
-
-@subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
-You can monitor the tracker network activity by listening
-to the @ref RAnalyticsWillUploadNotification, @ref RAnalyticsUploadFailureNotification
-and @ref RAnalyticsUploadSuccessNotification notifications. For example:
-
-@code{.m}
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(failedToUpload:)
-                                               name:RAnalyticsUploadFailureNotification
-                                             object:nil];
-}
-
-- (void)failedToUpload:(NSNotification *)notification {
-    NSArray *records = notification.object;
-    NSError *error = notification.userInfo[NSUnderlyingErrorKey];
-    NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
-}
-
-- (void)dealloc {
-    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-@endcode
-
 @section analytics-advanced Advanced Usage
 @subsection analytics-configure-idfa IDFA tracking
 The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
@@ -375,7 +274,13 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 @endcode
 
 @subsection analytics-batching-delay Configure the Tracker Batching Delay
-A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. The default batching delay is 60 seconds. You can configure a different delay with the RAnalyticsTracker::setBatchingDelay: and RAnalyticsTracker::setBatchingDelayWithBlock: methods.
+A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. 
+
+The batching delay is a configurable value with default set to 60 seconds.
+
+@attention In our [internal tests](https://jira.rakuten-it.com/jira/browse/SDKCF-1596) we noticed no significant impact on battery usage when the batching delay was reduced to 1 sec in our demo app. However you should perform your own developer testing and QA to determine the appropriate batching delay for your app.
+
+You can configure a different delay with the RAnalyticsTracker::setBatchingDelay: and RAnalyticsTracker::setBatchingDelayWithBlock: methods.
 
 ### Example 1: Configure batching interval of 10 seconds
 
@@ -474,7 +379,108 @@ public class CustomClass: NSObject {
 
 @endcode
 
-@section analytics-custom-tracker Creating a Custom Tracker
+@subsection analytics-appex Support for App Extensions
+The SDK can be added as a dependency to an App Extension target (e.g. Today Widget) and will compile successfully. The SDK's APIs such as @ref RAnalyticsEvent::track "track" (to track a custom event) can be used from an App Extension. 
+
+#### Requirements
+
+App Extensions need to follow the requirements at @ref analytics-configure-rat "Configuring RAT".
+
+* You MUST configure your RAT `accountId` and `applicationId` in the **App Extension** info.plist (in addition to your main app's info.plist)
+* To send events to a different endpoint you can set a `RATEndpoint` key in the **App Extension** info.plist
+* To enable debug logging you can create a boolean `RMSDKEnableDebugLogging` key set to YES in the **App Extension** info.plist
+
+#### Viewing App Extension events in Kibana
+
+To search for App Extension events in [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
+
+#### Limitations
+
+A known limitation due to app sandboxing is that the SDK cannot automatically fill the `userid` (normally contains a logged-in user's encrypted easy id) field in the payload of automatically tracked events such as `_rem_launch` when an event is sent by an App Extension.
+
+#### Track encrypted easy id
+
+To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using RAuthenticationAccount::loadAccountWithName:service:error: and then manually set the `userid` key to the loaded account's RAuthenticationAccount::trackingIdentifier :
+
+##### Swift 3
+
+@code{.swift}
+RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
+@endcode
+
+##### Objective C
+
+@code{.m}
+[[RAnalyticsRATTracker.sharedInstance eventWithEventType: @"custom_name" parameters: @{@"userid": account.trackingIdentifier}] track];
+@endcode
+
+@subsection analytics-rat-example-search-results Tracking search results with RAT
+The code below shows an example of an event you could send to track which results get shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
+
+RAT param | Description
+----------|---------------
+`lang`    | The language used for the search.
+`sq`      | The search terms.
+`oa`      | `a` for requesting all search terms (AND), `o` for requesting one of them (OR).
+`esq`     | Terms that should be excluded from the results.
+`genre`   | Category for the results.
+`tag`     | An array of tags.
+
+##### Swift 3
+
+@code{.swift}
+RAnalyticsRATTracker.shared().event(eventType: "pv",
+parameters:["pgn": "shop_search",
+"pgt": "search",
+"lang": "English",
+"sq": "search query",
+"oa": "a",
+"esq": "excluded query",
+"genre": "category",
+"tag": ["tag 1", "tag 2"]]).track()
+@endcode
+
+##### Objective C
+
+@code{.m}
+[[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
+parameters:@{@"pgn": @"shop_search",
+@"pgt": @"search",
+@"lang": @"English",
+@"sq": @"search query",
+@"oa": @"a",
+@"esq": @"excluded query",
+@"genre": @"category",
+@"tag": @[@"tag 1", @"tag 2"]}] track];
+@endcode
+
+@subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
+You can monitor the tracker network activity by listening
+to the @ref RAnalyticsWillUploadNotification, @ref RAnalyticsUploadFailureNotification
+and @ref RAnalyticsUploadSuccessNotification notifications. For example:
+
+@code{.m}
+- (void)viewDidLoad {
+[super viewDidLoad];
+
+[NSNotificationCenter.defaultCenter addObserver:self
+selector:@selector(failedToUpload:)
+name:RAnalyticsUploadFailureNotification
+object:nil];
+}
+
+- (void)failedToUpload:(NSNotification *)notification {
+NSArray *records = notification.object;
+NSError *error = notification.userInfo[NSUnderlyingErrorKey];
+NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
+}
+
+- (void)dealloc {
+[NSNotificationCenter.defaultCenter removeObserver:self];
+}
+@endcode
+
+@subsection analytics-custom-tracker Creating a Custom Tracker
 Custom @ref RAnalyticsTracker "trackers" can be @ref RAnalyticsManager::addTracker: "added" to the @ref RAnalyticsManager "manager".
 
 Create a class and implement the RAnalyticsTracker protocol. Its [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3)
