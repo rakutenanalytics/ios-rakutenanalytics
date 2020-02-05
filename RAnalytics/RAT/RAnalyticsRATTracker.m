@@ -24,11 +24,7 @@ static NSURL *findURLForView(UIView *view)
 {
     NSURL *url = nil;
 
-    if ([view isKindOfClass:[UIWebView class]])
-    {
-        url = ((UIWebView *)view).request.URL;
-    }
-    else if ([WKWebView class] && [view isKindOfClass:[WKWebView class]])
+    if ([WKWebView class] && [view isKindOfClass:[WKWebView class]])
     {
         url = ((WKWebView *)view).URL;
     }
