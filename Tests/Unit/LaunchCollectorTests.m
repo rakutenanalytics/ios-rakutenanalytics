@@ -53,110 +53,86 @@
     RAnalyticsManager.sharedInstance.deviceIdentifier = @"deviceIdentifier";
 }
 
+- (_RAnalyticsLaunchCollector *)defaultCollector
+{
+    _RAnalyticsLaunchCollector *collector = [_RAnalyticsLaunchCollector sharedInstance];
+    collector.isInitialLaunch = NO;
+    collector.isInstallLaunch = NO;
+    collector.isUpdateLaunch = NO;
+    return collector;
+}
+
 - (void)testInitThrows
 {
     XCTAssertThrowsSpecificNamed([_RAnalyticsLaunchCollector.alloc init], NSException, NSInvalidArgumentException);
 }
 
-- (void)testInitialLaunch
+- (void)assertThatManagerTracksEvent:(NSString *)expectedEventName onNotification:(NSString *)notificationName
 {
-    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+    RAnalyticsManager *manager = [RAnalyticsManager sharedInstance];
+    id mockManager = OCMPartialMock(manager);
+
+    XCTestExpectation *expectation = [self expectationWithDescription:expectedEventName];
+
+    OCMStub([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        RAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event.name);
+        if ([event.name isEqualToString:expectedEventName]) {
+            [expectation fulfill];
+        }
+        return YES;
+    }]]);
+
+    [NSNotificationCenter.defaultCenter postNotificationName:notificationName
+                                                      object:nil];
+
+    [self waitForExpectationsWithTimeout:5 handler:nil];
+    [mockManager stopMocking];
+}
+
+- (void)testThatInitialLaunchEventIsTrackedWhenAppLaunchedForFirstTime
+{
+    _RAnalyticsLaunchCollector *collector = [self defaultCollector];
     collector.isInitialLaunch = YES;
-    
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
 
-    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
-                                                      object:nil];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsInitialLaunchEventName] ||
-                         [event.name isEqualToString:RAnalyticsSessionStartEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
+    [self assertThatManagerTracksEvent:RAnalyticsInitialLaunchEventName
+                        onNotification:UIApplicationDidFinishLaunchingNotification];
+
     XCTAssertFalse(collector.isInitialLaunch);
-    [mockManager stopMocking];
 }
 
-- (void)testInstallLaunch
+- (void)testThatInstallEventIsTrackedWhenAppLaunchedAfterInstall
 {
-    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = [self defaultCollector];
     collector.isInstallLaunch = YES;
-    
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
-                                                      object:nil];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsInstallEventName] ||
-                         [event.name isEqualToString:RAnalyticsSessionStartEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
+
+    [self assertThatManagerTracksEvent:RAnalyticsInstallEventName
+                        onNotification:UIApplicationDidFinishLaunchingNotification];
+
     XCTAssertFalse(collector.isInstallLaunch);
-    [mockManager stopMocking];
 }
 
-- (void)testUpdateLaunch
+- (void)testThatUpdateEventIsTrackedWhenAppLaunchedAfterUpdate
 {
-    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+    _RAnalyticsLaunchCollector *collector = [self defaultCollector];
     collector.isUpdateLaunch = YES;
-    
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidFinishLaunchingNotification
-                                                      object:nil];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsInstallEventName] ||
-                         [event.name isEqualToString:RAnalyticsSessionStartEventName] ||
-                         [event.name isEqualToString:RAnalyticsApplicationUpdateEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
+
+    [self assertThatManagerTracksEvent:RAnalyticsApplicationUpdateEventName
+                        onNotification:UIApplicationDidFinishLaunchingNotification];
+
     XCTAssertFalse(collector.isUpdateLaunch);
-    [mockManager stopMocking];
 }
 
-- (void)testResume
+- (void)testThatSessionStartEventIsTrackedWhenAppResumed
 {
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationWillEnterForegroundNotification
-                                                      object:nil];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsSessionStartEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
-    [mockManager stopMocking];
+    [self assertThatManagerTracksEvent:RAnalyticsSessionStartEventName
+                        onNotification:UIApplicationWillEnterForegroundNotification];
 }
 
 - (void)testSuspend
 {
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
-    
-    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification
-                                                      object:nil];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsSessionEndEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        return expected;
-    }]]);
-    [mockManager stopMocking];
+    [self assertThatManagerTracksEvent:RAnalyticsSessionEndEventName
+                        onNotification:UIApplicationDidEnterBackgroundNotification];
 }
 
 - (void)testPresentTrackedVC
