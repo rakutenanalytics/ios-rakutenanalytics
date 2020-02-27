@@ -20,6 +20,8 @@
 @property (nonatomic, copy, nullable) NSString *lastVisitedPageIdentifier;
 @property (nonatomic, copy, nullable) NSNumber *carriedOverOrigin;
 @property (nonatomic) RAnalyticsSender      *sender;
+@property (nonatomic, nullable) NSNumber *reachabilityStatus;
+@property (nonatomic) BOOL isUsingLTE;
 - (instancetype)initInstance;
 - (NSNumber *)positiveIntegerNumberWithObject:(id)object;
 @end
@@ -411,6 +413,56 @@
 
     // Then
     XCTAssertEqualObjects(payload[@"mcn"], @"");
+}
+
+- (void)test_givenNetworkOffline_whenEventIsProcessed_thenJsonMnetwValueIsEmptyString
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(0); // _RATReachabilityStatusOffline
+
+    // When
+    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
+
+    // Then
+    XCTAssertEqualObjects(payload[@"mnetw"], @"");
+}
+
+- (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIsWiFi
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(2); // _RATReachabilityStatusConnectedWithWiFi
+
+    // When
+    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
+
+    // Then
+    XCTAssertEqualObjects(payload[@"mnetw"], @(1)); // _RATMobileNetworkTypeWiFi
+}
+
+- (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIs4G
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(1); // _RATReachabilityStatusConnectedWithWWAN
+    RAnalyticsRATTracker.sharedInstance.isUsingLTE = YES;
+
+    // When
+    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
+
+    // Then
+    XCTAssertEqualObjects(payload[@"mnetw"], @(4)); // _RATMobileNetworkType4G
+}
+
+- (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIs3G
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(1); // _RATReachabilityStatusConnectedWithWWAN
+    RAnalyticsRATTracker.sharedInstance.isUsingLTE = NO;
+
+    // When
+    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
+
+    // Then
+    XCTAssertEqualObjects(payload[@"mnetw"], @(3)); // _RATMobileNetworkType3G
 }
 
 #pragma mark Test batch delay handling and setting delivery strategy

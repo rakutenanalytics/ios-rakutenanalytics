@@ -61,8 +61,7 @@ NSString* const _RATTableName = @"RAKUTEN_ANALYTICS_TABLE";
 // Private constants
 
 /*
- * This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter,
- * and adds an extra RAnalyticsInvalidMobileNetworkType value we do not send.
+ * This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter.
  */
 typedef NS_ENUM(NSUInteger, _RATMobileNetworkType)
 {
@@ -498,6 +497,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     payload[@"model"] = RDeviceIdentifier.modelIdentifier;
 
     // MARK: mnetw
+    payload[@"mnetw"] = @"";
+    
     if (_reachabilityStatus)
     {
         switch (_reachabilityStatus.unsignedIntegerValue)
