@@ -568,6 +568,14 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-changelog Changelog
+
+@subsection analytics-5-0-0 5.0.0 (2020-02-27)
+* [SDKCF-2017](https://jira.rakuten-it.com/jira/browse/SDKCF-2017): Removed all `UIWebView` references from code to comply with Apple [announcement](https://developer.apple.com/news/?id=12232019b)
+* [SDKCF-1253](https://jira.rakuten-it.com/jira/browse/SDKCF-1253): Removed the deprecated `shouldUseStagingEnvironment` flag
+* [SDKCF-1957](https://jira.rakuten-it.com/jira/browse/SDKCF-1957): Updated batching delay documentation to reference battery usage testing
+* [SDKCF-1955](https://jira.rakuten-it.com/jira/browse/SDKCF-1955): Added missing module names to SDK Tracker's module map list
+* [SDKCF-1562](https://jira.rakuten-it.com/jira/browse/SDKCF-1562): Added empty `mcn` (carrier name) field to the RAT event payload that will be sent when a device is connected to WiFi
+
 @subsection analytics-4-1-0 4.1.0 (2019-10-28)
 * [SDKCF-1523](https://jira.rakuten-it.com/jira/browse/SDKCF-1523): Move RP cookie fetch functionality from RAT subspec to Core subspec so that it is available to modules that only have a dependency on Core
 
