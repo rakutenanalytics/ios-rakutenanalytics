@@ -11,6 +11,9 @@
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+
 @interface RAnalyticsRATTracker ()
 - (instancetype)initInstance;
 @end
@@ -39,7 +42,7 @@
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
-    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+    } withStubResponse:^OHHTTPStubsResponse *(__unused NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@;", cookieName, cookieValue];
         NSDictionary* headers = @{@"Set-Cookie": cookie};
         return [OHHTTPStubsResponse responseWithData:[NSData new]
@@ -64,7 +67,7 @@
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
-    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+    } withStubResponse:^OHHTTPStubsResponse *(__unused NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithData:[NSData new]
                                           statusCode:500
                                              headers:nil];
@@ -126,7 +129,7 @@
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
-    } withStubResponse:^OHHTTPStubsResponse *(NSURLRequest *request) {
+    } withStubResponse:^OHHTTPStubsResponse *(__unused NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@; path=/; expires=%@; session-only=%@; domain=.rakuten.co.jp", cookieName, cookieValue, expiryDate, [NSNumber numberWithBool:NO]];
         NSDictionary* headers = @{@"Set-Cookie": cookie};
         return [OHHTTPStubsResponse responseWithData:[NSData new]
@@ -141,4 +144,6 @@
 }
 
 @end
+
+#pragma clang diagnostic pop
 

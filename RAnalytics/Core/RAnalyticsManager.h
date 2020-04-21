@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Main class of the module.
  *
  *
- * @par Swift 3
+ * @par Swift
  * This class is exposed as **AnalyticsManager**.
  *
  * @class RAnalyticsManager RAnalyticsManager.h <RAnalytics/RAnalyticsManager.h>
@@ -20,7 +20,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 /**
  * Retrieve the shared instance.
  *
- * @par Swift 3
+ * @par Swift
  * This method is exposed as **AnalyticsManager.shared()**.
  *
  * @return The shared instance.
@@ -37,7 +37,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 /**
  * Add a tracker to tracker list.
  *
- * @par Swift 3
+ * @par Swift
  * This method is exposed as **.add()**.
  *
  * @param tracker  Any object that comforms to the @ref RAnalyticsTracker protocol.

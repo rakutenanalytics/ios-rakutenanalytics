@@ -27,6 +27,7 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
 
 - (void)testUNSetDelegateMethodReplaced
 {

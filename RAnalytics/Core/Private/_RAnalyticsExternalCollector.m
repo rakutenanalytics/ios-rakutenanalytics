@@ -357,7 +357,7 @@ static NSString *const _RAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.e
     [self.class trackEvent:eventName parameters:nil];
 }
 
-+ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters
++ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary<NSString *, id> *)parameters
 {
     [[RAnalyticsEvent.alloc initWithName:eventName parameters:parameters] track];
 }

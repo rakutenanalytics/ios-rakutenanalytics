@@ -16,16 +16,7 @@ typedef NSTimeInterval(^BatchingDelayBlock)(void);
 /*
  * Support for exposing public parts of the API with Swift-friendly naming.
  */
-#  define RSDKA_SWIFT_NAME(n) __attribute__((swift_name(#n)))
-
-/*
- * Xcode 6-compatible generics support
- */
-#if __has_feature(objc_generics)
-#   define RSDKA_GENERIC(...) <__VA_ARGS__>
-#else
-#   define RSDKA_GENERIC(...)
-#endif
+#define RSDKA_SWIFT_NAME(n) __attribute__((swift_name(#n)))
 
 /*
  * iOS 10 user notifications

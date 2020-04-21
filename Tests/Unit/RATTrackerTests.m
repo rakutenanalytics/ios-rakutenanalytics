@@ -32,7 +32,7 @@
 @end
 
 @interface RAnalyticsManager ()
-@property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;
+@property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @end
 
 #pragma mark - Unit Tests
@@ -100,7 +100,7 @@
 - (void)testThatPlistAccountIdKeyIsUsedWhenSet
 {
     // setUp() already mocks mainBundle so need to remove
-    [self.mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+    [self.mocks enumerateObjectsUsingBlock:^(id mock, __unused NSUInteger idx, __unused BOOL * stop) {
         [mock stopMocking];
     }];
 
@@ -122,7 +122,7 @@
 - (void)testThatPlistApplicationIdKeyIsUsedWhenSet
 {
     // setUp() already mocks mainBundle so need to remove
-    [self.mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+    [self.mocks enumerateObjectsUsingBlock:^(id mock, __unused NSUInteger idx, __unused BOOL * stop) {
         [mock stopMocking];
     }];
 

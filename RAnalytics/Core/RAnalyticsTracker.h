@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Interface for tracker which can process an object of RAnalyticsEvent.
  * The tracker conforming to this protocol will process events passed from the manager.
  *
- * @par Swift 3
+ * @par Swift
  * This protocol is exposed as **Tracker**.
  *
  * @protocol RAnalyticsTracker RAnalyticsTracker.h <RAnalytics/RAnalyticsTracker.h>

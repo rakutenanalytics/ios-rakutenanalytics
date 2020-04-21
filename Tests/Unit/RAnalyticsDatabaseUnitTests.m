@@ -29,9 +29,10 @@ describe(@"RAnalyticsDatabase", ^{
             _RAnalyticsDatabase* db = mkDatabase(connection);
             NSData* blob = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
             
-            [[db should] receive:@selector(insertBlobs:into:limit:then:) withArguments:@[blob], @"test_table", theValue(1), nil];
+            [[db should] receive:@selector(insertBlobs:into:limit:then:)
+                   withArguments:@[blob], @"test_table", theValue(1), kw_any()];
             
-            [db insertBlob:blob into:@"test_table" limit:1 then:nil];
+            [db insertBlob:blob into:@"test_table" limit:1 then:^{}];
         });
     });
     
@@ -193,7 +194,7 @@ describe(@"RAnalyticsDatabase", ^{
             _RAnalyticsDatabase* database = mkDatabase(connection);
             
             __block BOOL someTableExists;
-            [database fetchBlobs:100500 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobs, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:100500 from:@"some_table" then:^(__unused NSArray<NSData *> * _Nullable blobs, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                 someTableExists = isTableExist(@"some_table", connection);
             }];
             
@@ -206,7 +207,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedBlobs;
-            [database fetchBlobs:100500 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:100500 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedBlobs = blobsFromDb;
             }];
             
@@ -219,7 +220,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedIds;
-            [database fetchBlobs:100500 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobs, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:100500 from:@"some_table" then:^(__unused NSArray<NSData *> * _Nullable blobsFromDB, NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedIds = identifiers;
             }];
             
@@ -232,7 +233,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(@[[@"foo" dataUsingEncoding:NSUTF8StringEncoding]], @"some_table", connection);
             
             __block NSArray* fetchedBlobs;
-            [db fetchBlobs:100500 from:table then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [db fetchBlobs:100500 from:table then:^(NSArray<NSData *> * _Nullable blobsFromDb, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedBlobs = blobsFromDb;
             }];
             [table appendString:@"_foobar"];
@@ -246,7 +247,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(@[[@"foo" dataUsingEncoding:NSUTF8StringEncoding]], @"some_table", connection);
             
             __block NSArray* fetchedIds;
-            [db fetchBlobs:100500 from:table then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [db fetchBlobs:100500 from:table then:^(__unused NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedIds = identifiers;
             }];
             [table appendString:@"_foobar"];
@@ -260,7 +261,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedBlobs = @[];
-            [database fetchBlobs:0 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:0 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedBlobs = blobsFromDb;
             }];
             
@@ -273,7 +274,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedIds = @[];
-            [database fetchBlobs:0 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:0 from:@"some_table" then:^(__unused NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedIds = identifiers;
             }];
             
@@ -290,7 +291,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedBlobs = @[];
-            [database fetchBlobs:2 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:2 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedBlobs = blobsFromDb;
             }];
             
@@ -310,7 +311,7 @@ describe(@"RAnalyticsDatabase", ^{
             insertBlobsIntoTable(blobs, @"some_table", connection);
             
             __block NSArray* fetchedIds = @[];
-            [database fetchBlobs:2 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
+            [database fetchBlobs:2 from:@"some_table" then:^(__unused NSArray<NSData *> * _Nullable blobsFromDb, NSArray<NSNumber *> * _Nullable identifiers) {
                 fetchedIds = identifiers;
             }];
             
@@ -325,7 +326,7 @@ describe(@"RAnalyticsDatabase", ^{
                 _RAnalyticsDatabase* db = mkDatabase(readonlyConnection);
                 
                 __block BOOL someTableExists = YES;
-                [db fetchBlobs:123 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDB, NSArray<NSNumber *> * _Nullable identifiers) {
+                [db fetchBlobs:123 from:@"some_table" then:^(__unused NSArray<NSData *> * _Nullable blobsFromDB, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                     someTableExists = isTableExist(@"some_table", connection);
                 }];
                 
@@ -338,7 +339,7 @@ describe(@"RAnalyticsDatabase", ^{
                 insertBlobsIntoTable(blobs, @"some_table", connection);
                 
                 __block NSArray* fetchedBlobs = @[];
-                [db fetchBlobs:123 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDB, NSArray<NSNumber *> * _Nullable identifiers) {
+                [db fetchBlobs:123 from:@"some_table" then:^(NSArray<NSData *> * _Nullable blobsFromDB, __unused NSArray<NSNumber *> * _Nullable identifiers) {
                     fetchedBlobs = blobsFromDB;
                 }];
                 

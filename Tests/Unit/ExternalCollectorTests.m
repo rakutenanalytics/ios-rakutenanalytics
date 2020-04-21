@@ -8,7 +8,7 @@
 
 @interface _RAnalyticsExternalCollector ()
 + (void)trackEvent:(NSString *)eventName;
-+ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters;
++ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary<NSString *, id> *)parameters;
 - (instancetype)initInstance;
 @end
 

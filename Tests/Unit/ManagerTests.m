@@ -36,13 +36,12 @@
 @end
 
 @interface ManagerTests : XCTestCase
-{
-    RAnalyticsManager *_manager;
-}
-
 @end
 
 @implementation ManagerTests
+{
+    RAnalyticsManager *_manager;
+}
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

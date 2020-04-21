@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Known login methods.
  *
- * @par Swift 3
+ * @par Swift
  * This type is exposed as **AnalyticsManager.State.LoginMethod**.
  *
  * @see RAnalyticsState.loginMethod
@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
     /**
      * Login with other method except input password and one tap.
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.other**.
      */
     RAnalyticsOtherLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.other) = 0,
@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
      * Password Input Login.
      * The user had to manually input their credentials in order to login.
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.passwordInput**.
      */
     RAnalyticsPasswordInputLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.passwordInput),
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
      * One Tap Login.
      * The user logged in by just tapping a button, as allowed by Single Sign-On.
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.oneTapLogin**.
      */
     RAnalyticsOneTapLoginLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.oneTapLogin),
@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
 /**
  * Known launch origins.
  *
- * @par Swift 3
+ * @par Swift
  * This type is exposed as **AnalyticsManager.State.Origin**.
  *
  * @see RAnalyticsState.origin
@@ -60,7 +60,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
     /**
      * The visit originates from within the app itself.
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.internal**.
      */
     RAnalyticsInternalOrigin RSDKA_SWIFT_NAME(internal) = 0,
@@ -68,7 +68,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
     /**
      * The visit originates from another app (i.e. deep-linking).
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.external**.
      */
     RAnalyticsExternalOrigin RSDKA_SWIFT_NAME(external),
@@ -76,7 +76,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
     /**
      * The visit originates from a push notification.
      *
-     * @par Swift 3
+     * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.push**.
      */
     RAnalyticsPushOrigin RSDKA_SWIFT_NAME(push),
@@ -86,7 +86,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
  * Composite state created every time an event is processed, 
  * and passed to each tracker's [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3) method.
  *
- * @par Swift 3
+ * @par Swift
  * This class is exposed as **AnalyticsManager.State**.
  *
  * @class RAnalyticsState RAnalyticsState.h <RAnalytics/RAnalyticsState.h>

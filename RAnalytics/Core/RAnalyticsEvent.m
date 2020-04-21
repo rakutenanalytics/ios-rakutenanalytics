@@ -47,7 +47,7 @@ NSString *const RAnalyticsGlobalLogoutMethod         = @"global";
     __builtin_unreachable();
 }
 
-- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
+- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary<NSString *, id> * __nullable)parameters
 {
     NSParameterAssert(name.length);
     if ((self = [super init]))

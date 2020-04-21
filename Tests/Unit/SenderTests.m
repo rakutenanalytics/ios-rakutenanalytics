@@ -41,7 +41,7 @@
 }
 
 - (void)tearDown {
-    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+    [_mocks enumerateObjectsUsingBlock:^(id mock, __unused NSUInteger idx, __unused BOOL *stop) {
         [mock stopMocking];
     }];
 
@@ -73,7 +73,7 @@
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [wait fulfill];
-        XCTAssertEqual(_sender.uploadTimerInterval, batchingDelay);
+        XCTAssertEqual(self.sender.uploadTimerInterval, batchingDelay);
     });
 
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
@@ -83,7 +83,7 @@
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:@"https://endpoint.co.jp/"];
-    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
+    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(__unused NSURLRequest * _Nonnull request) {
         dispatch_async(dispatch_get_main_queue(), ^{
 
             if (completion) completion();
@@ -170,8 +170,8 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
             // Event should have been sent and DB record deleted
-            XCTAssertEqual(_database.keys.count, 0);
-            XCTAssertEqual(_database.rows.count, 0);
+            XCTAssertEqual(self.database.keys.count, 0);
+            XCTAssertEqual(self.database.rows.count, 0);
 
             [wait fulfill];
         });
@@ -193,8 +193,8 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
         // Event's DB record should still be in DB
-        XCTAssertEqual(_database.keys.count, 1);
-        XCTAssertEqual(_database.rows.count, 1);
+        XCTAssertEqual(self.database.keys.count, 1);
+        XCTAssertEqual(self.database.rows.count, 1);
 
         [wait fulfill];
     });
@@ -215,7 +215,7 @@
                                                                            queue:queue
                                                                       usingBlock:^(NSNotification * _Nonnull note)
                            {
-                               if ([((NSArray *)note.object).firstObject isEqual:_payload]) uploadsToRAT++;
+        if ([((NSArray *)note.object).firstObject isEqual:self.payload]) uploadsToRAT++;
                            }];
 
     XCTestExpectation *notified = [self expectationWithDescription:@"notified"];
@@ -223,19 +223,19 @@
     id cbDidBecomeActive = [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                                            object:nil
                                                                             queue:queue
-                                                                       usingBlock:^(NSNotification *note)
+                                                                       usingBlock:^(__unused NSNotification *note)
                             {
-                                [_sender setBatchingDelayBlock:^NSTimeInterval{
+                            [self.sender setBatchingDelayBlock:^NSTimeInterval{
                                     return 0.0;
                                 }];
-                                [_sender sendJSONOject:_payload];
+                                [self.sender sendJSONOject:self.payload];
 
                                 // Wait for events to be sent
                                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
                                     XCTAssertEqual(uploadsToRAT, 1);
-                                    XCTAssertEqual(_database.keys.count, 0);
-                                    XCTAssertEqual(_database.rows.count, 0);
+                                    XCTAssertEqual(self.database.keys.count, 0);
+                                    XCTAssertEqual(self.database.rows.count, 0);
 
                                     [notified fulfill];
                                 });
@@ -249,6 +249,9 @@
 }
 
 @end
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
 
 SPEC_BEGIN(SenderDatabaseTests)
 describe(@"initWithEndpoint:databaseName:databaseTableName:", ^{
@@ -312,3 +315,5 @@ describe(@"initWithEndpoint:databaseName:databaseTableName:", ^{
     });
 });
 SPEC_END
+
+#pragma clang diagnostic pop

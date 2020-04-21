@@ -16,7 +16,7 @@ RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
 /**
  * Retrieve the shared instance.
  *
- * @par Swift 3
+ * @par Swift
  * This method is exposed as **RAnalyticsRATTracker.shared()**.
  *
  * @return The shared instance.
@@ -26,7 +26,7 @@ RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
 /**
  * Create a RAT specific event.
  *
- * @par Swift 3
+ * @par Swift
  * This method is exposed as **.event(withEventType:parameters:)**.
  *
  * @param eventType       RAT event type
@@ -34,7 +34,7 @@ RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
  *
  * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl ) document.
  */
-- (RAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters;
+- (RAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary<NSString *, id> * __nullable)parameters;
 
 /**
  * This is the URL of RAT server which this module uploads records to.

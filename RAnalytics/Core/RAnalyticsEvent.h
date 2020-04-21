@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * A single analytics event. Use the RAnalyticsEvent::track: method for tracking the event.
  *
- * @par Swift 3
+ * @par Swift
  * This class is exposed as **AnalyticsManager.Event**.
  *
  * @class RAnalyticsEvent RAnalyticsEvent.h <RAnalytics/RAnalyticsEvent.h>
@@ -33,7 +33,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
 /**
  * Optional payload, for passing additional parameters to custom/3rd-party trackers.
  */
-@property (nonatomic, readonly, copy) NSDictionary RSDKA_GENERIC(NSString *, id) *parameters;
+@property (nonatomic, readonly, copy) NSDictionary<NSString *, id> *parameters;
 
 /**
  * @internal
@@ -53,7 +53,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
  *
  * @see AnalyticsEvents
  */
-- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary<NSString *, id> * __nullable)parameters NS_DESIGNATED_INITIALIZER;
 
 /**
  * Convenience method for tracking an event.
@@ -69,7 +69,7 @@ struct RSDKA_SWIFT_NAME(RAnalyticsEvent.Name) RAnalyticsEventName { };
  * Event triggered on first launch after installation or reinstallation.
  * Always followed by a .sessionStart event.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.initialLaunch**.
  *
  * @ingroup AnalyticsEvents
@@ -80,7 +80,7 @@ RSDKA_EXPORT NSString *const RAnalyticsInitialLaunchEventName  RSDKA_SWIFT_NAME(
  * Event triggered on every launch, as well as resume from background when
  * the life cycle session timeout has been exceeded.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.sessionStart**.
  *
  * @ingroup AnalyticsEvents
@@ -90,7 +90,7 @@ RSDKA_EXPORT NSString *const RAnalyticsSessionStartEventName  RSDKA_SWIFT_NAME(R
 /**
  * Event triggered when the app goes into background.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.sessionEnd**.
  *
  * @ingroup AnalyticsEvents
@@ -100,7 +100,7 @@ RSDKA_EXPORT NSString *const RAnalyticsSessionEndEventName  RSDKA_SWIFT_NAME(RAn
 /**
  * Event triggered on the first launch after an update.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.applicationUpdate**.
  *
  * @ingroup AnalyticsEvents
@@ -110,7 +110,7 @@ RSDKA_EXPORT NSString *const RAnalyticsApplicationUpdateEventName  RSDKA_SWIFT_N
 /**
  * Event triggered when a user logs in.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.login**.
  *
  * @ingroup AnalyticsEvents
@@ -121,7 +121,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLoginEventName  RSDKA_SWIFT_NAME(RAnalyti
 /**
  * Event triggered when a user login fails.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.loginFailure**.
  *
  * @ingroup AnalyticsEvents
@@ -132,7 +132,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLoginFailureEventName  RSDKA_SWIFT_NAME(R
 /**
  * Event triggered when a user logs out.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.logout**.
  *
  * @ingroup AnalyticsEvents
@@ -142,7 +142,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLogoutEventName  RSDKA_SWIFT_NAME(RAnalyt
 /**
  * Event triggered on first run after app install with or without version change
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.install**.
  *
  * @ingroup AnalyticsEvents
@@ -152,7 +152,7 @@ RSDKA_EXPORT NSString *const RAnalyticsInstallEventName  RSDKA_SWIFT_NAME(RAnaly
 /**
  * Event triggered when a view controller is shown.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.pageVisit**.
  *
  * @ingroup AnalyticsEvents
@@ -163,7 +163,7 @@ RSDKA_EXPORT NSString *const RAnalyticsPageVisitEventName  RSDKA_SWIFT_NAME(RAna
  * Event triggered when a push notification is received.
  * This event has a parameter named RAnalyticsPushNotificationTrackingIdentifierParameter
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.pushNotification**.
  *
  * @see RAnalyticsPushNotificationTrackingIdentifierParameter
@@ -180,7 +180,7 @@ struct RSDKA_SWIFT_NAME(RAnalyticsEvent.LogoutMethod) RAnalyticsLogoutMethod { }
 /**
  * Parameter for the logout method sent together with a logout event.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Parameter.logoutMethod**.
  *
  * @see RAnalyticsLogoutEventName
@@ -192,7 +192,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLogoutMethodEventParameter RSDKA_SWIFT_NA
 /**
  * Parameter for the tracking identifier sent together with a push notification event.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Parameter.pushTrackingIdentifier**.
  *
  * @see RAnalyticsPushNotificationEventName
@@ -203,7 +203,7 @@ RSDKA_EXPORT NSString *const RAnalyticsPushNotificationTrackingIdentifierParamet
 /**
  * Logout method when the user was logged out of the current app only.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.LogoutMethod.local**.
  *
  * @see RAnalyticsLogoutEventName
@@ -215,7 +215,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLocalLogoutMethod  RSDKA_SWIFT_NAME(RAnal
 /**
  * Logout method when the user was logged out of all apps and the account was deleted from the keychain.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.LogoutMethod.global**.
  *
  * @see RAnalyticsLogoutEventName
@@ -227,7 +227,7 @@ RSDKA_EXPORT NSString *const RAnalyticsGlobalLogoutMethod  RSDKA_SWIFT_NAME(RAna
 /**
  * Event triggered when an SSO credential is found.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.SSOCredentialFound**.
  *
  * @ingroup AnalyticsEvents
@@ -237,7 +237,7 @@ RSDKA_EXPORT NSString *const RAnalyticsSSOCredentialFoundEventName RSDKA_SWIFT_N
 /**
  * Event triggered when a login credential is found.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.loginCredentialFound**.
  *
  * @ingroup AnalyticsEvents
@@ -247,7 +247,7 @@ RSDKA_EXPORT NSString *const RAnalyticsLoginCredentialFoundEventName RSDKA_SWIFT
 /**
  * Event triggered at launch to track credential strategies.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.credentialStrategies**.
  *
  * @ingroup AnalyticsEvents
@@ -258,7 +258,7 @@ RSDKA_EXPORT NSString *const RAnalyticsCredentialStrategiesEventName RSDKA_SWIFT
  * Event used to package an event name and its data.
  * This event has parameters RAnalyticsCustomEventNameParameter and RAnalyticsCustomEventDataParameter
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.custom**.
  *
  * @see RAnalyticsCustomEventNameParameter
@@ -270,7 +270,7 @@ RSDKA_EXPORT NSString *const RAnalyticsCustomEventName RSDKA_SWIFT_NAME(RAnalyti
 /**
  * Parameter for the event name sent with a custom event.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Parameter.eventName**.
  *
  * @see RAnalyticsCustomEventName
@@ -281,7 +281,7 @@ RSDKA_EXPORT NSString *const RAnalyticsCustomEventNameParameter;
 /**
  * Parameter for the event data sent with a custom event.
  *
- * @par Swift 3
+ * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Parameter.eventData**.
  *
  * @see RAnalyticsCustomEventName

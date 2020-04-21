@@ -165,15 +165,16 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
     
     /*
      * Don't treat system popups as pages.
-     * Before iOS9, pop-overs will be caught further below because they used a _UIPopoverView
-     * and that class matches the criteria for Apple private classes.
      */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
     if ([view isKindOfClass:UIAlertView.class] ||
         [view isKindOfClass:UIActionSheet.class] ||
         ([UIAlertController class] && [viewController isKindOfClass:[UIAlertController class]]))
     {
         return;
     }
+#pragma clang diagnostic pop
 
     /*
      * Don't treat private classes as pages if they come from system frameworks.

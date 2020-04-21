@@ -270,7 +270,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     [_sender setBatchingDelayBlock:batchingDelayBlock];
 }
 
-- (RAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) * __nullable)parameters
+- (RAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary<NSString *, id> * __nullable)parameters
 {
     return [RAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@", _RATEventPrefix, eventType] parameters:parameters];
 }

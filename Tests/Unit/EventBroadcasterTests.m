@@ -5,7 +5,7 @@
 #import <OCMock/OCMock.h>
 
 @interface _RAnalyticsExternalCollector ()
-+ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary RSDKA_GENERIC(NSString *, id) *)parameters;
++ (void)trackEvent:(NSString *)eventName parameters:(NSDictionary<NSString *, id> *)parameters;
 @end
 
 @interface EventBroadcasterTests : XCTestCase

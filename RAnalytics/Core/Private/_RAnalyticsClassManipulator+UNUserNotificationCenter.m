@@ -18,7 +18,7 @@
 #pragma mark Added to id<UNUserNotificationCenterDelegate>
 - (void)_r_autotrack_userNotificationCenter:(UNUserNotificationCenter *)center
              didReceiveNotificationResponse:(UNNotificationResponse *)response
-                      withCompletionHandler:(void(^)())completionHandler
+                      withCompletionHandler:(void(^)(void))completionHandler
 {
     UNNotificationRequest *request = response.notification.request;
     if ([request.trigger isKindOfClass:UNPushNotificationTrigger.class])

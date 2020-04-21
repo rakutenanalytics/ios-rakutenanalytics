@@ -12,16 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSMutableDictionary *rows;
 @property (nonatomic) NSDictionary        *latestAddedJSON;
 
-- (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+- (void)insertBlobs:(NSArray<NSData *> *)blobs
                into:(NSString *)table
               limit:(unsigned int)maximumNumberOfBlobs
                then:(dispatch_block_t)completion;
 
 - (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
               from:(NSString *)table
-              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
+              then:(void (^)(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers))completion;
 
-- (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+- (void)deleteBlobsWithIdentifiers:(NSArray<NSNumber *> *)identifiers
                                 in:(NSString *)table
                               then:(dispatch_block_t)completion;
 

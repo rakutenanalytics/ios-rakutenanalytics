@@ -42,7 +42,7 @@
  */
 @property(nonatomic, copy) NSString *sessionCookie;
 @property (nonatomic, copy) NSDate *sessionStartDate;
-@property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;
+@property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 
 - (instancetype)initSharedInstance;
 @end

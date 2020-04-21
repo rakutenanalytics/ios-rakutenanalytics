@@ -26,7 +26,7 @@
 @end
 
 @interface RAnalyticsManager ()
-@property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;
+@property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @end
 
 @interface RAnalyticsSender ()
@@ -104,7 +104,7 @@
 
 - (void)tearDown {
     [OHHTTPStubs removeAllStubs];
-    [_mocks enumerateObjectsUsingBlock:^(id mock, NSUInteger idx, BOOL *stop) {
+    [_mocks enumerateObjectsUsingBlock:^(id mock, __unused NSUInteger idx, __unused BOOL *stop) {
         [mock stopMocking];
     }];
 
@@ -148,7 +148,7 @@
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString isEqualToString:RAnalyticsRATTracker.endpointAddress.absoluteString];
-    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
+    } withStubResponse:^OHHTTPStubsResponse * _Nonnull(__unused NSURLRequest * _Nonnull request) {
         dispatch_async(dispatch_get_main_queue(), ^{
 
             if (completion) completion();

@@ -41,7 +41,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param maximumNumberOfBlobs  Maximum number of blobs to keep in the table.
  * @param completion            Block to call upon completion.
  */
-- (void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+- (void)insertBlobs:(NSArray<NSData *> *)blobs
                into:(NSString *)table
               limit:(unsigned int)maximumNumberOfBlobs
                then:(dispatch_block_t)completion;
@@ -55,7 +55,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  */
 - (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
               from:(NSString *)table
-              then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion;
+              then:(void (^)(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers))completion;
 
 /*
  * Delete blobs with the given identifier from a table.
@@ -64,7 +64,7 @@ RSDKA_EXPORT @interface _RAnalyticsDatabase : NSObject
  * @param table        Name of the table.
  * @param completion   Block to call upon completion.
  */
-- (void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+- (void)deleteBlobsWithIdentifiers:(NSArray<NSNumber *> *)identifiers
                                 in:(NSString *)table
                               then:(dispatch_block_t)completion;
 

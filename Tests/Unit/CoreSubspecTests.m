@@ -3,7 +3,7 @@
 #import "../../RAnalytics/Core/Private/_SDKTracker.h"
 
 @interface RAnalyticsManager()<CLLocationManagerDelegate>
-@property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;
+@property(nonatomic, strong) NSMutableSet<RAnalyticsTracker> *trackers;
 - (instancetype)initSharedInstance;
 @end
 

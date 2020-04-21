@@ -121,12 +121,12 @@ static const unsigned int    _RATBatchSize      = 16u;
                          typeof(weakSelf) __strong strongSelf = weakSelf;
                          if (blobs)
                          {
-                             RAnalyticsDebugLog(@"Records fetched from DB table %@, now upload them", _databaseTableName);
+                             RAnalyticsDebugLog(@"Records fetched from DB table %@, now upload them", self.databaseTableName);
                              [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
                          }
                          else
                          {
-                             RAnalyticsDebugLog(@"No records found in DB table %@ so end upload", _databaseTableName);
+                             RAnalyticsDebugLog(@"No records found in DB table %@ so end upload", self.databaseTableName);
                              [strongSelf _backgroundUploadEnded];
                          }
                      }];
@@ -253,9 +253,9 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                    * Delete the records from the local database.
                                                    */
 
-                                                  [_database deleteBlobsWithIdentifiers:identifiers
-                                                                                               in:_databaseTableName
-                                                                                             then:^{
+                                                  [self.database deleteBlobsWithIdentifiers:identifiers
+                                                                                         in:self.databaseTableName
+                                                                                       then:^{
                                                                                                  // To throttle uploads, we schedule a new upload to send the rest of the records.
                                                                                                  typeof(weakSelf) __strong strongSelf = weakSelf;
 

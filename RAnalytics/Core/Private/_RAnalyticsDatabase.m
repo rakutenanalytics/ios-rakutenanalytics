@@ -42,7 +42,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
     [self insertBlobs:@[blob.copy] into:table limit:maximumNumberOfBlobs then:completion];
 }
 
--(void)insertBlobs:(NSArray RSDKA_GENERIC(NSData *) *)blobs
+-(void)insertBlobs:(NSArray<NSData *> *)blobs
               into:(NSString *)table
              limit:(unsigned int)maximumNumberOfBlobs
               then:(dispatch_block_t)completion
@@ -101,7 +101,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
 
 -(void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
              from:(NSString *)table
-             then:(void (^)(NSArray RSDKA_GENERIC(NSData *) *__nullable blobs, NSArray RSDKA_GENERIC(NSNumber *) *__nullable identifiers))completion
+             then:(void (^)(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers))completion
 {
     // Make params immutable, otherwise they could be modified before getting accessed later on the queue
     table = table.copy;
@@ -155,7 +155,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
     }];
 }
 
--(void)deleteBlobsWithIdentifiers:(NSArray RSDKA_GENERIC(NSNumber *) *)identifiers
+-(void)deleteBlobsWithIdentifiers:(NSArray<NSNumber *> *)identifiers
                                in:(NSString *)table
                              then:(dispatch_block_t)completion
 {

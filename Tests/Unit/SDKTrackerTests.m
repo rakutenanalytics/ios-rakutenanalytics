@@ -11,7 +11,7 @@
 #pragma mark - Module Internals
 
 @interface RAnalyticsManager ()
-@property(nonatomic, strong) NSMutableSet RSDKA_GENERIC(id<RAnalyticsTracker>) *trackers;
+@property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @end
 
 @interface _SDKTracker ()

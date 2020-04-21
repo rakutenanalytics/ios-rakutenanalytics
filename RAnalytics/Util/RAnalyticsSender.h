@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @attention By default, the sender will try to send the data immediately after the data are saved to the database. To configure the upload time interval for the sender, please use AnalyticsSender::setBatchingDelayBlock: method.
  *
- * @par Swift 3
+ * @par Swift
  * This class is exposed as **AnalyticsSender**.
  *
  * @class RAnalyticsSender RAnalyticsSender.h <RAnalytics/RAnalyticsSender.h>

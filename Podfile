@@ -1,27 +1,27 @@
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
-install! 'cocoapods', :deterministic_uuids => false
 platform :ios, '10.0'
 use_frameworks!
+inhibit_all_warnings!
 
 abstract_target 'Common' do
-  pod 'RAnalyticsBroadcast', :path => './RAnalyticsBroadcast.podspec'
-  pod 'RDeviceIdentifier', :inhibit_warnings => true, :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
+  pod 'RAnalyticsBroadcast', :inhibit_warnings => false, :path => './RAnalyticsBroadcast.podspec'
+  pod 'RDeviceIdentifier', :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
   pod 'OCMock'
   pod 'OHHTTPStubs', '~> 8.0'
   pod 'Kiwi', '~> 3.0.0'
 
   target 'UnitTests' do
-    pod 'RAnalytics', :path => './RAnalytics.podspec'
+    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
   end
 
   target 'FunctionalTests' do
-      pod 'RAnalytics', :path => './RAnalytics.podspec'
+      pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
   end
 
   target 'CoreTests' do
-    pod 'RAnalytics/Core', :path => './RAnalytics.podspec'
+    pod 'RAnalytics/Core', :inhibit_warnings => false, :path => './RAnalytics.podspec'
   end
 end
 
