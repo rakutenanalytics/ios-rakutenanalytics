@@ -14,14 +14,9 @@ typedef NSTimeInterval(^BatchingDelayBlock)(void);
 #endif
 
 /*
- * Support for exposing public parts of the API with Swift3-specific names.
- * Note: We assume Xcode 9 won't support Swift 2 anymore.
+ * Support for exposing public parts of the API with Swift-friendly naming.
  */
-#if __has_attribute(swift_name) && ((__apple_build_version__ >= 9000000) || ((__apple_build_version__ >= 8000000) && (SWIFT_SDK_OVERLAY_DISPATCH_EPOCH >= 2)))
 #  define RSDKA_SWIFT_NAME(n) __attribute__((swift_name(#n)))
-#else
-#  define RSDKA_SWIFT_NAME(n)
-#endif
 
 /*
  * Xcode 6-compatible generics support
