@@ -39,6 +39,32 @@ describe(@"RAnalyticsHelpers", ^{
             [[theValue(_RAnalyticsIsAppleClass(Nil)) should] beNo];
         });
     });
+
+    describe(@"_RAnalyticsUseDefaultSharedCookieStorage", ^{
+        it(@"should return false if user set 'disable shared cookie storage' key to true in app info.plist", ^{
+            [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@(YES) withArguments:@"RATDisableSharedCookieStorage"];
+
+            BOOL useSharedStorage = _RAnalyticsUseDefaultSharedCookieStorage();
+
+            [[@(useSharedStorage) should] beFalse];
+        });
+
+        it(@"should return true if user set 'disable shared cookie storage' key to false in app info.plist", ^{
+            [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@(NO) withArguments:@"RATDisableSharedCookieStorage"];
+
+            BOOL useSharedStorage = _RAnalyticsUseDefaultSharedCookieStorage();
+
+            [[@(useSharedStorage) should] beTrue];
+        });
+
+        it(@"should return true if 'disable shared cookie storage' key is not set in app info.plist", ^{
+            [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:nil withArguments:@"RATDisableSharedCookieStorage"];
+
+            BOOL useSharedStorage = _RAnalyticsUseDefaultSharedCookieStorage();
+
+            [[@(useSharedStorage) should] beTrue];
+        });
+    });
 });
 
 SPEC_END

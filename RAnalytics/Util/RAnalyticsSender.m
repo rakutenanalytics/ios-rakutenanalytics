@@ -188,7 +188,8 @@ static const unsigned int    _RATBatchSize      = 16u;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_endpoint
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:30];
-
+    
+    request.HTTPShouldHandleCookies = _RAnalyticsUseDefaultSharedCookieStorage();
 
     /*
      * For historical reasons we don't send the JSON as JSON but as some

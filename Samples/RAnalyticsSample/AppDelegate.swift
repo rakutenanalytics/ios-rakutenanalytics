@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationManager.requestWhenInUseAuthorization()
 
-        RAnalyticsRATTracker.shared().set(batchingDelay: 30)
+        RAnalyticsRATTracker.shared().set(batchingDelay: 15)
 
         return true
     }

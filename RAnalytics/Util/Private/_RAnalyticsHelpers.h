@@ -21,6 +21,11 @@ NS_INLINE BOOL _RAnalyticsEnableDebugLogging()
     return [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"RMSDKEnableDebugLogging"] boolValue];
 }
 
+NS_INLINE BOOL _RAnalyticsUseDefaultSharedCookieStorage()
+{
+    return ![[NSBundle.mainBundle objectForInfoDictionaryKey:@"RATDisableSharedCookieStorage"] boolValue];
+}
+
 NS_INLINE BOOL _RAnalyticsIsAppleClass(Class cls)
 {
     // bundleForClass:nil used to return the NSBundle.mainBundle but since Xcode 10.1

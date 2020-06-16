@@ -69,32 +69,52 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
     return rpCookie;
 }
 
+- (NSHTTPCookie * _Nullable)getRpCookieFromHttpResponse:(NSHTTPURLResponse *)httpResponse
+{
+    NSHTTPCookie *rpCookie = nil;
+    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:httpResponse.allHeaderFields
+                                                                              forURL:_RAnalyticsEndpointAddress()];
+
+    for (NSHTTPCookie *cookie in cookies) {
+        if ([cookie.name isEqualToString:@"Rp"]) {
+            rpCookie = cookie;
+            break;
+        }
+    }
+    return rpCookie;
+}
+
 - (void)getRpCookieFromRATCompletionHandler:(void (^)(NSHTTPCookie * _Nullable cookie))completionHandler
 {
     __weak typeof (self) weakSelf = self;
-    
-    [[[NSURLSession sharedSession] dataTaskWithURL:_RAnalyticsEndpointAddress() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
-      {
-          NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-          if(error || httpResponse.statusCode != 200)
-          {
-              // If failed retry fetch
-              weakSelf.rpCookieRequestRetryCount++;
-              
-              weakSelf.RATRpCookieRequestRetryInterval = MIN(RATRpCookieRequestMaximumTimeOut, pow(RATRpCookieRequestBackOffMultiplier, weakSelf.rpCookieRequestRetryCount) * RATRpCookieRequestInitialRetryInterval);
-              
-              // Retry till the RATRpCookieRequestMaximumTimeOut
-              if (weakSelf.RATRpCookieRequestRetryInterval < RATRpCookieRequestMaximumTimeOut)
-              {
-                  dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.RATRpCookieRequestRetryInterval * NSEC_PER_SEC));
-                  dispatch_after(delay, weakSelf.rpCookieQueue, ^(void){
-                      [weakSelf fetchRATRpCookie];
-                  });
-              }
-          }
-          self.rpCookieRequestRetryCount = 0;
-          completionHandler([weakSelf getRpCookieFromCookieStorage]);
-      }] resume];
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_RAnalyticsEndpointAddress()];
+    request.HTTPShouldHandleCookies = _RAnalyticsUseDefaultSharedCookieStorage();
+
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
+    {
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        if (error || httpResponse.statusCode != 200)
+        {
+            // If failed retry fetch
+            weakSelf.rpCookieRequestRetryCount++;
+
+            weakSelf.RATRpCookieRequestRetryInterval = MIN(RATRpCookieRequestMaximumTimeOut, pow(RATRpCookieRequestBackOffMultiplier, weakSelf.rpCookieRequestRetryCount) * RATRpCookieRequestInitialRetryInterval);
+
+            // Retry till the RATRpCookieRequestMaximumTimeOut
+            if (weakSelf.RATRpCookieRequestRetryInterval < RATRpCookieRequestMaximumTimeOut)
+            {
+                dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(weakSelf.RATRpCookieRequestRetryInterval * NSEC_PER_SEC));
+                dispatch_after(delay, weakSelf.rpCookieQueue, ^(void){
+                    [weakSelf fetchRATRpCookie];
+                });
+            }
+        }
+
+        weakSelf.rpCookieRequestRetryCount = 0;
+        NSHTTPCookie *cookie = request.HTTPShouldHandleCookies ? [weakSelf getRpCookieFromCookieStorage] : [weakSelf getRpCookieFromHttpResponse:httpResponse];
+        completionHandler(cookie);
+    }] resume];
 }
 
 - (void)fetchRATRpCookie
