@@ -11,6 +11,21 @@
 
 #pragma mark Added to id<UIApplicationDelegate>
 - (BOOL)_r_autotrack_application:(UIApplication *)application
+   willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    RAnalyticsDebugLog(@"Application will finish launching with options = %@", launchOptions);
+
+    _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsInternalOrigin;
+
+    // Delegates may not implement the original method
+    if ([self respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)])
+    {
+        return [self _r_autotrack_application:application willFinishLaunchingWithOptions:launchOptions];
+    }
+    return YES;
+}
+
+- (BOOL)_r_autotrack_application:(UIApplication *)application
    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     RAnalyticsDebugLog(@"Application did finish launching with options = %@", launchOptions);
@@ -120,14 +135,21 @@
 - (void)_r_autotrack_setApplicationDelegate:(id<UIApplicationDelegate>)delegate
 {
     RAnalyticsDebugLog(@"Application delegate is being set to %@", delegate);
-
-    if (!delegate || [delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)])
+    
+    if (!delegate
+        || [delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]
+        || [delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)])
     {
         // This delegate has already been extended.
         return;
     }
 
     Class recipient = delegate.class;
+    [_RAnalyticsClassManipulator addMethodWithSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)
+                                               toClass:recipient
+                                             replacing:@selector(application:willFinishLaunchingWithOptions:)
+                                         onlyIfPresent:NO];
+    
     [_RAnalyticsClassManipulator addMethodWithSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)
                                                toClass:recipient
                                              replacing:@selector(application:didFinishLaunchingWithOptions:)
