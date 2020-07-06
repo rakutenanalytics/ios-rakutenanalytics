@@ -569,6 +569,9 @@ The custom tracker can then be added to the RAnalyticsManager:
 
 @section analytics-changelog Changelog
 
+@subsection analytics-5-0-2 5.0.2 (2020-07-06)
+* [SDKCF-2561](https://jira.rakuten-it.com/jira/browse/SDKCF-2561): Made storing of RAT cookies in shared cookie storage optional. The option was added to temporarily workaround a specific backend issue for a specific customer. **Warning**: You should not need to use this option, however if you choose do so it may impact your RAT tracking statistics.
+
 @subsection analytics-5-0-1 5.0.1 (2020-04-30)
 * [SDKCF-2291](https://jira.rakuten-it.com/jira/browse/SDKCF-2291): Fixed Swift naming macro build error in Xcode 11.4.
 * [SDKCF-1561](https://jira.rakuten-it.com/jira/browse/SDKCF-1561): Send empty `mnetw` (network type - WiFi/4G/3G) field in the RAT event payload when device is offline.
