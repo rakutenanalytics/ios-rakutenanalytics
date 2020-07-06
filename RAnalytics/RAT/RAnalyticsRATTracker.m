@@ -19,6 +19,8 @@ NSString *const _RATREFParameter     = @"ref";
 
 const char* _RATReachabilityHost = "8.8.8.8"; // Google DNS Server
 
+static const NSTimeInterval _RATBatchingDelay = 1.0; // Batching delay is 1 second by default
+
 // Recursively try to find a URL in a view hierarchy
 static NSURL *findURLForView(UIView *view)
 {
@@ -217,7 +219,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint
                                                 databaseName:_RATDatabaseName
                                            databaseTableName:_RATTableName];
-        [_sender setBatchingDelayBlock:^{return 60.0;}]; // default is 60 seconds
+        [_sender setBatchingDelayBlock:^{return _RATBatchingDelay;}];
 
         _rpCookieFetcher = [[RAnalyticsRpCookieFetcher alloc] initWithCookieStorage:[NSHTTPCookieStorage sharedHTTPCookieStorage]];
         [_rpCookieFetcher getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error)

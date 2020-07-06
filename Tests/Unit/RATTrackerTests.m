@@ -42,6 +42,8 @@
 
 @implementation RATTrackerTests
 
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+
 - (void)setUp
 {
     [super setUp];
@@ -466,6 +468,12 @@
 }
 
 #pragma mark Test batch delay handling and setting delivery strategy
+
+- (void)testRATTrackerDefaultBatchingDelay {
+    
+    BatchingDelayBlock defaultBatchingDelay = [RAnalyticsRATTracker.sharedInstance.sender performSelector:@selector(batchingDelayBlock)];
+    XCTAssertEqual(defaultBatchingDelay(), 1.0);
+}
 
 - (void)testRATTrackerWithBatchingDelay
 {
