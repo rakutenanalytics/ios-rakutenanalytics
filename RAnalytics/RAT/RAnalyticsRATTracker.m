@@ -9,6 +9,7 @@
 #import "_RAnalyticsCoreHelpers.h"
 #import "RAnalyticsSender.h"
 #import "RAnalyticsRpCookieFetcher.h"
+#import "UIApplication+Additions.h"
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
@@ -519,7 +520,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: mori
-    payload[@"mori"] = @(UIDeviceOrientationIsLandscape(device.orientation) ? 2 : 1);
+    
+    if ([UIApplication _rat_respondsToSharedApplication]) {
+        payload[@"mori"] = @(UIInterfaceOrientationIsLandscape([UIApplication _rat_statusBarOrientation]) ? 2 : 1);
+        
+    } else { // [UIApplication sharedApplication] is not available for App Extension
+        payload[@"mori"] = @1; // default value
+    }
 
     // MARK: online
     if (_reachabilityStatus)

@@ -4,6 +4,7 @@
 
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import "../../RAnalytics/Util/Categories/UIApplication+Additions.h"
 
 #import "TrackerTests.h"
 
@@ -659,5 +660,36 @@
     XCTAssertNil(number);
 }
 
-@end
+#pragma mark Mori - Interface Orientations
 
+- (id)payloadWithInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    id classMockApplication = OCMClassMock(UIApplication.class);
+    OCMStub([classMockApplication sharedApplication]).andReturn(classMockApplication);
+    OCMStub([classMockApplication statusBarOrientation]).andReturn(interfaceOrientation);
+    
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
+    return payload;
+}
+
+- (void)testMoriIfUIApplicationRespondsToSharedApplication {
+    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortrait][@"mori"] intValue], 1);
+    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown][@"mori"] intValue], 1);
+    
+    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeLeft][@"mori"] intValue], 2);
+    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeRight][@"mori"] intValue], 2);
+    
+    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationUnknown][@"mori"] intValue], 1);
+}
+
+- (void)testMoriIfUIApplicationDoesNotRespondToSharedApplication {
+    id classMockApplication = OCMClassMock(UIApplication.class);
+    OCMStub([classMockApplication _rat_respondsToSharedApplication]).andReturn(NO);
+    
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
+    
+    XCTAssertEqual([payload[@"mori"] intValue], 1);
+}
+
+@end
