@@ -276,7 +276,7 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 @subsection analytics-batching-delay Configure the Tracker Batching Delay
 A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. 
 
-The batching delay is a configurable value with default set to 60 seconds.
+The batching delay is a configurable value with default set to 1 second.
 
 @attention In our [internal tests](https://jira.rakuten-it.com/jira/browse/SDKCF-1596) we noticed no significant impact on battery usage when the batching delay was reduced to 1 sec in our demo app. However you should perform your own developer testing and QA to determine the appropriate batching delay for your app.
 
