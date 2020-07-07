@@ -214,6 +214,7 @@ describe(@"_RAnalyticsClassManipulator", ^{
     __block SwizzledPartialAppDelegateWillLaunch *swizzledPartialAppDelegateWillLaunch = SwizzledPartialAppDelegateWillLaunch.new;
     __block SwizzledPartialAppDelegateDidLaunch *swizzledPartialAppDelegateDidLaunch = SwizzledPartialAppDelegateDidLaunch.new;
     __block SwizzledFullAppDelegate *swizzledFullAppDelegate = SwizzledFullAppDelegate.new;
+    __block id<UIApplicationDelegate> originalAppDelegate = UIApplication.sharedApplication.delegate;
     
     beforeEach(^{
         UIApplication.sharedApplication.delegate = nil;
@@ -227,6 +228,10 @@ describe(@"_RAnalyticsClassManipulator", ^{
         [_RAnalyticsClassManipulator replaceMethodWithSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)
                                                        toClass:UIApplication.sharedApplication.delegate.class
                                                      replacing:@selector(application:didFinishLaunchingWithOptions:)];
+    });
+    
+    afterAll(^{
+        UIApplication.sharedApplication.delegate = originalAppDelegate;
     });
     
     context(@"No 3rd party swizzling", ^{
