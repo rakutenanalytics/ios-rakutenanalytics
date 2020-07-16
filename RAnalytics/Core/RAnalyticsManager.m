@@ -8,6 +8,7 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
+#import "_RAdvertisingIdentifierRequester.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -285,19 +286,23 @@ static RAnalyticsManager *_instance = nil;
 
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
-    if (_shouldTrackAdvertisingIdentifier && ASIdentifierManager.sharedManager.isAdvertisingTrackingEnabled)
+    [_RAdvertisingIdentifierRequester requestAuthorization:^(bool success) {
+        [self processEvent:event withState:state authorizedIDFA:self.shouldTrackAdvertisingIdentifier && success];
+    }];
+}
+
+- (void)processEvent:(RAnalyticsEvent *)event withState:(RAnalyticsState *)state authorizedIDFA:(BOOL)advertisingIdentifierIsAuthorized
+{
+    NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
+    if (advertisingIdentifierIsAuthorized && idfa.length)
     {
-        NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
-        if (idfa.length)
+        if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
+                                            withString:@""
+                                               options:NSRegularExpressionSearch
+                                                 range:NSMakeRange(0, idfa.length)].length)
         {
-            if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
-                                                withString:@""
-                                                   options:NSRegularExpressionSearch
-                                                     range:NSMakeRange(0, idfa.length)].length)
-            {
-                // User has not disabled tracking
-                state.advertisingIdentifier = idfa;
-            }
+            // User has not disabled tracking
+            state.advertisingIdentifier = idfa;
         }
     }
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
