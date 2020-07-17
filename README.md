@@ -569,6 +569,11 @@ The custom tracker can then be added to the RAnalyticsManager:
 
 @section analytics-changelog Changelog
 
+@subsection analytics-5-1-0 5.1.0 (2020-07-17)
+* [SDKCF-2606](https://jira.rakuten-it.com/jira/browse/SDKCF-2606): Changed the default batching delay to 1 second. See @ref analytics-batching-delay.
+* [SDKCF-1654](https://jira.rakuten-it.com/jira/browse/SDKCF-1654): Fixed crash that can occur when Firebase SDK is also integrated.
+* [SDKCF-2077](https://jira.rakuten-it.com/jira/browse/SDKCF-2077): Fixed bug where a device laying flat in landscape mode could set the wrong orientation mode in the event payload.
+
 @subsection analytics-5-0-2 5.0.2 (2020-07-06)
 * [SDKCF-2561](https://jira.rakuten-it.com/jira/browse/SDKCF-2561): Made storing of RAT cookies in shared cookie storage optional. The option was added to temporarily workaround a specific backend issue for a specific customer. **Warning**: You should not need to use this option, however if you choose do so it may impact your RAT tracking statistics.
 
