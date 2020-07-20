@@ -16,17 +16,16 @@ typedef NS_ENUM(NSUInteger, RTrackingAuthorizationStatus) {
 
 + (void)requestAuthorization:(void(^)(NSString * _Nullable advertisingIdentifier))completion
 {
-    Class ATTrackingManagerClass = [_RAdvertisingIdentifierRequester ATTrackingManagerClass];
-    
     if (@available(iOS 14, *)) {
+        Class ATTrackingManagerClass = [_RAdvertisingIdentifierRequester ATTrackingManagerClass];
         if (ATTrackingManagerClass
             && [_RAdvertisingIdentifierRequester trackingTransparencyIsNotDetermined]
             && [_RAdvertisingIdentifierRequester userTrackingUsageDescription]) {
-                [ATTrackingManagerClass performSelector:@selector(requestTrackingAuthorizationWithCompletionHandler:) withObject:^{
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                       completion([_RAdvertisingIdentifierRequester advertisingIdentifier]);
-                    });
-                }];
+            [ATTrackingManagerClass performSelector:@selector(requestTrackingAuthorizationWithCompletionHandler:) withObject:^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   completion([_RAdvertisingIdentifierRequester advertisingIdentifier]);
+                });
+            }];
             return;
         }
     }
