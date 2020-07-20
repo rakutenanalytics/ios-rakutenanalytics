@@ -1,5 +1,3 @@
-#import <AdSupport/AdSupport.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _RAdvertisingIdentifierRequester: NSObject
@@ -7,11 +5,11 @@ NS_ASSUME_NONNULL_BEGIN
 // NOTE: AppTrackingTransparency framework has to be embedded in the app built with iOS SDK >= 14.0
 
 /**
- * Request user authorization to access app-related data for tracking the user or the device if iOS SDK version >= 14.0.
- * Otherwise returned success value is true.
+ * Request user authorization to access advertising identifier.
+ * Returned advertisingIdentifier value is not nil if tracking is authorized.
  *
  */
-+ (void)requestAuthorization:(void(^)(bool success))completion;
++ (void)requestAuthorization:(void(^)(NSString * _Nullable advertisingIdentifier))completion;
 
 @end
 

@@ -52,6 +52,6 @@
 	<key>RATDisableSharedCookieStorage</key>
 	<true/>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>RAnalyticsSampe app needs IDFA to track User ID.</string>
+	<string>RAnalyticsSample app needs IDFA to track User ID.</string>
 </dict>
 </plist>

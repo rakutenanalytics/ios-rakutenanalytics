@@ -286,25 +286,23 @@ static RAnalyticsManager *_instance = nil;
 
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
-    [_RAdvertisingIdentifierRequester requestAuthorization:^(bool success) {
-        [self processEvent:event withState:state authorizedIDFA:self.shouldTrackAdvertisingIdentifier && success];
-    }];
+    if (_shouldTrackAdvertisingIdentifier) {
+        [_RAdvertisingIdentifierRequester requestAuthorization:^(NSString * _Nullable advertisingIdentifier) {
+            if (advertisingIdentifier)
+            {
+                // User has not disabled tracking
+                state.advertisingIdentifier = advertisingIdentifier;
+            }
+            [self processEvent:event withState:state];
+        }];
+        
+    } else {
+        [self processEvent:event withState:state];
+    }
 }
 
-- (void)processEvent:(RAnalyticsEvent *)event withState:(RAnalyticsState *)state authorizedIDFA:(BOOL)advertisingIdentifierIsAuthorized
+- (void)processEvent:(RAnalyticsEvent *)event withState:(RAnalyticsState *)state
 {
-    NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
-    if (advertisingIdentifierIsAuthorized && idfa.length)
-    {
-        if ([idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
-                                            withString:@""
-                                               options:NSRegularExpressionSearch
-                                                 range:NSMakeRange(0, idfa.length)].length)
-        {
-            // User has not disabled tracking
-            state.advertisingIdentifier = idfa;
-        }
-    }
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
     state.sessionStartDate = self.sessionStartDate ?: nil;
 
