@@ -12,6 +12,7 @@
 		16E4819120B3F699006CB857 /* DatabaseTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */; };
 		16E4819220B3F699006CB857 /* DatabaseTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */; };
 		3A25875924AB4490007E7AF7 /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */; };
+		3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */; };
 		5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* EventTests.m */; };
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
@@ -67,6 +68,7 @@
 		16E4818E20B3F699006CB857 /* DatabaseTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseTestUtils.h; sourceTree = "<group>"; };
 		16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseTestUtils.m; sourceTree = "<group>"; };
 		3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUIApplicationTests.m; sourceTree = "<group>"; };
+		3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserIdentifierSelectorTests.m; sourceTree = "<group>"; };
 		5A3BC1711D3629EB00BBCA54 /* EventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTests.m; sourceTree = "<group>"; };
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
@@ -135,28 +137,29 @@
 		16E4817520B28EDB006CB857 /* Unit */ = {
 			isa = PBXGroup;
 			children = (
-				5AB254A220744B1800BF3EE9 /* RpCookieTests.m */,
-				5A3BC1711D3629EB00BBCA54 /* EventTests.m */,
-				5A3BC1731D362A0A00BBCA54 /* StateTests.m */,
-				5A6E8AD41D45E095001960DC /* ManagerTests.m */,
-				5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */,
-				6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */,
-				6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */,
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
+				6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */,
 				6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */,
-				5AF1B93E20478F5900BD0E3E /* SenderTests.m */,
-				5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */,
+				5A3BC1711D3629EB00BBCA54 /* EventTests.m */,
+				6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */,
+				6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */,
+				5A6E8AD41D45E095001960DC /* ManagerTests.m */,
 				5AD7A9BC204E39E500B03FBA /* MockedDatabase.h */,
 				5AD7A9BD204E39E500B03FBA /* MockedDatabase.m */,
-				5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */,
-				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
-				6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */,
 				69E1BBCE1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m */,
 				165C4AA720A56ABE00920439 /* RAnalyticsHelpersTests.m */,
-				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
-				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
+				5A6E8AD61D45E2A6001960DC /* RATTrackerTests.m */,
 				6D9F105524A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m */,
+				5AB254A220744B1800BF3EE9 /* RpCookieTests.m */,
+				5AD7A9BA204D49F400B03FBA /* SDKTrackerTests.m */,
+				5AF1B93E20478F5900BD0E3E /* SenderTests.m */,
+				5A3BC1731D362A0A00BBCA54 /* StateTests.m */,
+				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
+				5AD7A9BF204FC4C200B03FBA /* TrackerTests.h */,
+				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
+				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
+				3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -414,6 +417,7 @@
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
+				3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */,
 				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

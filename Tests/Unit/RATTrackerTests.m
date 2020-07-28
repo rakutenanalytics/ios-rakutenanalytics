@@ -692,4 +692,28 @@
     XCTAssertEqual([payload[@"mori"] intValue], 1);
 }
 
+#pragma mark User Identifier
+
+- (void)testPayloadUserIdentifierWithDefaultState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
+    XCTAssertTrue([payload[@"userid"] isEqual:@"userId"]);
+}
+
+- (void)testPayloadUserIdentifierWithEmptyState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB" deviceIdentifier:@"deviceId"];
+    id payload = [self assertProcessEvent:event state:state expectType:RAnalyticsInstallEventName];
+    XCTAssertNil(payload[@"userid"]);
+}
+
+- (void)testPayloadUserIdentifierWithNilState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    id payload = [self assertProcessEvent:event state:nil expectType:RAnalyticsInstallEventName];
+    XCTAssertNil(payload[@"userid"]);
+}
+
 @end

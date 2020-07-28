@@ -19,6 +19,11 @@ RSDKA_EXPORT @interface _RAnalyticsExternalCollector : NSObject
 @property (nonatomic, nullable, readonly, copy) NSString *trackingIdentifier;
 
 /*
+ * The user identifier is being stored in shared preferences.
+ */
+@property (nonatomic, nullable, copy) NSString *userIdentifier;
+
+/*
  * The login method is being stored in shared preferences.
  */
 @property (nonatomic, readonly) RAnalyticsLoginMethod loginMethod;

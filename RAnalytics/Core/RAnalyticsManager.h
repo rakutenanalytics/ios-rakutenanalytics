@@ -45,6 +45,12 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 - (void)addTracker:(id<RAnalyticsTracker>)tracker;
 
 /**
+ * Set the user identifier of the logged in user.
+ * @param userID  The user identifier. This can be an encrypted easy ID.
+ */
+- (void)setUserIdentifier:(NSString * _Nullable)userID;
+
+/**
  * Control whether the SDK should track page views. Defaults to `YES`.
  */
 @property (nonatomic) BOOL shouldTrackPageView;

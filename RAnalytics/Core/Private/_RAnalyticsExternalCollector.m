@@ -5,6 +5,7 @@
 
 static NSString *const _RAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
+static NSString *const _RAnalyticsUserIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.userIdentifier";
 static NSString *const _RAnalyticsLoginMethodKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginMethod";
 
 static NSString *const _RAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.events";
@@ -308,6 +309,7 @@ static NSString *const _RAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.e
     _loggedIn           = [defaults boolForKey:_RAnalyticsLoginStateKey];
     _loginMethod        = [(NSNumber *)[defaults objectForKey:_RAnalyticsLoginMethodKey] unsignedIntegerValue];
     _trackingIdentifier = [defaults stringForKey:_RAnalyticsTrackingIdentifierKey];
+    _userIdentifier = [defaults stringForKey:_RAnalyticsUserIdentifierKey];
 }
 
 - (void)setLoggedIn:(BOOL)loggedIn
@@ -319,6 +321,26 @@ static NSString *const _RAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.e
         [defaults setBool:loggedIn forKey:_RAnalyticsLoginStateKey];
         [defaults synchronize];
     }
+}
+
+- (void)setUserIdentifier:(NSString *)userIdentifier
+{
+    if (_RAnalyticsObjectsEqual(userIdentifier, _userIdentifier))
+    {
+        return;
+    }
+    
+    _userIdentifier = userIdentifier.copy;
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if (userIdentifier.length)
+    {
+        [defaults setObject:userIdentifier forKey:_RAnalyticsUserIdentifierKey];
+    }
+    else
+    {
+        [defaults removeObjectForKey:_RAnalyticsUserIdentifierKey];
+    }
+    [defaults synchronize];
 }
 
 - (void)setTrackingIdentifier:(NSString *)trackingIdentifier

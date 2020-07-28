@@ -7,6 +7,7 @@
 #import "_RAnalyticsLaunchCollector.h"
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
+#import "_UserIdentifierSelector.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -304,7 +305,7 @@ static RAnalyticsManager *_instance = nil;
 
     // Update state with data from external collector
     _RAnalyticsExternalCollector *externalCollector = _RAnalyticsExternalCollector.sharedInstance;
-    state.userIdentifier = externalCollector.trackingIdentifier;
+    state.userIdentifier = [_UserIdentifierSelector selectedTrackingIdentifier];
     state.loginMethod = externalCollector.loginMethod;
     state.loggedIn = externalCollector.isLoggedIn;
 
@@ -345,6 +346,11 @@ static RAnalyticsManager *_instance = nil;
             RAnalyticsDebugLog(@"Added tracker %@", tracker);
         }
     }
+}
+
+- (void)setUserIdentifier:(NSString * _Nullable)userID
+{
+    _RAnalyticsExternalCollector.sharedInstance.userIdentifier = userID;
 }
 
 //--------------------------------------------------------------------------
