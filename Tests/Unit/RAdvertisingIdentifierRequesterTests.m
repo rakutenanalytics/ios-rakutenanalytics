@@ -44,7 +44,7 @@ describe(@"RAdvertisingIdentifierRequester", ^{
         });
     });
     
-    describe(@"requestAuthorization", ^{
+    describe(@"requestAdvertisingIdentifier", ^{
         context(@"advertising tracking is not enabled", ^{
             beforeAll(^{
                 [_RAdvertisingIdentifierRequester stub:@selector(advertisingIdentifierIsAuthorized) andReturn:theValue(NO)];
@@ -54,7 +54,7 @@ describe(@"RAdvertisingIdentifierRequester", ^{
             });
             
             it(@"completion should return nil in any case", ^{
-                [_RAdvertisingIdentifierRequester requestAuthorization:^(NSString * _Nullable idfa) {
+                [_RAdvertisingIdentifierRequester requestAdvertisingIdentifier:^(NSString * _Nullable idfa) {
                     [[idfa shouldEventually] beNil];
                 }];
             });
@@ -71,7 +71,7 @@ describe(@"RAdvertisingIdentifierRequester", ^{
             it(@"completion should return nil when idfa UUIDString is 00000000-0000-0000-0000-000000000000", ^{
                 [_RAdvertisingIdentifierRequester stub:@selector(advertisingIdentifierUUIDString) andReturn:@"00000000-0000-0000-0000-000000000000"];
                 
-                [_RAdvertisingIdentifierRequester requestAuthorization:^(NSString * _Nullable idfa) {
+                [_RAdvertisingIdentifierRequester requestAdvertisingIdentifier:^(NSString * _Nullable idfa) {
                     [[idfa shouldEventually] beNil];
                 }];
             });
@@ -79,7 +79,7 @@ describe(@"RAdvertisingIdentifierRequester", ^{
             it(@"completion should return 1234-5678-9123-4563 when idfa UUIDString is 1234-5678-9123-4563", ^{
                 [_RAdvertisingIdentifierRequester stub:@selector(advertisingIdentifierUUIDString) andReturn:@"1234-5678-9123-4563"];
                 
-                [_RAdvertisingIdentifierRequester requestAuthorization:^(NSString * _Nullable idfa) {
+                [_RAdvertisingIdentifierRequester requestAdvertisingIdentifier:^(NSString * _Nullable idfa) {
                     [[idfa shouldEventually] equal:@"1234-5678-9123-4563"];
                 }];
             });

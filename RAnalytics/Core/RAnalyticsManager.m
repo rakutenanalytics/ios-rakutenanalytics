@@ -287,7 +287,7 @@ static RAnalyticsManager *_instance = nil;
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
     if (_shouldTrackAdvertisingIdentifier) {
-        [_RAdvertisingIdentifierRequester requestAuthorization:^(NSString * _Nullable advertisingIdentifier) {
+        [_RAdvertisingIdentifierRequester requestAdvertisingIdentifier:^(NSString * _Nullable advertisingIdentifier) {
             if (advertisingIdentifier)
             {
                 // User has not disabled tracking
