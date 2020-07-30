@@ -1,6 +1,5 @@
 @import Darwin.POSIX.sys;
 
-#import <AdSupport/AdSupport.h>
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import <RAnalytics/RAnalytics.h>
 #import "_RAnalyticsHelpers.h"

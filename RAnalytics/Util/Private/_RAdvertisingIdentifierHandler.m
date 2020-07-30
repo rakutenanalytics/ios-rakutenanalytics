@@ -3,6 +3,7 @@
 
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 
+// ATTrackingManagerAuthorizationStatus Mapping
 typedef NS_ENUM(NSUInteger, RTrackingAuthorizationStatus) {
     RTrackingAuthorizationStatusNotDetermined = 0,
     RTrackingAuthorizationStatusRestricted,
