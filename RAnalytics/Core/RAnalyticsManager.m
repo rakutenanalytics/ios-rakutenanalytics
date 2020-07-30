@@ -8,7 +8,7 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
-#import "_RAdvertisingIdentifierRequester.h"
+#import "_RAdvertisingIdentifierHandler.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -287,22 +287,14 @@ static RAnalyticsManager *_instance = nil;
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
     if (_shouldTrackAdvertisingIdentifier) {
-        [_RAdvertisingIdentifierRequester requestAdvertisingIdentifier:^(NSString * _Nullable advertisingIdentifier) {
-            if (advertisingIdentifier)
-            {
-                // User has not disabled tracking
-                state.advertisingIdentifier = advertisingIdentifier;
-            }
-            [self processEvent:event withState:state];
-        }];
-        
-    } else {
-        [self processEvent:event withState:state];
+        NSString *advertisingIdentifier = [_RAdvertisingIdentifierHandler idfa];
+        if (advertisingIdentifier)
+        {
+            // User has not disabled tracking
+            state.advertisingIdentifier = advertisingIdentifier;
+        }
     }
-}
-
-- (void)processEvent:(RAnalyticsEvent *)event withState:(RAnalyticsState *)state
-{
+    
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
     state.sessionStartDate = self.sessionStartDate ?: nil;
 

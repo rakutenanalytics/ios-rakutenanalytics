@@ -1,4 +1,4 @@
-#import "_RAdvertisingIdentifierRequester.h"
+#import "_RAdvertisingIdentifierHandler.h"
 #import <AdSupport/AdSupport.h>
 
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -10,13 +10,13 @@ typedef NS_ENUM(NSUInteger, RTrackingAuthorizationStatus) {
     RTrackingAuthorizationStatusAuthorized
 };
 
-@implementation _RAdvertisingIdentifierRequester
+@implementation _RAdvertisingIdentifierHandler
 
-# pragma mark - IDFA Authorization Request
+# pragma mark - IDFA
 
-+ (void)requestAdvertisingIdentifier:(void(^)(NSString * _Nullable advertisingIdentifier))completion
++ (NSString * _Nullable)idfa
 {
-    completion([_RAdvertisingIdentifierRequester advertisingIdentifier]);
+    return [_RAdvertisingIdentifierHandler advertisingIdentifier];
 }
 
 # pragma mark - Tracking Transparency
@@ -28,19 +28,19 @@ typedef NS_ENUM(NSUInteger, RTrackingAuthorizationStatus) {
 
 + (BOOL)trackingTransparencyIsAuthorized
 {
-    return (NSUInteger)[[_RAdvertisingIdentifierRequester ATTrackingManagerClass] performSelector:@selector(trackingAuthorizationStatus)] == RTrackingAuthorizationStatusAuthorized/*ATTrackingManagerAuthorizationStatusAuthorized*/;
+    return (NSUInteger)[[_RAdvertisingIdentifierHandler ATTrackingManagerClass] performSelector:@selector(trackingAuthorizationStatus)] == RTrackingAuthorizationStatusAuthorized/*ATTrackingManagerAuthorizationStatusAuthorized*/;
 }
 
 #pragma mark - Advertising Identifier
 
 + (NSString * _Nullable)advertisingIdentifier
 {
-    if (![_RAdvertisingIdentifierRequester advertisingIdentifierIsAuthorized])
+    if (![_RAdvertisingIdentifierHandler advertisingIdentifierIsAuthorized])
     {
         return nil;
     }
     
-    NSString *idfa = [_RAdvertisingIdentifierRequester advertisingIdentifierUUIDString];
+    NSString *idfa = [_RAdvertisingIdentifierHandler advertisingIdentifierUUIDString];
     if (idfa.length && [idfa stringByReplacingOccurrencesOfString:@"[0\\-]"
                                                        withString:@""
                                                           options:NSRegularExpressionSearch
@@ -61,11 +61,11 @@ typedef NS_ENUM(NSUInteger, RTrackingAuthorizationStatus) {
 {
     if (@available(iOS 14, *))
     {
-        if (![_RAdvertisingIdentifierRequester ATTrackingManagerClass])
+        if (![_RAdvertisingIdentifierHandler ATTrackingManagerClass])
         {
             return NO;
         }
-        return [_RAdvertisingIdentifierRequester trackingTransparencyIsAuthorized];
+        return [_RAdvertisingIdentifierHandler trackingTransparencyIsAuthorized];
     }
     else
     {
