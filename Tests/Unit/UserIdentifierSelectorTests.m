@@ -33,7 +33,7 @@ describe(@"_UserIdentifierSelector", ^{
                 [[_RAnalyticsExternalCollector.sharedInstance should] receive:@selector(setTrackingIdentifier:) withCount:0];
                 [RAnalyticsManager.sharedInstance setUserIdentifier:nil];
                 [[_RAnalyticsExternalCollector.sharedInstance.userIdentifier should] beNil];
-                [[[_UserIdentifierSelector selectedTrackingIdentifier] should] beNil];
+                [[[_UserIdentifierSelector selectedTrackingIdentifier] should] equal:@"NO_LOGIN_FOUND"];
             });
         });
         
