@@ -45,6 +45,20 @@
     XCTAssertTrue([center.delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
 }
 
+- (void)testUNSetDelegateMethodSwizzlesDidReceiveNotification_setToNil
+{
+    UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
+    UNDelegate *delegate = UNDelegate.new;
+    center.delegate = delegate;
+    XCTAssertTrue([center.delegate respondsToSelector:@selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+    XCTAssertTrue([center.delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+
+    center.delegate = nil;
+    XCTAssertNil(center.delegate);
+    XCTAssertTrue([delegate respondsToSelector:@selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+    XCTAssertTrue([delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+}
+
 - (void)testDidReceiveUNNotification
 {
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
@@ -69,7 +83,7 @@
     [response setValue:@"Some user text" forKey:@"userText"];
     [response setValue:UNNotificationDefaultActionIdentifier forKey:@"actionIdentifier"];
     [response setValue:notification forKey:@"notification"];
-    
+     
     id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     
     [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];

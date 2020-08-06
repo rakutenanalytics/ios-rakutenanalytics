@@ -231,7 +231,7 @@ describe(@"_RAnalyticsClassManipulator", ^{
     });
     
     afterAll(^{
-        UIApplication.sharedApplication.delegate = originalAppDelegate;
+        [UIApplication.sharedApplication performSelector:@selector(_r_autotrack_setApplicationDelegate:) withObject:originalAppDelegate];
     });
     
     context(@"No 3rd party swizzling", ^{

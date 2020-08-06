@@ -67,11 +67,23 @@ RSDKA_EXPORT @interface _RAnalyticsLaunchCollector : NSObject
  */
 - (void)didPresentViewController:(UIViewController *)viewController;
 
+#pragma mark - Push Notification
+
+
 /*
- * When the remote notification arrives, this method will compute the tracking identifier from the push payload. 
- * If the application is in foreground this method will emit the push event with the computed tracking identifier.
- * If the application is not in foreground, this method will store the computed tracking identifier on memory, and set the origin to push type.
- * The push event will be triggerred with the tracking identifier after the next _rem_visit event is triggerred.
+ * For implementations that do NOT use the UNUserNotification Framework,  We need to distinguish between a tap of notification alert and
+ * receiving a push notification.  This can be done by measuring the time since when this function was called and the next app life cycle "App did become active" event occuring.
+ */
+- (void)handleTapNonUNUserNotification:(NSDictionary *)userInfo
+                              appState:(UIApplicationState)state;
+
+/*
+ * This method sends a push open notify event only if a tracking identifier can be pulled from the UNNotificationResponse
+ */
+- (void)processPushNotificationResponse:(UNNotificationResponse*)notificationResponse;
+
+/*
+ * This method sends a push open notify event only if a tracking identifier can be pulled from the push payload
  */
 - (void)processPushNotificationPayload:(NSDictionary *)userInfo
                             userAction:(NSString *__nullable)userAction

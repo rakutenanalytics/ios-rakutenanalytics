@@ -1,0 +1,374 @@
+import UIKit
+import XCTest
+import RAnalytics
+
+class PushNotificationAppDelegateTests: XCTestCase {
+    
+    static var applicationState: UIApplication.State = .active
+    static var processEvent: ((AnalyticsManager.Event) -> Void)?
+    
+    class TestUNNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+        func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                    didReceive response: UNNotificationResponse,
+                                    withCompletionHandler completionHandler: @escaping () -> Void) {
+            
+        }
+    }
+    
+    let testUNNotificationDelegate = TestUNNotificationDelegate()
+    let testRID = "38493839"
+    var testResult: String { "rid:\(testRID)" }
+
+    override func setUp() {
+        UIApplication.swizzleToggle()
+        AnalyticsManager.swizzleToggle()
+        
+        UNUserNotificationCenter.current().delegate = nil
+        
+        _RAnalyticsLaunchCollector.sharedInstance().resetToDefaults()
+        _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier = nil
+    }
+    
+    override func tearDown() {
+        UIApplication.swizzleToggle()
+        AnalyticsManager.swizzleToggle()
+        
+        UNUserNotificationCenter.current().delegate = nil
+    }
+    
+    // MARK: - Test didReceiveRemoteNotification
+    
+    func test_swizzle_didReceiveRemoteNotification_inactive() throws {
+        
+        type(of: self).applicationState = .inactive
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_swizzle_didReceiveRemoteNotification_active() throws {
+        
+        type(of: self).applicationState = .active
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    func test_swizzle_didReceiveRemoteNotification_background() throws {
+
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotification_background_processEvent() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should receive open count event")
+        var processEvent = ""
+        var eventParams = [String: Any]()
+        
+        type(of: self).processEvent = { (event) in
+            processEvent = event.name
+            eventParams = event.parameters
+            expecation.fulfill()
+        }
+        
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        
+        wait(for: [expecation], timeout: 3)
+        
+        let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+        
+        XCTAssert(processEvent == AnalyticsManager.Event.Name.pushNotification)
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotification_background_processEvent_notTwice() throws {
+        
+        type(of: self).applicationState = .background
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should receive open count event once")
+        expecation.expectedFulfillmentCount = 1
+        expecation.assertForOverFulfill = true
+        var processEvent = ""
+        var eventParams = [String: Any]()
+        
+        type(of: self).processEvent = { (event) in
+            processEvent = event.name
+            eventParams = event.parameters
+            expecation.fulfill()
+        }
+        
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        wait(for: [expecation], timeout: 3)
+        
+        let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+        
+        XCTAssert(processEvent == AnalyticsManager.Event.Name.pushNotification)
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotification_background_notProcessEvent_after800ms() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should not send if greater than 0.7 seconds")
+        expecation.isInverted = true
+        
+        type(of: self).processEvent = { (event) in
+            let processEvent = event.name
+            let eventParams = event.parameters
+            let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+            if processEvent == AnalyticsManager.Event.Name.pushNotification &&
+                trackId == self.testResult {
+                expecation.fulfill()
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.8) {
+            NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        }
+
+        wait(for: [expecation], timeout: 3)
+    }
+    
+    func test_didReceiveRemoteNotification_background_notProcessEvent_ifSilentPush() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID,
+                                                        "aps": [ "content-available" : 1 ]])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    func test_didReceiveRemoteNotification_background_processEvent_ifBackgroundPush() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID,
+                                                        "aps": [ "content-available" : 1,
+                                                                 "alert" : "meesage"]])
+        
+        XCTAssertNotNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    
+    func test_didReceiveRemoteNotification_background_shouldNotProcessEvent_ifUNUserNotificationCenterDelegateImplemented() throws {
+        
+        type(of: self).applicationState = .background
+        UNUserNotificationCenter.current().delegate = testUNNotificationDelegate
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID,
+                                                        "aps": [ "content-available" : 1,
+                                                                 "alert" : "meesage"]])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    // MARK: - Test didReceiveRemoteNotificationWithCompletionHandler
+    
+    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_inactive() throws {
+        
+        type(of: self).applicationState = .inactive
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_active() throws {
+
+        type(of: self).applicationState = .active
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_background() throws {
+
+        type(of: self).applicationState = .background
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should receive open count event")
+        var processEvent = ""
+        var eventParams = [String: Any]()
+        
+        type(of: self).processEvent = { (event) in
+            processEvent = event.name
+            eventParams = event.parameters
+            expecation.fulfill()
+        }
+        
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        
+        wait(for: [expecation], timeout: 3)
+        
+        let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+        
+        XCTAssert(processEvent == AnalyticsManager.Event.Name.pushNotification)
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent_notTwice() throws {
+        
+        type(of: self).applicationState = .background
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should receive open count event once")
+        expecation.expectedFulfillmentCount = 1
+        expecation.assertForOverFulfill = true
+        var processEvent = ""
+        var eventParams = [String: Any]()
+        
+        type(of: self).processEvent = { (event) in
+            processEvent = event.name
+            eventParams = event.parameters
+            expecation.fulfill()
+        }
+        
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        wait(for: [expecation], timeout: 3)
+        
+        let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+        
+        XCTAssert(processEvent == AnalyticsManager.Event.Name.pushNotification)
+        XCTAssert(trackId == testResult)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_after800ms() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should not send if greater than 0.7 seconds")
+        expecation.isInverted = true
+        
+        type(of: self).processEvent = { (event) in
+            let processEvent = event.name
+            let eventParams = event.parameters
+            let trackId = (eventParams[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+            if processEvent == AnalyticsManager.Event.Name.pushNotification &&
+                trackId == self.testResult {
+                expecation.fulfill()
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.8) {
+            NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+        }
+
+        wait(for: [expecation], timeout: 3)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_ifSilentPush() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID,
+                                                                             "aps": [ "content-available" : 1 ]])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent_ifBackgroundPush() throws {
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID,
+                                                                             "aps": [ "content-available" : 1,
+                                                                                      "alert" : "meesage"]])
+        
+        XCTAssertNotNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_shouldNotProcessEvent_ifUNUserNotificationCenterDelegateImplemented() throws {
+        
+        type(of: self).applicationState = .background
+        UNUserNotificationCenter.current().delegate = testUNNotificationDelegate
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID,
+                                                                             "aps": [ "content-available" : 1,
+                                                                                      "alert" : "meesage"]])
+        
+        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+    }
+    
+    // MARK: - Helper
+    
+    private func _triggerDidReceiveRemoteNotification(userInfo:[AnyHashable: Any]) {
+        UIApplication.shared.delegate?.application?(UIApplication.shared,
+                                                    didReceiveRemoteNotification: userInfo)
+    }
+    
+    private func _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo:[AnyHashable: Any]) {
+        UIApplication.shared.delegate?.application?(UIApplication.shared,
+                                                    didReceiveRemoteNotification: userInfo,
+                                                    fetchCompletionHandler: { (results) in })
+    }
+}
+
+internal extension AnalyticsManager {
+    @objc func swizzleProcessEvent(event: AnalyticsManager.Event) {
+        PushNotificationAppDelegateTests.processEvent?(event)
+    }
+    
+    static func swizzleToggle() {
+        guard let originalMethod = class_getInstanceMethod(AnalyticsManager.self,
+                                                           #selector(process(_:))),
+            let swizzledMethod = class_getInstanceMethod(AnalyticsManager.self,
+                                                         #selector(swizzleProcessEvent(event:))) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+internal extension UIApplication {
+    @objc func swizzleAppState() -> UIApplication.State {
+        return PushNotificationAppDelegateTests.applicationState
+    }
+    
+    static func swizzleToggle() {
+        guard let originalMethod = class_getInstanceMethod(UIApplication.self,
+                                                           #selector(getter: applicationState)),
+            let swizzledMethod = class_getInstanceMethod(UIApplication.self,
+                                                         #selector(swizzleAppState)) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}

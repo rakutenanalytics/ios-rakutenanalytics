@@ -1,63 +1,54 @@
 #import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
+#import "_UNNotification+Trackable.h"
 
 /* RSDKA_EXPORT */ BOOL _RAnalyticsNotificationsAreHandledByUNDelegate(void)
 {
 #ifdef RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
     return [UNUserNotificationCenter.currentNotificationCenter.delegate
-            respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)];
+            respondsToSelector:@selector(userNotificationCenter:
+                                         didReceiveNotificationResponse:
+                                         withCompletionHandler:)];
 #else
     return NO;
 #endif
 }
-
 #ifdef RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
+
 @implementation _RAnalyticsClassManipulator(UNNotificationCenter)
 
-#pragma mark Added to id<UNUserNotificationCenterDelegate>
+#pragma mark Added to UNUserNotificationCenter
 - (void)_r_autotrack_userNotificationCenter:(UNUserNotificationCenter *)center
              didReceiveNotificationResponse:(UNNotificationResponse *)response
                       withCompletionHandler:(void(^)(void))completionHandler
 {
-    UNNotificationRequest *request = response.notification.request;
-    if ([request.trigger isKindOfClass:UNPushNotificationTrigger.class])
+    [_RAnalyticsLaunchCollector.sharedInstance processPushNotificationResponse:response];
+
+    if ([self respondsToSelector:@selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)])
     {
-        NSDictionary *payload = request.content.userInfo;
-        NSString *userAction = nil, *userText = nil;
-
-        if ([response isKindOfClass:UNTextInputNotificationResponse.class])
-        {
-            userText = [(UNTextInputNotificationResponse *)response userText];
-        }
-
-        if (response.actionIdentifier && ![response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier])
-        {
-            userAction = response.actionIdentifier;
-        }
-
-        RAnalyticsDebugLog(@"Application did receive remote notification %@", payload);
-        [_RAnalyticsLaunchCollector.sharedInstance processPushNotificationPayload:payload
-                                                                       userAction:userAction
-                                                                         userText:userText];
+        [self _r_autotrack_userNotificationCenter:center
+                   didReceiveNotificationResponse:response
+                            withCompletionHandler:completionHandler];
     }
-
-    [self _r_autotrack_userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
 }
 
-#pragma mark Added to UNUserNotificationCenter
 - (void)_r_autotrack_setUserNotificationCenterDelegate:(id<NSObject>)delegate
 {
     RAnalyticsDebugLog(@"User notification center delegate is being set to %@", delegate);
-    if (!delegate) return;
-
-    Class recipient = delegate.class;
-    SEL   selector = @selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
-    if (![delegate respondsToSelector:selector])
+    
+    SEL swizzle_selector = @selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
+    SEL delegate_selector = @selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
+    
+    // set swizzle if currently not swizzled
+    if (delegate &&
+        ![delegate respondsToSelector:swizzle_selector])
     {
-        [_RAnalyticsClassManipulator addMethodWithSelector:selector
+        
+        Class recipient = delegate.class;
+        [_RAnalyticsClassManipulator addMethodWithSelector:swizzle_selector
                                                    toClass:recipient
-                                                 replacing:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+                                                 replacing:delegate_selector
                                              onlyIfPresent:YES];
     }
     
@@ -71,6 +62,7 @@
                                                toClass:UNUserNotificationCenter.class
                                              replacing:@selector(setDelegate:)
                                          onlyIfPresent:YES];
+    
     RAnalyticsDebugLog(@"Installed auto-tracking hooks for UNNotificationCenter.");
 }
 

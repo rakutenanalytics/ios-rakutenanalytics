@@ -2,6 +2,9 @@
 #import <RAnalytics/RAnalyticsEvent.h>
 #import "_RAnalyticsLaunchCollector.h"
 #import "_RAnalyticsHelpers.h"
+#import <UserNotifications/UserNotifications.h>
+#import "_UNNotification+Trackable.h"
+#import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
 
 static NSString *const _RAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -9,6 +12,7 @@ static NSString *const _RAnalyticsLastUpdateDateKey = @"com.rakuten.esd.sdk.prop
 static NSString *const _RAnalyticsLastLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastLaunchDate";
 static NSString *const _RAnalyticsLastVersionKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastVersion";
 static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastVersionLaunches";
+static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
 
 @interface _RAnalyticsLaunchCollector ()
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
@@ -23,6 +27,7 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
 @property (nonatomic, readwrite) RAnalyticsOrigin origin;
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @property (nonatomic, nullable, readwrite, copy) NSString *pushTrackingIdentifier;
+@property (nonatomic, nullable) NSDate *pushTapTrackingDate;
 @end
 
 @implementation _RAnalyticsLaunchCollector
@@ -60,6 +65,11 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(didSuspend:)
                                                      name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(didBecomeActive:)
+                                                     name:UIApplicationDidBecomeActiveNotification
                                                    object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -100,6 +110,8 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
     return self;
 }
 
+#pragma mark - App Life Cycle Observers
+
 - (void)willResume:(NSNotification *)notification
 {
     [self update];
@@ -111,7 +123,12 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
     [[RAnalyticsEvent.alloc initWithName:RAnalyticsSessionEndEventName parameters:nil] track];
 }
 
-- (void)didLaunch:(NSNotification *)notification
+- (void)didBecomeActive:(NSNotification *) notification
+{
+    [self _sendTapNonUNUserNotification];
+}
+
+- (void)didLaunch:(NSNotification *) notification
 {
     [self update];
 
@@ -214,88 +231,82 @@ static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk
     _origin = RAnalyticsInternalOrigin;
 }
 
-- (void)triggerPushEvent
+#pragma mark - Push Notification
+
+- (void)handleTapNonUNUserNotification: (NSDictionary *) userInfo
+                              appState: (UIApplicationState) state
 {
-    if (_pushTrackingIdentifier.length)
+    if (_RAnalyticsNotificationsAreHandledByUNDelegate())
     {
-        [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter:_pushTrackingIdentifier}] track];
+        return;
+    }
+    
+    switch (state) {
+        case UIApplicationStateBackground:
+        case UIApplicationStateInactive:
+            _pushTrackingIdentifier = [UNNotification trackingIdentifierFromPayload:userInfo];
+            _pushTapTrackingDate = [NSDate date];
+            break;
+        default:
+            break;
     }
 }
 
-- (void)processPushNotificationPayload:(NSDictionary *)userInfo
-                            userAction:(NSString *)userAction
-                              userText:(NSString *)userText
+- (void)_sendTapNonUNUserNotification
 {
-    id aps = userInfo[@"aps"];
-    if (![aps isKindOfClass:NSDictionary.class]) aps = nil;
-
-    /*
-     * First, look for a string at .rid
-     */
-    NSString *rid = userInfo[@"rid"];
-    if ([rid isKindOfClass:NSString.class])
+    if (_RAnalyticsNotificationsAreHandledByUNDelegate())
     {
-        _pushTrackingIdentifier = [NSString stringWithFormat:@"rid:%@", rid];
+        return;
     }
-    else
+    
+    if (_pushTapTrackingDate != nil &&
+        _pushTrackingIdentifier != nil &&
+        fabs(_pushTapTrackingDate.timeIntervalSinceNow) < _RAnalyticsPushTapEventTimeLimit)
     {
-        /*
-         * If not found, look for a string at .notification_id
-         */
-        NSString *nid = userInfo[@"notification_id"];
-        if ([nid isKindOfClass:NSString.class])
-        {
-            _pushTrackingIdentifier = [NSString stringWithFormat:@"nid:%@", nid];
-        }
-        else
-        {
-            /*
-             * Otherwise, fallback to .aps.alert if that's a string, or, if that's
-             * a dictionary, for either .aps.alert.body or .aps.alert.title
-             */
-            NSString *msg = aps[@"alert"];
-            if ([msg isKindOfClass:NSDictionary.class])
-            {
-                id content = (id)msg;
-                msg = content[@"body"] ?: content[@"title"];
-            }
-
-            if (![msg isKindOfClass:NSString.class])
-            {
-                // Could not determine a tracking id, so bailing out…
-                return;
-            }
-
-            NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
-            NSMutableData *digest = [NSMutableData dataWithLength:CC_SHA256_DIGEST_LENGTH];
-            CC_SHA256(data.bytes, (CC_LONG) data.length, digest.mutableBytes);
-
-            NSMutableString *hexDigest = [NSMutableString stringWithCapacity:digest.length * 2];
-            const unsigned char *bytes = digest.bytes;
-            for (NSUInteger byteIndex = 0; byteIndex < digest.length; ++byteIndex) {
-                [hexDigest appendFormat:@"%02x", (unsigned int) bytes[byteIndex]];
-            }
-            _pushTrackingIdentifier = [NSString stringWithFormat:@"msg:%@", hexDigest];
-        }
+        [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
+                                  parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter:_pushTrackingIdentifier}] track];
     }
+    _pushTrackingIdentifier = nil;
+    _pushTapTrackingDate = nil;
+}
 
-    // TODO: track user action & text
-    (void)userAction;
-    (void)userText;
-
-    /*
-     * If the app is already in foreground (state is active or inactive), emit a _rem_push_notify right away.
-     * And if user tap on the notification, the state of application changes from background to inactive. 
-     * In this case, the origin will be set to push. 
-     * And the next _rem_visit event will have a push type.
-     */
-    UIApplicationState state = _RAnalyticsSharedApplication().applicationState;
-    if (state == UIApplicationStateActive || state == UIApplicationStateInactive)
+- (void)processPushNotificationResponse: (UNNotificationResponse*) notificationResponse
+{
+    UNNotificationTrigger * _Nullable trigger = notificationResponse.notification.request.trigger;
+    if (!trigger ||
+        ![trigger isKindOfClass:UNPushNotificationTrigger.class]) {
+        return;
+    }
+    
+    NSString * _Nullable userText = nil;
+    
+    if ([trigger isKindOfClass:UNTextInputNotificationResponse.class] &&
+        ((UNTextInputNotificationResponse*)trigger).userText.length > 0)
     {
-        // emit push_event
-        [self triggerPushEvent];
+        userText = ((UNTextInputNotificationResponse*)trigger).userText;
     }
-    if (state != UIApplicationStateActive)
+    
+    [self processPushNotificationPayload:notificationResponse.notification.request.content.userInfo
+                              userAction:notificationResponse.actionIdentifier
+                                userText:userText];
+    
+}
+
+- (void)processPushNotificationPayload: (NSDictionary *) userInfo
+                            userAction: (NSString *__nullable) userAction
+                              userText: (NSString *__nullable) userText
+{
+    
+    
+    NSString * _Nullable trackingId = [UNNotification trackingIdentifierFromPayload:userInfo];
+    
+    if (trackingId) {
+        _pushTrackingIdentifier = trackingId;
+        [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
+                                  parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter:trackingId}] track];
+    }
+        
+    if (_RAnalyticsSharedApplication().applicationState != UIApplicationStateActive)
     {
         // set the origin to push type for the next _rem_visit event
         self.origin = RAnalyticsPushOrigin;

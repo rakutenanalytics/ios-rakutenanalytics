@@ -237,6 +237,145 @@
     [mockManager stopMocking];
 }
 
+- (void)test_UNNotificationResponseProcess_success
+{
+    UNMutableNotificationContent *content = UNMutableNotificationContent.new;
+    content.title = @"UN notification";
+    content.body = @"body";
+    content.userInfo = @{@"rid":@"1234abcd",
+                         @"nid":@"abcd1234",
+                         @"aps":@{@"alert":@"a push alert"}};
+
+    UNPushNotificationTrigger *trigger = [UNPushNotificationTrigger alloc]; // init is marked unavailable
+    
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"id_notification"
+                                                                          content:content
+                                                                          trigger:trigger];
+    
+    UNNotification *notification = UNNotification.new;
+    [notification setValue:request
+                    forKey:@"request"];
+    
+    UNTextInputNotificationResponse *response = UNTextInputNotificationResponse.new;
+    [response setValue:@"Some user text"
+                forKey:@"userText"];
+    [response setValue:UNNotificationDefaultActionIdentifier
+                forKey:@"actionIdentifier"];
+    [response setValue:notification
+                forKey:@"notification"];
+    
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    
+    [collector processPushNotificationResponse:response];
+    
+    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        RAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
+        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] hasPrefix:@"rid:1234abcd"]);
+        return expected;
+    }]]);
+    
+    XCTAssertTrue([collector.pushTrackingIdentifier hasPrefix:@"rid:1234abcd"]);
+    [mockManager stopMocking];
+}
+
+- (void)test_UNNotificationResponseProcess_locationTrigger_failure
+{
+    UNMutableNotificationContent *content = UNMutableNotificationContent.new;
+    content.title = @"UN notification";
+    content.body = @"body";
+    content.userInfo = @{@"rid":@"1234abcd",
+                         @"nid":@"abcd1234",
+                         @"aps":@{@"alert":@"a push alert"}};
+    
+    
+    UNLocationNotificationTrigger *trigger = [UNLocationNotificationTrigger alloc]; // init is marked unavailable
+    
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"id_notification"
+                                                                          content:content
+                                                                          trigger:trigger];
+    
+    UNNotification *notification = UNNotification.new;
+    [notification setValue:request
+                    forKey:@"request"];
+    
+    UNTextInputNotificationResponse *response = UNTextInputNotificationResponse.new;
+    [response setValue:@"Some user text"
+                forKey:@"userText"];
+    [response setValue:UNNotificationDefaultActionIdentifier
+                forKey:@"actionIdentifier"];
+    [response setValue:notification
+                forKey:@"notification"];
+    
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    
+    [collector processPushNotificationResponse:response];
+    
+    [[mockManager reject] process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        
+        RAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
+        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] hasPrefix:@"rid:1234abcd"]);
+        return expected;
+    }]];
+    
+    XCTAssertNil(collector.pushTrackingIdentifier);
+    [mockManager stopMocking];
+}
+
+- (void)test_UNNotificationResponseProcess_noTrigger_failure
+{
+    UNMutableNotificationContent *content = UNMutableNotificationContent.new;
+    content.title = @"UN notification";
+    content.body = @"body";
+    content.userInfo = @{@"rid":@"1234abcd",
+                         @"nid":@"abcd1234",
+                         @"aps":@{@"alert":@"a push alert"}};
+    
+    UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:@"id_notification"
+                                                                          content:content
+                                                                          trigger:nil];
+    
+    UNNotification *notification = UNNotification.new;
+    [notification setValue:request
+                    forKey:@"request"];
+    
+    UNTextInputNotificationResponse *response = UNTextInputNotificationResponse.new;
+    [response setValue:@"Some user text"
+                forKey:@"userText"];
+    [response setValue:UNNotificationDefaultActionIdentifier
+                forKey:@"actionIdentifier"];
+    [response setValue:notification
+                forKey:@"notification"];
+    
+    _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;
+
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    
+    [collector processPushNotificationResponse:response];
+    
+    [[mockManager reject] process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        
+        RAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
+        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] hasPrefix:@"rid:1234abcd"]);
+        return expected;
+    }]];
+    
+    XCTAssertNil(collector.pushTrackingIdentifier);
+    [mockManager stopMocking];
+}
+
 - (void)testResetToDefaults
 {
     _RAnalyticsLaunchCollector *collector = _RAnalyticsLaunchCollector.sharedInstance;

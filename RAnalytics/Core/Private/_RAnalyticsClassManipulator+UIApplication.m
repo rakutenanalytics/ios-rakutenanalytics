@@ -2,6 +2,7 @@
 #import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
+#import "_UNNotification+Trackable.h"
 
 @interface _RAnalyticsLaunchCollector()
 @property (nonatomic) RAnalyticsOrigin origin;
@@ -35,7 +36,8 @@
     // Delegates may not implement the original method
     if ([self respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)])
     {
-        return [self _r_autotrack_application:application didFinishLaunchingWithOptions:launchOptions];
+        return [self _r_autotrack_application:application
+                didFinishLaunchingWithOptions:launchOptions];
     }
     return YES;
 }
@@ -51,7 +53,8 @@
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
 
     // If we're executing this, the original method exists
-    return [self _r_autotrack_application:application handleOpenURL:url];
+    return [self _r_autotrack_application:application
+                            handleOpenURL:url];
 }
 
 - (BOOL)_r_autotrack_application:(UIApplication *)application
@@ -63,7 +66,9 @@
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
 
     // If we're executing this, the original method exists
-    return [self _r_autotrack_application:application openURL:url options:options];
+    return [self _r_autotrack_application:application
+                                  openURL:url
+                                  options:options];
 }
 
 - (BOOL)_r_autotrack_application:(UIApplication *)application
@@ -74,7 +79,7 @@
     RAnalyticsDebugLog(@"Application was asked by %@ to open URL %@ with annotation %@", sourceApplication, url.absoluteString, annotation);
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
-
+    
     // If we're executing this, the original method exists
     return [self _r_autotrack_application:application
                                   openURL:url
@@ -95,35 +100,54 @@
                      continueUserActivity:userActivity
                        restorationHandler:restorationHandler];
 }
-
+/**
+ 
+    Swizzle didReceiveRemoteNotification. This was deprecated in iOS version 10.
+ 
+    This won't be called if Application Delegate was implemented:
+ 
+    application:didReceiveRemoteNotification:fetchCompletionHandler:
+ 
+    or
+ 
+    UNUserNotificationCenter delegate method was implemented:
+        
+    userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:
+ 
+ */
 - (void)_r_autotrack_application:(UIApplication *)application
     didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
 {
     RAnalyticsDebugLog(@"Application did receive remote notification %@", userInfo);
-
-    if (userInfo && !_RAnalyticsNotificationsAreHandledByUNDelegate())
-    {
-        [_RAnalyticsLaunchCollector.sharedInstance processPushNotificationPayload:userInfo
-                                                                       userAction:nil
-                                                                         userText:nil];
-    }
+    
+    [_RAnalyticsLaunchCollector.sharedInstance handleTapNonUNUserNotification:userInfo
+                                                                     appState:application.applicationState];
 
     // If we're executing this, the original method exists
-    [self _r_autotrack_application:application didReceiveRemoteNotification:userInfo];
+    [self _r_autotrack_application:application
+      didReceiveRemoteNotification:userInfo];
 }
 
+/**
+ 
+    Swizzle application:didReceiveRemoteNotification:fetchCompletionHandler:
+ 
+    if UNUserNotificationCenter delegate was set
+ 
+    - this will only be called for background or silent push notifications.
+ 
+    else:
+    
+    - this will be called for all push notifications when the app is launched
+*/
 - (void)_r_autotrack_application:(UIApplication *)application
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
     RAnalyticsDebugLog(@"Application did receive remote notification %@", userInfo);
-
-    if (userInfo && !_RAnalyticsNotificationsAreHandledByUNDelegate())
-    {
-        [_RAnalyticsLaunchCollector.sharedInstance processPushNotificationPayload:userInfo
-                                                                       userAction:nil
-                                                                         userText:nil];
-    }
+    
+    [_RAnalyticsLaunchCollector.sharedInstance handleTapNonUNUserNotification:userInfo
+                                                                     appState:application.applicationState];
 
     // If we're executing this, the original method exists
     [self _r_autotrack_application:application

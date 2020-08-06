@@ -14,6 +14,9 @@
 		3A25875924AB4490007E7AF7 /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */; };
 		3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */; };
 		3A8DC8FD24C58E8C006E2FDE /* RAdvertisingIdentifierRequesterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ACAF2B424C1C2C20028F426 /* RAdvertisingIdentifierRequesterTests.m */; };
+		5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */; };
+		571671A024B415DE0071B80B /* NSStringEncryptionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */; };
+		57C5486C24B425530099497D /* UNNotificationTrackableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C5486B24B425530099497D /* UNNotificationTrackableTests.m */; };
 		5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1711D3629EB00BBCA54 /* EventTests.m */; };
 		5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A3BC1731D362A0A00BBCA54 /* StateTests.m */; };
 		5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E8AD41D45E095001960DC /* ManagerTests.m */; };
@@ -71,6 +74,9 @@
 		3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUIApplicationTests.m; sourceTree = "<group>"; };
 		3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserIdentifierSelectorTests.m; sourceTree = "<group>"; };
 		3ACAF2B424C1C2C20028F426 /* RAdvertisingIdentifierRequesterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAdvertisingIdentifierRequesterTests.m; sourceTree = "<group>"; };
+		5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationAppDelegateTests.swift; sourceTree = "<group>"; };
+		5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSStringEncryptionTests.m; sourceTree = "<group>"; };
+		57C5486B24B425530099497D /* UNNotificationTrackableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UNNotificationTrackableTests.m; sourceTree = "<group>"; };
 		5A3BC1711D3629EB00BBCA54 /* EventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTests.m; sourceTree = "<group>"; };
 		5A3BC1731D362A0A00BBCA54 /* StateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StateTests.m; sourceTree = "<group>"; };
 		5A6E8AD41D45E095001960DC /* ManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagerTests.m; sourceTree = "<group>"; };
@@ -163,6 +169,10 @@
 				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
 				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
 				3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */,
+				6D9F105524A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m */,
+				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
+				5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */,
+				57C5486B24B425530099497D /* UNNotificationTrackableTests.m */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -175,12 +185,20 @@
 			path = Functional;
 			sourceTree = "<group>";
 		};
+		1C6D1DFFE95C67904E083EC5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		693B57EF1B7C613E008C5E86 = {
 			isa = PBXGroup;
 			children = (
 				693B58091B7C6159008C5E86 /* Tests */,
 				6D63A79E1E1F975E00F89009 /* Host */,
 				693B57F91B7C613E008C5E86 /* Products */,
+				1C6D1DFFE95C67904E083EC5 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -409,12 +427,15 @@
 				5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */,
 				6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */,
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
+				57C5486C24B425530099497D /* UNNotificationTrackableTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
+				571671A024B415DE0071B80B /* NSStringEncryptionTests.m in Sources */,
 				5AB254A320744B1900BF3EE9 /* RpCookieTests.m in Sources */,
 				16E4819120B3F699006CB857 /* DatabaseTestUtils.m in Sources */,
 				5A3BC1741D362A0A00BBCA54 /* StateTests.m in Sources */,
 				6D9F105624A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m in Sources */,
 				5AD7A9BE204E39E500B03FBA /* MockedDatabase.m in Sources */,
+				5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */,
 				69E1BBCF1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m in Sources */,
 				5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */,
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
