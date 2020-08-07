@@ -26,12 +26,14 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 pod 'RAnalytics/Core'
 @endcode
 
+@section analytics-support Getting support
+For support (bug reports, feature requests, questions etc.) please check our [FAQ page](https://developers.rakuten.net/hc/en-us) or contact us by raising an `Analytics SDK (RAT-SDK)` inquiry from our [support page](https://developers.rakuten.com/intra/support).
+
 @section analytics-tutorial Getting started
 @attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
 
-@subsection analytics-register RAT Account
-* You must have an account ID and an application ID to track events using the Rakuten Analytics Tracker. See [RAT Credentials](https://developers.rakuten.com/intra/rakuten-ecosystem-mobile/overview/getting_started_with_rem_sdk#rat_credentials) to apply for credentials.
-* If you have any questions you can check the [FAQ page](https://developers.rakuten.com/intra/rakuten-ecosystem-mobile/rem-faq/faq) or contact us via the [inquiry form](https://developers.rakuten.net/hc/en-us/requests/new?ticket_form_id=399907).
+@subsection analytics-register RAT credentials
+* You must have a RAT account ID and application ID to track events using the Rakuten Analytics Tracker. Apply for these credentials from this [form](https://confluence.rakuten-it.com/confluence/display/RAT/Application+for+RAT+Implementation) on the RAT site.
 
 @subsection analytics-configure-rat Configuring RAT
 @attention Applications **MUST** configure their RAT `accountId` and `applicationId` in their info.plist as follows:
