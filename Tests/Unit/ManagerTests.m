@@ -97,7 +97,7 @@
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);
 
-    OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
+    OCMStub([locationManagerMock performSelector:@selector(authorizationStatus)]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
 
     _manager.shouldTrackLastKnownLocation = YES;
 
@@ -110,7 +110,7 @@
 {
     id locationManagerMock = OCMClassMock(CLLocationManager.class);
 
-    OCMStub([locationManagerMock authorizationStatus]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
+    OCMStub([locationManagerMock performSelector:@selector(authorizationStatus)]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
 
     _manager.shouldTrackLastKnownLocation = NO;
 
