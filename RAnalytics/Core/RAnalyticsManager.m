@@ -171,7 +171,14 @@ static RAnalyticsManager *_instance = nil;
 
 #pragma mark - CLLocationManagerDelegate
 
+// Only for iOS version <= 13.x
 - (void)locationManager:(CLLocationManager * __unused)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    [self _startStopMonitoringLocationIfNeeded];
+}
+
+// Only for iOS version >= 14.0
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager
 {
     [self _startStopMonitoringLocationIfNeeded];
 }
