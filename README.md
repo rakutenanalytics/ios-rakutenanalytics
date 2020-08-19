@@ -3,7 +3,7 @@
 @section analytics-module Introduction
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the [Rakuten Analytics Tracker](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Home) (RAT) service.
 
-@attention This module tracks the [IDFA][idfa] by default to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
+@attention If a user has given their permission this module uses the [IDFA][idfa] to track installation and conversion rates. See the @ref analytics-appstore "AppStore Submission Procedure" section below for more information.
 
 @section analytics-installing Installing
 To use the module in its default configuration your `Podfile` should contain:
@@ -62,7 +62,7 @@ To find data for a certain event type, such as one of the @ref analytics-standar
 
 Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `NO`:
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     AnalyticsManager.shared().shouldTrackLastKnownLocation = false
@@ -83,7 +83,7 @@ Events are created with RAnalyticsEvent::initWithName:parameters: and spooled by
 #### Tracking generic events
 Tracking a generic event relies on a @ref RAnalyticsTracker "tracker" capable of processing the event currently being @ref RAnalyticsManager::addTracker: "registered".
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
@@ -100,7 +100,7 @@ A concrete tracker, RAnalyticsRATTracker, is automatically registered and intera
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["pgn": "coupon page"]).track()
@@ -114,7 +114,7 @@ A concrete tracker, RAnalyticsRATTracker, is automatically registered and intera
 
 @note You can override the `acc` and `aid` default values by including those keys in the `parameters` dictionary when you create an event.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
@@ -199,7 +199,40 @@ Check this checkbox. The Rakuten SDK uses the IDFA for install attribution.
 #### 3. Attribute an action taken within this app to a previously served advertisement
 Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution.
 
-#### 4. iOS Limited Ad Tracking
+#### 4. IDFA on iOS 14.x and greater
+If the app is built with iOS 14 SDK and embeds [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Rakuten SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
+Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
+
+##### Swift
+
+@code{.swift}
+ATTrackingManager.requestTrackingAuthorization { status in
+    switch status {
+    case .authorized:
+        // Now that tracking is authorized we can get the IDFA
+        let idfa = ASIdentifierManager.shared().advertisingIdentifier
+        
+    default: () // IDFA is not authorized
+    }
+}
+@endcode
+
+##### Objective C
+@code{.h}
+[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+    switch (status) {
+        case ATTrackingManagerAuthorizationStatusAuthorized: {
+            NSString *idfa = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+            }
+            break;
+            
+      default: // IDFA is not authorized
+        break;
+    }
+}];
+@endcode
+
+#### 5. iOS Limited Ad Tracking
 The Rakuten SDK fully complies with Apple requirement below:
 
 > Check the value of this property before performing any advertising tracking. If the value is NO, use the advertising identifier only for the following purposes: frequency capping, conversion events, estimating the number of unique users, security and fraud detection, and debugging.
@@ -213,7 +246,7 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 @subsection analytics-rat-example-ui-interactions UI Interaction
 The following code is an example that can be used to track button clicks. It uses RAT's standard `click` event and passes the page name, clicked element's id and goal id in the `pgn`, `target` and `gol` parameters, respectively.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     @IBAction func buttonTapped(sender: UIButton) {
@@ -239,7 +272,7 @@ The following code is an example that can be used to track button clicks. It use
 @subsection analytics-rat-example-custom-events RAT events with Custom Parameters
 The following is an example of tracking an event with custom parameters. It uses the standard `pv` RAT event used in the previous examples, and passes some custom `custom_param_##` parameters in the `cp` dictionary accepted by RAT for this purpose.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "pv",
@@ -263,7 +296,7 @@ The following is an example of tracking an event with custom parameters. It uses
 @subsection analytics-configure-idfa IDFA tracking
 The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
@@ -286,7 +319,7 @@ You can configure a different delay with the RAnalyticsTracker::setBatchingDelay
 
 ### Example 1: Configure batching interval of 10 seconds
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
 
@@ -305,7 +338,7 @@ You can configure a different delay with the RAnalyticsTracker::setBatchingDelay
 #### - 10 second batching between 10 and 30 seconds after app launch
 #### - 60 second batching after 30 seconds after app launch
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
 
@@ -404,7 +437,7 @@ A known limitation due to app sandboxing is that the SDK cannot automatically fi
 
 To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using RAuthenticationAccount::loadAccountWithName:service:error: and then manually set the `userid` key to the loaded account's RAuthenticationAccount::trackingIdentifier :
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
 RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
@@ -428,7 +461,7 @@ RAT param | Description
 `genre`   | Category for the results.
 `tag`     | An array of tags.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
 RAnalyticsRATTracker.shared().event(eventType: "pv",
@@ -491,7 +524,7 @@ generated by the SDK.
 
 The custom tracker in the code sample below only prints a few diagnostic messages. A real custom tracker would upload data to a server.
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     public class CustomTracker: NSObject, Tracker {
@@ -548,7 +581,7 @@ The custom tracker in the code sample below only prints a few diagnostic message
 
 The custom tracker can then be added to the RAnalyticsManager:
 
-##### Swift 3
+##### Swift
 
 @code{.swift}
     // Add CustomTracker to the manager
