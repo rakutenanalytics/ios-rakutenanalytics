@@ -166,6 +166,30 @@ Event name         | Required components
 `_rem_login`       | **authentication** module (3.10.1 or later).
 `_rem_logout`      | **authentication** module (3.10.1 or later).
 
+#### Manual setting of userId
+
+In earlier versions (v5.1.0 and below), userId value is internally set by receiving the encrypted easy Id broadcasted by CoreAuthentication.
+Starting v5.2.0, app can now sets the userId manually using 'setUserIdentifier:' method from RAnalyticsManager class.
+Any unique user identifier value can be used for this property.
+
+Use Cases:
+- App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the setUserIdentifier method.
+- App can do this every time the app is launched/opened, or when new user logs in.
+- App then should set it to nil when the user logs out.
+
+Examples:
+
+##### Swift
+
+@code{.swift}
+RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
+@endcode
+
+##### Objective C
+@code{.m}
+[RAnalyticsManager.sharedInstance setUserIdentifier:@"a_user_identifier"];
+@endcode
+
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
 
