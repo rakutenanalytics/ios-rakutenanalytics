@@ -136,8 +136,8 @@ RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
 
 Use cases:
 - App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the `setUserIdentifier:` method.
-- App can do this every time the app is launched/opened, or when new user logs in.
-- App should set user identifier to nil when the user logs out.
+- App can do this every time the app is launched/opened, or when new a user logs in.
+- App should set the user identifier to nil when the user logs out.
 
 @subsection analytics-enable-debug-log Enable debug logging
 To enable verbose debug logging for the Analytics module you have to create a boolean `RMSDKEnableDebugLogging` key set to `YES` in your app's Info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
@@ -517,7 +517,7 @@ The custom tracker can then be added to the RAnalyticsManager:
 @endcode
 
 @section analytics-knowledge-base Knowledge Base
-@ssubection analytics-migratev2v3 Migrating from v2 to v3
+@subsection analytics-migratev2v3 Migrating from v2 to v3
 - 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
 - Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
 - See @ref analytics-configure-rat "Configuring RAT" for the new plist approach for setting account ID and application ID. This replaces the deleted methods [configureWithAccountId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat) / [configureWithApplicationId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat)
@@ -631,7 +631,6 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 * [SDKCF-2695](https://jira.rakuten-it.com/jira/browse/SDKCF-2695): Added value for user identifier in user logged out state.
 * [SDKCF-2732](https://jira.rakuten-it.com/jira/browse/SDKCF-2732): Added support for the new Corelocation authorization delegate method on iOS 14.
 * [SDKCF-2411](https://jira.rakuten-it.com/jira/browse/SDKCF-2411): Changed the approach of calculating push notification open count rate. See @ref analytics-open-count-rate.
-
 
 @subsection analytics-5-1-0 5.1.0 (2020-07-17)
 * [SDKCF-2606](https://jira.rakuten-it.com/jira/browse/SDKCF-2606): Changed the default batching delay to 1 second. See @ref analytics-batching-delay.
