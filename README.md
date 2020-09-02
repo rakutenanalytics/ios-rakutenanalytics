@@ -45,17 +45,19 @@ Key         | Value (Number type)
 `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID`
 `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID`
 
-@subsection analytics-configure-endpoint Configure a custom endpoint
-To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
-
-@subsection analytics-rat-example-kibana Using Kibana to Test and Visualize Analytics
+@subsection analytics-rat-example-kibana Using Kibana to verify successful integration
 RAT's [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) STG and PROD sites can be used to check events sent by your app. 
 
 To find all analytics data for your app, you can search for your Application Identifier `aid:999` or `app_name:<your bundle id>`.
 
 To find data for a certain event type, such as one of the @ref analytics-standard-events "standard events", you can add the `etype` to your search query, for example `aid:999 AND etype:_rem_launch`.
 
-@subsection analytics-configure-location Location Tracking
+@section analytics-configure Advanced configuration
+
+@subsection analytics-configure-endpoint Configure a custom endpoint
+To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
+
+@subsection analytics-configure-location Location tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
 @warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
@@ -74,10 +76,73 @@ Location tracking is enabled by default. If you want to prevent our SDK from tra
     RAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
 @endcode
 
-@subsection analytics-enable-debug-log Enable Debug Log
-To enable verbose debug logging for the Analytics module you have to create a boolean **RMSDKEnableDebugLogging** key set to `YES` in your app's info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
+@subsection analytics-configure-idfa IDFA tracking
+The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
-@subsection analytics-tracking Tracking events
+##### Swift
+@code{.swift}
+    AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
+@endcode
+
+##### Objective C
+@code{.m}
+    RAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
+@endcode
+
+#### IDFA tracking on iOS 14.x and above
+If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
+Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
+
+##### Swift
+@code{.swift}
+ATTrackingManager.requestTrackingAuthorization { status in
+    switch status {
+    case .authorized:
+        // Now that tracking is authorized we can get the IDFA
+        let idfa = ASIdentifierManager.shared().advertisingIdentifier
+        
+    default: () // IDFA is not authorized
+    }
+}
+@endcode
+
+##### Objective C
+@code{.h}
+[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+    switch (status) {
+        case ATTrackingManagerAuthorizationStatusAuthorized: {
+            NSString *idfa = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+            }
+            break;
+            
+      default: // IDFA is not authorized
+        break;
+    }
+}];
+@endcode
+
+@subsection analytics-set-userid Manually set a user identifier
+From version 5.2.0 there is a new `setUserIdentifier:` API available for your app to manually set the tracking user identifier. After calling the API the user identifier that you set will be used for subsequent tracked events.
+
+##### Swift
+@code{.swift}
+RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
+@endcode
+
+##### Objective C
+@code{.m}
+[RAnalyticsManager.sharedInstance setUserIdentifier:@"a_user_identifier"];
+@endcode
+
+Use cases:
+- App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the `setUserIdentifier:` method.
+- App can do this every time the app is launched/opened, or when new user logs in.
+- App should set user identifier to nil when the user logs out.
+
+@subsection analytics-enable-debug-log Enable debug logging
+To enable verbose debug logging for the Analytics module you have to create a boolean `RMSDKEnableDebugLogging` key set to `YES` in your app's Info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
+
+@section analytics-tracking Tracking events
 Events are created with RAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RAnalyticsEvent::track "track" method.
 
 #### Tracking generic events
@@ -166,103 +231,8 @@ Event name         | Required components
 `_rem_login`       | **authentication** module (3.10.1 or later).
 `_rem_logout`      | **authentication** module (3.10.1 or later).
 
-#### Manual setting of userId
-
-In earlier versions (v5.1.0 and below), userId value is internally set by receiving the encrypted easy Id broadcasted by CoreAuthentication.
-Starting v5.2.0, app can now sets the userId manually using 'setUserIdentifier:' method from RAnalyticsManager class.
-Any unique user identifier value can be used for this property.
-
-Use Cases:
-- App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the setUserIdentifier method.
-- App can do this every time the app is launched/opened, or when new user logs in.
-- App then should set it to nil when the user logs out.
-
-Examples:
-
-##### Swift
-
-@code{.swift}
-RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
-@endcode
-
-##### Objective C
-@code{.m}
-[RAnalyticsManager.sharedInstance setUserIdentifier:@"a_user_identifier"];
-@endcode
-
 #### Automatically Generated State Attributes
 The SDK will automatically generate certain attributes about the @ref RAnalyticsState "state" of the device, and pass them to every registered @ref RAnalyticsTracker "tracker" when asked to process an event.
-
-@section analytics-migratev2v3 Migrating from v2 to v3
-- 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
-- Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
-- See @ref analytics-configure-rat "Configuring RAT" for the new plist approach for setting account ID and application ID. This replaces the deleted methods [configureWithAccountId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat) / [configureWithApplicationId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat)
-- If you use the Analytics module directly in your app source (e.g. to track custom events) you will need to change all references (header imports, method calls etc.) from `RSDKAnalytics` to `RAnalytics`. Also, if you call `RATTracker` methods you will need to change those references to `RAnalyticsRATTracker`. This renaming was required so that module versions v2 and v3 can co-exist in an app binary.
-- To depend on RAnalytics rather than RSDKAnalytics your Podfile should contain:
-
-@code{.rb}
-source 'https://github.com/CocoaPods/Specs.git'
-source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
-
-pod 'RAnalytics'
-@endcode
-
-@section analytics-appstore AppStore Submission Procedure
-Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
-
-@image html appstore-idfa.png "IDFA usage disclosure" width=80%
-
-#### 1. Serve advertisements within the app.
-Check this box if any of the following options apply to your app:
-- Your app contains advertisements.
-- You are using the **[discover](../discover-latest)** SDK module.
-
-#### 2. Attribute this app installation to a previously served advertisement
-Check this checkbox. The Rakuten SDK uses the IDFA for install attribution.
-
-#### 3. Attribute an action taken within this app to a previously served advertisement
-Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution.
-
-#### 4. IDFA on iOS 14.x and greater
-If the app is built with iOS 14 SDK and embeds [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Rakuten SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
-Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
-
-##### Swift
-
-@code{.swift}
-ATTrackingManager.requestTrackingAuthorization { status in
-    switch status {
-    case .authorized:
-        // Now that tracking is authorized we can get the IDFA
-        let idfa = ASIdentifierManager.shared().advertisingIdentifier
-        
-    default: () // IDFA is not authorized
-    }
-}
-@endcode
-
-##### Objective C
-@code{.h}
-[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-    switch (status) {
-        case ATTrackingManagerAuthorizationStatusAuthorized: {
-            NSString *idfa = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-            }
-            break;
-            
-      default: // IDFA is not authorized
-        break;
-    }
-}];
-@endcode
-
-#### 5. iOS Limited Ad Tracking
-The Rakuten SDK fully complies with Apple requirement below:
-
-> Check the value of this property before performing any advertising tracking. If the value is NO, use the advertising identifier only for the following purposes: frequency capping, conversion events, estimating the number of unique users, security and fraud detection, and debugging.
-
-The Rakuten SDK only uses the IDFA for `conversion events, estimating the number of unique users, security and fraud detection`.
-
 
 @section analytics-rat-examples RAT Examples
 @note These examples all use @ref RAnalyticsRATTracker to send [RAT specific parameters](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameters+Definition). If you are using a custom tracker, @ref RAnalyticsEvent should be used instead.
@@ -317,20 +287,6 @@ The following is an example of tracking an event with custom parameters. It uses
 @endcode
 
 @section analytics-advanced Advanced Usage
-@subsection analytics-configure-idfa IDFA tracking
-The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default. **It is not recommended to disable this feature**, but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
-
-##### Swift
-
-@code{.swift}
-    AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
-@endcode
-
-##### Objective C
-
-@code{.m}
-    RAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
-@endcode
 
 @subsection analytics-batching-delay Configure the Tracker Batching Delay
 A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. 
@@ -473,72 +429,6 @@ RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["user
 [[RAnalyticsRATTracker.sharedInstance eventWithEventType: @"custom_name" parameters: @{@"userid": account.trackingIdentifier}] track];
 @endcode
 
-@subsection analytics-rat-example-search-results Tracking search results with RAT
-The code below shows an example of an event you could send to track which results get shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
-
-RAT param | Description
-----------|---------------
-`lang`    | The language used for the search.
-`sq`      | The search terms.
-`oa`      | `a` for requesting all search terms (AND), `o` for requesting one of them (OR).
-`esq`     | Terms that should be excluded from the results.
-`genre`   | Category for the results.
-`tag`     | An array of tags.
-
-##### Swift
-
-@code{.swift}
-RAnalyticsRATTracker.shared().event(eventType: "pv",
-parameters:["pgn": "shop_search",
-"pgt": "search",
-"lang": "English",
-"sq": "search query",
-"oa": "a",
-"esq": "excluded query",
-"genre": "category",
-"tag": ["tag 1", "tag 2"]]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-[[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
-parameters:@{@"pgn": @"shop_search",
-@"pgt": @"search",
-@"lang": @"English",
-@"sq": @"search query",
-@"oa": @"a",
-@"esq": @"excluded query",
-@"genre": @"category",
-@"tag": @[@"tag 1", @"tag 2"]}] track];
-@endcode
-
-@subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
-You can monitor the tracker network activity by listening
-to the @ref RAnalyticsWillUploadNotification, @ref RAnalyticsUploadFailureNotification
-and @ref RAnalyticsUploadSuccessNotification notifications. For example:
-
-@code{.m}
-- (void)viewDidLoad {
-[super viewDidLoad];
-
-[NSNotificationCenter.defaultCenter addObserver:self
-selector:@selector(failedToUpload:)
-name:RAnalyticsUploadFailureNotification
-object:nil];
-}
-
-- (void)failedToUpload:(NSNotification *)notification {
-NSArray *records = notification.object;
-NSError *error = notification.userInfo[NSUnderlyingErrorKey];
-NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
-}
-
-- (void)dealloc {
-[NSNotificationCenter.defaultCenter removeObserver:self];
-}
-@endcode
-
 @subsection analytics-custom-tracker Creating a Custom Tracker
 Custom @ref RAnalyticsTracker "trackers" can be @ref RAnalyticsManager::addTracker: "added" to the @ref RAnalyticsManager "manager".
 
@@ -626,7 +516,122 @@ The custom tracker can then be added to the RAnalyticsManager:
     [[RAnalyticsEvent.alloc initWithName:CustomTrackerMyEventName parameters:nil] track];
 @endcode
 
+@section analytics-knowledge-base Knowledge Base
+@ssubection analytics-migratev2v3 Migrating from v2 to v3
+- 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
+- Version 3.0.0 restructures the module and splits the functionality into `Core` and `RAT` subspecs.
+- See @ref analytics-configure-rat "Configuring RAT" for the new plist approach for setting account ID and application ID. This replaces the deleted methods [configureWithAccountId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat) / [configureWithApplicationId:](https://documents.developers.rakuten.com/ios-sdk/analytics-2.13/#analytics-configure-rat)
+- If you use the Analytics module directly in your app source (e.g. to track custom events) you will need to change all references (header imports, method calls etc.) from `RSDKAnalytics` to `RAnalytics`. Also, if you call `RATTracker` methods you will need to change those references to `RAnalyticsRATTracker`. This renaming was required so that module versions v2 and v3 can co-exist in an app binary.
+- To depend on RAnalytics rather than RSDKAnalytics your Podfile should contain:
+
+@code{.rb}
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
+
+pod 'RAnalytics'
+@endcode
+
+@subsection analytics-appstore AppStore Submission Procedure
+Apple requests that you **disclose your usage of the advertising identifier (IDFA)** when releasing your application to the App Store.
+
+@image html appstore-idfa.png "IDFA usage disclosure" width=80%
+
+#### 1. Serve advertisements within the app.
+Check this box if any of the following options apply to your app:
+- Your app contains advertisements.
+- You are using the **[discover](../discover-latest)** SDK module.
+
+#### 2. Attribute this app installation to a previously served advertisement
+Check this checkbox. The Rakuten SDK uses the IDFA for install attribution.
+
+#### 3. Attribute an action taken within this app to a previously served advertisement
+Check this checkbox. The Rakuten SDK uses the IDFA for re-engagment ads attribution.
+
+#### 5. iOS Limited Ad Tracking
+The Rakuten SDK fully complies with Apple requirement below:
+
+> Check the value of this property before performing any advertising tracking. If the value is NO, use the advertising identifier only for the following purposes: frequency capping, conversion events, estimating the number of unique users, security and fraud detection, and debugging.
+
+The Rakuten SDK only uses the IDFA for `conversion events, estimating the number of unique users, security and fraud detection`.
+
+@subsection analytics-open-count-rate Push Notification Open Rate
+From SDK version 5.2.0 open count tracking has been changed to only send an open event when an alert has been directly opened by the user. It is **highly recommended** to implement the **UNUserNotificationCenter** delegate method: [``userNotificationCenter(_:didReceive:withCompletionHandler:)``](https://developer.apple.com/documentation/usernotifications/unusernotificationcenterdelegate/1649501-usernotificationcenter) because it will more reliably track the push notification open count. If you only implement the **AppDelegate** methods [``application(_:didReceiveRemoteNotification:fetchCompletionHandler:)``](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623013-application) or [``application(_:didReceiveRemoteNotification:)``](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623117-application) your open rate will not be accurate.
+
+@subsection analytics-rat-example-search-results Tracking search results with RAT
+The code below shows an example of an event you could send to track which results get shown on a search page. It uses the standard `pv` RAT event used in the previous examples, and a number of standard RAT parameters. The parameters used are:
+
+RAT param | Description
+----------|---------------
+`lang`    | The language used for the search.
+`sq`      | The search terms.
+`oa`      | `a` for requesting all search terms (AND), `o` for requesting one of them (OR).
+`esq`     | Terms that should be excluded from the results.
+`genre`   | Category for the results.
+`tag`     | An array of tags.
+
+##### Swift
+
+@code{.swift}
+RAnalyticsRATTracker.shared().event(eventType: "pv",
+parameters:["pgn": "shop_search",
+"pgt": "search",
+"lang": "English",
+"sq": "search query",
+"oa": "a",
+"esq": "excluded query",
+"genre": "category",
+"tag": ["tag 1", "tag 2"]]).track()
+@endcode
+
+##### Objective C
+
+@code{.m}
+[[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
+parameters:@{@"pgn": @"shop_search",
+@"pgt": @"search",
+@"lang": @"English",
+@"sq": @"search query",
+@"oa": @"a",
+@"esq": @"excluded query",
+@"genre": @"category",
+@"tag": @[@"tag 1", @"tag 2"]}] track];
+@endcode
+
+@subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
+You can monitor the tracker network activity by listening
+to the @ref RAnalyticsWillUploadNotification, @ref RAnalyticsUploadFailureNotification
+and @ref RAnalyticsUploadSuccessNotification notifications. For example:
+
+@code{.m}
+- (void)viewDidLoad {
+[super viewDidLoad];
+
+[NSNotificationCenter.defaultCenter addObserver:self
+selector:@selector(failedToUpload:)
+name:RAnalyticsUploadFailureNotification
+object:nil];
+}
+
+- (void)failedToUpload:(NSNotification *)notification {
+NSArray *records = notification.object;
+NSError *error = notification.userInfo[NSUnderlyingErrorKey];
+NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.localizedDescription);
+}
+
+- (void)dealloc {
+[NSNotificationCenter.defaultCenter removeObserver:self];
+}
+@endcode
+
 @section analytics-changelog Changelog
+
+@subsection analytics-5-2-0 5.2.0 (2020-09-02)
+* [SDKCF-2659](https://jira.rakuten-it.com/jira/browse/SDKCF-2659): Implemented support for iOS 14 IDFA permission changes. See @ref analytics-configure-idfa.
+* [SDKCF-2658](https://jira.rakuten-it.com/jira/browse/SDKCF-2658): Added `RAnalyticsManager.setUserIdentifier(userIdentifier:)` to allow apps to manually set a user identifier. See @ref analytics-set-userid.
+* [SDKCF-2695](https://jira.rakuten-it.com/jira/browse/SDKCF-2695): Added value for user identifier in user logged out state.
+* [SDKCF-2732](https://jira.rakuten-it.com/jira/browse/SDKCF-2732): Added support for the new Corelocation authorization delegate method on iOS 14.
+* [SDKCF-2411](https://jira.rakuten-it.com/jira/browse/SDKCF-2411): Changed the approach of calculating push notification open count rate. See @ref analytics-open-count-rate.
+
 
 @subsection analytics-5-1-0 5.1.0 (2020-07-17)
 * [SDKCF-2606](https://jira.rakuten-it.com/jira/browse/SDKCF-2606): Changed the default batching delay to 1 second. See @ref analytics-batching-delay.
