@@ -244,12 +244,26 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
             [self _checkLTE];
 
-            [NSNotificationCenter.defaultCenter addObserver:self
-                                                   selector:@selector(_checkLTE)
-                                                       name:CTRadioAccessTechnologyDidChangeNotification
-                                                     object:nil];
+            [NSNotificationCenter.defaultCenter addObserverForName:CTRadioAccessTechnologyDidChangeNotification
+                                                            object:nil
+                                                             queue:nil
+                                                        usingBlock:^(NSNotification *note)
+            {
+               [self _checkLTE];
+            }];
         }
-
+        
+        /*
+         * Reallocate telephonyNetworkInfo when the app becomes active
+         */
+        
+        [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
+                                                        object:nil
+                                                         queue:nil
+                                                    usingBlock:^(NSNotification *note)
+        {
+            self.telephonyNetworkInfo  = CTTelephonyNetworkInfo.new;
+        }];
     }
     return self;
 }
@@ -885,7 +899,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 - (void)_checkLTE
 {
-    self.isUsingLTE = [self.telephonyNetworkInfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.telephonyNetworkInfo respondsToSelector:@selector(currentRadioAccessTechnology)])
+        {
+            self.isUsingLTE = [self.telephonyNetworkInfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE];
+        }
+    });
 }
 
 - (NSNumber *)positiveIntegerNumberWithObject:(id)object
