@@ -30,8 +30,6 @@ pod 'RAnalytics/Core'
 For support (bug reports, feature requests, questions etc.) please check our [FAQ page](https://developers.rakuten.net/hc/en-us) or contact us by raising an `Analytics SDK (RAT-SDK)` inquiry from our [support page](https://developers.rakuten.com/intra/support).
 
 @section analytics-tutorial Getting started
-@attention This module requires keychain access for proper configuration. See @ref device-information-keychain-setup "Setting up the keychain" for more information.
-
 @subsection analytics-register RAT credentials
 * You must have a RAT account ID and application ID to track events using the Rakuten Analytics Tracker. Apply for these credentials from this [form](https://confluence.rakuten-it.com/confluence/display/RAT/Application+for+RAT+Implementation) on the RAT site.
 
@@ -44,6 +42,13 @@ Key         | Value (Number type)
 -------------------|-------------------
 `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID`
 `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID`
+
+@subsection analytics-keychain-setup Configuring the keychain
+@attention This module requires keychain access to work properly. You must add a `jp.co.rakuten.ios.sdk.deviceinformation` keychain access group to your application's "Keychain Sharing" capabilities, as shown below.
+
+@image html keychain-setup.png width=40%
+
+@warning Note that `jp.co.rakuten.ios.sdk.deviceinformation` **must not** be the first entry in this list. The first entry must be your own application's bundle identifier.
 
 @subsection analytics-rat-example-kibana Using Kibana to verify successful integration
 RAT's [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) STG and PROD sites can be used to check events sent by your app. 
