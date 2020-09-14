@@ -629,6 +629,8 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-5-2-1 5.2.1 (2020-09-14)
+* [SDKCF-2777](https://jira.rakuten-it.com/jira/browse/SDKCF-2777): Fixed a crash related to CTRadioAccessTechnologyDidChangeNotification.
 
 @subsection analytics-5-2-0 5.2.0 (2020-09-02)
 * [SDKCF-2659](https://jira.rakuten-it.com/jira/browse/SDKCF-2659): Implemented support for iOS 14 IDFA permission changes. See @ref analytics-configure-idfa.
