@@ -12,8 +12,8 @@
 		16E4819120B3F699006CB857 /* DatabaseTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */; };
 		16E4819220B3F699006CB857 /* DatabaseTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */; };
 		3A25875924AB4490007E7AF7 /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */; };
+		3A833D37250F662600CF2B58 /* RAdvertisingIdentifierHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */; };
 		3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */; };
-		3A8DC8FD24C58E8C006E2FDE /* RAdvertisingIdentifierRequesterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3ACAF2B424C1C2C20028F426 /* RAdvertisingIdentifierRequesterTests.m */; };
 		5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */; };
 		571671A024B415DE0071B80B /* NSStringEncryptionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */; };
 		57C5486C24B425530099497D /* UNNotificationTrackableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C5486B24B425530099497D /* UNNotificationTrackableTests.m */; };
@@ -72,8 +72,8 @@
 		16E4818E20B3F699006CB857 /* DatabaseTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DatabaseTestUtils.h; sourceTree = "<group>"; };
 		16E4818F20B3F699006CB857 /* DatabaseTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DatabaseTestUtils.m; sourceTree = "<group>"; };
 		3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUIApplicationTests.m; sourceTree = "<group>"; };
+		3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAdvertisingIdentifierHandlerTests.m; sourceTree = "<group>"; };
 		3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserIdentifierSelectorTests.m; sourceTree = "<group>"; };
-		3ACAF2B424C1C2C20028F426 /* RAdvertisingIdentifierRequesterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAdvertisingIdentifierRequesterTests.m; sourceTree = "<group>"; };
 		5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationAppDelegateTests.swift; sourceTree = "<group>"; };
 		5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSStringEncryptionTests.m; sourceTree = "<group>"; };
 		57C5486B24B425530099497D /* UNNotificationTrackableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UNNotificationTrackableTests.m; sourceTree = "<group>"; };
@@ -145,7 +145,7 @@
 		16E4817520B28EDB006CB857 /* Unit */ = {
 			isa = PBXGroup;
 			children = (
-				3ACAF2B424C1C2C20028F426 /* RAdvertisingIdentifierRequesterTests.m */,
+				3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */,
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
 				6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */,
@@ -421,7 +421,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A25875924AB4490007E7AF7 /* ClassManipulatorUIApplicationTests.m in Sources */,
-				3A8DC8FD24C58E8C006E2FDE /* RAdvertisingIdentifierRequesterTests.m in Sources */,
 				5AF1B93F20478F5900BD0E3E /* SenderTests.m in Sources */,
 				5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */,
 				5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */,
@@ -442,6 +441,7 @@
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
+				3A833D37250F662600CF2B58 /* RAdvertisingIdentifierHandlerTests.m in Sources */,
 				3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */,
 				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
 			);
