@@ -5,6 +5,7 @@
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "../../RAnalytics/Util/Private/UIApplication+Additions.h"
+#import "../../RAnalytics/Util/Private/_RStatusBarOrientationHandler.h"
 
 #import "TrackerTests.h"
 
@@ -663,12 +664,21 @@
 #pragma mark Mori - Interface Orientations
 
 - (id)payloadWithInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    id classMockApplication = OCMClassMock(UIApplication.class);
-    OCMStub([classMockApplication sharedApplication]).andReturn(classMockApplication);
-    OCMStub([classMockApplication statusBarOrientation]).andReturn(interfaceOrientation);
+    id statusBarOrientationHandlerMock = OCMPartialMock(_RStatusBarOrientationHandler.new);
+    OCMStub([statusBarOrientationHandlerMock performSelector:@selector(currentStatusBarOrientation)]).andReturn(interfaceOrientation);
+    
+    id trackerMock = OCMPartialMock([self tracker]);
+    OCMStub([trackerMock performSelector:@selector(statusBarOrientationHandler)]).andReturn(statusBarOrientationHandlerMock);
     
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
+    id payload = [self assertProcessEvent:event
+                                    state:self.defaultState
+                                  tracker:trackerMock
+                               expectType:RAnalyticsInstallEventName];
+    
+    [statusBarOrientationHandlerMock stopMocking];
+    [trackerMock stopMocking];
+    
     return payload;
 }
 

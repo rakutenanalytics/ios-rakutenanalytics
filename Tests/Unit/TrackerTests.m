@@ -136,8 +136,19 @@
                                state:(RAnalyticsState *)state
                           expectType:(NSString *)etype
 {
+    return [self assertProcessEvent:event
+                              state:state
+                            tracker:_tracker
+                         expectType:etype];
+}
+
+- (NSDictionary *)assertProcessEvent:(RAnalyticsEvent *)event
+                               state:(RAnalyticsState *)state
+                             tracker:(RAnalyticsRATTracker *)tracker
+                          expectType:(NSString *)etype
+{
     XCTAssertNotNil(event);
-    XCTAssert([_tracker processEvent:event state:state]);
+    XCTAssert([tracker processEvent:event state:state]);
     id payload = _database.latestAddedJSON;
     XCTAssertNotNil(payload);
     if (etype) XCTAssertEqualObjects(payload[@"etype"], etype);

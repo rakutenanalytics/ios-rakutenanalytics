@@ -16,6 +16,10 @@
 - (NSDictionary *)assertProcessEvent:(RAnalyticsEvent *)event
                                state:(RAnalyticsState *)state
                           expectType:(NSString *)etype;
+- (NSDictionary *)assertProcessEvent:(RAnalyticsEvent *)event
+     state:(RAnalyticsState *)state
+   tracker:(RAnalyticsRATTracker *)tracker
+                          expectType:(NSString *)etype;
 - (void)stubRATResponseWithStatusCode:(int)status completionHandler:(void (^)(void))completion;
 - (void)addMock:(id)mock;
 - (void)invalidateTimerOfSender:(RAnalyticsSender *)sender;
