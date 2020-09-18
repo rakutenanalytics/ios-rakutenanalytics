@@ -95,6 +95,8 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 @endcode
 
 #### IDFA tracking on iOS 14.x and above
+@attention If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
+
 If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
 Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
 
@@ -629,6 +631,10 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-5-2-2 5.2.2 (2020-09-18)
+* [SDKCF-2826](https://jira.rakuten-it.com/jira/browse/SDKCF-2826): Simplified the approach for handling IDFA. If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the requirement to obtain permission for user tracking until "early next year".
+* [SDKCF-2749](https://jira.rakuten-it.com/jira/browse/SDKCF-2749): Fixed warning that status bar orientation UI methods are called from non-UI thread.
+
 @subsection analytics-5-2-1 5.2.1 (2020-09-14)
 * [SDKCF-2777](https://jira.rakuten-it.com/jira/browse/SDKCF-2777): Fixed a crash related to CTRadioAccessTechnologyDidChangeNotification.
 
