@@ -10,6 +10,7 @@
 #import "RAnalyticsSender.h"
 #import "RAnalyticsRpCookieFetcher.h"
 #import "_RStatusBarOrientationHandler.h"
+#import "_RLogger.h"
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
@@ -232,7 +233,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          {
              if (error)
              {
-                 RAnalyticsDebugLog(@"%@", error);
+                 [_RLogger error:@"%@", error];
              }
          }];
         
@@ -443,7 +444,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RAnalyticsErrorLog(@"There is no value for 'acc' field, please configure it by setting a 'RATAccountIdentifier' key to YOUR_RAT_ACCOUNT_ID in your app's Info.plist");
+            [_RLogger error:@"There is no value for 'acc' field, please configure it by setting a 'RATAccountIdentifier' key to YOUR_RAT_ACCOUNT_ID in your app's Info.plist"];
         }
     }
 
@@ -461,7 +462,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            RAnalyticsErrorLog(@"There is no value for 'aid' field, please configure it by setting a 'RATAppIdentifier' key to YOUR_RAT_APPLICATION_ID in your app's Info.plist");
+            [_RLogger error:@"There is no value for 'aid' field, please configure it by setting a 'RATAppIdentifier' key to YOUR_RAT_APPLICATION_ID in your app's Info.plist"];
         }
     }
 

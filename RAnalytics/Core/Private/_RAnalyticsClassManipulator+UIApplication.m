@@ -3,6 +3,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
 #import "_UNNotification+Trackable.h"
+#import "_RLogger.h"
 
 @interface _RAnalyticsLaunchCollector()
 @property (nonatomic) RAnalyticsOrigin origin;
@@ -14,7 +15,7 @@
 - (BOOL)_r_autotrack_application:(UIApplication *)application
    willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    RAnalyticsDebugLog(@"Application will finish launching with options = %@", launchOptions);
+    [_RLogger debug:@"Application will finish launching with options = %@", launchOptions];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsInternalOrigin;
 
@@ -29,7 +30,7 @@
 - (BOOL)_r_autotrack_application:(UIApplication *)application
    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    RAnalyticsDebugLog(@"Application did finish launching with options = %@", launchOptions);
+    [_RLogger debug:@"Application did finish launching with options = %@", launchOptions];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsInternalOrigin;
 
@@ -48,7 +49,7 @@
 - (BOOL)_r_autotrack_application:(UIApplication *)application
                    handleOpenURL:(NSURL *)url
 {
-    RAnalyticsDebugLog(@"Application was asked to open URL %@", url.absoluteString);
+    [_RLogger debug:@"Application was asked to open URL %@", url.absoluteString];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
 
@@ -61,7 +62,7 @@
                          openURL:(NSURL *)url
                          options:(NSDictionary<NSString*, id> *)options
 {
-    RAnalyticsDebugLog(@"Application was asked to open URL %@ with options = %@", url.absoluteString, options);
+    [_RLogger debug:@"Application was asked to open URL %@ with options = %@", url.absoluteString, options];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
 
@@ -76,7 +77,7 @@
                sourceApplication:(NSString *)sourceApplication
                       annotation:(id)annotation
 {
-    RAnalyticsDebugLog(@"Application was asked by %@ to open URL %@ with annotation %@", sourceApplication, url.absoluteString, annotation);
+    [_RLogger debug:@"Application was asked by %@ to open URL %@ with annotation %@", sourceApplication, url.absoluteString, annotation];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
     
@@ -91,7 +92,7 @@
             continueUserActivity:(NSUserActivity *)userActivity
               restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
-    RAnalyticsDebugLog(@"Application was asked to continue user activity %@", userActivity.debugDescription);
+    [_RLogger debug:@"Application was asked to continue user activity %@", userActivity.debugDescription];
 
     _RAnalyticsLaunchCollector.sharedInstance.origin = RAnalyticsExternalOrigin;
 
@@ -118,7 +119,7 @@
 - (void)_r_autotrack_application:(UIApplication *)application
     didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
 {
-    RAnalyticsDebugLog(@"Application did receive remote notification %@", userInfo);
+    [_RLogger debug:@"Application did receive remote notification %@", userInfo];
     
     [_RAnalyticsLaunchCollector.sharedInstance handleTapNonUNUserNotification:userInfo
                                                                      appState:application.applicationState];
@@ -144,7 +145,7 @@
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
-    RAnalyticsDebugLog(@"Application did receive remote notification %@", userInfo);
+    [_RLogger debug:@"Application did receive remote notification %@", userInfo];
     
     [_RAnalyticsLaunchCollector.sharedInstance handleTapNonUNUserNotification:userInfo
                                                                      appState:application.applicationState];
@@ -158,7 +159,7 @@
 #pragma mark Added to UIApplication
 - (void)_r_autotrack_setApplicationDelegate:(id<UIApplicationDelegate>)delegate
 {
-    RAnalyticsDebugLog(@"Application delegate is being set to %@", delegate);
+    [_RLogger debug:@"Application delegate is being set to %@", delegate];
     
     if (!delegate
         || [delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]
@@ -224,6 +225,6 @@
                                                toClass:UIApplication.class
                                              replacing:@selector(setDelegate:)
                                          onlyIfPresent:YES];
-    RAnalyticsDebugLog(@"Installed auto-tracking hooks for UIApplication.");
+    [_RLogger debug:@"Installed auto-tracking hooks for UIApplication."];
 }
 @end

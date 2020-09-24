@@ -1,13 +1,14 @@
 #import "_RAnalyticsClassManipulator+UIViewController.h"
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
+#import "_RLogger.h"
 
 @implementation _RAnalyticsClassManipulator(UIViewController)
 
 #pragma mark Added to UIViewController
 - (void)_r_autotrack_viewDidAppear:(BOOL)animated
 {
-    RAnalyticsDebugLog(@"View did appear for %@", self);
+    [_RLogger debug:@"View did appear for %@", self];
 
     [_RAnalyticsLaunchCollector.sharedInstance didPresentViewController:(id)self];
     [self _r_autotrack_viewDidAppear:animated];
@@ -20,6 +21,6 @@
                                                toClass:UIViewController.class
                                              replacing:@selector(viewDidAppear:)
                                          onlyIfPresent:YES];
-    RAnalyticsDebugLog(@"Installed auto-tracking hooks for UIViewController.");
+    [_RLogger debug:@"Installed auto-tracking hooks for UIViewController."];
 }
 @end

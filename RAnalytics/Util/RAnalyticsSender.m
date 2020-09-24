@@ -1,6 +1,7 @@
 #import "RAnalyticsSender.h"
 #import "_RAnalyticsDatabase.h"
 #import "_RAnalyticsHelpers.h"
+#import "_RLogger.h"
 
 NSString *const RAnalyticsWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
 NSString *const RAnalyticsUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
@@ -62,7 +63,7 @@ static const unsigned int    _RATBatchSize      = 16u;
 - (void)sendJSONOject:(id)obj
 {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:0];
-    RAnalyticsDebugLog(@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]);
+    [_RLogger debug:@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]];
     [self _storeAndSendEventData:jsonData];
 }
 
@@ -121,12 +122,12 @@ static const unsigned int    _RATBatchSize      = 16u;
                          typeof(weakSelf) __strong strongSelf = weakSelf;
                          if (blobs)
                          {
-                             RAnalyticsDebugLog(@"Records fetched from DB table %@, now upload them", self.databaseTableName);
+                             [_RLogger debug:@"Records fetched from DB table %@, now upload them", self.databaseTableName];
                              [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
                          }
                          else
                          {
-                             RAnalyticsDebugLog(@"No records found in DB table %@ so end upload", self.databaseTableName);
+                             [_RLogger debug:@"No records found in DB table %@ so end upload", self.databaseTableName];
                              [strongSelf _backgroundUploadEnded];
                          }
                      }];
@@ -244,7 +245,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                       [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
                                                   }];
 
-                                                  RAnalyticsDebugLog(@"%@", logMessage);
+                                                  [_RLogger debug:logMessage];
 #endif
 
                                                   [NSNotificationCenter.defaultCenter postNotificationName:RAnalyticsUploadSuccessNotification

@@ -2,6 +2,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
 #import "_UNNotification+Trackable.h"
+#import "_RLogger.h"
 
 /* RSDKA_EXPORT */ BOOL _RAnalyticsNotificationsAreHandledByUNDelegate(void)
 {
@@ -35,7 +36,7 @@
 
 - (void)_r_autotrack_setUserNotificationCenterDelegate:(id<NSObject>)delegate
 {
-    RAnalyticsDebugLog(@"User notification center delegate is being set to %@", delegate);
+    [_RLogger debug:@"User notification center delegate is being set to %@", delegate];
     
     SEL swizzle_selector = @selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
     SEL delegate_selector = @selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
@@ -63,7 +64,7 @@
                                              replacing:@selector(setDelegate:)
                                          onlyIfPresent:YES];
     
-    RAnalyticsDebugLog(@"Installed auto-tracking hooks for UNNotificationCenter.");
+    [_RLogger debug:@"Installed auto-tracking hooks for UNNotificationCenter."];
 }
 
 @end

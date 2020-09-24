@@ -28,6 +28,13 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 + (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
 
 /**
+ * Set logging level
+ *
+ * @param loggingLevel  The logging level type.
+ */
+- (void)setLoggingLevel:(RLoggingLevel)loggingLevel RSDKA_SWIFT_NAME(set(loggingLevel:));
+
+/**
  * Process an event. The manager passes the event to each registered trackers, in turn.
  *
  * @param event  An event will be sent to RAT server.

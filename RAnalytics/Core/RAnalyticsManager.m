@@ -8,6 +8,7 @@
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
 #import "_RAdvertisingIdentifierHandler.h"
+#import "_RLogger.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -185,17 +186,26 @@ static RAnalyticsManager *_instance = nil;
 
 - (void)locationManagerDidPauseLocationUpdates:(CLLocationManager * __unused)manager
 {
-    RAnalyticsDebugLog(@"Location updates paused.");
+    [_RLogger debug:@"Location updates paused."];
 }
 
 - (void)locationManagerDidResumeLocationUpdates:(CLLocationManager * __unused)manager
 {
-    RAnalyticsDebugLog(@"Location updates resumed.");
+    [_RLogger debug:@"Location updates resumed."];
 }
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
 {
-    RAnalyticsErrorLog(@"Failed to acquire device location: %@", error.localizedDescription);
+    [_RLogger error:@"Failed to acquire device location: %@", error.localizedDescription];
+}
+
+//--------------------------------------------------------------------------
+
+#pragma mark - Logging Level method
+
+- (void)setLoggingLevel:(RLoggingLevel)loggingLevel
+{
+    _RLogger.loggingLevel = loggingLevel;
 }
 
 //--------------------------------------------------------------------------
@@ -230,7 +240,7 @@ static RAnalyticsManager *_instance = nil;
             case kCLAuthorizationStatusAuthorizedWhenInUse: statusString = @"Authorized When In Use"; break;
             default: statusString = [NSString stringWithFormat:@"Value (%i)", status];
         }
-        RAnalyticsDebugLog(@"Location services' authorization status changed to [%@].", statusString);
+        [_RLogger debug:@"Location services' authorization status changed to [%@].", statusString];
     }
 #endif
 
@@ -256,7 +266,7 @@ static RAnalyticsManager *_instance = nil;
         return;
     }
 
-    RAnalyticsDebugLog(@"Start monitoring location");
+    [_RLogger debug:@"Start monitoring location"];
     [self.locationManager startUpdatingLocation];
     self.locationManagerIsUpdating = YES;
 }
@@ -269,7 +279,7 @@ static RAnalyticsManager *_instance = nil;
         return;
     }
 
-    RAnalyticsDebugLog(@"Stop monitoring location");
+    [_RLogger debug:@"Stop monitoring location"];
     [self.locationManager stopUpdatingLocation];
     self.locationManagerIsUpdating = NO;
 }
@@ -287,7 +297,7 @@ static RAnalyticsManager *_instance = nil;
     }
     if (!_deviceIdentifier)
     {
-        RAnalyticsErrorLog(@"RDeviceIdentifier is not properly configured!");
+        [_RLogger error:@"RDeviceIdentifier is not properly configured!"];
     }
 
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
@@ -324,7 +334,7 @@ static RAnalyticsManager *_instance = nil;
     BOOL processed = NO;
     for (id<RAnalyticsTracker> tracker in self.trackers)
     {
-        RAnalyticsDebugLog(@"Using tracker %@", tracker);
+        [_RLogger debug:@"Using tracker %@", tracker];
 
         if ([tracker processEvent:event state:state])
         {
@@ -333,7 +343,7 @@ static RAnalyticsManager *_instance = nil;
     }
     if (!processed)
     {
-        RAnalyticsDebugLog(@"No tracker processed event %@",event.name);
+        [_RLogger debug:@"No tracker processed event %@", event.name];
     }
 }
 
@@ -344,7 +354,7 @@ static RAnalyticsManager *_instance = nil;
         if (![_trackers containsObject:tracker])
         {
             [_trackers addObject:tracker];
-            RAnalyticsDebugLog(@"Added tracker %@", tracker);
+            [_RLogger debug:@"Added tracker %@", tracker];
         }
     }
 }
