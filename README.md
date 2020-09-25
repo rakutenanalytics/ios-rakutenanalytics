@@ -146,8 +146,23 @@ Use cases:
 - App can do this every time the app is launched/opened, or when new a user logs in.
 - App should set the user identifier to nil when the user logs out.
 
-@subsection analytics-enable-debug-log Enable debug logging
-To enable verbose debug logging for the Analytics module you have to create a boolean `RMSDKEnableDebugLogging` key set to `YES` in your app's Info.plist. Analytics debug logging is disabled by default however module configuration errors will still be logged in debug builds.
+@subsection analytics-logging Configure debug logging
+
+To configure the module's internal debug logging use `AnalyticsManager#set(loggingLevel:)`.
+
+To set logging to `RLoggingLevelDebug` level (and above i.e. also print info/warning/error logs) use the following function call:
+@code{.swift}
+AnalyticsManager.shared().set(loggingLevel: .debug)
+@endcode
+
+@attention For user privacy and app security the module will *not* print `RLoggingLevelVerbose` or `RLoggingLevelDebug` logs in a release build.
+
+By default the module will show `RLoggingLevelError` logs, even in a release build. To disable the module's logs completely call:
+@code{.swift}
+AnalyticsManager.shared().set(loggingLevel: .none)
+@endcode
+
+@attention The plist flag `RMSDKEnableDebugLogging` has been deprecated and has no effect now. You must use the above `AnalyticsManager` API function to configure logging levels.
 
 @section analytics-tracking Tracking events
 Events are created with RAnalyticsEvent::initWithName:parameters: and spooled by calling their @ref RAnalyticsEvent::track "track" method.
@@ -410,7 +425,6 @@ App Extensions need to follow the requirements at @ref analytics-configure-rat "
 
 * You MUST configure your RAT `accountId` and `applicationId` in the **App Extension** info.plist (in addition to your main app's info.plist)
 * To send events to a different endpoint you can set a `RATEndpoint` key in the **App Extension** info.plist
-* To enable debug logging you can create a boolean `RMSDKEnableDebugLogging` key set to YES in the **App Extension** info.plist
 
 #### Viewing App Extension events in Kibana
 
