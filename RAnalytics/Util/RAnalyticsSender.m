@@ -63,7 +63,7 @@ static const unsigned int    _RATBatchSize      = 16u;
 - (void)sendJSONOject:(id)obj
 {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:0];
-    [_RLogger debug:@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]];
+    [_RLogger verbose:@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]];
     [self _storeAndSendEventData:jsonData];
 }
 

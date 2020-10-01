@@ -8,7 +8,7 @@
 #pragma mark Added to UIViewController
 - (void)_r_autotrack_viewDidAppear:(BOOL)animated
 {
-    [_RLogger debug:@"View did appear for %@", self];
+    [_RLogger verbose:@"View did appear for %@", self];
 
     [_RAnalyticsLaunchCollector.sharedInstance didPresentViewController:(id)self];
     [self _r_autotrack_viewDidAppear:animated];
@@ -21,6 +21,6 @@
                                                toClass:UIViewController.class
                                              replacing:@selector(viewDidAppear:)
                                          onlyIfPresent:YES];
-    [_RLogger debug:@"Installed auto-tracking hooks for UIViewController."];
+    [_RLogger verbose:@"Installed auto-tracking hooks for UIViewController."];
 }
 @end

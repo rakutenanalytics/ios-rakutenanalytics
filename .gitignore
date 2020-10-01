@@ -24,3 +24,7 @@ Pods
 /.doxygen
 /Doxyfile
 
+# Bundler
+vendor
+Gemfile.lock
+

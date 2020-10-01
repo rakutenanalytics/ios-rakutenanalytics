@@ -186,12 +186,12 @@ static RAnalyticsManager *_instance = nil;
 
 - (void)locationManagerDidPauseLocationUpdates:(CLLocationManager * __unused)manager
 {
-    [_RLogger debug:@"Location updates paused."];
+    [_RLogger verbose:@"Location updates paused."];
 }
 
 - (void)locationManagerDidResumeLocationUpdates:(CLLocationManager * __unused)manager
 {
-    [_RLogger debug:@"Location updates resumed."];
+    [_RLogger verbose:@"Location updates resumed."];
 }
 
 - (void)locationManager:(CLLocationManager * __unused)manager didFinishDeferredUpdatesWithError:(NSError *)error
@@ -266,7 +266,7 @@ static RAnalyticsManager *_instance = nil;
         return;
     }
 
-    [_RLogger debug:@"Start monitoring location"];
+    [_RLogger verbose:@"Start monitoring location"];
     [self.locationManager startUpdatingLocation];
     self.locationManagerIsUpdating = YES;
 }
@@ -279,7 +279,7 @@ static RAnalyticsManager *_instance = nil;
         return;
     }
 
-    [_RLogger debug:@"Stop monitoring location"];
+    [_RLogger verbose:@"Stop monitoring location"];
     [self.locationManager stopUpdatingLocation];
     self.locationManagerIsUpdating = NO;
 }
@@ -297,7 +297,7 @@ static RAnalyticsManager *_instance = nil;
     }
     if (!_deviceIdentifier)
     {
-        [_RLogger error:@"RDeviceIdentifier is not properly configured!"];
+        [_RLogger error:@"RDeviceIdentifier is not properly configured! See 'Configuring the keychain' in the README for instructions"];
     }
 
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
