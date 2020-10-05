@@ -14,6 +14,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         locationManager.requestWhenInUseAuthorization()
         
         AnalyticsManager.shared().set(loggingLevel: .debug)
+        AnalyticsManager.shared().enableAppToWebTracking = true
+
+        AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
+            return ".my-domain.co.jp"
+        }
 
         RAnalyticsRATTracker.shared().set(batchingDelay: 15)
 

@@ -310,6 +310,21 @@ The following is an example of tracking an event with custom parameters. It uses
 
 @section analytics-advanced Advanced Usage
 
+@subsection analytics-app-to-web-tracking App to Web tracking
+You can configure the SDK to inject a special tracking cookie which allows RAT to track events between the app and in-app webviews. The cookie is only injected on iOS 11.0 and later versions. This feaure is OFF by default. It can be enabled by setting RAnalyticsManager::enableAppToWebTracking to true.
+
+@code{.swift}
+    AnalyticsManager.shared().enableAppToWebTracking = true
+@endcode
+
+By default the cookie's domain will be set to the top-level Rakuten domain. Optionally, you can set a custom domain on the tracking cookie with RAnalyticsManager::setWebTrackingCookieDomainWithBlock:
+
+@code{.swift}
+    AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
+        return ".my-domain.co.jp"
+    }
+@endcode
+
 @subsection analytics-batching-delay Configure the Tracker Batching Delay
 A @ref RAnalyticsTracker "Tracker" collects events and sends them to a backend in batches. 
 
@@ -645,6 +660,9 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-5-3-0 5.3.0 (in-progress)
+* [SDKCF-2843](https://jira.rakuten-it.com/jira/browse/SDKCF-2843): Added API to inject an App to Web tracking cookie.
+
 @subsection analytics-5-2-2 5.2.2 (2020-09-18)
 * [SDKCF-2826](https://jira.rakuten-it.com/jira/browse/SDKCF-2826): Simplified the approach for handling IDFA. If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the requirement to obtain permission for user tracking until "early next year".
 * [SDKCF-2749](https://jira.rakuten-it.com/jira/browse/SDKCF-2749): Fixed warning that status bar orientation UI methods are called from non-UI thread.

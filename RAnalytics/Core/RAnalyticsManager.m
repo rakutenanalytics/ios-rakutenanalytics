@@ -8,6 +8,7 @@
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
 #import "_RAdvertisingIdentifierHandler.h"
+#import "_RAnalyticsCookieInjector.h"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -44,6 +45,7 @@
 @property(nonatomic, copy) NSString *sessionCookie;
 @property (nonatomic, copy) NSDate *sessionStartDate;
 @property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
+@property (nonatomic, copy) WebTrackingCookieDomainBlock cookieDomainBlock;
 
 - (instancetype)initSharedInstance;
 @end
@@ -165,6 +167,11 @@ static RAnalyticsManager *_instance = nil;
         // Update
         [self _startStopMonitoringLocationIfNeeded];
     }
+}
+
+- (void)setWebTrackingCookieDomainWithBlock:(WebTrackingCookieDomainBlock)cookieDomainBlock
+{
+    _cookieDomainBlock = cookieDomainBlock;
 }
 
 //--------------------------------------------------------------------------
@@ -301,15 +308,26 @@ static RAnalyticsManager *_instance = nil;
 
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier
                                                                    deviceIdentifier:_deviceIdentifier];
+
     if (_shouldTrackAdvertisingIdentifier) {
         NSString *advertisingIdentifier = [_RAdvertisingIdentifierHandler idfa];
-        if (advertisingIdentifier)
-        {
+
+        if (advertisingIdentifier) {
             // User has not disabled tracking
             state.advertisingIdentifier = advertisingIdentifier;
         }
     }
-    
+
+    if (_enableAppToWebTracking) {
+        NSString *domain = nil;
+        if (_cookieDomainBlock) {
+            domain = _cookieDomainBlock();
+        }
+
+        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
+                                                         deviceIdentifier:_deviceIdentifier];
+    }
+
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;
     state.sessionStartDate = self.sessionStartDate ?: nil;
 

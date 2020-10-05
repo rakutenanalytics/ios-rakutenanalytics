@@ -59,6 +59,12 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 - (void)setUserIdentifier:(NSString * _Nullable)userID;
 
 /**
+ * Block to allow the app to set a custom domain on the app-to-web tracking cookie.
+ *
+ * @param cookieDomainBlock  The block returns the domain string to set on the cookie.
+ */
+- (void)setWebTrackingCookieDomainWithBlock:(WebTrackingCookieDomainBlock)cookieDomainBlock RSDKA_SWIFT_NAME(setWebTrackingCookieDomain(block:));
+/**
  * Control whether the SDK should track page views. Defaults to `YES`.
  */
 @property (nonatomic) BOOL shouldTrackPageView;
@@ -83,6 +89,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * use the advertising identifier.
  */
 @property (nonatomic) BOOL shouldTrackAdvertisingIdentifier;
+
+/**
+ * Control whether the SDK should inject a special tracking cookie `ra_uid` into WKWebView's cookie store.
+ * The cookie enables tracking between mobile app and webviews. This feature only works on iOS 11.0 and above.
+ *
+ * This property is set to `NO` by default
+ */
+@property (nonatomic) BOOL enableAppToWebTracking;
 
 @end
 

@@ -38,6 +38,7 @@
 		6D9F105624A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9F105524A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m */; };
 		6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */; };
 		6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */; };
+		6DCCF0B5252C157700AE627F /* CookieInjectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */; };
 		6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */; };
 /* End PBXBuildFile section */
 
@@ -107,6 +108,7 @@
 		6D9F105524A46E7B00ECEBC4 /* RpCookieSharedStorageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RpCookieSharedStorageTests.m; sourceTree = "<group>"; };
 		6DA9A8901E0A585500AE4C35 /* ExternalCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExternalCollectorTests.m; sourceTree = "<group>"; };
 		6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchCollectorTests.m; sourceTree = "<group>"; };
+		6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CookieInjectorTests.m; sourceTree = "<group>"; };
 		6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventBroadcasterTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,6 +174,7 @@
 				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
 				5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */,
 				57C5486B24B425530099497D /* UNNotificationTrackableTests.m */,
+				6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -424,6 +427,7 @@
 				5A6E8AD51D45E095001960DC /* ManagerTests.m in Sources */,
 				5A6E8AD71D45E2A6001960DC /* RATTrackerTests.m in Sources */,
 				6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */,
+				6DCCF0B5252C157700AE627F /* CookieInjectorTests.m in Sources */,
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
 				57C5486C24B425530099497D /* UNNotificationTrackableTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
