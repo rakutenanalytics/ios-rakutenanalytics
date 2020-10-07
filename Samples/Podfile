@@ -9,7 +9,8 @@ use_frameworks!
 abstract_target 'Common' do
   pod 'RAnalytics', :path => '../RAnalytics.podspec'
   pod 'RDeviceIdentifier', :inhibit_warnings => true, :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
-
+  pod 'RLogger', :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-logger.git'
+  
   target 'RAnalyticsSample'
   target 'AnalyticsTodayExt'
 end

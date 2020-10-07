@@ -1,6 +1,6 @@
 #import "RAnalyticsRpCookieFetcher.h"
 #import <RAnalytics/_RAnalyticsHelpers.h>
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 static const NSTimeInterval  RATRpCookieRequestInitialRetryInterval = 10u; //10s as initial timeout request
 static const NSUInteger      RATRpCookieRequestBackOffMultiplier    = 2u; // Setting multiplier as 2

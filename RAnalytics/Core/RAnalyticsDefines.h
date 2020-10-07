@@ -1,15 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-typedef NS_ENUM(NSUInteger, RLoggingLevel) {
-    RLoggingLevelVerbose = 0,
-    RLoggingLevelDebug = 1,
-    RLoggingLevelInfo = 2,
-    RLoggingLevelWarning = 3,
-    RLoggingLevelError = 4,
-    RLoggingLevelNone = 5
-};
-
 typedef NSTimeInterval(^BatchingDelayBlock)(void);
 
 /*

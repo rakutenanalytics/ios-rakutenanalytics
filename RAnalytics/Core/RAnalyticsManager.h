@@ -1,4 +1,5 @@
 #import <RAnalytics/RAnalyticsDefines.h>
+#import <RLogger/RLogger.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

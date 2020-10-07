@@ -8,7 +8,6 @@
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
 #import "_RAdvertisingIdentifierHandler.h"
-#import "_RLogger.h"
 
 ////////////////////////////////////////////////////////////////////////////
 

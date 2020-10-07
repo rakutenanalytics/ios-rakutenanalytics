@@ -34,6 +34,7 @@ Pod::Spec.new do |s|
       'AdSupport'
     ]
     ss.dependency 'RDeviceIdentifier', '~> 1.0'
+    ss.dependency 'RLogger', '~> 1.0'
     ss.libraries = 'sqlite3', 'z'
   end
 

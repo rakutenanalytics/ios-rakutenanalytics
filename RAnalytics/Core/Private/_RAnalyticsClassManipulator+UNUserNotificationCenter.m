@@ -2,7 +2,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
 #import "_UNNotification+Trackable.h"
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 /* RSDKA_EXPORT */ BOOL _RAnalyticsNotificationsAreHandledByUNDelegate(void)
 {

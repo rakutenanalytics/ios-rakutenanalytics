@@ -3,7 +3,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
 #import "_UNNotification+Trackable.h"
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 @interface _RAnalyticsLaunchCollector()
 @property (nonatomic) RAnalyticsOrigin origin;

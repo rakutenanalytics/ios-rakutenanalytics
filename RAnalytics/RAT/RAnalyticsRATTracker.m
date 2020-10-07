@@ -10,7 +10,7 @@
 #import "RAnalyticsSender.h"
 #import "RAnalyticsRpCookieFetcher.h"
 #import "_RStatusBarOrientationHandler.h"
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";

@@ -1,7 +1,7 @@
 #import "_RAnalyticsClassManipulator+UIViewController.h"
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 @implementation _RAnalyticsClassManipulator(UIViewController)
 

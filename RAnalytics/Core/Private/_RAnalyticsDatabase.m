@@ -1,6 +1,6 @@
 #import "_RAnalyticsDatabase.h"
 #import "_RAnalyticsHelpers.h"
-#import "_RLogger.h"
+#import <RLogger/RLogger.h>
 
 NSString* const RAnalyticsDBErrorDomain = @"RAnalyticsDBErrorDomain";
 NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
