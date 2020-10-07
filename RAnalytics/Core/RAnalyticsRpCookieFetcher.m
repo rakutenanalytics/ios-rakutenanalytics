@@ -124,7 +124,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
      {
          if (error)
          {
-             [_RLogger error:@"%@", error];
+             [RLogger error:@"%@", error];
          }
      }];
 }

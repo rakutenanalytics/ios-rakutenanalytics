@@ -233,7 +233,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
          {
              if (error)
              {
-                 [_RLogger error:@"%@", error];
+                 [RLogger error:@"%@", error];
              }
          }];
         
@@ -444,7 +444,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            [_RLogger error:@"There is no value for 'acc' field, please configure it by setting a 'RATAccountIdentifier' key to YOUR_RAT_ACCOUNT_ID in your app's Info.plist"];
+            [RLogger error:@"There is no value for 'acc' field, please configure it by setting a 'RATAccountIdentifier' key to YOUR_RAT_ACCOUNT_ID in your app's Info.plist"];
         }
     }
 
@@ -462,7 +462,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
         else
         {
-            [_RLogger error:@"There is no value for 'aid' field, please configure it by setting a 'RATAppIdentifier' key to YOUR_RAT_APPLICATION_ID in your app's Info.plist"];
+            [RLogger error:@"There is no value for 'aid' field, please configure it by setting a 'RATAppIdentifier' key to YOUR_RAT_APPLICATION_ID in your app's Info.plist"];
         }
     }
 

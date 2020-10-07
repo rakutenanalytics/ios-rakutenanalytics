@@ -63,7 +63,7 @@ static const unsigned int    _RATBatchSize      = 16u;
 - (void)sendJSONOject:(id)obj
 {
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:obj options:NSJSONWritingPrettyPrinted error:0];
-    [_RLogger verbose:@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]];
+    [RLogger verbose:@"Spooling record with the following payload: %@", [NSString.alloc initWithData:jsonData encoding:NSUTF8StringEncoding]];
     [self _storeAndSendEventData:jsonData];
 }
 
@@ -122,12 +122,12 @@ static const unsigned int    _RATBatchSize      = 16u;
                          typeof(weakSelf) __strong strongSelf = weakSelf;
                          if (blobs)
                          {
-                             [_RLogger debug:@"Records fetched from DB table %@, now upload them", self.databaseTableName];
+                             [RLogger debug:@"Records fetched from DB table %@, now upload them", self.databaseTableName];
                              [strongSelf _doBackgroundUploadWithRecords:blobs identifiers:identifiers];
                          }
                          else
                          {
-                             [_RLogger debug:@"No records found in DB table %@ so end upload", self.databaseTableName];
+                             [RLogger debug:@"No records found in DB table %@ so end upload", self.databaseTableName];
                              [strongSelf _backgroundUploadEnded];
                          }
                      }];
@@ -245,7 +245,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                       [logMessage appendFormat:@"\n%@ %@", @(idx), obj];
                                                   }];
 
-                                                  [_RLogger debug:logMessage];
+                                                  [RLogger debug:logMessage];
 #endif
 
                                                   [NSNotificationCenter.defaultCenter postNotificationName:RAnalyticsUploadSuccessNotification

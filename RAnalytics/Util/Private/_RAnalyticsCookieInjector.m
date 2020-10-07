@@ -30,7 +30,7 @@
     // Inject cookie
     if (@available(iOS 11.0, *)) {
         [WKWebsiteDataStore.defaultDataStore.httpCookieStore setCookie:trackingCookie completionHandler:^{
-            [_RLogger verbose:@"Set cookie %@ on webview", trackingCookie];
+            [RLogger verbose:@"Set cookie %@ on webview", trackingCookie];
         }];
     }
     return trackingCookie;

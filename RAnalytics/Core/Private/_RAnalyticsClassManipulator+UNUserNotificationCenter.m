@@ -36,7 +36,7 @@
 
 - (void)_r_autotrack_setUserNotificationCenterDelegate:(id<NSObject>)delegate
 {
-    [_RLogger verbose:@"User notification center delegate is being set to %@", delegate];
+    [RLogger verbose:@"User notification center delegate is being set to %@", delegate];
     
     SEL swizzle_selector = @selector(_r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
     SEL delegate_selector = @selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:);
@@ -64,7 +64,7 @@
                                              replacing:@selector(setDelegate:)
                                          onlyIfPresent:YES];
     
-    [_RLogger verbose:@"Installed auto-tracking hooks for UNNotificationCenter."];
+    [RLogger verbose:@"Installed auto-tracking hooks for UNNotificationCenter."];
 }
 
 @end

@@ -80,7 +80,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                 }
                 else
                 {
-                    [_RLogger error:@"insertBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
+                    [RLogger error:@"insertBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
                 }
             }
             
@@ -142,7 +142,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
             }
             else
             {
-                [_RLogger error:@"fetchBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
+                [RLogger error:@"fetchBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
             }
         }
         
@@ -190,7 +190,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                 }
                 else
                 {
-                    [_RLogger error:@"deleteBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
+                    [RLogger error:@"deleteBlobs prepare failed with error %s code %d", sqlite3_errmsg(sself->_connection), sqlite3_errcode(sself->_connection)];
                 }
             }
             
@@ -218,7 +218,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
         if (sqlite3_exec(_connection, query.UTF8String, 0, 0, 0) != SQLITE_OK) {
             NSString* message = [NSString stringWithFormat:@"Failed to create table: %s code %d", sqlite3_errmsg(_connection), sqlite3_errcode(_connection)];
             
-            [_RLogger error:message];
+            [RLogger error:message];
             
             return [NSError errorWithDomain:RAnalyticsDBErrorDomain
                                        code:RAnalyticsDBTableCreationFailureErrorCode
@@ -243,7 +243,7 @@ sqlite3* mkAnalyticsDBConnectionWithName(NSString *databaseName) {
             sqlite3_close(connection);
         });
     } else {
-        [_RLogger error:@"Failed to open database: %@", databasePath];
+        [RLogger error:@"Failed to open database: %@", databasePath];
         sqlite3_close(connection);
         connection = 0;
     }
