@@ -60,6 +60,18 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
  * This does exactly the same as `[RAnalyticsManager.sharedInstance process:event]`.
  */
 - (void)track;
+
+/**
+ * Convenience method for tracking a _rem_push_notify event.
+ *
+ * @param pushNotificationPayload The entire payload of a push notification.
+ *
+ * @return A newly-initialized _rem_push_notify event with the tracking identifier set into the parameter list.
+ *
+ * @see AnalyticsEvents
+ */
+- (instancetype)initWithPushNotificationPayload:(NSDictionary *) pushNotificationPayload;
+
 @end
 
 /// @internal

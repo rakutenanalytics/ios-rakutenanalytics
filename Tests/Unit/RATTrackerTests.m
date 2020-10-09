@@ -316,6 +316,17 @@
     XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], trackingIdentifier);
 }
 
+- (void)testProcessInitWithPushEvent
+{
+    NSString *rid = @"123456";
+    NSDictionary *payload = @{@"rid":rid};
+    id event = [RAnalyticsEvent.alloc initWithPushNotificationPayload:payload];
+    id responsePayload = [self assertProcessEvent:event
+                                            state:self.defaultState
+                                       expectType:RAnalyticsPushNotificationEventName];
+    XCTAssertEqualObjects([responsePayload valueForKeyPath:@"cp.push_notify_value"], @"rid:123456");
+}
+
 - (void)testProcessDiscoverEvent
 {
     NSString *discoverEvent = @"_rem_discover_event";
