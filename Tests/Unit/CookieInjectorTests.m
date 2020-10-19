@@ -81,14 +81,18 @@ describe(@"injectAppToWebTrackingCookie", ^{
         if (@available(iOS 11.0, *)) {
             WKHTTPCookieStore *store = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
 
-            [store getAllCookies:^(NSArray<NSHTTPCookie *> * _Nonnull cookies) {
-                [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, __unused NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj.name isEqualToString:@"ra_uid"]) {
-                        hasCookie = YES;
-                        *stop = YES;
-                    }
+            // [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:deviceIdentifier:]
+            // is based on [WKHTTPCookieStore setCookie:completionHandler:] that is asynchronous
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [store getAllCookies:^(NSArray<NSHTTPCookie *> * _Nonnull cookies) {
+                    [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, __unused NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj.name isEqualToString:@"ra_uid"]) {
+                            hasCookie = YES;
+                            *stop = YES;
+                        }
+                    }];
                 }];
-            }];
+            });
 
             [[expectFutureValue(theValue(hasCookie)) shouldNotEventuallyBeforeTimingOutAfter(1.0)] beFalse];
         }
