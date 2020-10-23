@@ -3,7 +3,7 @@
 #import "_RAnalyticsLaunchCollector.h"
 #import "_RAnalyticsHelpers.h"
 #import <UserNotifications/UserNotifications.h>
-#import "_UNNotification+Trackable.h"
+#import "RAnalyticsPushTrackingUtility.h"
 #import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
 
 static NSString *const _RAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
@@ -244,7 +244,7 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
     switch (state) {
         case UIApplicationStateBackground:
         case UIApplicationStateInactive:
-            _pushTrackingIdentifier = [UNNotification trackingIdentifierFromPayload:userInfo];
+            _pushTrackingIdentifier = [RAnalyticsPushTrackingUtility trackingIdentifierFromPayload:userInfo];
             _pushTapTrackingDate = [NSDate date];
             break;
         default:
@@ -261,7 +261,8 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
     
     if (_pushTapTrackingDate != nil &&
         _pushTrackingIdentifier != nil &&
-        fabs(_pushTapTrackingDate.timeIntervalSinceNow) < _RAnalyticsPushTapEventTimeLimit)
+        (fabs(_pushTapTrackingDate.timeIntervalSinceNow) < _RAnalyticsPushTapEventTimeLimit) &&
+        ![RAnalyticsPushTrackingUtility analyticsEventHasBeenSentWith:_pushTrackingIdentifier])
     {
         [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
                                   parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter:_pushTrackingIdentifier}] track];
@@ -296,16 +297,16 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
                             userAction: (NSString *__nullable) userAction
                               userText: (NSString *__nullable) userText
 {
+    NSString * _Nullable trackingId = [RAnalyticsPushTrackingUtility trackingIdentifierFromPayload:userInfo];
     
-    
-    NSString * _Nullable trackingId = [UNNotification trackingIdentifierFromPayload:userInfo];
-    
-    if (trackingId) {
+    if (trackingId &&
+        ![RAnalyticsPushTrackingUtility analyticsEventHasBeenSentWith:_pushTrackingIdentifier])
+    {
         _pushTrackingIdentifier = trackingId;
         [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
                                   parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter:trackingId}] track];
     }
-        
+    
     if (_RAnalyticsSharedApplication().applicationState != UIApplicationStateActive)
     {
         // set the origin to push type for the next _rem_visit event

@@ -2,7 +2,6 @@
 #import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
-#import "_UNNotification+Trackable.h"
 #import <RLogger/RLogger.h>
 
 @interface _RAnalyticsLaunchCollector()

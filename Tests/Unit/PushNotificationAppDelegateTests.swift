@@ -10,9 +10,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
     class TestUNNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         func userNotificationCenter(_ center: UNUserNotificationCenter,
                                     didReceive response: UNNotificationResponse,
-                                    withCompletionHandler completionHandler: @escaping () -> Void) {
-            
-        }
+                                    withCompletionHandler completionHandler: @escaping () -> Void) { }
     }
     
     let testUNNotificationDelegate = TestUNNotificationDelegate()
@@ -122,7 +120,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
     
-    func DISABLED_test_didReceiveRemoteNotification_background_notProcessEvent_after800ms() throws {
+    func test_didReceiveRemoteNotification_background_notProcessEvent_after800ms() throws {
         
         type(of: self).applicationState = .background
         
@@ -147,6 +145,32 @@ class PushNotificationAppDelegateTests: XCTestCase {
 
         wait(for: [expecation], timeout: 8)
     }
+    
+    func test_didReceiveRemoteNotification_shouldNotProccessEvent_whenAppGroupContainsTrackingId() {
+        
+        RAnalyticsPushTrackingUtility.swizzle_analyticsEventHasBeenSent_returnTrue_toggle()
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should not send becuase utitliy says it's in app group")
+        expecation.isInverted = true
+        
+        type(of: self).processEvent = { (event) in
+            let trackId = (event.parameters[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+            guard event.name == AnalyticsManager.Event.Name.pushNotification &&
+                    trackId == self.testResult else { return }
+            expecation.fulfill()
+        }
+    
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+
+        wait(for: [expecation], timeout: 8)
+        
+        RAnalyticsPushTrackingUtility.swizzle_analyticsEventHasBeenSent_returnTrue_toggle()
+    }
+    
     
     func test_didReceiveRemoteNotification_background_notProcessEvent_ifSilentPush() throws {
         
@@ -267,7 +291,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
     
-    func DISABLED_test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_after800ms() throws {
+    func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_after800ms() throws {
         
         type(of: self).applicationState = .background
         
@@ -291,6 +315,31 @@ class PushNotificationAppDelegateTests: XCTestCase {
         }
 
         wait(for: [expecation], timeout: 8)
+    }
+    
+    func test_didReceiveRemoteNotificationWithCompletionHandler_shouldNotProccessEvent_whenAppGroupContainsTrackingId() {
+        
+        RAnalyticsPushTrackingUtility.swizzle_analyticsEventHasBeenSent_returnTrue_toggle()
+        
+        type(of: self).applicationState = .background
+        
+        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
+        
+        let expecation = XCTestExpectation(description: "should not send becuase utitliy says it's in app group")
+        expecation.isInverted = true
+        
+        type(of: self).processEvent = { (event) in
+            let trackId = (event.parameters[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String) ?? ""
+            guard event.name == AnalyticsManager.Event.Name.pushNotification &&
+                    trackId == self.testResult else { return }
+            expecation.fulfill()
+        }
+    
+        NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
+
+        wait(for: [expecation], timeout: 8)
+        
+        RAnalyticsPushTrackingUtility.swizzle_analyticsEventHasBeenSent_returnTrue_toggle()
     }
     
     func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_ifSilentPush() throws {
@@ -338,6 +387,22 @@ class PushNotificationAppDelegateTests: XCTestCase {
         UIApplication.shared.delegate?.application?(UIApplication.shared,
                                                     didReceiveRemoteNotification: userInfo,
                                                     fetchCompletionHandler: { (results) in })
+    }
+}
+
+internal extension RAnalyticsPushTrackingUtility {
+    @objc class func swizzle_analyticsEventHasBeenSent(trackingIdentifier: NSString?) -> Bool {
+        return true
+    }
+    
+    static func swizzle_analyticsEventHasBeenSent_returnTrue_toggle() {
+        guard let originalMethod = class_getClassMethod(RAnalyticsPushTrackingUtility.self,
+                                                           #selector(analyticsEventHasBeenSent(with:))),
+            let swizzledMethod = class_getClassMethod(RAnalyticsPushTrackingUtility.self,
+                                                         #selector(swizzle_analyticsEventHasBeenSent(trackingIdentifier:))) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 }
 

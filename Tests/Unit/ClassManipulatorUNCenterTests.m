@@ -65,6 +65,50 @@
     UNDelegate *delegate = UNDelegate.new;
     center.delegate = delegate;
     
+    UNTextInputNotificationResponse *response = [self _createTestResponse];
+     
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    
+    [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];
+    
+    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
+        RAnalyticsEvent *event = obj;
+        XCTAssertNotNil(event);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
+        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
+        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] isEqualToString:@"rid:1234abcd"]);
+        return expected;
+    }]]);
+    
+    [mockManager stopMocking];
+}
+
+- (void)testDidReceiveUNNotification_shouldNotProcessEvent_ifTrackingIdentifierIsAlreadyInAppGroup
+{
+    UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
+    UNDelegate *delegate = UNDelegate.new;
+    center.delegate = delegate;
+    
+    UNTextInputNotificationResponse* response = [self _createTestResponse];
+    
+    id trackingMock = OCMClassMock([RAnalyticsPushTrackingUtility class]);
+    OCMStub([trackingMock analyticsEventHasBeenSentWith: [OCMArg any]]).andReturn(true);
+     
+    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
+    XCTestExpectation* expectation = [XCTestExpectation.new initWithDescription:@"should not be called"];
+    [expectation setInverted:true];
+    
+    OCMStub([mockManager process:[OCMArg any]]).andDo(^(NSInvocation *invocation){ [expectation fulfill]; });
+    
+    [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];
+    
+    [self waitForExpectations:@[expectation] timeout:1];
+
+    [mockManager stopMocking];
+    [trackingMock stopMocking];
+}
+
+-(UNTextInputNotificationResponse*) _createTestResponse {
     UNMutableNotificationContent *content = UNMutableNotificationContent.new;
     content.title = @"UN notification";
     content.body = @"body";
@@ -83,21 +127,7 @@
     [response setValue:@"Some user text" forKey:@"userText"];
     [response setValue:UNNotificationDefaultActionIdentifier forKey:@"actionIdentifier"];
     [response setValue:notification forKey:@"notification"];
-     
-    id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
-    
-    [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];
-    
-    OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
-        RAnalyticsEvent *event = obj;
-        XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
-        XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] isEqualToString:@"rid:1234abcd"]);
-        return expected;
-    }]]);
-    
-    [mockManager stopMocking];
+    return response;
 }
 
 @end

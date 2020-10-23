@@ -1,11 +1,13 @@
 
-#import "_UNNotification+Trackable.h"
+#import "RAnalyticsPushTrackingUtility.h"
 #import "_NSString+Encryption.h"
-#import "_RAnalyticsLaunchCollector.h"
 
-@implementation UNNotification (Trackable)
+NSString *const RPushAppGroupIdentifierPlistKey = @"RPushAppGroupIdentifier";
+NSString *const RPushOpenCountSentUserDefaultKey = @"com.analytics.push.sentOpenCount";
 
-+ (nullable NSString*)trackingIdentifierFromPayload: (NSDictionary*) payload
+@implementation RAnalyticsPushTrackingUtility
+
++ (nullable NSString*)trackingIdentifierFromPayload:(NSDictionary*)payload
 {
     NSDictionary *aps = payload[@"aps"];
     NSString *rid = payload[@"rid"];
@@ -39,9 +41,33 @@
     return nil;
 }
 
++ (BOOL)analyticsEventHasBeenSentWith:(nullable NSString*)trackingIdentifier
+{
+    NSString* appGroupId = (NSString *)[[NSBundle mainBundle] objectForInfoDictionaryKey:RPushAppGroupIdentifierPlistKey];
+    if (!trackingIdentifier || !appGroupId)
+    {
+        return false;
+    }
+    
+    NSUserDefaults* userDefaults = [NSUserDefaults.new initWithSuiteName:appGroupId];
+    if (!userDefaults)
+    {
+        return false;
+    }
+    
+    NSDictionary* domain = [userDefaults dictionaryForKey:RPushOpenCountSentUserDefaultKey];
+    
+    if (!domain ||
+        ![domain[trackingIdentifier] isKindOfClass:NSNumber.class])
+    {
+        return false;
+    }
+    return [domain[trackingIdentifier] boolValue];
+}
+
 #pragma mark - Private Methods
 
-+ (BOOL) _isSilentPushNotification: (NSDictionary*) apsPayload
++ (BOOL)_isSilentPushNotification:(NSDictionary*)apsPayload
 {
     NSNumber *contentAvailable = apsPayload[@"content-available"];
      
@@ -55,7 +81,7 @@
     return NO;
 }
 
-+ (nullable NSString*)_getQualifyingEncryptedMessage: (NSDictionary*) aps
++ (nullable NSString*)_getQualifyingEncryptedMessage:(NSDictionary*)aps
 {
     /*
      * Otherwise, fallback to .aps.alert if that's a string, or, if that's

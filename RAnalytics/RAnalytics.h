@@ -6,6 +6,7 @@
 #import <RAnalytics/RAnalyticsState.h>
 #import <RAnalytics/RAnalyticsSender.h>
 #import <RAnalytics/RAnalyticsRpCookieFetcher.h>
+#import <RAnalytics/RAnalyticsPushTrackingUtility.h>
 
 // RAT
 #if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)

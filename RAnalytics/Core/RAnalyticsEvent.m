@@ -1,6 +1,6 @@
 #import "RAnalyticsEvent.h"
 #import "_RAnalyticsHelpers.h"
-#import <RAnalytics/_UNNotification+Trackable.h>
+#import <RAnalytics/RAnalyticsPushTrackingUtility.h>
 
 // Standard event names
 NSString *const RAnalyticsInitialLaunchEventName         = @"_rem_init_launch";
@@ -62,7 +62,7 @@ NSString *const RAnalyticsGlobalLogoutMethod         = @"global";
 - (instancetype)initWithPushNotificationPayload:(NSDictionary*) pushNotificationPayload
 {
     NSMutableDictionary *parameters = NSMutableDictionary.new;
-    NSString *trackingId = [UNNotification trackingIdentifierFromPayload:pushNotificationPayload];
+    NSString *trackingId = [RAnalyticsPushTrackingUtility trackingIdentifierFromPayload:pushNotificationPayload];
     
     if (trackingId)
     {
