@@ -41,5 +41,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>RATEndpoint</key>
+	<string>https://rat.rakuten.co.jp/</string>
 </dict>
 </plist>

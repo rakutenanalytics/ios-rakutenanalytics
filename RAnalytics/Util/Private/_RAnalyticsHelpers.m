@@ -11,8 +11,15 @@ NSURL *_RAnalyticsEndpointAddress(void)
     NSString *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATEndpoint"];
     
     NSURL *userDefinedURL = plistObj.length != 0 ? [NSURL URLWithString:plistObj] : nil;
-    NSURL *prodURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
-    return userDefinedURL ?: prodURL;
+    #ifdef PUBLIC_ANALYTICS_IOS_SDK
+        #if DEBUG
+        NSCAssert(userDefinedURL, @"Your application's Info.plist must contain a key 'RATEndpoint' set to your endpoint URL");
+        #endif
+        return userDefinedURL;
+    #else
+        NSURL *prodURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
+        return userDefinedURL ?: prodURL;
+    #endif
 }
 
 NSBundle *_RAnalyticsAssetsBundle(void)
