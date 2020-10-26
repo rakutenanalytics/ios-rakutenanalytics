@@ -25,7 +25,8 @@ dSymFilePath="RAnalytics.framework.dSYM/Contents/Resources/DWARF/RAnalytics"
 pod install
 
 # get marketing version number
-RANALYTICS_FRAMEWORK_VERSION=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -showBuildSettings -sdk iphonesimulator | grep -m 1 "MARKETING_VERSION" | sed 's/[ ]*MARKETING_VERSION = //')
+RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" ../RAnalytics.podspec | sed "s/  s.version      = \"//;s/.$//")
+echo "Version number: $RANALYTICS_FRAMEWORK_VERSION"
 
 ###
 ### 1.1. build DEBUG framework for simulators - x86_64
