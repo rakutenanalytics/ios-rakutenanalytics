@@ -300,7 +300,7 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
     NSString * _Nullable trackingId = [RAnalyticsPushTrackingUtility trackingIdentifierFromPayload:userInfo];
     
     if (trackingId &&
-        ![RAnalyticsPushTrackingUtility analyticsEventHasBeenSentWith:_pushTrackingIdentifier])
+        ![RAnalyticsPushTrackingUtility analyticsEventHasBeenSentWith:trackingId])
     {
         _pushTrackingIdentifier = trackingId;
         [[RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
