@@ -21,12 +21,26 @@ mkdir build/release
 frameworkBinaryPath="RAnalytics.framework/RAnalytics"
 dSymFilePath="RAnalytics.framework.dSYM/Contents/Resources/DWARF/RAnalytics"
 
+RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
+
 # install RakutenAnalyticsSDK workspace and pods
 pod install
 
 # get marketing version number
 RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" ../RAnalytics.podspec | sed "s/  s.version      = \"//;s/.$//")
-echo "Version number: $RANALYTICS_FRAMEWORK_VERSION"
+
+# update the project file with the new version number
+sed -i '' -E "s/MARKETING_VERSION = [0-9]+.[0-9]+.[0-9]+/MARKETING_VERSION = $RANALYTICS_FRAMEWORK_VERSION/g" $RAKUTEN_ANALYTICS_SDK_PROJECT_PATH
+
+# check if the new version number is updated
+PROJECT_VERSION_NUMBER=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -showBuildSettings -sdk iphonesimulator | grep -m 1 "MARKETING_VERSION" | sed 's/[ ]*MARKETING_VERSION = //')
+
+if [ "$RANALYTICS_FRAMEWORK_VERSION" = "$PROJECT_VERSION_NUMBER" ]; then
+    echo "SUCCESS: the project version number is updated to $RANALYTICS_FRAMEWORK_VERSION"
+else
+    echo "ERROR: the project version number is not updated to $RANALYTICS_FRAMEWORK_VERSION"
+    exit 1
+fi
 
 ###
 ### 1.1. build DEBUG framework for simulators - x86_64
