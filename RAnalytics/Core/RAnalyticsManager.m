@@ -2,6 +2,7 @@
 
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import <RAnalytics/RAnalytics.h>
+#import <RLogger/RLogger.h>
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsLaunchCollector.h"
 #import "_RAnalyticsExternalCollector.h"
@@ -209,9 +210,29 @@ static RAnalyticsManager *_instance = nil;
 
 #pragma mark - Logging Level method
 
-- (void)setLoggingLevel:(RLoggingLevel)loggingLevel
+- (void)setLoggingLevel:(RAnalyticsLoggingLevel)loggingLevel
 {
-    RLogger.loggingLevel = loggingLevel;
+    switch (loggingLevel)
+    {
+        case RAnalyticsLoggingLevelVerbose:
+            RLogger.loggingLevel = RLoggingLevelVerbose;
+            break;
+        case RAnalyticsLoggingLevelDebug:
+            RLogger.loggingLevel = RLoggingLevelDebug;
+            break;
+        case RAnalyticsLoggingLevelInfo:
+            RLogger.loggingLevel = RLoggingLevelInfo;
+            break;
+        case RAnalyticsLoggingLevelWarning:
+            RLogger.loggingLevel = RLoggingLevelWarning;
+            break;
+        case RAnalyticsLoggingLevelError:
+            RLogger.loggingLevel = RLoggingLevelError;
+            break;
+        case RAnalyticsLoggingLevelNone:
+            RLogger.loggingLevel = RLoggingLevelNone;
+            break;
+    }
 }
 
 //--------------------------------------------------------------------------

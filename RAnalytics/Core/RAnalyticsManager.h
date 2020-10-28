@@ -1,10 +1,18 @@
 #import <RAnalytics/RAnalyticsDefines.h>
-#import <RLogger/RLogger.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class RAnalyticsEvent;
 @protocol RAnalyticsTracker;
+
+typedef NS_ENUM(NSUInteger, RAnalyticsLoggingLevel) {
+    RAnalyticsLoggingLevelVerbose = 0,
+    RAnalyticsLoggingLevelDebug = 1,
+    RAnalyticsLoggingLevelInfo = 2,
+    RAnalyticsLoggingLevelWarning = 3,
+    RAnalyticsLoggingLevelError = 4,
+    RAnalyticsLoggingLevelNone = 5
+};
 
 /**
  * Main class of the module.
@@ -33,7 +41,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  *
  * @param loggingLevel  The logging level type.
  */
-- (void)setLoggingLevel:(RLoggingLevel)loggingLevel RSDKA_SWIFT_NAME(set(loggingLevel:));
+- (void)setLoggingLevel:(RAnalyticsLoggingLevel)loggingLevel RSDKA_SWIFT_NAME(set(loggingLevel:));
 
 /**
  * Process an event. The manager passes the event to each registered trackers, in turn.
