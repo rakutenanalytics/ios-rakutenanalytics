@@ -12,7 +12,7 @@ static NSString *const _RAnalyticsLastUpdateDateKey = @"com.rakuten.esd.sdk.prop
 static NSString *const _RAnalyticsLastLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastLaunchDate";
 static NSString *const _RAnalyticsLastVersionKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastVersion";
 static NSString *const _RAnalyticsLastVersionLaunchesKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.lastVersionLaunches";
-static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 0.75;
+static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 1.5;
 
 @interface _RAnalyticsLaunchCollector ()
 @property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
