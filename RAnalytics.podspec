@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ss|
     ss.source_files = [
       'RAnalytics/RAnalytics.{h,m}',
-      'RAnalytics/{Core/,Core/Private/,Util/,Util/Private/,Util/Categories/}*.{h,m}'
+      'RAnalytics/{Core/,Core/Private/,Util/,Util/Private/,Util/Categories/}*.{h,m,swift}'
     ]
     ss.private_header_files = 'RAnalytics/{Core,Util}/Private/*.h'
     ss.resource_bundles = { 'RAnalyticsAssets' => ['RAnalytics/Core/Assets/*'] }

@@ -1,8 +1,9 @@
 
 #import <Kiwi/Kiwi.h>
 #import <RAnalytics/RAnalyticsPushTrackingUtility.h>
-#import <RAnalytics/_NSString+Encryption.h>
 #import <OCMock/OCMock.h>
+
+#pragma clang diagnostic ignored "-Wundeclared-selector"
 
 SPEC_BEGIN(RAnalyticsPushTrackingUtilityTests)
 describe(@"RAnalyticsPushTrackingUtility", ^{
@@ -25,7 +26,7 @@ describe(@"RAnalyticsPushTrackingUtility", ^{
         return @"hello world";
     });
     let(alertMsgAsTrackingId, ^id{
-        return [NSString stringWithFormat:@"msg:%@",[alertString rat_encrypt]];
+        return [NSString stringWithFormat:@"msg:%@",[alertString performSelector:@selector(rat_encrypt)]];
     });
     context(@"return a valid tracking id", ^{
         context(@"using the rid in the payload", ^{

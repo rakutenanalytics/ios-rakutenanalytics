@@ -1,9 +1,19 @@
 
 #import "RAnalyticsPushTrackingUtility.h"
-#import "_NSString+Encryption.h"
 
 NSString *const RPushAppGroupIdentifierPlistKey = @"RPushAppGroupIdentifier";
 NSString *const RPushOpenCountSentUserDefaultKey = @"com.analytics.push.sentOpenCount";
+
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+@implementation NSString (Encryption)
+- (nullable NSString *)rat_encrypt
+{
+    if ([self respondsToSelector:@selector(ratEncrypt)]) {
+        return [self performSelector:@selector(ratEncrypt)];
+    }
+    return nil;
+}
+@end
 
 @implementation RAnalyticsPushTrackingUtility
 
