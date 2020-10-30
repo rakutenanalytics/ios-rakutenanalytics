@@ -660,8 +660,9 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
-@subsection analytics-5-3-0 5.3.0 (in-progress)
-* [SDKCF-2843](https://jira.rakuten-it.com/jira/browse/SDKCF-2843): Added API to inject an App to Web tracking cookie.
+@subsection analytics-5-3-0 5.3.0 (2020-10-30)
+* [SDKCF-2843](https://jira.rakuten-it.com/jira/browse/SDKCF-2843): Added API to enable App to Web tracking. By default this feature is disabled. See @ref analytics-app-to-web-tracking.
+* [SDKCF-2784](https://jira.rakuten-it.com/jira/browse/SDKCF-2784): Added API to configure logging level from app. The plist flag `RMSDKEnableDebugLogging` is now deprecated. See @ref analytics-logging for usage.
 
 @subsection analytics-5-2-2 5.2.2 (2020-09-18)
 * [SDKCF-2826](https://jira.rakuten-it.com/jira/browse/SDKCF-2826): Simplified the approach for handling IDFA. If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the requirement to obtain permission for user tracking until "early next year".
