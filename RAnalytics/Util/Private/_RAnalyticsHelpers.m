@@ -1,55 +1,46 @@
 #import <RAnalytics/RAnalyticsManager.h>
 #import "_RAnalyticsHelpers.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 BOOL _RAnalyticsObjectsEqual(id objA, id objB)
 {
-    return (!objA && !objB) || (objA && objB && [objA isEqual:objB]);
+    return [NSObject isNullableObjectEqual:objA to:objB];
 }
 
 NSURL *_RAnalyticsEndpointAddress(void)
 {
-    NSString *plistObj = [NSBundle.mainBundle objectForInfoDictionaryKey:@"RATEndpoint"];
-    
-    NSURL *userDefinedURL = plistObj.length != 0 ? [NSURL URLWithString:plistObj] : nil;
-    #ifdef PUBLIC_ANALYTICS_IOS_SDK
-        #if DEBUG
-        NSCAssert(userDefinedURL, @"Your application's Info.plist must contain a key 'RATEndpoint' set to your endpoint URL");
-        #endif
-        return userDefinedURL;
-    #else
-        NSURL *prodURL = [NSURL URLWithString:@"https://rat.rakuten.co.jp/"];
-        return userDefinedURL ?: prodURL;
-    #endif
+    return [NSBundle endpointAddress];
 }
 
 NSBundle *_RAnalyticsAssetsBundle(void)
 {
-    static NSBundle *bundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^
-                  {
-                      // Can't use [NSBundle mainBundle] here, because it returns the path to XCTest.framework
-                      // when running unit tests. Also, if the SDK is being bundled as a dynamic framework,
-                      // then it comes in its own bundle.
-                      NSBundle *classBundle = [NSBundle bundleForClass:[RAnalyticsManager class]];
-
-                      // If RAnalyticsAssets.bundle cannot be found, we revert to using the class bundle
-                      NSString *assetsPath = [classBundle.resourcePath stringByAppendingPathComponent:@"RAnalyticsAssets.bundle"];
-                      bundle = [NSBundle bundleWithPath:assetsPath] ?: classBundle;
-                  });
-    return bundle;
+    return [NSBundle assetsBundle];
 }
 
 NSDictionary *_RAnalyticsSDKComponentMap(void)
 {
-    static NSDictionary *map;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^
-                  {
-                      NSBundle *bundle = _RAnalyticsAssetsBundle();
-                      NSString *filePath = [bundle pathForResource:@"REMModulesMap" ofType:@"plist"];
-                      map = [[NSDictionary alloc] initWithContentsOfFile:filePath];
-                  });
-    return map;
+    return [NSBundle sdkComponentMap];
 }
 
+inline BOOL _RAnalyticsUseDefaultSharedCookieStorage()
+{
+    return [NSBundle useDefaultSharedCookieStorage];
+}
+
+inline BOOL _RAnalyticsIsAppleClass(Class cls)
+{
+    return [NSObject isAppleClass:cls];
+}
+
+inline BOOL _RAnalyticsIsApplePrivateClass(Class cls)
+{
+    return [NSObject isApplePrivateClass:cls];
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+inline UIApplication *_RAnalyticsSharedApplication(void)
+{
+    return [UIApplication RAnalyticsSharedApplication];
+}
+#pragma clang diagnostic pop
