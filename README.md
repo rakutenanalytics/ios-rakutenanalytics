@@ -1,4 +1,4 @@
-@tableofcontents
+@tableofcontents{HTML:2}
 @attention This module supports iOS 10.0 and above. It has been tested with iOS 10.0 and above.
 @section analytics-module Introduction
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the [Rakuten Analytics Tracker](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Home) (RAT) service.
