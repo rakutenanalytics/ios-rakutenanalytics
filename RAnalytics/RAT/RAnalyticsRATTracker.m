@@ -11,6 +11,7 @@
 #import "RAnalyticsRpCookieFetcher.h"
 #import "_RStatusBarOrientationHandler.h"
 #import <RLogger/RLogger.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";
@@ -615,8 +616,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         // MARK: _rem_install
 
         NSDictionary *appAndSDKDict = _RAnalyticsApplicationInfoAndSDKComponents();
-        NSDictionary *appInfo = appAndSDKDict[_RAnalyticsAppInfoKey];
-        NSDictionary *sdkInfo = appAndSDKDict[_RAnalyticsSDKInfoKey];
+        NSDictionary *appInfo = appAndSDKDict[RAnalyticsConstants.RAnalyticsAppInfoKey];
+        NSDictionary *sdkInfo = appAndSDKDict[RAnalyticsConstants.RAnalyticsSDKInfoKey];
         NSMutableArray *sdkComponents = NSMutableArray.new;
         for (NSString *key in sdkInfo.allKeys)
         {
