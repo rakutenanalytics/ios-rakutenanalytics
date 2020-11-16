@@ -9,6 +9,8 @@
 
 #import "TrackerTests.h"
 
+#import <Kiwi/Kiwi.h>
+
 #pragma mark - Module Internals
 
 @interface RAnalyticsState ()
@@ -738,3 +740,39 @@
 }
 
 @end
+
+@implementation RAnalyticsRATTracker(empty)
+- (instancetype)initEmpty {
+    self = [super init];
+    return self;
+}
+@end
+
+SPEC_BEGIN(RAnalyticsRATTrackerTests)
+
+describe(@"RAnalyticsRATTracker", ^{
+    describe(@"endpointURL", ^{
+        RAnalyticsRATTracker * ratTracker = [RAnalyticsRATTracker.alloc initInstance];
+        NSURL *originalEndpointURL = ratTracker.endpointURL;
+        RAnalyticsSender *sender = [ratTracker performSelector:@selector(sender)];
+        RAnalyticsRpCookieFetcher *rpCookieFetcher = [ratTracker performSelector:@selector(rpCookieFetcher)];
+        
+        it(@"should set the expected endpoint to its sender and rpCookieFetcher", ^{
+            ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint1.com"];
+            [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
+            [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
+            [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
+            
+            ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint2.com"];
+            [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
+            [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
+            [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
+        });
+        
+        afterAll(^{
+            ratTracker.endpointURL = originalEndpointURL;
+        });
+    });
+});
+
+SPEC_END

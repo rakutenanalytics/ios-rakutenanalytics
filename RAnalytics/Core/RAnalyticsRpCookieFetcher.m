@@ -18,10 +18,13 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 
 @implementation RAnalyticsRpCookieFetcher
 
+@synthesize endpointURL;
+
 - (instancetype)initWithCookieStorage:(NSHTTPCookieStorage *)cookieStorage
 {
     self = [super init];
     if (self) {
+        self.endpointURL = _RAnalyticsEndpointAddress();
         _RATRpCookieRequestRetryInterval = RATRpCookieRequestInitialRetryInterval;
         _rpCookieRequestRetryCount = 0;
         _rpCookieQueue = dispatch_queue_create("com.rakuten.tech.analytics.rpcookie", DISPATCH_QUEUE_SERIAL);
@@ -56,7 +59,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 
 - (NSHTTPCookie * _Nullable)getRpCookieFromCookieStorage
 {
-    NSArray *cookies = [_cookieStorage cookiesForURL:_RAnalyticsEndpointAddress()];
+    NSArray *cookies = [_cookieStorage cookiesForURL:self.endpointURL];
     NSHTTPCookie *rpCookie = nil;
     
     for(NSHTTPCookie *cookie in cookies)
@@ -74,7 +77,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 {
     NSHTTPCookie *rpCookie = nil;
     NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:httpResponse.allHeaderFields
-                                                                              forURL:_RAnalyticsEndpointAddress()];
+                                                                              forURL:self.endpointURL];
 
     for (NSHTTPCookie *cookie in cookies) {
         if ([cookie.name isEqualToString:@"Rp"]) {
@@ -89,7 +92,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
 {
     __weak typeof (self) weakSelf = self;
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_RAnalyticsEndpointAddress()];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.endpointURL];
     request.HTTPShouldHandleCookies = _RAnalyticsUseDefaultSharedCookieStorage();
 
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)

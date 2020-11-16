@@ -21,6 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         RAnalyticsRATTracker.shared().set(batchingDelay: 15)
+        
+        AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 
         return true
     }

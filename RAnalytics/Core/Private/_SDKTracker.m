@@ -13,6 +13,8 @@ NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
 
 @implementation _SDKTracker
 
+@synthesize endpointURL;
+
 + (instancetype)sharedInstance
 {
     static _SDKTracker *instance = nil;
@@ -42,6 +44,16 @@ NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
         }]; // default is 1 minute.
     }
     return self;
+}
+
+- (void)setEndpointURL:(NSURL *)endpointURL
+{
+    _sender.endpointURL = endpointURL;
+}
+
+- (NSURL *)endpointURL
+{
+    return _sender.endpointURL;
 }
 
 - (BOOL)processEvent:(nonnull RAnalyticsEvent *)event state:(nonnull RAnalyticsState *)state

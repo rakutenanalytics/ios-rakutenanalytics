@@ -58,7 +58,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  *
  * @param tracker  Any object that comforms to the @ref RAnalyticsTracker protocol.
  */
-- (void)addTracker:(id<RAnalyticsTracker>)tracker;
+- (void)addTracker:(id<RAnalyticsTracker>)tracker RSDKA_SWIFT_NAME(add(_:));
 
 /**
  * Set the user identifier of the logged in user.
@@ -72,6 +72,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * @param cookieDomainBlock  The block returns the domain string to set on the cookie.
  */
 - (void)setWebTrackingCookieDomainWithBlock:(WebTrackingCookieDomainBlock)cookieDomainBlock RSDKA_SWIFT_NAME(setWebTrackingCookieDomain(block:));
+
+/**
+ * Set the endpoint URL for all the trackers at runtime.
+ * @warning If endpointURL is not nil, RATEndpoint defined in app's info.plist is ignored.
+ * @warning If endpointURL is nil, RATEndpoint defined in app's info.plist is set.
+ */
+- (void)setEndpointURL:(NSURL * _Nullable)endpointURL RSDKA_SWIFT_NAME(set(endpointURL:));
+
 /**
  * Control whether the SDK should track page views. Defaults to `YES`.
  */

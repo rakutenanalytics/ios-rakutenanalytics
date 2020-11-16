@@ -1,4 +1,5 @@
 #import <RAnalytics/RAnalyticsDefines.h>
+#import <RAnalytics/RAnalyticsEndpointSettable.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @class RAnalyticsSender RAnalyticsSender.h <RAnalytics/RAnalyticsSender.h>
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsSender) @interface RAnalyticsSender : NSObject
+RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsSender) @interface RAnalyticsSender : NSObject <RAnalyticsEndpointSettable>
 
 /**
  *  Initialize a new sender

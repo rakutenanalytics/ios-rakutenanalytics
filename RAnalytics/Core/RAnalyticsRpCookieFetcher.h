@@ -1,8 +1,9 @@
 #import <Foundation/Foundation.h>
+#import <RAnalytics/RAnalyticsEndpointSettable.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RAnalyticsRpCookieFetcher : NSObject
+@interface RAnalyticsRpCookieFetcher : NSObject <RAnalyticsEndpointSettable>
 
 /**
  * This method for creating a new RP Cookie Fetcher object.

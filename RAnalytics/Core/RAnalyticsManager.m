@@ -235,6 +235,15 @@ static RAnalyticsManager *_instance = nil;
     }
 }
 
+#pragma mark - Endpoint
+
+- (void)setEndpointURL:(NSURL * _Nullable)endpointURL
+{
+    [_trackers enumerateObjectsUsingBlock:^(id<RAnalyticsTracker>  _Nonnull tracker, BOOL * _Nonnull stop) {
+        tracker.endpointURL = endpointURL ?: _RAnalyticsEndpointAddress();
+    }];
+}
+
 //--------------------------------------------------------------------------
 
 #pragma mark - Private methods

@@ -12,7 +12,6 @@ static const unsigned int    _RATBatchSize      = 16u;
 
 @interface RAnalyticsSender()
 
-@property (copy, nonatomic) NSURL          *endpoint;
 @property (copy, nonatomic) NSString       *databaseTableName;
 @property (nonatomic) _RAnalyticsDatabase* database;
 
@@ -34,12 +33,14 @@ static const unsigned int    _RATBatchSize      = 16u;
 
 @implementation RAnalyticsSender
 
+@synthesize endpointURL;
+
 - (instancetype)initWithEndpoint:(NSURL *)endpoint databaseName:(NSString *)databaseName databaseTableName:(NSString *)tableName
 {
     if (!endpoint.absoluteString.length || !databaseName.length || !tableName.length) return nil;
     if (self = [super init])
     {
-        _endpoint = endpoint;
+        self.endpointURL = endpoint;
         _databaseTableName = tableName;
         _database = [_RAnalyticsDatabase databaseWithConnection:mkAnalyticsDBConnectionWithName(databaseName)];
         
@@ -186,7 +187,7 @@ static const unsigned int    _RATBatchSize      = 16u;
      * We only delete the records from our database if server returns a 200 HTTP status.
      */
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_endpoint
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.endpointURL
                                                            cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                        timeoutInterval:30];
     
@@ -239,7 +240,7 @@ static const unsigned int    _RATBatchSize      = 16u;
                                                    */
 #if DEBUG
                                                   NSMutableString *logMessage = [NSMutableString stringWithCapacity:20];
-                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to %@ from %@:", strongSelf.endpoint, strongSelf.description]];
+                                                  [logMessage appendString:[NSString stringWithFormat:@"Successfully sent events to %@ from %@:", strongSelf.endpointURL, strongSelf.description]];
 
                                                   [recordGroup enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                                                       [logMessage appendFormat:@"\n%@ %@", @(idx), obj];

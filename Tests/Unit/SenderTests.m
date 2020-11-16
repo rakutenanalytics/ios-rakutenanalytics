@@ -8,7 +8,6 @@
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 
 @interface RAnalyticsSender()
-@property (copy, nonatomic) NSURL          *endpoint;
 @property (copy, nonatomic) NSString       *databaseTableName;
 @property (nonatomic) _RAnalyticsDatabase  *database;
 @property (nonatomic) NSTimeInterval        uploadTimerInterval;
@@ -98,7 +97,7 @@
 - (void)testInitWithEndPointAndDatabaseTableName
 {
     XCTAssertNotNil(_sender);
-    XCTAssertEqualObjects(_sender.endpoint.absoluteString, @"https://endpoint.co.jp/");
+    XCTAssertEqualObjects(_sender.endpointURL.absoluteString, @"https://endpoint.co.jp/");
     XCTAssertEqualObjects(_sender.databaseTableName, @"testTableName");
 }
 

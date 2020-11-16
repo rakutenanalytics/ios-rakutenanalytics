@@ -2,11 +2,16 @@
 #import <RAnalytics/RAnalytics.h>
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import <OCMock/OCMock.h>
+#import <Kiwi/Kiwi.h>
+#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 @interface TestTracker : NSObject<RAnalyticsTracker>
 @end
 
 @implementation TestTracker
+
+@synthesize endpointURL;
+
 - (instancetype)init
 {
     if (self = [super init])
@@ -161,3 +166,44 @@
 #pragma clang diagnostic pop
 
 @end
+
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+
+@implementation RAnalyticsManager(empty)
+- (instancetype)initEmpty {
+    self = [super init];
+    return self;
+}
+@end
+
+SPEC_BEGIN(RAnalyticsManagerTests)
+
+describe(@"RAnalyticsManager", ^{
+    describe(@"addTracker", ^{
+        it(@"should set the expected endpoint to the added trackers endpointURL", ^{
+            RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initEmpty];
+            
+            NSArray *trackers = [analyticsManager performSelector:@selector(trackers)];
+            
+            for(int i=0; i < 10; i++) { [analyticsManager addTracker:TestTracker.new]; }
+            
+            for(id<RAnalyticsTracker>tracker in trackers) {
+                [[tracker.endpointURL should] equal:_RAnalyticsEndpointAddress()];
+            }
+
+            [analyticsManager setEndpointURL:[NSURL URLWithString:@"https://endpoint.com"]];
+            
+            for(id<RAnalyticsTracker>tracker in trackers) {
+                [[tracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint.com"]];
+            }
+            
+            [analyticsManager setEndpointURL:nil];
+            
+            for(id<RAnalyticsTracker>tracker in trackers) {
+                [[tracker.endpointURL should] equal:_RAnalyticsEndpointAddress()];
+            }
+        });
+    });
+});
+
+SPEC_END

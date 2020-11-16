@@ -5,6 +5,8 @@ import RDeviceIdentifier
 public class SwiftInterop : XCTestCase {
     @objc
     public class TrackerSwift : NSObject, Tracker {
+        public var endpointURL: URL = URL(string: "https://endpoint.com")!
+        
         public var lastEvent : AnalyticsManager.Event?
         public var lastState : AnalyticsManager.State?
         public func process(event: AnalyticsManager.Event, state: AnalyticsManager.State) -> Bool {

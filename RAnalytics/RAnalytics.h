@@ -2,6 +2,7 @@
 #import <RAnalytics/RAnalyticsDefines.h>
 #import <RAnalytics/RAnalyticsManager.h>
 #import <RAnalytics/RAnalyticsTracker.h>
+#import <RAnalytics/RAnalyticsEndpointSettable.h>
 #import <RAnalytics/RAnalyticsEvent.h>
 #import <RAnalytics/RAnalyticsState.h>
 #import <RAnalytics/RAnalyticsSender.h>

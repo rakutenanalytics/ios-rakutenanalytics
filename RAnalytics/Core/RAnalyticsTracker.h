@@ -4,6 +4,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class RAnalyticsEvent;
 @class RAnalyticsState;
+@protocol RAnalyticsEndpointSettable;
 
 /**
  * Interface for tracker which can process an object of RAnalyticsEvent.
@@ -14,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @protocol RAnalyticsTracker RAnalyticsTracker.h <RAnalytics/RAnalyticsTracker.h>
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject>
+RSDKA_EXPORT RSDKA_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject, RAnalyticsEndpointSettable>
 
 @required
 /**

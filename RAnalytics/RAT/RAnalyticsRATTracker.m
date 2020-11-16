@@ -135,6 +135,8 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 
 @implementation RAnalyticsRATTracker
 
+@synthesize endpointURL;
+
 static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
 {
     NSNumber *status = nil;
@@ -300,9 +302,20 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return [RAnalyticsEvent.alloc initWithName:[NSString stringWithFormat:@"%@%@", _RATEventPrefix, eventType] parameters:parameters];
 }
 
+- (void)setEndpointURL:(NSURL *)endpointURL
+{
+    _sender.endpointURL = endpointURL;
+    _rpCookieFetcher.endpointURL = endpointURL;
+}
+
+- (NSURL *)endpointURL
+{
+    return _sender.endpointURL;
+}
+
 + (NSURL *)endpointAddress
 {
-    return _RAnalyticsEndpointAddress();
+    return RAnalyticsRATTracker.sharedInstance.sender.endpointURL;
 }
 
 + (NSString *)stringWithDate:(NSDate *)date
