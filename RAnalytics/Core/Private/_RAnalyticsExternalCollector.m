@@ -1,7 +1,7 @@
 #import <RAnalytics/RAnalyticsEvent.h>
 #import "_RAnalyticsExternalCollector.h"
-#import "_RAnalyticsPrivateEvents.h"
 #import "_RAnalyticsHelpers.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 static NSString *const _RAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";
@@ -99,13 +99,13 @@ static NSString *const _RAnalyticsNotificationBaseName = @"com.rakuten.esd.sdk.e
     NSString *eventBase = [NSString stringWithFormat:@"%@.discover.", _RAnalyticsNotificationBaseName];
     
     _discoverEventMapping =  @{
-                              @"visitPreview"           : _RAnalyticsPrivateEventDiscoverPreviewVisit,
-                              @"tapPreview"             : _RAnalyticsPrivateEventDiscoverPreviewTap,
-                              @"redirectPreview"        : _RAnalyticsPrivateEventDiscoverPreviewRedirect,
-                              @"tapShowMore"            : _RAnalyticsPrivateEventDiscoverPreviewShowMore,
-                              @"visitPage"              : _RAnalyticsPrivateEventDiscoverPageVisit,
-                              @"tapPage"                : _RAnalyticsPrivateEventDiscoverPageTap,
-                              @"redirectPage"           : _RAnalyticsPrivateEventDiscoverPageRedirect
+                              @"visitPreview"           : NSNotification.discoverPreviewVisit,
+                              @"tapPreview"             : NSNotification.discoverPreviewTap,
+                              @"redirectPreview"        : NSNotification.discoverPreviewRedirect,
+                              @"tapShowMore"            : NSNotification.discoverPreviewShowMore,
+                              @"visitPage"              : NSNotification.discoverPageVisit,
+                              @"tapPage"                : NSNotification.discoverPageTap,
+                              @"redirectPage"           : NSNotification.discoverPageRedirect
                               };
     
     for (NSString *notification in _discoverEventMapping)
