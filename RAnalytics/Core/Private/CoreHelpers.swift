@@ -54,7 +54,7 @@ import UIKit
             }
             let version = $0.object(forInfoDictionaryKey: "CFBundleShortVersionString")
             if let sdkComponentMapIdentifier = Bundle.sdkComponentMap?.object(forKey: identifier) as? String {
-                sdkInfo[sdkComponentMapIdentifier] = version;
+                sdkInfo[sdkComponentMapIdentifier] = version
             } else {
                 otherFrameworks[identifier] = version
             }
@@ -65,10 +65,10 @@ import UIKit
         if let xcodeVersion = xcodeVersion, !xcodeVersion.isEmpty {
             appInfo["xcode"] = xcodeVersion
         }
-        if let buildSDK = buildSDK, buildSDK.count > 0 {
+        if let buildSDK = buildSDK, !buildSDK.isEmpty {
             appInfo["sdk"] = buildSDK
         }
-        if otherFrameworks.count > 0 {
+        if !otherFrameworks.isEmpty {
             appInfo["frameworks"] = otherFrameworks
         }
         if let minimumOSVersion = info?["MinimumOSVersion"] {

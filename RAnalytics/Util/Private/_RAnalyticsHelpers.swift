@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 @objc public extension UIApplication {
-    @objc static var RAnalyticsSharedApplication: UIApplication? {
+    static var RAnalyticsSharedApplication: UIApplication? {
         let UIApplicationClass = UIApplication.self
         let sharedApplicationSelector = Selector(("shared"))
         if UIApplicationClass.responds(to: sharedApplicationSelector) {
@@ -13,7 +13,7 @@ import UIKit
 }
 
 @objc public extension NSObject {
-    @objc static func isAppleClass(_ cls: AnyClass?) -> Bool {
+    static func isAppleClass(_ cls: AnyClass?) -> Bool {
         guard let appleClass = cls,
               let bundleIdentifier = Bundle(for: appleClass.self).bundleIdentifier else {
             return false
@@ -21,30 +21,30 @@ import UIKit
         return bundleIdentifier.hasPrefix("com.apple.")
     }
 
-    @objc static func isApplePrivateClass(_ cls: AnyClass?) -> Bool {
+    static func isApplePrivateClass(_ cls: AnyClass?) -> Bool {
         guard let cls = cls else {
             return false
         }
         return NSStringFromClass(cls).hasPrefix("_") && NSObject.isAppleClass(cls)
     }
 
-    @objc static func isNullableObjectEqual(_ objA: NSObject?, to objB: NSObject?) -> Bool {
-        guard let a = objA, let b = objB else {
+    static func isNullableObjectEqual(_ objA: NSObject?, to objB: NSObject?) -> Bool {
+        guard let objectA = objA, let objectB = objB else {
             return objA == nil && objB == nil
         }
-        return a.isEqual(b)
+        return objectA.isEqual(objectB)
     }
 }
 
 @objc public extension Bundle {
-    @objc static var useDefaultSharedCookieStorage: Bool {
+    static var useDefaultSharedCookieStorage: Bool {
         guard let result = Bundle.main.object(forInfoDictionaryKey: "RATDisableSharedCookieStorage") as? NSNumber else {
             return true
         }
         return !result.boolValue
     }
 
-    @objc static var endpointAddress: URL? {
+    static var endpointAddress: URL? {
         guard let plistObj = Bundle.main.object(forInfoDictionaryKey: "RATEndpoint") as? String,
               !plistObj.isEmpty,
               let userDefinedURL = URL(string: plistObj) else {
@@ -61,7 +61,7 @@ import UIKit
         return userDefinedURL
     }
 
-    @objc static let assetsBundle: Bundle? = {
+    static let assetsBundle: Bundle? = {
         guard let RAnalyticsManagerClass = NSClassFromString("RAnalyticsManager") else {
             return nil
         }
@@ -80,7 +80,7 @@ import UIKit
         return bundle
     }()
 
-    @objc static let sdkComponentMap: NSDictionary? = {
+    static let sdkComponentMap: NSDictionary? = {
         guard let bundle = assetsBundle,
               let filePath = bundle.path(forResource: "REMModulesMap", ofType: "plist") else {
             return nil
