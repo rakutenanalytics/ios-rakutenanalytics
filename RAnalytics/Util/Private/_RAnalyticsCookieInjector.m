@@ -1,7 +1,7 @@
 #import "_RAnalyticsCookieInjector.h"
-#import "_RAdvertisingIdentifierHandler.h"
 #import "RLogger.h"
 #import <WebKit/WebKit.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 
 static NSString *const RAnalyticsCookieName = @"ra_uid";
 static char *const RAnalyticsCookiesDeletingQueue = "com.analytics.cookies.deleting.queue";
@@ -30,7 +30,7 @@ static char *const RAnalyticsCookiesDeletingQueue = "com.analytics.cookies.delet
     
     NSString *rawValue = [NSString stringWithFormat:@"rat_uid=%@;a_uid=%@",
                           deviceIdentifier,
-                          [_RAdvertisingIdentifierHandler advertisingIdentifierUUIDString]];
+                          ASIdentifierManager.sharedManager.advertisingIdentifierUUIDString];
     NSString *unreserved = @"-._~/?";
     NSMutableCharacterSet *allowed = [NSMutableCharacterSet
                                       alphanumericCharacterSet];

@@ -8,8 +8,8 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
-#import "_RAdvertisingIdentifierHandler.h"
 #import "_RAnalyticsCookieInjector.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +47,8 @@
 @property (nonatomic, copy) NSDate *sessionStartDate;
 @property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @property (nonatomic, copy) WebTrackingCookieDomainBlock cookieDomainBlock;
+@property (nonatomic, strong) AnyDependenciesContainer *dependenciesContainer;
+@property (nonatomic, strong) RAdvertisingIdentifierHandler *advertisingIdentifierHandler;
 
 - (instancetype)initSharedInstance;
 @end
@@ -98,6 +100,11 @@ static RAnalyticsManager *_instance = nil;
         _shouldTrackLastKnownLocation     = YES;
         _shouldTrackAdvertisingIdentifier = YES;
         _shouldTrackPageView              = YES;
+
+        _dependenciesContainer = AnyDependenciesContainer.new;
+        [_dependenciesContainer registerObject:ASIdentifierManager.sharedManager];
+
+        _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesContainer:_dependenciesContainer];
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -342,7 +349,7 @@ static RAnalyticsManager *_instance = nil;
                                                                    deviceIdentifier:_deviceIdentifier];
 
     if (_shouldTrackAdvertisingIdentifier) {
-        NSString *advertisingIdentifier = [_RAdvertisingIdentifierHandler idfa];
+        NSString *advertisingIdentifier = _advertisingIdentifierHandler.idfa;
 
         if (advertisingIdentifier) {
             // User has not disabled tracking
