@@ -62,6 +62,19 @@ To find data for a certain event type, such as one of the @ref analytics-standar
 @subsection analytics-configure-endpoint Configure a custom endpoint
 To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
 
+A custom endpoint can also be configured at runtime as below:
+##### Swift
+
+@code{.swift}
+    AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
+@endcode
+
+##### Objective-C
+
+@code{.m}
+    [RAnalyticsManager.sharedInstance setEndpointURL:[NSURL URLWithString:@"https://rat.rakuten.co.jp/"]];
+@endcode
+
 @subsection analytics-configure-location Location tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
 @warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
