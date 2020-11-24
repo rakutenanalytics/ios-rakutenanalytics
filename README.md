@@ -150,14 +150,14 @@ Use cases:
 
 To configure the module's internal debug logging use `AnalyticsManager#set(loggingLevel:)`.
 
-To set logging to `RLoggingLevelDebug` level (and above i.e. also print info/warning/error logs) use the following function call:
+To set logging to debug level (and above i.e. also print info/warning/error logs) use the following function call:
 @code{.swift}
 AnalyticsManager.shared().set(loggingLevel: .debug)
 @endcode
 
-@attention For user privacy and app security the module will *not* print `RLoggingLevelVerbose` or `RLoggingLevelDebug` logs in a release build.
+@attention For user privacy and app security the module will *not* print **verbose** or **debug** logs in a release build.
 
-By default the module will show `RLoggingLevelError` logs, even in a release build. To disable the module's logs completely call:
+By default the module will show error logs, even in a release build. To disable the module's logs completely call:
 @code{.swift}
 AnalyticsManager.shared().set(loggingLevel: .none)
 @endcode
@@ -660,6 +660,11 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-6-0-0 6.0.0 (2020-11-25)
+* [SDKCF-2921](https://jira.rakuten-it.com/jira/browse/SDKCF-2921): Added tracking support for rich push notifications.
+* [SDKCF-2938](https://jira.rakuten-it.com/jira/browse/SDKCF-2938): Fixed issue where push notification tracking event may not have been sent when UNUserNotification was disabled & app was in background on iOS 10.x.
+* **Breaking API change**: Updated parameter type in `AnalyticsManager#set(loggingLevel:)` API due to the support added for building the module code as a framework.
+
 @subsection analytics-5-3-0 5.3.0 (2020-10-30)
 * [SDKCF-2843](https://jira.rakuten-it.com/jira/browse/SDKCF-2843): Added API to enable App to Web tracking. By default this feature is disabled. See @ref analytics-app-to-web-tracking.
 * [SDKCF-2784](https://jira.rakuten-it.com/jira/browse/SDKCF-2784): Added API to configure logging level from app. The plist flag `RMSDKEnableDebugLogging` is now deprecated. See @ref analytics-logging for usage.

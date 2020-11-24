@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RAnalytics"
-  s.version      = "5.3.0"
+  s.version      = "6.0.0"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
   s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
