@@ -4,7 +4,6 @@
 
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../../RAnalytics/Util/Private/UIApplication+Additions.h"
 #import "../../RAnalytics/Util/Private/_RStatusBarOrientationHandler.h"
 
 #import "TrackerTests.h"
@@ -707,7 +706,7 @@
 
 - (void)testMoriIfUIApplicationDoesNotRespondToSharedApplication {
     id classMockApplication = OCMClassMock(UIApplication.class);
-    OCMStub([classMockApplication performSelector:@selector(_rat_respondsToSharedApplication)]).andReturn(NO);
+    OCMStub([classMockApplication performSelector:@selector(RAnalyticsSharedApplication)]).andReturn(nil);
     
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];

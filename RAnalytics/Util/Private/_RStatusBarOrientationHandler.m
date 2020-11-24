@@ -1,5 +1,5 @@
 #import "_RStatusBarOrientationHandler.h"
-#import "UIApplication+Additions.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 @interface _RStatusBarOrientationHandler()
 @property (nonatomic) UIInterfaceOrientation currentStatusBarOrientation;
@@ -14,12 +14,7 @@
         // As _RStatusBarOrientationHandler is instantiated from RAnalyticsRATTracker that is instantiated from [RAnalyticsManager load], [[UIApplication sharedApplication]] returns nil.
         // Therefore we need to dispatch this operation in the main queue so [[UIApplication sharedApplication]] is not nil when this operation is executed.
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([UIApplication _rat_respondsToSharedApplication]) {
-                self.currentStatusBarOrientation = [UIApplication _rat_statusBarOrientation];
-
-            } else { // [UIApplication sharedApplication] is not available for App Extension
-                self.currentStatusBarOrientation = UIInterfaceOrientationPortrait; // default value
-            }
+            self.currentStatusBarOrientation = [UIApplication ratStatusBarOrientation];
         });
         
         // UIApplicationWillChangeStatusBarOrientationNotification is preferred to UIApplicationDidChangeStatusBarOrientationNotification in order to get the correct statusBarOrientation value before the payload is built with mori key where statusBarOrientation is set
