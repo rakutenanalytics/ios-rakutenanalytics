@@ -3,12 +3,7 @@ import UIKit
 
 @objc public extension UIApplication {
     static var RAnalyticsSharedApplication: UIApplication? {
-        let UIApplicationClass = UIApplication.self
-        let sharedApplicationSelector = Selector(("shared"))
-        if UIApplicationClass.responds(to: sharedApplicationSelector) {
-            return UIApplicationClass.perform(sharedApplicationSelector)?.takeUnretainedValue() as? UIApplication
-        }
-        return nil
+        UIApplication.value(forKeyPath: #keyPath(UIApplication.shared)) as? UIApplication
     }
 }
 

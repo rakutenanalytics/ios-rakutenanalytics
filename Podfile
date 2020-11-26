@@ -12,6 +12,8 @@ abstract_target 'Common' do
   pod 'OCMock'
   pod 'OHHTTPStubs', '~> 8.0'
   pod 'Kiwi', '~> 3.0.0'
+  pod 'Quick'
+  pod 'Nimble'
 
   target 'UnitTests' do
     pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'

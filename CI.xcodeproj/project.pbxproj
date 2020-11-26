@@ -14,6 +14,7 @@
 		3A25875924AB4490007E7AF7 /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */; };
 		3A3F015F255E771700993197 /* RAnalyticsEndpointSettableTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3F013F255E760900993197 /* RAnalyticsEndpointSettableTests.m */; };
 		3A3F00BC255E6CFD00993197 /* AnyDependenciesContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3F00BB255E6CFD00993197 /* AnyDependenciesContainer.m */; };
+		3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */; };
 		3A833D37250F662600CF2B58 /* RAdvertisingIdentifierHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */; };
 		3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */; };
 		5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */; };
@@ -77,6 +78,7 @@
 		3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUIApplicationTests.m; sourceTree = "<group>"; };
 		3A3F013F255E760900993197 /* RAnalyticsEndpointSettableTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsEndpointSettableTests.m; sourceTree = "<group>"; };
 		3A3F00BB255E6CFD00993197 /* AnyDependenciesContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnyDependenciesContainer.m; sourceTree = "<group>"; };
+		3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RStatusBarOrientationHandlerSpec.swift; sourceTree = "<group>"; };
 		3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAdvertisingIdentifierHandlerTests.m; sourceTree = "<group>"; };
 		3AF7D1C124C07B2D0049E9D9 /* UserIdentifierSelectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserIdentifierSelectorTests.m; sourceTree = "<group>"; };
 		5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationAppDelegateTests.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 		16E4817520B28EDB006CB857 /* Unit */ = {
 			isa = PBXGroup;
 			children = (
+				3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */,
 				3A3F00BB255E6CFD00993197 /* AnyDependenciesContainer.m */,
 				3A833D34250F65D500CF2B58 /* RAdvertisingIdentifierHandlerTests.m */,
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
@@ -471,6 +474,7 @@
 				6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */,
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
+				3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
 				3A3F015F255E771700993197 /* RAnalyticsEndpointSettableTests.m in Sources */,
 				3A833D37250F662600CF2B58 /* RAdvertisingIdentifierHandlerTests.m in Sources */,

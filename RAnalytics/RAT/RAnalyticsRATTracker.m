@@ -9,7 +9,6 @@
 #import "_RAnalyticsCoreHelpers.h"
 #import "RAnalyticsSender.h"
 #import "RAnalyticsRpCookieFetcher.h"
-#import "_RStatusBarOrientationHandler.h"
 #import <RLogger/RLogger.h>
 #import <RAnalytics/RAnalytics-Swift.h>
 
@@ -127,11 +126,6 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 
 @property (nonatomic, strong) RAnalyticsRpCookieFetcher *rpCookieFetcher;
 
-/*
- * _RStatusBarOrientationHandler is used to read the current status bar orientation
- */
-@property (nonatomic) _RStatusBarOrientationHandler *statusBarOrientationHandler;
-
 @end
 
 @implementation RAnalyticsRATTracker
@@ -239,9 +233,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  [RLogger error:@"%@", error];
              }
          }];
-        
-        _statusBarOrientationHandler = _RStatusBarOrientationHandler.new;
-        
+
         /*
          * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
          */
@@ -552,7 +544,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: mori
-    payload[@"mori"] = @([self.statusBarOrientationHandler mori]);
+    RStatusBarOrientationHandler *statusBarOrientationHandler = [[RStatusBarOrientationHandler alloc] initWithApplication:_RAnalyticsSharedApplication()];
+    payload[@"mori"] = @([statusBarOrientationHandler mori]);
 
     // MARK: online
     if (_reachabilityStatus)
