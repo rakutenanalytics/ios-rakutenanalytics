@@ -1,7 +1,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
-platform :ios, '10.0'
+platform :ios, '11.4'
 use_frameworks!
 inhibit_all_warnings!
 
