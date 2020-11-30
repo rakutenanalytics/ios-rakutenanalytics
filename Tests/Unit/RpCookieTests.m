@@ -36,26 +36,23 @@
 
 - (void)testCookieIsSavedOnRATInstanceInitialization
 {
-    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
-    NSString* const cookieName = @"TestCookieName";
-    NSString* const cookieValue = @"TestCookieValue";
+    XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
-   [self setRpCookieWithName:cookieName value:cookieValue expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
+   [self setRpCookieWithName:@"TestCookieName" value:@"TestCookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
 
-    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:_RAnalyticsEndpointAddress()];
-
-        XCTAssertEqualObjects(cookieName, cookies[0].name);
-        XCTAssertEqualObjects(cookieValue, cookies[0].value);
+        NSHTTPCookie *cookie = [self rpCookieFromStorage];
+        XCTAssertEqualObjects(@"TestCookieName", cookie.name);
+        XCTAssertEqualObjects(@"TestCookieValue", cookie.value);
         [expectation fulfill];
     });
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
-- (void)testGetRpCookieWithError
+- (void)testRpCookieIsNilWhenServerErrorOccurs
 {
-    __weak XCTestExpectation *expectation = [self expectationWithDescription:@"sent"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
         return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
@@ -65,58 +62,51 @@
                                              headers:nil];
     }];
     
-    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error) {
-            
-            XCTAssertNil(cookie);
-            XCTAssertNotNil(error);
-            [expectation fulfill];
-        }];
+    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        XCTAssertNil([self rpCookieFromStorage]);
+        [expectation fulfill];
     });
-    [self waitForExpectationsWithTimeout:4.0 handler:nil];
+    [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
-- (void)testGetRpCookieWithExpiredCookie
+- (void)testRpCookieIsNilWhenFetchedCookieIsExpired
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
     [self setRpCookieWithName:@"Rp" value:@"CookieValue" expiryDate:@"Fri, 16-Nov-16 16:59:07 GMT"];
     
-    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
+    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error) {
-            
-            XCTAssertNil(cookie);
-            XCTAssertNotNil(error);
-            [expectation fulfill];
-        }];
+        XCTAssertNil([self rpCookieFromStorage]);
+        [expectation fulfill];
     });
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
-- (void)testGetRpCookieWithValidCookie
+- (void)testRpCookieIsNonNilWhenFetchedCookieIsValid
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"send"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
     [self setRpCookieWithName:@"Rp" value:@"CookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
-    
-    RAnalyticsRATTracker __unused *trackerInstance = [[RAnalyticsRATTracker alloc] initInstance];
+
+    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [[RAnalyticsRATTracker sharedInstance] getRpCookieCompletionHandler:^(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error) {
-            
-            XCTAssertNotNil(cookie);
-            XCTAssertNil(error);
-            XCTAssertEqualObjects(@"CookieValue", cookie.value);
-            [expectation fulfill];
-        }];
+        XCTAssertEqualObjects(@"CookieValue", [self rpCookieFromStorage].value);
+        [expectation fulfill];
     });
     
     [self waitForExpectationsWithTimeout:2.0 handler:nil];
 }
 
 #pragma mark Helper function for RpCookie
+
+- (NSHTTPCookie *)rpCookieFromStorage
+{
+    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:_RAnalyticsEndpointAddress()];
+    return cookies.firstObject;
+}
 
 - (void)setRpCookieWithName:(NSString *)cookieName value:(NSString *)cookieValue expiryDate:(NSString *)expiryDate
 {

@@ -278,10 +278,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return self;
 }
 
-- (void)getRpCookieCompletionHandler:(void (^)(NSHTTPCookie * _Nullable cookie, NSError * _Nullable error))completionHandler {
-    [_rpCookieFetcher getRpCookieCompletionHandler:completionHandler];
-}
-
 - (void)dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];

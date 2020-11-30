@@ -1,5 +1,5 @@
 @tableofcontents{HTML:2}
-@attention This module supports iOS 10.0 and above. It has been tested with iOS 10.0 and above.
+@attention This module supports iOS 11.4 and above in line with [GMD's recommendation](http://rex.public.rakuten-it.com/design/accessibility/system-requirements/os-and-browser/) (as of Q3 2020). It has been tested with iOS 11.4 and above.
 @section analytics-module Introduction
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the [Rakuten Analytics Tracker](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Home) (RAT) service.
 
@@ -63,16 +63,9 @@ To find data for a certain event type, such as one of the @ref analytics-standar
 To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `https://stg.rat.rakuten.co.jp/`.
 
 A custom endpoint can also be configured at runtime as below:
-##### Swift
 
 @code{.swift}
     AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
-@endcode
-
-##### Objective-C
-
-@code{.m}
-    [RAnalyticsManager.sharedInstance setEndpointURL:[NSURL URLWithString:@"https://rat.rakuten.co.jp/"]];
 @endcode
 
 @subsection analytics-configure-location Location tracking
@@ -82,29 +75,15 @@ A custom endpoint can also be configured at runtime as below:
 
 Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `NO`:
 
-##### Swift
-
 @code{.swift}
     AnalyticsManager.shared().shouldTrackLastKnownLocation = false
-@endcode
-
-##### Objective C
-
-@code{.m}
-    RAnalyticsManager.sharedInstance.shouldTrackLastKnownLocation = NO;
 @endcode
 
 @subsection analytics-configure-idfa IDFA tracking
 The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
 
-##### Swift
 @code{.swift}
     AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
-@endcode
-
-##### Objective C
-@code{.m}
-    RAnalyticsManager.sharedInstance.shouldTrackAdvertisingIdentifier = NO;
 @endcode
 
 #### IDFA tracking on iOS 14.x and above
@@ -113,7 +92,6 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
 If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
 Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
 
-##### Swift
 @code{.swift}
 ATTrackingManager.requestTrackingAuthorization { status in
     switch status {
@@ -126,32 +104,11 @@ ATTrackingManager.requestTrackingAuthorization { status in
 }
 @endcode
 
-##### Objective C
-@code{.h}
-[ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-    switch (status) {
-        case ATTrackingManagerAuthorizationStatusAuthorized: {
-            NSString *idfa = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-            }
-            break;
-            
-      default: // IDFA is not authorized
-        break;
-    }
-}];
-@endcode
-
 @subsection analytics-set-userid Manually set a user identifier
 From version 5.2.0 there is a new `setUserIdentifier:` API available for your app to manually set the tracking user identifier. After calling the API the user identifier that you set will be used for subsequent tracked events.
 
-##### Swift
 @code{.swift}
 RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
-@endcode
-
-##### Objective C
-@code{.m}
-[RAnalyticsManager.sharedInstance setUserIdentifier:@"a_user_identifier"];
 @endcode
 
 Use cases:
@@ -183,16 +140,8 @@ Events are created with RAnalyticsEvent::initWithName:parameters: and spooled by
 #### Tracking generic events
 Tracking a generic event relies on a @ref RAnalyticsTracker "tracker" capable of processing the event currently being @ref RAnalyticsManager::addTracker: "registered".
 
-##### Swift
-
 @code{.swift}
     AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-    [[RAnalyticsEvent.alloc initWithName:@"my.event" parameters:@{@"foo": @"bar"}] track];
 @endcode
 
 #### Tracking RAT-specific events
@@ -200,30 +149,14 @@ A concrete tracker, RAnalyticsRATTracker, is automatically registered and intera
 
 @note Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 
-##### Swift
-
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["pgn": "coupon page"]).track()
 @endcode
 
-##### Objective C
-
-@code{.m}
-    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"pgn": @"coupon page"}] track];
-@endcode
-
 @note You can override the `acc` and `aid` default values by including those keys in the `parameters` dictionary when you create an event.
-
-##### Swift
 
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click" parameters:@{@"acc": @123}] track];
 @endcode
 
 @subsection analytics-standard-events Standard Events
@@ -275,8 +208,6 @@ The SDK will automatically generate certain attributes about the @ref RAnalytics
 @subsection analytics-rat-example-ui-interactions UI Interaction
 The following code is an example that can be used to track button clicks. It uses RAT's standard `click` event and passes the page name, clicked element's id and goal id in the `pgn`, `target` and `gol` parameters, respectively.
 
-##### Swift
-
 @code{.swift}
     @IBAction func buttonTapped(sender: UIButton) {
         RAnalyticsRATTracker.shared().event(eventType: "click",
@@ -286,22 +217,8 @@ The following code is an example that can be used to track button clicks. It use
     }
 @endcode
 
-##### Objective C
-
-@code{.m}
-    // Objective-C
-    - (IBAction)buttonTapped:(UIButton *)sender {
-        [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"click"
-                                            parameters:@{@"pgn": @"Main",
-                                                         @"target": @"search_btn",
-                                                         @"gol": @"goal123456"}] track];
-    }
-@endcode
-
 @subsection analytics-rat-example-custom-events RAT events with Custom Parameters
 The following is an example of tracking an event with custom parameters. It uses the standard `pv` RAT event used in the previous examples, and passes some custom `custom_param_##` parameters in the `cp` dictionary accepted by RAT for this purpose.
-
-##### Swift
 
 @code{.swift}
     RAnalyticsRATTracker.shared().event(eventType: "pv",
@@ -309,16 +226,6 @@ The following is an example of tracking an event with custom parameters. It uses
                                          "cp": ["custom_param_1": "value",
                                                 "custom_param_2": 10,
                                                 "custom_param_3": true]]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-    [[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
-                                        parameters:@{@"pgn": @"Main",
-                                                     @"cp": @{@"custom_param_1": @"value",
-                                                              @"custom_param_2": @10,
-                                                              @"custom_param_3": @YES}}] track];
 @endcode
 
 @section analytics-advanced Advanced Usage
@@ -349,26 +256,15 @@ You can configure a different delay with the RAnalyticsTracker::setBatchingDelay
 
 ### Example 1: Configure batching interval of 10 seconds
 
-##### Swift
-
 @code{.swift}
 
     RAnalyticsRATTracker.shared().set(batchingDelay: 10.0)
-@endcode
-
-##### Objective C
-
-@code{.m}
-
-    [RAnalyticsRATTracker.sharedInstance setBatchingDelay:10.0];
 @endcode
 
 ### Example 2: Dynamic batching interval
 #### - no batching for the first 10 seconds after app launch
 #### - 10 second batching between 10 and 30 seconds after app launch
 #### - 60 second batching after 30 seconds after app launch
-
-##### Swift
 
 @code{.swift}
 
@@ -403,47 +299,6 @@ public class CustomClass: NSObject {
 
 @endcode
 
-##### Objective C
-
-@code{.m}
-
-@interface CustomClass : NSObject
-@property (nonatomic) NSTimeInterval startTime;
-@end
-
-@implementation CustomClass
-
-- (instancetype)init
-{
-    if (self = [super init])
-    {
-        _startTime = [NSDate timeIntervalSinceReferenceDate];
-    }
-    return self;
-}
-
-- (void)setup
-{
-    [RAnalyticsRATTracker.sharedInstance setBatchingDelayWithBlock:^NSTimeInterval{
-        NSTimeInterval secondsSinceStart = [NSDate timeIntervalSinceReferenceDate] - _startTime;
-
-        if (secondsSinceStart < 10)
-        {
-            return 0;
-        }
-        else if (secondsSinceStart < 30)
-        {
-            return 10;
-        }
-        else
-        {
-            return 60;
-        }
-    }];
-}
-
-@endcode
-
 @subsection analytics-appex Support for App Extensions
 The SDK can be added as a dependency to an App Extension target (e.g. Today Widget) and will compile successfully. The SDK's APIs such as @ref RAnalyticsEvent::track "track" (to track a custom event) can be used from an App Extension. 
 
@@ -466,16 +321,8 @@ A known limitation due to app sandboxing is that the SDK cannot automatically fi
 
 To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using RAuthenticationAccount::loadAccountWithName:service:error: and then manually set the `userid` key to the loaded account's RAuthenticationAccount::trackingIdentifier :
 
-##### Swift
-
 @code{.swift}
 RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-[[RAnalyticsRATTracker.sharedInstance eventWithEventType: @"custom_name" parameters: @{@"userid": account.trackingIdentifier}] track];
 @endcode
 
 @subsection analytics-custom-tracker Creating a Custom Tracker
@@ -486,8 +333,6 @@ method will receive an @ref RAnalyticsEvent "event" with a name and parameters, 
 generated by the SDK.
 
 The custom tracker in the code sample below only prints a few diagnostic messages. A real custom tracker would upload data to a server.
-
-##### Swift
 
 @code{.swift}
     public class CustomTracker: NSObject, Tracker {
@@ -512,39 +357,7 @@ The custom tracker in the code sample below only prints a few diagnostic message
     }
 @endcode
 
-##### Objective C
-
-@code{.m}
-    @interface CustomTracker : NSObject<RAnalyticsTracker>
-    @end
-
-    NSString *const CustomTrackerMyEventName = @"customtracker.myeventname";
-
-    @implementation CustomTracker
-    - (BOOL)processEvent:(RAnalyticsEvent *)event state:(RAnalyticsState *)state {
-        if ([event.name isEqualToString:RAnalyticsInitialLaunchEventName]) {
-            NSLog(@"I've just been launched!");
-            return YES;
-        }
-        else if ([event.name isEqualToString:RAnalyticsLoginEventName]) {
-            NSLog(@"User with tracking id '%@' just logged in!", state.userid);
-            return YES;
-        }
-        else if ([event.name isEqualToString:CustomTrackerMyEventName]) {
-            NSLog(@"Received my event!");
-            return YES;
-        }
-        // ...
-
-        // Unknown event!?
-        return NO
-    }
-    @end
-@endcode
-
 The custom tracker can then be added to the RAnalyticsManager:
-
-##### Swift
 
 @code{.swift}
     // Add CustomTracker to the manager
@@ -552,17 +365,6 @@ The custom tracker can then be added to the RAnalyticsManager:
 
     // Tracking events can now be sent to the custom tracker
     AnalyticsManager.Event(name: CustomTrackerMyEventName, parameters: nil).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-    // Add CustomTracker to the manager
-    // Initialize custom tracker
-    [RAnalyticsManager.sharedInstance addTracker:CustomTracker.new];
-
-    // Tracking events can now be sent to the custom tracker
-    [[RAnalyticsEvent.alloc initWithName:CustomTrackerMyEventName parameters:nil] track];
 @endcode
 
 @section analytics-knowledge-base Knowledge Base
@@ -618,8 +420,6 @@ RAT param | Description
 `genre`   | Category for the results.
 `tag`     | An array of tags.
 
-##### Swift
-
 @code{.swift}
 RAnalyticsRATTracker.shared().event(eventType: "pv",
 parameters:["pgn": "shop_search",
@@ -630,20 +430,6 @@ parameters:["pgn": "shop_search",
 "esq": "excluded query",
 "genre": "category",
 "tag": ["tag 1", "tag 2"]]).track()
-@endcode
-
-##### Objective C
-
-@code{.m}
-[[RAnalyticsRATTracker.sharedInstance eventWithEventType:@"pv"
-parameters:@{@"pgn": @"shop_search",
-@"pgt": @"search",
-@"lang": @"English",
-@"sq": @"search query",
-@"oa": @"a",
-@"esq": @"excluded query",
-@"genre": @"category",
-@"tag": @[@"tag 1", @"tag 2"]}] track];
 @endcode
 
 @subsection analytics-rat-example-network-monitoring Monitoring RAT traffic
