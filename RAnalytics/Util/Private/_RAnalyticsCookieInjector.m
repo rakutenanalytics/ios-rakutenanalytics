@@ -7,6 +7,17 @@ static NSString *const RAnalyticsCookieName = @"ra_uid";
 static char *const RAnalyticsCookiesDeletingQueue = "com.analytics.cookies.deleting.queue";
 
 @implementation _RAnalyticsCookieInjector
+
++ (dispatch_queue_t)sharedCookiesDeletingQueue
+{
+    static dispatch_once_t once;
+    static dispatch_queue_t sharedDispatchQueue;
+    dispatch_once(&once, ^{
+        sharedDispatchQueue = dispatch_queue_create(RAnalyticsCookiesDeletingQueue,  DISPATCH_QUEUE_PRIORITY_DEFAULT);
+    });
+    return sharedDispatchQueue;
+}
+
 + (void)injectAppToWebTrackingCookieWithDomain:(nullable NSString *)domain
                               deviceIdentifier:(NSString *)deviceIdentifier
                              completionHandler:(nullable void(^)(NSHTTPCookie * _Nullable))completionHandler
@@ -63,8 +74,6 @@ static char *const RAnalyticsCookiesDeletingQueue = "com.analytics.cookies.delet
 
     if (cookiesToDelete && cookiesToDelete.count > 0) {
         dispatch_group_t group = dispatch_group_create();
-        dispatch_queue_t queue = dispatch_queue_create(RAnalyticsCookiesDeletingQueue,  DISPATCH_QUEUE_PRIORITY_DEFAULT);
-        
         [cookiesToDelete enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull aCookie, NSUInteger idx, BOOL * _Nonnull stop) {
             dispatch_group_enter(group);
             // deleteCookie is an asynchronous method
@@ -73,7 +82,7 @@ static char *const RAnalyticsCookiesDeletingQueue = "com.analytics.cookies.delet
                 dispatch_group_leave(group);
             }];
         }];
-        dispatch_group_notify(group, queue, ^{
+        dispatch_group_notify(group, [_RAnalyticsCookieInjector sharedCookiesDeletingQueue], ^{
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionHandler();
             });
