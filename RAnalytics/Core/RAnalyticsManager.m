@@ -355,7 +355,8 @@ static RAnalyticsManager *_instance = nil;
         }
 
         [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
-                                                         deviceIdentifier:_deviceIdentifier];
+                                                         deviceIdentifier:_deviceIdentifier
+                                                        completionHandler:nil];
     }
 
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;

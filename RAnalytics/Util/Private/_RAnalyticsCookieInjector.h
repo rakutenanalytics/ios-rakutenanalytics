@@ -10,10 +10,11 @@ NS_ASSUME_NONNULL_BEGIN
  * @param domain  Domain to set on cookie, if nil default domain will be used
  * @param deviceIdentifier Device identifier string
  *
- * @return  Injected cookie or nil if cookie cannot be created or injected
+ * completionHandler:  Injected cookie or nil if cookie cannot be created or injected
  */
-+ (nullable NSHTTPCookie *)injectAppToWebTrackingCookieWithDomain:(nullable NSString *)domain
-                                                 deviceIdentifier:(NSString *)deviceIdentifier;
++ (void)injectAppToWebTrackingCookieWithDomain:(nullable NSString *)domain
+                              deviceIdentifier:(NSString *)deviceIdentifier
+                             completionHandler:(nullable void(^)(NSHTTPCookie * _Nullable))completionHandler;
 @end
 
 NS_ASSUME_NONNULL_END
