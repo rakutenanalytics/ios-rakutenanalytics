@@ -1,8 +1,8 @@
 import Foundation
 import CommonCrypto.CommonDigest
 
-@objc private extension NSString {
-    func ratEncrypt() -> NSString? {
+private extension NSString {
+    @objc func ratEncrypt() -> NSString? {
         guard let ratData = nsdata(using: String.Encoding.utf8.rawValue) else { return nil }
         return ratData.digest.hexString
     }
@@ -12,7 +12,7 @@ import CommonCrypto.CommonDigest
     }
 }
 
-@objc private extension NSData {
+private extension NSData {
     var digest: NSData {
         let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
         var hash = [UInt8](repeating: 0, count: digestLength)
