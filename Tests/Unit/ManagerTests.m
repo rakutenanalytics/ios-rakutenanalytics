@@ -5,13 +5,15 @@
 #import <Kiwi/Kiwi.h>
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
-@interface TestTracker : NSObject<RAnalyticsTracker>
+@interface TestTrackerNoEndpoint : NSObject<RAnalyticsTracker>
+@end
+@implementation TestTrackerNoEndpoint
 @end
 
+@interface TestTracker : NSObject<RAnalyticsTracker>
+@end
 @implementation TestTracker
-
 @synthesize endpointURL;
-
 - (instancetype)init
 {
     if (self = [super init])
@@ -20,7 +22,6 @@
     }
     return self;
 }
-
 - (BOOL)processEvent:(RAnalyticsEvent *)event state:(RAnalyticsState *)state
 {
     return YES;
@@ -201,6 +202,14 @@ describe(@"RAnalyticsManager", ^{
             
             for(id<RAnalyticsTracker>tracker in trackers) {
                 [[tracker.endpointURL should] equal:_RAnalyticsEndpointAddress()];
+            }
+        });
+        it(@"should not set the expected endpoint to the added trackers that doesn't synthesize endpointURL", ^{
+            RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initEmpty];
+            for(int i=0; i < 10; i++) { [analyticsManager addTracker:TestTrackerNoEndpoint.new]; }
+            NSArray *trackers = [analyticsManager performSelector:@selector(trackers)];
+            for(id<RAnalyticsTracker>tracker in trackers) {
+                [[tracker.endpointURL should] beNil];
             }
         });
     });

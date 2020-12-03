@@ -240,7 +240,9 @@ static RAnalyticsManager *_instance = nil;
 - (void)setEndpointURL:(NSURL * _Nullable)endpointURL
 {
     [_trackers enumerateObjectsUsingBlock:^(id<RAnalyticsTracker>  _Nonnull tracker, BOOL * _Nonnull stop) {
-        tracker.endpointURL = endpointURL ?: _RAnalyticsEndpointAddress();
+        if ([tracker respondsToSelector:@selector(setEndpointURL:)]) {
+            [tracker setEndpointURL:endpointURL ?: _RAnalyticsEndpointAddress()];
+        }
     }];
 }
 
