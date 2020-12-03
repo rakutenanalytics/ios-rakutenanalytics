@@ -7,7 +7,6 @@ rm -rf build
 mkdir build
 
 BUILD_DEBUG_SIMULATOR=build/debug/simulator
-BUILD_DEBUG_SIMULATOR_i386=build/debug/simulator_i386
 BUILD_DEBUG_DEVICE=build/debug/devices
 BUILD_DEBUG_UNIVERSAL=build/debug/universal
 
@@ -45,9 +44,7 @@ fi
 ###
 ### 1.1. build DEBUG framework for simulators - x86_64
 ###
-### Note: xcodebuild doesn't build the i386 architecture for simulator with or without this option: ARCHS="i386 x86_64"
-###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator ARCHS="x86_64"
+xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator
 
 # create folder to store compiled framework for simulator - Debug
 mkdir $BUILD_DEBUG_SIMULATOR
@@ -58,22 +55,6 @@ DERIVED_DATA_SIMULATOR=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -
 # copy compiled framework for DEBUG simulator into our build folder
 cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework $BUILD_DEBUG_SIMULATOR
 cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework.dSYM $BUILD_DEBUG_SIMULATOR
-
-
-###
-### 1.2. build DEBUG framework for simulators - i386
-###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator ARCHS="i386"
-
-# create folder to store compiled framework for simulator - Debug
-mkdir $BUILD_DEBUG_SIMULATOR_i386
-
-# get derived data path
-DERIVED_DATA_SIMULATOR_i386=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -configuration Debug -showBuildSettings -sdk iphonesimulator | grep -m 1 "CONFIGURATION_BUILD_DIR" | grep -oEi "\/.*")
-
-# copy compiled framework for DEBUG simulator into our build folder
-cp -r $DERIVED_DATA_SIMULATOR_i386/RAnalytics.framework $BUILD_DEBUG_SIMULATOR_i386
-cp -r $DERIVED_DATA_SIMULATOR_i386/RAnalytics.framework.dSYM $BUILD_DEBUG_SIMULATOR_i386
 
 
 ### 2. build RELEASE framework for simulators
@@ -141,7 +122,6 @@ lipo -remove "arm64" $BUILD_RELEASE_SIMULATOR/$dSymFilePath -o $BUILD_RELEASE_SI
 # create framework binary compatible with simulators and devices, and replace binary in universal framework
 lipo -create \
 $BUILD_DEBUG_SIMULATOR/$frameworkBinaryPath \
-$BUILD_DEBUG_SIMULATOR_i386/$frameworkBinaryPath \
 $BUILD_DEBUG_DEVICE/$frameworkBinaryPath \
 -output $BUILD_DEBUG_UNIVERSAL/$frameworkBinaryPath
 
@@ -153,7 +133,6 @@ lipo -create \
 # create universal dSYM for debug and release
 lipo -create \
     $BUILD_DEBUG_SIMULATOR/$dSymFilePath \
-    $BUILD_DEBUG_SIMULATOR_i386/$dSymFilePath \
     $BUILD_DEBUG_DEVICE/$dSymFilePath \
     -output $BUILD_DEBUG_UNIVERSAL/$dSymFilePath
 
@@ -177,7 +156,7 @@ echo "dSym - Release mode:"
 file $BUILD_RELEASE_UNIVERSAL/$dSymFilePath
 
 # check bitcode for each mobile architecture
-allArchitectures=("arm64" "armv7")
+allArchitectures=("arm64")
 
 bitcode()
 {
