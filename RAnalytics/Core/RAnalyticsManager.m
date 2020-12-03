@@ -8,8 +8,8 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
-#import "_RAnalyticsCookieInjector.h"
 #import <RAnalytics/RAnalytics-Swift.h>
+#import <WebKit/WebKit.h>
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +49,7 @@
 @property (nonatomic, copy) WebTrackingCookieDomainBlock cookieDomainBlock;
 @property (nonatomic, strong) AnyDependenciesContainer *dependenciesContainer;
 @property (nonatomic, strong) RAdvertisingIdentifierHandler *advertisingIdentifierHandler;
+@property (nonatomic, strong) RAnalyticsCookieInjector *analyticsCookieInjector;
 
 - (instancetype)initSharedInstance;
 @end
@@ -101,10 +102,14 @@ static RAnalyticsManager *_instance = nil;
         _shouldTrackAdvertisingIdentifier = YES;
         _shouldTrackPageView              = YES;
 
+        // Dependencies Container
         _dependenciesContainer = AnyDependenciesContainer.new;
         [_dependenciesContainer registerObject:ASIdentifierManager.sharedManager];
+        [_dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
 
-        _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesContainer:_dependenciesContainer];
+        // Inject the Dependencies Container
+        _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:_dependenciesContainer];
+        _analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:_dependenciesContainer];
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -363,9 +368,9 @@ static RAnalyticsManager *_instance = nil;
             domain = _cookieDomainBlock();
         }
 
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
-                                                         deviceIdentifier:_deviceIdentifier
-                                                        completionHandler:nil];
+        [_analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
+                                                        deviceIdentifier:_deviceIdentifier
+                                                       completionHandler:nil];
     }
 
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;

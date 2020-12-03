@@ -7,6 +7,13 @@
 SPEC_BEGIN(RAdvertisingIdentifierHandlerTests)
 
 describe(@"RAdvertisingIdentifierHandler", ^{
+    describe(@"initWithDependenciesFactory", ^{
+        it(@"should return nil if there are no dependencies", ^{
+            AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
+            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:dependenciesContainer];
+            [[advertisingIdentifierHandler should] beNil];
+        });
+    });
     describe(@"idfa", ^{
         it(@"should return nil when idfa UUID equals 00000000-0000-0000-0000-000000000000", ^{
             ASIdentifierManager *identifierManager = ASIdentifierManager.new;
@@ -19,7 +26,7 @@ describe(@"RAdvertisingIdentifierHandler", ^{
             
             [[[((ASIdentifierManager *)[dependenciesContainer resolveObject:ASIdentifierManager.class]) advertisingIdentifierUUIDString] should] equal:@"00000000-0000-0000-0000-000000000000"];
             
-            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesContainer:dependenciesContainer];
+            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:dependenciesContainer];
             
             [[advertisingIdentifierHandler.idfa should] beNil];
         });
@@ -30,7 +37,7 @@ describe(@"RAdvertisingIdentifierHandler", ^{
             
             AnyDependenciesContainer *dependenciesContainer = [[AnyDependenciesContainer alloc] init];
             
-            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesContainer:dependenciesContainer];
+            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:dependenciesContainer];
             
             [[advertisingIdentifierHandler.idfa should] beNil];
         });
@@ -46,7 +53,7 @@ describe(@"RAdvertisingIdentifierHandler", ^{
             
             [[[((ASIdentifierManager *)[dependenciesContainer resolveObject:ASIdentifierManager.class]) advertisingIdentifierUUIDString] should] equal:@"1234-5678-9123-4563"];
             
-            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesContainer:dependenciesContainer];
+            RAdvertisingIdentifierHandler *advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:dependenciesContainer];
             
             [[advertisingIdentifierHandler.idfa should] equal:@"1234-5678-9123-4563"];
         });

@@ -1,19 +1,49 @@
-#import <Kiwi/Kiwi.h>
-#import <WebKit/WebKit.h>
-#import "../../RAnalytics/Util/Private/_RAnalyticsCookieInjector.h"
+#import <RAnalytics/RAnalytics-Swift.h>
+@import Kiwi;
+@import WebKit;
+@import AdSupport;
 
 SPEC_BEGIN(CookieInjectorTests)
 
+describe(@"initWithDependenciesFactory", ^{
+    it(@"should return nil if there are no dependencies", ^{
+        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
+        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
+        [[analyticsCookieInjector should] beNil];
+    });
+    it(@"should return nil if only ASIdentifierManager is registered", ^{
+        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
+        [dependenciesContainer registerObject:ASIdentifierManager.new];
+        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
+        [[analyticsCookieInjector should] beNil];
+    });
+    it(@"should return nil if only WKHTTPCookieStore is registered", ^{
+        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
+        [dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
+        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
+        [[analyticsCookieInjector should] beNil];
+    });
+});
+
 describe(@"injectAppToWebTrackingCookie", ^{
     __block NSString *deviceID = @"12345";
+    __block AnyDependenciesContainer *dependenciesContainer;
+    __block RAnalyticsCookieInjector *analyticsCookieInjector;
+    
+    beforeAll(^{
+        dependenciesContainer = AnyDependenciesContainer.new;
+        [dependenciesContainer registerObject:ASIdentifierManager.new];
+        [dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
+        analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
+    });
 
     it(@"should set expected cookie value using device identifier", ^{
         // IDFA is always zero'd on simulator
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 
@@ -23,9 +53,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
     it(@"should set cookie path to /", ^{
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 
@@ -35,9 +65,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
     it(@"should set cookie name to ra_uid", ^{
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 
@@ -47,9 +77,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
     it(@"should set cookie samesite to none", ^{
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 
@@ -61,9 +91,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
     it(@"should set cookie as secure", ^{
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 
@@ -74,9 +104,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
         it(@"should set default .rakuten.co.jp domain on cookie", ^{
             __block NSHTTPCookie *cookie = nil;
             
-            [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                             deviceIdentifier:deviceID
-                                                            completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+            [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                           deviceIdentifier:deviceID
+                                                          completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
                 cookie = injectedCookie;
             }];
 
@@ -88,9 +118,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
         it(@"should set passed in domain on cookie", ^{
             __block NSHTTPCookie *cookie = nil;
             
-            [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@".my-domain.co.jp"
-                                                             deviceIdentifier:deviceID
-                                                            completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+            [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@".my-domain.co.jp"
+                                                           deviceIdentifier:deviceID
+                                                          completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
                 cookie = injectedCookie;
             }];
 
@@ -103,9 +133,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
 #pragma clang diagnostic ignored "-Wnonnull"
         __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:nil
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:nil
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
         }];
 #pragma clang diagnostic pop
@@ -117,9 +147,9 @@ describe(@"injectAppToWebTrackingCookie", ^{
         __block BOOL hasCookie = NO;
         __unused __block NSHTTPCookie *cookie = nil;
         
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
-                                                         deviceIdentifier:deviceID
-                                                        completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+        [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:nil
+                                                       deviceIdentifier:deviceID
+                                                      completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
             cookie = injectedCookie;
             
             if (@available(iOS 11.0, *)) {
@@ -146,13 +176,13 @@ describe(@"injectAppToWebTrackingCookie", ^{
 
         if (@available(iOS 11.0, *)) {
             WKHTTPCookieStore *store = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
-             [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@"https://domain1.com"
-                                                              deviceIdentifier:deviceID
-                                                             completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
+             [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@"https://domain1.com"
+                                                            deviceIdentifier:deviceID
+                                                           completionHandler:^(NSHTTPCookie * _Nullable injectedCookie) {
                  existingCookie = injectedCookie;
-                 [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@"https://domain2.com"
-                                                                                   deviceIdentifier:deviceID
-                                                                 completionHandler:^(NSHTTPCookie * _Nullable newInjectedCookie) {
+                 [analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:@"https://domain2.com"
+                                                                deviceIdentifier:deviceID
+                                                               completionHandler:^(NSHTTPCookie * _Nullable newInjectedCookie) {
                      replacedCookie = newInjectedCookie;
                      [store getAllCookies:^(NSArray<NSHTTPCookie *> * _Nonnull cookies) {
                          [cookies enumerateObjectsUsingBlock:^(NSHTTPCookie * _Nonnull obj, __unused NSUInteger idx, __unused BOOL * _Nonnull stop) {
