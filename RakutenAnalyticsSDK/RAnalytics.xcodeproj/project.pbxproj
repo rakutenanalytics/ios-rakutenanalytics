@@ -16,6 +16,7 @@
 		3A68C40624D164A600161F62 /* RAnalyticsState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40124D164A600161F62 /* RAnalyticsState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40224D164A600161F62 /* RAnalyticsManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40324D164A600161F62 /* RAnalyticsEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		3A68C40324D164A600161F62 /* RAnalyticsEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsEvent.h; path = ../../RAnalytics/Core/RAnalyticsEvent.h; sourceTree = "<group>"; };
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsEndpointSettable.h; path = ../../RAnalytics/Core/RAnalyticsEndpointSettable.h; sourceTree = "<group>"; };
 		9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.release.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.release.xcconfig"; sourceTree = "<group>"; };
 		FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.debug.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,6 +86,7 @@
 				3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */,
 				3A68C40124D164A600161F62 /* RAnalyticsState.h */,
 				3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */,
+				6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */,
 			);
 			path = RAnalytics;
 			sourceTree = "<group>";
@@ -107,6 +110,7 @@
 				3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */,
 				3A68C40524D164A600161F62 /* RAnalyticsDefines.h in Headers */,
 				3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */,
+				6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */,
 				3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */,
 				3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */,
 				3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */,
@@ -368,7 +372,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.1.0;
+				MARKETING_VERSION = 6.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -393,7 +397,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.1.0;
+				MARKETING_VERSION = 6.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
