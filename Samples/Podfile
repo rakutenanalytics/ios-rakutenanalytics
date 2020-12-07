@@ -3,7 +3,7 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 workspace 'RAnalyticsSample.xcworkspace'
 
-platform :ios, "11.4"
+platform :ios, "11.0"
 use_frameworks!
 
 abstract_target 'Common' do

@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
-  s.platform     = :ios, "11.4"
+  s.platform     = :ios, "11.0"
   s.requires_arc = true
 
   options = {
