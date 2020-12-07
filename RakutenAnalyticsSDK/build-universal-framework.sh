@@ -22,6 +22,8 @@ dSymFilePath="RAnalytics.framework.dSYM/Contents/Resources/DWARF/RAnalytics"
 
 RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
 
+PODSPEC_FILE_PATH="RAnalytics.podspec"
+
 # install RakutenAnalyticsSDK workspace and pods
 pod install
 
@@ -30,6 +32,9 @@ RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" ../RAnalytics.podspec | s
 
 # update the project file with the new version number
 sed -i '' -E "s/MARKETING_VERSION = [0-9]+.[0-9]+.[0-9]+/MARKETING_VERSION = $RANALYTICS_FRAMEWORK_VERSION/g" $RAKUTEN_ANALYTICS_SDK_PROJECT_PATH
+
+# update the podpec file with the new version number
+sed -i '' -E "s/s.version      = \"[0-9]+.[0-9]+.[0-9]+\"/s.version      = \"$RANALYTICS_FRAMEWORK_VERSION\"/g" $PODSPEC_FILE_PATH
 
 # check if the new version number is updated
 PROJECT_VERSION_NUMBER=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -showBuildSettings -sdk iphonesimulator | grep -m 1 "MARKETING_VERSION" | sed 's/[ ]*MARKETING_VERSION = //')
