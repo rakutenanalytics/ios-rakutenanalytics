@@ -47,9 +47,9 @@ else
 fi
 
 ###
-### 1.1. build DEBUG framework for simulators - x86_64
+### 1. build DEBUG framework for simulators - x86_64
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator
+xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator -arch x86_64
 
 # create folder to store compiled framework for simulator - Debug
 mkdir $BUILD_DEBUG_SIMULATOR
@@ -63,7 +63,7 @@ cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework.dSYM $BUILD_DEBUG_SIMULATOR
 
 
 ### 2. build RELEASE framework for simulators
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphonesimulator
+xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphonesimulator -arch x86_64
 
 # create folder to store compiled framework for simulator - Release
 mkdir $BUILD_RELEASE_SIMULATOR
@@ -79,7 +79,7 @@ cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework.dSYM $BUILD_RELEASE_SIMULATOR
 ###
 ### 3. build DEBUG framework for devices
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphoneos
+xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphoneos -arch arm64
 
 # create folder to store compiled framework for device - Debug
 mkdir $BUILD_DEBUG_DEVICE
@@ -95,7 +95,7 @@ cp -r $DERIVED_DATA_DEVICE/RAnalytics.framework.dSYM $BUILD_DEBUG_DEVICE
 ###
 ### 4. build RELEASE framework for devices
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphoneos
+xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphoneos -arch arm64
   
 # create folder to store compiled framework for device - Release
 mkdir $BUILD_RELEASE_DEVICE

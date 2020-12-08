@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1BE63C0FA6E903CCEF925A28 /* libPods-RAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */; };
-		3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */; };
-		3A0932A7257F531500F4F157 /* RAnalyticsSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0932A6257F531500F4F157 /* RAnalyticsSender.h */; };
+		3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3A0932A7257F531500F4F157 /* RAnalyticsSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0932A6257F531500F4F157 /* RAnalyticsSender.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C3FD24D1629A00161F62 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };

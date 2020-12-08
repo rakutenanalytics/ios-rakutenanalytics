@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
     s.homepage     = "https://www.rakuten.com"
     s.license      = { :type => 'Proprietary', :text => '© Rakuten' }
     s.source       = { :git => "https://github.com/rakutentech/ios-analytics-framework-test.git", :tag => "#{s.version}" }
-    s.platform     = :ios, "11.4"
+    s.platform     = :ios, "11.0"
     s.public_header_files = "RAnalytics/RAnalytics.framework/Headers/*.h"
     s.source_files = "RAnalytics/RAnalytics.framework/Headers/*.h"
     s.vendored_frameworks = "RAnalytics/RAnalytics.framework"
