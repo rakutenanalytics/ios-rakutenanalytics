@@ -2,6 +2,7 @@
 #import "_RAnalyticsDatabase.h"
 #import "_RAnalyticsHelpers.h"
 #import <RLogger/RLogger.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 
 NSString *const RAnalyticsWillUploadNotification    = @"com.rakuten.esd.sdk.notifications.analytics.rat.will_upload";
 NSString *const RAnalyticsUploadFailureNotification = @"com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed";
@@ -138,7 +139,7 @@ static const unsigned int    _RATBatchSize      = 16u;
  * Called by -_doBackgroundUpload only if previously-saved records were found.
  */
 
-- (void)_doBackgroundUploadWithRecords:(NSArray *)records identifiers:(NSArray *)identifiers
+- (void)_doBackgroundUploadWithRecords:(NSArray<NSData *> *)records identifiers:(NSArray<NSNumber *> *)identifiers
 {
     /*
      * When you make changes here, always check the server-side program will
@@ -146,71 +147,37 @@ static const unsigned int    _RATBatchSize      = 16u;
      * https://git.rakuten-it.com/projects/RATR/repos/receiver/browse/receiver.c
      */
 
-    typeof(self) __weak weakSelf = self;
+    if (!records ||
+        !identifiers ||
+        (records.count != identifiers.count)) {
+        return;
+    }
 
-    /*
-     * Prepare the body of our POST request. It's a JSON-formatted array
-     * of records. Note that the server doesn't accept pretty-formatted JSON.
-     *
-     * We could append 'record' NSData instances to 'postBody' in turn, separating
-     * each with a comma, but we'll need an array of deserialized objects anyway
-     * for using within the notifications we're sending.
-     */
+    NSMutableArray<NSDictionary *> *recordGroup = [NSMutableArray.alloc initWithRatDataRecords:records];
+    if (!recordGroup || !recordGroup.count) {
+        return;
+    }
 
-    NSArray *recordGroup = ({
-        NSMutableArray *builder = [NSMutableArray arrayWithCapacity:records.count];
-        for (NSData *recordData in records)
-        {
-            id object = [NSJSONSerialization JSONObjectWithData:recordData
-                                                        options:0
-                                                          error:NULL];
-            if(object) {
-                [builder addObject:object];
-            }
-        }
-        builder.copy;
-    });
+    NSMutableData *data = [NSMutableData.alloc initWithRatRecords:recordGroup];
+    if (!data) {
+        return;
+    }
 
-    [NSNotificationCenter.defaultCenter postNotificationName:RAnalyticsWillUploadNotification
-                                                      object:recordGroup];
-
-    NSMutableData *postBody = NSMutableData.new;
-    [postBody appendData:[@"cpkg_none=" dataUsingEncoding:NSUTF8StringEncoding]];
-    [postBody appendData:[NSJSONSerialization dataWithJSONObject:recordGroup
-                                                         options:0
-                                                           error:NULL]];
-
+    if (!self.endpointURL) {
+        return;
+    }
 
     /*
      * Prepare and send the request.
      *
      * We only delete the records from our database if server returns a 200 HTTP status.
      */
+    NSURLRequest *request = [NSURLRequest ratRequestWithUrl:self.endpointURL body:data];
+    if (!request) {
+        return;
+    }
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.endpointURL
-                                                           cachePolicy:NSURLRequestReloadIgnoringCacheData
-                                                       timeoutInterval:30];
-    
-    request.HTTPShouldHandleCookies = _RAnalyticsUseDefaultSharedCookieStorage();
-
-    /*
-     * For historical reasons we don't send the JSON as JSON but as some
-     * weird non-urlEncoded x-www-form-urlencoded, passed as text/plain.
-     *
-     * The backend also doesn't accept a charset value (but assumes UTF-8).
-     */
-
-    [request setValue:@"text/plain" forHTTPHeaderField:@"Content-Type"];
-
-    /*
-     * Set the content length, as the backend needs it.
-     */
-
-    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)postBody.length] forHTTPHeaderField:@"Content-Length"];
-
-    request.HTTPMethod = @"POST";
-    request.HTTPBody = postBody;
-
+    typeof(self) __weak weakSelf = self;
     NSURLSessionDataTask *dataTask = [NSURLSession.sharedSession dataTaskWithRequest:request
                                                                    completionHandler:^(NSData * __nullable data, NSURLResponse * __nullable response, NSError * __nullable error)
                                       {

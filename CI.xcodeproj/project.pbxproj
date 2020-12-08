@@ -32,6 +32,7 @@
 		5AD7A9C1204FC4C200B03FBA /* TrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */; };
 		5AF1B93F20478F5900BD0E3E /* SenderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF1B93E20478F5900BD0E3E /* SenderTests.m */; };
 		69E1BBCF1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 69E1BBCE1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m */; };
+		6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0AD19B2582383500206848 /* RATExtensionsTests.swift */; };
 		6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */; };
 		6D63A7A11E1F975E00F89009 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D63A7A01E1F975E00F89009 /* main.m */; };
 		6D63A7A41E1F975E00F89009 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D63A7A31E1F975E00F89009 /* AppDelegate.m */; };
@@ -104,6 +105,7 @@
 		693B58081B7C6159008C5E86 /* UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		693B580C1B7C6159008C5E86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		69E1BBCE1DADC17A00127885 /* RAnalyticsDatabaseUnitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsDatabaseUnitTests.m; sourceTree = "<group>"; };
+		6D0AD19B2582383500206848 /* RATExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RATExtensionsTests.swift; sourceTree = "<group>"; };
 		6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUNCenterTests.m; sourceTree = "<group>"; };
 		6D63A79D1E1F975E00F89009 /* Host.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Host.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D63A7A01E1F975E00F89009 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */,
 				3A3F013F255E760900993197 /* RAnalyticsEndpointSettableTests.m */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
+				6D0AD19B2582383500206848 /* RATExtensionsTests.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -471,6 +474,7 @@
 				6D243BC81E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m in Sources */,
 				57C5486C24B425530099497D /* UNNotificationTrackableTests.m in Sources */,
 				6DA9A8911E0A585500AE4C35 /* ExternalCollectorTests.m in Sources */,
+				6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */,
 				571671A024B415DE0071B80B /* NSStringEncryptionTests.m in Sources */,
 				5AB254A320744B1900BF3EE9 /* RpCookieTests.m in Sources */,
 				16E4819120B3F699006CB857 /* DatabaseTestUtils.m in Sources */,
