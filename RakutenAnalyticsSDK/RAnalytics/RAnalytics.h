@@ -6,3 +6,5 @@
 #import <RAnalytics/RAnalyticsEndpointSettable.h>
 #import <RAnalytics/RAnalyticsRATTracker.h>
 #import <RAnalytics/RAnalyticsRpCookieFetcher.h>
+#import <RAnalytics/RAnalyticsPushTrackingUtility.h>
+#import <RAnalytics/RAnalyticsSender.h>

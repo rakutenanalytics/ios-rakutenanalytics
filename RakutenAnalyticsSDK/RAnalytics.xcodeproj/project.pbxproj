@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1BE63C0FA6E903CCEF925A28 /* libPods-RAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */; };
+		3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */; };
+		3A0932A7257F531500F4F157 /* RAnalyticsSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0932A6257F531500F4F157 /* RAnalyticsSender.h */; };
 		3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C3FD24D1629A00161F62 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -21,6 +23,8 @@
 
 /* Begin PBXFileReference section */
 		1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RAnalytics.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsPushTrackingUtility.h; path = ../../RAnalytics/Util/RAnalyticsPushTrackingUtility.h; sourceTree = "<group>"; };
+		3A0932A6257F531500F4F157 /* RAnalyticsSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsSender.h; path = ../../RAnalytics/Util/RAnalyticsSender.h; sourceTree = "<group>"; };
 		3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsRATTracker.h; path = ../../RAnalytics/RAT/RAnalyticsRATTracker.h; sourceTree = "<group>"; };
 		3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsRpCookieFetcher.h; path = ../../RAnalytics/Core/RAnalyticsRpCookieFetcher.h; sourceTree = "<group>"; };
 		3A68C3FD24D1629A00161F62 /* RAnalytics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
@@ -80,13 +84,15 @@
 				3AA58EF424CB107D00CE703C /* Info.plist */,
 				3A68C3FD24D1629A00161F62 /* RAnalytics.h */,
 				3A68C40024D164A600161F62 /* RAnalyticsDefines.h */,
+				6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */,
 				3A68C40324D164A600161F62 /* RAnalyticsEvent.h */,
 				3A68C40224D164A600161F62 /* RAnalyticsManager.h */,
+				3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */,
 				3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */,
 				3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */,
+				3A0932A6257F531500F4F157 /* RAnalyticsSender.h */,
 				3A68C40124D164A600161F62 /* RAnalyticsState.h */,
 				3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */,
-				6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */,
 			);
 			path = RAnalytics;
 			sourceTree = "<group>";
@@ -107,10 +113,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A0932A7257F531500F4F157 /* RAnalyticsSender.h in Headers */,
 				3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */,
 				3A68C40524D164A600161F62 /* RAnalyticsDefines.h in Headers */,
 				3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */,
 				6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */,
+				3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */,
 				3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */,
 				3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */,
 				3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */,
