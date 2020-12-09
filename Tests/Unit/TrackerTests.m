@@ -3,7 +3,7 @@
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 @interface RAnalyticsState ()
 @property (nonatomic, readwrite, copy)              NSString                    *sessionIdentifier;
@@ -87,7 +87,7 @@
     // Mock the database
     _database = MockedDatabase.new;
     
-    id dbMock = OCMClassMock(_RAnalyticsDatabase.class);
+    id dbMock = OCMClassMock(RAnalyticsDatabase.class);
     [self addMock:dbMock];
     
     OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);

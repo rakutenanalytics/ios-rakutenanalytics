@@ -1,6 +1,6 @@
-#import "DatabaseTestUtils.h"\
+#import "DatabaseTestUtils.h"
 
-#import "../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 sqlite3* openRegularConnection() {
     return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
@@ -18,9 +18,9 @@ sqlite3* openConnection(int flags) {
     return connection;
 }
 
-static _RAnalyticsDatabase* db; // Required because of ARC
-_RAnalyticsDatabase* mkDatabase(sqlite3* connection) {
-    db = [_RAnalyticsDatabase databaseWithConnection:connection];
+static RAnalyticsDatabase* db; // Required because of ARC
+RAnalyticsDatabase* mkDatabase(sqlite3* connection) {
+    db = [RAnalyticsDatabase databaseWithConnection:connection];
     
     return db;
 }

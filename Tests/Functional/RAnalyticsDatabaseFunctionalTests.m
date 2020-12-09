@@ -1,12 +1,13 @@
 #import <Kiwi/Kiwi.h>
 #import <sqlite3.h>
 
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 #import "DatabaseTestUtils.h"
 
 NSData* mkEvent(void);
 NSData* mkAnotherEvent(void);
+sqlite3* mkAnalyticsDBConnectionWithName(NSString *databaseName);
 
 SPEC_BEGIN(RAnalyticsDatabaseFunctionalTests)
 
@@ -33,13 +34,13 @@ describe(@"RAnalyticsDatabase", ^{
     });
     
     it(@"should create database", ^{
-        [_RAnalyticsDatabase databaseWithConnection:connection];
+        [RAnalyticsDatabase databaseWithConnection:connection];
         
         [[theValue([[NSFileManager defaultManager] fileExistsAtPath:databasePath]) should] beTrue];
     });
     
     it(@"should insert events to database", ^{
-        _RAnalyticsDatabase* database = [_RAnalyticsDatabase databaseWithConnection:connection];
+        RAnalyticsDatabase* database = [RAnalyticsDatabase databaseWithConnection:connection];
         NSArray* events = @[mkEvent(), mkAnotherEvent()];
         
         __block NSArray* eventsInDb;
@@ -51,7 +52,7 @@ describe(@"RAnalyticsDatabase", ^{
     });
     
     it(@"should fetch saved events from database", ^{
-        _RAnalyticsDatabase* database = [_RAnalyticsDatabase databaseWithConnection:connection];
+        RAnalyticsDatabase* database = [RAnalyticsDatabase databaseWithConnection:connection];
         NSArray* events = @[mkEvent(), mkAnotherEvent()];
         insertBlobsIntoTable(events, @"events_table", connection);
         
@@ -67,7 +68,7 @@ describe(@"RAnalyticsDatabase", ^{
     });
     
     it(@"should delete saved events according to passed IDs", ^{
-        _RAnalyticsDatabase* database = [_RAnalyticsDatabase databaseWithConnection:connection];
+        RAnalyticsDatabase* database = [RAnalyticsDatabase databaseWithConnection:connection];
         NSArray* events = @[mkEvent(), mkAnotherEvent()];
         insertBlobsIntoTable(events, @"events_table", connection);
         
@@ -81,6 +82,10 @@ describe(@"RAnalyticsDatabase", ^{
 });
 
 SPEC_END
+
+sqlite3* mkAnalyticsDBConnectionWithName(NSString *databaseName) {
+    return [RAnalyticsDatabase mkAnalyticsDBConnectionWithName:databaseName];
+}
 
 NSData* mkEvent(void) {
     return [@"{"

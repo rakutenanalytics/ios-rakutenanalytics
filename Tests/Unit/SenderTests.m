@@ -5,11 +5,11 @@
 #import <Kiwi/Kiwi.h>
 #import "MockedDatabase.h"
 
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 @interface RAnalyticsSender()
 @property (copy, nonatomic) NSString       *databaseTableName;
-@property (nonatomic) _RAnalyticsDatabase  *database;
+@property (nonatomic) RAnalyticsDatabase   *database;
 @property (nonatomic) NSTimeInterval        uploadTimerInterval;
 @property (nonatomic) NSTimer              *uploadTimer;
 @end
@@ -31,7 +31,7 @@
     // Mock the database
     _database = MockedDatabase.new;
     
-    id dbMock = OCMClassMock(_RAnalyticsDatabase.class);
+    id dbMock = OCMClassMock(RAnalyticsDatabase.class);
     [self addMock:dbMock];
     
     OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);

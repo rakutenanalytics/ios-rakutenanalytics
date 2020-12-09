@@ -15,7 +15,7 @@
     return self;
 }
 
-- (void) insertBlob:(NSData*)blob into:(NSString *)table limit:(unsigned int)maximumNumberOfBlobs then:(dispatch_block_t)completion {
+- (void)insertBlob:(NSData*)blob into:(NSString *)table limit:(unsigned int)maximumNumberOfBlobs then:(dispatch_block_t)completion {
     return [self insertBlobs:@[blob] into:table limit:maximumNumberOfBlobs then:completion];
 }
 

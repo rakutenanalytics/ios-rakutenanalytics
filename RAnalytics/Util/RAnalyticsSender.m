@@ -1,5 +1,4 @@
 #import "RAnalyticsSender.h"
-#import "_RAnalyticsDatabase.h"
 #import "_RAnalyticsHelpers.h"
 #import <RLogger/RLogger.h>
 #import <RAnalytics/RAnalytics-Swift.h>
@@ -14,7 +13,7 @@ static const unsigned int    _RATBatchSize      = 16u;
 @interface RAnalyticsSender()
 
 @property (copy, nonatomic) NSString       *databaseTableName;
-@property (nonatomic) _RAnalyticsDatabase* database;
+@property (nonatomic) RAnalyticsDatabase* database;
 
 /*
  * uploadTimer is used to throttle uploads. A call to -_scheduleBackgroundUpload
@@ -43,7 +42,7 @@ static const unsigned int    _RATBatchSize      = 16u;
     {
         self.endpointURL = endpoint;
         _databaseTableName = tableName;
-        _database = [_RAnalyticsDatabase databaseWithConnection:mkAnalyticsDBConnectionWithName(databaseName)];
+        _database = [RAnalyticsDatabase databaseWithConnection:[RAnalyticsDatabase mkAnalyticsDBConnectionWithName:databaseName]];
         
         /*
          * Listen to new session start event

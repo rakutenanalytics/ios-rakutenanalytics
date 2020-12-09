@@ -3,7 +3,6 @@
 #import <OHHTTPStubs/OHHTTPStubs.h>
 
 #import "../../RAnalytics/Core/Private/_SDKTracker.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 #import "TrackerTests.h"
