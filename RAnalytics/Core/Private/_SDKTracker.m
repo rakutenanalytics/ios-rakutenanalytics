@@ -1,7 +1,6 @@
 #import <RAnalytics/RAnalytics.h>
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
-#import "RAnalyticsSender.h"
 #import "_SDKTracker.h"
 #import <RAnalytics/RAnalytics-Swift.h>
 
@@ -37,9 +36,10 @@ NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
     if (self = [super init])
     {
         // create a sender.
-        _sender = [[RAnalyticsSender alloc] initWithEndpoint:_RAnalyticsEndpointAddress()
-                                                databaseName:_SDKDatabaseName
-                                           databaseTableName:_SDKTableName];
+        RAnalyticsDatabase *database = [RAnalyticsDatabase databaseWithConnection:[RAnalyticsDatabase mkAnalyticsDBConnectionWithName:_SDKDatabaseName]];
+        _sender = [RAnalyticsSender.alloc initWithEndpoint:_RAnalyticsEndpointAddress()
+                                                  database:database
+                                             databaseTable:_SDKTableName];
         [_sender setBatchingDelayBlock:^NSTimeInterval{
             return 60.0;
         }]; // default is 1 minute.
@@ -95,7 +95,7 @@ NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
     payload[@"cp"] = extra;
     [payload addEntriesFromDictionary:_RAnalyticsSharedPayload(state)];
 
-    [_sender sendJSONOject:payload];
+    [_sender sendJSONObject:payload];
     return YES;
 }
 @end

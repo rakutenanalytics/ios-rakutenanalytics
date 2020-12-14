@@ -3,17 +3,16 @@ import SQLite3
 import struct RAnalytics.SQlite3Pointer
 import class RAnalytics.RAnalyticsDatabase
 
-enum DatabaseTestUtils {
-
-    static func openRegularConnection() -> SQlite3Pointer? {
+@objc public class DatabaseTestUtils: NSObject {
+    @objc public class func openRegularConnection() -> SQlite3Pointer? {
         return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)
     }
 
-    static func openReadonlyConnection() -> SQlite3Pointer? {
+    @objc public class func openReadonlyConnection() -> SQlite3Pointer? {
         return openConnection(SQLITE_OPEN_READONLY) // will fail if database is not created
     }
 
-    static func openConnection(_ flags: Int32) -> SQlite3Pointer? {
+    @objc public class func openConnection(_ flags: Int32) -> SQlite3Pointer? {
         var connection: SQlite3Pointer?
 
         // With 2 connections open we cannot use temporary databases because they are not shared.
@@ -27,11 +26,11 @@ enum DatabaseTestUtils {
         return connection
     }
 
-    static func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
+    @objc public class func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
         return RAnalyticsDatabase.database(connection: connection)
     }
 
-    static func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
+    @objc public class func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
         var tableCount = Int32(0)
         let query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='\(table)'"
 
@@ -44,8 +43,18 @@ enum DatabaseTestUtils {
 
         return tableCount > 0
     }
+
+    @objc public class func deleteTableIfExists(_ table: String, connection: SQlite3Pointer) {
+        let query = "DROP TABLE IF EXISTS '\(table)'"
+
+        var statement: SQlite3Pointer?
+        sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        sqlite3_step(statement)
+        sqlite3_reset(statement)
+        sqlite3_finalize(statement)
+    }
     
-    static func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
+    @objc public class func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
         var result = [Data]()
         let query = "select * from \(table)"
 
@@ -68,7 +77,7 @@ enum DatabaseTestUtils {
         return result
     }
     
-    static func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
+    @objc public class func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
         assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
 
         let createTableQuery = "create table if not exists \(table) (id integer primary key, data blob)"

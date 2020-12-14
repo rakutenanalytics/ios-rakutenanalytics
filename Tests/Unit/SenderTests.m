@@ -1,24 +1,19 @@
 @import XCTest;
-#import <RAnalytics/RAnalyticsSender.h>
+#import <RAnalytics/RAnalyticsProgressNotifications.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import <OCMock/OCMock.h>
 #import <Kiwi/Kiwi.h>
-#import "MockedDatabase.h"
-
+#import <sqlite3.h>
 #import <RAnalytics/RAnalytics-Swift.h>
-
-@interface RAnalyticsSender()
-@property (copy, nonatomic) NSString       *databaseTableName;
-@property (nonatomic) RAnalyticsDatabase   *database;
-@property (nonatomic) NSTimeInterval        uploadTimerInterval;
-@property (nonatomic) NSTimer              *uploadTimer;
-@end
+#import "UnitTests-Swift.h"
 
 @interface SenderTests : XCTestCase
-@property (nonatomic) RAnalyticsSender  *sender;
-@property (nonatomic) MockedDatabase       *database;
-@property (nonatomic) NSDictionary         *payload;
-@property (nonatomic) NSMutableArray       *mocks;
+@property (nonatomic) RAnalyticsSender *sender;
+@property (nonatomic, copy) NSString *databaseTableName;
+@property (nonatomic) RAnalyticsDatabase *database;
+@property (nonatomic) NSDictionary *payload;
+@property (nonatomic) NSMutableArray *mocks;
+@property (nonatomic) sqlite3 *connection;
 @end
 
 @implementation SenderTests
@@ -28,15 +23,14 @@
     _mocks = NSMutableArray.new;
     _payload = @{@"key":@"value"};
 
-    // Mock the database
-    _database = MockedDatabase.new;
+    // Create in-memory DB
+    _databaseTableName = @"testTableName";
+    _connection = [DatabaseTestUtils openRegularConnection];
+    _database = [DatabaseTestUtils mkDatabaseWithConnection:self.connection];
     
-    id dbMock = OCMClassMock(RAnalyticsDatabase.class);
-    [self addMock:dbMock];
-    
-    OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
-    
-    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"] databaseName:@"dbName.db" databaseTableName:@"testTableName"];
+    _sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"]
+                                                database:_database
+                                           databaseTable:_databaseTableName];
 }
 
 - (void)tearDown {
@@ -45,12 +39,14 @@
     }];
 
     // Clear any still running timers because they can break our async batching delay tests
-
     [_sender.uploadTimer invalidate];
     _sender.uploadTimer = nil;
 
+    [DatabaseTestUtils deleteTableIfExists:_databaseTableName connection:_connection];
+
     _sender = nil;
     _database = nil;
+    _connection = nil;
     _payload = nil;
     _mocks = nil;
     [super tearDown];
@@ -67,7 +63,7 @@
 {
     XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
 
-    [_sender sendJSONOject:_payload];
+    [_sender sendJSONObject:_payload];
 
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -94,13 +90,6 @@
 
 #pragma mark test initialisation and configuration
 
-- (void)testInitWithEndPointAndDatabaseTableName
-{
-    XCTAssertNotNil(_sender);
-    XCTAssertEqualObjects(_sender.endpointURL.absoluteString, @"https://endpoint.co.jp/");
-    XCTAssertEqualObjects(_sender.databaseTableName, @"testTableName");
-}
-
 - (void)testSenderWithDefaultBatchingDelay
 {
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
@@ -116,6 +105,18 @@
     [self verifyWithBatchingDelay:15.0];
 }
 
+- (void)testSetBatchingDelay
+{
+    [_sender setBatchingDelayBlock:^NSTimeInterval{
+        return 15.0;
+    }];
+
+    BatchingDelayBlock block = [_sender batchingDelayBlock];
+    NSTimeInterval delay  = block();
+
+    XCTAssertEqual(delay, 15.0);
+}
+
 #pragma mark Test sending events to RAT
 
 - (void)testSendEventToRAT
@@ -126,7 +127,7 @@
         [sent fulfill];
     }];
 
-    [_sender sendJSONOject:_payload];
+    [_sender sendJSONObject:_payload];
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -150,7 +151,8 @@
                  [notified fulfill];
              }];
 
-    [_sender sendJSONOject:_payload];
+    [_sender sendJSONObject:_payload];
+
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
     [NSNotificationCenter.defaultCenter removeObserver:cb];
 }
@@ -169,14 +171,13 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
             // Event should have been sent and DB record deleted
-            XCTAssertEqual(self.database.keys.count, 0);
-            XCTAssertEqual(self.database.rows.count, 0);
-
+            NSArray<NSData *> *contents = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection];
+            XCTAssertEqual(contents.count, 0);
             [wait fulfill];
         });
     }];
 
-    [_sender sendJSONOject:_payload];
+    [_sender sendJSONObject:_payload];
     [self waitForExpectationsWithTimeout:4.0 handler:nil];
 }
 
@@ -192,13 +193,12 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
         // Event's DB record should still be in DB
-        XCTAssertEqual(self.database.keys.count, 1);
-        XCTAssertEqual(self.database.rows.count, 1);
-
+        NSArray<NSData *> *contents = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection];
+        XCTAssertEqual(contents.count, 1);
         [wait fulfill];
     });
 
-    [_sender sendJSONOject:_payload];
+    [_sender sendJSONObject:_payload];
     [self waitForExpectationsWithTimeout:4.0 handler:nil];
 }
 
@@ -227,15 +227,14 @@
                             [self.sender setBatchingDelayBlock:^NSTimeInterval{
                                     return 0.0;
                                 }];
-                                [self.sender sendJSONOject:self.payload];
+                                [self.sender sendJSONObject:self.payload];
 
                                 // Wait for events to be sent
                                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
+                                    NSArray<NSData *> *contents = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection];
                                     XCTAssertEqual(uploadsToRAT, 1);
-                                    XCTAssertEqual(self.database.keys.count, 0);
-                                    XCTAssertEqual(self.database.rows.count, 0);
-
+                                    XCTAssertEqual(contents.count, 0);
                                     [notified fulfill];
                                 });
                             }];
@@ -248,71 +247,3 @@
 }
 
 @end
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnonnull"
-
-SPEC_BEGIN(SenderDatabaseTests)
-describe(@"initWithEndpoint:databaseName:databaseTableName:", ^{
-    NSURL *endpointURL = [NSURL URLWithString:@"https://www.example.com"];
-    
-    it(@"should create a database connection when a database name is passed as param", ^{
-        RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
-                                                               databaseName:@"databaseName"
-                                                          databaseTableName:@"tableName"];
-        
-        [[sender.database should] beNonNil];
-    });
-    context(@"failed initialization", ^{
-        it(@"should fail intialization when nil endpoint is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:nil
-                                                                   databaseName:@"databaseName"
-                                                              databaseTableName:@"tableName"];
-            
-            [[sender.database should] beNil];
-        });
-        
-        it(@"should fail intialization when zero-length endpoint is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:[NSURL URLWithString:@""]
-                                                                   databaseName:@"databaseName"
-                                                              databaseTableName:@"tableName"];
-            
-            [[sender.database should] beNil];
-        });
-        
-        it(@"should fail intialization when nil db name is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
-                                                                   databaseName:nil
-                                                              databaseTableName:nil];
-            
-            [[sender.database should] beNil];
-        });
-        
-        it(@"should fail intialization when zero-length db name is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
-                                                                   databaseName:@""
-                                                              databaseTableName:@"tableName"];
-            
-            [[sender.database should] beNil];
-        });
-        
-        it(@"should fail intialization when nil table name is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
-                                                                   databaseName:@"databaseName"
-                                                              databaseTableName:nil];
-            
-            [[sender.database should] beNil];
-        });
-        
-        it(@"should fail intialization when zero-length table name is passed as param", ^{
-            RAnalyticsSender *sender = [RAnalyticsSender.alloc initWithEndpoint:endpointURL
-                                                                   databaseName:@"databaseName"
-                                                              databaseTableName:@""];
-            
-            [[sender.database should] beNil];
-        });
-    });
-});
-SPEC_END
-
-#pragma clang diagnostic pop

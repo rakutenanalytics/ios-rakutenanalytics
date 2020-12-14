@@ -18,6 +18,8 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
             }
 
             afterEach {
+                DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
+                
                 sqlite3_close(connection)
                 sqlite3_close(readonlyConnection)
 
