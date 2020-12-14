@@ -1,0 +1,95 @@
+import Foundation
+import SQLite3
+import struct RAnalytics.SQlite3Pointer
+import class RAnalytics.RAnalyticsDatabase
+
+enum DatabaseTestUtils {
+
+    static func openRegularConnection() -> SQlite3Pointer? {
+        return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)
+    }
+
+    static func openReadonlyConnection() -> SQlite3Pointer? {
+        return openConnection(SQLITE_OPEN_READONLY) // will fail if database is not created
+    }
+
+    static func openConnection(_ flags: Int32) -> SQlite3Pointer? {
+        var connection: SQlite3Pointer?
+
+        // With 2 connections open we cannot use temporary databases because they are not shared.
+        // Using memory databases allow sharing (cache=shared) but because of that the readonlyConnection is able to write the database.
+        // https://stackoverflow.com/questions/40547077/is-it-possible-to-connect-to-an-in-memory-sqlite-db-in-read-only-mode
+        assert(sqlite3_open_v2("file::memory:?cache=shared", &connection, flags, nil) == SQLITE_OK)
+        if ((flags & SQLITE_OPEN_READONLY) != 0) {
+            assert(sqlite3_exec(connection, "PRAGMA query_only = 1", nil, nil, nil) == SQLITE_OK) // forces read-only behavior
+        }
+
+        return connection
+    }
+
+    static func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
+        return RAnalyticsDatabase.database(connection: connection)
+    }
+
+    static func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
+        var tableCount = Int32(0)
+        let query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='\(table)'"
+
+        var statement: SQlite3Pointer?
+        sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        sqlite3_step(statement)
+        tableCount = sqlite3_column_int(statement, 0)
+        sqlite3_reset(statement)
+        sqlite3_finalize(statement)
+
+        return tableCount > 0
+    }
+    
+    static func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
+        var result = [Data]()
+        let query = "select * from \(table)"
+
+        var statement: SQlite3Pointer?
+        let code = sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        switch code {
+        case SQLITE_OK:
+            while sqlite3_step(statement) == SQLITE_ROW {
+                let bytes: UnsafeRawPointer = sqlite3_column_blob(statement, 1)
+                let length = sqlite3_column_bytes(statement, 1)
+
+                result.append(Data(bytes: bytes, count: Int(length)))
+            }
+            sqlite3_finalize(statement)
+        case SQLITE_MISUSE:
+            assertionFailure()
+        default: ()
+        }
+
+        return result
+    }
+    
+    static func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
+        assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
+
+        let createTableQuery = "create table if not exists \(table) (id integer primary key, data blob)"
+        assert(sqlite3_exec(connection, createTableQuery, nil, nil, nil) == SQLITE_OK)
+
+        let insertQuery = "insert into \(table) (data) values(?)"
+        var statement: SQlite3Pointer?
+        assert(sqlite3_prepare_v2(connection, insertQuery, -1, &statement, nil) == SQLITE_OK)
+
+        blobs.forEach { blob in
+            blob.withUnsafeBytes { bytes -> Void in
+                let c1 = sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(blob.count), nil)
+                let c2 = sqlite3_step(statement)
+                let c3 = sqlite3_clear_bindings(statement)
+                let c4 = sqlite3_reset(statement)
+                assert([c1, c3, c4].allSatisfy({ $0 == SQLITE_OK }))
+                assert(c2 == SQLITE_DONE)
+            }
+        }
+
+        sqlite3_finalize(statement)
+        assert(sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK)
+    }
+}
