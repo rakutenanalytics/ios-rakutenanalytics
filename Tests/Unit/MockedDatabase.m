@@ -15,13 +15,13 @@
     return self;
 }
 
-- (void)insertBlob:(NSData*)blob into:(NSString *)table limit:(unsigned int)maximumNumberOfBlobs then:(dispatch_block_t)completion {
+- (void)insertBlob:(NSData *)blob into:(NSString *)table limit:(NSUInteger)maximumNumberOfBlobs then:(dispatch_block_t)completion {
     return [self insertBlobs:@[blob] into:table limit:maximumNumberOfBlobs then:completion];
 }
 
 - (void)insertBlobs:(NSArray<NSData *> *)blobs
                into:(NSString *)table
-              limit:(unsigned int)maximumNumberOfBlobs
+              limit:(NSUInteger)maximumNumberOfBlobs
                then:(dispatch_block_t)completion
 {
     for (NSData *blob in blobs)
@@ -44,9 +44,9 @@
     }
 }
 
-- (void)fetchBlobs:(unsigned int)maximumNumberOfBlobs
+- (void)fetchBlobs:(NSUInteger)maximumNumberOfBlobs
               from:(NSString *)table
-              then:(void (^)(NSArray<NSData *> *__nullable blobs, NSArray<NSNumber *> *__nullable identifiers))completion
+              then:(void (^)(NSArray<NSData *> * _Nullable, NSArray<NSNumber *> * _Nullable))completion
 {
     NSMutableArray *blobs       = NSMutableArray.new;
     NSMutableArray *identifiers = NSMutableArray.new;

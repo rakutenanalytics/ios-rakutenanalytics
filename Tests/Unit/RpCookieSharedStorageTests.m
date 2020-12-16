@@ -26,6 +26,7 @@ describe(@"getRpCookieFromCookieStorage", ^{
 
     afterEach(^{
         [OHHTTPStubs removeAllStubs];
+        [[NSBundle mainBundle] clearStubs];
     });
     context(@"when user sets 'disable shared cookie storage' key to true in app info.plist", ^{
         it(@"should return nil cookie", ^{

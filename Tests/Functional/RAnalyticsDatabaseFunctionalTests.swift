@@ -9,7 +9,7 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
     override func spec() {
         describe("RAnalyticsDatabase") {
 
-            let databaseName = "RSDKAnalytics.db"
+            let databaseName = "RSDKAnalytics_Test.db"
             let events = [mkEvent, mkAnotherEvent]
             var connection: SQlite3Pointer!
             var databaseURL: URL!

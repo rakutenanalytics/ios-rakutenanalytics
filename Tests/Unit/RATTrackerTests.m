@@ -1,6 +1,5 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
-#import <OHHTTPStubs/OHHTTPStubs.h>
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
@@ -311,7 +310,7 @@
 {
     NSString *trackingIdentifier = @"trackingIdentifier";
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
-                                           parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter: trackingIdentifier}];
+                                        parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter: trackingIdentifier}];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsPushNotificationEventName];
     XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], trackingIdentifier);
 }
@@ -334,7 +333,7 @@
     NSString *storeURL      = @"storeUrl";
 
     id event = [RAnalyticsEvent.alloc initWithName:discoverEvent
-                                           parameters:@{@"prApp" : appName, @"prStoreUrl": storeURL}];
+                                        parameters:@{@"prApp" : appName, @"prStoreUrl": storeURL}];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:discoverEvent];
     XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prApp"], appName);
     XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prStoreUrl"], storeURL);
@@ -483,7 +482,7 @@
 #pragma mark Test batch delay handling and setting delivery strategy
 
 - (void)testRATTrackerDefaultBatchingDelay {
-    
+
     BatchingDelayBlock defaultBatchingDelay = [RAnalyticsRATTracker.sharedInstance.sender performSelector:@selector(batchingDelayBlock)];
     XCTAssertEqual(defaultBatchingDelay(), 1.0);
 }
@@ -501,9 +500,9 @@
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
-        [wait fulfill];
         NSTimeInterval expectedDelay = 15.0;
         XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        [wait fulfill];
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
@@ -524,9 +523,9 @@
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
-        [wait fulfill];
         NSTimeInterval expectedDelay = 10.0;
         XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        [wait fulfill];
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
@@ -691,10 +690,10 @@
 {
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortrait][@"mori"] intValue], 1);
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown][@"mori"] intValue], 1);
-    
+
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeLeft][@"mori"] intValue], 2);
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeRight][@"mori"] intValue], 2);
-    
+
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationUnknown][@"mori"] intValue], 1);
 }
 
@@ -704,7 +703,7 @@
     OCMStub([classMockApplication performSelector:@selector(sharedApplication)]).andReturn(nil);
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
-    
+
     XCTAssertEqual([payload[@"mori"] intValue], 1);
     [classMockApplication stopMocking];
 }
@@ -735,13 +734,6 @@
 
 @end
 
-@implementation RAnalyticsRATTracker(empty)
-- (instancetype)initEmpty {
-    self = [super init];
-    return self;
-}
-@end
-
 SPEC_BEGIN(RAnalyticsRATTrackerTests)
 
 describe(@"RAnalyticsRATTracker", ^{
@@ -750,20 +742,20 @@ describe(@"RAnalyticsRATTracker", ^{
         NSURL *originalEndpointURL = ratTracker.endpointURL;
         RAnalyticsSender *sender = [ratTracker performSelector:@selector(sender)];
         RAnalyticsRpCookieFetcher *rpCookieFetcher = [ratTracker performSelector:@selector(rpCookieFetcher)];
-        
+
         it(@"should set the expected endpoint to its sender and rpCookieFetcher", ^{
             ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint1.com"];
             [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
             [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
             [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
-            
+
             ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint2.com"];
             [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
             [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
             [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
         });
-        
-        afterAll(^{
+
+        afterEach(^{
             ratTracker.endpointURL = originalEndpointURL;
         });
     });

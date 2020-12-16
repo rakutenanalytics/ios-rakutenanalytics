@@ -16,6 +16,9 @@ describe(@"RAnalyticsHelpers", ^{
             RAnalyticsManager* manager = [RAnalyticsManager nullMock];
             [RAnalyticsManager stub:@selector(sharedInstance) andReturn:manager];
         });
+        afterEach(^{
+            [RAnalyticsManager clearStubs];
+        });
         
         it(@"should return user-defined RAT url if user set RAT url in app info.plist", ^{
             [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@"https://example.com" withArguments:@"RATEndpoint"];
@@ -47,6 +50,10 @@ describe(@"RAnalyticsHelpers", ^{
     });
 
     describe(@"_RAnalyticsUseDefaultSharedCookieStorage", ^{
+        afterEach(^{
+            [[NSBundle mainBundle] clearStubs];
+        });
+
         it(@"should return false if user set 'disable shared cookie storage' key to true in app info.plist", ^{
             [[NSBundle mainBundle] stub:@selector(objectForInfoDictionaryKey:) andReturn:@(YES) withArguments:@"RATDisableSharedCookieStorage"];
 

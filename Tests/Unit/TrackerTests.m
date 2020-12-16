@@ -66,7 +66,7 @@
     NSDate *lastUpdateDate = dateComponents.date;
 
     _defaultState = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
-                                                       deviceIdentifier:@"deviceId"];
+                                                    deviceIdentifier:@"deviceId"];
     _defaultState.advertisingIdentifier = @"adId";
     _defaultState.lastKnownLocation     = location;
     _defaultState.sessionStartDate      = sessionStartDate;
@@ -82,14 +82,14 @@
     _defaultState.currentPage           = currentPage;
 
     _defaultEvent = [RAnalyticsEvent.alloc initWithName:[_RATEventPrefix stringByAppendingString:@"defaultEvent"]
-                                                parameters:@{@"param1": @"value1"}];
+                                             parameters:@{@"param1": @"value1"}];
 
     // Mock the database
     _database = MockedDatabase.new;
     
     id dbMock = OCMClassMock(RAnalyticsDatabase.class);
     [self addMock:dbMock];
-    
+
     OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
 
     // Mock the SDKTracker singleton so that each test gets a fresh one
