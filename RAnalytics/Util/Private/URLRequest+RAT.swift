@@ -18,7 +18,7 @@ fileprivate extension URLRequest {
         /// For historical reasons we don't send the JSON as JSON but as non-urlEncoded x-www-form-urlencoded,
         /// passed as text/plain. The backend also doesn't accept a charset value (but assumes UTF-8).
         setValue("text/plain", forHTTPHeaderField: "Content-Type")
-        
+
         httpBody = body
         httpMethod = "POST"
 

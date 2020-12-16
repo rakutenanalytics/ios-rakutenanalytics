@@ -1,5 +1,5 @@
 @objc public extension NSMutableArray {
-    
+
     /// Initializes JSON-formatted array of records from data array
     /// - Parameter ratDataRecords: array of RAT data records
     convenience init(ratDataRecords: [NSData]) {

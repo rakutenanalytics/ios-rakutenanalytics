@@ -32,7 +32,7 @@ extension AnyDependenciesContainer {
 
 public struct SwiftyDependenciesContainer<T: Equatable> {
     private var elements = [T]()
-    
+
     public init() {}
 
     /// Register an  instance conforming to Equatable protocol if it's not already contained
@@ -55,7 +55,7 @@ public struct SwiftyDependenciesContainer<T: Equatable> {
             }
             return type(of: element) == typeToResolve
         }
-        
+
         return result as? T
     }
 }

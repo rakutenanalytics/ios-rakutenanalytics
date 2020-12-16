@@ -44,13 +44,13 @@ import UIKit
               !plistObj.isEmpty,
               let userDefinedURL = URL(string: plistObj) else {
             #if PUBLIC_ANALYTICS_IOS_SDK
-                #if DEBUG
-                assertionFailure("Your application's Info.plist must contain a key 'RATEndpoint' set to your endpoint URL")
-                #endif
-                return nil
+            #if DEBUG
+            assertionFailure("Your application's Info.plist must contain a key 'RATEndpoint' set to your endpoint URL")
+            #endif
+            return nil
             #else
-                let prodURL = URL(string: "https://rat.rakuten.co.jp/")
-                return prodURL
+            let prodURL = URL(string: "https://rat.rakuten.co.jp/")
+            return prodURL
             #endif
         }
         return userDefinedURL
