@@ -4,6 +4,5 @@ PROJECT_BRIEF    = "Analytics module of the Rakuten Ecosystem Mobile SDK"
 INPUT           += RAnalytics
 IGNORE_PREFIX    = RAnalytics
 PREDEFINED		+= "RSDKA_SWIFT_NAME(s)="
-TAGFILES         = "$(HOME)/remsdk-tagfiles/deviceinformation-1.5.tag=../deviceinformation-1.5"
 
 

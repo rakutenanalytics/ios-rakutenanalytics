@@ -68,6 +68,10 @@ A custom endpoint can also be configured at runtime as below:
     AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 @endcode
 
+@attention The runtime endpoint you set is not persisted and is intended only for developer/QA testing.
+
+**Note**: If you have implmenented a @ref analytics-custom-tracker "custom tracker" ensure that you have added your tracker to the manager before calling the set endpoint function.
+
 @subsection analytics-configure-location Location tracking
 @warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
 @warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
@@ -459,6 +463,12 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-7-0-0 7.0.0 (2020-12-16)
+* [SDKCF-2922](https://jira.rakuten-it.com/jira/browse/SDKCF-2922): Added ability to configure the RAT endpoint at runtime. See @ref analytics-configure-endpoint.
+* [SDKCF-2920](https://jira.rakuten-it.com/jira/browse/SDKCF-2920): Improved custom domains support in App to Web Tracking feature. See @ref analytics-app-to-web-tracking.
+* **Breaking change** [SDKCF-2888](https://jira.rakuten-it.com/jira/browse/SDKCF-2888): Minimum supported version has been changed to iOS 11.0.
+* **Breaking change** Custom @ref RAnalyticsTracker trackers must implement the new @ref RAnalyticsEndpointSettable protocol.
+
 @subsection analytics-6-0-0 6.0.0 (2020-11-25)
 * [SDKCF-2921](https://jira.rakuten-it.com/jira/browse/SDKCF-2921): Added tracking support for rich push notifications.
 * [SDKCF-2938](https://jira.rakuten-it.com/jira/browse/SDKCF-2938): Fixed issue where push notification tracking event may not have been sent when UNUserNotification was disabled & app was in background on iOS 10.x.
