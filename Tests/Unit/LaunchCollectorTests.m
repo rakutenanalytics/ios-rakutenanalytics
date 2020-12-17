@@ -2,8 +2,8 @@
 #import <RAnalytics/RAnalytics.h>
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "../../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
 #import <OCMock/OCMock.h>
+#import <UserNotifications/UserNotifications.h>
 
 @interface _RAnalyticsExternalCollector ()
 + (void)trackEvent:(NSString *)eventName;

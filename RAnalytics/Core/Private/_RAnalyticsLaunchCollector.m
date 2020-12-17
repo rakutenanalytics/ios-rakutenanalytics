@@ -4,7 +4,8 @@
 #import "_RAnalyticsHelpers.h"
 #import <UserNotifications/UserNotifications.h>
 #import "RAnalyticsPushTrackingUtility.h"
-#import "_RAnalyticsClassManipulator+UNUserNotificationCenter.h"
+
+#import <RAnalytics/RAnalytics-Swift.h>
 
 static NSString *const _RAnalyticsInitialLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate";
 static NSString *const _RAnalyticsInstallLaunchDateKey = @"com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate";
@@ -236,7 +237,7 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 1.5;
 - (void)handleTapNonUNUserNotification: (NSDictionary *) userInfo
                               appState: (UIApplicationState) state
 {
-    if (_RAnalyticsNotificationsAreHandledByUNDelegate())
+    if (UNUserNotificationCenter.RAnalyticsNotificationsAreHandledByUNDelegate)
     {
         return;
     }
@@ -254,7 +255,7 @@ static NSTimeInterval const _RAnalyticsPushTapEventTimeLimit = 1.5;
 
 - (void)_sendTapNonUNUserNotification
 {
-    if (_RAnalyticsNotificationsAreHandledByUNDelegate())
+    if (UNUserNotificationCenter.RAnalyticsNotificationsAreHandledByUNDelegate)
     {
         return;
     }

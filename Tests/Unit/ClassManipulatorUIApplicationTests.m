@@ -3,7 +3,6 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 #import "AppDelegate.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsClassManipulator.h"
 
 #pragma mark - IceBase (Fake FireBase)
 
@@ -186,9 +185,9 @@
 @implementation Container
 @end
 
-@interface _RAnalyticsClassManipulator(Replacement) <UIApplicationDelegate>
+@interface UIApplication (Replacement) <UIApplicationDelegate>
 @end
-@implementation _RAnalyticsClassManipulator (Replacement)
+@implementation UIApplication (Replacement)
 
 + (void)replaceMethodWithSelector:(SEL)newSelector
                       toClass:(Class)recipient
@@ -221,26 +220,26 @@ describe(@"_RAnalyticsClassManipulator", ^{
     });
     
     afterEach(^{
-        [_RAnalyticsClassManipulator replaceMethodWithSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)
-                                                       toClass:UIApplication.sharedApplication.delegate.class
-                                                     replacing:@selector(application:willFinishLaunchingWithOptions:)];
+        [UIApplication replaceMethodWithSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)
+                                         toClass:UIApplication.sharedApplication.delegate.class
+                                       replacing:@selector(application:willFinishLaunchingWithOptions:)];
         
-        [_RAnalyticsClassManipulator replaceMethodWithSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)
-                                                       toClass:UIApplication.sharedApplication.delegate.class
-                                                     replacing:@selector(application:didFinishLaunchingWithOptions:)];
+        [UIApplication replaceMethodWithSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)
+                                         toClass:UIApplication.sharedApplication.delegate.class
+                                       replacing:@selector(application:didFinishLaunchingWithOptions:)];
     });
     
     afterAll(^{
-        [UIApplication.sharedApplication performSelector:@selector(_r_autotrack_setApplicationDelegate:) withObject:originalAppDelegate];
+        [UIApplication.sharedApplication performSelector:@selector(r_autotrack_setApplicationDelegate:) withObject:originalAppDelegate];
     });
     
     context(@"No 3rd party swizzling", ^{
         describe(@"EmptyAppDelegate", ^{
-            it(@"should not respond to _r_autotrack_application launching methods", ^{
+            it(@"should not respond to r_autotrack_application launching methods", ^{
                 UIApplication.sharedApplication.delegate = emptyAppDelegate;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beFalse];
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beFalse];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beFalse];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beFalse];
 
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
@@ -251,13 +250,13 @@ describe(@"_RAnalyticsClassManipulator", ^{
         });
 
         describe(@"PartialAppDelegateWillLaunch", ^{
-            it(@"should respond to _r_autotrack_application:willFinishLaunchingWithOptions:", ^{
+            it(@"should respond to r_autotrack_application:willFinishLaunchingWithOptions:", ^{
                 UIApplication.sharedApplication.delegate = partialAppDelegateWillLaunch;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beFalse];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beFalse];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(application:didFinishLaunchingWithOptions:) withCount:1];
@@ -266,32 +265,32 @@ describe(@"_RAnalyticsClassManipulator", ^{
         });
 
         describe(@"PartialAppDelegateDidLaunch", ^{
-            it(@"should respond to _r_autotrack_application:didFinishLaunchingWithOptions:", ^{
+            it(@"should respond to r_autotrack_application:didFinishLaunchingWithOptions:", ^{
                 UIApplication.sharedApplication.delegate = partialAppDelegateDidLaunch;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beFalse];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beFalse];
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });
 
         describe(@"FullAppDelegate", ^{
-            it(@"should respond to _r_autotrack_application launching methods", ^{
+            it(@"should respond to r_autotrack_application launching methods", ^{
                 UIApplication.sharedApplication.delegate = fullAppDelegate;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });
@@ -302,8 +301,8 @@ describe(@"_RAnalyticsClassManipulator", ^{
             it(@"should respond to _ice_app launching methods", ^{
                 UIApplication.sharedApplication.delegate = swizzledEmptyAppDelegate;
 
-                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:willFinishLaunchingWithOptions:)]) should] beTrue];
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:didFinishLaunchingWithOptions:)]) should] beTrue];
@@ -314,10 +313,10 @@ describe(@"_RAnalyticsClassManipulator", ^{
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_ice_app:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate _ice_app:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });
@@ -326,8 +325,8 @@ describe(@"_RAnalyticsClassManipulator", ^{
             it(@"should respond to _ice_app:didFinishLaunchingWithOptions:", ^{
                 UIApplication.sharedApplication.delegate = swizzledPartialAppDelegateWillLaunch;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:willFinishLaunchingWithOptions:)]) should] beFalse];
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:didFinishLaunchingWithOptions:)]) should] beTrue];
@@ -335,10 +334,10 @@ describe(@"_RAnalyticsClassManipulator", ^{
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_ice_app:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate _ice_app:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });
@@ -347,8 +346,8 @@ describe(@"_RAnalyticsClassManipulator", ^{
             it(@"should respond to _ice_app:willFinishLaunchingWithOptions:", ^{
                 UIApplication.sharedApplication.delegate = swizzledPartialAppDelegateDidLaunch;
 
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:willFinishLaunchingWithOptions:)]) should] beTrue];
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:didFinishLaunchingWithOptions:)]) should] beFalse];
@@ -356,10 +355,10 @@ describe(@"_RAnalyticsClassManipulator", ^{
                 [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_ice_app:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate _ice_app:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });
@@ -368,16 +367,16 @@ describe(@"_RAnalyticsClassManipulator", ^{
             it(@"should not respond to _ice_app launching methods", ^{
                 UIApplication.sharedApplication.delegate = swizzledFullAppDelegate;
 
-                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
-                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:willFinishLaunchingWithOptions:)]) should] beTrue];
+                [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(r_autotrack_application:didFinishLaunchingWithOptions:)]) should] beTrue];
 
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:willFinishLaunchingWithOptions:)]) should] beFalse];
                 [[theValue([(id)UIApplication.sharedApplication.delegate respondsToSelector:@selector(_ice_app:didFinishLaunchingWithOptions:)]) should] beFalse];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:willFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication willFinishLaunchingWithOptions:nil];
 
-                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(_r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
+                [[(id)UIApplication.sharedApplication.delegate should] receive:@selector(r_autotrack_application:didFinishLaunchingWithOptions:) withCount:1];
                 [(id)UIApplication.sharedApplication.delegate application:UIApplication.sharedApplication didFinishLaunchingWithOptions:nil];
             });
         });

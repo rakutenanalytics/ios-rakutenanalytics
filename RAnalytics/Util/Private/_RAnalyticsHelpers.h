@@ -1,4 +1,5 @@
 #import <RAnalytics/RAnalyticsDefines.h>
+#import <UIKit/UIApplication.h>
 
 RSDKA_EXPORT NSString *const _RATEventPrefix;
 RSDKA_EXPORT NSString *const _RATETypeParameter;

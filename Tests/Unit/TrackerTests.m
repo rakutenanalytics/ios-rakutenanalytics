@@ -1,6 +1,7 @@
 #import "TrackerTests.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
+#import <CoreLocation/CLLocation.h>
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "UnitTests-Swift.h"
