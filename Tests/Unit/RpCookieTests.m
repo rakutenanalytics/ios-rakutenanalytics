@@ -38,12 +38,12 @@
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
-   [self setRpCookieWithName:@"TestCookieName" value:@"TestCookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
+   [self setRpCookieWithName:@"Rp" value:@"TestCookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
 
     RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSHTTPCookie *cookie = [self rpCookieFromStorage];
-        XCTAssertEqualObjects(@"TestCookieName", cookie.name);
+        XCTAssertEqualObjects(@"Rp", cookie.name);
         XCTAssertEqualObjects(@"TestCookieValue", cookie.value);
         [expectation fulfill];
     });
