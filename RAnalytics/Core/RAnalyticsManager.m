@@ -8,8 +8,8 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
-#import "_RAdvertisingIdentifierHandler.h"
-#import "_RAnalyticsCookieInjector.h"
+#import <RAnalytics/RAnalytics-Swift.h>
+#import <WebKit/WebKit.h>
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +47,9 @@
 @property (nonatomic, copy) NSDate *sessionStartDate;
 @property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @property (nonatomic, copy) WebTrackingCookieDomainBlock cookieDomainBlock;
+@property (nonatomic, strong) AnyDependenciesContainer *dependenciesContainer;
+@property (nonatomic, strong) RAdvertisingIdentifierHandler *advertisingIdentifierHandler;
+@property (nonatomic, strong) RAnalyticsCookieInjector *analyticsCookieInjector;
 
 - (instancetype)initSharedInstance;
 @end
@@ -98,6 +101,15 @@ static RAnalyticsManager *_instance = nil;
         _shouldTrackLastKnownLocation     = YES;
         _shouldTrackAdvertisingIdentifier = YES;
         _shouldTrackPageView              = YES;
+
+        // Dependencies Container
+        _dependenciesContainer = AnyDependenciesContainer.new;
+        [_dependenciesContainer registerObject:ASIdentifierManager.sharedManager];
+        [_dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
+
+        // Inject the Dependencies Container
+        _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:_dependenciesContainer];
+        _analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:_dependenciesContainer];
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -342,7 +354,7 @@ static RAnalyticsManager *_instance = nil;
                                                                    deviceIdentifier:_deviceIdentifier];
 
     if (_shouldTrackAdvertisingIdentifier) {
-        NSString *advertisingIdentifier = [_RAdvertisingIdentifierHandler idfa];
+        NSString *advertisingIdentifier = _advertisingIdentifierHandler.idfa;
 
         if (advertisingIdentifier) {
             // User has not disabled tracking
@@ -356,9 +368,9 @@ static RAnalyticsManager *_instance = nil;
             domain = _cookieDomainBlock();
         }
 
-        [_RAnalyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
-                                                         deviceIdentifier:_deviceIdentifier
-                                                        completionHandler:nil];
+        [_analyticsCookieInjector injectAppToWebTrackingCookieWithDomain:domain
+                                                        deviceIdentifier:_deviceIdentifier
+                                                       completionHandler:nil];
     }
 
     state.lastKnownLocation = self.shouldTrackLastKnownLocation ? self.locationManager.location : nil;

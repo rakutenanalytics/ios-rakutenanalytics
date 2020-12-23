@@ -3,6 +3,7 @@
 #import "_RAnalyticsCoreHelpers.h"
 #import "RAnalyticsSender.h"
 #import "_SDKTracker.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 NSString* const _SDKTableName = @"RAKUTEN_ANALYTICS_SDK_TABLE";
 NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
@@ -72,8 +73,8 @@ NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";
     payload[@"etype"] = etype;
 
     NSDictionary *appAndSDKDict = _RAnalyticsApplicationInfoAndSDKComponents();
-    NSDictionary *appInfo = appAndSDKDict[_RAnalyticsAppInfoKey];
-    NSDictionary *sdkInfo = appAndSDKDict[_RAnalyticsSDKInfoKey];
+    NSDictionary *appInfo = appAndSDKDict[RAnalyticsConstants.RAnalyticsAppInfoKey];
+    NSDictionary *sdkInfo = appAndSDKDict[RAnalyticsConstants.RAnalyticsSDKInfoKey];
 
     if (sdkInfo.count)
     {

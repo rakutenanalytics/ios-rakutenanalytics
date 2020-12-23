@@ -3,8 +3,8 @@
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "../../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
 #import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsPrivateEvents.h"
 #import <OCMock/OCMock.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 
 @interface _RAnalyticsExternalCollector ()
 + (void)trackEvent:(NSString *)eventName;
@@ -84,9 +84,9 @@
 - (void)testDiscoverCollectorEventNoParams
 {
     NSDictionary *mapping = @{
-                              @"visitPreview"           : _RAnalyticsPrivateEventDiscoverPreviewVisit,
-                              @"tapShowMore"            : _RAnalyticsPrivateEventDiscoverPreviewShowMore,
-                              @"visitPage"              : _RAnalyticsPrivateEventDiscoverPageVisit
+                              @"visitPreview"           : NSNotification.discoverPreviewVisit,
+                              @"tapShowMore"            : NSNotification.discoverPreviewShowMore,
+                              @"visitPage"              : NSNotification.discoverPageVisit
                               };
     
     id mockCollector = OCMClassMock(_RAnalyticsExternalCollector.class);
@@ -104,8 +104,8 @@
 - (void)testDiscoverCollectorEventWithIdentifier
 {
     NSDictionary *mapping = @{
-                              @"tapPreview"             : _RAnalyticsPrivateEventDiscoverPreviewTap,
-                              @"tapPage"                : _RAnalyticsPrivateEventDiscoverPageTap
+                              @"tapPreview"             : NSNotification.discoverPreviewTap,
+                              @"tapPage"                : NSNotification.discoverPageTap
                               };
     
     NSString *identifier = @"12345";
@@ -130,8 +130,8 @@
 - (void)testDiscoverCollectorEventWithIdentifierAndRedirect
 {
     NSDictionary *mapping = @{
-                              @"redirectPreview"        : _RAnalyticsPrivateEventDiscoverPreviewRedirect,
-                              @"redirectPage"           : _RAnalyticsPrivateEventDiscoverPageRedirect
+                              @"redirectPreview"        : NSNotification.discoverPreviewRedirect,
+                              @"redirectPage"           : NSNotification.discoverPageRedirect
                               };
     
     NSString *identifier = @"12345";

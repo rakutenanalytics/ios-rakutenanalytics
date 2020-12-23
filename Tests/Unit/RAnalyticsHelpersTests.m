@@ -5,6 +5,12 @@
 SPEC_BEGIN(RAnalyticsHelpersTests)
 
 describe(@"RAnalyticsHelpers", ^{
+    describe(@"_RAnalyticsSharedApplication", ^{
+        it(@"should not return nil", ^{
+            [[_RAnalyticsSharedApplication() should] beNonNil];
+        });
+    });
+
     describe(@"_RAnalyticsEndpointAddress", ^{
         beforeEach(^{
             RAnalyticsManager* manager = [RAnalyticsManager nullMock];

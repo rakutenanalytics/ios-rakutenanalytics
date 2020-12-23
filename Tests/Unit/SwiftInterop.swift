@@ -14,12 +14,14 @@ public class SwiftInterop : XCTestCase {
             case AnalyticsManager.State.Origin.internal: break
             case AnalyticsManager.State.Origin.external: break
             case AnalyticsManager.State.Origin.push:     break
+            @unknown default:()
             }
 
             switch state.loginMethod {
             case AnalyticsManager.State.LoginMethod.oneTapLogin:   break
             case AnalyticsManager.State.LoginMethod.passwordInput: break
             case AnalyticsManager.State.LoginMethod.other:         break
+            @unknown default:()
             }
 
             if let _ = event.parameters["boo"] as? NSNumber {

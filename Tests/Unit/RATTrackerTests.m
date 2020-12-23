@@ -4,12 +4,11 @@
 
 #import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../../RAnalytics/Util/Private/UIApplication+Additions.h"
-#import "../../RAnalytics/Util/Private/_RStatusBarOrientationHandler.h"
 
 #import "TrackerTests.h"
 
 #import <Kiwi/Kiwi.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 
 #pragma mark - Module Internals
 
@@ -676,26 +675,21 @@
 
 #pragma mark Mori - Interface Orientations
 
-- (id)payloadWithInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    id statusBarOrientationHandlerMock = OCMPartialMock(_RStatusBarOrientationHandler.new);
-    OCMStub([statusBarOrientationHandlerMock performSelector:@selector(currentStatusBarOrientation)]).andReturn(interfaceOrientation);
-    
-    id trackerMock = OCMPartialMock([self tracker]);
-    OCMStub([trackerMock performSelector:@selector(statusBarOrientationHandler)]).andReturn(statusBarOrientationHandlerMock);
-    
+- (id)payloadWithInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    id classMockApplication = OCMPartialMock(UIApplication.sharedApplication);
+    OCMStub([classMockApplication performSelector:@selector(analyticsStatusBarOrientation)]).andReturn(interfaceOrientation);
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     id payload = [self assertProcessEvent:event
                                     state:self.defaultState
-                                  tracker:trackerMock
+                                  tracker:(id)[self tracker]
                                expectType:RAnalyticsInstallEventName];
-    
-    [statusBarOrientationHandlerMock stopMocking];
-    [trackerMock stopMocking];
-    
+    [classMockApplication stopMocking];
     return payload;
 }
 
-- (void)testMoriIfUIApplicationRespondsToSharedApplication {
+- (void)testMoriIfUIApplicationRespondsToSharedApplication
+{
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortrait][@"mori"] intValue], 1);
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown][@"mori"] intValue], 1);
     
@@ -705,14 +699,15 @@
     XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationUnknown][@"mori"] intValue], 1);
 }
 
-- (void)testMoriIfUIApplicationDoesNotRespondToSharedApplication {
+- (void)testMoriIfUIApplicationDoesNotRespondToSharedApplication
+{
     id classMockApplication = OCMClassMock(UIApplication.class);
-    OCMStub([classMockApplication performSelector:@selector(_rat_respondsToSharedApplication)]).andReturn(NO);
-    
+    OCMStub([classMockApplication performSelector:@selector(sharedApplication)]).andReturn(nil);
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
     
     XCTAssertEqual([payload[@"mori"] intValue], 1);
+    [classMockApplication stopMocking];
 }
 
 #pragma mark User Identifier
