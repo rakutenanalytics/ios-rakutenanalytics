@@ -142,12 +142,16 @@ fileprivate extension RAnalyticsSender {
     func doBackgroundUpload(records: [Data], identifiers: [Int64]) {
         /// When you make changes here, always check the server-side program will accept it.
         /// The source code is at https://git.rakuten-it.com/projects/RATR/repos/receiver/browse/receiver.c
-        guard let recordGroup = NSMutableArray(ratDataRecords: records as [NSData]) as? [NSDictionary],
-              let data = NSMutableData(ratRecords: recordGroup) else {
+        /// and the API spec is https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Data+Insertion+API
+        guard !records.isEmpty,
+              let ratJsonRecords = [JsonRecord](ratDataRecords: records),
+              !ratJsonRecords.isEmpty,
+              let data = Data(ratJsonRecords: ratJsonRecords) else {
+            RLogger.error("Sender error: failed to create RAT request body data")
             return
         }
 
-        let request = NSURLRequest.ratRequest(url: endpointURL, body: data as Data)
+        let request = URLRequest.ratRequest(url: endpointURL, body: data)
 
         let task = URLSession.shared.dataTask(with: request as URLRequest) {(_, response, error) in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -169,15 +173,15 @@ fileprivate extension RAnalyticsSender {
                 }
                 let userInfo = [NSUnderlyingErrorKey: innerError]
                 NotificationCenter.default.post(name: NSNotification.Name.RAnalyticsUploadFailure,
-                                                object: recordGroup,
+                                                object: ratJsonRecords,
                                                 userInfo: userInfo)
                 self.backgroundUploadEnded()
                 return
             }
 
             /// Success!
-            NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadSuccess, object: recordGroup)
-            self.logSentRecords(recordGroup)
+            NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadSuccess, object: ratJsonRecords)
+            self.logSentRecords(ratJsonRecords)
 
             /// Delete the records from the local database.
             self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {

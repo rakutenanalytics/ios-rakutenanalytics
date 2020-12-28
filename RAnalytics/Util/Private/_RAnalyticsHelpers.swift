@@ -31,15 +31,22 @@ import UIKit
     }
 }
 
-@objc public extension Bundle {
-    static var useDefaultSharedCookieStorage: Bool {
+@objc public protocol EnvironmentBundle {
+    static var useDefaultSharedCookieStorage: Bool { get }
+    static var endpointAddress: URL? { get }
+    static var assetsBundle: Bundle? { get }
+    static var sdkComponentMap: NSDictionary? { get }
+}
+
+@objc extension Bundle: EnvironmentBundle {
+    public static var useDefaultSharedCookieStorage: Bool {
         guard let result = Bundle.main.object(forInfoDictionaryKey: "RATDisableSharedCookieStorage") as? NSNumber else {
             return true
         }
         return !result.boolValue
     }
 
-    static var endpointAddress: URL? {
+    public static var endpointAddress: URL? {
         guard let plistObj = Bundle.main.object(forInfoDictionaryKey: "RATEndpoint") as? String,
               !plistObj.isEmpty,
               let userDefinedURL = URL(string: plistObj) else {
@@ -56,7 +63,7 @@ import UIKit
         return userDefinedURL
     }
 
-    static let assetsBundle: Bundle? = {
+    public static let assetsBundle: Bundle? = {
         guard let RAnalyticsManagerClass = NSClassFromString("RAnalyticsManager") else {
             return nil
         }
@@ -75,7 +82,7 @@ import UIKit
         return bundle
     }()
 
-    static let sdkComponentMap: NSDictionary? = {
+    public static let sdkComponentMap: NSDictionary? = {
         guard let bundle = assetsBundle,
               let filePath = bundle.path(forResource: "REMModulesMap", ofType: "plist") else {
             return nil

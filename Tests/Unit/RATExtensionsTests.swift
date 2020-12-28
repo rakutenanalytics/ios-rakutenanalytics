@@ -1,12 +1,22 @@
 import Quick
 import Nimble
+@testable import RAnalytics
+
+class BundleMock: EnvironmentBundle {
+    static var shouldUseDefaultCookieStorage = true
+
+    static var useDefaultSharedCookieStorage: Bool { shouldUseDefaultCookieStorage }
+    static var endpointAddress: URL? { nil }
+    static var assetsBundle: Bundle? { nil }
+    static var sdkComponentMap: NSDictionary? { nil }
+}
 
 final class RATUrlRequestExtensionSpec: QuickSpec {
     override func spec() {
         describe("ratRequest") {
             let urlString = "https://www.example.com"
             let data = "foo".data(using: .utf8)!
-            let request = NSURLRequest.ratRequest(url: URL(string: urlString)!, body: data)
+            let request = URLRequest.ratRequest(url: URL(string: urlString)!, body: data)
 
             it("should return a request with passed-in url set") {
                 expect(request.url?.absoluteString).to(equal(urlString))
@@ -36,9 +46,11 @@ final class RATUrlRequestExtensionSpec: QuickSpec {
                 expect(request.allHTTPHeaderFields?["Content-Length"]).to(equal("\(data.count)"))
             }
 
-            it("should return a request with httpShouldHandleCookies set to expected value") {
-                // FIXME: Due to structure of bundle helpers we cannot inject the value
-                //expect(request.httpShouldHandleCookies).to(equal(true))
+            it("should return a request with httpShouldHandleCookies set false") {
+                BundleMock.shouldUseDefaultCookieStorage = false
+                let httpRequest = URLRequest.ratRequest(url: URL(string: urlString)!, body: data, environmentBundle: BundleMock.self)
+
+                expect(httpRequest.httpShouldHandleCookies).to(equal(false))
             }
         }
     }
@@ -47,21 +59,21 @@ final class RATUrlRequestExtensionSpec: QuickSpec {
 final class RATArrayExtensionSpec: QuickSpec {
     override func spec() {
         describe("init") {
-            context("when the passed in array elements are serialized json objects") {
+            context("when the passed in array elements are serialized json dictionaries") {
                 it("should return an array of the expected json dictionary elements") {
                     let dictionaryData = try! JSONSerialization.data(withJSONObject: ["key": "value"], options: .init(rawValue: 0))
-                    let dataArray = [dictionaryData as NSData, dictionaryData as NSData]
-                    let expected = [["key": "value"], ["key": "value"]] as NSArray
+                    let dataArray = [dictionaryData, dictionaryData]
+                    let expected = [["key": "value"], ["key": "value"]]
 
-                    expect(NSMutableArray(ratDataRecords: dataArray)).to(equal(expected))
+                    expect([JsonRecord](ratDataRecords: dataArray) as? Array).to(equal(expected))
                 }
             }
 
-            context("when the input array elements are not serialized json objects") {
-                it("should return an empty array") {
-                    let dataArray = ["a", "b"].compactMap({ $0.data(using: .utf8) as NSData? })
+            context("when the input array elements are not serialized json dictionaries") {
+                it("should return a nil array") {
+                    let dataArray = ["a", "b"].compactMap({ $0.data(using: .utf8) as Data? })
 
-                    expect(NSMutableArray(ratDataRecords: dataArray)).to(beEmpty())
+                    expect([JsonRecord](ratDataRecords: dataArray)).to(beNil())
                 }
             }
         }
@@ -73,7 +85,8 @@ final class RATDataExtensionSpec: QuickSpec {
         describe("init") {
             context("when the input array elements are dictionaries") {
                 it("should return valid data") {
-                    expect(NSMutableData(ratRecords: [["key1": "value1"], ["key2": "value2"]])).toNot(beNil())
+                    let input = [["key1": "value1", "key2": "value2"], ["key3": "value3"]] as [JsonRecord]
+                    expect(Data(ratJsonRecords: input)).toNot(beNil())
                 }
             }
         }

@@ -1,19 +1,20 @@
-@objc public extension NSURLRequest {
+extension URLRequest {
 
     /// Build a RAT http request
     /// - Parameters:
     ///   - url: RAT url endpoint
     ///   - body: body data
+    ///   - environmentBundle: type to get bundle data from
     /// - Returns: url request
-    class func ratRequest(url: URL, body: Data) -> NSURLRequest {
-        return URLRequest(url: url, body: body) as NSURLRequest
+    static func ratRequest(url: URL, body: Data, environmentBundle: EnvironmentBundle.Type = Bundle.self) -> URLRequest {
+        return URLRequest(url: url, body: body, environmentBundle: environmentBundle)
     }
 }
 
 fileprivate extension URLRequest {
-    init(url: URL, body: Data) {
+    init(url: URL, body: Data, environmentBundle: EnvironmentBundle.Type = Bundle.self) {
         self.init(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
-        httpShouldHandleCookies = Bundle.useDefaultSharedCookieStorage
+        httpShouldHandleCookies = environmentBundle.useDefaultSharedCookieStorage
 
         /// For historical reasons we don't send the JSON as JSON but as non-urlEncoded x-www-form-urlencoded,
         /// passed as text/plain. The backend also doesn't accept a charset value (but assumes UTF-8).
