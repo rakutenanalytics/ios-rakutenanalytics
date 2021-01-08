@@ -24,6 +24,7 @@ public final class RAnalyticsDatabase: NSObject {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
+    private var appWillTerminate = false
 
     ///
     /// Creates DB manager instance with SQLite connection
@@ -37,6 +38,11 @@ public final class RAnalyticsDatabase: NSObject {
 
     private init(connection: SQlite3Pointer) {
         self.connection = connection
+        super.init()
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(willTerminate),
+                                               name: UIApplication.willTerminateNotification,
+                                               object: nil)
     }
 
     ///
@@ -182,6 +188,11 @@ public final class RAnalyticsDatabase: NSObject {
                             in table: String,
                             then completion: @escaping () -> Void) {
 
+        guard !appWillTerminate else {
+            RLogger.debug("RAnalyticsDatabase - deleteBlobs is canceled because the app will terminate")
+            return
+        }
+
         let callerQueue = OperationQueue.current
         queue.addOperation { [weak self] in
 
@@ -214,6 +225,13 @@ public final class RAnalyticsDatabase: NSObject {
 
             RAnalyticsDatabaseHelper.commitTransaction(connection: self.connection)
         }
+    }
+}
+
+private extension RAnalyticsDatabase {
+
+    @objc private func willTerminate() {
+        appWillTerminate = true
     }
 }
 
