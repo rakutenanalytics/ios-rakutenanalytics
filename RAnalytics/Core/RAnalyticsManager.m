@@ -4,7 +4,6 @@
 #import <RAnalytics/RAnalytics.h>
 #import <RLogger/RLogger.h>
 #import "_RAnalyticsHelpers.h"
-#import "_RAnalyticsLaunchCollector.h"
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
@@ -51,6 +50,7 @@
 @property (nonatomic, strong) RAdvertisingIdentifierHandler *advertisingIdentifierHandler;
 @property (nonatomic, strong) RAnalyticsCookieInjector *analyticsCookieInjector;
 @property (nonatomic, strong) EventChecker *eventChecker;
+@property (nonatomic, strong) RAnalyticsLaunchCollector *analyticsLaunchCollector;
 
 - (instancetype)initSharedInstance;
 @end
@@ -92,8 +92,20 @@ static RAnalyticsManager *_instance = nil;
 {
     if ((self = [super init]))
     {
+        // Dependencies Container
+        _dependenciesContainer = AnyDependenciesContainer.new;
+        [_dependenciesContainer registerObject:NSNotificationCenter.defaultCenter];
+        [_dependenciesContainer registerObject:NSUserDefaults.standardUserDefaults];
+        [_dependenciesContainer registerObject:ASIdentifierManager.sharedManager];
+        [_dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
+        [_dependenciesContainer registerObject:KeychainHandler.new];
+        [_dependenciesContainer registerObject:AnalyticsTracker.new];
+
+        // Inject the Dependencies Container
+        _analyticsLaunchCollector = [[RAnalyticsLaunchCollector alloc] initWithDependenciesFactory:_dependenciesContainer];
+        
         if (!_RAnalyticsExternalCollector.sharedInstance ||
-            !_RAnalyticsLaunchCollector.sharedInstance)
+            !_analyticsLaunchCollector)
         {
             NSAssert(NO, @"Failed to initialize the %@ singleton", NSStringFromClass(self.class));
             return nil;
@@ -102,11 +114,6 @@ static RAnalyticsManager *_instance = nil;
         _shouldTrackLastKnownLocation     = YES;
         _shouldTrackAdvertisingIdentifier = YES;
         _shouldTrackPageView              = YES;
-
-        // Dependencies Container
-        _dependenciesContainer = AnyDependenciesContainer.new;
-        [_dependenciesContainer registerObject:ASIdentifierManager.sharedManager];
-        [_dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
 
         // Inject the Dependencies Container
         _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:_dependenciesContainer];
@@ -403,7 +410,7 @@ static RAnalyticsManager *_instance = nil;
     state.loggedIn = externalCollector.isLoggedIn;
 
     // Update state with data from launch collector
-    _RAnalyticsLaunchCollector *launchCollector = _RAnalyticsLaunchCollector.sharedInstance;
+    RAnalyticsLaunchCollector *launchCollector = _analyticsLaunchCollector;
     state.initialLaunchDate = launchCollector.initialLaunchDate;
     state.installLaunchDate = launchCollector.installLaunchDate;
     state.lastUpdateDate = launchCollector.lastUpdateDate;

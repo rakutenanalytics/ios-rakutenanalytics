@@ -10,16 +10,6 @@ let RSDKABuildUserNotificationSupport = false
 
 extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable {
 
-    // swiftlint:disable:next identifier_name
-    @objc public static var RAnalyticsNotificationsAreHandledByUNDelegate: Bool {
-        guard RSDKABuildUserNotificationSupport else {
-            return false
-        }
-
-        let delegateSelector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
-        return UNUserNotificationCenter.current().delegate?.responds(to: delegateSelector) ?? false
-    }
-
     @objc public static func loadSwift() {
         guard RSDKABuildUserNotificationSupport else {
             return
@@ -38,7 +28,7 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void) {
 
-        _RAnalyticsLaunchCollector.sharedInstance().processPush(response)
+        AnalyticsManager.shared().launchCollector?.processPushNotificationResponse(response)
         if responds(to: #selector(r_autotrack_userNotificationCenter(_:didReceive:withCompletionHandler:))) {
             r_autotrack_userNotificationCenter(center,
                                                didReceive: response,

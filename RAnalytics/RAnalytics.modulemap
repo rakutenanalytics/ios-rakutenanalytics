@@ -1,6 +1,5 @@
 framework module RAnalytics {
   umbrella header "RAnalytics.h"
-  header "_RAnalyticsLaunchCollector.h" // FIXME: to be removed when this class is migrated to Swift
 
   export *
   module * { export * }

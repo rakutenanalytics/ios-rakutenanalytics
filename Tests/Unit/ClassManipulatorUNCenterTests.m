@@ -4,10 +4,6 @@
 #import <RAnalytics/RAnalytics.h>
 #import <OCMock/OCMock.h>
 
-@interface _RAnalyticsLaunchCollector()
-@property (nonatomic) RAnalyticsOrigin origin;
-@end
-
 @interface UNDelegate : NSObject <UNUserNotificationCenterDelegate>
 @end
 

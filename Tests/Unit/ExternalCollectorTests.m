@@ -11,7 +11,7 @@
 - (instancetype)initInstance;
 @end
 
-@interface _RAnalyticsLaunchCollector ()
+@interface RAnalyticsLaunchCollector ()
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @end
 

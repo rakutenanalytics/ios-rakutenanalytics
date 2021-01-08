@@ -17,7 +17,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         RLogger.verbose("Application will finish launching with options = \(String(describing: launchOptions))")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.internal)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.internal)
 
         // Delegates may not implement the original method
         if responds(to: #selector(r_autotrack_application(_:willFinishLaunchingWithOptions:))) {
@@ -33,7 +33,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         RLogger.verbose("Application did finish launching with options = \(String(describing: launchOptions))")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.internal)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.internal)
 
         // Delegates may not implement the original method
         if responds(to: #selector(r_autotrack_application(_:didFinishLaunchingWithOptions:))) {
@@ -49,7 +49,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
     @objc func r_autotrack_application(_ application: UIApplication, handleOpen url: URL) -> Bool {
         RLogger.verbose("Application was asked to open URL \(url.absoluteString)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.external)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.external)
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application, handleOpen: url)
@@ -59,7 +59,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
                                        options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         RLogger.verbose("Application was asked to open URL \(url.absoluteString) with options =  \(options)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.external)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.external)
 
         return r_autotrack_application(app, open: url, options: options)
     }
@@ -70,7 +70,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
                                        annotation: Any) -> Bool {
         RLogger.verbose("Application was asked by \(sourceApplication ?? "nil") to open URL \(url.absoluteString) with annotation \(annotation)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.external)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.external)
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application,
@@ -86,7 +86,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         RLogger.verbose("Application was asked to continue user activity \(userActivity.debugDescription)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().setOrigin(.external)
+        AnalyticsManager.shared().launchCollector?.setOrigin(.external)
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application,
@@ -109,7 +109,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         RLogger.verbose("Application did receive remote notification \(userInfo)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().handleTapNonUNUserNotification(
+        AnalyticsManager.shared().launchCollector?.handleTapNonUNUserNotification(
             userInfo,
             appState: application.applicationState)
 
@@ -133,7 +133,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         RLogger.verbose("Application did receive remote notification \(userInfo)")
 
-        _RAnalyticsLaunchCollector.sharedInstance().handleTapNonUNUserNotification(
+        AnalyticsManager.shared().launchCollector?.handleTapNonUNUserNotification(
             userInfo,
             appState: application.applicationState)
 
@@ -214,12 +214,5 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             inClass: recipient,
             with: #selector(r_autotrack_application(_:didReceiveRemoteNotification:fetchCompletionHandler:)),
             onlyIfPresent: true)
-    }
-}
-
-// To be removed once _RAnalyticsLaunchCollector is migrated to Swift
-extension _RAnalyticsLaunchCollector {
-    func setOrigin(_ origin: AnalyticsManager.State.Origin) {
-        setValue(origin.rawValue, forKey: "origin")
     }
 }

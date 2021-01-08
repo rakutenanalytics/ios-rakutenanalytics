@@ -23,8 +23,8 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         UNUserNotificationCenter.current().delegate = nil
         
-        _RAnalyticsLaunchCollector.sharedInstance().resetToDefaults()
-        _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier = nil
+        AnalyticsManager.shared().launchCollector?.resetToDefaults()
+        AnalyticsManager.shared().launchCollector?.resetPushTrackingIdentifier()
     }
     
     override func tearDown() {
@@ -42,7 +42,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
         
-        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        let trackId = AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier ?? ""
         
         XCTAssert(trackId == testResult)
     }
@@ -53,7 +53,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     func test_swizzle_didReceiveRemoteNotification_background() throws {
@@ -62,7 +62,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID])
         
-        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        let trackId = AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier ?? ""
         
         XCTAssert(trackId == testResult)
     }
@@ -179,7 +179,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         _triggerDidReceiveRemoteNotification(userInfo: ["rid" : testRID,
                                                         "aps": [ "content-available" : 1 ]])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     func test_didReceiveRemoteNotification_background_processEvent_ifBackgroundPush() throws {
@@ -190,7 +190,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
                                                         "aps": [ "content-available" : 1,
                                                                  "alert" : "meesage"]])
         
-        XCTAssertNotNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNotNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     
@@ -203,7 +203,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
                                                         "aps": [ "content-available" : 1,
                                                                  "alert" : "meesage"]])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     // MARK: - Test didReceiveRemoteNotificationWithCompletionHandler
@@ -214,7 +214,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
         
-        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        let trackId = AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier ?? ""
         
         XCTAssert(trackId == testResult)
     }
@@ -225,7 +225,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         
         _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_background() throws {
@@ -233,7 +233,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         type(of: self).applicationState = .background
         _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID])
         
-        let trackId = _RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier ?? ""
+        let trackId = AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier ?? ""
         
         XCTAssert(trackId == testResult)
     }
@@ -349,7 +349,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
         _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid" : testRID,
                                                                              "aps": [ "content-available" : 1 ]])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent_ifBackgroundPush() throws {
@@ -360,7 +360,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
                                                                              "aps": [ "content-available" : 1,
                                                                                       "alert" : "meesage"]])
         
-        XCTAssertNotNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNotNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     
@@ -373,7 +373,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
                                                                              "aps": [ "content-available" : 1,
                                                                                       "alert" : "meesage"]])
         
-        XCTAssertNil(_RAnalyticsLaunchCollector.sharedInstance().pushTrackingIdentifier)
+        XCTAssertNil(AnalyticsManager.shared().launchCollector?.pushTrackingIdentifier)
     }
     
     // MARK: - Helper
