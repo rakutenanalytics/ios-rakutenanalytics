@@ -16,6 +16,7 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
     NSMutableSet* _tables;
     
     NSOperationQueue* _queue;
+    BOOL _appWillTerminate;
 }
 
 +(_RAnalyticsDatabase*)databaseWithConnection:(sqlite3*)connection {
@@ -29,8 +30,15 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
         _queue = [NSOperationQueue new];
         _queue.name = @"com.rakuten.esd.sdk.analytics.database";
         _queue.maxConcurrentOperationCount = 1;
-        
+
         _tables = [NSMutableSet set];
+        
+        _appWillTerminate = NO;
+
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(willTerminate)
+                                                   name:UIApplicationWillTerminateNotification
+                                                 object:nil];
     }
     return self;
 }
@@ -160,6 +168,11 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
                                in:(NSString *)table
                              then:(dispatch_block_t)completion
 {
+    if (_appWillTerminate)
+    {
+        return;
+    }
+    
     // Make params immutable, otherwise they could be modified before getting accessed later on the queue
     identifiers = [NSArray.alloc initWithArray:identifiers copyItems:YES];
     table = table.copy;
@@ -203,6 +216,11 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
             [queue addOperationWithBlock:completion];
         }
     }];
+}
+
+- (void)willTerminate
+{
+    _appWillTerminate = YES;
 }
 
 @end
