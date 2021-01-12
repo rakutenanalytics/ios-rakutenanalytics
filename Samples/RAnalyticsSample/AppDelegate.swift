@@ -1,12 +1,22 @@
 import UIKit
 import CoreLocation
 import RAnalytics
+import RLogger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let locationManager = CLLocationManager()
+
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        RLogger.loggingLevel = .debug
+        // Override the build time configuration of disabled automatic events defined in `RAnalyticsInfo.plist`
+        AnalyticsManager.shared().shouldTrackEventHandler = { _ in
+            true
+        }
+        return true
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 

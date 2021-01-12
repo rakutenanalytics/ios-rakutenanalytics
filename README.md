@@ -90,6 +90,69 @@ The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by defaul
     AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
 @endcode
 
+##### Automatics Events Tracking Configuration
+
+###### Build time configuration
+Create and add to your Xcode project this file: RAnalyticsConfiguration.plist
+Open the file and add the following events if you want to disable all the automatic events tracked by RAnalytics:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>RATDisabledEventsList</key>
+    <array>
+    <string>_rem_init_launch</string>
+    <string>_rem_launch</string>
+    <string>_rem_end_session</string>
+    <string>_rem_update</string>
+    <string>_rem_login</string>
+    <string>_rem_login_failure</string>
+    <string>_rem_logout</string>
+    <string>_rem_install</string>
+    <string>_rem_visit</string>
+    <string>_rem_push_notify</string>
+    <string>_rem_sso_credential_found</string>
+    <string>_rem_login_credential_found</string>
+    <string>_rem_credential_strategies</string>
+    <string>_analytics_custom</string>
+    </array>
+</dict>
+</plist>
+```
+###### Runtime configuration
+It's also possible to enable or disable events at Runtime:
+- Enable all events at Runtime:
+```swift
+AnalyticsManager.shared().shouldTrackEvent = { _ in true }
+```
+- Disable all events at Runtime:
+```swift
+AnalyticsManager.shared().shouldTrackEvent = { _ in false }
+```
+- Disable a given event at Runtime:
+```swift
+AnalyticsManager.shared().shouldTrackEvent = { eventName in
+    eventName != AnalyticsManager.Event.Name.sessionStart
+}
+```
+
+Note: The Runtime configuration overrides the build time configuration.
+If an event is disabled at build time configuration and enabled at runtime configuration, this event will be tracked by RAnalytics.
+
+In order to override the build time configuration at Runtime please set `AnalyticsManager.shared().shouldTrackEvent` in `application(_:willFinishLaunchingWithOptions:)`:
+```swift
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        AnalyticsManager.shared().shouldTrackEvent = { eventName in
+            ...
+        }
+        return true
+    }
+}
+```
+
 #### IDFA tracking on iOS 14.x and above
 @attention If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
 

@@ -19,6 +19,7 @@
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
 		6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
+		C98D717D25A6F71F00B1D048 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSample.entitlements; sourceTree = "<group>"; };
+		C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */ = {
 			isa = PBXGroup;
 			children = (
+				C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */,
 				6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */,
 				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
 				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
@@ -240,6 +243,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C98D717D25A6F71F00B1D048 /* RAnalyticsConfiguration.plist in Resources */,
 				6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */,
 				5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */,
 				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */,

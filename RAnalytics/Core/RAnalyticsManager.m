@@ -50,6 +50,7 @@
 @property (nonatomic, strong) AnyDependenciesContainer *dependenciesContainer;
 @property (nonatomic, strong) RAdvertisingIdentifierHandler *advertisingIdentifierHandler;
 @property (nonatomic, strong) RAnalyticsCookieInjector *analyticsCookieInjector;
+@property (nonatomic, strong) EventChecker *eventChecker;
 
 - (instancetype)initSharedInstance;
 @end
@@ -110,6 +111,7 @@ static RAnalyticsManager *_instance = nil;
         // Inject the Dependencies Container
         _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:_dependenciesContainer];
         _analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:_dependenciesContainer];
+        _eventChecker = [[EventChecker alloc] initWithDisabledEventsAtBuildTime:[NSBundle disabledEventsAtBuildTime]];
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -334,8 +336,26 @@ static RAnalyticsManager *_instance = nil;
     self.locationManagerIsUpdating = NO;
 }
 
-- (void)process:(RAnalyticsEvent *)event
+#pragma mark - Should Track Event
+
+- (void)setShouldTrackEventHandler:(RAnalyticsShouldTrackEventCompletionBlock)shouldTrackEventHandler
 {
+    _eventChecker.shouldTrackEventHandler = shouldTrackEventHandler;
+}
+
+- (RAnalyticsShouldTrackEventCompletionBlock)shouldTrackEventHandler
+{
+    return _eventChecker.shouldTrackEventHandler;
+}
+
+#pragma mark - Process Event
+
+- (BOOL)process:(RAnalyticsEvent *)event
+{
+    if (![_eventChecker shouldProcess:event.name]) {
+        return NO;
+    }
+
     NSString *sessionIdentifier = self.sessionCookie;
     if (!_deviceIdentifier)
     {
@@ -407,6 +427,7 @@ static RAnalyticsManager *_instance = nil;
     {
         [RLogger debug:@"No tracker processed event %@", event.name];
     }
+    return processed;
 }
 
 - (void)addTracker:(id<RAnalyticsTracker>)tracker

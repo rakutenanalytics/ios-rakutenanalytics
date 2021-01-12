@@ -14,6 +14,8 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoggingLevel) {
     RAnalyticsLoggingLevelNone = 5
 };
 
+typedef BOOL (^RAnalyticsShouldTrackEventCompletionBlock)(NSString *);
+
 /**
  * Main class of the module.
  *
@@ -47,8 +49,10 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * Process an event. The manager passes the event to each registered trackers, in turn.
  *
  * @param event  An event will be sent to RAT server.
+ *
+ * @return A boolean value indicating if the event has been processed.
  */
-- (void)process:(RAnalyticsEvent *)event;
+- (BOOL)process:(RAnalyticsEvent *)event;
 
 /**
  * Add a tracker to tracker list.
@@ -113,6 +117,47 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * This property is set to `NO` by default
  */
 @property (nonatomic) BOOL enableAppToWebTracking;
+
+/**
+ * Enable or disable the tracking of an event at Runtime.
+ *
+ * Objective-C example to disable RAnalyticsSessionStartEventName:
+ * RAnalyticsManager.sharedInstance.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+ *  return ![eventName isEqualToString:RAnalyticsSessionStartEventName];
+ * };
+ *
+ * Swift example to disable AnalyticsManager.Event.Name.sessionStart:
+ * AnalyticsManager.shared().shouldTrackEventHandler = { eventName in
+ *  eventName != AnalyticsManager.Event.Name.sessionStart
+ * }
+ *
+ * Note: it is also possible to disable events at build time in the RAnalyticsConfiguration.plist file.
+ * First create the RAnalyticsConfiguration.plist file and add it to your Xcode project.
+ * Then create the key RATDisabledEventsList and add the array of disabled events.
+ *
+ * Example:
+ * This is the complete list of automatic events that you can disable in your app by adding it to the RAnalyticsConfiguration.plist file:
+ *
+ * <key>RATDisabledEventsList</key>
+ * <array>
+ * <string>_rem_init_launch</string>
+ * <string>_rem_launch</string>
+ * <string>_rem_end_session</string>
+ * <string>_rem_update</string>
+ * <string>_rem_login</string>
+ * <string>_rem_login_failure</string>
+ * <string>_rem_logout</string>
+ * <string>_rem_install</string>
+ * <string>_rem_visit</string>
+ * <string>_rem_push_notify</string>
+ * <string>_rem_sso_credential_found</string>
+ * <string>_rem_login_credential_found</string>
+ * <string>_rem_credential_strategies</string>
+ * <string>_analytics_custom</string>
+ * </array>
+ */
+
+@property (nonatomic, copy) _Nullable RAnalyticsShouldTrackEventCompletionBlock shouldTrackEventHandler;
 
 @end
 

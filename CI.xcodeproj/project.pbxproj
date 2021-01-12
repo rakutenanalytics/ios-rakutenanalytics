@@ -44,6 +44,8 @@
 		6DA9A8931E0B749600AE4C35 /* LaunchCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */; };
 		6DCCF0B5252C157700AE627F /* CookieInjectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */; };
 		6DCD46841F7B7DEC00D02F1B /* EventBroadcasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */; };
+		C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */; };
+		C98D71D725A7207300B1D048 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +120,8 @@
 		6DA9A8921E0B749600AE4C35 /* LaunchCollectorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchCollectorTests.m; sourceTree = "<group>"; };
 		6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CookieInjectorTests.m; sourceTree = "<group>"; };
 		6DCD46831F7B7DEC00D02F1B /* EventBroadcasterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventBroadcasterTests.m; sourceTree = "<group>"; };
+		C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckerSpec.swift; sourceTree = "<group>"; };
+		C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +191,7 @@
 				57C5486B24B425530099497D /* UNNotificationTrackableTests.m */,
 				6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */,
 				3A3F013F255E760900993197 /* RAnalyticsEndpointSettableTests.m */,
+				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 		6D63A79E1E1F975E00F89009 /* Host */ = {
 			isa = PBXGroup;
 			children = (
+				C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */,
 				6D63A7A21E1F975E00F89009 /* AppDelegate.h */,
 				6D63A7A31E1F975E00F89009 /* AppDelegate.m */,
 				6D63A7A81E1F975E00F89009 /* Main.storyboard */,
@@ -406,6 +412,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C98D71D725A7207300B1D048 /* RAnalyticsConfiguration.plist in Resources */,
 				6D63A7AF1E1F975E00F89009 /* LaunchScreen.storyboard in Resources */,
 				6D63A7AC1E1F975E00F89009 /* Assets.xcassets in Resources */,
 				6D63A7AA1E1F975E00F89009 /* Main.storyboard in Resources */,
@@ -478,6 +485,7 @@
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				165C4AA820A56ABE00920439 /* RAnalyticsHelpersTests.m in Sources */,
 				3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */,
+				C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */,
 				5A3BC1721D3629EB00BBCA54 /* EventTests.m in Sources */,
 				3A2A3E472577B216008D83A1 /* AnyDependenciesContainerSpec.swift in Sources */,
 				3A3F015F255E771700993197 /* RAnalyticsEndpointSettableTests.m in Sources */,

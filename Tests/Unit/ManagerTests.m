@@ -213,6 +213,96 @@ describe(@"RAnalyticsManager", ^{
             }
         });
     });
+    // Note: RAnalyticsSessionEndEventName is added to the RAnalyticsConfiguration.plist file for the key: RATDisabledEventsList
+    describe(@"process", ^{
+        context(@"shouldTrackEventHandler is nil", ^{
+            context(@"build time configuration file is missing", ^{
+                it(@"should return true", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [analyticsManager performSelector:@selector(eventChecker) withObject:[[EventChecker alloc] initWithDisabledEventsAtBuildTime:nil]];
+                    [[analyticsManager.shouldTrackEventHandler should] beNil];
+                    [[theValue([analyticsManager process:event]) should] beTrue];
+                });
+            });
+            context(@"build time configuration file exists", ^{
+                it(@"should return false if the event is disabled at build time", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionEndEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionEndEventName]) should] beTrue];
+                    [[analyticsManager.shouldTrackEventHandler should] beNil];
+                    [[theValue([analyticsManager process:event]) should] beFalse];
+                });
+                it(@"should return true if the event is not disabled at build time", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionStartEventName]) should] beFalse];
+                    [[analyticsManager.shouldTrackEventHandler should] beNil];
+                    [[theValue([analyticsManager process:event]) should] beTrue];
+                });
+            });
+        });
+        context(@"shouldTrackEventHandler is not nil", ^{
+            context(@"build time configuration file is missing", ^{
+                it(@"should return false if the event is disabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [analyticsManager performSelector:@selector(eventChecker) withObject:[[EventChecker alloc] initWithDisabledEventsAtBuildTime:nil]];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return ![eventName isEqualToString:RAnalyticsSessionStartEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beFalse];
+                });
+                it(@"should return true if the event is enabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [analyticsManager performSelector:@selector(eventChecker) withObject:[[EventChecker alloc] initWithDisabledEventsAtBuildTime:nil]];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return [eventName isEqualToString:RAnalyticsSessionStartEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beTrue];
+                });
+            });
+            context(@"build time configuration file exists", ^{
+                it(@"should return true if the event is disabled at build time and enabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionEndEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionEndEventName]) should] beTrue];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return [eventName isEqualToString:RAnalyticsSessionEndEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beTrue];
+                });
+                it(@"should return true if the event is not disabled at build time and enabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionStartEventName]) should] beFalse];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return [eventName isEqualToString:RAnalyticsSessionStartEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beTrue];
+                });
+                it(@"should return false if the event is disabled at build time and disabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionEndEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionEndEventName]) should] beTrue];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return ![eventName isEqualToString:RAnalyticsSessionEndEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beFalse];
+                });
+                it(@"should return false if the event is not disabled at build time and disabled at runtime", ^{
+                    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
+                    RAnalyticsManager *analyticsManager = [[RAnalyticsManager alloc] initSharedInstance];
+                    [[theValue([[NSBundle disabledEventsAtBuildTime] containsObject:RAnalyticsSessionStartEventName]) should] beFalse];
+                    analyticsManager.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
+                        return ![eventName isEqualToString:RAnalyticsSessionStartEventName];
+                    };
+                    [[theValue([analyticsManager process:event]) should] beFalse];
+                });
+            });
+        });
+    });
 });
 
 SPEC_END
