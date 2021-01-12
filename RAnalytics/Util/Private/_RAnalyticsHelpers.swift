@@ -89,8 +89,8 @@ import UIKit
         }
         return NSDictionary(contentsOfFile: filePath)
     }()
-    
-    static let disabledEventsAtBuildTime: [String]? = {
+
+    public static let disabledEventsAtBuildTime: [String]? = {
         guard let filePath = Bundle.main.path(forResource: "RAnalyticsConfiguration", ofType: "plist") else {
             return nil
         }
