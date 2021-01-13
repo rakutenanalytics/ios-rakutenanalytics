@@ -19,6 +19,7 @@
 		3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40224D164A600161F62 /* RAnalyticsManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40324D164A600161F62 /* RAnalyticsEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C92849F925AD92A40099EF49 /* RAnalyticsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsEndpointSettable.h; path = ../../RAnalytics/Core/RAnalyticsEndpointSettable.h; sourceTree = "<group>"; };
 		9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.release.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.release.xcconfig"; sourceTree = "<group>"; };
+		C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsHeader.swift; sourceTree = "<group>"; };
 		FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.debug.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -93,6 +95,7 @@
 				3A0932A6257F531500F4F157 /* RAnalyticsSender.h */,
 				3A68C40124D164A600161F62 /* RAnalyticsState.h */,
 				3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */,
+				C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */,
 			);
 			path = RAnalytics;
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 				TargetAttributes = {
 					3AA58EEF24CB107D00CE703C = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1230;
 					};
 				};
 			};
@@ -239,6 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C92849F925AD92A40099EF49 /* RAnalyticsHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +307,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -357,6 +363,7 @@
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-fembed-bitcode";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -367,6 +374,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -384,6 +392,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -392,6 +402,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -409,6 +420,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

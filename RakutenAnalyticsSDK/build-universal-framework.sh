@@ -17,6 +17,8 @@ BUILD_RELEASE_UNIVERSAL=build/release/universal
 mkdir build/debug
 mkdir build/release
 
+FRAMEWORK_NAME="RAnalytics"
+
 frameworkBinaryPath="RAnalytics.framework/RAnalytics"
 dSymFilePath="RAnalytics.framework.dSYM/Contents/Resources/DWARF/RAnalytics"
 
@@ -25,7 +27,7 @@ RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
 PODSPEC_FILE_PATH="RAnalytics.podspec"
 
 # install RakutenAnalyticsSDK workspace and pods
-pod install
+bundle exec pod install
 
 # get marketing version number
 RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" ../RAnalytics.podspec | sed "s/  s.version      = \"//;s/.$//")
@@ -120,10 +122,6 @@ cp -r $BUILD_RELEASE_DEVICE/RAnalytics.framework $BUILD_RELEASE_UNIVERSAL
 cp -r $BUILD_DEBUG_DEVICE/RAnalytics.framework.dSYM $BUILD_DEBUG_UNIVERSAL
 cp -r $BUILD_RELEASE_DEVICE/RAnalytics.framework.dSYM $BUILD_RELEASE_UNIVERSAL
 
-# Xcode 12 patch: remove arm64 architecture from simulator release framework binary and dSym files
-lipo -remove "arm64" $BUILD_RELEASE_SIMULATOR/$frameworkBinaryPath -o $BUILD_RELEASE_SIMULATOR/$frameworkBinaryPath
-lipo -remove "arm64" $BUILD_RELEASE_SIMULATOR/$dSymFilePath -o $BUILD_RELEASE_SIMULATOR/$dSymFilePath
-
 # create framework binary compatible with simulators and devices, and replace binary in universal framework
 lipo -create \
 $BUILD_DEBUG_SIMULATOR/$frameworkBinaryPath \
@@ -147,8 +145,11 @@ lipo -create \
     -output $BUILD_RELEASE_UNIVERSAL/$dSymFilePath
 
 # copy simulator Swift public interface to universal framework
-#cp $$BUILD_DEBUG_SIMULATOR/RAnalytics.framework/Modules/RAnalytics.swiftmodule/* $BUILD_DEBUG_UNIVERSAL/RAnalytics.framework/Modules/RAnalytics.swiftmodule
-#cp $$BUILD_RELEASE_SIMULATOR/RAnalytics.framework/Modules/RAnalytics.swiftmodule/* $BUILD_RELEASE_UNIVERSAL/RAnalytics.framework/Modules/RAnalytics.swiftmodule
+cp $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
+cp $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
+
+cp $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
+cp $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
 
 # check architectures
 echo "Framework - Debug mode:"
