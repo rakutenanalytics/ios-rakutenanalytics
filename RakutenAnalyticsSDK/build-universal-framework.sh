@@ -27,6 +27,7 @@ RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
 PODSPEC_FILE_PATH="RAnalytics.podspec"
 
 # install RakutenAnalyticsSDK workspace and pods
+bundle install
 bundle exec pod install
 
 # get marketing version number
