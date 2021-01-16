@@ -530,7 +530,8 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 * [SDKCF-2922](https://jira.rakuten-it.com/jira/browse/SDKCF-2922): Added ability to configure the RAT endpoint at runtime. See @ref analytics-configure-endpoint.
 * [SDKCF-2920](https://jira.rakuten-it.com/jira/browse/SDKCF-2920): Improved custom domains support in App to Web Tracking feature. See @ref analytics-app-to-web-tracking.
 * **Breaking change** [SDKCF-2888](https://jira.rakuten-it.com/jira/browse/SDKCF-2888): Minimum supported version has been changed to iOS 11.0.
-* **Breaking change** Custom @ref RAnalyticsTracker trackers must implement the new @ref RAnalyticsEndpointSettable protocol.
+* **Breaking API change** Custom @ref RAnalyticsTracker trackers must implement the new @ref RAnalyticsEndpointSettable protocol.
+* **Breaking API change** Removed deprecated `RAnalyticsRATTracker#getRpCookieCompletionHandler()`. Apps can use @ref RAnalyticsRpCookieFetcher instead.
 
 @subsection analytics-6-0-0 6.0.0 (2020-11-25)
 * [SDKCF-2921](https://jira.rakuten-it.com/jira/browse/SDKCF-2921): Added tracking support for rich push notifications.
