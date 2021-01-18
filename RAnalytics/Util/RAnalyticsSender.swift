@@ -66,7 +66,7 @@ private enum SenderConstants {
 
     /// Set the batching delay
     /// - Parameter batchingDelayBlock: batching delay block
-    @objc public func setBatchingDelayBlock(_ batchingDelayBlock: @escaping BatchingDelayBlock) {
+    @objc public func setBatchingDelayBlock(_ batchingDelayBlock: @escaping @autoclosure BatchingDelayBlock) {
         batchingDelayClosure = batchingDelayBlock
     }
 
@@ -153,43 +153,46 @@ fileprivate extension RAnalyticsSender {
 
         let request = URLRequest.ratRequest(url: endpointURL, body: data)
 
-        let task = URLSession.shared.dataTask(with: request as URLRequest) {(_, response, error) in
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                let innerError: Error
-                if let connectionError = error {
-                    /// Connection failed. Request a new attempt before calling the completion.
-                    // swiftlint:disable:next todo
-                    // FIXME: does this synchronized?
-                    /// start @synchronized
-                    innerError = connectionError
-                    self.uploadRequested = true
-                    /// end @synchronized
-                } else {
-                    let reason = "Expected status code 200, got \(String(describing: (response as? HTTPURLResponse)?.statusCode))"
+        let task = URLSession.shared.dataTask(with: request) { result in
+            switch result {
+            case .failure(let error):
+                /// Connection failed. Request a new attempt before calling the completion.
+                // swiftlint:disable:next todo
+                // FIXME: does this synchronized?
+                /// start @synchronized
+                self.uploadRequested = true
+                /// end @synchronized
+                self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
+
+            case .success(let responseInfo):
+                let statusCode = (responseInfo.response as? HTTPURLResponse)?.statusCode
+
+                guard statusCode == 200 else {
+                    let reason = "Expected status code 200, got \(String(describing: statusCode))"
                     let userInfo = [NSLocalizedDescriptionKey: "invalid_response",
                                     NSLocalizedFailureReasonErrorKey: reason]
-                    innerError = NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: userInfo)
+                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: userInfo)
+
+                    self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
+                    return
                 }
-                let userInfo = [NSUnderlyingErrorKey: innerError]
-                NotificationCenter.default.post(name: NSNotification.Name.RAnalyticsUploadFailure,
-                                                object: ratJsonRecords,
-                                                userInfo: userInfo)
-                self.backgroundUploadEnded()
-                return
+
+                NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadSuccess, object: ratJsonRecords)
+                self.logSentRecords(ratJsonRecords)
+
+                self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
+                    self.scheduleUploadOrPerformImmediately()
+                }
             }
-
-            /// Success!
-            NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadSuccess, object: ratJsonRecords)
-            self.logSentRecords(ratJsonRecords)
-
-            /// Delete the records from the local database.
-            self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
-                self.scheduleUploadOrPerformImmediately()
-            }
-
         }
         task.resume()
+    }
+
+    private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) {
+        NotificationCenter.default.post(name: NSNotification.Name.RAnalyticsUploadFailure,
+                                        object: ratJsonRecords,
+                                        userInfo: [NSUnderlyingErrorKey: error])
+        backgroundUploadEnded()
     }
 }
 
