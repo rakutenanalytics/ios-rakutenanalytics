@@ -4,6 +4,7 @@
 
 NSString* const RAnalyticsDBErrorDomain = @"RAnalyticsDBErrorDomain";
 NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
+NSInteger RAnalyticsDBAppWillTerminateErrorCode = 2;
 
 @interface _RAnalyticsDatabase(Private)
 
@@ -228,6 +229,13 @@ NSInteger RAnalyticsDBTableCreationFailureErrorCode = 1;
 @implementation _RAnalyticsDatabase(Private)
 
 -(NSError*)prepareTable:(NSString*)table {
+    if (_appWillTerminate)
+    {
+        return [NSError errorWithDomain:RAnalyticsDBErrorDomain
+                                   code:RAnalyticsDBAppWillTerminateErrorCode
+                               userInfo:@{NSLocalizedDescriptionKey: @"The app is terminating."}];
+    }
+    
     assert(NSOperationQueue.currentQueue == _queue);
     
     if (![_tables containsObject:table]) {
