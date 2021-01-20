@@ -19,7 +19,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
             afterEach {
                 DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
-                
+
                 sqlite3_close(connection)
                 sqlite3_close(readonlyConnection)
 
@@ -29,11 +29,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
             context("when calling insert(blobs:into:limit:then:)") {
                 it("should create table to insert if it does not exist yet") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
                     var tableExists = false
                     waitUntil { done in
-                        db.insert(blobs: [], into: "some_table", limit: 1) {
+                        database.insert(blobs: [], into: "some_table", limit: 1) {
                             tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                             done()
                         }
@@ -43,13 +43,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should insert blobs into provided table") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     let anotherBlob = "bar".data(using: .utf8)!
 
                     var insertedBlobs = [Data]()
                     waitUntil { done in
-                        db.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
+                        database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                             insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -59,7 +59,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should limit amount of records in updated table as limit passed in param") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let previousContent = [
                         "fizz".data(using: .utf8)!,
                         "bazz".data(using: .utf8)!
@@ -68,7 +68,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var tableContents = [Data]()
                     waitUntil { done in
-                        db.insert(blobs: [], into: "some_table", limit: 1) {
+                        database.insert(blobs: [], into: "some_table", limit: 1) {
                             tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -78,7 +78,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should limit both just-inserted and old entries leaving the newest ones") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let previousContent = [
                         "fizz".data(using: .utf8)!,
                         "bazz".data(using: .utf8)!
@@ -91,7 +91,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var tableContents = [Data]()
                     waitUntil { done in
-                        db.insert(blobs: newContent, into: "some_table", limit: 1) {
+                        database.insert(blobs: newContent, into: "some_table", limit: 1) {
                             tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -100,8 +100,8 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                     expect(tableContents).to(elementsEqual([newContent.last!]))
                 }
 
-                it("should not remove previous or new records from DB if limit is 0") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                it("should not remove previous or new records from database if limit is 0") {
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let previousContent = [
                         "fizz".data(using: .utf8)!,
                         "bazz".data(using: .utf8)!
@@ -114,7 +114,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var tableContents = [Data]()
                     waitUntil { done in
-                        db.insert(blobs: newContent, into: "some_table", limit: 0) {
+                        database.insert(blobs: newContent, into: "some_table", limit: 0) {
                             tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -126,11 +126,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 context("and some error occurred") {
 
                     it("should not create passed table") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
                         var tableExists: Bool?
                         waitUntil { done in
-                            db.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
+                            database.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
                                 tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                                 done()
                             }
@@ -139,12 +139,12 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         expect(tableExists).to(beFalse())
                     }
 
-                    it("should not insert records in DB") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                    it("should not insert records in database") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
-                        var tableContents: [Data]? = nil
+                        var tableContents: [Data]?
                         waitUntil { done in
-                            db.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
+                            database.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
                                 tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                                 done()
                             }
@@ -153,13 +153,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         expect(tableContents).to(equal([]))
                     }
 
-                    it("should not remove old records from DB") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                    it("should not remove old records from database") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                         DatabaseTestUtils.insert(blobs: ["foo".data(using: .utf8)!], table: "some_table", connection: connection)
 
                         var tableContents = [Data]()
                         waitUntil { done in
-                            db.insert(blobs: ["bar".data(using: .utf8)!], into: "some_table", limit: 0) {
+                            database.insert(blobs: ["bar".data(using: .utf8)!], into: "some_table", limit: 0) {
                                 tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: readonlyConnection)
                                 done()
                             }
@@ -173,11 +173,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
             context("when calling fetch(blobs:into:limit:then:)") {
 
                 it("should create passed table if table did not exist before") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
                     var tableExists = false
                     waitUntil { done in
-                        db.fetchBlobs(bigNumber, from: "some_table") { _, _ in
+                        database.fetchBlobs(bigNumber, from: "some_table") { _, _ in
                             tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                             done()
                         }
@@ -185,14 +185,14 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     expect(tableExists).to(beTrue())
                 }
-                
+
                 it("should not create passed table if the app will terminate") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
                     var tableExists = false
                     waitUntil { done in
                         NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
-                        db.fetchBlobs(bigNumber, from: "some_table") { _, _ in
+                        database.fetchBlobs(bigNumber, from: "some_table") { _, _ in
                             tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                             done()
                         }
@@ -202,13 +202,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should fetch blobs from passed table") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
 
                     var fetchedBlobs: [Data]?
                     waitUntil { done in
-                        db.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                        database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
                             fetchedBlobs = blobs
                             done()
                         }
@@ -218,13 +218,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should fetch ids corresponding to blobs from passed table") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
 
                     var fetchedIds: [Int64]?
                     waitUntil { done in
-                        db.fetchBlobs(bigNumber, from: "some_table") { _, ids in
+                        database.fetchBlobs(bigNumber, from: "some_table") { _, ids in
                             fetchedIds = ids
                             done()
                         }
@@ -234,13 +234,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should not fetch blobs if amount to fetch is 0") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
 
                     var fetchedBlobs: [Data]? = []
                     waitUntil { done in
-                        db.fetchBlobs(0, from: "some_table") { blobs, _ in
+                        database.fetchBlobs(0, from: "some_table") { blobs, _ in
                             fetchedBlobs = blobs
                             done()
                         }
@@ -250,13 +250,13 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should not fetch identifiers if amount to fetch is 0") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
 
                     var fetchedIds: [Int64]? = []
                     waitUntil { done in
-                        db.fetchBlobs(0, from: "some_table") { _, ids in
+                        database.fetchBlobs(0, from: "some_table") { _, ids in
                             fetchedIds = ids
                             done()
                         }
@@ -266,7 +266,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should limit the amount of fetched blobs to amount param fetching the oldest ones first") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blobs = [
                         "foo".data(using: .utf8)!,
                         "bar".data(using: .utf8)!,
@@ -276,7 +276,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var fetchedBlobs: [Data]?
                     waitUntil { done in
-                        db.fetchBlobs(2, from: "some_table") { blobs, _ in
+                        database.fetchBlobs(2, from: "some_table") { blobs, _ in
                             fetchedBlobs = blobs
                             done()
                         }
@@ -287,7 +287,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should limit the amount of fetched ids to amount param fetching the oldest ones first") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blobs = [
                         "foo".data(using: .utf8)!,
                         "bar".data(using: .utf8)!,
@@ -297,7 +297,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var fetchedIds: [Int64]?
                     waitUntil { done in
-                        db.fetchBlobs(2, from: "some_table") { _, ids in
+                        database.fetchBlobs(2, from: "some_table") { _, ids in
                             fetchedIds = ids
                             done()
                         }
@@ -309,11 +309,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 context("and some error occurred") {
 
                     it("should not create passed table") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
                         var tableExists: Bool?
                         waitUntil { done in
-                            db.fetchBlobs(bigNumber, from: "some_table") { _, _ in
+                            database.fetchBlobs(bigNumber, from: "some_table") { _, _ in
                                 tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                                 done()
                             }
@@ -322,14 +322,14 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         expect(tableExists).to(beFalse())
                     }
 
-                    it("should not fetch blobs from DB") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                    it("should not fetch blobs from database") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                         let blob = "foo".data(using: .utf8)!
-                        db.insert(blob: blob, into: "some_table", limit: 0, then: { })
+                        database.insert(blob: blob, into: "some_table", limit: 0, then: { })
 
                         var fetchedBlobs: [Data]? = []
                         waitUntil { done in
-                            db.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                            database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
                                 fetchedBlobs = blobs
                                 done()
                             }
@@ -338,14 +338,14 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         expect(fetchedBlobs).to(beNil())
                     }
 
-                    it("should not fetch ids from DB") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                    it("should not fetch ids from database") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                         let blob = "foo".data(using: .utf8)!
-                        db.insert(blob: blob, into: "some_table", limit: 0, then: { })
+                        database.insert(blob: blob, into: "some_table", limit: 0, then: { })
 
                         var fetchedIds: [Int64]? = []
                         waitUntil { done in
-                            db.fetchBlobs(bigNumber, from: "some_table") { _, ids in
+                            database.fetchBlobs(bigNumber, from: "some_table") { _, ids in
                                 fetchedIds = ids
                                 done()
                             }
@@ -359,11 +359,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
             describe("when calling deleteBlobs(identifiers:in:then:") {
 
                 it("should create passed table if table did not exist before") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
                     var tableExists: Bool?
                     waitUntil { done in
-                        db.deleteBlobs(identifiers: [], in: "some_table") {
+                        database.deleteBlobs(identifiers: [], in: "some_table") {
                             tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                             done()
                         }
@@ -373,7 +373,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should delete items for passed IDs") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blobs = [
                         "foo".data(using: .utf8)!,
                         "bar".data(using: .utf8)!
@@ -382,7 +382,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var itemsInDb: [Data]?
                     waitUntil { done in
-                        db.deleteBlobs(identifiers: [1, 2], in: "some_table") {
+                        database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
                             itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -392,7 +392,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 }
 
                 it("should not delete items which IDs were not passed for deletion") {
-                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blobs = [
                         "foo".data(using: .utf8)!,
                         "bar".data(using: .utf8)!
@@ -401,7 +401,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     var itemsInDb: [Data]?
                     waitUntil { done in
-                        db.deleteBlobs(identifiers: [1], in: "some_table") {
+                        database.deleteBlobs(identifiers: [1], in: "some_table") {
                             itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                             done()
                         }
@@ -413,11 +413,11 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                 context("and some error occurred") {
 
                     it("should not create passed table") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
                         var tableExists: Bool?
                         waitUntil { done in
-                            db.deleteBlobs(identifiers: [], in: "some_table") {
+                            database.deleteBlobs(identifiers: [], in: "some_table") {
                                 tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                                 done()
                             }
@@ -426,14 +426,14 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         expect(tableExists).to(beFalse())
                     }
 
-                    it("should not delete blobs from DB if some error occurred") {
-                        let db = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
+                    it("should not delete blobs from database if some error occurred") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                         let blobs = ["foo".data(using: .utf8)!]
                         DatabaseTestUtils.insert(blobs: blobs, table: "some_table", connection: connection)
 
                         var itemsInDb: [Data]?
                         waitUntil { done in
-                            db.deleteBlobs(identifiers: [1], in: "some_table") {
+                            database.deleteBlobs(identifiers: [1], in: "some_table") {
                                 itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                                 done()
                             }

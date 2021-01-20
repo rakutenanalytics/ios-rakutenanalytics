@@ -13,16 +13,16 @@ final class AnyDependenciesContainerSpec: QuickSpec {
             describe("register") {
                 it("should not register an object that is already registered") {
                     let dependenciesContainer = AnyDependenciesContainer()
-                    let a = RAnalyticsHandler1()
-                    expect(dependenciesContainer.registerObject(a)).to(beTrue())
-                    expect(dependenciesContainer.registerObject(a)).to(beFalse())
+                    let handler = RAnalyticsHandler1()
+                    expect(dependenciesContainer.registerObject(handler)).to(beTrue())
+                    expect(dependenciesContainer.registerObject(handler)).to(beFalse())
                 }
                 it("should not register an object that has the same type") {
                     let dependenciesContainer = AnyDependenciesContainer()
-                    let a = RAnalyticsHandler1()
-                    let b = RAnalyticsHandler1()
-                    expect(dependenciesContainer.registerObject(a)).to(beTrue())
-                    expect(dependenciesContainer.registerObject(b)).to(beFalse())
+                    let handlerA = RAnalyticsHandler1()
+                    let handlerB = RAnalyticsHandler1()
+                    expect(dependenciesContainer.registerObject(handlerA)).to(beTrue())
+                    expect(dependenciesContainer.registerObject(handlerB)).to(beFalse())
                 }
             }
         }
@@ -42,15 +42,15 @@ final class AnyDependenciesContainerSpec: QuickSpec {
             }
             it("should return the correct object when the type is found") {
                 let dependenciesContainer = AnyDependenciesContainer()
-                let a = RAnalyticsHandler1()
-                let b = RAnalyticsHandler2()
-                let c = RAnalyticsHandler3()
-                expect(dependenciesContainer.registerObject(a)).to(beTrue())
-                expect(dependenciesContainer.registerObject(b)).to(beTrue())
-                expect(dependenciesContainer.registerObject(c)).to(beTrue())
-                expect(dependenciesContainer.resolveObject(RAnalyticsHandler1.self)).to(equal(a))
-                expect(dependenciesContainer.resolveObject(RAnalyticsHandler2.self)).to(equal(b))
-                expect(dependenciesContainer.resolveObject(RAnalyticsHandler3.self)).to(equal(c))
+                let handler1 = RAnalyticsHandler1()
+                let handler2 = RAnalyticsHandler2()
+                let handler3 = RAnalyticsHandler3()
+                expect(dependenciesContainer.registerObject(handler1)).to(beTrue())
+                expect(dependenciesContainer.registerObject(handler2)).to(beTrue())
+                expect(dependenciesContainer.registerObject(handler3)).to(beTrue())
+                expect(dependenciesContainer.resolveObject(RAnalyticsHandler1.self)).to(equal(handler1))
+                expect(dependenciesContainer.resolveObject(RAnalyticsHandler2.self)).to(equal(handler2))
+                expect(dependenciesContainer.resolveObject(RAnalyticsHandler3.self)).to(equal(handler3))
             }
         }
     }

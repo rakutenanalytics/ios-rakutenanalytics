@@ -61,6 +61,7 @@ final class RATArrayExtensionSpec: QuickSpec {
         describe("init") {
             context("when the passed in array elements are serialized json dictionaries") {
                 it("should return an array of the expected json dictionary elements") {
+                    // swiftlint:disable:next force_try
                     let dictionaryData = try! JSONSerialization.data(withJSONObject: ["key": "value"], options: .init(rawValue: 0))
                     let dataArray = [dictionaryData, dictionaryData]
                     let expected = [["key": "value"], ["key": "value"]]
@@ -92,4 +93,3 @@ final class RATDataExtensionSpec: QuickSpec {
         }
     }
 }
-

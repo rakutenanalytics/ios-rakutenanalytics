@@ -19,7 +19,7 @@ import class RAnalytics.RAnalyticsDatabase
         // Using memory databases allow sharing (cache=shared) but because of that the readonlyConnection is able to write the database.
         // https://stackoverflow.com/questions/40547077/is-it-possible-to-connect-to-an-in-memory-sqlite-db-in-read-only-mode
         assert(sqlite3_open_v2("file::memory:?cache=shared", &connection, flags, nil) == SQLITE_OK)
-        if ((flags & SQLITE_OPEN_READONLY) != 0) {
+        if (flags & SQLITE_OPEN_READONLY) != 0 {
             assert(sqlite3_exec(connection, "PRAGMA query_only = 1", nil, nil, nil) == SQLITE_OK) // forces read-only behavior
         }
 
@@ -53,7 +53,7 @@ import class RAnalytics.RAnalyticsDatabase
         sqlite3_reset(statement)
         sqlite3_finalize(statement)
     }
-    
+
     @objc public class func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
         var result = [Data]()
         let query = "select * from \(table)"
@@ -76,7 +76,7 @@ import class RAnalytics.RAnalyticsDatabase
 
         return result
     }
-    
+
     @objc public class func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
         assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
 
@@ -89,12 +89,12 @@ import class RAnalytics.RAnalyticsDatabase
 
         blobs.forEach { blob in
             blob.withUnsafeBytes { bytes -> Void in
-                let c1 = sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(blob.count), nil)
-                let c2 = sqlite3_step(statement)
-                let c3 = sqlite3_clear_bindings(statement)
-                let c4 = sqlite3_reset(statement)
-                assert([c1, c3, c4].allSatisfy({ $0 == SQLITE_OK }))
-                assert(c2 == SQLITE_DONE)
+                let status1 = sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(blob.count), nil)
+                let status2 = sqlite3_step(statement)
+                let status3 = sqlite3_clear_bindings(statement)
+                let status4 = sqlite3_reset(statement)
+                assert([status1, status3, status4].allSatisfy({ $0 == SQLITE_OK }))
+                assert(status2 == SQLITE_DONE)
             }
         }
 

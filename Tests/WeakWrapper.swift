@@ -1,6 +1,6 @@
 /// Class that stores weak reference to the wrapped object.
 /// It can be used used to avoid retain cycles in some cases.
- internal class WeakWrapper<T> {
+internal class WeakWrapper<T> {
     // T cannot be restricted to AnyObject in order to support protocols
     private weak var _value: AnyObject?
     var value: T? {

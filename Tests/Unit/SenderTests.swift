@@ -121,7 +121,7 @@ class SenderTests: QuickSpec {
                     let uploadObserver = NotificationCenter.default.addObserver(forName: NSNotification.Name.RAnalyticsUploadSuccess,
                                                                                 object: nil,
                                                                                 queue: queue) { (notification) in
-                        if (notification.object as? Array<Any>)?.first as? [String: String] == payload {
+                        if (notification.object as? [Any])?.first as? [String: String] == payload {
                             uploadsToRat += 1
                         }
                     }
@@ -129,7 +129,7 @@ class SenderTests: QuickSpec {
                     var didReceiveNotification = false
                     let didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
                                                                                          object: nil,
-                                                                                         queue: queue) { (notification) in
+                                                                                         queue: queue) { (_) in
                         sender.setBatchingDelayBlock(0)
                         sender.send(jsonObject: payload)
 
