@@ -1,6 +1,7 @@
 import Quick
 import Nimble
-import class RAnalytics.RAnalyticsSender
+
+@testable import class RAnalytics.RAnalyticsSender
 
 class SenderTests: QuickSpec {
 
@@ -28,9 +29,6 @@ class SenderTests: QuickSpec {
 
             afterEach {
                 URLSessionMock.stopMockingURLSession()
-                // Clear any still running timers because they can break our async batching delay tests
-                sender.uploadTimer?.invalidate()
-                sender.uploadTimer = nil
 
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
                 databaseConnection = nil

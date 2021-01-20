@@ -28,6 +28,7 @@
 		45E3BC5025814D3600319ECF /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E3BC4F25814D3600319ECF /* TestUtils.swift */; };
 		45E3BC5125814D3600319ECF /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E3BC4F25814D3600319ECF /* TestUtils.swift */; };
 		45E3BC5225814D3600319ECF /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E3BC4F25814D3600319ECF /* TestUtils.swift */; };
+		45EA71DE25B62776001B2049 /* LockableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EA71DD25B62776001B2049 /* LockableTests.swift */; };
 		45EAE08F2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EAE08E2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift */; };
 		45EAE0982587FE660025422B /* DatabaseTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E3BC3A2581403E00319ECF /* DatabaseTestUtils.swift */; };
 		5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */; };
@@ -99,6 +100,7 @@
 		45E3BC3A2581403E00319ECF /* DatabaseTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTestUtils.swift; sourceTree = "<group>"; };
 		45E3BC492581476400319ECF /* RAnalyticsDatabaseUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseUnitTests.swift; sourceTree = "<group>"; };
 		45E3BC4F25814D3600319ECF /* TestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
+		45EA71DD25B62776001B2049 /* LockableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockableTests.swift; sourceTree = "<group>"; };
 		45EAE08E2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseFunctionalTests.swift; sourceTree = "<group>"; };
 		5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationAppDelegateTests.swift; sourceTree = "<group>"; };
 		5716719F24B415DE0071B80B /* NSStringEncryptionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSStringEncryptionTests.m; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 				6D0AD19B2582383500206848 /* RATExtensionsTests.swift */,
 				6D834FB025930086007325BE /* RAnalyticsRATTrackerSpec.m */,
 				3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */,
+				45EA71DD25B62776001B2049 /* LockableTests.swift */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				3A833D37250F662600CF2B58 /* RAdvertisingIdentifierHandlerTests.m in Sources */,
 				3AF7D1C424C07B510049E9D9 /* UserIdentifierSelectorTests.m in Sources */,
 				5AD7A9BB204D49F400B03FBA /* SDKTrackerTests.m in Sources */,
+				45EA71DE25B62776001B2049 /* LockableTests.swift in Sources */,
 				45E3BC5025814D3600319ECF /* TestUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

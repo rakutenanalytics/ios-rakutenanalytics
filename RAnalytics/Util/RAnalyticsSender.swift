@@ -26,12 +26,12 @@ private enum SenderConstants {
 
     // swiftlint:disable:next todo
     // FIXME: Make private again after tests are refactored
-    @objc public var uploadTimer: Timer?
-    @objc public var uploadTimerInterval = SenderConstants.defaultUploadInterval
+    @AtomicGetSet @objc public var uploadTimer: Timer?
+    @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?
-    private var uploadRequested = false
-    private var zeroBatchingDelayUploadInProgress = false
+    @AtomicGetSet private var uploadRequested = false
+    @AtomicGetSet private var zeroBatchingDelayUploadInProgress = false
 
     /// Initialize Sender
     /// - Parameters:
@@ -48,6 +48,10 @@ private enum SenderConstants {
         super.init()
 
         configureNotifications()
+    }
+
+    deinit {
+        uploadTimer?.invalidate()
     }
 
     /// Store event data in database to be sent later
@@ -126,13 +130,9 @@ fileprivate extension RAnalyticsSender {
     /// Called whenever a background upload ends, successfully or not.
     /// If uploadRequested has been set, it schedules another upload.
     func backgroundUploadEnded() {
-        // swiftlint:disable:next todo
-        // FIXME: does this need synced? how to synchronize?
-        /// start @synchronized
         uploadTimer?.invalidate()
         uploadTimer = nil
         zeroBatchingDelayUploadInProgress = false
-        /// end @synchronized
 
         if uploadRequested {
             scheduleBackgroundUpload()
@@ -157,11 +157,7 @@ fileprivate extension RAnalyticsSender {
             switch result {
             case .failure(let error):
                 /// Connection failed. Request a new attempt before calling the completion.
-                // swiftlint:disable:next todo
-                // FIXME: does this synchronized?
-                /// start @synchronized
                 self.uploadRequested = true
-                /// end @synchronized
                 self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
 
             case .success(let responseInfo):
