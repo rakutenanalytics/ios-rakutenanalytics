@@ -15,6 +15,7 @@ public final class RAnalyticsDatabase: NSObject {
 
     private static let RAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
     private static let RAnalyticsDBTableCreationFailureErrorCode = 1 // swiftlint:disable:this identifier_name
+    private static let RAnalyticsDBAppWillTerminateErrorCode = 2
 
     private let connection: SQlite3Pointer
     private var tables = Set<String>()
@@ -238,6 +239,13 @@ private extension RAnalyticsDatabase {
 private extension RAnalyticsDatabase {
 
     func prepareTable(_ table: String) -> NSError? {
+        guard !appWillTerminate else {
+            RLogger.error("RAnalyticsDatabase - prepareTable is canceled because the app will terminate")
+            return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
+                           code: RAnalyticsDatabase.RAnalyticsDBAppWillTerminateErrorCode,
+                           userInfo: [NSLocalizedDescriptionKey: "The app is terminating."])
+        }
+
         assert(OperationQueue.current == queue)
         guard !tables.contains(table) else {
             return nil

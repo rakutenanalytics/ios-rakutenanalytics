@@ -185,6 +185,21 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
                     expect(tableExists).to(beTrue())
                 }
+                
+                it("should not create passed table if the app will terminate") {
+                    let db = DatabaseTestUtils.mkDatabase(connection: connection)
+
+                    var tableExists = false
+                    waitUntil { done in
+                        NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
+                        db.fetchBlobs(bigNumber, from: "some_table") { _, _ in
+                            tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
+                            done()
+                        }
+                    }
+
+                    expect(tableExists).to(beFalse())
+                }
 
                 it("should fetch blobs from passed table") {
                     let db = DatabaseTestUtils.mkDatabase(connection: connection)
