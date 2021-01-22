@@ -45,14 +45,21 @@ import UIKit
 }
 
 @objc extension RStatusBarOrientationHandler: MoriGettable {
-    /// Returned value equals RMoriType.portrait if the status bar orientation is in portrait mode
-    /// Returned value equals RMoriType.landscape if the status bar orientation is in landscape mode
-    /// Note: returns RMoriType.portrait if UIApplication.shared is not available
-    public var mori: RMoriType {
+    private var unsafeMori: RMoriType {
         guard let application = application else {
             // Note: [UIApplication sharedApplication] is not available for App Extension
             return .portrait // default value
         }
         return application.analyticsStatusBarOrientation.isLandscape ? .landscape : .portrait
+    }
+    
+    /// Executes a closure on the main thread
+    ///
+    /// - Returns: `RMoriType.portrait` if the status bar orientation is in portrait mode
+    /// `RMoriType.landscape` if the status bar orientation is in landscape mode
+    ///
+    /// - Note: returns RMoriType.portrait if UIApplication.shared is not available
+    public var mori: RMoriType {
+        MainThreadExecutor.run { unsafeMori }
     }
 }
