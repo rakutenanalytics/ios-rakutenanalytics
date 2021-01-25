@@ -8,7 +8,8 @@ import WebKit.WKHTTPCookieStore
 
 @objc extension WKHTTPCookieStore: WKHTTPCookieStorable {
     public func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
-        getAllCookies(completionHandler)
+        // Note: getAllCookies crashes on background thread
+        DispatchQueue.main.async { self.getAllCookies(completionHandler) }
     }
     public func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
         setCookie(cookie, completionHandler: completionHandler)
