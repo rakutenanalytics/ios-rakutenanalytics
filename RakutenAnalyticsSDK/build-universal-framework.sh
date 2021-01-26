@@ -18,9 +18,10 @@ mkdir build/debug
 mkdir build/release
 
 FRAMEWORK_NAME="RAnalytics"
+FRAMEWORK_DSYM="RAnalytics.framework.dSYM"
 
 frameworkBinaryPath="RAnalytics.framework/RAnalytics"
-dSymFilePath="RAnalytics.framework.dSYM/Contents/Resources/DWARF/RAnalytics"
+dSymFilePath="$FRAMEWORK_DSYM/Contents/Resources/DWARF/RAnalytics"
 
 RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
 
@@ -52,7 +53,7 @@ fi
 ###
 ### 1. build DEBUG framework for simulators - x86_64
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator -arch x86_64
+xcodebuild BUILD_LIBRARY_FOR_DISTRIBUTION=YES -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphonesimulator -arch x86_64
 
 # create folder to store compiled framework for simulator - Debug
 mkdir $BUILD_DEBUG_SIMULATOR
@@ -62,11 +63,11 @@ DERIVED_DATA_SIMULATOR=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -
 
 # copy compiled framework for DEBUG simulator into our build folder
 cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework $BUILD_DEBUG_SIMULATOR
-cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework.dSYM $BUILD_DEBUG_SIMULATOR
+cp -r $DERIVED_DATA_SIMULATOR/$FRAMEWORK_DSYM $BUILD_DEBUG_SIMULATOR
 
 
 ### 2. build RELEASE framework for simulators
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphonesimulator -arch x86_64
+xcodebuild BUILD_LIBRARY_FOR_DISTRIBUTION=YES -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphonesimulator -arch x86_64
 
 # create folder to store compiled framework for simulator - Release
 mkdir $BUILD_RELEASE_SIMULATOR
@@ -76,13 +77,13 @@ DERIVED_DATA_SIMULATOR=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -
 
 # copy compiled framework for RELEASE simulator into our build folder
 cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework $BUILD_RELEASE_SIMULATOR
-cp -r $DERIVED_DATA_SIMULATOR/RAnalytics.framework.dSYM $BUILD_RELEASE_SIMULATOR
+cp -r $DERIVED_DATA_SIMULATOR/$FRAMEWORK_DSYM $BUILD_RELEASE_SIMULATOR
 
 
 ###
 ### 3. build DEBUG framework for devices
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphoneos -arch arm64
+xcodebuild BUILD_LIBRARY_FOR_DISTRIBUTION=YES -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Debug -sdk iphoneos -arch arm64
 
 # create folder to store compiled framework for device - Debug
 mkdir $BUILD_DEBUG_DEVICE
@@ -92,13 +93,13 @@ DERIVED_DATA_DEVICE=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -Use
 
 # copy compiled framework for devices into our build folder - Debug
 cp -r $DERIVED_DATA_DEVICE/RAnalytics.framework $BUILD_DEBUG_DEVICE
-cp -r $DERIVED_DATA_DEVICE/RAnalytics.framework.dSYM $BUILD_DEBUG_DEVICE
+cp -r $DERIVED_DATA_DEVICE/$FRAMEWORK_DSYM $BUILD_DEBUG_DEVICE
 
 
 ###
 ### 4. build RELEASE framework for devices
 ###
-xcodebuild -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphoneos -arch arm64
+xcodebuild BUILD_LIBRARY_FOR_DISTRIBUTION=YES -UseModernBuildSystem=YES BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" clean build -workspace RakutenAnalyticsSDK.xcworkspace -scheme RAnalytics-Framework -configuration Release -sdk iphoneos -arch arm64
   
 # create folder to store compiled framework for device - Release
 mkdir $BUILD_RELEASE_DEVICE
@@ -108,7 +109,7 @@ DERIVED_DATA_DEVICE=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -Use
 
 # copy compiled framework for devices into our build folder - Release
 cp -r $DERIVED_DATA_DEVICE/RAnalytics.framework $BUILD_RELEASE_DEVICE
-cp -r $DERIVED_DATA_DEVICE/RAnalytics.framework.dSYM $BUILD_RELEASE_DEVICE
+cp -r $DERIVED_DATA_DEVICE/$FRAMEWORK_DSYM $BUILD_RELEASE_DEVICE
 
 # create folders to store compiled universal framework for Debug and Release configurations
 mkdir $BUILD_DEBUG_UNIVERSAL
@@ -120,8 +121,27 @@ mkdir $BUILD_RELEASE_UNIVERSAL
 cp -r $BUILD_DEBUG_DEVICE/RAnalytics.framework $BUILD_DEBUG_UNIVERSAL
 cp -r $BUILD_RELEASE_DEVICE/RAnalytics.framework $BUILD_RELEASE_UNIVERSAL
 
-cp -r $BUILD_DEBUG_DEVICE/RAnalytics.framework.dSYM $BUILD_DEBUG_UNIVERSAL
-cp -r $BUILD_RELEASE_DEVICE/RAnalytics.framework.dSYM $BUILD_RELEASE_UNIVERSAL
+cp -r $BUILD_DEBUG_DEVICE/$FRAMEWORK_DSYM $BUILD_DEBUG_UNIVERSAL
+cp -r $BUILD_RELEASE_DEVICE/$FRAMEWORK_DSYM $BUILD_RELEASE_UNIVERSAL
+
+UUIDs=$(dwarfdump --uuid "$BUILD_RELEASE_DEVICE/$FRAMEWORK_DSYM" | cut -d ' ' -f2)
+echo "dwarfdump UUIDs: $UUIDs"
+
+# find and copy bitcode symbols
+# see https://instabug.com/blog/ios-binary-framework/
+for file in `find "$DERIVED_DATA_DEVICE" -name "*.bcsymbolmap" -type f`; do
+    fileName=$(basename "$file" ".bcsymbolmap")
+    for UUID in $UUIDs; do
+        if [[ "$UUID" = "$fileName" ]]; then
+            cp -R "$file" "$BUILD_RELEASE_DEVICE"
+
+            # Updates the dSYM inplace using bitcode symbol map
+            # see "Restore Hidden Symbols" https://developer.apple.com/documentation/xcode/diagnosing_issues_using_crash_reports_and_device_logs/adding_identifiable_symbol_names_to_a_crash_report
+            dsymutil --symbol-map "$BUILD_RELEASE_DEVICE"/"$fileName".bcsymbolmap "$BUILD_RELEASE_DEVICE/$FRAMEWORK_DSYM"
+            echo "Mapped bitcode symbols from ${fileName} to $FRAMEWORK_DSYM"
+        fi
+    done
+done 
 
 # create framework binary compatible with simulators and devices, and replace binary in universal framework
 lipo -create \
@@ -143,14 +163,14 @@ lipo -create \
 lipo -create \
     $BUILD_RELEASE_SIMULATOR/$dSymFilePath \
     $BUILD_RELEASE_DEVICE/$dSymFilePath \
-    -output $BUILD_RELEASE_UNIVERSAL/$dSymFilePath
+    -output $BUILD_RELEASE_UNIVERSAL/$dSymFilePath   
 
 # copy simulator Swift public interface to universal framework
-cp $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
-cp $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
+cp -r $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
+cp -r $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule
 
-cp $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
-cp $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
+cp -r $BUILD_DEBUG_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_DEBUG_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
+cp -r $BUILD_RELEASE_SIMULATOR/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project/* $BUILD_RELEASE_UNIVERSAL/$FRAMEWORK_NAME.framework/Modules/$FRAMEWORK_NAME.swiftmodule/Project
 
 # check architectures
 echo "Framework - Debug mode:"
@@ -185,22 +205,3 @@ do
     echo "Framework - Release mode - architecture $item:"
     bitcode $item $BUILD_RELEASE_UNIVERSAL/$frameworkBinaryPath
 done
-
-# check if RATEndpoint warning exists or not
-DEBUG_INFO="Your application's Info.plist must contain a key 'RATEndpoint' set to your endpoint URL"
-DEBUG_VALIDATION=$(strings $BUILD_DEBUG_UNIVERSAL/$frameworkBinaryPath | grep "$DEBUG_INFO")
-RELEASE_VALIDATION=$(strings $BUILD_RELEASE_UNIVERSAL/$frameworkBinaryPath | grep "$DEBUG_INFO")
-
-if [ "$DEBUG_VALIDATION" = "$DEBUG_INFO" ]; then
-    echo "OK: $BUILD_DEBUG_UNIVERSAL/$frameworkBinaryPath contains RATEndpoint warning message"
-else
-    echo "ERROR: $BUILD_DEBUG_UNIVERSAL/$frameworkBinaryPath doesn't contain RATEndpoint warning message"
-    exit 1
-fi
-
-if [ "$RELEASE_VALIDATION" = "$DEBUG_INFO" ]; then
-    echo "ERROR: $BUILD_RELEASE_UNIVERSAL/$frameworkBinaryPath contains RATEndpoint warning message"
-    exit 1
-else
-    echo "OK: $BUILD_RELEASE_UNIVERSAL/$frameworkBinaryPath doesn't contain RATEndpoint warning message"
-fi

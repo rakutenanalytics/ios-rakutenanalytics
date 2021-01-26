@@ -374,6 +374,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -402,6 +403,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;

@@ -28,3 +28,7 @@ Pods
 vendor
 Gemfile.lock
 
+# Public SDK
+RakutenAnalyticsSDK/RAnalyticsDebug*.zip
+RakutenAnalyticsSDK/RAnalyticsRelease*.zip
+

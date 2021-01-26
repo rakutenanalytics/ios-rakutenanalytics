@@ -7,6 +7,80 @@ platform :ios do
     shared_tests(options)
     shared_sample(options)
   end
+
+  desc "Build and release public framework, options are 'version' (string, mandatory), 'testing' (boolean), skip_artifact_upload (boolean), skip_pod_push (boolean)"
+  lane :release_framework do |options|
+    version = options[:version]
+    podspecPath = "RakutenAnalyticsSDK/RAnalytics.podspec"
+    podspecVersion = version_get_podspec(path: podspecPath)
+    UI.user_error!("The passed in version parameter #{version || "NONE"} and podspec version #{podspecVersion} must match") unless version == podspecVersion
+    
+    # build the libraries
+    build_framework(version: version) unless options[:skip_build]
+
+    latest_commit = last_git_commit
+    commit_message = "Built from internal commit #{latest_commit[:commit_hash]}"
+    release_name = "Public Analytics SDK Release v#{version}"
+
+    # upload and pod push are disabled when testing=true
+    testing = options[:testing] || false
+    if testing
+      UI.important "Running in testing mode..."
+    end
+
+    skip_upload = options[:skip_artifact_upload] || false
+    skip_pod_push = options[:skip_pod_push] || false
+
+    private_server_url = "https://ghe.rakuten-it.com/api/v3"
+    private_repo = "ssed/ios-analytics-private-artifacts"
+    private_token = ENV["GHE_TOKEN"]
+    release_description = "\n\n#{commit_message}\n" + File.read("changelog") rescue commit_message
+    private_target_branch = options[:target_branch] || "master"
+
+    UI.message "Upload PRIVATE artifacts to on-prem GHE repo: #{private_repo}, branch: #{private_target_branch}, description: #{release_description}"
+    sh "ls ../RakutenAnalyticsSDK/RAnalytics*.zip"
+    
+    # upload all artifacts to private repo on GHE
+    github_release = set_github_release(
+      server_url: private_server_url,
+      repository_name: private_repo,
+      api_token: private_token,
+      name: release_name,
+      tag_name: version,
+      description: release_description,
+      commitish: private_target_branch,
+      upload_assets: [
+        "RakutenAnalyticsSDK/RAnalyticsRelease-v#{version}.zip", 
+        "RakutenAnalyticsSDK/RAnalyticsDebug-v#{version}.zip",
+        "RakutenAnalyticsSDK/RAnalyticsDebug_dSYM-v#{version}.zip",
+        "RakutenAnalyticsSDK/RAnalyticsRelease_dSYM-v#{version}.zip",
+      ]
+    ) unless testing || skip_upload
+
+    public_repo = "rakutentech/ios-analytics-framework-test"
+    public_token = ENV["GITHUB_TOKEN"]
+    public_target_branch = options[:target_branch] || "master"
+
+    UI.message "Upload PUBLIC artifacts to GitHub repo: #{public_repo}, branch #{public_target_branch}, description: #{release_description}"
+    sh "ls ../RakutenAnalyticsSDK/RAnalyticsRelease-v#{version}.zip"
+
+    # upload only RELEASE framework to public GitHub repo
+    github_release = set_github_release(
+      repository_name: public_repo,
+      api_token: public_token,
+      name: release_name,
+      tag_name: version,
+      description: release_description,
+      commitish: public_target_branch,
+      upload_assets: ["RakutenAnalyticsSDK/RAnalyticsRelease-v#{version}.zip"]
+    ) unless testing || skip_upload
+
+    # lint and push podspec to CocoaPods trunk spec repo
+    pod_lib_lint(podspec: podspecPath, allow_warnings: true)
+    pod_push(path: podspecPath, allow_warnings: true) unless testing || skip_pod_push
+
+    UI.success "Successfully released v#{version}" unless testing || skip_pod_push || skip_upload
+  end
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
