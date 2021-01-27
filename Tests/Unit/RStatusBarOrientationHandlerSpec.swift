@@ -18,19 +18,19 @@ final class RStatusBarOrientationHandlerSpec: QuickSpec {
         describe("RStatusBarOrientationHandler") {
             describe("mori") {
                 context("executed on the Main Thread") {
-                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.portrait") {
+                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals .portrait") {
                         expect(RStatusBarOrientationHandler(application: ApplicationMock(.portrait)).mori).to(equal(.portrait))
                     }
-                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.portraitUpsideDown") {
+                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals .portraitUpsideDown") {
                         expect(RStatusBarOrientationHandler(application: ApplicationMock(.portraitUpsideDown)).mori).to(equal(.portrait))
                     }
-                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.landscapeLeft") {
+                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals .landscapeLeft") {
                         expect(RStatusBarOrientationHandler(application: ApplicationMock(.landscapeLeft)).mori).to(equal(.landscape))
                     }
-                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.landscapeRight") {
+                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals .landscapeRight") {
                         expect(RStatusBarOrientationHandler(application: ApplicationMock(.landscapeRight)).mori).to(equal(.landscape))
                     }
-                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.unknown") {
+                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals .unknown") {
                         expect(RStatusBarOrientationHandler(application: ApplicationMock(.unknown)).mori).to(equal(.portrait))
                     }
                     it("should equal RMoriType.portrait if UIApplication.shared is not available") {
@@ -38,7 +38,7 @@ final class RStatusBarOrientationHandlerSpec: QuickSpec {
                     }
                 }
                 context("executed on other Thread") {
-                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.portrait") {
+                    it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals .portrait") {
                         let queue = DispatchQueue(label: "com.analytics.status-bar-orientation-handler-spec.queue", qos: .default)
                         var result: RMoriType = .landscape
                         queue.async {
@@ -46,7 +46,7 @@ final class RStatusBarOrientationHandlerSpec: QuickSpec {
                         }
                         expect(result).toEventually(equal(.portrait))
                     }
-                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals UIInterfaceOrientation.landscape") {
+                    it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals .landscape") {
                         let queue = DispatchQueue(label: "com.analytics.status-bar-orientation-handler-spec.queue", qos: .default)
                         var result: RMoriType = .portrait
                         queue.async {
