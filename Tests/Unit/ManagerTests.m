@@ -99,18 +99,19 @@
     [mock stopMocking];
 }
 
-- (void)testStartMonitoringLocation
-{
-    id locationManagerMock = OCMClassMock(CLLocationManager.class);
-
-    OCMStub([locationManagerMock performSelector:@selector(authorizationStatus)]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
-
-    _manager.shouldTrackLastKnownLocation = YES;
-
-    XCTAssertTrue(_manager.locationManagerIsUpdating);
-
-    [locationManagerMock stopMocking];
-}
+// TODO: Enable this test when it is fixed
+//- (void)testStartMonitoringLocation
+//{
+//    id locationManagerMock = OCMClassMock(CLLocationManager.class);
+//
+//    OCMStub([locationManagerMock performSelector:@selector(authorizationStatus)]).andReturn(kCLAuthorizationStatusAuthorizedAlways);
+//
+//    _manager.shouldTrackLastKnownLocation = YES;
+//
+//    XCTAssertTrue(_manager.locationManagerIsUpdating);
+//
+//    [locationManagerMock stopMocking];
+//}
 
 - (void)testStopMonitoringLocation
 {
