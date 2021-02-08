@@ -1,9 +1,15 @@
 #import "TrackerTests.h"
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
+#import <CoreLocation/CLLocation.h>
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
+#import "UnitTests-Swift.h"
+
+#import <RAnalytics/RAnalytics-Swift.h>
+
+@implementation CurrentPage
+@end
 
 @interface RAnalyticsState ()
 @property (nonatomic, readwrite, copy)              NSString                    *sessionIdentifier;
@@ -27,11 +33,6 @@
 
 @interface RAnalyticsManager ()
 @property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
-@end
-
-@interface RAnalyticsSender ()
-@property (nonatomic) NSTimeInterval            uploadTimerInterval;
-@property (nonatomic) NSTimer                  *uploadTimer;
 @end
 
 @implementation TrackerTests
@@ -66,7 +67,7 @@
     NSDate *lastUpdateDate = dateComponents.date;
 
     _defaultState = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
-                                                       deviceIdentifier:@"deviceId"];
+                                                    deviceIdentifier:@"deviceId"];
     _defaultState.advertisingIdentifier = @"adId";
     _defaultState.lastKnownLocation     = location;
     _defaultState.sessionStartDate      = sessionStartDate;
@@ -82,15 +83,7 @@
     _defaultState.currentPage           = currentPage;
 
     _defaultEvent = [RAnalyticsEvent.alloc initWithName:[_RATEventPrefix stringByAppendingString:@"defaultEvent"]
-                                                parameters:@{@"param1": @"value1"}];
-
-    // Mock the database
-    _database = MockedDatabase.new;
-    
-    id dbMock = OCMClassMock(_RAnalyticsDatabase.class);
-    [self addMock:dbMock];
-    
-    OCMStub([dbMock databaseWithConnection:[OCMArg anyPointer]]).andReturn(_database);
+                                             parameters:@{@"param1": @"value1"}];
 
     // Mock the SDKTracker singleton so that each test gets a fresh one
     _tracker = [self testedTracker];
@@ -110,7 +103,11 @@
 
     _mocks    = nil;
     _tracker  = nil;
+
+    [DatabaseTestUtils deleteTableIfExists:_databaseTableName connection:_connection];
     _database = nil;
+    _connection = nil;
+    
     [super tearDown];
 }
 
@@ -132,27 +129,51 @@
     [_mocks addObject:mock];
 }
 
-- (NSDictionary *)assertProcessEvent:(RAnalyticsEvent *)event
-                               state:(RAnalyticsState *)state
-                          expectType:(NSString *)etype
+- (void)assertProcessEvent:(RAnalyticsEvent *)event
+                     state:(RAnalyticsState *)state
+                expectType:(NSString *)etype
 {
-    return [self assertProcessEvent:event
-                              state:state
-                            tracker:_tracker
-                         expectType:etype];
+    [self assertProcessEvent:event
+                       state:state
+                 expectEtype:etype
+                 assertBlock:nil];
 }
 
-- (NSDictionary *)assertProcessEvent:(RAnalyticsEvent *)event
-                               state:(RAnalyticsState *)state
-                             tracker:(RAnalyticsRATTracker *)tracker
-                          expectType:(NSString *)etype
+- (void)assertProcessEvent:(RAnalyticsEvent *)event
+                     state:(RAnalyticsState *)state
+               assertBlock:(TrackerAssertBlock)assertBlock
 {
+    [self assertProcessEvent:event state:state expectEtype:nil assertBlock:assertBlock];
+}
+
+- (void)assertProcessEvent:(RAnalyticsEvent *)event
+                     state:(RAnalyticsState *)state
+               expectEtype:(NSString *)etype
+               assertBlock:(TrackerAssertBlock)assertBlock
+{
+    // Given
+    XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
     XCTAssertNotNil(event);
-    XCTAssert([tracker processEvent:event state:state]);
-    id payload = _database.latestAddedJSON;
-    XCTAssertNotNil(payload);
-    if (etype) XCTAssertEqualObjects(payload[@"etype"], etype);
-    return payload;
+
+    // When
+    [self.tracker processEvent:event state:state];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSData *data = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection].firstObject;
+        
+        NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:data options:0 error:0];
+        XCTAssertNotNil(payload);
+        if (etype) {
+            XCTAssertEqualObjects(payload[@"etype"], etype);
+        }
+        if (assertBlock) {
+            assertBlock(payload);
+        }
+        [wait fulfill];
+    });
+
+    // Then
+    [self waitForExpectationsWithTimeout:0.5 handler:nil];
 }
 
 - (void)stubRATResponseWithStatusCode:(int)status completionHandler:(void (^)(void))completion

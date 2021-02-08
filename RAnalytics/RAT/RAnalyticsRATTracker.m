@@ -7,7 +7,6 @@
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
-#import "RAnalyticsSender.h"
 #import "RAnalyticsRpCookieFetcher.h"
 #import <RLogger/RLogger.h>
 #import <RAnalytics/RAnalytics-Swift.h>
@@ -190,8 +189,6 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         /*
          * Keep track of reachability.
          */
-
-        NSURL *endpoint = _RAnalyticsEndpointAddress();
         static SCNetworkReachabilityRef reachability;
         static dispatch_once_t oncet;
         dispatch_once(&oncet, ^{
@@ -220,9 +217,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         });
 
         // create a sender.
-        _sender = [[RAnalyticsSender alloc] initWithEndpoint:endpoint
-                                                databaseName:_RATDatabaseName
-                                           databaseTableName:_RATTableName];
+        RAnalyticsDatabase *database = [RAnalyticsDatabase databaseWithConnection:[RAnalyticsDatabase mkAnalyticsDBConnectionWithName:_RATDatabaseName]];
+        _sender = [RAnalyticsSender.alloc initWithEndpoint:_RAnalyticsEndpointAddress()
+                                                  database:database
+                                             databaseTable:_RATTableName];
         [_sender setBatchingDelayBlock:^{return _RATBatchingDelay;}];
 
         _rpCookieFetcher = [[RAnalyticsRpCookieFetcher alloc] initWithCookieStorage:[NSHTTPCookieStorage sharedHTTPCookieStorage]];
@@ -896,7 +894,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     [self addAutomaticFields:payload state:state];
-    [_sender sendJSONOject:payload];
+    [_sender sendJSONObject:payload];
     return YES;
 }
 

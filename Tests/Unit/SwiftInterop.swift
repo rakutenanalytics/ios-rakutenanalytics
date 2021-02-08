@@ -2,29 +2,31 @@ import XCTest
 import RAnalytics
 import RDeviceIdentifier
 
-public class SwiftInterop : XCTestCase {
+public class SwiftInterop: XCTestCase {
     @objc
-    public class TrackerSwift : NSObject, Tracker {
+    public class TrackerSwift: NSObject, Tracker {
         public var endpointURL: URL = URL(string: "https://endpoint.com")!
-        
-        public var lastEvent : AnalyticsManager.Event?
-        public var lastState : AnalyticsManager.State?
+
+        public var lastEvent: AnalyticsManager.Event?
+        public var lastState: AnalyticsManager.State?
         public func process(event: AnalyticsManager.Event, state: AnalyticsManager.State) -> Bool {
+
+            // Testing NS_SWIFT_NAME conversion from Objective-C enum
             switch state.origin {
-            case AnalyticsManager.State.Origin.internal: break
-            case AnalyticsManager.State.Origin.external: break
-            case AnalyticsManager.State.Origin.push:     break
-            @unknown default:()
+            case AnalyticsManager.State.Origin.internal,
+                 AnalyticsManager.State.Origin.external,
+                 AnalyticsManager.State.Origin.push: ()
+            @unknown default: ()
             }
 
             switch state.loginMethod {
-            case AnalyticsManager.State.LoginMethod.oneTapLogin:   break
-            case AnalyticsManager.State.LoginMethod.passwordInput: break
-            case AnalyticsManager.State.LoginMethod.other:         break
+            case AnalyticsManager.State.LoginMethod.oneTapLogin,
+                 AnalyticsManager.State.LoginMethod.passwordInput,
+                 AnalyticsManager.State.LoginMethod.other: ()
             @unknown default:()
             }
 
-            if let _ = event.parameters["boo"] as? NSNumber {
+            if event.parameters["boo"] is NSNumber {
                 print("just testing parameter unwrapping")
             }
 
@@ -34,26 +36,24 @@ public class SwiftInterop : XCTestCase {
 
             switch event.name {
             case AnalyticsManager.Event.Name.initialLaunch:
-                lastEvent = (event.copy() as! AnalyticsManager.Event)
-                lastState = (state.copy() as! AnalyticsManager.State)
+                lastEvent = (event.copy() as! AnalyticsManager.Event) // swiftlint:disable:this force_cast
+                lastState = (state.copy() as! AnalyticsManager.State) // swiftlint:disable:this force_cast
                 return true
-            case AnalyticsManager.Event.Name.sessionStart: break
-            case AnalyticsManager.Event.Name.sessionEnd: break
-            case AnalyticsManager.Event.Name.applicationUpdate: break
+            case AnalyticsManager.Event.Name.sessionStart,
+                 AnalyticsManager.Event.Name.sessionEnd,
+                 AnalyticsManager.Event.Name.install,
+                 AnalyticsManager.Event.Name.applicationUpdate: ()
             case AnalyticsManager.Event.Name.login:
                 print("User with tracking id '\(state.userIdentifier ?? "")' just logged in!")
-                break
             case AnalyticsManager.Event.Name.logout:
                 if let logoutMethod = event.parameters[AnalyticsManager.Event.Parameter.logoutMethod] as? String {
                     switch logoutMethod {
-                    case AnalyticsManager.Event.LogoutMethod.local: break;
-                    case AnalyticsManager.Event.LogoutMethod.global: break;
-                    default: break;
+                    case AnalyticsManager.Event.LogoutMethod.local,
+                         AnalyticsManager.Event.LogoutMethod.global: ()
+                    default: ()
                     }
                 }
-                break
-            case AnalyticsManager.Event.Name.install: break
-            default: break
+            default: ()
             }
 
             lastEvent = nil
@@ -63,10 +63,10 @@ public class SwiftInterop : XCTestCase {
     }
 
     public func testSwiftInterop() {
-        let rat : RAnalyticsRATTracker = RAnalyticsRATTracker.shared()
+        let rat: RAnalyticsRATTracker = RAnalyticsRATTracker.shared()
         XCTAssertNotNil(rat)
 
-        var event : AnalyticsManager.Event = rat.event(withEventType: "foo", parameters: ["bar" : "baz"])
+        var event: AnalyticsManager.Event = rat.event(withEventType: "foo", parameters: ["bar": "baz"])
         XCTAssertNotNil(event)
 
         let manager = AnalyticsManager.shared()
@@ -87,9 +87,9 @@ public class SwiftInterop : XCTestCase {
         XCTAssertNotNil(tracker.lastEvent)
         XCTAssertNotNil(tracker.lastState)
 
-        let nc = NotificationCenter.default
-        nc.post(name:NSNotification.Name.RAnalyticsWillUpload, object:nil)
-        nc.post(name:NSNotification.Name.RAnalyticsUploadFailure, object:nil)
-        nc.post(name:NSNotification.Name.RAnalyticsUploadSuccess, object:nil)
+        let nCenter = NotificationCenter.default
+        nCenter.post(name: NSNotification.Name.RAnalyticsWillUpload, object: nil)
+        nCenter.post(name: NSNotification.Name.RAnalyticsUploadFailure, object: nil)
+        nCenter.post(name: NSNotification.Name.RAnalyticsUploadSuccess, object: nil)
     }
 }

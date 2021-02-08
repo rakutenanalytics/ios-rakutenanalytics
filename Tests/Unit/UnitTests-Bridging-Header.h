@@ -3,10 +3,3 @@
 //
 #import <RAnalytics/RAnalytics.h>
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
-
-@interface _RAnalyticsLaunchCollector ()
-@property (nonatomic, readwrite)                    RAnalyticsOrigin     origin;
-@property (nonatomic, nullable, readwrite, copy)    NSString                *pushTrackingIdentifier;
-- (void)resetToDefaults;
-@end

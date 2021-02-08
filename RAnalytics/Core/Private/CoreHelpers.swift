@@ -49,7 +49,7 @@ import UIKit
         var otherFrameworks = [String: Any]()
         Bundle.allFrameworks.forEach {
             guard let identifier = $0.bundleIdentifier,
-               !identifier.hasPrefix("com.apple.") else {
+                  !identifier.hasPrefix("com.apple.") else {
                 return
             }
             let version = $0.object(forInfoDictionaryKey: "CFBundleShortVersionString")

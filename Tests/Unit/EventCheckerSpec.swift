@@ -30,13 +30,13 @@ final class EventCheckerSpec: QuickSpec {
                 context("shouldTrackEventHandler is not nil") {
                     context("disabledEventsAtBuildTime is nil") {
                         it("should return false if the event is not auhorized by shouldTrackEventHandler") {
-                            let eventChecker = EventChecker(disabledEventsAtBuildTime:nil)
+                            let eventChecker = EventChecker(disabledEventsAtBuildTime: nil)
                             eventChecker.shouldTrackEventHandler = { $0 != "foo" }
                             expect(eventChecker.shouldTrackEventHandler).toNot(beNil())
                             expect(eventChecker.shouldProcess("foo")).to(beFalse())
                         }
                         it("should return true if the event is auhorized by shouldTrackEventHandler") {
-                            let eventChecker = EventChecker(disabledEventsAtBuildTime:nil)
+                            let eventChecker = EventChecker(disabledEventsAtBuildTime: nil)
                             eventChecker.shouldTrackEventHandler = { $0 == "foo" }
                             expect(eventChecker.shouldTrackEventHandler).toNot(beNil())
                             expect(eventChecker.shouldProcess("foo")).to(beTrue())
@@ -63,6 +63,7 @@ final class EventCheckerSpec: QuickSpec {
                             expect(eventChecker.shouldTrackEventHandler).toNot(beNil())
                             expect(eventChecker.shouldProcess("foo")).to(beFalse())
                         }
+                        // swiftlint:disable:next line_length
                         it("should return false if the event does not exist in disabledEventsAtBuildTime but not authorized in shouldTrackEventHandler") {
                             let eventChecker = EventChecker(disabledEventsAtBuildTime: ["hello"])
                             eventChecker.shouldTrackEventHandler = { $0 != "foo" }

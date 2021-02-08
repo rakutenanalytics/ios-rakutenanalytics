@@ -2,6 +2,7 @@ included:
   - Samples/RAnalyticsSample # path when run from CI
   - RAnalyticsSample # path when run as an Xcode build phase
   - RAnalytics
+  - Tests
 
 disabled_rules:
 - trailing_whitespace

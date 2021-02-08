@@ -32,17 +32,17 @@ final class SwiftyDependenciesContainerSpec: QuickSpec {
         describe("SwiftyContainer") {
             describe("register") {
                 it("should not register a reference that is already registered") {
-                    let a = AnalyticsHandler(name: "a")
+                    let handler = AnalyticsHandler(name: "a")
                     var swiftyContainer = SwiftyDependenciesContainer<Dependency>()
-                    expect(swiftyContainer.register(a)).to(beTrue())
-                    expect(swiftyContainer.register(a)).to(beFalse())
+                    expect(swiftyContainer.register(handler)).to(beTrue())
+                    expect(swiftyContainer.register(handler)).to(beFalse())
                 }
                 it("should not register the same type") {
-                    let a = AnalyticsHandler(name: "a")
-                    let b = AnalyticsHandler(name: "b")
+                    let handlerA = AnalyticsHandler(name: "a")
+                    let handlerB = AnalyticsHandler(name: "b")
                     var swiftyContainer = SwiftyDependenciesContainer<Dependency>()
-                    expect(swiftyContainer.register(a)).to(beTrue())
-                    expect(swiftyContainer.register(b)).to(beFalse())
+                    expect(swiftyContainer.register(handlerA)).to(beTrue())
+                    expect(swiftyContainer.register(handlerB)).to(beFalse())
                 }
             }
             describe("resolve") {
@@ -57,11 +57,11 @@ final class SwiftyDependenciesContainerSpec: QuickSpec {
                     expect(swiftyContainer.resolve(CookieInjector.self)).to(beNil())
                 }
                 it("should return the correct reference") {
-                    let a: AdvertisingHandler = AdvertisingHandler(name: "a")
+                    let handler = AdvertisingHandler(name: "a")
                     var swiftyContainer = SwiftyDependenciesContainer<Dependency>()
-                    swiftyContainer.register(a)
-                    expect(swiftyContainer.resolve(AdvertisingHandler.self)).to(equal(a))
-                    expect(swiftyContainer.resolve(AdvertisementIdentifiable.self) as? AdvertisingHandler).to(equal(a))
+                    swiftyContainer.register(handler)
+                    expect(swiftyContainer.resolve(AdvertisingHandler.self)).to(equal(handler))
+                    expect(swiftyContainer.resolve(AdvertisementIdentifiable.self) as? AdvertisingHandler).to(equal(handler))
                 }
             }
         }

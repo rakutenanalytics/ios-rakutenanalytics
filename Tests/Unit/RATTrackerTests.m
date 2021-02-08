@@ -1,14 +1,13 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
-#import <OHHTTPStubs/OHHTTPStubs.h>
 
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 #import "TrackerTests.h"
+#import <RAnalytics/RAnalytics-Swift.h>
+#import "UnitTests-Swift.h"
 
 #import <Kiwi/Kiwi.h>
-#import <RAnalytics/RAnalytics-Swift.h>
 
 #pragma mark - Module Internals
 
@@ -29,16 +28,13 @@
 - (NSNumber *)positiveIntegerNumberWithObject:(id)object;
 @end
 
-@interface RAnalyticsSender ()
-@property (nonatomic) NSTimeInterval            uploadTimerInterval;
-@property (nonatomic) NSTimer                  *uploadTimer;
-@end
-
 @interface RAnalyticsManager ()
 @property(nonatomic, strong) NSMutableSet<id<RAnalyticsTracker>> *trackers;
 @end
 
 #pragma mark - Unit Tests
+
+const NSTimeInterval DEFAULT_BATCHING_DELAY = 1.0;
 
 @interface RATTrackerTests : TrackerTests
 @end
@@ -73,7 +69,18 @@
 #pragma mark TrackerTestConfiguration protocol
 - (id<RAnalyticsTracker>)testedTracker
 {
-    return [RAnalyticsRATTracker.alloc initInstance];
+    // Create in-memory DB and init tracker
+    self.connection = [DatabaseTestUtils openRegularConnection];
+    self.database = [DatabaseTestUtils mkDatabaseWithConnection:self.connection];
+    self.databaseTableName = @"RATTrackerTests_Table";
+    RAnalyticsRATTracker *tracker = [RAnalyticsRATTracker.alloc initInstance];
+    tracker.sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"]
+                                                       database:self.database
+                                                  databaseTable:self.databaseTableName];
+    [tracker setBatchingDelayWithBlock:^NSTimeInterval{
+       return DEFAULT_BATCHING_DELAY;
+    }];
+    return tracker;
 }
 
 #pragma mark Test initialisation and configuration
@@ -162,22 +169,23 @@
 - (void)testProcessInstallEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
-    id appInfo = [payload valueForKeyPath:@"cp.app_info"];
-    XCTAssert([appInfo containsString:@"xcode"]);
-    XCTAssert([appInfo containsString:@"iphonesimulator"]);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        id appInfo = [payload valueForKeyPath:@"cp.app_info"];
+        XCTAssert([appInfo containsString:@"xcode"]);
+        XCTAssert([appInfo containsString:@"iphonesimulator"]);
+    }];
 }
 
 
 - (void)testProcessSessionStartEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsSessionStartEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsSessionStartEventName];
-
-    NSInteger daysSinceFirstUse = [[payload valueForKeyPath:@"cp.days_since_first_use"] integerValue];
-    NSInteger daysSinceLastUse  = [[payload valueForKeyPath:@"cp.days_since_last_use"] integerValue];
-    XCTAssertGreaterThanOrEqual(daysSinceLastUse, 0);
-    XCTAssertEqual(daysSinceLastUse, daysSinceFirstUse - 2);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsSessionStartEventName assertBlock:^(id  _Nonnull payload) {
+        NSInteger daysSinceFirstUse = [[payload valueForKeyPath:@"cp.days_since_first_use"] integerValue];
+        NSInteger daysSinceLastUse  = [[payload valueForKeyPath:@"cp.days_since_last_use"] integerValue];
+        XCTAssertGreaterThanOrEqual(daysSinceLastUse, 0);
+        XCTAssertEqual(daysSinceLastUse, daysSinceFirstUse - 2);
+    }];
 }
 
 - (void)testProcessSessionEndEvent
@@ -189,19 +197,20 @@
 - (void)testProcessApplicationUpdateEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsApplicationUpdateEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsApplicationUpdateEventName];
-
-    NSInteger launchesSinceUpgrade = [[payload valueForKeyPath:@"cp.launches_since_last_upgrade"] integerValue];
-    NSInteger daysSinceUpgrade     = [[payload valueForKeyPath:@"cp.days_since_last_upgrade"] integerValue];
-    XCTAssertGreaterThan(launchesSinceUpgrade, 0);
-    XCTAssertGreaterThan(daysSinceUpgrade,     0);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsApplicationUpdateEventName assertBlock:^(id  _Nonnull payload) {
+        NSInteger launchesSinceUpgrade = [[payload valueForKeyPath:@"cp.launches_since_last_upgrade"] integerValue];
+        NSInteger daysSinceUpgrade     = [[payload valueForKeyPath:@"cp.days_since_last_upgrade"] integerValue];
+        XCTAssertGreaterThan(launchesSinceUpgrade, 0);
+        XCTAssertGreaterThan(daysSinceUpgrade,     0);
+    }];
 }
 
 - (void)testProcessOneTapLoginEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLoginEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLoginEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"one_tap_login");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLoginEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"one_tap_login");
+    }];
 }
 
 - (void)testProcessPasswordLoginEvent
@@ -210,78 +219,97 @@
     state.loginMethod = RAnalyticsPasswordInputLoginMethod;
 
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLoginEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:state expectType:RAnalyticsLoginEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"password");
+    [self assertProcessEvent:event state:state expectEtype:RAnalyticsLoginEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.login_method"], @"password");
+    }];
 }
 
 - (void)testProcessLocalLogoutEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLogoutEventName parameters:@{RAnalyticsLogoutMethodEventParameter:RAnalyticsLocalLogoutMethod}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLogoutEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"single");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLogoutEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"single");
+    }];
 }
 
 - (void)testProcessGlobalLogoutEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLogoutEventName parameters:@{RAnalyticsLogoutMethodEventParameter:RAnalyticsGlobalLogoutMethod}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLogoutEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"all");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLogoutEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.logout_method"], @"all");
+    }];
 }
 
 - (void)testProcessEmptyLogoutEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLogoutEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLogoutEventName];
-    XCTAssertNil([payload valueForKeyPath:@"cp.logout_method"]);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLogoutEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil([payload valueForKeyPath:@"cp.logout_method"]);
+    }];
 }
 
 - (void)testProcessPasswordLoginFailureEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLoginFailureEventName parameters:@{@"type":@"password_login", @"rae_error" : @"invalid_grant"}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLoginFailureEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"password_login");
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_grant");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLoginFailureEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"password_login");
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_grant");
+    }];
 }
 
 - (void)testProcessSSOLoginFailureEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLoginFailureEventName parameters:@{@"type":@"sso_login", @"rae_error" : @"invalid_scope"}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsLoginFailureEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"sso_login");
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_scope");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLoginFailureEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.type"], @"sso_login");
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.rae_error"], @"invalid_scope");
+    }];
 }
 
 - (void)testProcessPageVisitEventWithPageId
 {
     NSString *pageId = @"TestPage";
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:@"pv" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
+    }];
 }
 
 - (void)testProcessPageVisitEventWithoutPageId
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], NSStringFromClass(CurrentPage.class));
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:@"pv" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], NSStringFromClass(CurrentPage.class));
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"internal");
+    }];
 }
 
 - (void)testProcessPageWithRef
 {
-    NSString *firstPage  = @"FirstPage",
-             *secondPage = @"SecondPage";
+    // Given
+    XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
+    NSString *firstPage = @"FirstPage";
+    NSString *secondPage = @"SecondPage";
 
-    id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": firstPage}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], firstPage);
-    XCTAssertNil([payload valueForKeyPath:@"ref"]);
+    id firstEvent = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": firstPage}];
+    id secondEvent = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": secondPage}];
 
-    event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": secondPage}];
-    payload = [self assertProcessEvent:event state:self.defaultState expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], secondPage);
-    XCTAssertEqualObjects([payload valueForKeyPath:@"ref"], firstPage);
+    // When
+    [self.tracker processEvent:firstEvent state:self.defaultState];
+    [self.tracker processEvent:secondEvent state:self.defaultState];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSData *data = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection].lastObject;
+        NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:data options:0 error:0];
+        XCTAssertNotNil(payload);
+        XCTAssertEqualObjects(payload[@"pgn"], secondPage);
+        XCTAssertEqualObjects(payload[@"ref"], firstPage);
+        [wait fulfill];
+    });
+
+    // Then
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
 
 - (void)testProcessExternalPageVisitEvent
@@ -291,9 +319,10 @@
     state.origin = RAnalyticsExternalOrigin;
 
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
-    id payload = [self assertProcessEvent:event state:state expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"external");
+    [self assertProcessEvent:event state:state expectEtype:@"pv" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"external");
+    }];
 }
 
 - (void)testProcessPushPageVisitEvent
@@ -303,9 +332,10 @@
     state.origin = RAnalyticsPushOrigin;
 
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPageVisitEventName parameters:@{@"page_id": pageId}];
-    id payload = [self assertProcessEvent:event state:state expectType:@"pv"];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"push");
+    [self assertProcessEvent:event state:state expectEtype:@"pv" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"pgn"], pageId);
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.ref_type"], @"push");
+    }];
 }
 
 - (void)testProcessPushEvent
@@ -313,19 +343,17 @@
     NSString *trackingIdentifier = @"trackingIdentifier";
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsPushNotificationEventName
                                            parameters:@{RAnalyticsPushNotificationTrackingIdentifierParameter: trackingIdentifier}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsPushNotificationEventName];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], trackingIdentifier);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsPushNotificationEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], trackingIdentifier);
+    }];
 }
 
 - (void)testProcessInitWithPushEvent
 {
-    NSString *rid = @"123456";
-    NSDictionary *payload = @{@"rid":rid};
-    id event = [RAnalyticsEvent.alloc initWithPushNotificationPayload:payload];
-    id responsePayload = [self assertProcessEvent:event
-                                            state:self.defaultState
-                                       expectType:RAnalyticsPushNotificationEventName];
-    XCTAssertEqualObjects([responsePayload valueForKeyPath:@"cp.push_notify_value"], @"rid:123456");
+    id event = [RAnalyticsEvent.alloc initWithPushNotificationPayload:@{@"rid":@"123456"}];
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsPushNotificationEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.push_notify_value"], @"rid:123456");
+    }];
 }
 
 - (void)testProcessDiscoverEvent
@@ -336,9 +364,10 @@
 
     id event = [RAnalyticsEvent.alloc initWithName:discoverEvent
                                            parameters:@{@"prApp" : appName, @"prStoreUrl": storeURL}];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:discoverEvent];
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prApp"], appName);
-    XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prStoreUrl"], storeURL);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:discoverEvent assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prApp"], appName);
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.prStoreUrl"], storeURL);
+    }];
 }
 
 - (void)testProcessCardInfoEvent
@@ -375,15 +404,17 @@
 - (void)testProcessCustomEvent
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsCustomEventName parameters:@{@"eventName":@"etypeName", @"eventData":@{@"foo":@"bar"}}];
-    NSDictionary *payload = [self assertProcessEvent:event state:self.defaultState expectType:@"etypeName"];
-    XCTAssertEqualObjects(payload[@"cp"][@"foo"], @"bar");
+    [self assertProcessEvent:event state:self.defaultState expectEtype:@"etypeName" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects(payload[@"cp"][@"foo"], @"bar");
+    }];
 }
 
 - (void)testProcessCustomEventNoData
 {
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsCustomEventName parameters:@{@"eventName":@"etypeName"}];
-    NSDictionary *payload = [self assertProcessEvent:event state:self.defaultState expectType:@"etypeName"];
-    XCTAssertNil(payload[@"cp"]);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:@"etypeName" assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil(payload[@"cp"]);
+    }];
 }
 
 - (void)testProcessInvalidCustomEventFails
@@ -406,29 +437,26 @@
     OCMStub([deviceSpy batteryState]).andReturn(UIDeviceBatteryStateUnplugged);
     OCMStub([deviceSpy batteryLevel]).andReturn(0.5);
 
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-    NSNumber *powerstatus = payload[@"powerstatus"],
-             *mbat        = payload[@"mbat"];
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState expectEtype:nil assertBlock:^(id  _Nonnull payload) {
+        NSNumber *powerstatus = payload[@"powerstatus"],
+                 *mbat        = payload[@"mbat"];
 
-    XCTAssertNotNil(powerstatus);
-    XCTAssertNotNil(mbat);
+        XCTAssertNotNil(powerstatus);
+        XCTAssertNotNil(mbat);
 
-    XCTAssert([powerstatus isKindOfClass:NSNumber.class]);
-    XCTAssert([mbat        isKindOfClass:NSString.class]);
+        XCTAssert([powerstatus isKindOfClass:NSNumber.class]);
+        XCTAssert([mbat        isKindOfClass:NSString.class]);
 
-    XCTAssertEqual(powerstatus.integerValue, 0);
-    XCTAssertEqual(mbat.floatValue,          50);
+        XCTAssertEqual(powerstatus.integerValue, 0);
+        XCTAssertEqual(mbat.floatValue,          50);
+    }];
 }
 
 - (void)test_givenNetworkIsWiFi_whenEventIsProcessed_thenJsonMcnValueIsEmptyString
 {
-    // Given (network is WiFi because tests run on simulator)
-
-    // When
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-
-    // Then
-    XCTAssertEqualObjects(payload[@"mcn"], @"");
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects(payload[@"mcn"], @"");
+    }];
 }
 
 - (void)test_givenNetworkOffline_whenEventIsProcessed_thenJsonMnetwValueIsEmptyString
@@ -437,10 +465,10 @@
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(0); // _RATReachabilityStatusOffline
 
     // When
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-
-    // Then
-    XCTAssertEqualObjects(payload[@"mnetw"], @"");
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetw"], @"");
+    }];
 }
 
 - (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIsWiFi
@@ -449,10 +477,10 @@
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(2); // _RATReachabilityStatusConnectedWithWiFi
 
     // When
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-
-    // Then
-    XCTAssertEqualObjects(payload[@"mnetw"], @(1)); // _RATMobileNetworkTypeWiFi
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetw"], @(1)); // _RATMobileNetworkTypeWiFi
+    }];
 }
 
 - (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIs4G
@@ -462,10 +490,10 @@
     RAnalyticsRATTracker.sharedInstance.isUsingLTE = YES;
 
     // When
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-
-    // Then
-    XCTAssertEqualObjects(payload[@"mnetw"], @(4)); // _RATMobileNetworkType4G
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetw"], @(4)); // _RATMobileNetworkType4G
+    }];
 }
 
 - (void)test_givenNetworkIsWifi_whenEventIsProcessed_thenJsonMnetwValueIs3G
@@ -475,18 +503,18 @@
     RAnalyticsRATTracker.sharedInstance.isUsingLTE = NO;
 
     // When
-    id payload = [self assertProcessEvent:self.defaultEvent state:self.defaultState expectType:nil];
-
-    // Then
-    XCTAssertEqualObjects(payload[@"mnetw"], @(3)); // _RATMobileNetworkType3G
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetw"], @(3)); // _RATMobileNetworkType3G
+    }];
 }
 
 #pragma mark Test batch delay handling and setting delivery strategy
 
 - (void)testRATTrackerDefaultBatchingDelay {
-    
+
     BatchingDelayBlock defaultBatchingDelay = [RAnalyticsRATTracker.sharedInstance.sender performSelector:@selector(batchingDelayBlock)];
-    XCTAssertEqual(defaultBatchingDelay(), 1.0);
+    XCTAssertEqual(defaultBatchingDelay(), DEFAULT_BATCHING_DELAY);
 }
 
 - (void)testRATTrackerWithBatchingDelay
@@ -502,9 +530,9 @@
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
-        [wait fulfill];
         NSTimeInterval expectedDelay = 15.0;
         XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        [wait fulfill];
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
@@ -525,9 +553,9 @@
     // Wait for Sender to check delivery strategy batching delay
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
-        [wait fulfill];
         NSTimeInterval expectedDelay = 10.0;
         XCTAssertEqual(RAnalyticsRATTracker.sharedInstance.sender.uploadTimerInterval, expectedDelay);
+        [wait fulfill];
     });
 
     [self waitForExpectationsWithTimeout:3.0 handler:nil];
@@ -675,28 +703,43 @@
 
 #pragma mark Mori - Interface Orientations
 
-- (id)payloadWithInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)assertMori:(NSInteger)mori interfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     id classMockApplication = OCMPartialMock(UIApplication.sharedApplication);
     OCMStub([classMockApplication performSelector:@selector(analyticsStatusBarOrientation)]).andReturn(interfaceOrientation);
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event
-                                    state:self.defaultState
-                                  tracker:(id)[self tracker]
-                               expectType:RAnalyticsInstallEventName];
+    [self assertProcessEvent:event
+                       state:self.defaultState
+                 expectEtype:RAnalyticsInstallEventName
+                 assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqual([payload[@"mori"] intValue], mori);
+    }];
     [classMockApplication stopMocking];
-    return payload;
 }
 
-- (void)testMoriIfUIApplicationRespondsToSharedApplication
+- (void)testMoriIfUIApplicationReturnsOrientationPortrait
 {
-    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortrait][@"mori"] intValue], 1);
-    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationPortraitUpsideDown][@"mori"] intValue], 1);
-    
-    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeLeft][@"mori"] intValue], 2);
-    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationLandscapeRight][@"mori"] intValue], 2);
-    
-    XCTAssertEqual([[self payloadWithInterfaceOrientation:UIInterfaceOrientationUnknown][@"mori"] intValue], 1);
+    [self assertMori:1 interfaceOrientation:UIInterfaceOrientationPortrait];
+}
+
+- (void)testMoriIfUIApplicationReturnsOrientationPortraitUpsideDown
+{
+    [self assertMori:1 interfaceOrientation:UIInterfaceOrientationPortraitUpsideDown];
+}
+
+- (void)testMoriIfUIApplicationReturnsOrientationLandscapeLeft
+{
+    [self assertMori:2 interfaceOrientation:UIInterfaceOrientationLandscapeLeft];
+}
+
+- (void)testMoriIfUIApplicationReturnsOrientationLandscapeRight
+{
+    [self assertMori:2 interfaceOrientation:UIInterfaceOrientationLandscapeRight];
+}
+
+- (void)testMoriIfUIApplicationReturnsOrientationUnknown
+{
+    [self assertMori:1 interfaceOrientation:UIInterfaceOrientationUnknown];
 }
 
 - (void)testMoriIfUIApplicationDoesNotRespondToSharedApplication
@@ -704,10 +747,11 @@
     id classMockApplication = OCMClassMock(UIApplication.class);
     OCMStub([classMockApplication performSelector:@selector(sharedApplication)]).andReturn(nil);
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
     
-    XCTAssertEqual([payload[@"mori"] intValue], 1);
-    [classMockApplication stopMocking];
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqual([payload[@"mori"] intValue], 1);
+        [classMockApplication stopMocking];
+    }];
 }
 
 #pragma mark User Identifier
@@ -715,59 +759,26 @@
 - (void)testPayloadUserIdentifierWithDefaultState
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:RAnalyticsInstallEventName];
-    XCTAssertTrue([payload[@"userid"] isEqual:@"userId"]);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertTrue([payload[@"userid"] isEqual:@"userId"]);
+    }];
 }
 
 - (void)testPayloadUserIdentifierWithEmptyState
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB" deviceIdentifier:@"deviceId"];
-    id payload = [self assertProcessEvent:event state:state expectType:RAnalyticsInstallEventName];
-    XCTAssertNil(payload[@"userid"]);
+    [self assertProcessEvent:event state:state expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil(payload[@"userid"]);
+    }];
 }
 
 - (void)testPayloadUserIdentifierWithNilState
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:nil expectType:RAnalyticsInstallEventName];
-    XCTAssertNil(payload[@"userid"]);
+    [self assertProcessEvent:event state:nil expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil(payload[@"userid"]);
+    }];
 }
 
 @end
-
-@implementation RAnalyticsRATTracker(empty)
-- (instancetype)initEmpty {
-    self = [super init];
-    return self;
-}
-@end
-
-SPEC_BEGIN(RAnalyticsRATTrackerTests)
-
-describe(@"RAnalyticsRATTracker", ^{
-    describe(@"endpointURL", ^{
-        RAnalyticsRATTracker * ratTracker = [RAnalyticsRATTracker.alloc initInstance];
-        NSURL *originalEndpointURL = ratTracker.endpointURL;
-        RAnalyticsSender *sender = [ratTracker performSelector:@selector(sender)];
-        RAnalyticsRpCookieFetcher *rpCookieFetcher = [ratTracker performSelector:@selector(rpCookieFetcher)];
-        
-        it(@"should set the expected endpoint to its sender and rpCookieFetcher", ^{
-            ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint1.com"];
-            [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
-            [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
-            [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint1.com"]];
-            
-            ratTracker.endpointURL = [NSURL URLWithString:@"https://endpoint2.com"];
-            [[sender.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
-            [[rpCookieFetcher.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
-            [[ratTracker.endpointURL should] equal:[NSURL URLWithString:@"https://endpoint2.com"]];
-        });
-        
-        afterAll(^{
-            ratTracker.endpointURL = originalEndpointURL;
-        });
-    });
-});
-
-SPEC_END

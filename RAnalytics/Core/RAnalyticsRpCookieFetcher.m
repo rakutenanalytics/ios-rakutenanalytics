@@ -95,6 +95,7 @@ static const NSUInteger      RATRpCookieRequestMaximumTimeOut       = 600u; // 1
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.endpointURL];
     request.HTTPShouldHandleCookies = _RAnalyticsUseDefaultSharedCookieStorage();
 
+    // TODO: Use `dataTask(URLRequest, (Result<(Data, URLResponse), Error>) -> Void) -> URLSessionDataTask` when migrating to Swift
     [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error)
     {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;

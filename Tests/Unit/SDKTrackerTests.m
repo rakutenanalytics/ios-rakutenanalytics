@@ -1,12 +1,13 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
-#import <OHHTTPStubs/OHHTTPStubs.h>
 
 #import "../../RAnalytics/Core/Private/_SDKTracker.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsDatabase.h"
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 #import "TrackerTests.h"
+#import "UnitTests-Swift.h"
+
+#import <RAnalytics/RAnalytics-Swift.h>
 
 #pragma mark - Module Internals
 
@@ -25,6 +26,11 @@
 @implementation SDKTrackerTests
 
 - (void)setUp {
+    // Create in-memory DB
+    self.connection = [DatabaseTestUtils openRegularConnection];
+    self.database = [DatabaseTestUtils mkDatabaseWithConnection:self.connection];
+    self.databaseTableName = @"SDKTrackerTests_Table";
+
     [super setUp];
 }
 
@@ -44,7 +50,11 @@
 #pragma mark TrackerTestConfiguration protocol
 - (id<RAnalyticsTracker>)testedTracker
 {
-    return [_SDKTracker.alloc initInstance];
+    _SDKTracker *tracker = [_SDKTracker.alloc initInstance];
+    tracker.sender = [[RAnalyticsSender alloc] initWithEndpoint:[NSURL URLWithString:@"https://endpoint.co.jp/"]
+                                                       database:self.database
+                                                  databaseTable:self.databaseTableName];
+    return tracker;
 }
 
 #pragma mark Test initialisation and configuration
@@ -70,7 +80,7 @@
 {
     XCTAssertNotNil(self.defaultEvent);
     XCTAssert(![_SDKTracker.sharedInstance processEvent:self.defaultEvent state:self.defaultState]);
-    id payload = self.database.latestAddedJSON;
+    id payload = [DatabaseTestUtils fetchTableContents:self.databaseTableName connection:self.connection].lastObject;
     XCTAssertNil(payload);
 }
 
@@ -78,14 +88,15 @@
 {
     [self stubRATResponseWithStatusCode:200 completionHandler:nil];
     id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    id payload = [self assertProcessEvent:event state:self.defaultState expectType:@"_rem_internal_install"];
-    NSNumber *acc = payload[@"acc"];
-    XCTAssert([acc isEqualToNumber:@477]);
-    NSNumber *aid = payload[@"aid"];
-    XCTAssert([aid isEqualToNumber:@1]);
-    id appInfo = [payload valueForKeyPath:@"cp.app_info"];
-    XCTAssert([appInfo containsString:@"xcode"]);
-    XCTAssert([appInfo containsString:@"iphonesimulator"]);
+    [self assertProcessEvent:event state:self.defaultState expectEtype:@"_rem_internal_install" assertBlock:^(id  _Nonnull payload) {
+        NSNumber *acc = payload[@"acc"];
+        XCTAssert([acc isEqualToNumber:@477]);
+        NSNumber *aid = payload[@"aid"];
+        XCTAssert([aid isEqualToNumber:@1]);
+        id appInfo = [payload valueForKeyPath:@"cp.app_info"];
+        XCTAssert([appInfo containsString:@"xcode"]);
+        XCTAssert([appInfo containsString:@"iphonesimulator"]);
+    }];
 }
 @end
 

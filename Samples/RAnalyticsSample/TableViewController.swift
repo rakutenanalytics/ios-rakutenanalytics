@@ -27,7 +27,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
         guard let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int64,
-            let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
+              let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
             return
         }
         self.accountId = accountId
@@ -36,24 +36,24 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 
     func update(_ dict: [String: Any]) {
         if let value = dict[GlobalConstants.kLocationTracking],
-            let flag = value as? Bool {
+           let flag = value as? Bool {
             AnalyticsManager.shared().shouldTrackLastKnownLocation = flag
         }
 
         if let value = dict[GlobalConstants.kIDFATracking],
-            let flag = value as? Bool {
+           let flag = value as? Bool {
             AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = flag
         }
 
         if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String,
-            let accountId = Int64(accountIdString),
-            !accountIdString.isEmpty {
+           let accountId = Int64(accountIdString),
+           !accountIdString.isEmpty {
             self.accountId = accountId
         }
 
         if let appIdString = dict[GlobalConstants.kRATAppID] as? String,
-            let appId = Int64(appIdString),
-            !appIdString.isEmpty {
+           let appId = Int64(appIdString),
+           !appIdString.isEmpty {
             self.serviceId = appId
         }
     }

@@ -5,9 +5,9 @@
 #import <RAnalytics/RAnalyticsEndpointSettable.h>
 #import <RAnalytics/RAnalyticsEvent.h>
 #import <RAnalytics/RAnalyticsState.h>
-#import <RAnalytics/RAnalyticsSender.h>
 #import <RAnalytics/RAnalyticsRpCookieFetcher.h>
 #import <RAnalytics/RAnalyticsPushTrackingUtility.h>
+#import <RAnalytics/RAnalyticsProgressNotifications.h>
 
 // RAT
 #if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)

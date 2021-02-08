@@ -2,7 +2,6 @@
 #import <RAnalytics/RAnalytics.h>
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "../../RAnalytics/Core/Private/_RAnalyticsExternalCollector.h"
-#import "../../RAnalytics/Core/Private/_RAnalyticsLaunchCollector.h"
 #import <OCMock/OCMock.h>
 #import <RAnalytics/RAnalytics-Swift.h>
 
@@ -12,7 +11,7 @@
 - (instancetype)initInstance;
 @end
 
-@interface _RAnalyticsLaunchCollector ()
+@interface RAnalyticsLaunchCollector ()
 @property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @end
 

@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationManager.requestWhenInUseAuthorization()
-        
+
         AnalyticsManager.shared().set(loggingLevel: .debug)
         AnalyticsManager.shared().enableAppToWebTracking = true
 
@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         RAnalyticsRATTracker.shared().set(batchingDelay: 15)
-        
+
         AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 
         return true
