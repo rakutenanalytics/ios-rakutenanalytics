@@ -1,5 +1,5 @@
 #import "_UserIdentifierSelector.h"
-#import "_RAnalyticsExternalCollector.h"
+#import <RAnalytics/RAnalytics-Swift.h>
 
 NSString* const _RATTrackingIdentifierNoLoginFound = @"NO_LOGIN_FOUND";
 
@@ -7,10 +7,10 @@ NSString* const _RATTrackingIdentifierNoLoginFound = @"NO_LOGIN_FOUND";
 
 + (NSString * _Nullable)selectedTrackingIdentifier
 {
-    NSString *selectedTrackingIdentifier = _RAnalyticsExternalCollector.sharedInstance.userIdentifier;
+    NSString *selectedTrackingIdentifier = RAnalyticsManager.sharedInstance.externalCollector.userIdentifier;
     if (!selectedTrackingIdentifier)
     {
-        selectedTrackingIdentifier = _RAnalyticsExternalCollector.sharedInstance.trackingIdentifier;
+        selectedTrackingIdentifier = RAnalyticsManager.sharedInstance.externalCollector.trackingIdentifier;
     }
     if (!selectedTrackingIdentifier)
     {

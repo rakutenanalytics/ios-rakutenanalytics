@@ -17,6 +17,9 @@ excluded:
 - Pods
 - SwiftLint/Common/3rdPartyLib
 
+identifier_name:
+  max_length: 45
+
 line_length:
     warning: 150
     error: 200

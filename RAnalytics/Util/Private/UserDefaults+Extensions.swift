@@ -7,8 +7,11 @@ import Foundation
 /// set(value: Any?, forKey defaultName: String)
 @objc public protocol UserStorageHandleable {
     func object(forKey defaultName: String) -> Any?
+    func bool(forKey defaultName: String) -> Bool
     func string(forKey defaultName: String) -> String?
     func set(value: Any?, forKey defaultName: String)
+    func removeObject(forKey defaultName: String)
+    @discardableResult func synchronize() -> Bool
 }
 
 extension UserDefaults: UserStorageHandleable {

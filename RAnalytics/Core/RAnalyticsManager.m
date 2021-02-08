@@ -4,7 +4,6 @@
 #import <RAnalytics/RAnalytics.h>
 #import <RLogger/RLogger.h>
 #import "_RAnalyticsHelpers.h"
-#import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
 #import "SwiftHeader.h"
@@ -51,6 +50,7 @@
 @property (nonatomic, strong) RAnalyticsCookieInjector *analyticsCookieInjector;
 @property (nonatomic, strong) EventChecker *eventChecker;
 @property (nonatomic, strong) RAnalyticsLaunchCollector *analyticsLaunchCollector;
+@property (nonatomic, strong) RAnalyticsExternalCollector *analyticsExternalCollector;
 
 - (instancetype)initSharedInstance;
 @end
@@ -102,9 +102,10 @@ static RAnalyticsManager *_instance = nil;
         [_dependenciesContainer registerObject:AnalyticsTracker.new];
 
         // Inject the Dependencies Container
+        _analyticsExternalCollector = [[RAnalyticsExternalCollector alloc] initWithDependenciesFactory:_dependenciesContainer];
         _analyticsLaunchCollector = [[RAnalyticsLaunchCollector alloc] initWithDependenciesFactory:_dependenciesContainer];
         
-        if (!_RAnalyticsExternalCollector.sharedInstance ||
+        if (!_analyticsExternalCollector ||
             !_analyticsLaunchCollector)
         {
             NSAssert(NO, @"Failed to initialize the %@ singleton", NSStringFromClass(self.class));
@@ -404,10 +405,9 @@ static RAnalyticsManager *_instance = nil;
     state.sessionStartDate = self.sessionStartDate ?: nil;
 
     // Update state with data from external collector
-    _RAnalyticsExternalCollector *externalCollector = _RAnalyticsExternalCollector.sharedInstance;
     state.userIdentifier = [_UserIdentifierSelector selectedTrackingIdentifier];
-    state.loginMethod = externalCollector.loginMethod;
-    state.loggedIn = externalCollector.isLoggedIn;
+    state.loginMethod = _analyticsExternalCollector.loginMethod;
+    state.loggedIn = _analyticsExternalCollector.isLoggedIn;
 
     // Update state with data from launch collector
     RAnalyticsLaunchCollector *launchCollector = _analyticsLaunchCollector;
@@ -451,7 +451,7 @@ static RAnalyticsManager *_instance = nil;
 
 - (void)setUserIdentifier:(NSString * _Nullable)userID
 {
-    _RAnalyticsExternalCollector.sharedInstance.userIdentifier = userID;
+    _analyticsExternalCollector.userIdentifier = userID;
 }
 
 //--------------------------------------------------------------------------

@@ -14,7 +14,7 @@ public typealias SQlite3Pointer = OpaquePointer
 public final class RAnalyticsDatabase: NSObject {
 
     private static let RAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
-    private static let RAnalyticsDBTableCreationFailureErrorCode = 1 // swiftlint:disable:this identifier_name
+    private static let RAnalyticsDBTableCreationFailureErrorCode = 1
     private static let RAnalyticsDBAppWillTerminateErrorCode = 2
 
     private let connection: SQlite3Pointer
