@@ -526,6 +526,9 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-7-0-1 7.0.1 (2021-02-12)
+* [SDKCF-3218](https://jira.rakuten-it.com/jira/browse/SDKCF-3218) / [SDKCF-3152](https://jira.rakuten-it.com/jira/browse/SDKCF-3152): Fixed crash that can occur if there are pending database operations when app terminates. Database operations will now be cancelled if app is terminating.
+
 @subsection analytics-7-0-0 7.0.0 (2020-12-16)
 * [SDKCF-2922](https://jira.rakuten-it.com/jira/browse/SDKCF-2922): Added ability to configure the RAT endpoint at runtime. See @ref analytics-configure-endpoint.
 * [SDKCF-2920](https://jira.rakuten-it.com/jira/browse/SDKCF-2920): Improved custom domains support in App to Web Tracking feature. See @ref analytics-app-to-web-tracking.
