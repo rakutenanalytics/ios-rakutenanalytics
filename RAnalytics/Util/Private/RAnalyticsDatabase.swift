@@ -54,11 +54,10 @@ public final class RAnalyticsDatabase: NSObject {
     /// - Parameter maximumNumberOfBlobs:  Maximum number of blobs to keep in the table.
     /// - Parameter completion:            Block to call upon completion.
     ///
-    @objc(insertBlob:into:limit:then:)
-    public func insert(blob: Data,
-                       into table: String,
-                       limit maximumNumberOfBlobs: UInt,
-                       then completion: @escaping () -> Void) {
+    func insert(blob: Data,
+                into table: String,
+                limit maximumNumberOfBlobs: UInt,
+                then completion: @escaping () -> Void) {
 
         insert(blobs: [blob], into: table, limit: maximumNumberOfBlobs, then: completion)
     }
@@ -71,25 +70,17 @@ public final class RAnalyticsDatabase: NSObject {
     /// - Parameter maximumNumberOfBlobs:  Maximum number of blobs to keep in the table.
     /// - Parameter completion:            Block to call upon completion.
     ///
-    @objc(insertBlobs:into:limit:then:)
-    public func insert(blobs: [Data],
-                       into table: String,
-                       limit maximumNumberOfBlobs: UInt,
-                       then completion: @escaping () -> Void) {
-
-        guard let callerQueue = OperationQueue.current else {
-            assertionFailure("Caller's queue could not be obtained. insertBlobs operation could not be performed.")
-            completion()
-            return
-        }
+    func insert(blobs: [Data],
+                into table: String,
+                limit maximumNumberOfBlobs: UInt,
+                then completion: @escaping () -> Void) {
 
         queue.addOperation { [weak self] in
-
+            defer {
+                completion()
+            }
             guard let self = self else {
                 return
-            }
-            defer {
-                callerQueue.addOperation(completion)
             }
 
             let error = self.prepareTable(table)
@@ -132,27 +123,24 @@ public final class RAnalyticsDatabase: NSObject {
     /// - Parameter table:                 Name of the table.
     /// - Parameter completion:            Block to call upon completion.
     ///
-    @objc public func fetchBlobs(_ maximumNumberOfBlobs: UInt,
-                                 from table: String,
-                                 then completion: @escaping (_ blobs: [Data]?, _ identifiers: [Int64]?) -> Void) {
+    func fetchBlobs(_ maximumNumberOfBlobs: UInt,
+                    from table: String,
+                    then completion: @escaping (_ blobs: [Data]?, _ identifiers: [Int64]?) -> Void) {
 
-        let callerQueue = OperationQueue.current
         queue.addOperation { [weak self] in
+            var blobs = [Data]()
+            var identifiers = [Int64]()
+
+            defer {
+                completion(blobs.isEmpty ? nil : blobs,
+                           identifiers.isEmpty ? nil : identifiers)
+            }
             guard let self = self else {
                 return
             }
 
-            var blobs = [Data]()
             blobs.reserveCapacity(Int(maximumNumberOfBlobs))
-            var identifiers = [Int64]()
             identifiers.reserveCapacity(Int(maximumNumberOfBlobs))
-
-            defer {
-                callerQueue?.addOperation {
-                    completion(blobs.isEmpty ? nil : blobs,
-                               identifiers.isEmpty ? nil : identifiers)
-                }
-            }
 
             let error = self.prepareTable(table)
             guard error == nil, maximumNumberOfBlobs > 0 else {
@@ -184,24 +172,21 @@ public final class RAnalyticsDatabase: NSObject {
     /// - Parameter table:        Name of the table.
     /// - Parameter completion:   Block to call upon completion.
     ///
-    @objc(deleteBlobsWithIdentifiers:in:then:)
-    public func deleteBlobs(identifiers: [Int64],
-                            in table: String,
-                            then completion: @escaping () -> Void) {
+    func deleteBlobs(identifiers: [Int64],
+                     in table: String,
+                     then completion: @escaping () -> Void) {
 
         guard !appWillTerminate else {
             RLogger.debug("RAnalyticsDatabase - deleteBlobs is canceled because the app will terminate")
             return
         }
 
-        let callerQueue = OperationQueue.current
         queue.addOperation { [weak self] in
-
+            defer {
+                completion()
+            }
             guard let self = self else {
                 return
-            }
-            defer {
-                callerQueue?.addOperation(completion)
             }
 
             let error = self.prepareTable(table)

@@ -1,7 +1,8 @@
 import Quick
 import Nimble
 import SQLite3
-import class RAnalytics.RAnalyticsDatabase
+
+@testable import class RAnalytics.RAnalyticsDatabase
 
 class RAnalyticsDatabaseUnitTests: QuickSpec {
 

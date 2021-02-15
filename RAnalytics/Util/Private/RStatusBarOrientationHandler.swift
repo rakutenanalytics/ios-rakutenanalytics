@@ -52,7 +52,7 @@ import UIKit
         }
         return application.analyticsStatusBarOrientation.isLandscape ? .landscape : .portrait
     }
-    
+
     /// Executes a closure on the main thread
     ///
     /// - Returns: `RMoriType.portrait` if the status bar orientation is in portrait mode

@@ -1,8 +1,8 @@
 import Quick
 import Nimble
 import SQLite3
-import class RAnalytics.RAnalyticsDatabase
-import struct RAnalytics.SQlite3Pointer
+
+@testable import RAnalytics
 
 class RAnalyticsDatabaseFunctionalTests: QuickSpec {
 
