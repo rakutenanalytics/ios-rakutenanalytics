@@ -1,7 +1,7 @@
 ### Release Steps for Public Framework
 
 1. Make a PR to update the public framework podspec `RakutenAnalyticsSDK/RAnalytics.podspec`:
-    * Set `version` to release x.y.z semantic version
+    * *Note* that the podspec `version` will be set in the build script from the root `../RAnalytics.podspec` version
     * Set `source` to the to-be-released framework zip download url (this can be predicted based on version e.g. v8.0.0 will be at https://github.com/rakutentech/ios-analytics-public-framework/releases/download/8.0.0/RAnalyticsRelease-v8.0.0.zip)
 1. Execute the release
     * For automated release, run the [Jenkins release job](http://jenkins-mtsd.rakuten-it.com/job/sdk/job/public-analytics/) by setting the version and branch build parameters
