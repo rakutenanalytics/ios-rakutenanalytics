@@ -1,6 +1,6 @@
 #import "_RAnalyticsCoreHelpers.h"
 #import "_RAnalyticsHelpers.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 NSDictionary *_RAnalyticsSharedPayload(RAnalyticsState * state)
 {

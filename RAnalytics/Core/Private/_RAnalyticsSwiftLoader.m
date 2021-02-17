@@ -1,5 +1,5 @@
 #import "_RAnalyticsSwiftLoader.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 @implementation _RAnalyticsSwiftLoader
 

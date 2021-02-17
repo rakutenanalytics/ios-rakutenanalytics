@@ -7,7 +7,7 @@
 #import "_RAnalyticsExternalCollector.h"
 #import "_SDKTracker.h"
 #import "_UserIdentifierSelector.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 #import <WebKit/WebKit.h>
 
 ////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #import <RAnalytics/RAnalyticsEvent.h>
 #import "_RAnalyticsExternalCollector.h"
 #import "_RAnalyticsHelpers.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 static NSString *const _RAnalyticsLoginStateKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState";
 static NSString *const _RAnalyticsTrackingIdentifierKey = @"com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier";

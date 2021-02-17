@@ -9,7 +9,7 @@
 #import "_RAnalyticsCoreHelpers.h"
 #import "RAnalyticsRpCookieFetcher.h"
 #import <RLogger/RLogger.h>
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 NSString *const _RATEventPrefix      = @"rat.";
 NSString *const _RATETypeParameter   = @"etype";

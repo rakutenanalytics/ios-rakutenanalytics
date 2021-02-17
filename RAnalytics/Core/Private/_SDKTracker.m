@@ -2,7 +2,7 @@
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
 #import "_SDKTracker.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 NSString* const _SDKTableName = @"RAKUTEN_ANALYTICS_SDK_TABLE";
 NSString* const _SDKDatabaseName = @"RAnalyticsSDKTracker.db";

@@ -1,6 +1,6 @@
 #import <RAnalytics/RAnalyticsManager.h>
 #import "_RAnalyticsHelpers.h"
-#import <RAnalytics/RAnalytics-Swift.h>
+#import "SwiftHeader.h"
 
 BOOL _RAnalyticsObjectsEqual(id objA, id objB)
 {
