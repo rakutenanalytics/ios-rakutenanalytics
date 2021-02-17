@@ -5,7 +5,6 @@
 #import <RLogger/RLogger.h>
 #import "_RAnalyticsHelpers.h"
 #import "_SDKTracker.h"
-#import "_UserIdentifierSelector.h"
 #import "SwiftHeader.h"
 #import <WebKit/WebKit.h>
 
@@ -51,6 +50,7 @@
 @property (nonatomic, strong) EventChecker *eventChecker;
 @property (nonatomic, strong) RAnalyticsLaunchCollector *analyticsLaunchCollector;
 @property (nonatomic, strong) RAnalyticsExternalCollector *analyticsExternalCollector;
+@property (nonatomic, strong) UserIdentifierSelector *userIdentifierSelector;
 
 - (instancetype)initSharedInstance;
 @end
@@ -120,6 +120,7 @@ static RAnalyticsManager *_instance = nil;
         _advertisingIdentifierHandler = [[RAdvertisingIdentifierHandler alloc] initWithDependenciesFactory:_dependenciesContainer];
         _analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:_dependenciesContainer];
         _eventChecker = [[EventChecker alloc] initWithDisabledEventsAtBuildTime:[NSBundle disabledEventsAtBuildTime]];
+        _userIdentifierSelector = [UserIdentifierSelector.alloc initWithUserIdentifiable:_analyticsExternalCollector];
 
         _trackers = [NSMutableSet set];
         [self addTracker:_SDKTracker.sharedInstance];
@@ -405,7 +406,7 @@ static RAnalyticsManager *_instance = nil;
     state.sessionStartDate = self.sessionStartDate ?: nil;
 
     // Update state with data from external collector
-    state.userIdentifier = [_UserIdentifierSelector selectedTrackingIdentifier];
+    state.userIdentifier = _userIdentifierSelector.selectedTrackingIdentifier;
     state.loginMethod = _analyticsExternalCollector.loginMethod;
     state.loggedIn = _analyticsExternalCollector.isLoggedIn;
 

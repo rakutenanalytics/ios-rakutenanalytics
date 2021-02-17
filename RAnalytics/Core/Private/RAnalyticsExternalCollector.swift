@@ -1,9 +1,14 @@
 import Foundation
 import RLogger
 
+@objc public protocol UserIdentifiable {
+    var trackingIdentifier: String? { get }
+    var userIdentifier: String? { get set }
+}
+
 /// This class tracks login, logout and push events.
 /// It creates event corressponding to each event, sends it to RAnalyticsManager's instance to process.
-@objc public final class RAnalyticsExternalCollector: NSObject {
+@objc public final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
     private enum Constants {
         static let loginStateKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState"
         static let trackingIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier"

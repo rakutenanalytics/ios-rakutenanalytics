@@ -26,8 +26,15 @@ final class AnalyticsTrackerMock: NSObject, Trackable {
 
 // MARK: - User Defaults
 
-final class UserDefaultsMock: NSObject, UserStorageHandleable {
+final class UserDefaultsMock: NSObject {
     var dictionary: [String: Any]?
+    convenience init(_ dictionary: [String: Any]) {
+        self.init()
+        self.dictionary = dictionary
+    }
+}
+
+extension UserDefaultsMock: UserStorageHandleable {
     func set(value: Any?, forKey key: String) { dictionary?[key] = value }
     func removeObject(forKey defaultName: String) { dictionary?[defaultName] = nil }
     func object(forKey defaultName: String) -> Any? { dictionary?[defaultName] }
@@ -39,4 +46,15 @@ final class UserDefaultsMock: NSObject, UserStorageHandleable {
         return result
     }
     func synchronize() -> Bool { true }
+}
+
+// MARK: - External Collector Factory
+
+struct ExternalCollectorFactory {
+    static func mock() -> RAnalyticsExternalCollector? {
+        let container = AnyDependenciesContainer()
+        container.registerObject(UserDefaultsMock([:]))
+        container.registerObject(AnalyticsTrackerMock())
+        return RAnalyticsExternalCollector(dependenciesFactory: container)
+    }
 }
