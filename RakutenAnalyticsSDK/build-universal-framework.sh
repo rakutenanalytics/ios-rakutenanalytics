@@ -31,14 +31,10 @@ PODSPEC_FILE_PATH="RAnalytics.podspec"
 bundle install
 bundle exec pod install
 
-# get marketing version number
-RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" ../RAnalytics.podspec | sed "s/  s.version      = \"//;s/.$//")
+RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" $PODSPEC_FILE_PATH | sed "s/  s.version      = \"//;s/.$//" | tr -d [:space:])
 
 # update the project file with the new version number
 sed -i '' -E "s/MARKETING_VERSION = [0-9]+.[0-9]+.[0-9]+/MARKETING_VERSION = $RANALYTICS_FRAMEWORK_VERSION/g" $RAKUTEN_ANALYTICS_SDK_PROJECT_PATH
-
-# update the podpec file with the new version number
-sed -i '' -E "s/s.version      = \"[0-9]+.[0-9]+.[0-9]+\"/s.version      = \"$RANALYTICS_FRAMEWORK_VERSION\"/g" $PODSPEC_FILE_PATH
 
 # check if the new version number is updated
 PROJECT_VERSION_NUMBER=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -showBuildSettings -sdk iphonesimulator | grep -m 1 "MARKETING_VERSION" | sed 's/[ ]*MARKETING_VERSION = //')
@@ -46,7 +42,7 @@ PROJECT_VERSION_NUMBER=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -
 if [ "$RANALYTICS_FRAMEWORK_VERSION" = "$PROJECT_VERSION_NUMBER" ]; then
     echo "SUCCESS: the project version number is updated to $RANALYTICS_FRAMEWORK_VERSION"
 else
-    echo "ERROR: the project version number is not updated to $RANALYTICS_FRAMEWORK_VERSION"
+    echo "ERROR: the project version number $PROJECT_VERSION_NUMBER is not updated to $RANALYTICS_FRAMEWORK_VERSION"
     exit 1
 fi
 

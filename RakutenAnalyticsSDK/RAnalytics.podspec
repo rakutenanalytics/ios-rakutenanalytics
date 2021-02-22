@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
     s.summary      = "RAnalytics records user activity and automatically sends tracking events to RAT."
     s.homepage     = "https://www.rakuten.co.jp"
     s.license      = { :type => 'Proprietary', :text => '© Rakuten' }
-    s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework-test/releases/download/0.0.2/RAnalyticsRelease-v0.0.2.zip" }
+    s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework-snapshot/releases/download/#{s.version.to_s}/RAnalyticsRelease-v#{s.version.to_s}.zip" }
     s.platform     = :ios, "11.0"
     s.vendored_frameworks = "RAnalytics.framework"
     options = {
