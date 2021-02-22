@@ -88,7 +88,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * Control whether the SDK should track page views. Defaults to `YES`.
  * @deprecated RAnalyticsManager::shouldTrackEventHandler should be used instead
  */
-@property (nonatomic) BOOL shouldTrackPageView; DEPRECATED_MSG_ATTRIBUTE("Deprecated. RAnalyticsManager#shouldTrackEventHandler should be used instead.")
+@property (nonatomic) BOOL shouldTrackPageView DEPRECATED_MSG_ATTRIBUTE("Deprecated. RAnalyticsManager#shouldTrackEventHandler should be used instead.");
 
 /**
  * Control whether the SDK should track the device's location or not.

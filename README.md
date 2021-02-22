@@ -73,7 +73,7 @@ A custom endpoint can also be configured at runtime as below:
 **Note**: If you have implmenented a @ref analytics-custom-tracker "custom tracker" ensure that you have added your tracker to the manager before calling the set endpoint function.
 
 @subsection analytics-configure-location Location tracking
-@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `YES`. Instead, it passively monitors location updates captured by your application.
+@warning The SDK does not *actively* track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `true`. Instead, it passively monitors location updates captured by your application.
 @warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
 
@@ -112,9 +112,9 @@ ATTrackingManager.requestTrackingAuthorization { status in
 By default the SDK automatically tracks page views/visits (`pv` etype in RAT). The automatic tracking can be disabled by setting RAnalyticsManager::shouldTrackPageView to `false`. This property is now deprecated and we recommend to use the below feature @ref analytics-configure-automatic-tracking instead.
 
 @subsection analytics-configure-automatic-tracking Configure automatic tracking
-##### Automatics Events Tracking Configuration
+### Automatics Events Tracking Configuration
 
-###### Build time configuration
+#### Build time configuration
 * Create and add this file to your Xcode project: `RAnalyticsConfiguration.plist`
 * Open the file and add the events you do not want to track to a `RATDisabledEventsList` string array. For example, to disable all the automatic events:
 ```xml
@@ -142,7 +142,7 @@ By default the SDK automatically tracks page views/visits (`pv` etype in RAT). T
 </dict>
 </plist>
 ```
-###### Runtime configuration
+#### Runtime configuration
 It's also possible to enable or disable events at runtime:
 
 * Enable all events at runtime
@@ -247,6 +247,8 @@ Event name         | Description
 `_rem_install`     | Application version is launched for the first time.
 `_rem_visit`       | A new page is shown. Application developers can also emit this event manually if they wish so, for instance to track pages that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.
 `_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.
+
+For a full list and more details see the [SDK Standard Event Spec](https://confluence.rakuten-it.com/confluence/display/MTSD/Analytics+SDK+-+SDK+Tracking+Specification+for+RAT#AnalyticsSDK-SDKTrackingSpecificationforRAT-AutomaticsEvents).
 
 ##### How page views are automatically tracked
 We use method swizzling to automatically trigger a @ref RAnalyticsPageVisitEventName "visit event" every time a new view controller is presented, unless:
@@ -533,6 +535,9 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-8-0-0 8.0.0 (2021-in-progress)
+* [SDKCF-3163](https://jira.rakuten-it.com/jira/browse/SDKCF-3163): Added runtime and buildtime configuration of the automatically tracked events. See @ref analytics-configure-automatic-tracking.
+
 @subsection analytics-7-0-1 7.0.1 (2021-02-12)
 * [SDKCF-3218](https://jira.rakuten-it.com/jira/browse/SDKCF-3218) / [SDKCF-3152](https://jira.rakuten-it.com/jira/browse/SDKCF-3152): Fixed crash that can occur if there are pending database operations when app terminates. Database operations will now be cancelled if app is terminating.
 
