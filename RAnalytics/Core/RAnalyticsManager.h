@@ -86,8 +86,9 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 
 /**
  * Control whether the SDK should track page views. Defaults to `YES`.
+ * @deprecated RAnalyticsManager::shouldTrackEventHandler should be used instead
  */
-@property (nonatomic) BOOL shouldTrackPageView;
+@property (nonatomic) BOOL shouldTrackPageView; DEPRECATED_MSG_ATTRIBUTE("Deprecated. RAnalyticsManager#shouldTrackEventHandler should be used instead.")
 
 /**
  * Control whether the SDK should track the device's location or not.
@@ -119,24 +120,18 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 @property (nonatomic) BOOL enableAppToWebTracking;
 
 /**
- * Enable or disable the tracking of an event at Runtime.
+ * Enable or disable the tracking of an event at runtime.
  *
- * Objective-C example to disable RAnalyticsSessionStartEventName:
- * RAnalyticsManager.sharedInstance.shouldTrackEventHandler = ^BOOL(NSString * _Nonnull eventName) {
- *  return ![eventName isEqualToString:RAnalyticsSessionStartEventName];
- * };
+ * Disable `AnalyticsManager.Event.Name.sessionStart`:
  *
- * Swift example to disable AnalyticsManager.Event.Name.sessionStart:
- * AnalyticsManager.shared().shouldTrackEventHandler = { eventName in
- *  eventName != AnalyticsManager.Event.Name.sessionStart
- * }
+ * `AnalyticsManager.shared().shouldTrackEventHandler = { eventName in eventName != AnalyticsManager.Event.Name.sessionStart }`
  *
- * Note: it is also possible to disable events at build time in the RAnalyticsConfiguration.plist file.
- * First create the RAnalyticsConfiguration.plist file and add it to your Xcode project.
- * Then create the key RATDisabledEventsList and add the array of disabled events.
+ * Note: it is also possible to disable events at build time in the `RAnalyticsConfiguration.plist` file.
+ * First create the `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
+ * Then create the key `RATDisabledEventsList` and add the array of disabled events.
  *
  * Example:
- * This is the complete list of automatic events that you can disable in your app by adding it to the RAnalyticsConfiguration.plist file:
+ * This is the complete list of automatic events that you can disable in your app by adding it to the `RAnalyticsConfiguration.plist` file:
  *
  * <key>RATDisabledEventsList</key>
  * <array>
@@ -156,7 +151,6 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * <string>_analytics_custom</string>
  * </array>
  */
-
 @property (nonatomic, copy) _Nullable RAnalyticsShouldTrackEventCompletionBlock shouldTrackEventHandler;
 
 @end

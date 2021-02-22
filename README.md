@@ -77,24 +77,46 @@ A custom endpoint can also be configured at runtime as below:
 @warning Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 @warning See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
 
-Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `NO`:
+Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `false`:
 
 @code{.swift}
     AnalyticsManager.shared().shouldTrackLastKnownLocation = false
 @endcode
 
 @subsection analytics-configure-idfa IDFA tracking
-The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `NO`:
+The SDK automatically tracks the [advertising identifier (IDFA)][idfa] by default but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `false`:
 
 @code{.swift}
     AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
 @endcode
 
+#### IDFA tracking on iOS 14.x and above
+@attention If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
+
+If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
+Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
+
+@code{.swift}
+ATTrackingManager.requestTrackingAuthorization { status in
+    switch status {
+    case .authorized:
+        // Now that tracking is authorized we can get the IDFA
+        let idfa = ASIdentifierManager.shared().advertisingIdentifier
+        
+    default: () // IDFA is not authorized
+    }
+}
+@endcode
+
+@subsection analytics-configure-pageview Configure page view tracking
+By default the SDK automatically tracks page views/visits (`pv` etype in RAT). The automatic tracking can be disabled by setting RAnalyticsManager::shouldTrackPageView to `false`. This property is now deprecated and we recommend to use the below feature @ref analytics-configure-automatic-tracking instead.
+
+@subsection analytics-configure-automatic-tracking Configure automatic tracking
 ##### Automatics Events Tracking Configuration
 
 ###### Build time configuration
-Create and add to your Xcode project this file: RAnalyticsConfiguration.plist
-Open the file and add the following events if you want to disable all the automatic events tracked by RAnalytics:
+* Create and add this file to your Xcode project: `RAnalyticsConfiguration.plist`
+* Open the file and add the events you do not want to track to a `RATDisabledEventsList` string array. For example, to disable all the automatic events:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -121,26 +143,29 @@ Open the file and add the following events if you want to disable all the automa
 </plist>
 ```
 ###### Runtime configuration
-It's also possible to enable or disable events at Runtime:
-- Enable all events at Runtime:
+It's also possible to enable or disable events at runtime:
+
+* Enable all events at runtime
 ```swift
 AnalyticsManager.shared().shouldTrackEvent = { _ in true }
 ```
-- Disable all events at Runtime:
+
+* Disable all events at runtime
 ```swift
 AnalyticsManager.shared().shouldTrackEvent = { _ in false }
 ```
-- Disable a given event at Runtime:
+
+* Disable a given event at runtime
 ```swift
 AnalyticsManager.shared().shouldTrackEvent = { eventName in
     eventName != AnalyticsManager.Event.Name.sessionStart
 }
 ```
 
-Note: The Runtime configuration overrides the build time configuration.
-If an event is disabled at build time configuration and enabled at runtime configuration, this event will be tracked by RAnalytics.
+Note: The runtime configuration overrides the build time configuration.
+If an event is disabled in the build time configuration and enabled in the runtime configuration the event will be tracked by RAnalytics.
 
-In order to override the build time configuration at Runtime please set `AnalyticsManager.shared().shouldTrackEvent` in `application(_:willFinishLaunchingWithOptions:)`:
+In order to override the build time configuration at runtime set `AnalyticsManager.shared().shouldTrackEvent` in `application(_:willFinishLaunchingWithOptions:)`:
 ```swift
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -152,24 +177,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 ```
-
-#### IDFA tracking on iOS 14.x and above
-@attention If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
-
-If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking.
-Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
-
-@code{.swift}
-ATTrackingManager.requestTrackingAuthorization { status in
-    switch status {
-    case .authorized:
-        // Now that tracking is authorized we can get the IDFA
-        let idfa = ASIdentifierManager.shared().advertisingIdentifier
-        
-    default: () // IDFA is not authorized
-    }
-}
-@endcode
 
 @subsection analytics-set-userid Manually set a user identifier
 From version 5.2.0 there is a new `setUserIdentifier:` API available for your app to manually set the tracking user identifier. After calling the API the user identifier that you set will be used for subsequent tracked events.
