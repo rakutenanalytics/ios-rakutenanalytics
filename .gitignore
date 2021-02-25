@@ -32,3 +32,4 @@ Gemfile.lock
 RakutenAnalyticsSDK/RAnalyticsDebug*.zip
 RakutenAnalyticsSDK/RAnalyticsRelease*.zip
 RakutenAnalyticsSDK/RAnalytics.framework
+Samples/RAnalytics.zip

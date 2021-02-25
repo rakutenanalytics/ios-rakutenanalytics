@@ -6,12 +6,22 @@ workspace 'RAnalyticsSample.xcworkspace'
 platform :ios, "11.0"
 use_frameworks!
 
+framework_name = 'RAnalytics.zip'
+framework_zip = 'file:' + __dir__ + '/' + framework_name
+
 abstract_target 'Common' do
-  pod 'RAnalytics', :path => '../RAnalytics.podspec'
-  pod 'RDeviceIdentifier', :inhibit_warnings => true, :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
-  pod 'RLogger', :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-logger.git'
+  # Binary framework pod of ../RakutenAnalyticsSDK
+  pod 'RAnalytics', :http => framework_zip
+
+  # Source-based pod of ../RAnalytics
+  # For local development comment out the framework pod and uncomment this
+  # pod 'RAnalytics', :path => '../RAnalytics.podspec'
   
   target 'RAnalyticsSample'
   target 'AnalyticsTodayExt'
+end
+
+pre_install do |installer|
+  raise StandardError, "RAnalytics framework zip not found at expected path #{framework_zip}\nRun `bundle exec fastlane ios build_sample` to generate framework zip\n\n" unless File.exist?(framework_name)
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

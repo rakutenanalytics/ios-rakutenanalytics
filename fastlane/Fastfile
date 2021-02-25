@@ -5,6 +5,22 @@ platform :ios do
   desc "Build everything"
   lane :ci do |options|
     shared_tests(options)
+    build_sample(options)
+  end
+
+  desc "Build sample"
+  lane :build_sample do |options|
+    podspec = "RakutenAnalyticsSDK/RAnalytics.podspec"
+    version = version_get_podspec(path: podspec)
+
+    build_framework(version: version) unless options[:skip_build]
+
+    # copy specifc version's framework zip to the Samples folder
+    sh "cp ../RakutenAnalyticsSDK/RAnalyticsDebug-v#{version}.zip ../Samples/RAnalytics.zip"
+
+    # for `pod install` cocoapods needs the podspec included in the zip 
+    sh "zip -urj ../Samples/RAnalytics.zip ../#{podspec}"
+
     shared_sample(options)
   end
 

@@ -1,7 +1,6 @@
 import UIKit
 import CoreLocation
 import RAnalytics
-import RLogger
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -10,7 +9,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let locationManager = CLLocationManager()
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        RLogger.loggingLevel = .debug
         // Override the build time configuration of disabled automatic events defined in `RAnalyticsInfo.plist`
         AnalyticsManager.shared().shouldTrackEventHandler = { _ in
             true
