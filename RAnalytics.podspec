@@ -8,6 +8,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "11.0"
   s.requires_arc = true
+  s.swift_version = '5.3'
 
   options = {
     'CLANG_ENABLE_MODULES'    => 'YES',
