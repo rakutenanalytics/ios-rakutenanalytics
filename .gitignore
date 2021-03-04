@@ -28,7 +28,7 @@ Pods
 vendor
 Gemfile.lock
 
-# Public SDK
+# Public framework
 RakutenAnalyticsSDK/RAnalyticsDebug*.zip
 RakutenAnalyticsSDK/RAnalyticsRelease*.zip
 RakutenAnalyticsSDK/RAnalytics.framework

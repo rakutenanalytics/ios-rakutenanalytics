@@ -535,8 +535,11 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
-@subsection analytics-8-0-0 8.0.0 (2021-in-progress)
+@subsection analytics-8-0-0 8.0.0 (2021-03-04)
+* The module can now be built and deployed as a binary framework. See [Confluence](https://confluence.rakuten-it.com/confluence/display/MTSD/iOS+Analytics+SDK+on+GitHub+-+Make+SDK+public) for details.
 * [SDKCF-3163](https://jira.rakuten-it.com/jira/browse/SDKCF-3163): Added runtime and buildtime configuration of the automatically tracked events. See @ref analytics-configure-automatic-tracking.
+* [SDKCF-3190](https://jira.rakuten-it.com/jira/browse/SDKCF-3190): `RAnalyticsManager#shouldTrackPageView` has been deprecated. Apps can use the newly introduced `RAnalyticsManager#shouldTrackEventHandler` property instead.
+* Partly migrated the module code to Swift. Includes migration phases [one](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-1) and [two](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-2) which consists mainly of private classes.
 
 @subsection analytics-7-0-1 7.0.1 (2021-02-12)
 * [SDKCF-3218](https://jira.rakuten-it.com/jira/browse/SDKCF-3218) / [SDKCF-3152](https://jira.rakuten-it.com/jira/browse/SDKCF-3152): Fixed crash that can occur if there are pending database operations when app terminates. Database operations will now be cancelled if app is terminating.

@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
     s.name         = "RAnalytics"
-    s.version      = "7.0.0"
-    s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
-    s.summary      = "RAnalytics records user activity and automatically sends tracking events to RAT."
-    s.homepage     = "https://www.rakuten.co.jp"
+    s.version      = "8.0.0"
+    s.authors      = "Rakuten Ecosystem Mobile"
+    s.summary      = "Records user activity and automatically sends tracking events to an analytics cloud service."
+    s.homepage     = "https://github.com/rakutentech"
     s.license      = { :type => 'Proprietary', :text => '© Rakuten' }
-    s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework-snapshot/releases/download/#{s.version.to_s}/RAnalyticsRelease-v#{s.version.to_s}.zip" }
+    s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework/releases/download/#{s.version.to_s}/RAnalyticsRelease-v#{s.version.to_s}.zip" }
     s.platform     = :ios, "11.0"
     s.vendored_frameworks = "RAnalytics.framework"
     options = {
@@ -14,9 +14,7 @@ Pod::Spec.new do |s|
       'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
       'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
       'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'",
-      # FIXME: `pod lib lint` attempts to build all available archs.
-      # We do not include an arm64 slice in our simulator fat binary therefore 
-      # we need to exclude Apple Silicon arm64 arch from simulator builds. 
+      # FIXME: `pod lib lint` attempts to build all available archs so we need to exclude Apple Silicon arm64 from simulator builds. 
       # See https://github.com/CocoaPods/CocoaPods/issues/10065#issuecomment-694266259
       'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'
     }
