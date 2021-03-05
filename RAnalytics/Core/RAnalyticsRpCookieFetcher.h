@@ -6,9 +6,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RAnalyticsRpCookieFetcher : NSObject <RAnalyticsEndpointSettable>
 
 /**
- * This method for creating a new RP Cookie Fetcher object.
+ * Create a new RP Cookie Fetcher object.
  *
- * @param cookieStorage  It is the storage where rp cookie is set.
+ * @param cookieStorage  Where the cookie will be set.
  *
  * @return A newly-initialized RP Cookie Fetcher.
  */
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *
- * @return a cached valid RP cookie.
+ * @return A cached valid RP cookie.
  *
  */
 - (NSHTTPCookie * _Nullable)getRpCookieFromCookieStorage;

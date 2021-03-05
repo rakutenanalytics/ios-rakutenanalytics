@@ -20,11 +20,10 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
  * @ref AnalyticsEvents "standard events" and custom ones.
  *
  * @attention Unprefixed names are reserved for @ref AnalyticsEvents "standard events". For custom events, or
- * events targetting specific @ref RAnalyticsTracker "trackers", please use a domain notation (e.g. `kobo.pageRead`).
+ * events targetting specific @ref RAnalyticsTracker "trackers", please use a domain notation (e.g. `{app-name}.pageRead`).
  *
- * @note The @ref RAnalyticsRATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`,
- * where `etype` is the standard RAT field going by that name. For convenience, you can create RAT-specific
- * events directly using RAnalyticsRATTracker::eventWithEventType:parameters:.
+ * @note The @ref RAnalyticsRATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`. 
+ * For convenience, you can create RAT-specific events directly using RAnalyticsRATTracker::eventWithEventType:parameters:.
  *
  * @see AnalyticsEvents
  */
@@ -41,12 +40,12 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
 - (instancetype)init NS_UNAVAILABLE;
 
 /**
- * This method for creating a new event object.
+ * Create a new event.
  *
  * @attention For RAT-specific events, please use RAnalyticsRATTracker::eventWithEventType:parameters: instead.
  *
  * @param name  Name of the event. We provides @ref AnalyticsEvents "standard events" as part of our SDK.
- *              For custom events, or events targetting specific trackers, please use a domain notation (e.g. `kobo.pageRead`).
+ *              For custom events, or events targetting specific trackers, please use a domain notation (e.g. `{app-name}.pageRead`).
  * @param parameters  Optional payload, for passing additional parameters to custom/3rd-party trackers.
  *
  * @return A newly-initialized event.
@@ -62,11 +61,11 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent
 - (void)track;
 
 /**
- * Convenience method for tracking a _rem_push_notify event.
+ * Convenience method for tracking a push notify event.
  *
  * @param pushNotificationPayload The entire payload of a push notification.
  *
- * @return A newly-initialized _rem_push_notify event with the tracking identifier set into the parameter list.
+ * @return A newly-initialized push notify event with the tracking identifier set into the parameter list.
  *
  * @see AnalyticsEvents
  */
@@ -173,7 +172,7 @@ RSDKA_EXPORT NSString *const RAnalyticsPageVisitEventName  RSDKA_SWIFT_NAME(RAna
 
 /**
  * Event triggered when a push notification is received.
- * This event has a parameter named RAnalyticsPushNotificationTrackingIdentifierParameter
+ * This event has a parameter named `RAnalyticsPushNotificationTrackingIdentifierParameter`
  *
  * @par Swift
  * This value is exposed as **AnalyticsManager.Event.Name.pushNotification**.

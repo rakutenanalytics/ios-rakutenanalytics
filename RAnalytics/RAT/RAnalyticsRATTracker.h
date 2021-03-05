@@ -30,9 +30,7 @@ RSDKA_EXPORT @interface RAnalyticsRATTracker : NSObject<RAnalyticsTracker>
  * This method is exposed as **.event(withEventType:parameters:)**.
  *
  * @param eventType       RAT event type
- * @param parameters      Optional RAT parameters 
- *
- * @note For a list of RAT parameters and their names, see the [RAT Generic IDL](https://git.rakuten-it.com/projects/RG/repos/rg/browse/ratGeneric.idl ) document.
+ * @param parameters      Optional RAT parameters
  */
 - (RAnalyticsEvent *)eventWithEventType:(NSString *)eventType parameters:(NSDictionary<NSString *, id> * __nullable)parameters;
 

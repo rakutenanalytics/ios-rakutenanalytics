@@ -140,9 +140,8 @@ fileprivate extension RAnalyticsSender {
     }
 
     func doBackgroundUpload(records: [Data], identifiers: [Int64]) {
-        /// When you make changes here, always check the server-side program will accept it.
-        /// The source code is at https://git.rakuten-it.com/projects/RATR/repos/receiver/browse/receiver.c
-        /// and the API spec is https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Data+Insertion+API
+        /// If you make changes to the payload format, always confirm with RAT team 
+        /// that the server-side program will accept the updated format.
         guard !records.isEmpty,
               let ratJsonRecords = [JsonRecord](ratDataRecords: records),
               !ratJsonRecords.isEmpty,

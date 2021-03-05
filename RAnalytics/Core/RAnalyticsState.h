@@ -84,7 +84,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
 
 /**
  * Composite state created every time an event is processed, 
- * and passed to each tracker's [processEvent(event, state)](protocol_r_s_d_k_analytics_tracker_01-p.html#abd4a093a74d3445fe72916f16685f5a3) method.
+ * and passed to each tracker's `processEvent(event, state)` method.
  *
  * @par Swift
  * This class is exposed as **AnalyticsManager.State**.
@@ -139,8 +139,8 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(RAnalyticsManager.State) @interface RAnalyticsStat
  * If `loggedIn` is `true`, then trackers can assume that user is
  * currently logged in.
  *
- * Note: for users logged in with RAE, this is the "encrypted easy id"
- * as returned by the `IdInformation/GetEncryptedEasyId/20140617` API.
+ * Note: for users logged in with Rakuten, this is the encrypted user
+ * tracking identifier.
  */
 @property (nonatomic, nullable, readonly, copy) NSString *userIdentifier;
 

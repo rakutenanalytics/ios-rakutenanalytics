@@ -46,9 +46,9 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 - (void)setLoggingLevel:(RAnalyticsLoggingLevel)loggingLevel RSDKA_SWIFT_NAME(set(loggingLevel:));
 
 /**
- * Process an event. The manager passes the event to each registered trackers, in turn.
+ * Process an event. The manager passes the event to each registered tracker, in turn.
  *
- * @param event  An event will be sent to RAT server.
+ * @param event  Event to track.
  *
  * @return A boolean value indicating if the event has been processed.
  */
@@ -66,7 +66,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 
 /**
  * Set the user identifier of the logged in user.
- * @param userID  The user identifier. This can be an encrypted easy ID.
+ * @param userID  The user identifier. This can be the encrypted internal tracking ID.
  */
 - (void)setUserIdentifier:(NSString * _Nullable)userID;
 
@@ -88,7 +88,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * Control whether the SDK should track page views. Defaults to `YES`.
  * @deprecated RAnalyticsManager::shouldTrackEventHandler should be used instead
  */
-@property (nonatomic) BOOL shouldTrackPageView DEPRECATED_MSG_ATTRIBUTE("Deprecated. RAnalyticsManager#shouldTrackEventHandler should be used instead.");
+@property (nonatomic) BOOL shouldTrackPageView DEPRECATED_MSG_ATTRIBUTE("RAnalyticsManager#shouldTrackEventHandler should be used instead.");
 
 /**
  * Control whether the SDK should track the device's location or not.
@@ -107,13 +107,15 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  * Control whether the SDK should track the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) or not.
  *
  * This property is set to `YES` by default, which means @ref RAnalyticsManager will
- * use the advertising identifier.
+ * use the advertising identifier if it is set to a non-zeroed valid value.
  */
 @property (nonatomic) BOOL shouldTrackAdvertisingIdentifier;
 
 /**
- * Control whether the SDK should inject a special tracking cookie `ra_uid` into WKWebView's cookie store.
- * The cookie enables tracking between mobile app and webviews. This feature only works on iOS 11.0 and above.
+ * Control whether the SDK should inject a tracking cookie into the WKWebView's cookie store.
+ * The cookie enables tracking between mobile app and webviews. 
+ *
+ * This feature only works on iOS 11.0 and above.
  *
  * This property is set to `NO` by default
  */
@@ -122,16 +124,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
 /**
  * Enable or disable the tracking of an event at runtime.
  *
- * Disable `AnalyticsManager.Event.Name.sessionStart`:
- *
+ * For example, to disable `AnalyticsManager.Event.Name.sessionStart`:
  * `AnalyticsManager.shared().shouldTrackEventHandler = { eventName in eventName != AnalyticsManager.Event.Name.sessionStart }`
+ * 
+ * Note that it is also possible to disable events at build time in the `RAnalyticsConfiguration.plist` file:
+ * 1) First create a `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
+ * 2) Then create a key `RATDisabledEventsList` and add the array of disabled events.
  *
- * Note: it is also possible to disable events at build time in the `RAnalyticsConfiguration.plist` file.
- * First create the `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
- * Then create the key `RATDisabledEventsList` and add the array of disabled events.
- *
- * Example:
- * This is the complete list of automatic events that you can disable in your app by adding it to the `RAnalyticsConfiguration.plist` file:
+ * For example, to disable all automatic tracking add the following to your `RAnalyticsConfiguration.plist` file:
  *
  * <key>RATDisabledEventsList</key>
  * <array>

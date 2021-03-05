@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @name Notifications
 
 /**
- * The RAnalyticsSender instance sends this notification when it is about to make a request to upload a group of records to the servers.
+ * The RAnalyticsSender instance sends this notification when it is about to make a request to upload a group of records.
  * `NSNotification.object` is the JSON payload being uploaded, in its unserialized `NSArray` form.
  *
  * @ingroup AnalyticsConstants
