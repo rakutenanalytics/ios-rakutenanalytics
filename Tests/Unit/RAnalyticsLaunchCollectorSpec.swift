@@ -12,29 +12,6 @@ private final class KeychainHandlerMock: NSObject, KeychainHandleable {
     func creationDate(for reference: CFTypeRef?) -> Date? { creationDate }
 }
 
-// MARK: - User Defaults
-
-private final class UserDefaultsMock: NSObject, UserStorageHandleable {
-    var dictionary: [String: Any]?
-    func object(forKey defaultName: String) -> Any? { dictionary?[defaultName] }
-    func string(forKey defaultName: String) -> String? { dictionary?[defaultName] as? String }
-    func set(value: Any?, forKey key: String) { dictionary?[key] = value }
-}
-
-// MARK: - Tracker
-
-private struct TrackerResult {
-    let tracked: Bool
-    let parameters: [String: Any]?
-}
-
-private final class AnalyticsTrackerMock: NSObject, Trackable {
-    var dictionary: [String: TrackerResult]?
-    func trackEvent(name: String, parameters: [String: Any]?) {
-        dictionary?[name] = TrackerResult(tracked: true, parameters: parameters)
-    }
-}
-
 // MARK: - Notification
 
 extension UNTextInputNotificationResponse {
