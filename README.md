@@ -535,6 +535,9 @@ NSLog(@"RAnalyticsRATTracker failed to upload: %@, reason = %@", records, error.
 @endcode
 
 @section analytics-changelog Changelog
+@subsection analytics-8-0-1 8.0.1 (2021-03-17)
+* [SDKCF-3460](https://jira.rakuten-it.com/jira/browse/SDKCF-3460): Removed sensitive/internal information from public header files so that they will not be exposed in the framework.
+
 @subsection analytics-8-0-0 8.0.0 (2021-03-04)
 * The module can now be built and deployed as a binary framework. See [Confluence](https://confluence.rakuten-it.com/confluence/display/MTSD/iOS+Analytics+SDK+on+GitHub+-+Make+SDK+public) for details.
 * [SDKCF-3163](https://jira.rakuten-it.com/jira/browse/SDKCF-3163): Added runtime and buildtime configuration of the automatically tracked events. See @ref analytics-configure-automatic-tracking.
