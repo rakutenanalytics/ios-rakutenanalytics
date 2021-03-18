@@ -50,6 +50,8 @@ platform :ios do
       "RakutenAnalyticsSDK/RAnalyticsRelease_dSYM-v#{version}.zip",
     ]
 
+    pod_lib_lint(podspec: podspecPath, allow_warnings: true)
+
     if isSnapshot
       snapshot_repo = "rakutentech/ios-analytics-framework-snapshots"
       UI.message "Upload snapshot '#{release_name}' to GitHub repo #{snapshot_repo}, branch #{target_branch}"
@@ -86,7 +88,7 @@ platform :ios do
       public_repo = "rakutentech/ios-analytics-framework"
       UI.message "Upload PUBLIC artifacts to GitHub repo: #{public_repo}, branch #{target_branch}, description: #{release_description}"
 
-      # upload RELEASE framework to public GitHub repo and lint/push podspec
+      # upload RELEASE framework to public GitHub repo and push podspec
       github_release = set_github_release(
         repository_name: public_repo,
         api_token: ENV["RELEASE_GITHUB_TOKEN"],
@@ -98,8 +100,7 @@ platform :ios do
       ) unless skip_upload
 
       unless skip_pod_push
-        pod_lib_lint(podspec: podspecPath, allow_warnings: true) 
-        pod_push(path: podspecPath, allow_warnings: true)
+        pod_push(path: podspecPath, allow_warnings: true, repo:"rakutentech")
       end
 
       UI.success "Successfully released v#{version}"

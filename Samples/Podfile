@@ -25,6 +25,6 @@ end
 
 pre_install do |installer|
   # NOTE: you must comment out the line below if you use a source-based or github pod
-  # raise StandardError, "RAnalytics framework zip not found at expected path #{framework_zip}\nRun `bundle exec fastlane ios build_sample` to generate framework zip. Comment out this error in the Podfile if you are building from source pod or github pod.\n\n" unless File.exist?(framework_name)
+  raise StandardError, "RAnalytics framework zip not found at expected path #{framework_zip}\nRun `bundle exec fastlane ios build_sample` to generate framework zip. Comment out this error in the Podfile if you are building from source pod or github pod.\n\n" unless File.exist?(framework_name)
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
