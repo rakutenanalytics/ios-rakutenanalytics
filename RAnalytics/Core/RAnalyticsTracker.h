@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @protocol RAnalyticsTracker RAnalyticsTracker.h <RAnalytics/RAnalyticsTracker.h>
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject, RAnalyticsEndpointSettable>
+RSDKA_EXPORT NS_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject, RAnalyticsEndpointSettable>
 
 @required
 /**
@@ -26,7 +26,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject, RA
  *
  * @return `YES` if the recipient consumed the event, `NO` if it doesn't support it.
  */
-- (BOOL)processEvent:(RAnalyticsEvent *)event state:(RAnalyticsState *)state RSDKA_SWIFT_NAME(process(event:state:));
+- (BOOL)processEvent:(RAnalyticsEvent *)event state:(RAnalyticsState *)state NS_SWIFT_NAME(process(event:state:));
 
 @optional
 /**
@@ -34,14 +34,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(Tracker) @protocol RAnalyticsTracker <NSObject, RA
  *
  * @param batchingDelay  Delivery delay in seconds. Value should be >= 0 and <= 60.
  */
-- (void)setBatchingDelay:(NSTimeInterval)batchingDelay RSDKA_SWIFT_NAME(set(batchingDelay:));
+- (void)setBatchingDelay:(NSTimeInterval)batchingDelay NS_SWIFT_NAME(set(batchingDelay:));
 
 /**
  * Method for configuring the dynamic batching delay.
  *
  * @param batchingDelayBlock  The block returns delivery delay in seconds. Value should be >= 0 and <= 60.
  */
-- (void)setBatchingDelayWithBlock:(BatchingDelayBlock)batchingDelayBlock RSDKA_SWIFT_NAME(set(batchingDelayBlock:));
+- (void)setBatchingDelayWithBlock:(BatchingDelayBlock)batchingDelayBlock NS_SWIFT_NAME(set(batchingDelayBlock:));
 
 @end
 

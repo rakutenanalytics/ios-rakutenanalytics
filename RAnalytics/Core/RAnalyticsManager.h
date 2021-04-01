@@ -26,7 +26,7 @@ typedef BOOL (^RAnalyticsShouldTrackEventCompletionBlock)(NSString *);
  * @class RAnalyticsManager RAnalyticsManager.h <RAnalytics/RAnalyticsManager.h>
  * @ingroup AnalyticsCore
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : NSObject
+RSDKA_EXPORT NS_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : NSObject
 
 /**
  * Retrieve the shared instance.
@@ -36,14 +36,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  *
  * @return The shared instance.
  */
-+ (instancetype)sharedInstance RSDKA_SWIFT_NAME(shared());
++ (instancetype)sharedInstance NS_SWIFT_NAME(shared());
 
 /**
  * Set logging level
  *
  * @param loggingLevel  The logging level type.
  */
-- (void)setLoggingLevel:(RAnalyticsLoggingLevel)loggingLevel RSDKA_SWIFT_NAME(set(loggingLevel:));
+- (void)setLoggingLevel:(RAnalyticsLoggingLevel)loggingLevel NS_SWIFT_NAME(set(loggingLevel:));
 
 /**
  * Process an event. The manager passes the event to each registered tracker, in turn.
@@ -62,7 +62,7 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  *
  * @param tracker  Any object that comforms to the @ref RAnalyticsTracker protocol.
  */
-- (void)addTracker:(id<RAnalyticsTracker>)tracker RSDKA_SWIFT_NAME(add(_:));
+- (void)addTracker:(id<RAnalyticsTracker>)tracker NS_SWIFT_NAME(add(_:));
 
 /**
  * Set the user identifier of the logged in user.
@@ -75,14 +75,14 @@ RSDKA_EXPORT RSDKA_SWIFT_NAME(AnalyticsManager) @interface RAnalyticsManager : N
  *
  * @param cookieDomainBlock  The block returns the domain string to set on the cookie.
  */
-- (void)setWebTrackingCookieDomainWithBlock:(WebTrackingCookieDomainBlock)cookieDomainBlock RSDKA_SWIFT_NAME(setWebTrackingCookieDomain(block:));
+- (void)setWebTrackingCookieDomainWithBlock:(WebTrackingCookieDomainBlock)cookieDomainBlock NS_SWIFT_NAME(setWebTrackingCookieDomain(block:));
 
 /**
  * Set the endpoint URL for all the trackers at runtime.
  * @warning If endpointURL is not nil, RATEndpoint defined in app's info.plist is ignored.
  * @warning If endpointURL is nil, RATEndpoint defined in app's info.plist is set.
  */
-- (void)setEndpointURL:(NSURL * _Nullable)endpointURL RSDKA_SWIFT_NAME(set(endpointURL:));
+- (void)setEndpointURL:(NSURL * _Nullable)endpointURL NS_SWIFT_NAME(set(endpointURL:));
 
 /**
  * Control whether the SDK should track page views. Defaults to `YES`.

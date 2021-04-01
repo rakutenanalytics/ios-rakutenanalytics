@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @protocol RAnalyticsEndpointSettable RAnalyticsEndpointSettable.h <RAnalytics/RAnalyticsEndpointSettable.h>
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(EndpointSettable) @protocol RAnalyticsEndpointSettable <NSObject>
+RSDKA_EXPORT NS_SWIFT_NAME(EndpointSettable) @protocol RAnalyticsEndpointSettable <NSObject>
 
 @required
 

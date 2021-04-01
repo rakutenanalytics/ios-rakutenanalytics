@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.other**.
      */
-    RAnalyticsOtherLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.other) = 0,
+    RAnalyticsOtherLoginMethod NS_SWIFT_NAME(RAnalyticsLoginMethod.other) = 0,
 
     /**
      * Password Input Login.
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.passwordInput**.
      */
-    RAnalyticsPasswordInputLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.passwordInput),
+    RAnalyticsPasswordInputLoginMethod NS_SWIFT_NAME(RAnalyticsLoginMethod.passwordInput),
 
     /**
      * One Tap Login.
@@ -42,8 +42,8 @@ typedef NS_ENUM(NSUInteger, RAnalyticsLoginMethod)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.LoginMethod.oneTapLogin**.
      */
-    RAnalyticsOneTapLoginLoginMethod RSDKA_SWIFT_NAME(RAnalyticsLoginMethod.oneTapLogin),
-} RSDKA_SWIFT_NAME(RAnalyticsState.LoginMethod);
+    RAnalyticsOneTapLoginLoginMethod NS_SWIFT_NAME(RAnalyticsLoginMethod.oneTapLogin),
+} NS_SWIFT_NAME(RAnalyticsState.LoginMethod);
 
 /**
  * Known launch origins.
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.internal**.
      */
-    RAnalyticsInternalOrigin RSDKA_SWIFT_NAME(internal) = 0,
+    RAnalyticsInternalOrigin NS_SWIFT_NAME(internal) = 0,
 
     /**
      * The visit originates from another app (i.e. deep-linking).
@@ -71,7 +71,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.external**.
      */
-    RAnalyticsExternalOrigin RSDKA_SWIFT_NAME(external),
+    RAnalyticsExternalOrigin NS_SWIFT_NAME(external),
 
     /**
      * The visit originates from a push notification.
@@ -79,8 +79,8 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
      * @par Swift
      * This value is exposed as **AnalyticsManager.State.Origin.push**.
      */
-    RAnalyticsPushOrigin RSDKA_SWIFT_NAME(push),
-} RSDKA_SWIFT_NAME(RAnalyticsState.Origin);
+    RAnalyticsPushOrigin NS_SWIFT_NAME(push),
+} NS_SWIFT_NAME(RAnalyticsState.Origin);
 
 /**
  * Composite state created every time an event is processed, 
@@ -92,7 +92,7 @@ typedef NS_ENUM(NSUInteger, RAnalyticsOrigin)
  * @class RAnalyticsState RAnalyticsState.h <RAnalytics/RAnalyticsState.h>
  * @ingroup AnalyticsCore
  */
-RSDKA_EXPORT RSDKA_SWIFT_NAME(RAnalyticsManager.State) @interface RAnalyticsState : NSObject<NSCopying>
+RSDKA_EXPORT NS_SWIFT_NAME(RAnalyticsManager.State) @interface RAnalyticsState : NSObject<NSCopying>
 
 /**
  * Globally-unique string updated every time a new session starts.

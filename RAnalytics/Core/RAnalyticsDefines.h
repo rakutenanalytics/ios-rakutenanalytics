@@ -25,9 +25,4 @@ typedef NSString *__nullable(^WebTrackingCookieDomainBlock)(void);
 #   define RSDKA_EXPORT extern __attribute__((visibility ("default")))
 #endif
 
-/*
- * Support for exposing public parts of the API with Swift-friendly naming.
- */
-#define RSDKA_SWIFT_NAME(n) __attribute__((swift_name(#n)))
-
 NS_ASSUME_NONNULL_END
