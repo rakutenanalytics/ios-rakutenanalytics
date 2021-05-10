@@ -32,22 +32,22 @@ import UIKit
 }
 
 @objc public protocol EnvironmentBundle {
-    static var useDefaultSharedCookieStorage: Bool { get }
-    static var endpointAddress: URL? { get }
+    var useDefaultSharedCookieStorage: Bool { get }
+    var endpointAddress: URL? { get }
     static var assetsBundle: Bundle? { get }
     static var sdkComponentMap: NSDictionary? { get }
 }
 
 @objc extension Bundle: EnvironmentBundle {
-    public static var useDefaultSharedCookieStorage: Bool {
-        guard let result = Bundle.main.object(forInfoDictionaryKey: "RATDisableSharedCookieStorage") as? NSNumber else {
+    public var useDefaultSharedCookieStorage: Bool {
+        guard let result = object(forInfoDictionaryKey: "RATDisableSharedCookieStorage") as? NSNumber else {
             return true
         }
         return !result.boolValue
     }
 
-    public static var endpointAddress: URL? {
-        guard let plistObj = Bundle.main.object(forInfoDictionaryKey: "RATEndpoint") as? String,
+    public var endpointAddress: URL? {
+        guard let plistObj = object(forInfoDictionaryKey: "RATEndpoint") as? String,
               !plistObj.isEmpty,
               let userDefinedURL = URL(string: plistObj) else {
             #if PUBLIC_ANALYTICS_IOS_SDK

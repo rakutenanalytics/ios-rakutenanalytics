@@ -1,79 +1,7 @@
 #import <RAnalytics/RAnalyticsDefines.h>
-#import <RAnalytics/RAnalyticsManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * A single analytics event. Use the RAnalyticsEvent::track: method for tracking the event.
- *
- * @par Swift
- * This class is exposed as **AnalyticsManager.Event**.
- *
- * @class RAnalyticsEvent RAnalyticsEvent.h <RAnalytics/RAnalyticsEvent.h>
- * @ingroup AnalyticsCore
- */
-RSDKA_EXPORT NS_SWIFT_NAME(AnalyticsManager.Event) @interface RAnalyticsEvent : NSObject<NSSecureCoding, NSCopying>
-
-/**
- * Name of the event.
- * This allows custom @ref RAnalyticsTracker "trackers" to recognize and process both
- * @ref AnalyticsEvents "standard events" and custom ones.
- *
- * @attention Unprefixed names are reserved for @ref AnalyticsEvents "standard events". For custom events, or
- * events targetting specific @ref RAnalyticsTracker "trackers", please use a domain notation (e.g. `{app-name}.pageRead`).
- *
- * @note The @ref RAnalyticsRATTracker "RAT tracker" provided by this SDK processes events with a name of the form `rat.etype`. 
- * For convenience, you can create RAT-specific events directly using RAnalyticsRATTracker::eventWithEventType:parameters:.
- *
- * @see AnalyticsEvents
- */
-@property (nonatomic, readonly, copy) NSString *name;
-
-/**
- * Optional payload, for passing additional parameters to custom/3rd-party trackers.
- */
-@property (nonatomic, readonly, copy) NSDictionary<NSString *, id> *parameters;
-
-/**
- * @internal
- */
-- (instancetype)init NS_UNAVAILABLE;
-
-/**
- * Create a new event.
- *
- * @attention For RAT-specific events, please use RAnalyticsRATTracker::eventWithEventType:parameters: instead.
- *
- * @param name  Name of the event. We provides @ref AnalyticsEvents "standard events" as part of our SDK.
- *              For custom events, or events targetting specific trackers, please use a domain notation (e.g. `{app-name}.pageRead`).
- * @param parameters  Optional payload, for passing additional parameters to custom/3rd-party trackers.
- *
- * @return A newly-initialized event.
- *
- * @see AnalyticsEvents
- */
-- (instancetype)initWithName:(NSString *)name parameters:(NSDictionary<NSString *, id> * __nullable)parameters NS_DESIGNATED_INITIALIZER;
-
-/**
- * Convenience method for tracking an event.
- * This does exactly the same as `[RAnalyticsManager.sharedInstance process:event]`.
- */
-- (void)track;
-
-/**
- * Convenience method for tracking a push notify event.
- *
- * @param pushNotificationPayload The entire payload of a push notification.
- *
- * @return A newly-initialized push notify event with the tracking identifier set into the parameter list.
- *
- * @see AnalyticsEvents
- */
-- (instancetype)initWithPushNotificationPayload:(NSDictionary *) pushNotificationPayload;
-
-@end
-
-/// @internal
 struct NS_SWIFT_NAME(RAnalyticsEvent.Name) RAnalyticsEventName { };
 
 /**

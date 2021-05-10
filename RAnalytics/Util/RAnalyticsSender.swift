@@ -140,7 +140,7 @@ fileprivate extension RAnalyticsSender {
     }
 
     func doBackgroundUpload(records: [Data], identifiers: [Int64]) {
-        /// If you make changes to the payload format, always confirm with RAT team 
+        /// If you make changes to the payload format, always confirm with RAT team
         /// that the server-side program will accept the updated format.
         guard !records.isEmpty,
               let ratJsonRecords = [JsonRecord](ratDataRecords: records),

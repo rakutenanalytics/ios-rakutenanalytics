@@ -1,8 +1,3 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
- */
-
 #import <RAnalyticsBroadcast/RAnalyticsBroadcast.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -1,6 +1,7 @@
 
 #import <Kiwi/Kiwi.h>
-#import <RAnalytics/RAnalyticsPushTrackingUtility.h>
+#import <RAnalytics/RAnalytics.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 #import <OCMock/OCMock.h>
 
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -26,7 +27,7 @@ describe(@"RAnalyticsPushTrackingUtility", ^{
         return @"hello world";
     });
     let(alertMsgAsTrackingId, ^id{
-        return [NSString stringWithFormat:@"msg:%@",[alertString performSelector:@selector(rat_encrypt)]];
+        return [NSString stringWithFormat:@"msg:%@",[alertString performSelector:@selector(nsratEncrypt)]];
     });
     context(@"return a valid tracking id", ^{
         context(@"using the rid in the payload", ^{
@@ -242,9 +243,13 @@ describe(@"RAnalyticsPushTrackingUtility", ^{
                 
                 mockMainBundle = createMockMainBundleWithAppGroupName(@"appGroupId");
                 
-                mockUserDefaults = createMockUserDefaultsWith(goodOpenCountDictionary, false);
+                NSUserDefaults *userDefaults = [NSUserDefaults.alloc initWithSuiteName:@"appGroupId"];
+                NSObject *object = [userDefaults objectForKey:RPushOpenCountSentUserDefaultKey];
+                [userDefaults setObject:goodOpenCountDictionary forKey:RPushOpenCountSentUserDefaultKey];
                 
                 [[theValue([RAnalyticsPushTrackingUtility analyticsEventHasBeenSentWith:sentTrackingId]) should] beTrue];
+                
+                [userDefaults setObject:object forKey:RPushOpenCountSentUserDefaultKey];
             });
         });
         
@@ -390,5 +395,3 @@ describe(@"RAnalyticsPushTrackingUtility", ^{
 });
 
 SPEC_END
-
-

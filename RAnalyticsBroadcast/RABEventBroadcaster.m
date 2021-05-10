@@ -1,7 +1,3 @@
-/*
- * © Rakuten, Inc.
- * authors: "Rakuten Ecosystem Mobile" <ecosystem-mobile@mail.rakuten.com>
- */
 #import <RAnalyticsBroadcast/RAnalyticsBroadcast.h>
 
 @implementation RABEventBroadcaster

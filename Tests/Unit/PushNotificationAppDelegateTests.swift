@@ -155,7 +155,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
 
         _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
-        let expecation = XCTestExpectation(description: "should not send becuase utitliy says it's in app group")
+        let expecation = XCTestExpectation(description: "should not send because utility says it's in app group")
         expecation.isInverted = true
 
         type(of: self).processEvent = { (event) in
@@ -324,7 +324,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
 
         _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
-        let expecation = XCTestExpectation(description: "should not send becuase utitliy says it's in app group")
+        let expecation = XCTestExpectation(description: "should not send because utility says it's in app group")
         expecation.isInverted = true
 
         type(of: self).processEvent = { (event) in

@@ -2,13 +2,20 @@ import Quick
 import Nimble
 @testable import RAnalytics
 
-class BundleMock: EnvironmentBundle {
-    static var shouldUseDefaultCookieStorage = true
-
-    static var useDefaultSharedCookieStorage: Bool { shouldUseDefaultCookieStorage }
-    static var endpointAddress: URL? { nil }
+final class BundleMock: EnvironmentBundle {
+    var useDefaultSharedCookieStorage: Bool {
+        (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
+    }
+    var endpointAddress: URL? { mutableEndpointAddress }
     static var assetsBundle: Bundle? { nil }
     static var sdkComponentMap: NSDictionary? { nil }
+
+    var dictionary: [String: Any]?
+    var mutableEndpointAddress: URL?
+}
+
+extension BundleMock: Bundleable {
+    func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
 }
 
 final class RATUrlRequestExtensionSpec: QuickSpec {
@@ -47,8 +54,9 @@ final class RATUrlRequestExtensionSpec: QuickSpec {
             }
 
             it("should return a request with httpShouldHandleCookies set false") {
-                BundleMock.shouldUseDefaultCookieStorage = false
-                let httpRequest = URLRequest.ratRequest(url: URL(string: urlString)!, body: data, environmentBundle: BundleMock.self)
+                let bundleMock = BundleMock()
+                bundleMock.dictionary?["RATDisableSharedCookieStorage"] = false
+                let httpRequest = URLRequest.ratRequest(url: URL(string: urlString)!, body: data, environmentBundle: bundleMock)
 
                 expect(httpRequest.httpShouldHandleCookies).to(equal(false))
             }

@@ -20,12 +20,14 @@ Pods
 /fastlane/report.xml
 /fastlane/README.md
 
-# Doxygen
+# Documentation
 /.doxygen
 /Doxyfile
+/docs
 
 # Bundler
 vendor
+.bundle
 Gemfile.lock
 
 # Public framework

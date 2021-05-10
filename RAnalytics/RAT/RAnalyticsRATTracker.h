@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class RAnalyticsEvent;
+
 /**
  * Concrete implementation of @ref RAnalyticsTracker that sends events to RAT.
  *

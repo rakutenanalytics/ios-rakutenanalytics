@@ -1,4 +1,5 @@
 import Nimble
+@testable import RAnalytics
 
 extension Expectation {
 
@@ -49,5 +50,13 @@ public func elementsEqualOrderAgnostic<Col1: Collection, Col2: Collection>(
             let matches = expected.count == actual.count && expected.allSatisfy { actual.contains($0) }
             return PredicateResult(bool: matches, message: msg)
         }
+    }
+}
+
+// MARK: - Encryption
+
+extension NSString {
+    @objc func nsratEncrypt() -> NSString? {
+        (self as String).ratEncrypt as NSString?
     }
 }

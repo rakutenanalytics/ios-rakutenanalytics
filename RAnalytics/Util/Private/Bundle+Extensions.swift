@@ -1,13 +1,28 @@
 import Foundation
 
+// MARK: - Bundleable
+
+protocol Bundleable {
+    func object(forInfoDictionaryKey key: String) -> Any?
+}
+
+extension Bundle: Bundleable {}
+
 // MARK: - Version
 
 extension Bundle {
     /// Retrieve and return the short version string.
     ///
     /// - Returns: The short version string or nil.
-    static var shortVersion: String? {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+    var shortVersion: String? {
+        infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+
+    /// Retrieve and return the version.
+    ///
+    /// - Returns: The version or nil.
+    var version: String? {
+        infoDictionary?["CFBundleVersion"] as? String
     }
 }
 

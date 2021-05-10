@@ -1,5 +1,6 @@
 @import XCTest;
 #import <RAnalytics/RAnalytics.h>
+@import CoreLocation.CLLocationManagerDelegate;
 #import "../../RAnalytics/Core/Private/_SDKTracker.h"
 
 @interface RAnalyticsManager()<CLLocationManagerDelegate>

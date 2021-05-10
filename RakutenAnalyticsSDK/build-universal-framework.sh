@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # clean previous builds
 rm -rf build

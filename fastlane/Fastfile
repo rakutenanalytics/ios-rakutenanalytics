@@ -13,6 +13,11 @@ platform :ios do
     podspec = "RakutenAnalyticsSDK/RAnalytics.podspec"
     version = version_get_podspec(path: podspec)
 
+    # ensure clean install
+    sh "rm -rf ../Samples/RAnalytics.zip"
+    sh "rm -rf ../Samples/Pods;rm -f ../Samples/Podfile.lock"
+    sh "pod cache clean RAnalytics"
+
     build_framework(version: version) unless options[:skip_build]
 
     # copy specifc version's framework zip to the Samples folder

@@ -88,31 +88,32 @@ public final class RAnalyticsDatabase: NSObject {
                   RAnalyticsDatabaseHelper.beginTransaction(connection: self.connection) else {
                 return
             }
+            defer {
+                RAnalyticsDatabaseHelper.commitTransaction(connection: self.connection)
+            }
 
             let query = "insert into \(table) (data) values(?)"
+            var statement: SQlite3Pointer?
+            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
+                return
+            }
+
             blobs.forEach { blob in
-
-                var statement: SQlite3Pointer?
-                guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
-                    return
-                }
-
                 blob.withUnsafeBytes { bytes -> Void in
                     if sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(bytes.count), nil) == SQLITE_OK {
                         sqlite3_step(statement)
                         sqlite3_clear_bindings(statement)
                     }
                     sqlite3_reset(statement)
-                    sqlite3_finalize(statement)
                 }
             }
+            sqlite3_finalize(statement)
 
             if maximumNumberOfBlobs != 0 {
+                // Truncate the table by removing older records (blobs)
                 let query = "delete from \(table) where id not in (select id from \(table) order by id desc limit \(maximumNumberOfBlobs))"
                 sqlite3_exec(self.connection, query, nil, nil, nil)
             }
-
-            RAnalyticsDatabaseHelper.commitTransaction(connection: self.connection)
         }
     }
 
@@ -189,39 +190,54 @@ public final class RAnalyticsDatabase: NSObject {
                 return
             }
 
-            let error = self.prepareTable(table)
-            guard error == nil,
+            guard self.isTablePresent(table),
                   RAnalyticsDatabaseHelper.beginTransaction(connection: self.connection) else {
                 return
             }
+            defer {
+                RAnalyticsDatabaseHelper.commitTransaction(connection: self.connection)
+            }
 
             let query = "delete from \(table) where id=?"
-            identifiers.forEach { identifier in
-                var statement: SQlite3Pointer?
-                guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
-                    return
-                }
+            var statement: SQlite3Pointer?
+            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
+                return
+            }
 
+            identifiers.forEach { identifier in
                 sqlite3_bind_int64(statement, 1, identifier)
                 sqlite3_step(statement)
                 sqlite3_clear_bindings(statement)
                 sqlite3_reset(statement)
-                sqlite3_finalize(statement)
             }
-
-            RAnalyticsDatabaseHelper.commitTransaction(connection: self.connection)
+            sqlite3_finalize(statement)
         }
     }
 }
 
 private extension RAnalyticsDatabase {
 
-    @objc private func willTerminate() {
-        appWillTerminate = true
-    }
-}
+    func isTablePresent(_ table: String) -> Bool {
+        guard !tables.contains(table) else {
+            return true
+        }
 
-private extension RAnalyticsDatabase {
+        let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
+        var statement: SQlite3Pointer?
+        guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
+            assertionFailure()
+            return false
+        }
+
+        sqlite3_step(statement)
+        let tableCount = sqlite3_column_int(statement, 0)
+        sqlite3_reset(statement)
+        sqlite3_finalize(statement)
+
+        let isPresent = tableCount > 0
+        if isPresent { tables.insert(table) }
+        return isPresent
+    }
 
     func prepareTable(_ table: String) -> NSError? {
         guard !appWillTerminate else {
@@ -248,5 +264,12 @@ private extension RAnalyticsDatabase {
 
         tables.insert(table)
         return nil
+    }
+}
+
+private extension RAnalyticsDatabase {
+
+    @objc func willTerminate() {
+        appWillTerminate = true
     }
 }

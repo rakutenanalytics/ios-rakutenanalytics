@@ -7,7 +7,6 @@
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
-#import "RAnalyticsRpCookieFetcher.h"
 #import <RLogger/RLogger.h>
 #import "SwiftHeader.h"
 

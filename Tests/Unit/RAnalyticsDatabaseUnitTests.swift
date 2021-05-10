@@ -359,7 +359,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
 
             describe("when calling deleteBlobs(identifiers:in:then:") {
 
-                it("should create passed table if table did not exist before") {
+                it("should not create passed table if table did not exist before") {
                     let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
                     var tableExists: Bool?
@@ -370,7 +370,7 @@ class RAnalyticsDatabaseUnitTests: QuickSpec {
                         }
                     }
 
-                    expect(tableExists).to(beTrue())
+                    expect(tableExists).to(beFalse())
                 }
 
                 it("should delete items for passed IDs") {

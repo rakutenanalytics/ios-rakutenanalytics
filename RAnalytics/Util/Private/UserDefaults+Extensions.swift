@@ -6,6 +6,8 @@ import Foundation
 /// Declaring this method instead solves this error:
 /// set(value: Any?, forKey defaultName: String)
 @objc public protocol UserStorageHandleable {
+    init?(suiteName suitename: String?)
+    func dictionary(forKey defaultName: String) -> [String: Any]?
     func object(forKey defaultName: String) -> Any?
     func bool(forKey defaultName: String) -> Bool
     func string(forKey defaultName: String) -> String?

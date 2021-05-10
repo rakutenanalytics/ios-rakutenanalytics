@@ -11,11 +11,6 @@
 
 #pragma mark - Module Internals
 
-@interface RAnalyticsState ()
-@property (nonatomic, readwrite)                    RAnalyticsLoginMethod     loginMethod;
-@property (nonatomic, readwrite)                    RAnalyticsOrigin          origin;
-@end
-
 @interface RAnalyticsRATTracker ()
 @property (nonatomic) int64_t                   accountIdentifier;
 @property (nonatomic) int64_t                   applicationIdentifier;

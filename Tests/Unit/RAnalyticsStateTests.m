@@ -1,25 +1,7 @@
 @import XCTest;
-#import <RAnalytics/RAnalyticsState.h>
+#import <RAnalytics/RAnalytics-Swift.h>
 #import <OCMock/OCMock.h>
-
-@interface RAnalyticsState ()
-@property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
-@property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
-@property (nonatomic, readwrite, copy) NSString *currentVersion;
-@property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
-@property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
-@property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
-@property (nonatomic, readwrite, getter=isLoggedIn) BOOL loggedIn;
-@property (nonatomic, nullable, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic, readwrite) RAnalyticsLoginMethod loginMethod;
-@property (nonatomic, readwrite) RAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic) NSUInteger lastVersionLaunches;
-@property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
-@end
+@import CoreLocation.CLLocation;
 
 @interface StateTests : XCTestCase
 @property (nonatomic) NSCalendar *calendar;

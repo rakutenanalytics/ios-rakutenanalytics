@@ -6,6 +6,7 @@ included:
 
 disabled_rules:
 - trailing_whitespace
+- nesting
 
 opt_in_rules:
 - empty_count

@@ -51,4 +51,12 @@ extension Optional where Wrapped: NSObject {
         }
         return anObject.isApplePrivateClass()
     }
+
+    /// Retrieve the hash value of an object.
+    ///
+    /// - Returns: The hash value or `0`.
+    var safeHashValue: Int {
+        guard let anObject = self else { return 0 }
+        return anObject.hashValue
+    }
 }

@@ -1,0 +1,169 @@
+import Quick
+import Nimble
+import CoreLocation
+import UIKit
+
+// MARK: - RAnalyticsStateSpec
+
+final class RAnalyticsStateSpec: QuickSpec {
+    override func spec() {
+        describe("AnalyticsManager.State") {
+            let sessionIdentifier = "CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+            let deviceIdentifier = "deviceId"
+            let advertisingIdentifier = "adId"
+            let userIdentifier = "userId"
+            let currentVersion = "2.0"
+            let lastVersion = "1.0"
+            let bundle = Bundle(for: RAnalyticsStateSpec.self)
+            let calendar = Calendar(identifier: .gregorian)
+            let sessionStartDate = calendar.date(from: DateComponents(year: 2016,
+                                                                      month: 6,
+                                                                      day: 10,
+                                                                      hour: 9,
+                                                                      minute: 15,
+                                                                      second: 30))
+            let initialLaunchDate = calendar.date(from: DateComponents(year: 2016,
+                                                                       month: 6,
+                                                                       day: 10))
+            let lastLaunchDate = calendar.date(from: DateComponents(year: 2016,
+                                                                    month: 7,
+                                                                    day: 12))
+            let lastUpdateDate = calendar.date(from: DateComponents(year: 2016,
+                                                                    month: 7,
+                                                                    day: 11))
+            let currentPage: UIViewController = {
+                let viewController = UIViewController()
+                viewController.view.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+                return viewController
+            }()
+            let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
+            let defaultState: AnalyticsManager.State = {
+                let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                   deviceIdentifier: deviceIdentifier,
+                                                   bundle: bundle)
+                state.advertisingIdentifier = advertisingIdentifier
+                state.lastKnownLocation = location
+                state.loginMethod = .oneTapLogin
+                state.origin = .external
+                state.lastVersion = "1.0"
+                state.lastVersionLaunches = 10
+                state.currentPage = currentPage
+                state.sessionStartDate = sessionStartDate
+                state.initialLaunchDate = initialLaunchDate
+                state.lastLaunchDate = lastLaunchDate
+                state.lastUpdateDate = lastUpdateDate
+                state.userIdentifier = userIdentifier
+                state.loggedIn = true
+                return state
+            }()
+
+            describe("init") {
+                it("should have the correct default values") {
+                    let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                       deviceIdentifier: deviceIdentifier,
+                                                       bundle: bundle)
+                    expect(state.sessionIdentifier).to(equal(sessionIdentifier))
+                    expect(state.deviceIdentifier).to(equal(deviceIdentifier))
+                    expect(state.currentVersion).to(equal(currentVersion))
+                    expect(state.advertisingIdentifier).to(beNil())
+                    expect(state.lastKnownLocation).to(beNil())
+                    expect(state.sessionStartDate).to(beNil())
+                    expect(state.loggedIn).to(beFalse())
+                    expect(state.userIdentifier).to(beNil())
+                    expect(state.lastVersion).to(beNil())
+                    expect(state.initialLaunchDate).to(beNil())
+                    expect(state.lastLaunchDate).to(beNil())
+                    expect(state.lastUpdateDate).to(beNil())
+                    expect(state.lastVersionLaunches).to(equal(0))
+                    expect(state.loginMethod).to(equal(.other))
+                    expect(state.origin).to(equal(.internal))
+                    expect(state.currentPage).to(beNil())
+                }
+            }
+            describe("setting") {
+                it("should have the expected values") {
+                    let state = defaultState
+                    expect(state.sessionIdentifier).to(equal(sessionIdentifier))
+                    expect(state.deviceIdentifier).to(equal(deviceIdentifier))
+                    expect(state.currentVersion).to(equal(currentVersion))
+                    expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
+                    expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
+                    expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
+                    expect(state.sessionStartDate).to(equal(sessionStartDate))
+                    expect(state.isLoggedIn).to(beTrue())
+                    expect(state.userIdentifier).to(equal(userIdentifier))
+                    expect(state.lastVersion).to(equal(lastVersion))
+                    expect(state.initialLaunchDate).to(equal(initialLaunchDate))
+                    expect(state.lastLaunchDate).to(equal(lastLaunchDate))
+                    expect(state.lastUpdateDate).to(equal(lastUpdateDate))
+                    expect(state.lastVersionLaunches).to(equal(10))
+                    expect(state.loginMethod).to(equal(.oneTapLogin))
+                    expect(state.origin).to(equal(.external))
+                    expect(state.currentPage).to(equal(currentPage))
+                }
+            }
+            describe("copy") {
+                it("should have the expected values") {
+                    guard let state = defaultState.copy() as? AnalyticsManager.State else {
+                        assertionFailure("AnalyticsManager.State copy fails")
+                        return
+                    }
+                    expect(state.sessionIdentifier).to(equal(sessionIdentifier))
+                    expect(state.deviceIdentifier).to(equal(deviceIdentifier))
+                    expect(state.currentVersion).to(equal(currentVersion))
+                    expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
+                    expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
+                    expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
+                    expect(state.sessionStartDate).to(equal(sessionStartDate))
+                    expect(state.isLoggedIn).to(beTrue())
+                    expect(state.userIdentifier).to(equal(userIdentifier))
+                    expect(state.lastVersion).to(equal(lastVersion))
+                    expect(state.initialLaunchDate).to(equal(initialLaunchDate))
+                    expect(state.lastLaunchDate).to(equal(lastLaunchDate))
+                    expect(state.lastUpdateDate).to(equal(lastUpdateDate))
+                    expect(state.lastVersionLaunches).to(equal(10))
+                    expect(state.loginMethod).to(equal(.oneTapLogin))
+                    expect(state.origin).to(equal(.external))
+                    expect(state.currentPage).to(equal(currentPage))
+                }
+            }
+            describe("equal") {
+                it("should be true if it has the same properties of an other state") {
+                    let state = defaultState
+                    guard let copiedState = defaultState.copy() as? AnalyticsManager.State else {
+                        assertionFailure("AnalyticsManager.State copy fails")
+                        return
+                    }
+                    expect(state).to(equal(copiedState))
+                }
+                it("should be false if it has not the same properties of an other state") {
+                    let state = defaultState
+                    let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                            deviceIdentifier: "differentDeviceId")
+                    expect(state).toNot(equal(otherState))
+                }
+                it("should be false if it doesn't match the State type") {
+                    let state = defaultState
+                    let anObject = UIView()
+                    expect(state).toNot(equal(anObject))
+                }
+            }
+            describe("hash") {
+                it("should be identical if it is a copy of an other state") {
+                    let state = defaultState
+                    guard let copiedState = defaultState.copy() as? AnalyticsManager.State else {
+                        assertionFailure("AnalyticsManager.State copy fails")
+                        return
+                    }
+                    expect(state.hash).to(equal(copiedState.hash))
+                }
+                it("should not be identical if the properties are different") {
+                    let state = defaultState
+                    let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                            deviceIdentifier: "differentDeviceId")
+                    expect(state.hash).toNot(equal(otherState.hash))
+                }
+            }
+        }
+    }
+}

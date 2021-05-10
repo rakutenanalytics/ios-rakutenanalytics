@@ -1,9 +1,7 @@
 @import XCTest;
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
-
 #import <RAnalytics/RAnalytics.h>
-#import <RAnalytics/RAnalyticsState.h>
 
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 

@@ -32,7 +32,7 @@ import class RAnalytics.RAnalyticsDatabase
 
     @objc public class func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
         var tableCount = Int32(0)
-        let query = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='\(table)'"
+        let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
 
         var statement: SQlite3Pointer?
         sqlite3_prepare_v2(connection, query, -1, &statement, nil)

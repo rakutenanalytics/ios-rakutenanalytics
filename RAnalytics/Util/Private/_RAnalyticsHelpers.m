@@ -9,7 +9,7 @@ BOOL _RAnalyticsObjectsEqual(id objA, id objB)
 
 NSURL *_RAnalyticsEndpointAddress(void)
 {
-    return [NSBundle endpointAddress];
+    return [NSBundle.mainBundle endpointAddress];
 }
 
 NSBundle *_RAnalyticsAssetsBundle(void)
@@ -24,7 +24,7 @@ NSDictionary *_RAnalyticsSDKComponentMap(void)
 
 inline BOOL _RAnalyticsUseDefaultSharedCookieStorage()
 {
-    return [NSBundle useDefaultSharedCookieStorage];
+    return [NSBundle.mainBundle useDefaultSharedCookieStorage];
 }
 
 inline BOOL _RAnalyticsIsAppleClass(Class cls)

@@ -1,6 +1,7 @@
 import Quick
 import Nimble
 import UIKit
+import CoreLocation.CLRegion
 
 // MARK: - Keychain Handler
 

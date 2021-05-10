@@ -191,7 +191,7 @@
 				CLASSPREFIX = RSDKAnalytics;
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 0800;
-				ORGANIZATIONNAME = "Rakuten, Inc.";
+				ORGANIZATIONNAME = "Rakuten Group, Inc.";
 				TargetAttributes = {
 					5AB2B82A1FC3F64A0017CF83 = {
 						CreatedOnToolsVersion = 9.1;

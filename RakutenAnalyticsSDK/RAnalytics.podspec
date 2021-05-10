@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
     s.authors      = "Rakuten Ecosystem Mobile"
     s.summary      = "Records user activity and automatically sends tracking events to an analytics cloud service."
     s.homepage     = "https://github.com/rakutentech"
-    s.license      = { :type => 'Proprietary', :text => '© Rakuten' }
+    s.license      = { :type => 'Proprietary', :text => '© Rakuten Group, Inc.' }
     s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework/releases/download/#{s.version.to_s}/RAnalyticsRelease-v#{s.version.to_s}.zip" }
     s.platform     = :ios, "11.0"
     s.vendored_frameworks = "RAnalytics.framework"

@@ -98,7 +98,7 @@ public enum RAnalyticsLaunchCollectorError: Error {
 
         resetToDefaults()
         isInstallLaunch = (installLaunchDate == nil)
-        isUpdateLaunch = lastVersion != (Bundle.shortVersion ?? "")
+        isUpdateLaunch = lastVersion != (Bundle.main.shortVersion ?? "")
     }
 
     private func configureNotifications() {
@@ -324,7 +324,7 @@ private extension RAnalyticsLaunchCollector {
 
         /// Update values for the next run
         let now = Date()
-        let currentVersion = Bundle.shortVersion
+        let currentVersion = Bundle.main.shortVersion
 
         if !isInitialLaunch && installLaunchDate == nil {
             isInstallLaunch = true

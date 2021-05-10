@@ -5,7 +5,7 @@
 plugin 'cocoapods-user-defined-build-types'
 enable_user_defined_build_types!
 
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 platform :ios, '11.0'
@@ -14,7 +14,6 @@ inhibit_all_warnings!
 workspace 'RakutenAnalyticsSDK'
 
 target 'RAnalytics' do
-  pod 'RAnalytics', :build_type => :static_framework, :inhibit_warnings => false, :path => '../RAnalytics.podspec'
   pod 'RLogger', :build_type => :static_framework
   pod 'RDeviceIdentifier', :build_type => :static_framework
 end

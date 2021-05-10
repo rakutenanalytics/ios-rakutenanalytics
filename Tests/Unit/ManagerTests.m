@@ -3,11 +3,16 @@
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import <OCMock/OCMock.h>
 #import <Kiwi/Kiwi.h>
+@import CoreLocation.CLLocationManager;
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
 @interface TestTrackerNoEndpoint : NSObject<RAnalyticsTracker>
 @end
 @implementation TestTrackerNoEndpoint
+@synthesize endpointURL;
+- (BOOL)processEvent:(nonnull RAnalyticsEvent *)event state:(nonnull RAnalyticsState *)state {
+    return YES;
+}
 @end
 
 @interface TestTracker : NSObject<RAnalyticsTracker>
@@ -26,10 +31,6 @@
 {
     return YES;
 }
-@end
-
-@interface RAnalyticsState ()
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
 @end
 
 @interface RAnalyticsManager ()

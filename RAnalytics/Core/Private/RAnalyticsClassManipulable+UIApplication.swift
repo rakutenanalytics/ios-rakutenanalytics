@@ -68,7 +68,8 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
                                        open url: URL,
                                        sourceApplication: String?,
                                        annotation: Any) -> Bool {
-        RLogger.verbose("Application was asked by \(sourceApplication ?? "nil") to open URL \(url.absoluteString) with annotation \(annotation)")
+        let message = "Application was asked by \(sourceApplication ?? "nil") to open URL \(url.absoluteString) with annotation \(annotation)"
+        RLogger.verbose(message)
 
         AnalyticsManager.shared().launchCollector?.setOrigin(.external)
 

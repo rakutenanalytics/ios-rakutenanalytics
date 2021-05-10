@@ -7,28 +7,9 @@
 #import "_SDKTracker.h"
 #import "SwiftHeader.h"
 #import <WebKit/WebKit.h>
+@import CoreLocation;
 
 ////////////////////////////////////////////////////////////////////////////
-
-@interface RAnalyticsState ()
-@property (nonatomic, readwrite, copy) NSString *sessionIdentifier;
-@property (nonatomic, readwrite, copy) NSString *deviceIdentifier;
-@property (nonatomic, readwrite, copy) NSString *currentVersion;
-@property (nonatomic, nullable, readwrite, copy) CLLocation *lastKnownLocation;
-@property (nonatomic, nullable, readwrite, copy) NSString *advertisingIdentifier;
-@property (nonatomic, nullable, readwrite, copy) NSDate *sessionStartDate;
-@property (nonatomic, readwrite) BOOL loggedIn;
-@property (nonatomic, readwrite, copy) NSString *userIdentifier;
-@property (nonatomic) RAnalyticsLoginMethod loginMethod;
-@property (nonatomic, readwrite) RAnalyticsOrigin origin;
-@property (nonatomic, nullable, readwrite, copy) NSString *lastVersion;
-@property (nonatomic) NSUInteger lastVersionLaunches;
-@property (nonatomic, nullable, readwrite, copy) NSDate *initialLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *installLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *lastLaunchDate;
-@property (nonatomic, nullable, readwrite, copy) NSDate *lastUpdateDate;
-@property (nonatomic, nullable, readwrite) UIViewController *currentPage;
-@end
 
 @interface RAnalyticsManager()<CLLocationManagerDelegate>
 @property (nonatomic, strong) CLLocationManager *locationManager;

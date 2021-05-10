@@ -7,7 +7,7 @@ The SDK tracking is designed to not contain any data that can be linked to a use
 To use the SDK tracking in your SDK/library add a dependency on `RAnalytics/Core` to your `Podfile`.
 
 ```ruby
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 pod 'RAnalytics/Core'

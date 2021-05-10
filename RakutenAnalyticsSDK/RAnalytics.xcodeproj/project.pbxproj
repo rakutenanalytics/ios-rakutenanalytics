@@ -3,41 +3,169 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1BE63C0FA6E903CCEF925A28 /* libPods-RAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */; };
-		3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C3FD24D1629A00161F62 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C40424D164A600161F62 /* RAnalyticsTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C40524D164A600161F62 /* RAnalyticsDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40024D164A600161F62 /* RAnalyticsDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C40624D164A600161F62 /* RAnalyticsState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40124D164A600161F62 /* RAnalyticsState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40224D164A600161F62 /* RAnalyticsManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A68C40324D164A600161F62 /* RAnalyticsEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C92849F925AD92A40099EF49 /* RAnalyticsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */; };
+		C923B85225FF322A00F9CCA0 /* RAnalyticsEndpointSettable.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80325FF322A00F9CCA0 /* RAnalyticsEndpointSettable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B85325FF322A00F9CCA0 /* RAnalyticsTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80425FF322A00F9CCA0 /* RAnalyticsTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */; };
+		C923B85525FF322A00F9CCA0 /* RAnalyticsEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */; };
+		C923B85625FF322A00F9CCA0 /* RAnalyticsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B80725FF322A00F9CCA0 /* RAnalyticsManager.m */; };
+		C923B85825FF322A00F9CCA0 /* RAnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */; };
+		C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B85B25FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80D25FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.h */; };
+		C923B85C25FF322A00F9CCA0 /* NSNotification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */; };
+		C923B85D25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80F25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift */; };
+		C923B85E25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift */; };
+		C923B85F25FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81125FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift */; };
+		C923B86025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81225FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIViewController.swift */; };
+		C923B86125FF322A00F9CCA0 /* CoreHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81325FF322A00F9CCA0 /* CoreHelpers.swift */; };
+		C923B86225FF322A00F9CCA0 /* AnyDependenciesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81425FF322A00F9CCA0 /* AnyDependenciesContainer.swift */; };
+		C923B86325FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B81525FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h */; };
+		C923B86425FF322A00F9CCA0 /* _SDKTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B81625FF322A00F9CCA0 /* _SDKTracker.m */; };
+		C923B86525FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B81725FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.m */; };
+		C923B86625FF322A00F9CCA0 /* RuntimeLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81825FF322A00F9CCA0 /* RuntimeLoadable.swift */; };
+		C923B86725FF322A00F9CCA0 /* AnyDependenciesContainer+DependencyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81925FF322A00F9CCA0 /* AnyDependenciesContainer+DependencyFactory.swift */; };
+		C923B86825FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81A25FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift */; };
+		C923B86925FF322A00F9CCA0 /* _SDKTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B81B25FF322A00F9CCA0 /* _SDKTracker.h */; };
+		C923B86A25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */; };
+		C923B86B25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */; };
+		C923B86C25FF322A00F9CCA0 /* RAnalyticsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B81E25FF322A00F9CCA0 /* RAnalyticsManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B86D25FF322A00F9CCA0 /* RAnalyticsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B86E25FF322A00F9CCA0 /* REMModulesMap.plist in Resources */ = {isa = PBXBuildFile; fileRef = C923B82125FF322A00F9CCA0 /* REMModulesMap.plist */; };
+		C923B86F25FF322A00F9CCA0 /* RAnalyticsSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */; };
+		C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B87125FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */; };
+		C923B87225FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */; };
+		C923B87325FF322A00F9CCA0 /* Data+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82825FF322A00F9CCA0 /* Data+RAT.swift */; };
+		C923B87425FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82925FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift */; };
+		C923B87525FF322A00F9CCA0 /* EventChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82A25FF322A00F9CCA0 /* EventChecker.swift */; };
+		C923B87625FF322A00F9CCA0 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82B25FF322A00F9CCA0 /* UIViewController+Extensions.swift */; };
+		C923B87725FF322A00F9CCA0 /* _RAnalyticsHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82C25FF322A00F9CCA0 /* _RAnalyticsHelpers.swift */; };
+		C923B87825FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82D25FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift */; };
+		C923B87925FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82E25FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift */; };
+		C923B87A25FF322A00F9CCA0 /* Optional+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82F25FF322A00F9CCA0 /* Optional+String.swift */; };
+		C923B87B25FF322A00F9CCA0 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83025FF322A00F9CCA0 /* String+Extensions.swift */; };
+		C923B87C25FF322A00F9CCA0 /* Array+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83125FF322A00F9CCA0 /* Array+RAT.swift */; };
+		C923B87D25FF322A00F9CCA0 /* _RAnalyticsHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B83225FF322A00F9CCA0 /* _RAnalyticsHelpers.h */; };
+		C923B87E25FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */; };
+		C923B87F25FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */; };
+		C923B88025FF322A00F9CCA0 /* URLSession+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83525FF322A00F9CCA0 /* URLSession+Result.swift */; };
+		C923B88125FF322A00F9CCA0 /* AnalyticsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */; };
+		C923B88225FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83725FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift */; };
+		C923B88325FF322A00F9CCA0 /* RAnalyticsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83825FF322A00F9CCA0 /* RAnalyticsDatabase.swift */; };
+		C923B88425FF322A00F9CCA0 /* NSObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83925FF322A00F9CCA0 /* NSObject+Extensions.swift */; };
+		C923B88525FF322A00F9CCA0 /* RAnalyticsCookieInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83A25FF322A00F9CCA0 /* RAnalyticsCookieInjector.swift */; };
+		C923B88625FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83B25FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift */; };
+		C923B88725FF322A00F9CCA0 /* AtomicWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83C25FF322A00F9CCA0 /* AtomicWrapper.swift */; };
+		C923B88825FF322A00F9CCA0 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83D25FF322A00F9CCA0 /* UserDefaults+Extensions.swift */; };
+		C923B88A25FF322A00F9CCA0 /* UserIdentifierSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83F25FF322A00F9CCA0 /* UserIdentifierSelector.swift */; };
+		C923B88B25FF322A00F9CCA0 /* Optional+NSObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84025FF322A00F9CCA0 /* Optional+NSObject.swift */; };
+		C923B88C25FF322A00F9CCA0 /* SwiftHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84125FF322A00F9CCA0 /* SwiftHeader.h */; };
+		C923B88D25FF322A00F9CCA0 /* Synchronizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84225FF322A00F9CCA0 /* Synchronizable.swift */; };
+		C923B88E25FF322A00F9CCA0 /* CLLocation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */; };
+		C923B88F25FF322A00F9CCA0 /* NotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84425FF322A00F9CCA0 /* NotificationCenter+Extensions.swift */; };
+		C923B89025FF322A00F9CCA0 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84525FF322A00F9CCA0 /* Bundle+Extensions.swift */; };
+		C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84625FF322A00F9CCA0 /* URLRequest+RAT.swift */; };
+		C923B89225FF322A00F9CCA0 /* KeychainHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */; };
+		C923B89325FF322A00F9CCA0 /* _RAnalyticsHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B84825FF322A00F9CCA0 /* _RAnalyticsHelpers.m */; };
+		C923B89425FF322A00F9CCA0 /* MainThreadExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84925FF322A00F9CCA0 /* MainThreadExecutor.swift */; };
+		C923B89525FF322A00F9CCA0 /* Optional+CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84A25FF322A00F9CCA0 /* Optional+CLLocation.swift */; };
+		C923B89625FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B89725FF322A00F9CCA0 /* RAnalyticsRATTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B84D25FF322A00F9CCA0 /* RAnalyticsRATTracker.m */; };
+		C923B89825FF322A00F9CCA0 /* RAnalyticsRATTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C923B89925FF322A00F9CCA0 /* RAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B84F25FF322A00F9CCA0 /* RAnalytics.m */; };
+		C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B85025FF322A00F9CCA0 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C96B73DB261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */; };
+		C96B73E6261E479600CF91BA /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73E3261E479600CF91BA /* URLSessionTask+Extensions.swift */; };
+		C96B73E7261E479600CF91BA /* HTTPCookieStorage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */; };
+		C96B73E8261E479600CF91BA /* URLSession+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73E5261E479600CF91BA /* URLSession+Extensions.swift */; };
+		C9E4BC91260C9AD20001F0B4 /* String+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */; };
+		C9E4BC92260C9AD20001F0B4 /* PushEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */; };
+		C9E4BC96260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RAnalytics.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsPushTrackingUtility.h; path = ../../RAnalytics/Util/RAnalyticsPushTrackingUtility.h; sourceTree = "<group>"; };
-		3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsRATTracker.h; path = ../../RAnalytics/RAT/RAnalyticsRATTracker.h; sourceTree = "<group>"; };
-		3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsRpCookieFetcher.h; path = ../../RAnalytics/Core/RAnalyticsRpCookieFetcher.h; sourceTree = "<group>"; };
-		3A68C3FD24D1629A00161F62 /* RAnalytics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
-		3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsTracker.h; path = ../../RAnalytics/Core/RAnalyticsTracker.h; sourceTree = "<group>"; };
-		3A68C40024D164A600161F62 /* RAnalyticsDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsDefines.h; path = ../../RAnalytics/Core/RAnalyticsDefines.h; sourceTree = "<group>"; };
-		3A68C40124D164A600161F62 /* RAnalyticsState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsState.h; path = ../../RAnalytics/Core/RAnalyticsState.h; sourceTree = "<group>"; };
-		3A68C40224D164A600161F62 /* RAnalyticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsManager.h; path = ../../RAnalytics/Core/RAnalyticsManager.h; sourceTree = "<group>"; };
-		3A68C40324D164A600161F62 /* RAnalyticsEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsEvent.h; path = ../../RAnalytics/Core/RAnalyticsEvent.h; sourceTree = "<group>"; };
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAnalyticsEndpointSettable.h; path = ../../RAnalytics/Core/RAnalyticsEndpointSettable.h; sourceTree = "<group>"; };
-		9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.release.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.release.xcconfig"; sourceTree = "<group>"; };
-		C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsHeader.swift; sourceTree = "<group>"; };
-		FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RAnalytics.debug.xcconfig"; path = "Target Support Files/Pods-RAnalytics/Pods-RAnalytics.debug.xcconfig"; sourceTree = "<group>"; };
+		C923B80325FF322A00F9CCA0 /* RAnalyticsEndpointSettable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsEndpointSettable.h; sourceTree = "<group>"; };
+		C923B80425FF322A00F9CCA0 /* RAnalyticsTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsTracker.h; sourceTree = "<group>"; };
+		C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEvent.swift; sourceTree = "<group>"; };
+		C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsEvent.m; sourceTree = "<group>"; };
+		C923B80725FF322A00F9CCA0 /* RAnalyticsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsManager.m; sourceTree = "<group>"; };
+		C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsState.swift; sourceTree = "<group>"; };
+		C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDefines.h; sourceTree = "<group>"; };
+		C923B80D25FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _RAnalyticsCoreHelpers.h; sourceTree = "<group>"; };
+		C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extensions.swift"; sourceTree = "<group>"; };
+		C923B80F25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UNUserNotificationCenter.swift"; sourceTree = "<group>"; };
+		C923B81025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UIApplication.swift"; sourceTree = "<group>"; };
+		C923B81125FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsClassManipulable.swift; sourceTree = "<group>"; };
+		C923B81225FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UIViewController.swift"; sourceTree = "<group>"; };
+		C923B81325FF322A00F9CCA0 /* CoreHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreHelpers.swift; sourceTree = "<group>"; };
+		C923B81425FF322A00F9CCA0 /* AnyDependenciesContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyDependenciesContainer.swift; sourceTree = "<group>"; };
+		C923B81525FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _RAnalyticsSwiftLoader.h; sourceTree = "<group>"; };
+		C923B81625FF322A00F9CCA0 /* _SDKTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _SDKTracker.m; sourceTree = "<group>"; };
+		C923B81725FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsCoreHelpers.m; sourceTree = "<group>"; };
+		C923B81825FF322A00F9CCA0 /* RuntimeLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuntimeLoadable.swift; sourceTree = "<group>"; };
+		C923B81925FF322A00F9CCA0 /* AnyDependenciesContainer+DependencyFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnyDependenciesContainer+DependencyFactory.swift"; sourceTree = "<group>"; };
+		C923B81A25FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollector.swift; sourceTree = "<group>"; };
+		C923B81B25FF322A00F9CCA0 /* _SDKTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _SDKTracker.h; sourceTree = "<group>"; };
+		C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollector.swift; sourceTree = "<group>"; };
+		C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsSwiftLoader.m; sourceTree = "<group>"; };
+		C923B81E25FF322A00F9CCA0 /* RAnalyticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsManager.h; sourceTree = "<group>"; };
+		C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsEvent.h; sourceTree = "<group>"; };
+		C923B82125FF322A00F9CCA0 /* REMModulesMap.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = REMModulesMap.plist; sourceTree = "<group>"; };
+		C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsSender.swift; sourceTree = "<group>"; };
+		C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsPushTrackingUtility.h; sourceTree = "<group>"; };
+		C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsProgressNotifications.m; sourceTree = "<group>"; };
+		C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsPushTrackingUtility.m; sourceTree = "<group>"; };
+		C923B82825FF322A00F9CCA0 /* Data+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+RAT.swift"; sourceTree = "<group>"; };
+		C923B82925FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
+		C923B82A25FF322A00F9CCA0 /* EventChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventChecker.swift; sourceTree = "<group>"; };
+		C923B82B25FF322A00F9CCA0 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
+		C923B82C25FF322A00F9CCA0 /* _RAnalyticsHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = _RAnalyticsHelpers.swift; sourceTree = "<group>"; };
+		C923B82D25FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseHelper.swift; sourceTree = "<group>"; };
+		C923B82E25FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RStatusBarOrientationHandler.swift; sourceTree = "<group>"; };
+		C923B82F25FF322A00F9CCA0 /* Optional+String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+String.swift"; sourceTree = "<group>"; };
+		C923B83025FF322A00F9CCA0 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83125FF322A00F9CCA0 /* Array+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RAT.swift"; sourceTree = "<group>"; };
+		C923B83225FF322A00F9CCA0 /* _RAnalyticsHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _RAnalyticsHelpers.h; sourceTree = "<group>"; };
+		C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ASIdentifierManager+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsManager+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83525FF322A00F9CCA0 /* URLSession+Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+Result.swift"; sourceTree = "<group>"; };
+		C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTracker.swift; sourceTree = "<group>"; };
+		C923B83725FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKHTTPCookieStore+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83825FF322A00F9CCA0 /* RAnalyticsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabase.swift; sourceTree = "<group>"; };
+		C923B83925FF322A00F9CCA0 /* NSObject+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83A25FF322A00F9CCA0 /* RAnalyticsCookieInjector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsCookieInjector.swift; sourceTree = "<group>"; };
+		C923B83B25FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAdvertisingIdentifierHandler.swift; sourceTree = "<group>"; };
+		C923B83C25FF322A00F9CCA0 /* AtomicWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicWrapper.swift; sourceTree = "<group>"; };
+		C923B83D25FF322A00F9CCA0 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
+		C923B83F25FF322A00F9CCA0 /* UserIdentifierSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelector.swift; sourceTree = "<group>"; };
+		C923B84025FF322A00F9CCA0 /* Optional+NSObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+NSObject.swift"; sourceTree = "<group>"; };
+		C923B84125FF322A00F9CCA0 /* SwiftHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwiftHeader.h; sourceTree = "<group>"; };
+		C923B84225FF322A00F9CCA0 /* Synchronizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronizable.swift; sourceTree = "<group>"; };
+		C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocation+Extensions.swift"; sourceTree = "<group>"; };
+		C923B84425FF322A00F9CCA0 /* NotificationCenter+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
+		C923B84525FF322A00F9CCA0 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
+		C923B84625FF322A00F9CCA0 /* URLRequest+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+RAT.swift"; sourceTree = "<group>"; };
+		C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainHandler.swift; sourceTree = "<group>"; };
+		C923B84825FF322A00F9CCA0 /* _RAnalyticsHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsHelpers.m; sourceTree = "<group>"; };
+		C923B84925FF322A00F9CCA0 /* MainThreadExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainThreadExecutor.swift; sourceTree = "<group>"; };
+		C923B84A25FF322A00F9CCA0 /* Optional+CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+CLLocation.swift"; sourceTree = "<group>"; };
+		C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsProgressNotifications.h; sourceTree = "<group>"; };
+		C923B84D25FF322A00F9CCA0 /* RAnalyticsRATTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsRATTracker.m; sourceTree = "<group>"; };
+		C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsRATTracker.h; sourceTree = "<group>"; };
+		C923B84F25FF322A00F9CCA0 /* RAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalytics.m; sourceTree = "<group>"; };
+		C923B85025FF322A00F9CCA0 /* RAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
+		C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcher.swift; sourceTree = "<group>"; };
+		C96B73E3261E479600CF91BA /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
+		C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HTTPCookieStorage+Extensions.swift"; sourceTree = "<group>"; };
+		C96B73E5261E479600CF91BA /* URLSession+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+Extensions.swift"; sourceTree = "<group>"; };
+		C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Encryption.swift"; sourceTree = "<group>"; };
+		C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandler.swift; sourceTree = "<group>"; };
+		C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,28 +173,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BE63C0FA6E903CCEF925A28 /* libPods-RAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		25583ACF54036B3E709F27D6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1FF564176100B0EE6AC8CCA3 /* libPods-RAnalytics.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		3AA58EE624CB107D00CE703C = {
 			isa = PBXGroup;
 			children = (
 				3AA58EF224CB107D00CE703C /* RAnalytics */,
 				3AA58EF124CB107D00CE703C /* Products */,
 				FE170DA88FE9647A82E8A609 /* Pods */,
-				25583ACF54036B3E709F27D6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,27 +199,148 @@
 		3AA58EF224CB107D00CE703C /* RAnalytics */ = {
 			isa = PBXGroup;
 			children = (
+				C923B7FF25FF322A00F9CCA0 /* RAnalytics */,
 				3AA58EF424CB107D00CE703C /* Info.plist */,
-				3A68C3FD24D1629A00161F62 /* RAnalytics.h */,
-				3A68C40024D164A600161F62 /* RAnalyticsDefines.h */,
-				6D6ADCD8257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h */,
-				3A68C40324D164A600161F62 /* RAnalyticsEvent.h */,
-				3A68C40224D164A600161F62 /* RAnalyticsManager.h */,
-				3A093298257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h */,
-				3A11BDC424DAA862005E709F /* RAnalyticsRATTracker.h */,
-				3A11BDC624DB052F005E709F /* RAnalyticsRpCookieFetcher.h */,
-				3A68C40124D164A600161F62 /* RAnalyticsState.h */,
-				3A68C3FF24D164A600161F62 /* RAnalyticsTracker.h */,
-				C92849F825AD92A40099EF49 /* RAnalyticsHeader.swift */,
 			);
 			path = RAnalytics;
+			sourceTree = "<group>";
+		};
+		C923B7FF25FF322A00F9CCA0 /* RAnalytics */ = {
+			isa = PBXGroup;
+			children = (
+				C923B80125FF322A00F9CCA0 /* Core */,
+				C923B85025FF322A00F9CCA0 /* RAnalytics.h */,
+				C923B84F25FF322A00F9CCA0 /* RAnalytics.m */,
+				C923B84C25FF322A00F9CCA0 /* RAT */,
+				C923B82225FF322A00F9CCA0 /* Util */,
+			);
+			name = RAnalytics;
+			path = ../../RAnalytics;
+			sourceTree = "<group>";
+		};
+		C923B80125FF322A00F9CCA0 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C923B82025FF322A00F9CCA0 /* Assets */,
+				C923B80C25FF322A00F9CCA0 /* Private */,
+				C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */,
+				C923B80325FF322A00F9CCA0 /* RAnalyticsEndpointSettable.h */,
+				C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */,
+				C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */,
+				C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */,
+				C923B81E25FF322A00F9CCA0 /* RAnalyticsManager.h */,
+				C923B80725FF322A00F9CCA0 /* RAnalyticsManager.m */,
+				C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */,
+				C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */,
+				C923B80425FF322A00F9CCA0 /* RAnalyticsTracker.h */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		C923B80C25FF322A00F9CCA0 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				C923B80D25FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.h */,
+				C923B81725FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.m */,
+				C923B81525FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h */,
+				C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */,
+				C923B81B25FF322A00F9CCA0 /* _SDKTracker.h */,
+				C923B81625FF322A00F9CCA0 /* _SDKTracker.m */,
+				C923B81425FF322A00F9CCA0 /* AnyDependenciesContainer.swift */,
+				C923B81925FF322A00F9CCA0 /* AnyDependenciesContainer+DependencyFactory.swift */,
+				C923B81325FF322A00F9CCA0 /* CoreHelpers.swift */,
+				C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */,
+				C923B81125FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift */,
+				C923B81025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift */,
+				C923B81225FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIViewController.swift */,
+				C923B80F25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift */,
+				C923B81A25FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift */,
+				C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */,
+				C923B81825FF322A00F9CCA0 /* RuntimeLoadable.swift */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		C923B82025FF322A00F9CCA0 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				C923B82125FF322A00F9CCA0 /* REMModulesMap.plist */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		C923B82225FF322A00F9CCA0 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				C923B82725FF322A00F9CCA0 /* Private */,
+				C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */,
+				C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */,
+				C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */,
+				C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */,
+				C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */,
+				C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		C923B82725FF322A00F9CCA0 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				C923B83225FF322A00F9CCA0 /* _RAnalyticsHelpers.h */,
+				C923B84825FF322A00F9CCA0 /* _RAnalyticsHelpers.m */,
+				C923B82C25FF322A00F9CCA0 /* _RAnalyticsHelpers.swift */,
+				C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */,
+				C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */,
+				C923B83125FF322A00F9CCA0 /* Array+RAT.swift */,
+				C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */,
+				C923B83C25FF322A00F9CCA0 /* AtomicWrapper.swift */,
+				C923B84525FF322A00F9CCA0 /* Bundle+Extensions.swift */,
+				C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */,
+				C923B82825FF322A00F9CCA0 /* Data+RAT.swift */,
+				C923B82A25FF322A00F9CCA0 /* EventChecker.swift */,
+				C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */,
+				C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */,
+				C923B84925FF322A00F9CCA0 /* MainThreadExecutor.swift */,
+				C923B84425FF322A00F9CCA0 /* NotificationCenter+Extensions.swift */,
+				C923B83925FF322A00F9CCA0 /* NSObject+Extensions.swift */,
+				C923B84A25FF322A00F9CCA0 /* Optional+CLLocation.swift */,
+				C923B84025FF322A00F9CCA0 /* Optional+NSObject.swift */,
+				C923B82F25FF322A00F9CCA0 /* Optional+String.swift */,
+				C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */,
+				C923B83B25FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift */,
+				C923B83A25FF322A00F9CCA0 /* RAnalyticsCookieInjector.swift */,
+				C923B83825FF322A00F9CCA0 /* RAnalyticsDatabase.swift */,
+				C923B82D25FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift */,
+				C923B82E25FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift */,
+				C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */,
+				C923B83025FF322A00F9CCA0 /* String+Extensions.swift */,
+				C923B84125FF322A00F9CCA0 /* SwiftHeader.h */,
+				C923B84225FF322A00F9CCA0 /* Synchronizable.swift */,
+				C923B82B25FF322A00F9CCA0 /* UIViewController+Extensions.swift */,
+				C923B82925FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift */,
+				C923B84625FF322A00F9CCA0 /* URLRequest+RAT.swift */,
+				C96B73E5261E479600CF91BA /* URLSession+Extensions.swift */,
+				C923B83525FF322A00F9CCA0 /* URLSession+Result.swift */,
+				C96B73E3261E479600CF91BA /* URLSessionTask+Extensions.swift */,
+				C923B83D25FF322A00F9CCA0 /* UserDefaults+Extensions.swift */,
+				C923B83F25FF322A00F9CCA0 /* UserIdentifierSelector.swift */,
+				C923B83725FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		C923B84C25FF322A00F9CCA0 /* RAT */ = {
+			isa = PBXGroup;
+			children = (
+				C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */,
+				C923B84D25FF322A00F9CCA0 /* RAnalyticsRATTracker.m */,
+			);
+			path = RAT;
 			sourceTree = "<group>";
 		};
 		FE170DA88FE9647A82E8A609 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */,
-				9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -113,16 +352,20 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A11BDC724DB052F005E709F /* RAnalyticsRpCookieFetcher.h in Headers */,
-				3A68C40524D164A600161F62 /* RAnalyticsDefines.h in Headers */,
-				3A68C3FE24D1629C00161F62 /* RAnalytics.h in Headers */,
-				6D6ADCD9257DE10C00EE6D6E /* RAnalyticsEndpointSettable.h in Headers */,
-				3A093299257F51FF00F4F157 /* RAnalyticsPushTrackingUtility.h in Headers */,
-				3A11BDC524DAA862005E709F /* RAnalyticsRATTracker.h in Headers */,
-				3A68C40724D164A600161F62 /* RAnalyticsManager.h in Headers */,
-				3A68C40824D164A600161F62 /* RAnalyticsEvent.h in Headers */,
-				3A68C40624D164A600161F62 /* RAnalyticsState.h in Headers */,
-				3A68C40424D164A600161F62 /* RAnalyticsTracker.h in Headers */,
+				C923B86D25FF322A00F9CCA0 /* RAnalyticsEvent.h in Headers */,
+				C923B85B25FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.h in Headers */,
+				C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */,
+				C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */,
+				C923B85325FF322A00F9CCA0 /* RAnalyticsTracker.h in Headers */,
+				C923B89625FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h in Headers */,
+				C923B85225FF322A00F9CCA0 /* RAnalyticsEndpointSettable.h in Headers */,
+				C923B87D25FF322A00F9CCA0 /* _RAnalyticsHelpers.h in Headers */,
+				C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */,
+				C923B89825FF322A00F9CCA0 /* RAnalyticsRATTracker.h in Headers */,
+				C923B86325FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h in Headers */,
+				C923B88C25FF322A00F9CCA0 /* SwiftHeader.h in Headers */,
+				C923B86C25FF322A00F9CCA0 /* RAnalyticsManager.h in Headers */,
+				C923B86925FF322A00F9CCA0 /* _SDKTracker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,12 +376,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AA58EF824CB107D00CE703C /* Build configuration list for PBXNativeTarget "RAnalytics" */;
 			buildPhases = (
-				E9A9BE5DBA871A8C31C81CCA /* [CP] Check Pods Manifest.lock */,
 				3AA58EEB24CB107D00CE703C /* Headers */,
 				3AA58EEC24CB107D00CE703C /* Sources */,
 				3AA58EED24CB107D00CE703C /* Frameworks */,
 				3AA58EEE24CB107D00CE703C /* Resources */,
-				8128A92FC1A4385B34A6AD25 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -155,8 +396,9 @@
 		3AA58EE724CB107D00CE703C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1150;
-				ORGANIZATIONNAME = Rakuten;
+				ORGANIZATIONNAME = "Rakuten Group, Inc.";
 				TargetAttributes = {
 					3AA58EEF24CB107D00CE703C = {
 						CreatedOnToolsVersion = 11.5;
@@ -187,59 +429,79 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C923B86E25FF322A00F9CCA0 /* REMModulesMap.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		8128A92FC1A4385B34A6AD25 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RAnalytics/Pods-RAnalytics-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RAnalytics/Pods-RAnalytics-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RAnalytics/Pods-RAnalytics-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E9A9BE5DBA871A8C31C81CCA /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-RAnalytics-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3AA58EEC24CB107D00CE703C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C92849F925AD92A40099EF49 /* RAnalyticsHeader.swift in Sources */,
+				C923B85E25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift in Sources */,
+				C923B85525FF322A00F9CCA0 /* RAnalyticsEvent.m in Sources */,
+				C923B87625FF322A00F9CCA0 /* UIViewController+Extensions.swift in Sources */,
+				C923B85F25FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift in Sources */,
+				C923B89325FF322A00F9CCA0 /* _RAnalyticsHelpers.m in Sources */,
+				C923B86425FF322A00F9CCA0 /* _SDKTracker.m in Sources */,
+				C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */,
+				C923B87925FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift in Sources */,
+				C923B87225FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m in Sources */,
+				C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */,
+				C923B86125FF322A00F9CCA0 /* CoreHelpers.swift in Sources */,
+				C923B87A25FF322A00F9CCA0 /* Optional+String.swift in Sources */,
+				C923B88525FF322A00F9CCA0 /* RAnalyticsCookieInjector.swift in Sources */,
+				C923B85D25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */,
+				C923B88425FF322A00F9CCA0 /* NSObject+Extensions.swift in Sources */,
+				C923B89925FF322A00F9CCA0 /* RAnalytics.m in Sources */,
+				C9E4BC91260C9AD20001F0B4 /* String+Encryption.swift in Sources */,
+				C923B86A25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift in Sources */,
+				C923B88A25FF322A00F9CCA0 /* UserIdentifierSelector.swift in Sources */,
+				C923B88625FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift in Sources */,
+				C923B86625FF322A00F9CCA0 /* RuntimeLoadable.swift in Sources */,
+				C923B86525FF322A00F9CCA0 /* _RAnalyticsCoreHelpers.m in Sources */,
+				C923B87E25FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift in Sources */,
+				C923B86225FF322A00F9CCA0 /* AnyDependenciesContainer.swift in Sources */,
+				C923B86025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIViewController.swift in Sources */,
+				C923B85C25FF322A00F9CCA0 /* NSNotification+Extensions.swift in Sources */,
+				C923B87825FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift in Sources */,
+				C923B87F25FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift in Sources */,
+				C923B88E25FF322A00F9CCA0 /* CLLocation+Extensions.swift in Sources */,
+				C923B86825FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift in Sources */,
+				C9E4BC96260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift in Sources */,
+				C923B88325FF322A00F9CCA0 /* RAnalyticsDatabase.swift in Sources */,
+				C923B85625FF322A00F9CCA0 /* RAnalyticsManager.m in Sources */,
+				C96B73DB261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift in Sources */,
+				C923B87425FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift in Sources */,
+				C923B88825FF322A00F9CCA0 /* UserDefaults+Extensions.swift in Sources */,
+				C923B89025FF322A00F9CCA0 /* Bundle+Extensions.swift in Sources */,
+				C923B88025FF322A00F9CCA0 /* URLSession+Result.swift in Sources */,
+				C923B89225FF322A00F9CCA0 /* KeychainHandler.swift in Sources */,
+				C923B88125FF322A00F9CCA0 /* AnalyticsTracker.swift in Sources */,
+				C923B89725FF322A00F9CCA0 /* RAnalyticsRATTracker.m in Sources */,
+				C923B88B25FF322A00F9CCA0 /* Optional+NSObject.swift in Sources */,
+				C923B87125FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m in Sources */,
+				C923B86F25FF322A00F9CCA0 /* RAnalyticsSender.swift in Sources */,
+				C923B87725FF322A00F9CCA0 /* _RAnalyticsHelpers.swift in Sources */,
+				C923B85825FF322A00F9CCA0 /* RAnalyticsState.swift in Sources */,
+				C923B88225FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift in Sources */,
+				C9E4BC92260C9AD20001F0B4 /* PushEventHandler.swift in Sources */,
+				C923B87525FF322A00F9CCA0 /* EventChecker.swift in Sources */,
+				C923B87C25FF322A00F9CCA0 /* Array+RAT.swift in Sources */,
+				C923B86B25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m in Sources */,
+				C96B73E6261E479600CF91BA /* URLSessionTask+Extensions.swift in Sources */,
+				C923B88F25FF322A00F9CCA0 /* NotificationCenter+Extensions.swift in Sources */,
+				C923B88D25FF322A00F9CCA0 /* Synchronizable.swift in Sources */,
+				C96B73E7261E479600CF91BA /* HTTPCookieStorage+Extensions.swift in Sources */,
+				C923B88725FF322A00F9CCA0 /* AtomicWrapper.swift in Sources */,
+				C923B87B25FF322A00F9CCA0 /* String+Extensions.swift in Sources */,
+				C923B89525FF322A00F9CCA0 /* Optional+CLLocation.swift in Sources */,
+				C923B89425FF322A00F9CCA0 /* MainThreadExecutor.swift in Sources */,
+				C923B86725FF322A00F9CCA0 /* AnyDependenciesContainer+DependencyFactory.swift in Sources */,
+				C96B73E8261E479600CF91BA /* URLSession+Extensions.swift in Sources */,
+				C923B87325FF322A00F9CCA0 /* Data+RAT.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,7 +630,6 @@
 		};
 		3AA58EF924CB107D00CE703C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FD6259520E8BCE316329F9C7 /* Pods-RAnalytics.debug.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -386,6 +647,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 8.0.1;
+				MODULEMAP_PRIVATE_FILE = RAnalytics.private.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -397,7 +659,6 @@
 		};
 		3AA58EFA24CB107D00CE703C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9CC73AC1F554BC7318FA5511 /* Pods-RAnalytics.release.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -415,6 +676,7 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 8.0.1;
+				MODULEMAP_PRIVATE_FILE = RAnalytics.private.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

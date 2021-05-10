@@ -1,0 +1,7 @@
+author: Rakuten Group, Inc.
+module: RAnalytics
+readme: README.md
+documentation: "{CHANGELOG.md,CONTRIBUTING.md,ADVANCED_USAGE.md}"
+hide_documentation_coverage: true
+copyright: "© Rakuten Group, Inc."
+podspec: RAnalytics.podspec

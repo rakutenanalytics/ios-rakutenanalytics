@@ -1,5 +1,5 @@
 import Foundation
-import RAnalytics
+@testable import RAnalytics
 
 // MARK: - Tracker
 
@@ -35,6 +35,13 @@ final class UserDefaultsMock: NSObject {
 }
 
 extension UserDefaultsMock: UserStorageHandleable {
+    convenience init?(suiteName suitename: String?) {
+        guard suitename != nil else {
+            return nil
+        }
+        self.init()
+    }
+    func dictionary(forKey defaultName: String) -> [String: Any]? { dictionary?[defaultName] as? [String: Any] }
     func set(value: Any?, forKey key: String) { dictionary?[key] = value }
     func removeObject(forKey defaultName: String) { dictionary?[defaultName] = nil }
     func object(forKey defaultName: String) -> Any? { dictionary?[defaultName] }
@@ -56,5 +63,33 @@ struct ExternalCollectorFactory {
         container.registerObject(UserDefaultsMock([:]))
         container.registerObject(AnalyticsTrackerMock())
         return RAnalyticsExternalCollector(dependenciesFactory: container)
+    }
+}
+
+// MARK: - Session
+
+final class SessionMock: Sessionable {
+    var willComplete: (() -> Void?)?
+    var response: HTTPURLResponse?
+    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable {
+        willComplete?()
+        completionHandler(nil, response, nil)
+        return URLSessionTaskMock()
+    }
+}
+
+// MARK: - URL Session Task
+
+final class URLSessionTaskMock: URLSessionTaskable {
+    func resume() {}
+}
+
+// MARK: - HTTP Cookie Storage
+
+final class HTTPCookieStorageMock: HTTPCookieStorable {
+    var cookiesArray: [HTTPCookie]?
+
+    func cookies(for URL: URL) -> [HTTPCookie]? {
+        cookiesArray
     }
 }
