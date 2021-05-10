@@ -582,6 +582,12 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     {
         payload[@"userid"] = state.userIdentifier;
     }
+    
+    // MARK: easyid
+    if (state.easyIdentifier.length && !((NSString *)payload[@"easyid"]).length)
+    {
+        payload[@"easyid"] = state.easyIdentifier;
+    }
 
     [payload addEntriesFromDictionary:_RAnalyticsSharedPayload(state)];
 }

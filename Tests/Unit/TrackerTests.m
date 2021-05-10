@@ -52,6 +52,7 @@
     _defaultState.lastKnownLocation     = location;
     _defaultState.sessionStartDate      = sessionStartDate;
     _defaultState.userIdentifier        = @"userId";
+    _defaultState.easyIdentifier        = @"easyId";
     _defaultState.loginMethod           = RAnalyticsOneTapLoginLoginMethod;
     _defaultState.origin                = RAnalyticsInternalOrigin;
     _defaultState.lastVersion           = @"1.0";
@@ -127,9 +128,9 @@
 }
 
 - (void)assertProcessEvent:(RAnalyticsEvent *)event
-                     state:(RAnalyticsState *)state
-               expectEtype:(NSString *)etype
-               assertBlock:(TrackerAssertBlock)assertBlock
+                     state:( RAnalyticsState * _Nullable)state
+               expectEtype:(NSString * _Nullable)etype
+               assertBlock:(TrackerAssertBlock _Nullable)assertBlock
 {
     // Given
     XCTestExpectation *wait = [self expectationWithDescription:@"wait"];
@@ -171,4 +172,3 @@
 }
 
 @end
-

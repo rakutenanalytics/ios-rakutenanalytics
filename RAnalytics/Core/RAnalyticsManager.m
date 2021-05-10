@@ -388,6 +388,7 @@ static RAnalyticsManager *_instance = nil;
 
     // Update state with data from external collector
     state.userIdentifier = _userIdentifierSelector.selectedTrackingIdentifier;
+    state.easyIdentifier = _analyticsExternalCollector.easyIdentifier;
     state.loginMethod = _analyticsExternalCollector.loginMethod;
     state.loggedIn = _analyticsExternalCollector.isLoggedIn;
 

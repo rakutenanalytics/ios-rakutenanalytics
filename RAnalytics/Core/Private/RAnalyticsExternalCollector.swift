@@ -15,6 +15,7 @@ import RLogger
         static let userIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.userIdentifier"
         static let loginMethodKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginMethod"
         static let notificationBaseName = "com.rakuten.esd.sdk.events"
+        static let idTokenEvent = "idtoken_memberid"
     }
 
     /// The login state information is being stored in shared preferences.
@@ -62,6 +63,9 @@ import RLogger
         }
     }
 
+    /// The easy identifier
+    @objc public var easyIdentifier: String?
+
     /// The login method is being stored in shared preferences.
     @objc public private(set) var loginMethod: AnalyticsManager.State.LoginMethod = .other {
         willSet(newValue) {
@@ -87,7 +91,7 @@ import RLogger
          "tapPage": .discoverPageTap,
          "redirectPage": .discoverPageRedirect]
     }()
-    private let loginEvents = ["password", "one_tap", "other"]
+    private let loginEvents = ["password", "one_tap", "other", Constants.idTokenEvent]
     private let logoutEvents = ["local", "global"]
     private let credentialEvents = ["ssocredentialfound", "logincredentialfound"]
     private let eventsRequiringOnlyIdentifier = ["tapPage", "tapPreview"]
@@ -182,7 +186,12 @@ private extension RAnalyticsExternalCollector {
         update()
 
         if let trackingIdentifier = notification.object as? String {
-            self.trackingIdentifier = trackingIdentifier
+            if notification.name.rawValue.hasSuffix(Constants.idTokenEvent) {
+                self.easyIdentifier = trackingIdentifier
+
+            } else {
+                self.trackingIdentifier = trackingIdentifier
+            }
         }
 
         isLoggedIn = true

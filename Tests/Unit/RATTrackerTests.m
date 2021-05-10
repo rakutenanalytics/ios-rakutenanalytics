@@ -31,6 +31,8 @@
 
 const NSTimeInterval DEFAULT_BATCHING_DELAY = 1.0;
 
+static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DECAB";
+
 @interface RATTrackerTests : TrackerTests
 @end
 
@@ -762,7 +764,7 @@ const NSTimeInterval DEFAULT_BATCHING_DELAY = 1.0;
 - (void)testPayloadUserIdentifierWithEmptyState
 {
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
-    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:@"CA7A88AB-82FE-40C9-A836-B1B3455DECAB" deviceIdentifier:@"deviceId"];
+    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier deviceIdentifier:@"deviceId"];
     [self assertProcessEvent:event state:state expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
         XCTAssertNil(payload[@"userid"]);
     }];
@@ -773,6 +775,33 @@ const NSTimeInterval DEFAULT_BATCHING_DELAY = 1.0;
     RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
     [self assertProcessEvent:event state:nil expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
         XCTAssertNil(payload[@"userid"]);
+    }];
+}
+
+#pragma mark Easy Identifier
+
+- (void)testPayloadEasyIdentifierWithDefaultState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertTrue([payload[@"easyid"] isEqual:@"easyId"]);
+    }];
+}
+
+- (void)testPayloadEasyIdentifierWithEmptyState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    RAnalyticsState *state = [RAnalyticsState.alloc initWithSessionIdentifier:sessionIdentifier deviceIdentifier:@"deviceId"];
+    [self assertProcessEvent:event state:state expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil(payload[@"easyid"]);
+    }];
+}
+
+- (void)testPayloadEasyIdentifierWithNilState
+{
+    RAnalyticsEvent *event = [RAnalyticsEvent.alloc initWithName:RAnalyticsInstallEventName parameters:nil];
+    [self assertProcessEvent:event state:nil expectEtype:RAnalyticsInstallEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertNil(payload[@"easyid"]);
     }];
 }
 

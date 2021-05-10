@@ -32,9 +32,9 @@ typedef void (^TrackerAssertBlock)(id payload);
                assertBlock:(TrackerAssertBlock)assertBlock;
 
 - (void)assertProcessEvent:(RAnalyticsEvent *)event
-                     state:(RAnalyticsState *)state
-               expectEtype:(NSString *)etype
-               assertBlock:(TrackerAssertBlock)assertBlock;
+                     state:(RAnalyticsState * _Nullable)state
+               expectEtype:(NSString * _Nullable)etype
+               assertBlock:(TrackerAssertBlock _Nullable)assertBlock;
 
 - (void)stubRATResponseWithStatusCode:(int)status completionHandler:(void (^)(void))completion;
 - (void)addMock:(id)mock;

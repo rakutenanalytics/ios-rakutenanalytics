@@ -82,6 +82,9 @@ import CoreLocation.CLLocation
     /// as returned by the `IdInformation/GetEncryptedEasyId/20140617` API.
     @objc public var userIdentifier: String?
 
+    /// The easy identifier
+    @objc public var easyIdentifier: String?
+
     /// The login method for the last logged-in user.
     @objc public var loginMethod: RAnalyticsLoginMethod = .other
 
@@ -165,6 +168,7 @@ import CoreLocation.CLLocation
             ^ sessionStartDate.hashValue
             ^ isLoggedIn.hashValue
             ^ userIdentifier.safeHashValue
+            ^ easyIdentifier.safeHashValue
             ^ loginMethod.hashValue
             ^ origin.hashValue
             ^ lastVersion.hashValue
@@ -188,6 +192,7 @@ import CoreLocation.CLLocation
             && sessionStartDate == object.sessionStartDate
             && isLoggedIn == object.isLoggedIn
             && userIdentifier == object.userIdentifier
+            && easyIdentifier == object.easyIdentifier
             && loginMethod == object.loginMethod
             && origin == object.origin
             && lastVersion == object.lastVersion
@@ -210,6 +215,7 @@ extension RAnalyticsState: NSCopying {
         state.sessionStartDate = sessionStartDate
         state.loggedIn = loggedIn
         state.userIdentifier = userIdentifier
+        state.easyIdentifier = easyIdentifier
         state.loginMethod = loginMethod
         state.origin = origin
         state.lastVersion = lastVersion

@@ -12,6 +12,7 @@ final class RAnalyticsStateSpec: QuickSpec {
             let deviceIdentifier = "deviceId"
             let advertisingIdentifier = "adId"
             let userIdentifier = "userId"
+            let easyIdentifier = "easyId"
             let currentVersion = "2.0"
             let lastVersion = "1.0"
             let bundle = Bundle(for: RAnalyticsStateSpec.self)
@@ -53,6 +54,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                 state.lastLaunchDate = lastLaunchDate
                 state.lastUpdateDate = lastUpdateDate
                 state.userIdentifier = userIdentifier
+                state.easyIdentifier = easyIdentifier
                 state.loggedIn = true
                 return state
             }()
@@ -70,6 +72,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.sessionStartDate).to(beNil())
                     expect(state.loggedIn).to(beFalse())
                     expect(state.userIdentifier).to(beNil())
+                    expect(state.easyIdentifier).to(beNil())
                     expect(state.lastVersion).to(beNil())
                     expect(state.initialLaunchDate).to(beNil())
                     expect(state.lastLaunchDate).to(beNil())
@@ -92,6 +95,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.sessionStartDate).to(equal(sessionStartDate))
                     expect(state.isLoggedIn).to(beTrue())
                     expect(state.userIdentifier).to(equal(userIdentifier))
+                    expect(state.easyIdentifier).to(equal(easyIdentifier))
                     expect(state.lastVersion).to(equal(lastVersion))
                     expect(state.initialLaunchDate).to(equal(initialLaunchDate))
                     expect(state.lastLaunchDate).to(equal(lastLaunchDate))
@@ -117,6 +121,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.sessionStartDate).to(equal(sessionStartDate))
                     expect(state.isLoggedIn).to(beTrue())
                     expect(state.userIdentifier).to(equal(userIdentifier))
+                    expect(state.easyIdentifier).to(equal(easyIdentifier))
                     expect(state.lastVersion).to(equal(lastVersion))
                     expect(state.initialLaunchDate).to(equal(initialLaunchDate))
                     expect(state.lastLaunchDate).to(equal(lastLaunchDate))

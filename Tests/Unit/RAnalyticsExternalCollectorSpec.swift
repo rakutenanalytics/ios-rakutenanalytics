@@ -115,6 +115,36 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.params).toEventually(beNil())
                         tracker?.reset()
                     }
+
+                    it("should track AnalyticsManager.Event.Name.login when an IDSDK login notification is received") {
+                        let tracker = (dependenciesFactory.tracker as? AnalyticsTrackerMock)
+                        let easyIdentifier = "easyIdentifier"
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesFactory: dependenciesFactory)
+                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.idtoken_memberid")
+
+                        expect(externalCollector).toNot(beNil())
+                        expect(externalCollector?.easyIdentifier).to(beNil())
+                        expect(externalCollector?.loginMethod).to(equal(.other))
+                        expect(externalCollector?.isLoggedIn).to(beFalse())
+                        expect(tracker?.eventName).to(beNil())
+                        expect(tracker?.params).to(beNil())
+
+                        let passwordNotificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.password")
+                        NotificationCenter.default.post(name: passwordNotificationName, object: easyIdentifier)
+
+                        expect(externalCollector?.loginMethod).toEventually(equal(.passwordInput))
+                        tracker?.reset()
+
+                        NotificationCenter.default.post(name: notificationName, object: easyIdentifier)
+
+                        expect(externalCollector?.loginMethod).toEventually(equal(.other))
+
+                        expect(externalCollector?.isLoggedIn).toEventually(beTrue())
+                        expect(externalCollector?.easyIdentifier).toEventually(equal(easyIdentifier))
+                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker?.params).toEventually(beNil())
+                        tracker?.reset()
+                    }
                 }
             }
             describe("receiveLoginFailureNotification") {
