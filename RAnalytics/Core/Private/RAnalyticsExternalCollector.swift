@@ -12,6 +12,7 @@ import RLogger
     private enum Constants {
         static let loginStateKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState"
         static let trackingIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier"
+        static let easyIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.easyIdentifier"
         static let userIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.userIdentifier"
         static let loginMethodKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginMethod"
         static let notificationBaseName = "com.rakuten.esd.sdk.events"
@@ -63,8 +64,22 @@ import RLogger
         }
     }
 
-    /// The easy identifier
-    @objc public var easyIdentifier: String?
+    /// The easy identifier is being stored in shared preferences.
+    @objc public var easyIdentifier: String? {
+        willSet(newValue) {
+            guard easyIdentifier != newValue else {
+                return
+            }
+            if let easyIdentifier = newValue,
+               !easyIdentifier.isEmpty {
+                userStorageHandler?.set(value: trackingIdentifier, forKey: Constants.easyIdentifierKey)
+
+            } else {
+                userStorageHandler?.removeObject(forKey: Constants.easyIdentifierKey)
+            }
+            userStorageHandler?.synchronize()
+        }
+    }
 
     /// The login method is being stored in shared preferences.
     @objc public private(set) var loginMethod: AnalyticsManager.State.LoginMethod = .other {
@@ -185,12 +200,12 @@ private extension RAnalyticsExternalCollector {
     func receiveLoginNotification(_ notification: NSNotification) {
         update()
 
-        if let trackingIdentifier = notification.object as? String {
+        if let anIdentifier = notification.object as? String {
             if notification.name.rawValue.hasSuffix(Constants.idTokenEvent) {
-                self.easyIdentifier = trackingIdentifier
+                self.easyIdentifier = anIdentifier
 
             } else {
-                self.trackingIdentifier = trackingIdentifier
+                self.trackingIdentifier = anIdentifier
             }
         }
 
@@ -217,6 +232,7 @@ private extension RAnalyticsExternalCollector {
 
         isLoggedIn = false
         trackingIdentifier = nil
+        easyIdentifier = nil
 
         var parameters = [String: Any]()
 
@@ -236,6 +252,7 @@ private extension RAnalyticsExternalCollector {
 
         isLoggedIn = false
         trackingIdentifier = nil
+        easyIdentifier = nil
 
         var parameters = [String: Any]()
 
@@ -343,6 +360,7 @@ private extension RAnalyticsExternalCollector {
         }
         isLoggedIn = userStorageHandler.bool(forKey: Constants.loginStateKey)
         trackingIdentifier = userStorageHandler.string(forKey: Constants.trackingIdentifierKey)
+        easyIdentifier = userStorageHandler.string(forKey: Constants.easyIdentifierKey)
         userIdentifier = userStorageHandler.string(forKey: Constants.userIdentifierKey)
 
         // Note: loginMethod is set and got as NSNumber in RAnalytics version <= 7.x - _RAnalyticsExternalCollector.m
