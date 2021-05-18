@@ -151,6 +151,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     let params = ["rae_error": "login failure",
                                   "rae_error_message": "login fails",
                                   "type": "login.failure"]
+                    let idsdkError = NSError(domain: "com.analytics.error",
+                                             code: 0,
+                                             userInfo: [NSLocalizedDescriptionKey: "login failure", NSLocalizedFailureReasonErrorKey: "login fails"])
                     let tracker = (dependenciesFactory.tracker as? AnalyticsTrackerMock)
                     let externalCollector = RAnalyticsExternalCollector(dependenciesFactory: dependenciesFactory)
                     let notificationNames = ["\(self.notificationBaseName).login.failure",
@@ -162,7 +165,16 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
 
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: notificationName), object: params)
+                        switch notificationName {
+                        case "\(self.notificationBaseName).login.failure":
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: notificationName), object: params)
+
+                        case "\(self.notificationBaseName).login.failure.idtoken_memberid":
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: notificationName), object: idsdkError)
+
+                        default:
+                            assertionFailure("Unexpected login failure case.")
+                        }
 
                         expect(externalCollector?.isLoggedIn).toAfterTimeout(beFalse())
                         expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.loginFailure))
@@ -174,7 +186,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                             expect(tracker?.params?["type"] as? String).toEventually(equal(params["type"]))
 
                         case "\(self.notificationBaseName).login.failure.idtoken_memberid":
-                            expect(tracker?.params).to(beNil())
+                            expect(tracker?.params?["idsdk_error"] as? String).toEventually(equal(idsdkError.localizedDescription))
+                            expect(tracker?.params?["idsdk_error_message"] as? String).toEventually(equal(idsdkError.localizedFailureReason))
 
                         default:
                             assertionFailure("Unexpected login failure case.")
