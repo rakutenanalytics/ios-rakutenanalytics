@@ -13,6 +13,10 @@ private enum SenderConstants {
 @objc public final class RAnalyticsSender: NSObject, EndpointSettable {
     @objc public var endpointURL: URL
 
+    /// Enable the experimental internal JSON serialization or not.
+    /// The experimental internal JSON serialization fixes the float numbers decimals.
+    private let enableInternalSerialization: Bool
+
     private let database: RAnalyticsDatabase
     private let databaseTableName: String
 
@@ -38,13 +42,30 @@ private enum SenderConstants {
     ///   - endpoint: endpoint URL
     ///   - database: database to read/write
     ///   - databaseTable: name of database
-    @objc public init?(endpoint: URL,
-                       database: RAnalyticsDatabase,
-                       databaseTable: String) {
+    @objc public convenience init?(endpoint: URL,
+                                   database: RAnalyticsDatabase,
+                                   databaseTable: String) {
+        self.init(endpoint: endpoint,
+                  database: database,
+                  databaseTable: databaseTable,
+                  bundle: Bundle.main)
+    }
+
+    /// Initialize Sender
+    /// - Parameters:
+    ///   - endpoint: endpoint URL
+    ///   - database: database to read/write
+    ///   - databaseTable: name of database
+    ///   - bundle: the bundle
+    init?(endpoint: URL,
+          database: RAnalyticsDatabase,
+          databaseTable: String,
+          bundle: EnvironmentBundle) {
         self.endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
         self.batchingDelayClosure = { return SenderConstants.defaultUploadInterval }
+        self.enableInternalSerialization = bundle.enableInternalSerialization
         super.init()
 
         configureNotifications()
@@ -145,7 +166,8 @@ fileprivate extension RAnalyticsSender {
         guard !records.isEmpty,
               let ratJsonRecords = [JsonRecord](ratDataRecords: records),
               !ratJsonRecords.isEmpty,
-              let data = Data(ratJsonRecords: ratJsonRecords) else {
+              let data = Data(ratJsonRecords: ratJsonRecords,
+                              internalSerialization: enableInternalSerialization) else {
             RLogger.error("Sender error: failed to create RAT request body data")
             return
         }

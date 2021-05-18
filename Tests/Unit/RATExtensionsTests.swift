@@ -7,11 +7,13 @@ final class BundleMock: EnvironmentBundle {
         (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
     }
     var endpointAddress: URL? { mutableEndpointAddress }
+    var enableInternalSerialization: Bool { mutableEnableInternalSerialization }
     static var assetsBundle: Bundle? { nil }
     static var sdkComponentMap: NSDictionary? { nil }
 
     var dictionary: [String: Any]?
     var mutableEndpointAddress: URL?
+    var mutableEnableInternalSerialization: Bool = false
 }
 
 extension BundleMock: Bundleable {
@@ -93,9 +95,70 @@ final class RATDataExtensionSpec: QuickSpec {
     override func spec() {
         describe("init") {
             context("when the input array elements are dictionaries") {
-                it("should return valid data") {
-                    let input = [["key1": "value1", "key2": "value2"], ["key3": "value3"]] as [JsonRecord]
-                    expect(Data(ratJsonRecords: input)).toNot(beNil())
+                let input = [["key1": "value1", "key2": "value2"],
+                             ["key3": "value3", "key4": ["key5": [["key6": "value6"], ["key7": "value7"]]]],
+                             ["flag1": true],
+                             ["flag2": false],
+                             ["nullable1": nil],
+                             ["price1": 3.57],
+                             ["nullable2": nil],
+                             ["price2": 5]] as [JsonRecord]
+
+                context("when internalSerialization is false") {
+                    it("should return valid data") {
+                        expect(Data(ratJsonRecords: input, internalSerialization: false)).toNot(beNil())
+                    }
+
+                    it("should return data with correct values except for Float numbers") {
+                        let data = Data(ratJsonRecords: input, internalSerialization: false)!
+                        let jsonString = String(data: data, encoding: .utf8)
+                        verifyValues(from: jsonString)
+                        expect(jsonString?.contains(#"{"price1":3.57}"#)).to(beFalse())
+                    }
+
+                    it("should return data with a valid JSON structure") {
+                        verifyStructure(internalSerialization: false)
+                    }
+                }
+
+                context("when internalSerialization is true") {
+                    it("should return valid data") {
+                        expect(Data(ratJsonRecords: input, internalSerialization: true)).toNot(beNil())
+                    }
+
+                    it("should return data with correct values") {
+                        let data = Data(ratJsonRecords: input, internalSerialization: true)!
+                        let jsonString = String(data: data, encoding: .utf8)
+                        verifyValues(from: jsonString)
+                        expect(jsonString?.contains(#"{"price1":3.57}"#)).to(beTrue())
+                    }
+
+                    it("should return data with a valid JSON structure") {
+                        verifyStructure(internalSerialization: true)
+                    }
+                }
+
+                func verifyValues(from jsonString: String?) {
+                    expect(jsonString?.hasPrefix("cpkg_none=")).to(beTrue())
+                    expect(jsonString?.contains(#""key1":"value1""#)).to(beTrue())
+                    expect(jsonString?.contains(#""key2":"value2""#)).to(beTrue())
+                    expect(jsonString?.contains(#""key3":"value3""#)).to(beTrue())
+                    expect(jsonString?.contains(#""key6":"value6""#)).to(beTrue())
+                    expect(jsonString?.contains(#""key7":"value7""#)).to(beTrue())
+                    expect(jsonString?.contains(#"{"flag1":true}"#)).to(beTrue())
+                    expect(jsonString?.contains(#"{"flag2":false}"#)).to(beTrue())
+                    expect(jsonString?.contains(#"{"price2":5}"#)).to(beTrue())
+                    expect(jsonString?.contains(#"{"nullable1":null}"#)).to(beTrue())
+                    expect(jsonString?.contains(#"{"nullable2":null}"#)).to(beTrue())
+                }
+
+                func verifyStructure(internalSerialization: Bool) {
+                    let str = String(data: Data(ratJsonRecords: input, internalSerialization: internalSerialization)!, encoding: .utf8)!
+                    let jsonString = str["cpkg_none=".count..<str.count]
+                    let jsonData = jsonString.data(using: .utf8)!
+                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .init(rawValue: 0))
+
+                    expect(jsonObject).toNot(beNil())
                 }
             }
         }

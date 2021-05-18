@@ -43,5 +43,7 @@
 	</array>
 	<key>RATEndpoint</key>
 	<string>https://rat.rakuten.co.jp/</string>
+	<key>RATEnableInternalSerialization</key>
+	<false/>
 </dict>
 </plist>

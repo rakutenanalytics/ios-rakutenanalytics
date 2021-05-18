@@ -35,6 +35,41 @@ class SenderTests: QuickSpec {
                 database = nil
             }
 
+            context("JSON serialization") {
+                let bundle = BundleMock()
+
+                func createSender(bundle: EnvironmentBundle) -> RAnalyticsSender {
+                    let databaseConnection = DatabaseTestUtils.openRegularConnection()!
+                    let database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
+                    return RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
+                                            database: database,
+                                            databaseTable: databaseTableName,
+                                            bundle: bundle)!
+                }
+
+                it("should send given payload when enableInternalSerialization is false") {
+                    var isSendingCompleted = false
+                    stubRATResponse(statusCode: 200) {
+                        isSendingCompleted = true
+                    }
+                    bundle.mutableEnableInternalSerialization = false
+                    let sender = createSender(bundle: bundle)
+                    sender.send(jsonObject: payload)
+                    expect(isSendingCompleted).toEventually(beTrue())
+                }
+
+                it("should send given payload when enableInternalSerialization is true") {
+                    var isSendingCompleted = false
+                    stubRATResponse(statusCode: 200) {
+                        isSendingCompleted = true
+                    }
+                    bundle.mutableEnableInternalSerialization = true
+                    let sender = createSender(bundle: bundle)
+                    sender.send(jsonObject: payload)
+                    expect(isSendingCompleted).toEventually(beTrue())
+                }
+            }
+
             context("when setting batching delay") {
 
                 it("should succeed with default batching delay", closure: {
@@ -60,7 +95,6 @@ class SenderTests: QuickSpec {
                     stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
-
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
                 }

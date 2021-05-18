@@ -34,6 +34,7 @@ import UIKit
 @objc public protocol EnvironmentBundle {
     var useDefaultSharedCookieStorage: Bool { get }
     var endpointAddress: URL? { get }
+    var enableInternalSerialization: Bool { get }
     static var assetsBundle: Bundle? { get }
     static var sdkComponentMap: NSDictionary? { get }
 }
@@ -61,6 +62,13 @@ import UIKit
             #endif
         }
         return userDefinedURL
+    }
+
+    public var enableInternalSerialization: Bool {
+        guard let internalSerializationIsEnabled = object(forInfoDictionaryKey: "RATEnableInternalSerialization") as? Bool else {
+            return false
+        }
+        return internalSerializationIsEnabled
     }
 
     public static let assetsBundle: Bundle? = {
