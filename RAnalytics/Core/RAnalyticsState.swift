@@ -82,7 +82,7 @@ import CoreLocation.CLLocation
     /// as returned by the `IdInformation/GetEncryptedEasyId/20140617` API.
     @objc public var userIdentifier: String?
 
-    /// The easy identifier
+    /// The logged in user's easyid (unique member identifier).
     @objc public var easyIdentifier: String?
 
     /// The login method for the last logged-in user.

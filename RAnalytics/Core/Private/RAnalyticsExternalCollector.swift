@@ -107,7 +107,8 @@ import RLogger
          "redirectPage": .discoverPageRedirect]
     }()
     private let loginEvents = ["password", "one_tap", "other", Constants.idTokenEvent]
-    private let logoutEvents = ["local", "global"]
+    private let loginFailureEvents = ["failure", "failure.\(Constants.idTokenEvent)"]
+    private let logoutEvents = ["local", "global", Constants.idTokenEvent]
     private let credentialEvents = ["ssocredentialfound", "logincredentialfound"]
     private let eventsRequiringOnlyIdentifier = ["tapPage", "tapPreview"]
     private let eventsRequiringIdentifierAndRedirectString = ["redirectPage", "redirectPreview"]
@@ -159,7 +160,9 @@ private extension RAnalyticsExternalCollector {
     }
 
     func addLoginFailureObservers() {
-        addNotificationName("\(Constants.notificationBaseName).login.failure", selector: #selector(receiveLoginFailureNotification(_:)))
+        loginFailureEvents.forEach {
+            addNotificationName("\(Constants.notificationBaseName).login.\($0)", selector: #selector(receiveLoginFailureNotification(_:)))
+        }
     }
 
     func addLogoutObservers() {
@@ -226,7 +229,7 @@ private extension RAnalyticsExternalCollector {
     func receiveLoginFailureNotification(_ notification: NSNotification) {
         update()
 
-        guard notification.name.rawValue == "\(Constants.notificationBaseName).login.failure" else {
+        guard notification.name.rawValue.hasPrefix("\(Constants.notificationBaseName).login.failure") else {
             return
         }
 
@@ -236,12 +239,18 @@ private extension RAnalyticsExternalCollector {
 
         var parameters = [String: Any]()
 
-        if let params = notification.object as? [String: Any] {
-            parameters["rae_error"] = params["rae_error"]
-            parameters["type"] = params["type"]
-            if let raeErrorMessage = params["rae_error_message"] {
-                parameters["rae_error_message"] = raeErrorMessage
+        switch notification.name.rawValue {
+        case "\(Constants.notificationBaseName).login.failure":
+            if let params = notification.object as? [String: Any] {
+                parameters = [String: Any]()
+                parameters["rae_error"] = params["rae_error"]
+                parameters["type"] = params["type"]
+                if let raeErrorMessage = params["rae_error_message"] {
+                    parameters["rae_error_message"] = raeErrorMessage
+                }
             }
+
+        default: ()
         }
 
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.loginFailure, parameters: parameters.isEmpty ? nil : parameters)
@@ -256,11 +265,14 @@ private extension RAnalyticsExternalCollector {
 
         var parameters = [String: Any]()
 
-        if notification.name.rawValue == "\(Constants.notificationBaseName).logout.local" {
+        switch notification.name.rawValue {
+        case "\(Constants.notificationBaseName).logout.local":
             parameters[AnalyticsManager.Event.Parameter.logoutMethod] = AnalyticsManager.Event.LogoutMethod.local
 
-        } else {
+        case "\(Constants.notificationBaseName).logout.global":
             parameters[AnalyticsManager.Event.Parameter.logoutMethod] = AnalyticsManager.Event.LogoutMethod.global
+
+        default: ()
         }
 
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.logout, parameters: parameters)
