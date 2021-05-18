@@ -16,7 +16,7 @@ platform :ios do
     # ensure clean install
     sh "rm -rf ../Samples/RAnalytics.zip"
     sh "rm -rf ../Samples/Pods;rm -f ../Samples/Podfile.lock"
-    sh "pod cache clean RAnalytics"
+    sh "pod cache clean RAnalytics --all"
 
     build_framework(version: version) unless options[:skip_build]
 
@@ -56,6 +56,8 @@ platform :ios do
     ]
 
     pod_lib_lint(podspec: podspecPath, allow_warnings: true)
+
+    update_swift_package(version: version, release: !isSnapshot, target_branch: target_branch) unless options[:skip_build] || skip_upload
 
     if isSnapshot
       snapshot_repo = "rakutentech/ios-analytics-framework-snapshots"

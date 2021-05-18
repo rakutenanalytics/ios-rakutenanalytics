@@ -184,7 +184,7 @@
 			children = (
 				3AA58EF224CB107D00CE703C /* RAnalytics */,
 				3AA58EF124CB107D00CE703C /* Products */,
-				FE170DA88FE9647A82E8A609 /* Pods */,
+				AA633E799A46F1639B2ECBC6 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -203,6 +203,13 @@
 				3AA58EF424CB107D00CE703C /* Info.plist */,
 			);
 			path = RAnalytics;
+			sourceTree = "<group>";
+		};
+		AA633E799A46F1639B2ECBC6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		C923B7FF25FF322A00F9CCA0 /* RAnalytics */ = {
@@ -336,13 +343,6 @@
 				C923B84D25FF322A00F9CCA0 /* RAnalyticsRATTracker.m */,
 			);
 			path = RAT;
-			sourceTree = "<group>";
-		};
-		FE170DA88FE9647A82E8A609 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -632,13 +632,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/RLogger",
+					"$(BUILT_PRODUCTS_DIR)/RDeviceIdentifier",
+				);
 				INFOPLIST_FILE = RAnalytics/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -661,13 +665,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/RLogger",
+					"$(BUILT_PRODUCTS_DIR)/RDeviceIdentifier",
+				);
 				INFOPLIST_FILE = RAnalytics/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (

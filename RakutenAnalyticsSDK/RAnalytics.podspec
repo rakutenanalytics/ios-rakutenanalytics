@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
     s.license      = { :type => 'Proprietary', :text => '© Rakuten Group, Inc.' }
     s.source       = { :http => "https://github.com/rakutentech/ios-analytics-framework/releases/download/#{s.version.to_s}/RAnalyticsRelease-v#{s.version.to_s}.zip" }
     s.platform     = :ios, "11.0"
-    s.vendored_frameworks = "RAnalytics.framework"
+    s.vendored_frameworks = "RAnalytics.xcframework"
     s.documentation_url = "https://github.com/rakutentech/ios-analytics-framework"
     options = {
       'CLANG_ENABLE_MODULES'    => 'YES',

@@ -13,12 +13,12 @@ module Fastlane
 
         # run build
         UI.message("Building #{frameworkName} v#{version} in folder path #{frameworkFolder}")
-        sh "./build-universal-framework.sh"
+        sh "./build-xcframework.sh"
         UI.success("Successfully built framework")
 
         suffix = "-v#{version}"
-        debug_path = "build/debug/universal"
-        release_path = "build/release/universal"
+        debug_path = "output/Debug"
+        release_path = "output/Release"
         debug_framework_zip = "#{frameworkName}Debug#{suffix}.zip"
         release_framework_zip = "#{frameworkName}Release#{suffix}.zip"
         debug_symbols_zip = "#{frameworkName}Debug_dSYM#{suffix}.zip"
@@ -28,21 +28,22 @@ module Fastlane
         sh "rm -f #{frameworkName}Release*.zip && rm -f #{frameworkName}Debug*.zip"
 
         # confirm build outputs are present
-        sh "ls #{debug_path}/#{frameworkName}.framework && ls #{release_path}/#{frameworkName}.framework"
+        sh "ls #{debug_path}/#{frameworkName}.xcframework && ls #{release_path}/#{frameworkName}.xcframework"
 
         # package frameworks as zips, removing paths
-        sh "cd #{debug_path} && zip -r ../../../#{debug_framework_zip} #{frameworkName}.framework"
+        currentDir = Dir.pwd
+        sh "cd #{debug_path} && zip -r #{currentDir}/#{debug_framework_zip} #{frameworkName}.xcframework"
         sh "ls -l #{debug_framework_zip}"
-        sh "cd #{release_path} && zip -r ../../../#{release_framework_zip} #{frameworkName}.framework"
+        sh "cd #{release_path} && zip -r #{currentDir}/#{release_framework_zip} #{frameworkName}.xcframework"
         sh "ls -l #{release_framework_zip}"
 
         # unzip release framework for pod lib linting & local podspecs
         sh "unzip -o #{release_framework_zip}"
 
         # package symbols as zips, removing paths
-        sh "cd #{debug_path} && zip -r ../../../#{debug_symbols_zip} #{frameworkName}.framework.dSYM"
+        sh "cd #{debug_path} && zip -r #{currentDir}/#{debug_symbols_zip} #{frameworkName}.framework.dSYM"
         sh "ls -l #{debug_symbols_zip}"
-        sh "cd #{release_path} && zip -r ../../../#{release_symbols_zip} #{frameworkName}.framework.dSYM"
+        sh "cd #{release_path} && zip -r #{currentDir}/#{release_symbols_zip} #{frameworkName}.framework.dSYM"
         sh "ls -l #{release_symbols_zip}"
 
         UI.success("Successfully packaged #{frameworkName} v#{version} ")
