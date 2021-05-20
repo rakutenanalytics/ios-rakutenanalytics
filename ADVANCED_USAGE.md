@@ -11,6 +11,7 @@
 1. [Configure the tracker batching delay](#configure-the-tracker-batching-delay)
 1. [Support for App Extensions](#support-for-app-extensions)
 1. [Creating a custom tracker](#creating-a-custom-tracker)
+1. [Fetching a RP Cookie](#fetching-a-rp-cookie)
 
 ## Configure a custom endpoint
 
@@ -337,4 +338,23 @@ RAnalyticsManager.shared().add(CustomTracker())
 
 // Tracking events can now be sent to the custom tracker
 AnalyticsManager.Event(name: CustomTrackerMyEventName, parameters: nil).track()
+```
+
+## Fetching a RP Cookie
+
+RAnalytics provides a public API to fetch the RP Cookie by instantiating `RAnalyticsRpCookieFetcher` class.
+
+Note: the completion handler of `getRpCookieCompletionHandler` may be called on a background queue.
+
+```swift
+// Create a RP Cookie Fetcher
+let fetcher = RAnalyticsRpCookieFetcher(cookieStorage: HTTPCookieStorage.shared)
+
+// Get the RP Cookie
+fetcher?.getRpCookieCompletionHandler({ cookie, _ in
+    guard let cookie = cookie else {
+        return
+    }
+    print(cookie)
+})
 ```

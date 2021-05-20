@@ -48,7 +48,6 @@
 		6D63A7AF1E1F975E00F89009 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D63A7AD1E1F975E00F89009 /* LaunchScreen.storyboard */; };
 		6D7573A32074CD9E006AAC66 /* CoreSubspecTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */; };
 		6D834FB125930086007325BE /* RAnalyticsRATTrackerSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D834FB025930086007325BE /* RAnalyticsRATTrackerSpec.m */; };
-		6D9F105624A46E7B00ECEBC4 /* RAnalyticsRpCookieFetcherSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D9F105524A46E7B00ECEBC4 /* RAnalyticsRpCookieFetcherSpec.m */; };
 		6DCCF0B5252C157700AE627F /* CookieInjectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */; };
 		C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */; };
 		C969127A25CAC5670073D804 /* RABEventBroadcasterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969127925CAC5670073D804 /* RABEventBroadcasterSpec.swift */; };
@@ -132,7 +131,6 @@
 		6D7573A02074C59E006AAC66 /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D7573A22074CD9E006AAC66 /* CoreSubspecTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreSubspecTests.m; sourceTree = "<group>"; };
 		6D834FB025930086007325BE /* RAnalyticsRATTrackerSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsRATTrackerSpec.m; sourceTree = "<group>"; };
-		6D9F105524A46E7B00ECEBC4 /* RAnalyticsRpCookieFetcherSpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsRpCookieFetcherSpec.m; sourceTree = "<group>"; };
 		6DCCF0B4252C157700AE627F /* CookieInjectorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CookieInjectorTests.m; sourceTree = "<group>"; };
 		C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelectorSpec.swift; sourceTree = "<group>"; };
 		C969127925CAC5670073D804 /* RABEventBroadcasterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RABEventBroadcasterSpec.swift; sourceTree = "<group>"; };
@@ -210,7 +208,6 @@
 				5AD7A9C0204FC4C200B03FBA /* TrackerTests.m */,
 				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
 				C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */,
-				6D9F105524A46E7B00ECEBC4 /* RAnalyticsRpCookieFetcherSpec.m */,
 				C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */,
 				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
 				C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */,
@@ -510,7 +507,6 @@
 				6D834FB125930086007325BE /* RAnalyticsRATTrackerSpec.m in Sources */,
 				5AB254A320744B1900BF3EE9 /* RpCookieTests.m in Sources */,
 				5A3BC1741D362A0A00BBCA54 /* RAnalyticsStateTests.m in Sources */,
-				6D9F105624A46E7B00ECEBC4 /* RAnalyticsRpCookieFetcherSpec.m in Sources */,
 				C96912A425CAC62B0073D804 /* MockUtils.swift in Sources */,
 				C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */,
 				45E3BC4A2581476400319ECF /* RAnalyticsDatabaseUnitTests.swift in Sources */,

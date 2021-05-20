@@ -70,10 +70,12 @@ struct ExternalCollectorFactory {
 
 final class SessionMock: Sessionable {
     var willComplete: (() -> Void?)?
+    var data: Data?
     var response: HTTPURLResponse?
+    var error: Error?
     func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable {
         willComplete?()
-        completionHandler(nil, response, nil)
+        completionHandler(data, response, error)
         return URLSessionTaskMock()
     }
 }
