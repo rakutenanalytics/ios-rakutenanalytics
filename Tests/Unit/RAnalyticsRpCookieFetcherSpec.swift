@@ -8,6 +8,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsRpCookieFetcher") {
             let headerFields = ["Set-Cookie": "Rp=cookieValue; path=/; expires=Fri, 16-Nov-50 16:59:07 GMT; session-only=0; domain=.rakuten.co.jp"]
+            let noRpCookieHeaderFields = ["Set-Token": "1234"]
             let urlString = "https://domain.com"
             let response = HTTPURLResponse(url: URL(string: urlString)!,
                                            statusCode: 200,
@@ -22,6 +23,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                                                 statusCode: 200,
                                                 httpVersion: nil,
                                                 headerFields: nil)
+            let noRpCookieResponse = HTTPURLResponse(url: URL(string: urlString)!,
+                                                     statusCode: 200,
+                                                     httpVersion: nil,
+                                                     headerFields: noRpCookieHeaderFields)
             let bundleMock = BundleMock()
             let cookieStorageMock = HTTPCookieStorageMock()
             let sessionMock = SessionMock()
@@ -102,7 +107,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                 }
 
                 context("when user sets 'disable shared cookie storage' key to false in app info.plist") {
-                    it("should return Rp cookie when the http response contains the RP Cookie") {
+                    it("should return Rp cookie when the http response contains the Rp Cookie") {
                         bundleMock.dictionary = ["RATDisableSharedCookieStorage": false]
                         sessionMock.response = response
 
@@ -116,7 +121,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                         expect(error).to(beNil())
                     }
 
-                    it("should return an error when the http response does not contain the RP Cookie") {
+                    it("should return an error when the http response does not contain the Rp Cookie") {
                         bundleMock.dictionary = ["RATDisableSharedCookieStorage": false]
                         sessionMock.response = emptyResponse
 
@@ -129,12 +134,32 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                         expect(error).toEventuallyNot(beNil())
                         expect((error as NSError?)?.localizedDescription)
                             .toEventually(equal("Cannot get Rp cookie from the RAT Server HTTP Response - \(urlString)"))
+                        expect((error as NSError?)?.localizedFailureReason)
+                            .toEventually(equal("The header fields are empty."))
+                        expect(cookie).to(beNil())
+                    }
+
+                    it("should return an error when the http response does not contain the Rp Cookie") {
+                        bundleMock.dictionary = ["RATDisableSharedCookieStorage": false]
+                        sessionMock.response = noRpCookieResponse
+
+                        var cookie: HTTPCookie?
+                        var error: Error?
+                        cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
+                            cookie = aCookie
+                            error = anError
+                        }
+                        expect(error).toEventuallyNot(beNil())
+                        expect((error as NSError?)?.localizedDescription)
+                            .toEventually(equal("Cannot get Rp cookie from the RAT Server HTTP Response - \(urlString)"))
+                        expect((error as NSError?)?.localizedFailureReason)
+                            .toEventually(equal("The Rp Cookie is not in the http response header fields."))
                         expect(cookie).to(beNil())
                     }
                 }
 
                 context("when user did not set 'disable shared cookie storage' key in app info.plist") {
-                    it("should return Rp cookie when the http response contains the RP Cookie") {
+                    it("should return Rp cookie when the http response contains the Rp Cookie") {
                         bundleMock.dictionary = nil
                         sessionMock.response = response
 
@@ -148,7 +173,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                         expect(error).to(beNil())
                     }
 
-                    it("should return an error when the http response does not contain the RP Cookie") {
+                    it("should return an error when the http response does not contain the Rp Cookie") {
                         bundleMock.dictionary = nil
                         sessionMock.response = emptyResponse
 
@@ -161,6 +186,26 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                         expect(error).toEventuallyNot(beNil())
                         expect((error as NSError?)?.localizedDescription)
                             .toEventually(equal("Cannot get Rp cookie from the RAT Server HTTP Response - \(urlString)"))
+                        expect((error as NSError?)?.localizedFailureReason)
+                            .toEventually(equal("The header fields are empty."))
+                        expect(cookie).to(beNil())
+                    }
+
+                    it("should return an error when the http response does not contain the Rp Cookie") {
+                        bundleMock.dictionary = nil
+                        sessionMock.response = noRpCookieResponse
+
+                        var cookie: HTTPCookie?
+                        var error: Error?
+                        cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
+                            cookie = aCookie
+                            error = anError
+                        }
+                        expect(error).toEventuallyNot(beNil())
+                        expect((error as NSError?)?.localizedDescription)
+                            .toEventually(equal("Cannot get Rp cookie from the RAT Server HTTP Response - \(urlString)"))
+                        expect((error as NSError?)?.localizedFailureReason)
+                            .toEventually(equal("The Rp Cookie is not in the http response header fields."))
                         expect(cookie).to(beNil())
                     }
                 }

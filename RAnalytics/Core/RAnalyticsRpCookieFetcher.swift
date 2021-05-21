@@ -2,7 +2,9 @@ import Foundation
 import RLogger
 
 @objc public final class RAnalyticsRpCookieFetcher: NSObject, EndpointSettable {
+    /// The endpoint to fetch the Rp Cookie.
     @objc public var endpointURL: URL
+
     private var retryInterval: TimeInterval
     private var rpCookieRequestRetryCount: UInt
     private let rpCookieQueue: DispatchQueue
@@ -19,9 +21,10 @@ import RLogger
     private enum RpCookieFetcherError {
         static let domain = "com.rakuten.esd.sdk.analytics.error.rpcookie"
         static let unknown: NSError = {
-            let userInfo = [NSLocalizedDescriptionKey: "Unknown RP Cookie Error"]
+            let userInfo = [NSLocalizedDescriptionKey: "Unknown Rp Cookie Error"]
             return NSError(domain: domain, code: NSURLErrorUnknown, userInfo: userInfo)
         }()
+        static let failureReason = "Invalid/NoCookie details available"
     }
 
     @available(*, unavailable)
@@ -37,12 +40,12 @@ import RLogger
         super.init()
     }
 
-    /// Create a new RP Cookie Fetcher object.
+    /// Create a new Rp Cookie Fetcher object.
     ///
     /// - Parameters:
     ///     - cookieStorage: Where the cookie will be set.
     ///
-    /// - Returns: A newly-initialized RP Cookie Fetcher or nil.
+    /// - Returns: A newly-initialized Rp Cookie Fetcher or nil.
     @objc public convenience init?(cookieStorage: HTTPCookieStorage) {
         self.init(cookieStorage: cookieStorage,
                   bundle: Bundle.main,
@@ -50,7 +53,7 @@ import RLogger
                   maximumTimeOut: Constants.timeOut)
     }
 
-    /// Create a new RP Cookie Fetcher object.
+    /// Create a new Rp Cookie Fetcher object.
     ///
     /// - Parameters:
     ///     - cookieStorage: Where the cookie will be set.
@@ -58,7 +61,7 @@ import RLogger
     ///     - session: The session.
     ///     - maximumTimeOut: The retry time out.
     ///
-    /// - Returns: A newly-initialized RP Cookie Fetcher or nil.
+    /// - Returns: A newly-initialized Rp Cookie Fetcher or nil.
     init?(cookieStorage: HTTPCookieStorable,
           bundle: EnvironmentBundle,
           session: Sessionable,
@@ -91,12 +94,13 @@ extension RAnalyticsRpCookieFetcher {
     ///     `completionHandler` may be called on a background queue.
     @objc public func getRpCookieCompletionHandler(_ completionHandler: @escaping (HTTPCookie?, NSError?) -> Void) {
         guard let rpCookie = getRpCookieFromCookieStorage() else {
-            getRpCookieFromRATCompletionHandler { result in
+            getRpCookieFromRAT { result in
                 switch result {
                 case .success(let cookie):
                     completionHandler(cookie, nil)
 
                 case .failure(let error):
+                    RLogger.error("\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
                     completionHandler(nil, error as NSError)
                 }
             }
@@ -105,8 +109,57 @@ extension RAnalyticsRpCookieFetcher {
         completionHandler(rpCookie, nil)
     }
 
-    /// - Returns: A cached valid RP cookie.
+    /// - Returns: A cached valid Rp cookie.
     @objc public func getRpCookieFromCookieStorage() -> HTTPCookie? {
+        do {
+            return try getRpCookie(from: cookieStorage)
+
+        } catch {
+            RLogger.error("\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
+            return nil
+        }
+    }
+}
+
+// MARK: - Get Rp Cookie
+
+extension RAnalyticsRpCookieFetcher {
+    /// Get the Rp Cookie from the HTTP URL response.
+    ///
+    /// - Parameter httpResponse: the HTTP URL response.
+    ///
+    /// - Returns: the HTTP Cookie
+    ///
+    /// - Throws: an error if the HTTP Cookie can't be retrieved in the HTTP URL response.
+    private func getRpCookie(from httpResponse: HTTPURLResponse) throws -> HTTPCookie {
+        let errorDescription = "Cannot get Rp cookie from the RAT Server HTTP Response - \(self.endpointURL.absoluteString)"
+
+        guard let allHeaderFields = httpResponse.allHeaderFields as? [String: String],
+              !allHeaderFields.isEmpty else {
+            let userInfo = [NSLocalizedDescriptionKey: errorDescription,
+                            NSLocalizedFailureReasonErrorKey: "The header fields are empty."]
+            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+        }
+
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: allHeaderFields, for: endpointURL)
+        let result = cookies.first { $0.name == Constants.rpName }
+
+        guard let cookie = result else {
+            let userInfo = [NSLocalizedDescriptionKey: errorDescription,
+                            NSLocalizedFailureReasonErrorKey: "The Rp Cookie is not in the http response header fields."]
+            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+        }
+        return cookie
+    }
+
+    /// Get the Rp Cookie from the cookie storage.
+    ///
+    /// - Parameter cookieStorage: the cookie storage.
+    ///
+    /// - Returns: the HTTP Cookie
+    ///
+    /// - Throws: an error if the HTTP Cookie can't be retrieved in the cookie storage.
+    private func getRpCookie(from cookieStorage: HTTPCookieStorable) throws -> HTTPCookie {
         let cookies = cookieStorage.cookies(for: endpointURL)
         let rpCookie = cookies?.first(where: {
             if let expiresDate = $0.expiresDate,
@@ -115,22 +168,23 @@ extension RAnalyticsRpCookieFetcher {
             }
             return false
         })
-        return rpCookie
+        guard let result = rpCookie else {
+            let errorDescription = "Cannot get Rp cookie from the Cookie Storage - \(self.endpointURL.absoluteString)"
+            let userInfo = [NSLocalizedDescriptionKey: errorDescription,
+                            NSLocalizedFailureReasonErrorKey: RpCookieFetcherError.failureReason]
+            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+        }
+        return result
     }
 }
 
-// MARK: - Utils
+// MARK: - Request
 
 extension RAnalyticsRpCookieFetcher {
-    private func getRpCookieFromHttpResponse(_ httpResponse: HTTPURLResponse) -> HTTPCookie? {
-        guard let allHeaderFields = httpResponse.allHeaderFields as? [String: String] else {
-            return nil
-        }
-        let cookies = HTTPCookie.cookies(withResponseHeaderFields: allHeaderFields, for: endpointURL)
-        return cookies.first { $0.name == Constants.rpName }
-    }
-
-    private func getRpCookieFromRATCompletionHandler(_ completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+    /// Get the Rp Cookie from the `endpointURL`.
+    ///
+    /// - Parameter completionHandler: the completion handler.
+    private func getRpCookieFromRAT(_ completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
         var request = URLRequest(url: endpointURL)
         request.httpShouldHandleCookies = bundle.useDefaultSharedCookieStorage
 
@@ -146,7 +200,8 @@ extension RAnalyticsRpCookieFetcher {
                             completionHandler(.failure(error))
 
                         } else if let statusCode = httpResponse?.statusCode {
-                            let userInfo = [NSLocalizedDescriptionKey: "The RP Cookie request response status code is \(statusCode)"]
+                            let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(self.endpointURL.absoluteString)"
+                            let userInfo = [NSLocalizedDescriptionKey: errorDescription]
                             let statusCodeError = NSError(domain: RpCookieFetcherError.domain,
                                                           code: statusCode,
                                                           userInfo: userInfo)
@@ -157,45 +212,48 @@ extension RAnalyticsRpCookieFetcher {
                         }
                         return
                     }
-                    self.getRpCookieFromRATCompletionHandler(completionHandler)
+                    self.getRpCookieFromRAT(completionHandler)
                 }
 
             } else {
                 self.rpCookieRequestRetryCount = 0
 
-                var userInfo: [String: String]?
-
-                var retrievedCookie: HTTPCookie?
                 if request.httpShouldHandleCookies {
-                    retrievedCookie = self.getRpCookieFromCookieStorage()
+                    do {
+                        let retrievedCookie = try self.getRpCookie(from: self.cookieStorage)
+                        completionHandler(.success(retrievedCookie))
 
-                    if retrievedCookie == nil {
-                        let errorDescription = "Cannot get Rp cookie from the Cookie Storage - \(self.endpointURL.absoluteString)"
-                        userInfo = [NSLocalizedDescriptionKey: errorDescription,
-                                    NSLocalizedFailureReasonErrorKey: "Invalid/NoCookie details available"]
+                    } catch {
+                        completionHandler(.failure(error))
                     }
 
                 } else if let httpResponse = httpResponse {
-                    retrievedCookie = self.getRpCookieFromHttpResponse(httpResponse)
+                    do {
+                        let retrievedCookie = try self.getRpCookie(from: httpResponse)
+                        completionHandler(.success(retrievedCookie))
 
-                    if retrievedCookie == nil {
-                        let errorDescription = "Cannot get Rp cookie from the RAT Server HTTP Response - \(self.endpointURL.absoluteString)"
-                        userInfo = [NSLocalizedDescriptionKey: errorDescription,
-                                    NSLocalizedFailureReasonErrorKey: "Invalid/NoCookie details available"]
+                    } catch {
+                        completionHandler(.failure(error))
                     }
-                }
 
-                guard let cookie = retrievedCookie else {
-                    let rpCookieError = NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
-                    completionHandler(.failure(rpCookieError))
-                    return
+                } else {
+                    let errorDescription = "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(self.endpointURL.absoluteString)"
+                    let userInfo = [NSLocalizedDescriptionKey: errorDescription,
+                                    NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."]
+                    completionHandler(.failure(NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)))
                 }
-                completionHandler(.success(cookie))
             }
 
         }.resume()
     }
+}
 
+// MARK: - Retry
+
+extension RAnalyticsRpCookieFetcher {
+    /// This method is used to retry getting the Rp Cookie until a given `maximumTimeOut`.
+    ///
+    /// - Parameter completionHandler: the completion handler.
     private func retryFetchingRpCookie(_ completionHandler: @escaping (Bool) -> Void) {
         // If failed retry fetch
         rpCookieRequestRetryCount += 1
