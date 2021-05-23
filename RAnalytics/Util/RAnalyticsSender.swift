@@ -137,13 +137,13 @@ fileprivate extension RAnalyticsSender {
             /// the in progress upload will likely complete before the timer fires.
             let interval = self.uploadTimerInterval == 0 ? SenderConstants.retryInterval : self.uploadTimerInterval
 
-            // swiftlint:disable:next todo
-            // FIXME: add timer to common mode not default - re: request to send events while scrolling
-            self.uploadTimer = Timer.scheduledTimer(timeInterval: interval,
-                                                    target: self,
-                                                    selector: #selector(self.fetchAndUpload),
-                                                    userInfo: nil,
-                                                    repeats: false)
+            let uploadTimer = Timer(timeInterval: interval,
+                                    target: self,
+                                    selector: #selector(self.fetchAndUpload),
+                                    userInfo: nil,
+                                    repeats: false)
+            self.uploadTimer = uploadTimer
+            RunLoop.current.add(uploadTimer, forMode: .common)
             self.uploadRequested = false
         }
     }
