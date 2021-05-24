@@ -40,7 +40,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'RAT' do |ss|
-    ss.source_files = 'RAnalytics/RAT/*.{h,m}'
+    ss.source_files = 'RAnalytics/RAT/*.{h,m,swift}'
     ss.weak_frameworks = [
       'CoreTelephony',
       'SystemConfiguration'

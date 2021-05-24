@@ -263,6 +263,16 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
     }];
 }
 
+- (void)testProcessLoginFailureEventForIDSDK
+{
+    id event = [RAnalyticsEvent.alloc initWithName:RAnalyticsLoginFailureEventName
+                                        parameters:@{@"idsdk_error" : @"IDSDK Login Error", @"idsdk_error_message" : @"Network Error"}];
+    [self assertProcessEvent:event state:self.defaultState expectEtype:RAnalyticsLoginFailureEventName assertBlock:^(id  _Nonnull payload) {
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.idsdk_error"], @"IDSDK Login Error");
+        XCTAssertEqualObjects([payload valueForKeyPath:@"cp.idsdk_error_message"], @"Network Error");
+    }];
+}
+
 - (void)testProcessPageVisitEventWithPageId
 {
     NSString *pageId = @"TestPage";

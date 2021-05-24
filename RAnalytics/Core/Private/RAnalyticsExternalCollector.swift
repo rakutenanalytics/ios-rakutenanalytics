@@ -1,6 +1,14 @@
 import Foundation
 import RLogger
 
+enum LoginFailureKey {
+    static let type = "type"
+    static let raeError = "rae_error"
+    static let raeErrorMessage = "rae_error_message"
+    static let idsdkError = "idsdk_error"
+    static let idsdkErrorMessage = "idsdk_error_message"
+}
+
 @objc public protocol UserIdentifiable {
     var trackingIdentifier: String? { get }
     var userIdentifier: String? { get set }
@@ -242,17 +250,17 @@ private extension RAnalyticsExternalCollector {
         switch notification.name.rawValue {
         case "\(Constants.notificationBaseName).login.failure":
             if let params = notification.object as? [String: Any] {
-                parameters["rae_error"] = params["rae_error"]
-                parameters["type"] = params["type"]
-                if let raeErrorMessage = params["rae_error_message"] {
-                    parameters["rae_error_message"] = raeErrorMessage
+                parameters[LoginFailureKey.raeError] = params[LoginFailureKey.raeError]
+                parameters[LoginFailureKey.type] = params[LoginFailureKey.type]
+                if let raeErrorMessage = params[LoginFailureKey.raeErrorMessage] {
+                    parameters[LoginFailureKey.raeErrorMessage] = raeErrorMessage
                 }
             }
 
         case "\(Constants.notificationBaseName).login.failure.\(Constants.idTokenEvent)":
             if let error = notification.object as? Error {
-                parameters["idsdk_error"] = error.localizedDescription
-                parameters["idsdk_error_message"] = (error as NSError).localizedFailureReason
+                parameters[LoginFailureKey.idsdkError] = error.localizedDescription
+                parameters[LoginFailureKey.idsdkErrorMessage] = (error as NSError).localizedFailureReason
             }
 
         default: ()

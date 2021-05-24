@@ -666,30 +666,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
     else if ([event.name isEqualToString:RAnalyticsLoginFailureEventName])
     {
-        // MARK: _rem_login_Failure
-        NSString *loginType = nil;
-        NSString *errorMessage = nil;
-        NSString *failureReason = nil;
-        NSString *loginFailureType = event.parameters[@"type"];
-        NSString *loginError = event.parameters[@"rae_error"];
-        NSString *loginFailureReason = event.parameters[@"rae_error_message"];
-        if ([loginFailureType isKindOfClass:NSString.class] && loginFailureType.length)
-        {
-            loginType = loginFailureType;
+        NSDictionary *loginFailureDictionary = event.loginFailureParameters;
+        if (loginFailureDictionary) {
+            [extra addEntriesFromDictionary:loginFailureDictionary];
         }
-        if ([loginError isKindOfClass:NSString.class] && loginError.length)
-        {
-            errorMessage = loginError;
-        }
-        if ([loginFailureReason isKindOfClass:NSString.class] && loginFailureReason.length)
-        {
-            failureReason = loginFailureReason;
-        }
-
-        if (loginType) extra[@"type"] = loginType;
-        if (errorMessage) extra[@"rae_error"] = errorMessage;
-        if (failureReason) extra[@"rae_error_message"] = failureReason;
-
     }
     else if ([event.name isEqualToString:RAnalyticsLogoutEventName])
     {

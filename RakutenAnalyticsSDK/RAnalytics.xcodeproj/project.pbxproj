@@ -77,6 +77,7 @@
 		C923B89825FF322A00F9CCA0 /* RAnalyticsRATTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B89925FF322A00F9CCA0 /* RAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B84F25FF322A00F9CCA0 /* RAnalytics.m */; };
 		C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B85025FF322A00F9CCA0 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C967B74B265BBDF700A92DAF /* RAnalyticsEvent+LoginFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = C967B74A265BBDF700A92DAF /* RAnalyticsEvent+LoginFailure.swift */; };
 		C96B73DB261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */; };
 		C96B73E6261E479600CF91BA /* URLSessionTask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73E3261E479600CF91BA /* URLSessionTask+Extensions.swift */; };
 		C96B73E7261E479600CF91BA /* HTTPCookieStorage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */; };
@@ -159,6 +160,7 @@
 		C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsRATTracker.h; sourceTree = "<group>"; };
 		C923B84F25FF322A00F9CCA0 /* RAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalytics.m; sourceTree = "<group>"; };
 		C923B85025FF322A00F9CCA0 /* RAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
+		C967B74A265BBDF700A92DAF /* RAnalyticsEvent+LoginFailure.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsEvent+LoginFailure.swift"; sourceTree = "<group>"; };
 		C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcher.swift; sourceTree = "<group>"; };
 		C96B73E3261E479600CF91BA /* URLSessionTask+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSessionTask+Extensions.swift"; sourceTree = "<group>"; };
 		C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HTTPCookieStorage+Extensions.swift"; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 		C923B84C25FF322A00F9CCA0 /* RAT */ = {
 			isa = PBXGroup;
 			children = (
+				C967B74A265BBDF700A92DAF /* RAnalyticsEvent+LoginFailure.swift */,
 				C923B84E25FF322A00F9CCA0 /* RAnalyticsRATTracker.h */,
 				C923B84D25FF322A00F9CCA0 /* RAnalyticsRATTracker.m */,
 			);
@@ -449,6 +452,7 @@
 				C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */,
 				C923B87925FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift in Sources */,
 				C923B87225FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m in Sources */,
+				C967B74B265BBDF700A92DAF /* RAnalyticsEvent+LoginFailure.swift in Sources */,
 				C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */,
 				C923B86125FF322A00F9CCA0 /* CoreHelpers.swift in Sources */,
 				C923B87A25FF322A00F9CCA0 /* Optional+String.swift in Sources */,
