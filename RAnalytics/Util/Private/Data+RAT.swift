@@ -30,13 +30,48 @@ extension Data {
     }
 }
 
+private func convert(_ object: Any) -> Any {
+    switch object {
+    case _ as NSNull:
+        return "null"
+
+    case let value as JsonRecord:
+        return value.toJsonString
+
+    case let value as [AnyObject]:
+        return value.toJsonString
+
+    case let value as String:
+        return "\"\(value)\""
+
+    case let value as NSNumber:
+        if CFGetTypeID(value) == CFBooleanGetTypeID() {
+            return (value.boolValue ? "true" : "false")
+        } else {
+            return object
+        }
+
+    default:
+        return object
+    }
+}
+
 private extension Array where Element == JsonRecord {
     var toJsonString: String {
         if isEmpty {
             return "[]"
         }
-        let result = map { $0.toJsonString }
-        return "[" + result.joined(separator: ", ") + "]"
+        return "[" + map { $0.toJsonString }.joined(separator: ",") + "]"
+    }
+}
+
+private extension Array where Element == AnyObject {
+    var toJsonString: String {
+        if isEmpty {
+            return "[]"
+        }
+        let result = map { convert($0) as AnyObject }
+        return "[\(result.map { "\($0)" }.joined(separator: ","))]"
     }
 }
 
@@ -46,25 +81,7 @@ private extension Dictionary where Key == String, Value == AnyObject {
             return "{}"
         }
 
-        let array = map { arg0 -> String in
-            let (key, value) = arg0
-
-            switch value {
-            case _ as NSNull:
-                return "\"\(key)\":null"
-            case let value as JsonRecord:
-                return "\"\(key)\":\(value.toJsonString)"
-            case let value as [JsonRecord]:
-                return "\"\(key)\":\(value.toJsonString)"
-            case let value as String:
-                return "\"\(key)\":\"\(value)\""
-            case let value as Bool:
-                return "\"\(key)\":\(value ? "true" : "false")"
-            default:
-                return "\"\(key)\":\(value)"
-            }
-        }
-
+        let array = map { "\"\($0.key)\":\(convert($0.value))" }
         return "{" + array.joined(separator: ", ") + "}"
     }
 }
