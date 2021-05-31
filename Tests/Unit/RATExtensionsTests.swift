@@ -103,6 +103,8 @@ final class RATDataExtensionSpec: QuickSpec {
                              ["price1": 3.57],
                              ["price": [nil, nil, nil, 41.65, 59.5, 22, 23.35, 9.99, 21.99, 21.41, 17.87, 19.99, 49.99, 41.65, 24.99]],
                              ["any1": [nil, nil, nil, "domain.com", 58, 34.56, true, false, [0, 1, 2, 3, 4, 5], ["user": ["name": "john"]]]],
+                             ["emptyArray": []],
+                             ["emptyDict": [:]],
                              ["nullable2": nil],
                              ["price2": 5]] as [JsonRecord]
 
@@ -137,6 +139,8 @@ final class RATDataExtensionSpec: QuickSpec {
                         expect(jsonString?.contains(#"{"price":[null,null,null,41.65,59.5,22,23.35,9.99,21.99,21.41,17.87,19.99,49.99,41.65,24.99]}"#)).to(beTrue())
                         // swiftlint:disable:next line_length
                         expect(jsonString?.contains(#"{"any1":[null,null,null,"domain.com",58,34.56,true,false,[0,1,2,3,4,5],{"user":{"name":"john"}}]}"#)).to(beTrue())
+                        expect(jsonString?.contains(#"{"emptyArray":[]}"#)).to(beTrue())
+                        expect(jsonString?.contains(#"{"emptyDict":{}}"#)).to(beTrue())
                     }
 
                     it("should return data with a valid JSON structure") {
