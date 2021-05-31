@@ -1,5 +1,9 @@
 # Changelog
 
+## 8.0.1 (2021-03-17)
+
+* [SDKCF-3460](https://jira.rakuten-it.com/jira/browse/SDKCF-3460): Removed sensitive/internal information from public header files so that they will not be exposed in the framework.
+
 ## 8.0.0 (2021-03-04)
 
 * The module can now be built and deployed as a binary framework. See [Confluence](https://confluence.rakuten-it.com/confluence/display/MTSD/iOS+Analytics+SDK+on+GitHub+-+Make+SDK+public) for details.
