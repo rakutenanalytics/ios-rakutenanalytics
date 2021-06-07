@@ -9,6 +9,7 @@ then
 fi
 
 SOURCEKITTEN="${JAZZY}/bin/sourcekitten"
+output_dir="./documentation"
 
 echo "📄 Installing Pods"
 bundle install && bundle exec pod install
@@ -23,10 +24,10 @@ mv ./docs-tmp ./RAnalytics/RAnalytics
 $SOURCEKITTEN doc --objc ./RAnalytics/RAnalytics/RAnalytics.h -- -x objective-c  -isysroot $(xcrun --show-sdk-path --sdk iphonesimulator) -I ./RAnalytics -fmodules > objcDoc.json
 
 echo "📄 Merging"
-jazzy --sourcekitten-sourcefile swiftDoc.json,objcDoc.json
+bundle exec jazzy --sourcekitten-sourcefile swiftDoc.json,objcDoc.json --output $output_dir
 
 echo "📄 Copying images"
-cp -r ./doc ./docs/doc 
+cp -r ./doc "$output_dir/doc"
 
 echo "📄 Cleaning up"
 rm -rf ./RAnalytics/RAnalytics
