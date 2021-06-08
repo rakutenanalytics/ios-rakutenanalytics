@@ -10,6 +10,8 @@ Parameters that can be passed into the lane are:
 * `skip_upload` (boolean, optional, default: false)
 * `skip_pod_push` (boolean, optional, default: false)
 
+The lane also uploads SPM Package to release or snapshot repo.
+
 ## Deploy Snapshot
 
 1. To deploy a **snapshot** you must set the environment variable `SNAPSHOT_GITHUB_TOKEN` - this value can be found on the internal accounts [page](https://confluence.rakuten-it.com/confluence/display/MTSD/Internal+accounts+for+SDK+Team) under "Github CI Publishing Account".
@@ -20,7 +22,8 @@ Parameters that can be passed into the lane are:
 
 * The `deploy_framework` fastlane lane in **snapshot** mode:
     1. Confirms the version parameter matches the podspec
-    1. Builds the fat binary arm64 and x86_64 frameworks using xcodebuild
+    1. Builds xcframework (arm64 and x86_64) using xcodebuild
+    1. Uploads SPM Package by updating xcframework in https://github.com/rakutentech/ios-analytics-framework-snapshots repo
     1. Uploads all the build artifacts (zipped frameworks, debug symbols) as a github release to https://github.com/rakutentech/ios-analytics-framework-snapshots/releases
 
 ## Deploy Release
@@ -33,7 +36,8 @@ Parameters that can be passed into the lane are:
 
 * The `deploy_framework` fastlane lane in **release** (i.e. with snapshot:false parameter set) mode:
     1. Confirms the version parameter matches the podspec
-    1. Builds the fat binary arm64 and x86_64 frameworks using xcodebuild
+    1. Builds xcframework (arm64 and x86_64) using xcodebuild
+    1. Uploads SPM Package by updating Package.swift file in https://github.com/rakutentech/ios-analytics-framework repo
     1. Uploads all the build artifacts (zipped frameworks, debug symbols) to an internal private repo as a github release https://ghe.rakuten-it.com/ssed/ios-analytics-private-artifacts/releases
     1. Uploads the zipped release framework as a github release to https://github.com/rakutentech/ios-analytics-framework/releases/
     1. Runs pod lib lint and pushes the podspec to spec repo

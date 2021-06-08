@@ -1,6 +1,6 @@
 module Fastlane
   module Actions
-    class UpdateSwiftPackageAction < Action
+    class UploadSwiftPackageAction < Action
       def self.run(params)
         isSnapshot = !params[:release]
         version = params[:version]
@@ -14,7 +14,7 @@ module Fastlane
             snapshot_repo = "rakutentech/ios-analytics-framework-snapshots"
             UI.message "Uploading snapshot framework v#{version} to GitHub repo: #{snapshot_repo}, branch #{target_branch}"
 
-            sh "sh push_framework_snapshot.sh #{version} #{ENV["SNAPSHOT_GITHUB_TOKEN"]} #{target_branch}"
+            sh "sh push_xcframework_snapshot.sh #{version} #{ENV["SNAPSHOT_GITHUB_TOKEN"]} #{target_branch}"
 
             UI.success "Successfully uploaded snapshot framework v#{version}"
           else
@@ -25,7 +25,7 @@ module Fastlane
             checksum = sh("swift package compute-checksum #{zipFrameworkPath}").strip
 
             UI.message "Updating Package.swift file"
-            packageUrl = "https://github.com/rakutentech/ios-analytics-framework-snapshots/releases/download/#{version}/RAnalyticsRelease-v#{version}.zip"
+            packageUrl = "https://github.com/rakutentech/ios-analytics-framework/releases/download/#{version}/RAnalyticsRelease-v#{version}.zip"
             sedPatternChecksum = '/^[[:space:]]*name: "RAnalytics"/{n;n;/checksum: / s/"[^"][^"]*"/"'+"#{checksum}"+'"/;}'
             sedPatternUrl = '/^[[:space:]]*name: "RAnalytics"/{n;/url: / s#"[^"][^"]*"#"'+"#{packageUrl}"+'"#;}'
             sh "sed -i '' '#{sedPatternChecksum}' Package.swift"

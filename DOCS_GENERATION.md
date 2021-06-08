@@ -9,11 +9,14 @@ Then, according to Jazzy [documentation](https://github.com/realm/jazzy/blob/mas
 
 ## How to use
 Ensure that Jazzy is installed.
-To generate docs run the following command in project's root directory.
+To generate docs run `generate_docs` Fastlane lane. Example:
 ```bash
-$ sh generate-docs.sh
+$ bundle exec fastlane generate_docs module_name:"RAnalytics" module_version:"8.0.0"
 ```
-The documentation is generated in `./docs` directory.
+The documentation is generated in `./artifacts/docs` directory.<br>
+
+`generate_docs` lane runs `documentation` action which executes `generate-docs.sh` instead of standard `red-gendoc`.
+This setting can be modified by changing `REM_FL_DOCS_GENERATION_COMMAND` variable in `fastlane/.env`.
 
 ## Script details
 The proposed solution for projects with mixed Objective-C and Swift files in Jazzy documentation doesn't work in our project.

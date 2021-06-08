@@ -57,7 +57,7 @@ platform :ios do
 
     pod_lib_lint(podspec: podspecPath, allow_warnings: true)
 
-    update_swift_package(version: version, release: !isSnapshot, target_branch: target_branch) unless options[:skip_build] || skip_upload
+    upload_swift_package(version: version, release: !isSnapshot, target_branch: target_branch) unless options[:skip_build] || skip_upload
 
     if isSnapshot
       snapshot_repo = "rakutentech/ios-analytics-framework-snapshots"
