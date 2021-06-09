@@ -1,5 +1,15 @@
 # Changelog
 
+## 8.1.0 (2021-06-09)
+
+* [SDKCF-3604](https://jira.rakuten-it.com/jira/browse/SDKCF-3604): Replaced RSDKA_SWIFT_NAME with NS_SWIFT_NAME to fix build error for specific customer.
+* [SDKCF-3823](https://jira.rakuten-it.com/jira/browse/SDKCF-3823): Fixed serialization of decimals [issue](https://bugs.swift.org/browse/SR-7054) by using an experimental replacement of JSONDecoder. This is currently only enabled for a specific customer.
+* [SDKCF-3545](https://jira.rakuten-it.com/jira/browse/SDKCF-3545): Changed Rakuten company name references.
+* [SDKCF-3851](https://jira.rakuten-it.com/jira/browse/SDKCF-3851): Added ability to track events while scrolling.
+* [SDKCF-3843](https://jira.rakuten-it.com/jira/browse/SDKCF-3843): Improved retry logic and error handling for RP cookie.
+* [SDKCF-3612](https://jira.rakuten-it.com/jira/browse/SDKCF-3612): Added support to build SDK as xcframework.
+* Continued migration of module code to Swift. Includes migration phases [three](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-3) and [four](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-4).
+
 ## 8.0.1 (2021-03-17)
 
 * [SDKCF-3460](https://jira.rakuten-it.com/jira/browse/SDKCF-3460): Removed sensitive/internal information from public header files so that they will not be exposed in the framework.
