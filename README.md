@@ -8,6 +8,7 @@
 1. [Advanced configuration and usage](advanced_usage.html)
 1. [Knowledge base](#knowledge-base)
 1. [Build and run module](#build-and-run-module)
+1. [Troubleshooting](#troubleshooting)
 1. [Changelog](changelog.html)
 
 # Introduction
@@ -302,3 +303,30 @@ The RAT tracker furthermore ignores view controllers that have no title, no navi
 * Run `bundle exec fastlane ios build_sample`
   - By default the `RAnalyticsSample` app depends on the compiled `RAnalytics` framework which gets built via this command invocation. It will also install dependencies.
 * Open `Samples/RAnalyticsSample.xcworkspace` in Xcode then run
+
+# Troubleshooting
+
+## How to build your project without use_frameworks!
+
+RAnalytics is a Swift framework and contains a custom module map.
+
+Then if  `use_frameworks!` is not defined in the iOS App's Podfile, this cocoapods error is displayed:
+`Using Swift static libraries with custom module maps is currently not supported.`
+
+Then it is needed to:
+- add `cocoapods-user-defined-build-types` plugin to the iOS App's Podfile
+- declare RAnalytics and its dependencies as `static_framework` as below:
+
+```
+plugin 'cocoapods-user-defined-build-types'
+enable_user_defined_build_types!
+
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
+
+target 'MyApp' do
+  pod 'RAnalytics', :build_type => :static_framework
+  pod 'RLogger', :build_type => :static_framework
+  pod 'RDeviceIdentifier', :build_type => :static_framework
+end
+```
