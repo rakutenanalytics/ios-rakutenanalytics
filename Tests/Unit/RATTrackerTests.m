@@ -11,6 +11,10 @@
 
 #pragma mark - Module Internals
 
+@interface TelephonyHandler ()
+@property (nonatomic, strong) NSString *mnetw;
+@end
+
 @interface RAnalyticsRATTracker ()
 @property (nonatomic) int64_t                   accountIdentifier;
 @property (nonatomic) int64_t                   applicationIdentifier;
@@ -18,7 +22,7 @@
 @property (nonatomic, copy, nullable) NSNumber *carriedOverOrigin;
 @property (nonatomic) RAnalyticsSender      *sender;
 @property (nonatomic, nullable) NSNumber *reachabilityStatus;
-@property (nonatomic) BOOL isUsingLTE;
+@property (nonatomic, strong) TelephonyHandler *telephonyHandler;
 - (instancetype)initInstance;
 - (NSNumber *)positiveIntegerNumberWithObject:(id)object;
 @end
@@ -494,12 +498,14 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
 {
     // Given
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(1); // _RATReachabilityStatusConnectedWithWWAN
-    RAnalyticsRATTracker.sharedInstance.isUsingLTE = YES;
-
+    
+    id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
+    OCMStub([telephonyHandlerMock mnetw]).andReturn(@(RATMobileNetworkTypeCellularLTE));
+    
     // When
     [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
         // Then
-        XCTAssertEqualObjects(payload[@"mnetw"], @(4)); // _RATMobileNetworkType4G
+        XCTAssertEqualObjects(payload[@"mnetw"], @(RATMobileNetworkTypeCellularLTE));
     }];
 }
 
@@ -507,12 +513,14 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
 {
     // Given
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(1); // _RATReachabilityStatusConnectedWithWWAN
-    RAnalyticsRATTracker.sharedInstance.isUsingLTE = NO;
+    
+    id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
+    OCMStub([telephonyHandlerMock mnetw]).andReturn(@(RATMobileNetworkTypeCellularNonLTE));
 
     // When
     [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
         // Then
-        XCTAssertEqualObjects(payload[@"mnetw"], @(3)); // _RATMobileNetworkType3G
+        XCTAssertEqualObjects(payload[@"mnetw"], @(RATMobileNetworkTypeCellularNonLTE));
     }];
 }
 
@@ -699,7 +707,7 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
 - (void)testNumberValidationWithStringLeadingByZero
 {
     NSNumber *number = [RAnalyticsRATTracker.sharedInstance positiveIntegerNumberWithObject:@"01"];
-    XCTAssertNil(number);
+    XCTAssertEqualObjects(number, @1);
 }
 
 - (void)testNumberValidationWithStringIncludingCharacter

@@ -2,10 +2,8 @@
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import <CoreLocation/CLLocation.h>
-
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 #import "UnitTests-Swift.h"
-
 #import <RAnalytics/RAnalytics-Swift.h>
 
 @implementation CurrentPage
@@ -99,11 +97,16 @@
     return nil;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+
 - (void)invalidateTimerOfSender:(RAnalyticsSender *)sender
 {
-    [sender.uploadTimer invalidate];
-    sender.uploadTimer = nil;
+    [[sender performSelector:NSSelectorFromString(@"uploadTimer")] invalidate];
+    [sender performSelector:NSSelectorFromString(@"setUploadTimer:") withObject:nil];
 }
+
+#pragma clang diagnostic pop
 
 - (void)addMock:(id)mock
 {

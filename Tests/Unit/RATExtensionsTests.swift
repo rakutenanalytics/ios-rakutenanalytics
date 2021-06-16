@@ -3,6 +3,8 @@ import Nimble
 @testable import RAnalytics
 
 final class BundleMock: EnvironmentBundle {
+    var disabledEventsAtBuildTime: [String]?
+    var bundleIdentifier: String?
     var useDefaultSharedCookieStorage: Bool {
         (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
     }

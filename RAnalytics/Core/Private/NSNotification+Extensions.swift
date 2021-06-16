@@ -14,7 +14,7 @@ extension Notification.Name {
 
 /// @warning This extension is declared as public to be used in Objective-C classes
 /// @warning This extension will have to be internal when the callers are migrated to Swift
-@objc public extension NSNotification {
+@objc extension NSNotification {
     static let discoverPageVisit = Notification.Name.discoverPageVisit
     static let discoverPageTap = Notification.Name.discoverPageTap
     static let discoverPageRedirect = Notification.Name.discoverPageRedirect

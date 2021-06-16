@@ -1,9 +1,5 @@
 #import <RAnalytics/RAnalytics.h>
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreLocation/CoreLocation.h>
-#import <SystemConfiguration/SystemConfiguration.h>
-#import <WebKit/WebKit.h>
 #import <RDeviceIdentifier/RDeviceIdentifier.h>
 #import "_RAnalyticsHelpers.h"
 #import "_RAnalyticsCoreHelpers.h"
@@ -17,71 +13,14 @@ NSString *const _RATGenericEventName = @"rat.generic";
 NSString *const _RATPGNParameter     = @"pgn";
 NSString *const _RATREFParameter     = @"ref";
 
-const char* _RATReachabilityHost = "8.8.8.8"; // Google DNS Server
+NSString *const _RATReachabilityHost = @"8.8.8.8"; // Google DNS Server
 
 static const NSTimeInterval _RATBatchingDelay = 1.0; // Batching delay is 1 second by default
-
-// Recursively try to find a URL in a view hierarchy
-static NSURL *findURLForView(UIView *view)
-{
-    NSURL *url = nil;
-
-    if ([WKWebView class] && [view isKindOfClass:[WKWebView class]])
-    {
-        url = ((WKWebView *)view).URL;
-    }
-
-    if ((url = url.absoluteURL))
-    {
-        /*
-         * If a URL is found, only keep a safe subpart of it (scheme+host+path) since
-         * query parameters etc may have sensitive information (access tokens…).
-         */
-        NSURLComponents *fullComponents = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-        NSURLComponents *components = [NSURLComponents new];
-        components.scheme = fullComponents.scheme;
-        components.host   = fullComponents.host;
-        components.path   = fullComponents.path;
-        url = components.URL.absoluteURL;
-    }
-    else
-    {
-        for (UIView *subview in view.subviews)
-        {
-            if ((url = findURLForView(subview))) break;
-        }
-    }
-
-    return url;
-}
 
 NSString* const _RATDatabaseName = @"RSDKAnalytics.db";
 NSString* const _RATTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
 ////////////////////////////////////////////////////////////////////////////
-
-// Private constants
-
-/*
- * This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter.
- */
-typedef NS_ENUM(NSUInteger, _RATMobileNetworkType)
-{
-    _RATMobileNetworkTypeWiFi    = 1,
-    _RATMobileNetworkType3G      = 3,
-    _RATMobileNetworkType4G      = 4,
-};
-
-
-/*
- * Reachability status.
- */
-typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
-{
-    _RATReachabilityStatusOffline,
-    _RATReachabilityStatusConnectedWithWWAN,
-    _RATReachabilityStatusConnectedWithWiFi,
-};
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -90,15 +29,6 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 @property (nonatomic) int64_t applicationIdentifier;
 
 @property (nonatomic) RAnalyticsSender *sender;
-
-/*
- * We need to keep an instance of CTTelephonyNetworkInfo around to track
- * changes in radio access technology, on iOS 7+.
- */
-
-@property (nonatomic) CTTelephonyNetworkInfo *telephonyNetworkInfo;
-@property (nonatomic) BOOL isUsingLTE;
-
 
 /*
  * Keep track of reachability.
@@ -121,34 +51,21 @@ typedef NS_ENUM(NSUInteger, _RATReachabilityStatus)
 /*
  * RPCookie fetcher is used to retrieve the cookie details on initialize
 */
-
 @property (nonatomic, strong) RAnalyticsRpCookieFetcher *rpCookieFetcher;
+
+@property (nonatomic, strong) TelephonyHandler *telephonyHandler;
+
+@property (nonatomic, strong) DeviceHandler *deviceHandler;
+
+@property (nonatomic, strong) UserAgentHandler *userAgentHandler;
+
+@property (nonatomic, strong) ReachabilityNotifier * _Nullable reachabilityNotifier;
 
 @end
 
 @implementation RAnalyticsRATTracker
 
 @synthesize endpointURL;
-
-static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNetworkReachabilityFlags flags, void __unused *info)
-{
-    NSNumber *status = nil;
-
-    if (!(flags & kSCNetworkReachabilityFlagsReachable) || (flags & kSCNetworkReachabilityFlagsConnectionRequired))
-    {
-        status = @(_RATReachabilityStatusOffline);
-    }
-    else if ((flags & kSCNetworkReachabilityFlagsIsWWAN))
-    {
-        status = @(_RATReachabilityStatusConnectedWithWWAN);
-    }
-    else
-    {
-        status = @(_RATReachabilityStatusConnectedWithWiFi);
-    }
-
-    [RAnalyticsRATTracker sharedInstance].reachabilityStatus = status;
-}
 
 #pragma mark - RAnalyticsTracker
 
@@ -172,7 +89,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 {
     if (self = [super init])
     {
-        _startTime = [RAnalyticsRATTracker stringWithDate:NSDate.date];
+        _startTime = NSDate.date.toString;
 
         /*
          * Attempt to read the IDs from the app's plist
@@ -188,32 +105,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         /*
          * Keep track of reachability.
          */
-        static SCNetworkReachabilityRef reachability;
-        static dispatch_once_t oncet;
-        dispatch_once(&oncet, ^{
-            reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, _RATReachabilityHost);
-            SCNetworkReachabilitySetCallback(reachability, _reachabilityCallback, NULL);
-            SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
-
-            /*
-             * We register for reachability updates, but to get the current reachability we need to query it,
-             * so we do so from a background thread.
-             */
-
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-                SCNetworkReachabilityFlags flags;
-                if (SCNetworkReachabilityGetFlags(reachability, &flags))
-                {
-                    _reachabilityCallback(reachability, flags, NULL);
-                }
-            });
-
-            atexit_b(^
-                     {
-                         SCNetworkReachabilityUnscheduleFromRunLoop(reachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
-                         CFRelease(reachability);
-                     });
-        });
+        _reachabilityNotifier = [ReachabilityNotifier.alloc initWithHost:_RATReachabilityHost
+                                                                callback:RAnalyticsRATTracker.reachabilityCallback];
 
         // create a sender.
         RAnalyticsDatabase *database = [RAnalyticsDatabase databaseWithConnection:[RAnalyticsDatabase mkAnalyticsDBConnectionWithName:_RATDatabaseName]];
@@ -230,40 +123,23 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
                  [RLogger error:@"%@", error];
              }
          }];
-
-        /*
-         * Listen to changes in radio access technology, to detect LTE. Only iOS7+ sends these.
-         */
-
-        _telephonyNetworkInfo  = CTTelephonyNetworkInfo.new;
-        if ([_telephonyNetworkInfo respondsToSelector:@selector(currentRadioAccessTechnology)])
-        {
-            /*
-             * Check immediately, then listen to changes.
-             */
-
-            [self _checkLTE];
-
-            [NSNotificationCenter.defaultCenter addObserverForName:CTRadioAccessTechnologyDidChangeNotification
-                                                            object:nil
-                                                             queue:nil
-                                                        usingBlock:^(NSNotification *note)
-            {
-               [self _checkLTE];
-            }];
-        }
         
-        /*
-         * Reallocate telephonyNetworkInfo when the app becomes active
-         */
+        _telephonyHandler = [TelephonyHandler.alloc initWithTelephonyNetworkInfo:CTTelephonyNetworkInfo.new
+                                                              notificationCenter:NSNotificationCenter.defaultCenter];
         
+        // Reallocate telephonyNetworkInfo when the app becomes active
         [NSNotificationCenter.defaultCenter addObserverForName:UIApplicationDidBecomeActiveNotification
                                                         object:nil
                                                          queue:nil
-                                                    usingBlock:^(NSNotification *note)
-        {
-            self.telephonyNetworkInfo  = CTTelephonyNetworkInfo.new;
+                                                    usingBlock:^(NSNotification * _Nonnull note) {
+            [self.telephonyHandler updateWithTelephonyNetworkInfo: CTTelephonyNetworkInfo.new];
         }];
+        
+        _deviceHandler = [DeviceHandler.alloc initWithDevice:UIDevice.currentDevice
+                                                      screen:UIScreen.mainScreen];
+        
+        _userAgentHandler = [UserAgentHandler.alloc initWithBundle:NSBundle.mainBundle];
+        
     }
     return self;
 }
@@ -304,131 +180,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     return RAnalyticsRATTracker.sharedInstance.sender.endpointURL;
 }
 
-+ (NSString *)stringWithDate:(NSDate *)date
-{
-    /*
-     * Using the following code would result in libICU being lazily loaded along with
-     * its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
-     *
-     * ```
-     * NSDateFormatter *startTimeFormatter = NSDateFormatter.new;
-     * startTimeFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-     * startTimeFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-     * startTimeFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-     * NSString *startTime = [startTimeFormatter stringFromDate:NSDate.date];
-     * ```
-     *
-     * Think NSCalendar is the solution? No luck, it loads ICU too! Instead,
-     * we just use a few lines of C, which allocate about 20KB. It's OK as we don't need
-     * any fancy locale.
-     */
-
-
-    /*
-     * The reason I don't use gettimeofday (2) is that it's a BSD 4.2 function, it's not part
-     * of the standard C library, and I'm not sure how Apple feels about using those.
-     *
-     * -[NSDate timeIntervalSince1970] gives the same result anyway.
-     */
-    NSTimeInterval timeInterval = date.timeIntervalSince1970;
-    struct timeval tod;
-    tod.tv_sec  = (long) ceil(timeInterval);
-    tod.tv_usec = (int)  ceil((timeInterval - tod.tv_sec) * (double) NSEC_PER_MSEC);
-
-
-    /*
-     * localtime (3) reuses an internal buffer, so the pointer it returns must never get
-     * free (3)'d. localtime (3) is ISO C90 so it's safe to use without having to worry
-     * about Apple's wrath.
-     */
-
-    struct tm *time = localtime(&tod.tv_sec);
-
-
-    /*
-     * struct tm's epoc is 1900/1/1. Months start at 0.
-     */
-
-     return [[NSString stringWithFormat:@"%04u-%02u-%02u %02u:%02u:%02u",
-                                        1900 + time->tm_year,
-                                        1 + time->tm_mon,
-                                        time->tm_mday,
-                                        time->tm_hour,
-                                        time->tm_min,
-                                        time->tm_sec] copy];
-}
-
-+ (NSString *)nameWithPage:(UIViewController *)page
-{
-    if (!page)
-    {
-        return nil;
-    }
-    /*
-     * FIXME: should we allow developers to give view controllers distinctive
-     * names just for analytics?
-     */
-
-    return NSStringFromClass([page class]);
-}
-
-+ (int64_t)daysPassedSinceDate:(NSDate *)date
-{
-    if (!date)
-    {
-        return 0;
-    }
-    NSCalendar *calendar = [NSCalendar.alloc initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    return [calendar components:NSCalendarUnitDay fromDate:date toDate:NSDate.date options:0].day;
-}
-
 - (void)addAutomaticFields:(NSMutableDictionary *)payload state:(RAnalyticsState *)state
 {
-    static UIDevice *device;
-    static NSString *screenResolution;
-    static NSString *carrierName;
-    static NSString *userAgent;
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        CGSize screenSize = UIScreen.mainScreen.bounds.size;
-        screenResolution = [NSString stringWithFormat:@"%ux%u", (unsigned) ceil(screenSize.width), (unsigned) ceil(screenSize.height)];
-
-        /*
-         * This is needed to enable access to the battery getters below.
-         */
-        device = UIDevice.currentDevice;
-        device.batteryMonitoringEnabled = YES;
-
-
-        /*
-         * Build a user agent string of the form AppId/Version
-         */
-
-        NSBundle *bundle = NSBundle.mainBundle;
-        userAgent = [NSString stringWithFormat:@"%@/%@", bundle.bundleIdentifier, state.currentVersion];
-
-
-        /*
-         * Listen to changes in carrier.
-         */
-
-        void (^assignCarrierName)(CTCarrier *) = ^(CTCarrier *carrier) {
-            carrierName = carrier.carrierName.copy;
-            carrierName = [carrierName substringToIndex:MIN(32ul, carrierName.length)];
-
-            if (!carrierName.length || !carrier.mobileNetworkCode.length)
-            {
-                carrierName = nil;
-            }
-        };
-
-        CTTelephonyNetworkInfo *telephonyNetworkInfo = self.telephonyNetworkInfo;
-        assignCarrierName(telephonyNetworkInfo.subscriberCellularProvider);
-        telephonyNetworkInfo.subscriberCellularProviderDidUpdateNotifier = ^(CTCarrier *carrier) {
-            assignCarrierName(carrier);
-        };
-    });
-
     // MARK: acc
     NSNumber *acc = [self positiveIntegerNumberWithObject:payload[@"acc"]];
     if (acc)
@@ -465,13 +218,13 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         }
     }
 
-    if (device.batteryState != UIDeviceBatteryStateUnknown)
+    if (_deviceHandler.batteryState != UIDeviceBatteryStateUnknown)
     {
         // MARK: powerstatus
-        payload[@"powerstatus"] = @(device.batteryState != UIDeviceBatteryStateUnplugged ? 1 : 0);
+        payload[@"powerstatus"] = @(_deviceHandler.batteryState != UIDeviceBatteryStateUnplugged ? 1 : 0);
 
         // MARK: mbat
-        payload[@"mbat"] = [NSString stringWithFormat:@"%0.f", device.batteryLevel * 100];
+        payload[@"mbat"] = [NSString stringWithFormat:@"%0.f", _deviceHandler.batteryLevel * 100];
     }
 
     // MARK: dln
@@ -513,32 +266,17 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
         payload[@"loc"] = locationDic;
     }
+    
+    _telephonyHandler.reachabilityStatus = _reachabilityStatus;
 
     // MARK: mcn
-    payload[@"mcn"] = carrierName.length ? carrierName : @"";
+    payload[@"mcn"] = _telephonyHandler.mcn;
 
     // MARK: model
     payload[@"model"] = RDeviceIdentifier.modelIdentifier;
 
     // MARK: mnetw
-    payload[@"mnetw"] = @"";
-    
-    if (_reachabilityStatus)
-    {
-        switch (_reachabilityStatus.unsignedIntegerValue)
-        {
-            case _RATReachabilityStatusConnectedWithWiFi:
-                payload[@"mnetw"] = @(_RATMobileNetworkTypeWiFi);
-                break;
-
-            case _RATReachabilityStatusConnectedWithWWAN:
-                payload[@"mnetw"] = @(self.isUsingLTE ? _RATMobileNetworkType4G : _RATMobileNetworkType3G);
-                break;
-
-            default:
-                break;
-        }
-    }
+    payload[@"mnetw"] = _telephonyHandler.mnetw ?: @"";
 
     // MARK: mori
     RStatusBarOrientationHandler *statusBarOrientationHandler = [[RStatusBarOrientationHandler alloc] initWithApplication:_RAnalyticsSharedApplication()];
@@ -547,7 +285,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     // MARK: online
     if (_reachabilityStatus)
     {
-        payload[@"online"] = (_reachabilityStatus.unsignedIntegerValue != _RATReachabilityStatusOffline) ? @YES : @NO;
+        payload[@"online"] = (_reachabilityStatus.unsignedIntegerValue != RATReachabilityStatusOffline) ? @YES : @NO;
     }
 
     // MARK: ckp
@@ -557,10 +295,10 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     }
 
     // MARK: ua
-    payload[@"ua"] = userAgent;
+    payload[@"ua"] = [_userAgentHandler valueFor:state];
 
     // MARK: res
-    payload[@"res"] = screenResolution;
+    payload[@"res"] = _deviceHandler.screenResolution;
 
     // MARK: ltm
     payload[@"ltm"] = self.startTime;
@@ -633,8 +371,8 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
     else if ([event.name isEqualToString:RAnalyticsSessionStartEventName])
     {
         // MARK: _rem_launch
-        extra[@"days_since_first_use"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.installLaunchDate]);
-        extra[@"days_since_last_use"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.lastLaunchDate]);
+        extra[@"days_since_first_use"] = @([NSDate daysPassedSinceDate:state.installLaunchDate]);
+        extra[@"days_since_last_use"] = @([NSDate daysPassedSinceDate:state.lastLaunchDate]);
     }
     else if ([event.name isEqualToString:RAnalyticsSessionEndEventName])
     {
@@ -649,7 +387,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
             extra[@"previous_version"] = state.lastVersion;
         }
         extra[@"launches_since_last_upgrade"] = @(state.lastVersionLaunches);
-        extra[@"days_since_last_upgrade"] = @([RAnalyticsRATTracker daysPassedSinceDate:state.lastUpdateDate]);
+        extra[@"days_since_last_upgrade"] = @([NSDate daysPassedSinceDate:state.lastUpdateDate]);
     }
     else if ([event.name isEqualToString:RAnalyticsLoginEventName])
     {
@@ -705,7 +443,7 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
         Class     pageClass      = currentPage.class;
         NSString *pageIdentifier = (NSString *)event.parameters[@"page_id"];
         NSString *pageTitle      = currentPage.navigationItem.title ?: currentPage.title;
-        NSURL    *pageURL        = findURLForView(currentPage.view).absoluteURL;
+        NSURL    *pageURL        = [currentPage.view getWebViewURL].absoluteURL;
 
         pageIdentifier = pageIdentifier.length ? pageIdentifier : nil;
         pageTitle      = pageTitle.length      ? pageTitle      : nil;
@@ -885,35 +623,9 @@ static void _reachabilityCallback(SCNetworkReachabilityRef __unused target, SCNe
 
 //--------------------------------------------------------------------------
 
-- (void)_checkLTE
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.telephonyNetworkInfo respondsToSelector:@selector(currentRadioAccessTechnology)])
-        {
-            self.isUsingLTE = [self.telephonyNetworkInfo.currentRadioAccessTechnology isEqualToString:CTRadioAccessTechnologyLTE];
-        }
-    });
-}
-
 - (NSNumber *)positiveIntegerNumberWithObject:(id)object
 {
-    if ([object isKindOfClass:NSNumber.class])
-    {
-        if((strcmp([object objCType], @encode(float))) != 0 && (strcmp([object objCType], @encode(double))) != 0 && [object longLongValue] > 0)
-        {
-            return object;
-        }
-    }
-    else if ([object isKindOfClass:NSString.class])
-    {
-        NSString *text = object;
-        NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:text];
-        if([[NSCharacterSet decimalDigitCharacterSet] isSupersetOfSet: charSet] && [text characterAtIndex:0] != '0' && [text longLongValue] > 0)
-        {
-            return @(text.longLongValue);
-        }
-    }
-    return nil;
+    return [object positiveIntegerNumber];
 }
 
 @end

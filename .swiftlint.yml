@@ -7,6 +7,9 @@ included:
 disabled_rules:
 - trailing_whitespace
 - nesting
+- max_length
+- identifier_name
+- todo
 
 opt_in_rules:
 - empty_count
@@ -17,9 +20,6 @@ excluded:
 - Samples/Pods
 - Pods
 - SwiftLint/Common/3rdPartyLib
-
-identifier_name:
-  max_length: 45
 
 line_length:
     warning: 150

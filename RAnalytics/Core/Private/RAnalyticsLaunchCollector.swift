@@ -1,16 +1,14 @@
 import Foundation
 import UIKit
 
-public enum RAnalyticsLaunchCollectorError: Error {
+enum RAnalyticsLaunchCollectorError: Error {
     case triggerTypeIsIncorrect
     case trackingIsNotProcessed
 }
 
 /// This class tracks launch events.
 /// It creates event corresponding to each event, sends it to RAnalyticsManager's instance to process.
-/// @warning RAnalyticsLaunchCollector is declared as public to be accessible from Objective-C
-/// @warning RAnalyticsLaunchCollector will have to be private when the callers are migrated to Swift
-@objc public final class RAnalyticsLaunchCollector: NSObject {
+@objc final class RAnalyticsLaunchCollector: NSObject {
     private enum Constants {
         static let initialLaunchDateKey = "com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate"
         static let installLaunchDateKey = "com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate"
@@ -21,33 +19,33 @@ public enum RAnalyticsLaunchCollectorError: Error {
     }
 
     /// The initial launch date is being stored in keychain.
-    @objc public private(set) var initialLaunchDate: Date?
+    @objc private(set) var initialLaunchDate: Date?
 
     /// The install launch date is being stored in shared preferences.
-    @objc public private(set) var installLaunchDate: Date?
+    @objc private(set) var installLaunchDate: Date?
 
     /// The last update date is being stored in shared preferences.
-    @objc public private(set) var lastUpdateDate: Date?
+    @objc private(set) var lastUpdateDate: Date?
 
     /// The last launch date is being stored in shared preferences.
-    @objc public private(set) var lastLaunchDate: Date?
+    @objc private(set) var lastLaunchDate: Date?
 
     /// The last version is being stored in shared preferences.
-    @objc public private(set) var lastVersion: String?
+    @objc private(set) var lastVersion: String?
 
     /// The number of launches since last version is being stored in shared preferences.
-    @objc public private(set) var lastVersionLaunches: UInt = 0
+    @objc private(set) var lastVersionLaunches: UInt = 0
 
     /// String identifying the origin of the launch or visit, if it can be determined.
     /// Default value: .internal
-    @objc public private(set) var origin: AnalyticsManager.State.Origin = .internal
+    @objc private(set) var origin: AnalyticsManager.State.Origin = .internal
 
     /// Currently-visited view controller.
-    @objc public private(set) var currentPage: UIViewController?
+    @objc private(set) var currentPage: UIViewController?
 
     /// The identifier is computed from push payload.
     /// It is used for tracking push notification. It is also sent together with a push notification event.
-    @objc public private(set) var pushTrackingIdentifier: String?
+    @objc private(set) var pushTrackingIdentifier: String?
 
     private let notificationHandler: NotificationObservable?
     private let userStorageHandler: UserStorageHandleable?
@@ -57,9 +55,9 @@ public enum RAnalyticsLaunchCollectorError: Error {
     private var pushTapTrackingDate: Date?
     private let pushTapEventTimeLimit: TimeInterval = 1.5
 
-    @objc public private(set) var isInitialLaunch: Bool = false
-    @objc public private(set) var isInstallLaunch: Bool = false
-    @objc public private(set) var isUpdateLaunch: Bool = false
+    @objc private(set) var isInitialLaunch: Bool = false
+    @objc private(set) var isInstallLaunch: Bool = false
+    @objc private(set) var isUpdateLaunch: Bool = false
 
     @available(*, unavailable)
     override init() {
@@ -76,7 +74,7 @@ public enum RAnalyticsLaunchCollectorError: Error {
     ///   - dependenciesFactory: The dependencies factory.
     ///
     /// - Returns: An instance of RAnalyticsLaunchCollector or nil.
-    @objc public init?(dependenciesFactory: DependenciesFactory) {
+    @objc init?(dependenciesFactory: DependenciesFactory) {
         guard let notificationHandler = dependenciesFactory.notificationHandler,
               let userStorageHandler = dependenciesFactory.userStorageHandler,
               let keychainHandler = dependenciesFactory.keychainHandler,
@@ -147,7 +145,7 @@ public enum RAnalyticsLaunchCollectorError: Error {
 
 // MARK: - App Life Cycle Observers
 
-@objc public extension RAnalyticsLaunchCollector {
+@objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
         update()
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
@@ -194,7 +192,7 @@ public enum RAnalyticsLaunchCollectorError: Error {
 
 // MARK: - Presenting View Controller
 
-public extension RAnalyticsLaunchCollector {
+extension RAnalyticsLaunchCollector {
     /// This method is called when the swizzling method _swizzled_viewDidAppear in _RAnalyticsTrackingPageView is called.
     /// The _swizzled_viewDidAppear is called when the view of an UIViewController is shown.
     func didPresentViewController(_ viewController: UIViewController) {
@@ -234,7 +232,7 @@ extension RAnalyticsLaunchCollector {
     }
 }
 
-public extension RAnalyticsLaunchCollector {
+extension RAnalyticsLaunchCollector {
     /// This method sends a push open notify event only if a tracking identifier can be pulled from the UNNotificationResponse
     /// - Returns:
     ///     - success if the trigger is kind of UNPushNotificationTrigger and if the tracking is processed. The associated value is the trigger.
@@ -304,7 +302,7 @@ private extension RAnalyticsLaunchCollector {
 
 // MARK: - Utils
 
-public extension RAnalyticsLaunchCollector {
+extension RAnalyticsLaunchCollector {
     func resetToDefaults() {
         installLaunchDate = userStorageHandler?.object(forKey: Constants.installLaunchDateKey) as? Date
         lastUpdateDate = userStorageHandler?.object(forKey: Constants.lastUpdateDateKey) as? Date

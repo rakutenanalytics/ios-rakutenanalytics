@@ -19,6 +19,7 @@ private enum SenderConstants {
 
     private let database: RAnalyticsDatabase
     private let databaseTableName: String
+    private let session: SwiftySessionable
 
     /// uploadTimer is used to throttle uploads. A call to scheduleBackgroundUpload
     /// will do nothing if uploadTimer is not nil.
@@ -27,10 +28,7 @@ private enum SenderConstants {
     /// processed, though, we only invalidate that timer at the very end of the HTTP
     /// request. That's why we also need uploadRequested, set by scheduleBackgroundUpload,
     /// so that we know we have to restart our timer at that point.
-
-    // swiftlint:disable:next todo
-    // FIXME: Make private again after tests are refactored
-    @AtomicGetSet @objc public var uploadTimer: Timer?
+    @AtomicGetSet @objc dynamic var uploadTimer: Timer?
     @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?
@@ -48,7 +46,8 @@ private enum SenderConstants {
         self.init(endpoint: endpoint,
                   database: database,
                   databaseTable: databaseTable,
-                  bundle: Bundle.main)
+                  bundle: Bundle.main,
+                  session: URLSession.shared)
     }
 
     /// Initialize Sender
@@ -57,15 +56,18 @@ private enum SenderConstants {
     ///   - database: database to read/write
     ///   - databaseTable: name of database
     ///   - bundle: the bundle
+    ///   - session: the URL session
     init?(endpoint: URL,
           database: RAnalyticsDatabase,
           databaseTable: String,
-          bundle: EnvironmentBundle) {
+          bundle: EnvironmentBundle,
+          session: SwiftySessionable) {
         self.endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
         self.batchingDelayClosure = { return SenderConstants.defaultUploadInterval }
         self.enableInternalSerialization = bundle.enableInternalSerialization
+        self.session = session
         super.init()
 
         configureNotifications()
@@ -174,7 +176,7 @@ fileprivate extension RAnalyticsSender {
 
         let request = URLRequest.ratRequest(url: endpointURL, body: data)
 
-        let task = URLSession.shared.dataTask(with: request) { result in
+        let task = session.dataTask(with: request) { result in
             switch result {
             case .failure(let error):
                 /// Connection failed. Request a new attempt before calling the completion.

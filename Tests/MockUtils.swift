@@ -86,6 +86,18 @@ final class URLSessionTaskMock: URLSessionTaskable {
     func resume() {}
 }
 
+// MARK: - Swifty Session
+
+final class SwityURLSessionMock: SwiftySessionable {
+    var urlRequest: URLRequest?
+
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
+        self.urlRequest = request
+        completionHandler(.success((nil, URLResponse())))
+        return URLSessionTaskMock()
+    }
+}
+
 // MARK: - HTTP Cookie Storage
 
 final class HTTPCookieStorageMock: HTTPCookieStorable {
@@ -93,5 +105,19 @@ final class HTTPCookieStorageMock: HTTPCookieStorable {
 
     func cookies(for URL: URL) -> [HTTPCookie]? {
         cookiesArray
+    }
+}
+
+// MARK: - Tracker
+
+final class TrackerMock: NSObject, Tracker {
+    var endpointURL: URL = URL(string: "https://endpoint.co.jp")!
+
+    override init() {
+        super.init()
+    }
+
+    func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        false
     }
 }

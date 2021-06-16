@@ -1,14 +1,19 @@
 internal enum Synchronizable {
 
     /// This is a Swift interpretation of Obj-C `@synchronized`
-    static func withSynchronized(_ objects: [Lockable], do: () -> Void) { // swiftlint:disable:this identifier_name
+    static func withSynchronized(_ objects: [LockableResource], do: () -> Void) { // swiftlint:disable:this identifier_name
         objects.forEach { $0.lock() }
         `do`()
         objects.forEach { $0.unlock() }
     }
 }
 
+/// Protocol to mark object that have resources that can be thread locked
 internal protocol Lockable {
+    var resourcesToLock: [LockableResource] { get }
+}
+
+internal protocol LockableResource {
 
     /// Lock resource for caller's thread use
     func lock()
@@ -17,41 +22,52 @@ internal protocol Lockable {
     func unlock()
 }
 
-/// Object wrapper that conforms to Lockable protocol.
-/// Use it to control access to the resource in multi threaded environment.
+/// Object-wrapper that conforms to LockableResource protocol.
+/// Used to control getter and setter of given resource.
 /// When lock() has been called on some thread, only that thread will be able to access the resource.
 /// Other threads will synchronously wait for unlock() call to continue.
-internal class LockableObject<T>: Lockable {
-
+internal class LockableObject<T>: LockableResource {
     private var resource: T
-    private var lockingThread: Thread?
     private let dispatchGroup = DispatchGroup()
-    var isLocked: Bool {
-        return lockingThread != nil
+    @AtomicGetSet private var lockingThread: Thread?
+    @AtomicGetSet private var lockCount: UInt = 0
+    private var shouldWait: Bool {
+        assert(!(isLocked && lockingThread == nil), "Thread was deallocated before calling unlock()")
+        return isLocked && lockingThread != nil && lockingThread != Thread.current
     }
+
+    var isLocked: Bool { lockCount > 0 }
 
     init(_ resource: T) {
         self.resource = resource
     }
 
     deinit {
-        unlock()
+        for _ in [0..<lockCount] {
+            unlock()
+        }
     }
 
     func lock() {
+        if shouldWait {
+            dispatchGroup.wait()
+        }
+        _lockCount.mutate { $0 += 1 }
         lockingThread = Thread.current
         dispatchGroup.enter()
     }
 
     func unlock() {
-        if isLocked {
+        if lockCount > 0 {
+            _lockCount.mutate { $0 -= 1 }
             dispatchGroup.leave()
+        } else {
+            lockingThread = nil
         }
-        lockingThread = nil
     }
 
     func get() -> T {
-        if isLocked, lockingThread != Thread.current {
+        if shouldWait {
             dispatchGroup.wait()
             return resource
         } else {
@@ -60,7 +76,7 @@ internal class LockableObject<T>: Lockable {
     }
 
     func set(value: T) {
-        if isLocked, lockingThread != Thread.current {
+        if shouldWait {
             dispatchGroup.wait()
             resource = value
         } else {

@@ -2,6 +2,7 @@ import Quick
 import Nimble
 import UIKit
 import CoreLocation.CLRegion
+@testable import RAnalytics
 
 // MARK: - Keychain Handler
 

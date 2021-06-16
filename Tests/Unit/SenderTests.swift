@@ -44,7 +44,8 @@ class SenderTests: QuickSpec {
                     return RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
                                             database: database,
                                             databaseTable: databaseTableName,
-                                            bundle: bundle)!
+                                            bundle: bundle,
+                                            session: URLSession.shared)!
                 }
 
                 it("should send given payload when enableInternalSerialization is false") {

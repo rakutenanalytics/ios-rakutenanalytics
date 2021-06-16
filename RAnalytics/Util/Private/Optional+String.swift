@@ -8,4 +8,9 @@ extension Optional where Wrapped == String {
         guard let str = self else { return 0 }
         return str.hashValue
     }
+
+    var isEmpty: Bool {
+        guard let str = self else { return true }
+        return str.isEmpty
+    }
 }

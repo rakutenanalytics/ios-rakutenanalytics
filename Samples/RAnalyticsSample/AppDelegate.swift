@@ -10,7 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Override the build time configuration of disabled automatic events defined in `RAnalyticsInfo.plist`
-        AnalyticsManager.shared().shouldTrackEventHandler = { _ in
+        AnalyticsManager.shared()?.shouldTrackEventHandler = { _ in
             true
         }
         return true
@@ -21,16 +21,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         locationManager.requestWhenInUseAuthorization()
 
-        AnalyticsManager.shared().set(loggingLevel: .debug)
-        AnalyticsManager.shared().enableAppToWebTracking = true
+        AnalyticsManager.shared()?.set(loggingLevel: .debug)
+        AnalyticsManager.shared()?.enableAppToWebTracking = true
 
-        AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
+        AnalyticsManager.shared()?.setWebTrackingCookieDomain { () -> String? in
             return ".my-domain.co.jp"
         }
 
         RAnalyticsRATTracker.shared().set(batchingDelay: 15)
 
-        AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
+        AnalyticsManager.shared()?.set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 
         return true
     }

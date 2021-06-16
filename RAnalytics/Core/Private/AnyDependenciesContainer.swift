@@ -18,6 +18,14 @@ import Foundation
     }
 }
 
+extension AnyDependenciesContainer: NSCopying {
+    public func copy(with zone: NSZone? = nil) -> Any {
+        let copiedInstance = AnyDependenciesContainer()
+        copiedInstance.swiftyContainer = swiftyContainer
+        return copiedInstance
+    }
+}
+
 // MARK: - Generic resolve - Only for Swift
 
 extension AnyDependenciesContainer {

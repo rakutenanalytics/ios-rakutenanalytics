@@ -3,10 +3,6 @@
 #import <OCMock/OCMock.h>
 #import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
 
-@interface RAnalyticsManager ()
-@property (nonatomic, nullable, copy) NSString *deviceIdentifier;
-@end
-
 @interface EventTests : XCTestCase
 @end
 
@@ -15,7 +11,6 @@
 - (void)setUp
 {
     [super setUp];
-    RAnalyticsManager.sharedInstance.deviceIdentifier = @"deviceIdentifier";
 }
 
 - (RAnalyticsEvent *)defaultEvent

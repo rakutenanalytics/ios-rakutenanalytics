@@ -8,6 +8,7 @@
         UIApplication.class,
         UIViewController.class,
         UNUserNotificationCenter.class,
+        RAnalyticsManager.class
     ];
     for (Class loadableClass in classes) {
         if ([loadableClass respondsToSelector:@selector(loadSwift)]) {

@@ -1,6 +1,7 @@
 import Quick
 import Nimble
 import RAnalyticsBroadcast
+@testable import RAnalytics
 
 // MARK: - RABEventBroadcasterSpec
 

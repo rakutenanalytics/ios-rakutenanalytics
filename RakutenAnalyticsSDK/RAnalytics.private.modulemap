@@ -1,3 +1,7 @@
 module RLogger {
     link "RLogger"
 }
+
+module RDeviceIdentifier {
+    link "RDeviceIdentifier"
+}

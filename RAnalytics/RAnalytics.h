@@ -1,11 +1,11 @@
 // Core
 #import <RAnalytics/RAnalyticsDefines.h>
-#import <RAnalytics/RAnalyticsManager.h>
 #import <RAnalytics/RAnalyticsTracker.h>
 #import <RAnalytics/RAnalyticsEndpointSettable.h>
 #import <RAnalytics/RAnalyticsEvent.h>
 #import <RAnalytics/RAnalyticsPushTrackingUtility.h>
 #import <RAnalytics/RAnalyticsProgressNotifications.h>
+#import <RAnalytics/RAnalyticsDeviceIdentifier.h>
 
 // RAT
 #if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)

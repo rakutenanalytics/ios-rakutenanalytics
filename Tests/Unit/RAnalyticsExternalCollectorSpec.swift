@@ -1,6 +1,7 @@
 import Quick
 import Nimble
 import UIKit
+@testable import RAnalytics
 
 // MARK: - RAnalyticsExternalCollectorSpec
 

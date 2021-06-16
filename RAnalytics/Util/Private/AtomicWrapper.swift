@@ -1,22 +1,27 @@
 /// This wrapper ensures synchronized access to the value only for getter and setter.
-/// Mutating functions, subscript, incrementation etc. are not synchronized.
+/// Mutating functions, subscript, incrementation etc. are not synchronized by default -
+/// use `mutate` function to ensure operation atomicity.
 @propertyWrapper
-public struct AtomicGetSet<Value> {
-    // swiftlint:disable:next todo
-    /// FIXME: Make all internal again after tests are refactored
+struct AtomicGetSet<Value> {
     private let queue = PropertyQueueGenerator.spawnQueue(domain: "RAnalytics.Core.AtomicProperty")
     private var value: Value
 
-    public init(wrappedValue: Value) {
+    init(wrappedValue: Value) {
         self.value = wrappedValue
     }
 
-    public var wrappedValue: Value {
+    var wrappedValue: Value {
         get {
             return queue.sync { value }
         }
         set {
             queue.sync { value = newValue }
+        }
+    }
+
+    mutating func mutate(_ mutation: (inout Value) -> Void) {
+        queue.sync {
+            mutation(&value)
         }
     }
 }

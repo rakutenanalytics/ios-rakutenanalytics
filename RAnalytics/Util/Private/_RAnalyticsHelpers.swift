@@ -32,9 +32,11 @@ import UIKit
 }
 
 @objc public protocol EnvironmentBundle {
+    var bundleIdentifier: String? { get }
     var useDefaultSharedCookieStorage: Bool { get }
     var endpointAddress: URL? { get }
     var enableInternalSerialization: Bool { get }
+    var disabledEventsAtBuildTime: [String]? { get }
     static var assetsBundle: Bundle? { get }
     static var sdkComponentMap: NSDictionary? { get }
 }
@@ -98,13 +100,19 @@ import UIKit
         return NSDictionary(contentsOfFile: filePath)
     }()
 
-    public static let disabledEventsAtBuildTime: [String]? = {
-        guard let filePath = Bundle.main.path(forResource: "RAnalyticsConfiguration", ofType: "plist") else {
+    public var disabledEventsAtBuildTime: [String]? {
+        if let aSharedDisabledEventsAtBuildTime = Bundle.sharedDisabledEventsAtBuildTime {
+            return aSharedDisabledEventsAtBuildTime
+        }
+        guard let filePath = path(forResource: "RAnalyticsConfiguration", ofType: "plist") else {
             return nil
         }
         let dictionary = NSDictionary(contentsOfFile: filePath)
-        return dictionary?.object(forKey: "RATDisabledEventsList") as? [String]
-    }()
+        Bundle.sharedDisabledEventsAtBuildTime = dictionary?.object(forKey: "RATDisabledEventsList") as? [String]
+        return Bundle.sharedDisabledEventsAtBuildTime
+    }
+
+    private static var sharedDisabledEventsAtBuildTime: [String]?
 }
 
 private extension String {

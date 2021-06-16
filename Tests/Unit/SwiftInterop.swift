@@ -69,7 +69,7 @@ public class SwiftInterop: XCTestCase {
         var event: AnalyticsManager.Event = rat.event(withEventType: "foo", parameters: ["bar": "baz"])
         XCTAssertNotNil(event)
 
-        let manager = AnalyticsManager.shared()
+        let manager = AnalyticsManager.shared()!
         XCTAssertNotNil(manager)
         manager.shouldTrackLastKnownLocation = true
         manager.shouldTrackAdvertisingIdentifier = true

@@ -1,7 +1,7 @@
 import Foundation
 
 /// This class is used to get the correct tracking identifier.
-public final class UserIdentifierSelector: NSObject {
+final class UserIdentifierSelector: NSObject {
     private let trackingIdentifierNoLoginFound = "NO_LOGIN_FOUND"
     private let userIdentifiable: UserIdentifiable
 
@@ -11,7 +11,7 @@ public final class UserIdentifierSelector: NSObject {
     ///   - userIdentifiable: The user identifiable.
     ///
     /// - Returns: An instance of UserIdentifierSelector.
-    @objc public init(userIdentifiable: UserIdentifiable) {
+    @objc init(userIdentifiable: UserIdentifiable) {
         self.userIdentifiable = userIdentifiable
         super.init()
     }
@@ -19,7 +19,7 @@ public final class UserIdentifierSelector: NSObject {
     /// Returns the selected tracking identifier
     ///
     /// - Returns: A tracking identifier.
-    @objc public var selectedTrackingIdentifier: String {
+    @objc var selectedTrackingIdentifier: String {
         let selectedTrackingIdentifier = userIdentifiable.userIdentifier ?? userIdentifiable.trackingIdentifier
         guard let aTrackingIdentifier = selectedTrackingIdentifier else {
             return trackingIdentifierNoLoginFound

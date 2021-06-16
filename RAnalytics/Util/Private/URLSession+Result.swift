@@ -1,7 +1,7 @@
 internal extension URLSession {
 
     func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionDataTask {
+                  completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
 
         return dataTask(with: request) { (data, response, error) in
             if let error = error {

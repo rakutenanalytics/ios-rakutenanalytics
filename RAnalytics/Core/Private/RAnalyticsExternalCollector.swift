@@ -9,14 +9,14 @@ enum LoginFailureKey {
     static let idsdkErrorMessage = "idsdk_error_message"
 }
 
-@objc public protocol UserIdentifiable {
+@objc protocol UserIdentifiable {
     var trackingIdentifier: String? { get }
     var userIdentifier: String? { get set }
 }
 
 /// This class tracks login, logout and push events.
 /// It creates event corressponding to each event, sends it to RAnalyticsManager's instance to process.
-@objc public final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
+@objc final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
     private enum Constants {
         static let loginStateKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState"
         static let trackingIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier"
@@ -28,7 +28,7 @@ enum LoginFailureKey {
     }
 
     /// The login state information is being stored in shared preferences.
-    @objc public private(set) var isLoggedIn: Bool = false {
+    @objc private(set) var isLoggedIn: Bool = false {
         willSet(newValue) {
             guard isLoggedIn != newValue else {
                 return
@@ -39,7 +39,7 @@ enum LoginFailureKey {
     }
 
     /// The tracking identifier is being stored in shared preferences.
-    @objc public private(set) var trackingIdentifier: String? {
+    @objc private(set) var trackingIdentifier: String? {
         willSet(newValue) {
             guard trackingIdentifier != newValue else {
                 return
@@ -56,7 +56,7 @@ enum LoginFailureKey {
     }
 
     /// The user identifier is being stored in shared preferences.
-    @objc public var userIdentifier: String? {
+    @objc var userIdentifier: String? {
         willSet(newValue) {
             guard userIdentifier != newValue else {
                 return
@@ -90,7 +90,7 @@ enum LoginFailureKey {
     }
 
     /// The login method is being stored in shared preferences.
-    @objc public private(set) var loginMethod: AnalyticsManager.State.LoginMethod = .other {
+    @objc private(set) var loginMethod: AnalyticsManager.State.LoginMethod = .other {
         willSet(newValue) {
             guard loginMethod != newValue else {
                 return
@@ -137,7 +137,7 @@ enum LoginFailureKey {
     ///         It requires intances of these types: UserStorageHandleable, Trackable
     ///
     /// - Returns: An instance of RAnalyticsExternalCollector or nil.
-    @objc public init?(dependenciesFactory: DependenciesFactory) {
+    @objc init?(dependenciesFactory: DependenciesFactory) {
         guard let userStorageHandler = dependenciesFactory.userStorageHandler,
               let tracker = dependenciesFactory.tracker else {
             RLogger.warning("RAnalyticsExternalCollector can't be created without userStorageHandler and tracker dependencies")

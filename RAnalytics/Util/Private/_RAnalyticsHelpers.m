@@ -1,11 +1,5 @@
-#import <RAnalytics/RAnalyticsManager.h>
 #import "_RAnalyticsHelpers.h"
 #import "SwiftHeader.h"
-
-BOOL _RAnalyticsObjectsEqual(id objA, id objB)
-{
-    return [NSObject isNullableObjectEqual:objA to:objB];
-}
 
 NSURL *_RAnalyticsEndpointAddress(void)
 {
@@ -17,11 +11,6 @@ NSBundle *_RAnalyticsAssetsBundle(void)
     return [NSBundle assetsBundle];
 }
 
-NSDictionary *_RAnalyticsSDKComponentMap(void)
-{
-    return [NSBundle sdkComponentMap];
-}
-
 inline BOOL _RAnalyticsUseDefaultSharedCookieStorage()
 {
     return [NSBundle.mainBundle useDefaultSharedCookieStorage];
@@ -30,11 +19,6 @@ inline BOOL _RAnalyticsUseDefaultSharedCookieStorage()
 inline BOOL _RAnalyticsIsAppleClass(Class cls)
 {
     return [NSObject isAppleClass:cls];
-}
-
-inline BOOL _RAnalyticsIsApplePrivateClass(Class cls)
-{
-    return [NSObject isApplePrivateClass:cls];
 }
 
 #pragma clang diagnostic push
