@@ -271,12 +271,14 @@ NSString* const _RATTableName = @"RAKUTEN_ANALYTICS_TABLE";
 
     // MARK: mcn
     payload[@"mcn"] = _telephonyHandler.mcn;
+    payload[@"mcnd"] = _telephonyHandler.mcnd;
 
     // MARK: model
     payload[@"model"] = RDeviceIdentifier.modelIdentifier;
 
     // MARK: mnetw
     payload[@"mnetw"] = _telephonyHandler.mnetw ?: @"";
+    payload[@"mnetwd"] = _telephonyHandler.mnetwd ?: @"";
 
     // MARK: mori
     RStatusBarOrientationHandler *statusBarOrientationHandler = [[RStatusBarOrientationHandler alloc] initWithApplication:_RAnalyticsSharedApplication()];

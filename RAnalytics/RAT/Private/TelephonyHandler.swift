@@ -85,7 +85,7 @@ extension TelephonyHandler {
 
 extension TelephonyHandler {
     @available(iOS 12.0, *)
-    var selectedCarrierKey: String? {
+    private var selectedCarrierKey: String? {
         if #available(iOS 13.0, *) {
             return telephonyNetworkInfo.dataServiceIdentifier
 
@@ -98,7 +98,7 @@ extension TelephonyHandler {
 // MARK: - mcn and mcnd
 
 extension TelephonyHandler {
-    /// The mcn of the primary carrier.
+    /// - Returns: The name of the primary carrier.
     @objc public var mcn: String {
         if #available(iOS 12.0, *) {
             return primaryMcn
@@ -116,15 +116,37 @@ extension TelephonyHandler {
         }
         return carrier.displayedCarrierName ?? ""
     }
+
+    /// - Returns: The name of the secondary carrier.
+    @objc public var mcnd: String {
+        if #available(iOS 12.0, *) {
+            return eSimMcn
+
+        } else {
+            return ""
+        }
+    }
+
+    @available(iOS 12.0, *)
+    private var eSimMcn: String {
+        // Note: Only one eSIM can be enabled on iOS.
+        // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
+        let otherKey = telephonyNetworkInfo.serviceSubscriberCellularProviders?.filter {
+            selectedCarrierKey != $0.key
+        }.keys.first
+        if let key = otherKey,
+           let carrier = telephonyNetworkInfo.serviceSubscriberCellularProviders?[key] {
+            return carrier.displayedCarrierName ?? ""
+        }
+        return ""
+    }
 }
 
 // MARK: - mnetw and mnetwd
 
 extension TelephonyHandler {
-    /// The mnetw of the primary carrier.
-    /// - Note: declared as dynamic only for using it with OCMock in the unit tests target
-    /// FIXME: remove `dynamic` when the unit tests are migrated to Swift
-    @objc public dynamic var mnetw: NSNumber? {
+    /// - Returns: The network status of the primary carrier.
+    @objc public var mnetw: NSNumber? {
         if #available(iOS 12.0, *) {
             return primaryMnetw
 
@@ -144,6 +166,34 @@ extension TelephonyHandler {
         }
         return networkType(for: radioName)
     }
+
+    /// - Returns: The network status of the secondary carrier.
+    @objc public var mnetwd: NSNumber? {
+        if #available(iOS 12.0, *) {
+            return eSimMnetwd
+
+        } else {
+            return networkType(for: "")
+        }
+    }
+
+    @available(iOS 12.0, *)
+    private var eSimMnetwd: NSNumber? {
+        guard let carrierKey = selectedCarrierKey else {
+            return networkType(for: "")
+        }
+
+        // Note: Only one eSIM can be enabled on iOS.
+        // If there are more than one eSIM, `serviceCurrentRadioAccessTechnology.count` always equals to 2.
+        let otherKey = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?.filter {
+            carrierKey != $0.key
+        }.keys.first
+        guard let key = otherKey,
+              let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[key] else {
+            return networkType(for: "")
+        }
+        return networkType(for: radioName)
+    }
 }
 
 // MARK: - Network Type
@@ -151,19 +201,19 @@ extension TelephonyHandler {
 private extension TelephonyHandler {
     func networkType(for radioName: String) -> NSNumber? {
         guard let value = reachabilityStatus?.intValue,
-              let result = RATReachabilityStatus(rawValue: value) else {
+              let status = RATReachabilityStatus(rawValue: value) else {
             return nil
         }
 
-        switch result {
-        case .wwan:
-            switch radioName {
-            case CTRadioAccessTechnologyLTE:
-                return NSNumber(value: RATMobileNetworkType.cellularLTE.rawValue)
+        switch status {
+        case .wwan where radioName.isEmpty:
+            return nil
 
-            default:
-                return NSNumber(value: RATMobileNetworkType.cellularNonLTE.rawValue)
-            }
+        case .wwan where radioName == CTRadioAccessTechnologyLTE:
+            return NSNumber(value: RATMobileNetworkType.cellularLTE.rawValue)
+
+        case .wwan:
+            return NSNumber(value: RATMobileNetworkType.cellularNonLTE.rawValue)
 
         case .wifi:
             return NSNumber(value: RATMobileNetworkType.wifi.rawValue)
@@ -177,10 +227,10 @@ private extension TelephonyHandler {
 // MARK: - CTCarrier
 
 private extension CTCarrier {
-    /// The carrier name maximum length.
+    /// - Returns: The carrier name maximum length.
     private static let carrierNameLengthMax: Int = 32
 
-    /// The displayed carrier name.
+    /// - Returns: The displayed carrier name.
     var displayedCarrierName: String? {
         var name: String?
 
