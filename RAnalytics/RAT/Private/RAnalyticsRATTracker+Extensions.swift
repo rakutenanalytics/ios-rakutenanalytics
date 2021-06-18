@@ -4,6 +4,10 @@ import SystemConfiguration
 extension RAnalyticsRATTracker {
     @objc public static let reachabilityCallback: SCNetworkReachabilityCallBack = { _, flags, _ in
         let result = flags.reachabilityStatus.rawValue
-        shared().perform(Selector(("setReachabilityStatus:")), with: NSNumber(value: result))
+        let selector = Selector(("setReachabilityStatus:"))
+
+        if shared().responds(to: selector) {
+            shared().perform(selector, with: NSNumber(value: result))
+        }
     }
 }
