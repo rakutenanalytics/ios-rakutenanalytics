@@ -96,6 +96,19 @@ final class RATArrayExtensionSpec: QuickSpec {
 final class RATDataExtensionSpec: QuickSpec {
     override func spec() {
         describe("init") {
+            context("when the internal serializer serializes a big amount of data") {
+                let bundle = Bundle(for: type(of: self))
+                let url = bundle.url(forResource: "rat", withExtension: "json")!
+                let jsonData = try? String(contentsOf: url, encoding: .utf8).data(using: .utf8)
+                let input = (try? JSONSerialization.jsonObject(with: jsonData!, options: []) as? [JsonRecord])!
+
+                it("should not crash") {
+                    let array = Array(repeating: input, count: 1000).flatMap { $0 }
+                    let data = Data(ratJsonRecords: array, internalSerialization: true)
+                    expect(data).toNot(beNil())
+                }
+            }
+
             context("when the input array elements are dictionaries") {
                 let input = [["key1": "value1", "key2": "value2"],
                              ["key3": "value3", "key4": ["key5": [["key6": "value6"], ["key7": "value7"]]]],

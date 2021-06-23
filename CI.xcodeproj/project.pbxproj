@@ -57,6 +57,7 @@
 		C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */; };
 		C9B5F4582649198A0039A6A5 /* RAnalyticsManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F4572649198A0039A6A5 /* RAnalyticsManagerTests.m */; };
 		C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */; };
+		C9DF10282680922100D69CDE /* rat.json in Resources */ = {isa = PBXBuildFile; fileRef = C9DF10272680922100D69CDE /* rat.json */; };
 		C9E4BB3E260BA2430001F0B4 /* RATEncryptSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */; };
 		C9E4BBAB260BAB1B0001F0B4 /* RAnalyticsPushTrackingUtilityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BBAA260BAB1B0001F0B4 /* RAnalyticsPushTrackingUtilityTests.m */; };
 		C9E4BBCC260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BBCB260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift */; };
@@ -142,6 +143,7 @@
 		C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHandlerSpec.swift; sourceTree = "<group>"; };
 		C9B5F4572649198A0039A6A5 /* RAnalyticsManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsManagerTests.m; sourceTree = "<group>"; };
 		C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStateSpec.swift; sourceTree = "<group>"; };
+		C9DF10272680922100D69CDE /* rat.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = rat.json; sourceTree = "<group>"; };
 		C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RATEncryptSpec.swift; sourceTree = "<group>"; };
 		C9E4BBAA260BAB1B0001F0B4 /* RAnalyticsPushTrackingUtilityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsPushTrackingUtilityTests.m; sourceTree = "<group>"; };
 		C9E4BBCB260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtilitySpec.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */,
 				45EA71DD25B62776001B2049 /* LockableTests.swift */,
 				C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */,
+				C9DF10272680922100D69CDE /* rat.json */,
 			);
 			path = Unit;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9DF10282680922100D69CDE /* rat.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
