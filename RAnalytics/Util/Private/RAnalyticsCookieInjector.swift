@@ -14,14 +14,9 @@ import RLogger
     private let adIdentifierManager: AdvertisementIdentifiable
 
     /// Initialize RAnalyticsCookieInjector with a dependenciesFactory
-    /// @warning It returns nil if httpCookieStore and adIdentifierManager are not registered in dependenciesFactory
-    @objc public init?(dependenciesFactory: DependenciesFactory) {
-        guard let httpCookieStore = dependenciesFactory.httpCookieStore,
-              let adIdentifierManager = dependenciesFactory.adIdentifierManager else {
-            return nil
-        }
-        self.httpCookieStore = httpCookieStore
-        self.adIdentifierManager = adIdentifierManager
+    @objc public init(dependenciesContainer: SimpleDependenciesContainable) {
+        self.httpCookieStore = dependenciesContainer.httpCookieStore
+        self.adIdentifierManager = dependenciesContainer.adIdentifierManager
         super.init()
     }
 }

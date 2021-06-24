@@ -28,7 +28,7 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void) {
 
-        AnalyticsManager.shared()?.launchCollector?.processPushNotificationResponse(response)
+        AnalyticsManager.shared().launchCollector?.processPushNotificationResponse(response)
         if responds(to: #selector(r_autotrack_userNotificationCenter(_:didReceive:withCompletionHandler:))) {
             r_autotrack_userNotificationCenter(center,
                                                didReceive: response,

@@ -37,12 +37,12 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     func update(_ dict: [String: Any]) {
         if let value = dict[GlobalConstants.kLocationTracking],
            let flag = value as? Bool {
-            AnalyticsManager.shared()?.shouldTrackLastKnownLocation = flag
+            AnalyticsManager.shared().shouldTrackLastKnownLocation = flag
         }
 
         if let value = dict[GlobalConstants.kIDFATracking],
            let flag = value as? Bool {
-            AnalyticsManager.shared()?.shouldTrackAdvertisingIdentifier = flag
+            AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = flag
         }
 
         if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String,

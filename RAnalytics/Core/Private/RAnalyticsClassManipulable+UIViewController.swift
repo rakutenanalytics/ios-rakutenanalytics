@@ -13,7 +13,7 @@ extension UIViewController: RAnalyticsClassManipulable, RuntimeLoadable {
 
     @objc func r_autotrack_viewDidAppear(_ animated: Bool) {
         RLogger.verbose("View did appear for \(type(of: self))")
-        AnalyticsManager.shared()?.launchCollector?.didPresentViewController(self)
+        AnalyticsManager.shared().launchCollector?.didPresentViewController(self)
         r_autotrack_viewDidAppear(animated)
     }
 }

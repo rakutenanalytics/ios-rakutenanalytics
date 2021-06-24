@@ -8,15 +8,13 @@ import RAnalyticsBroadcast
 final class RABEventBroadcasterSpec: QuickSpec {
     override func spec() {
         describe("sendEventName") {
-            var dependenciesFactory: AnyDependenciesContainer!
+            var dependenciesContainer: SimpleContainerMock!
             beforeEach {
-                dependenciesFactory = AnyDependenciesContainer()
-                dependenciesFactory.registerObject(UserDefaultsMock())
-                dependenciesFactory.registerObject(AnalyticsTrackerMock())
+                dependenciesContainer = SimpleContainerMock()
             }
             it("should track AnalyticsManager.Event.Name.custom with eventName and eventData when an event is broadcasted with data") {
-                let externalCollector = RAnalyticsExternalCollector(dependenciesFactory: dependenciesFactory)
-                let tracker = (dependenciesFactory.tracker as? AnalyticsTrackerMock)
+                let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
 
                 expect(externalCollector).toNot(beNil())
                 expect(tracker?.eventName).toEventually(beNil())
@@ -29,8 +27,8 @@ final class RABEventBroadcasterSpec: QuickSpec {
                 expect(tracker?.params?["eventData"] as? [String: String]).toEventually(equal(["foo": "bar"]))
             }
             it("should track AnalyticsManager.Event.Name.custom with eventName and no eventData when an event is broadcasted without data") {
-                let externalCollector = RAnalyticsExternalCollector(dependenciesFactory: dependenciesFactory)
-                let tracker = (dependenciesFactory.tracker as? AnalyticsTrackerMock)
+                let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
 
                 expect(externalCollector).toNot(beNil())
                 expect(tracker?.eventName).toEventually(beNil())

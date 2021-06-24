@@ -12,13 +12,15 @@ final class UserIdentifierSelectorSpec: QuickSpec {
 
             describe("selectedTrackingIdentifier") {
                 it("should return \(noLoginFound) at initialization") {
-                    let externalCollector = ExternalCollectorFactory.mock()!
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: SimpleContainerMock())
                     let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
                     expect(userIdentifierSelector.selectedTrackingIdentifier).to(equal(noLoginFound))
                 }
                 context("trackingIdentifier is nil") {
                     it("should return userID when userID is set to non-empty value") {
-                        let externalCollector = ExternalCollectorFactory.mock()!
+                        let dependenciesContainer = SimpleContainerMock()
+                        (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
                         externalCollector.userIdentifier = "userID"
@@ -27,7 +29,7 @@ final class UserIdentifierSelectorSpec: QuickSpec {
                         expect(userIdentifierSelector.selectedTrackingIdentifier).toEventually(equal("userID"))
                     }
                     it("should return \(noLoginFound) when userID is nil") {
-                        let externalCollector = ExternalCollectorFactory.mock()!
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: SimpleContainerMock())
                         let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
                         externalCollector.userIdentifier = nil
@@ -38,7 +40,9 @@ final class UserIdentifierSelectorSpec: QuickSpec {
                 }
                 context("trackingIdentifier is not nil") {
                     it("should return userID when userID is set to non-empty value") {
-                        let externalCollector = ExternalCollectorFactory.mock()!
+                        let dependenciesContainer = SimpleContainerMock()
+                        (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
                         externalCollector.userIdentifier = "userID"
@@ -47,7 +51,7 @@ final class UserIdentifierSelectorSpec: QuickSpec {
                         expect(userIdentifierSelector.selectedTrackingIdentifier).toEventually(equal("userID"))
                     }
                     it("should return trackingID when userID is nil") {
-                        let externalCollector = ExternalCollectorFactory.mock()!
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: SimpleContainerMock())
                         let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
                         externalCollector.userIdentifier = nil

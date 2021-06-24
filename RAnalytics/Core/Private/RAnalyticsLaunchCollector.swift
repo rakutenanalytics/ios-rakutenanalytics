@@ -71,29 +71,19 @@ enum RAnalyticsLaunchCollectorError: Error {
     /// Creates a launch collector
     ///
     /// - Parameters:
-    ///   - dependenciesFactory: The dependencies factory.
+    ///   - dependenciesContainer: The dependencies container.
     ///
     /// - Returns: An instance of RAnalyticsLaunchCollector or nil.
-    @objc init?(dependenciesFactory: DependenciesFactory) {
-        guard let notificationHandler = dependenciesFactory.notificationHandler,
-              let userStorageHandler = dependenciesFactory.userStorageHandler,
-              let keychainHandler = dependenciesFactory.keychainHandler,
-              let tracker = dependenciesFactory.tracker else {
-            return nil
-        }
-        self.notificationHandler = notificationHandler
-        self.userStorageHandler = userStorageHandler
-        self.keychainHandler = keychainHandler
-        self.tracker = tracker
+    @objc init(dependenciesContainer: SimpleDependenciesContainable) {
+        self.notificationHandler = dependenciesContainer.notificationHandler
+        self.userStorageHandler = dependenciesContainer.userStorageHandler
+        self.keychainHandler = dependenciesContainer.keychainHandler
+        self.tracker = dependenciesContainer.tracker
 
         super.init()
 
         configureNotifications()
-
-        guard configureLaunchValues() else {
-            return nil
-        }
-
+        configureLaunchValues()
         resetToDefaults()
         isInstallLaunch = (installLaunchDate == nil)
         isUpdateLaunch = lastVersion != (Bundle.main.shortVersion ?? "")
@@ -121,7 +111,7 @@ enum RAnalyticsLaunchCollectorError: Error {
                                          object: nil)
     }
 
-    private func configureLaunchValues() -> Bool {
+    private func configureLaunchValues() {
         // check initLaunchDate exists in keychain
         let response = keychainHandler?.item(for: Constants.initialLaunchDateKey)
 
@@ -129,17 +119,21 @@ enum RAnalyticsLaunchCollectorError: Error {
         case errSecSuccess:
             // keychain item exists
             guard let date = keychainHandler?.creationDate(for: response?.result) else {
-                return false
+                configureDefaultLaunchValues()
+                return
             }
             initialLaunchDate = date
             isInitialLaunch = false
         default:
             // no keychain item
-            initialLaunchDate = Date()
-            keychainHandler?.set(creationDate: initialLaunchDate, for: Constants.initialLaunchDateKey)
-            isInitialLaunch = true
+            configureDefaultLaunchValues()
         }
-        return true
+    }
+
+    private func configureDefaultLaunchValues() {
+        initialLaunchDate = Date()
+        keychainHandler?.set(creationDate: initialLaunchDate, for: Constants.initialLaunchDateKey)
+        isInitialLaunch = true
     }
 }
 

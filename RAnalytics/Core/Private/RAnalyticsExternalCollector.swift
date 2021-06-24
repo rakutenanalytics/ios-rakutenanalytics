@@ -133,18 +133,13 @@ enum LoginFailureKey {
     /// Creates an external collector
     ///
     /// - Parameters:
-    ///   - dependenciesFactory: The dependencies factory.
+    ///   - dependenciesContainer: The dependencies container.
     ///         It requires intances of these types: UserStorageHandleable, Trackable
     ///
-    /// - Returns: An instance of RAnalyticsExternalCollector or nil.
-    @objc init?(dependenciesFactory: DependenciesFactory) {
-        guard let userStorageHandler = dependenciesFactory.userStorageHandler,
-              let tracker = dependenciesFactory.tracker else {
-            RLogger.warning("RAnalyticsExternalCollector can't be created without userStorageHandler and tracker dependencies")
-            return nil
-        }
-        self.userStorageHandler = userStorageHandler
-        self.tracker = tracker
+    /// - Returns: An instance of RAnalyticsExternalCollector.
+    @objc init(dependenciesContainer: SimpleDependenciesContainable) {
+        self.userStorageHandler = dependenciesContainer.userStorageHandler
+        self.tracker = dependenciesContainer.tracker
         super.init()
         addLoginObservers()
         addLoginFailureObservers()

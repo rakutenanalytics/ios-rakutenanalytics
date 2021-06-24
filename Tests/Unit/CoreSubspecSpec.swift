@@ -12,7 +12,7 @@ final class CoreSubspecSpec: QuickSpec {
             }
 
             it("should contain SDKTracker") {
-                let trackers = AnalyticsManager.shared()?.perform(Selector((("trackers"))))?.takeUnretainedValue() as? NSMutableSet
+                let trackers = AnalyticsManager.shared().perform(Selector((("trackers"))))?.takeUnretainedValue() as? NSMutableSet
 
                 expect(trackers).toNot(beNil())
                 expect(trackers?.count).to(equal(1))

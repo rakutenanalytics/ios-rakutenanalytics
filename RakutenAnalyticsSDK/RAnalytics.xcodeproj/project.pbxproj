@@ -95,6 +95,7 @@
 		C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */; };
 		C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9B5F778264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */; };
+		C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */; };
 		C9E4BC91260C9AD20001F0B4 /* String+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */; };
 		C9E4BC92260C9AD20001F0B4 /* PushEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */; };
 		C9E4BC96260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */; };
@@ -191,6 +192,7 @@
 		C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Extensions.swift"; sourceTree = "<group>"; };
 		C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDeviceIdentifier.h; sourceTree = "<group>"; };
 		C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsDeviceIdentifier.m; sourceTree = "<group>"; };
+		C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDependenciesContainer.swift; sourceTree = "<group>"; };
 		C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Encryption.swift"; sourceTree = "<group>"; };
 		C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandler.swift; sourceTree = "<group>"; };
 		C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtility.swift; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				C923B83825FF322A00F9CCA0 /* RAnalyticsDatabase.swift */,
 				C923B82D25FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift */,
 				C923B82E25FF322A00F9CCA0 /* RStatusBarOrientationHandler.swift */,
+				C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */,
 				C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */,
 				C923B83025FF322A00F9CCA0 /* String+Extensions.swift */,
 				C923B84125FF322A00F9CCA0 /* SwiftHeader.h */,
@@ -491,6 +494,7 @@
 			files = (
 				C948A577265E8877008BA975 /* NSDate+Extensions.swift in Sources */,
 				C923B85E25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift in Sources */,
+				C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */,
 				C923B85525FF322A00F9CCA0 /* RAnalyticsEvent.m in Sources */,
 				C923B87625FF322A00F9CCA0 /* UIViewController+Extensions.swift in Sources */,
 				C923B85F25FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift in Sources */,

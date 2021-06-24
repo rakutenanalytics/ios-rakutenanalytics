@@ -5,36 +5,14 @@
 
 SPEC_BEGIN(CookieInjectorTests)
 
-describe(@"initWithDependenciesFactory", ^{
-    it(@"should return nil if there are no dependencies", ^{
-        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
-        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
-        [[analyticsCookieInjector should] beNil];
-    });
-    it(@"should return nil if only ASIdentifierManager is registered", ^{
-        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
-        [dependenciesContainer registerObject:ASIdentifierManager.new];
-        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
-        [[analyticsCookieInjector should] beNil];
-    });
-    it(@"should return nil if only WKHTTPCookieStore is registered", ^{
-        AnyDependenciesContainer *dependenciesContainer = AnyDependenciesContainer.new;
-        [dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
-        RAnalyticsCookieInjector *analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
-        [[analyticsCookieInjector should] beNil];
-    });
-});
-
 describe(@"injectAppToWebTrackingCookie", ^{
     __block NSString *deviceID = @"12345";
-    __block AnyDependenciesContainer *dependenciesContainer;
+    __block SimpleDependenciesContainer *dependenciesContainer;
     __block RAnalyticsCookieInjector *analyticsCookieInjector;
     
     beforeAll(^{
-        dependenciesContainer = AnyDependenciesContainer.new;
-        [dependenciesContainer registerObject:ASIdentifierManager.new];
-        [dependenciesContainer registerObject:WKWebsiteDataStore.defaultDataStore.httpCookieStore];
-        analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesFactory:dependenciesContainer];
+        dependenciesContainer = SimpleDependenciesContainer.new;
+        analyticsCookieInjector = [[RAnalyticsCookieInjector alloc] initWithDependenciesContainer:dependenciesContainer];
     });
 
     it(@"should set expected cookie value using device identifier", ^{

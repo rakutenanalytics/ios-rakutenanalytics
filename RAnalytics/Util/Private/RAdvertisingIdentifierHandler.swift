@@ -7,12 +7,8 @@ import Foundation
     private let adIdentifierManager: AdvertisementIdentifiable
 
     /// Initialize RAdvertisingIdentifierHandler with a dependenciesFactory
-    /// @warning It returns nil if adIdentifierManager is not registered in dependenciesFactory
-    @objc public init?(dependenciesFactory: DependenciesFactory) {
-        guard let adIdentifierManager = dependenciesFactory.adIdentifierManager else {
-            return nil
-        }
-        self.adIdentifierManager = adIdentifierManager
+    @objc public init(dependenciesContainer: SimpleDependenciesContainable) {
+        self.adIdentifierManager = dependenciesContainer.adIdentifierManager
     }
 
     /// Request the advertising identifier.

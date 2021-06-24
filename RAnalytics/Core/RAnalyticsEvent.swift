@@ -79,10 +79,10 @@ import Foundation
 
 extension RAnalyticsEvent {
     /// Convenience method for tracking an event.
-    /// This does exactly the same as `AnalyticsManager.shared()?.process(event)`.
+    /// This does exactly the same as `AnalyticsManager.shared().process(event)`.
     @discardableResult
     @objc public func track() -> Bool {
-        AnalyticsManager.shared()?.process(self) ?? false
+        AnalyticsManager.shared().process(self)
     }
 }
 

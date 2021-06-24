@@ -1,7 +1,7 @@
 import Foundation
 import CoreLocation
 
-@objc protocol LocationManageable {
+@objc public protocol LocationManageable {
     var desiredAccuracy: CLLocationAccuracy { get set }
     var delegate: CLLocationManagerDelegate? { get set }
     var location: CLLocation? { get }

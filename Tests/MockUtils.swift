@@ -1,4 +1,5 @@
 import Foundation
+import CoreLocation
 @testable import RAnalytics
 
 // MARK: - Tracker
@@ -21,6 +22,25 @@ final class AnalyticsTrackerMock: NSObject, Trackable {
         dictionary = nil
         eventName = nil
         params = nil
+    }
+}
+
+// MARK: - ASIdentifierManagerMock
+
+final class ASIdentifierManagerMock: NSObject, AdvertisementIdentifiable {
+    var advertisingIdentifierUUIDString: String = ""
+}
+
+// MARK: - WKHTTP Cookie Storage
+
+final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
+    func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
+    }
+
+    func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+    }
+
+    func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
     }
 }
 
@@ -53,17 +73,6 @@ extension UserDefaultsMock: UserStorageHandleable {
         return result
     }
     func synchronize() -> Bool { true }
-}
-
-// MARK: - External Collector Factory
-
-struct ExternalCollectorFactory {
-    static func mock() -> RAnalyticsExternalCollector? {
-        let container = AnyDependenciesContainer()
-        container.registerObject(UserDefaultsMock([:]))
-        container.registerObject(AnalyticsTrackerMock())
-        return RAnalyticsExternalCollector(dependenciesFactory: container)
-    }
 }
 
 // MARK: - Session
@@ -120,4 +129,49 @@ final class TrackerMock: NSObject, Tracker {
     func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
         false
     }
+}
+
+// MARK: - Location Manager
+
+final class LocationManagerMock: NSObject, LocationManageable {
+    static func authorizationStatus() -> CLAuthorizationStatus {
+        .authorizedAlways
+    }
+    var desiredAccuracy: CLLocationAccuracy = 0.0
+    weak var delegate: CLLocationManagerDelegate?
+    var location: CLLocation?
+    var startUpdatingLocationIsCalled = false
+    var stopUpdatingLocationIsCalled = false
+
+    func startUpdatingLocation() {
+        startUpdatingLocationIsCalled = true
+    }
+
+    func stopUpdatingLocation() {
+        stopUpdatingLocationIsCalled = true
+    }
+}
+
+// MARK: - Keychain Handler
+
+final class KeychainHandlerMock: NSObject, KeychainHandleable {
+    var status: OSStatus = errSecItemNotFound
+    private var creationDate: Date?
+    func item(for label: String) -> KeychainResult { KeychainResult(result: nil, status: status) }
+    func set(creationDate: Date?, for label: String) { self.creationDate = creationDate }
+    func creationDate(for reference: CFTypeRef?) -> Date? { creationDate }
+}
+
+// MARK: - Simple Container Mock
+
+final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
+    public let notificationHandler: NotificationObservable = NotificationCenter.default
+    public let userStorageHandler: UserStorageHandleable = UserDefaultsMock()
+    public let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManagerMock()
+    public let httpCookieStore: WKHTTPCookieStorable = WKHTTPCookieStorageMock()
+    public let keychainHandler: KeychainHandleable = KeychainHandlerMock()
+    public let analyticsTracker = AnalyticsTrackerMock()
+    public let locationManager: LocationManageable = LocationManagerMock()
+    public let bundle: EnvironmentBundle = Bundle.main
+    public let tracker: Trackable = AnalyticsTrackerMock()
 }

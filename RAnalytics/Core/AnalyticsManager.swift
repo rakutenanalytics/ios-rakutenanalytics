@@ -18,23 +18,14 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
         static let defaultDeviceIdentifier = "NO_DEVICE_ID_FOUND"
     }
 
-    private static let singleton: AnalyticsManager? = {
-        let dependenciesContainer = AnyDependenciesContainer()
-        dependenciesContainer.registerObject(NotificationCenter.default)
-        dependenciesContainer.registerObject(UserDefaults.standard)
-        dependenciesContainer.registerObject(ASIdentifierManager.shared())
-        dependenciesContainer.registerObject(WKWebsiteDataStore.default().httpCookieStore)
-        dependenciesContainer.registerObject(KeychainHandler())
-        dependenciesContainer.registerObject(AnalyticsTracker())
-        dependenciesContainer.registerObject(CLLocationManager())
-        dependenciesContainer.registerObject(Bundle.main)
-        return AnalyticsManager(dependenciesContainer: dependenciesContainer)
+    private static let singleton: AnalyticsManager = {
+        AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
 
     /// Retrieve the shared instance.
     ///
     /// - Returns: The shared instance.
-    @objc(sharedInstance) dynamic public static func shared() -> AnalyticsManager? {
+    @objc(sharedInstance) dynamic public static func shared() -> AnalyticsManager {
         singleton
     }
 
@@ -71,7 +62,7 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     /// Enable or disable the tracking of an event at runtime.
     ///
     /// For example, to disable `AnalyticsManager.Event.Name.sessionStart`:
-    /// `AnalyticsManager.shared()?.shouldTrackEventHandler = { eventName in eventName != AnalyticsManager.Event.Name.sessionStart }`
+    /// `AnalyticsManager.shared().shouldTrackEventHandler = { eventName in eventName != AnalyticsManager.Event.Name.sessionStart }`
     ///
     /// Note that it is also possible to disable events at build time in the `RAnalyticsConfiguration.plist` file:
     /// 1) First create a `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
@@ -121,12 +112,9 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     @objc dynamic private(set) var trackers: NSMutableSet
     private(set) var trackersLockableObject: LockableObject<NSMutableSet>
 
-    /// Dependencies Container
-    private let dependenciesContainer: AnyDependenciesContainer
-
     /// Dependencies
-    private let advertisingIdentifierHandler: RAdvertisingIdentifierHandler?
-    private let analyticsCookieInjector: RAnalyticsCookieInjector?
+    private let advertisingIdentifierHandler: RAdvertisingIdentifierHandler
+    private let analyticsCookieInjector: RAnalyticsCookieInjector
     private let userIdentifierSelector: UserIdentifierSelector
     @objc private let analyticsLaunchCollector: RAnalyticsLaunchCollector
     @objc private let analyticsExternalCollector: RAnalyticsExternalCollector
@@ -134,37 +122,21 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     /// - Note: dynamic is only used for message dispatch in RAnalyticsManagerTests (Objective-C)
     @objc dynamic private let eventChecker: EventChecker
 
-    init?(dependenciesContainer: AnyDependenciesContainer) {
-        // Create the Dependencies Container
-        self.dependenciesContainer = dependenciesContainer
+    init(dependenciesContainer: SimpleDependenciesContainable) {
+        analyticsExternalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+        analyticsLaunchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
+        self.locationManager = dependenciesContainer.locationManager
 
-        // Inject the Dependencies Container
-        guard let externalCollector = RAnalyticsExternalCollector(dependenciesFactory: dependenciesContainer) else {
-            RLogger.error("Failed to initialize the AnalyticsManager singleton because externalCollector could not be instantiated")
-            return nil
-        }
-        guard let launchCollector = RAnalyticsLaunchCollector(dependenciesFactory: dependenciesContainer) else {
-            RLogger.error("Failed to initialize the AnalyticsManager singleton because launchCollector could not be instantiated")
-            return nil
-        }
-        guard let locationManager = dependenciesContainer.resolve(LocationManageable.self) else {
-            RLogger.error("Failed to initialize the Location Manager")
-            return nil
-        }
-        analyticsExternalCollector = externalCollector
-        analyticsLaunchCollector = launchCollector
-        self.locationManager = locationManager
-
-        let bundle = dependenciesContainer.resolve(EnvironmentBundle.self)
-        eventChecker = EventChecker(disabledEventsAtBuildTime: bundle?.disabledEventsAtBuildTime)
+        let bundle = dependenciesContainer.bundle
+        eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
         shouldTrackPageView = true
 
         // Inject the Dependencies Container
-        advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesFactory: dependenciesContainer)
-        analyticsCookieInjector = RAnalyticsCookieInjector(dependenciesFactory: dependenciesContainer)
+        advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesContainer: dependenciesContainer)
+        analyticsCookieInjector = RAnalyticsCookieInjector(dependenciesContainer: dependenciesContainer)
 
         userIdentifierSelector = UserIdentifierSelector(userIdentifiable: analyticsExternalCollector)
 
@@ -378,7 +350,7 @@ extension AnalyticsManager {
         let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: notOptionalDeviceIdentifier)
 
         if shouldTrackAdvertisingIdentifier {
-            if let advertisingIdentifier = advertisingIdentifierHandler?.idfa {
+            if let advertisingIdentifier = advertisingIdentifierHandler.idfa {
                 // User has not disabled tracking
                 state.advertisingIdentifier = advertisingIdentifier
             }
@@ -390,9 +362,9 @@ extension AnalyticsManager {
                 domain = cookieDomainBlock?()
             }
 
-            analyticsCookieInjector?.injectAppToWebTrackingCookie(domain: domain,
-                                                                  deviceIdentifier: notOptionalDeviceIdentifier,
-                                                                  completionHandler: nil)
+            analyticsCookieInjector.injectAppToWebTrackingCookie(domain: domain,
+                                                                 deviceIdentifier: notOptionalDeviceIdentifier,
+                                                                 completionHandler: nil)
         }
 
         state.lastKnownLocation = shouldTrackLastKnownLocation ? locationManager.location : nil
