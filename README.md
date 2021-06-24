@@ -310,12 +310,14 @@ The RAT tracker furthermore ignores view controllers that have no title, no navi
 
 RAnalytics is a Swift framework and contains a custom module map.
 
-Then if  `use_frameworks!` is not defined in the iOS App's Podfile, this cocoapods error is displayed:
-`Using Swift static libraries with custom module maps is currently not supported.`
+If `use_frameworks!` is not defined in your app's Podfile the following Cocoapods error occurs:
 
-Then it is needed to:
-- add `cocoapods-user-defined-build-types` plugin to the iOS App's Podfile
-- declare RAnalytics and its dependencies as `static_framework` as below:
+
+> `Using Swift static libraries with custom module maps is currently not supported.`
+
+To solve this problem:
+1. add `cocoapods-user-defined-build-types` plugin to your Podfile
+1. declare `RAnalytics` and its dependencies as `static_framework` as follows:
 
 ```
 plugin 'cocoapods-user-defined-build-types'
@@ -330,3 +332,5 @@ target 'MyApp' do
   pod 'RDeviceIdentifier', :build_type => :static_framework
 end
 ```
+
+⚠️ **Note:** The `cocoapods-user-defined-build-types` plugin is developed by a third party and we cannot guarantee that its support will continue.

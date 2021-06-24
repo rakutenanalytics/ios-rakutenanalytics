@@ -1,5 +1,10 @@
 # Changelog
 
+## 8.1.1 (in-progress)
+
+* [SDKCF-3903](https://jira.rakuten-it.com/jira/browse/SDKCF-3903): Fixed serialization of floating numbers in experimental custom serializer.
+* [SDKCF-3907](https://jira.rakuten-it.com/jira/browse/SDKCF-3907): Added [troubleshooting](index.html#troubleshooting) tip for building the SDK without defining `use_frameworks!`.
+
 ## 8.1.0 (2021-06-09)
 
 * [SDKCF-3604](https://jira.rakuten-it.com/jira/browse/SDKCF-3604): Replaced RSDKA_SWIFT_NAME with NS_SWIFT_NAME to fix build error for specific customer.
