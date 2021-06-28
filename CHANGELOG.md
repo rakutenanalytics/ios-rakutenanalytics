@@ -1,6 +1,6 @@
 # Changelog
 
-## 8.1.1 (in-progress)
+## 8.1.1 (2021-06-29)
 
 * [SDKCF-3903](https://jira.rakuten-it.com/jira/browse/SDKCF-3903): Fixed serialization of floating numbers in experimental custom serializer.
 * [SDKCF-3907](https://jira.rakuten-it.com/jira/browse/SDKCF-3907): Added [troubleshooting](index.html#troubleshooting) tip for building the SDK without defining `use_frameworks!`.
