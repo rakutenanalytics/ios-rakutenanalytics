@@ -5,8 +5,9 @@ import CoreTelephony
 /// - Note: This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter.
 @objc public enum RATMobileNetworkType: Int {
     case wifi = 1
-    case cellularNonLTE = 3
+    case cellularOther = 3
     case cellularLTE = 4
+    case cellular5G = 5
 }
 
 /// The Telephony Handler handles the core telephony framework.
@@ -209,11 +210,14 @@ private extension TelephonyHandler {
         case .wwan where radioName.isEmpty:
             return nil
 
-        case .wwan where radioName == CTRadioAccessTechnologyLTE:
+        case .wwan where radioName.isLTE:
             return NSNumber(value: RATMobileNetworkType.cellularLTE.rawValue)
 
+        case .wwan where radioName.is5G:
+            return NSNumber(value: RATMobileNetworkType.cellular5G.rawValue)
+
         case .wwan:
-            return NSNumber(value: RATMobileNetworkType.cellularNonLTE.rawValue)
+            return NSNumber(value: RATMobileNetworkType.cellularOther.rawValue)
 
         case .wifi:
             return NSNumber(value: RATMobileNetworkType.wifi.rawValue)
@@ -242,5 +246,20 @@ private extension CTCarrier {
             return name
         }
         return nil
+    }
+}
+
+// MARK: - Radio Access Technology
+
+private extension String {
+    var isLTE: Bool {
+        self == CTRadioAccessTechnologyLTE
+    }
+
+    var is5G: Bool {
+        if #available(iOS 14.0, *) {
+            return self == CTRadioAccessTechnologyNR || self == CTRadioAccessTechnologyNRNSA
+        }
+        return false
     }
 }

@@ -534,18 +534,33 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
     }];
 }
 
+- (void)test_givenNetworkIsWWANAndPhysicalSimNetworkIs5G_whenEventIsProcessed_thenJsonMnetwValueIs5G
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(RATReachabilityStatusWwan);
+    
+    id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
+    OCMStub([telephonyHandlerMock mnetw]).andReturn(@(RATMobileNetworkTypeCellular5G));
+    
+    // When
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetw"], @(RATMobileNetworkTypeCellular5G));
+    }];
+}
+
 - (void)test_givenNetworkIsWWANAndPhysicalSimNetworkIsNonLTE_whenEventIsProcessed_thenJsonMnetwValueIsNonLTE
 {
     // Given
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(RATReachabilityStatusWwan);
     
     id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
-    OCMStub([telephonyHandlerMock mnetw]).andReturn(@(RATMobileNetworkTypeCellularNonLTE));
+    OCMStub([telephonyHandlerMock mnetw]).andReturn(@(RATMobileNetworkTypeCellularOther));
 
     // When
     [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
         // Then
-        XCTAssertEqualObjects(payload[@"mnetw"], @(RATMobileNetworkTypeCellularNonLTE));
+        XCTAssertEqualObjects(payload[@"mnetw"], @(RATMobileNetworkTypeCellularOther));
     }];
 }
 
@@ -564,18 +579,33 @@ static NSString * const sessionIdentifier = @"CA7A88AB-82FE-40C9-A836-B1B3455DEC
     }];
 }
 
+- (void)test_givenNetworkIsWWANAndeSimNetworkIs5G_whenEventIsProcessed_thenJsonMnetwdValueIs5G
+{
+    // Given
+    RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(RATReachabilityStatusWwan);
+    
+    id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
+    OCMStub([telephonyHandlerMock mnetwd]).andReturn(@(RATMobileNetworkTypeCellular5G));
+    
+    // When
+    [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
+        // Then
+        XCTAssertEqualObjects(payload[@"mnetwd"], @(RATMobileNetworkTypeCellular5G));
+    }];
+}
+
 - (void)test_givenNetworkIsWWANAndeSimNetworkIsNonLTE_whenEventIsProcessed_thenJsonMnetwdValueIsNonLTE
 {
     // Given
     RAnalyticsRATTracker.sharedInstance.reachabilityStatus = @(RATReachabilityStatusWwan);
     
     id telephonyHandlerMock = OCMPartialMock(RAnalyticsRATTracker.sharedInstance.telephonyHandler);
-    OCMStub([telephonyHandlerMock mnetwd]).andReturn(@(RATMobileNetworkTypeCellularNonLTE));
+    OCMStub([telephonyHandlerMock mnetwd]).andReturn(@(RATMobileNetworkTypeCellularOther));
 
     // When
     [self assertProcessEvent:self.defaultEvent state:self.defaultState assertBlock:^(id  _Nonnull payload) {
         // Then
-        XCTAssertEqualObjects(payload[@"mnetwd"], @(RATMobileNetworkTypeCellularNonLTE));
+        XCTAssertEqualObjects(payload[@"mnetwd"], @(RATMobileNetworkTypeCellularOther));
     }];
 }
 
