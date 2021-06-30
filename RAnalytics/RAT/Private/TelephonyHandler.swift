@@ -257,7 +257,7 @@ private extension String {
     }
 
     var is5G: Bool {
-        if #available(iOS 14.0, *) {
+        if #available(iOS 14.1, *) {
             return self == CTRadioAccessTechnologyNR || self == CTRadioAccessTechnologyNRNSA
         }
         return false
