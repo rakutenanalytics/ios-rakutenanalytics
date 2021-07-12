@@ -30,6 +30,9 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
             let cookieInjector = RAnalyticsCookieInjector(dependenciesContainer: containerMock)
             let analyticsCookieName = "ra_uid"
 
+            // Temporarity fix for the tests
+            cookieStore.getAllCookies { _ in }
+
             describe("injectAppToWebTrackingCookie") {
                 it("should set expected cookie value using device identifier and idfa") {
                     var cookie: HTTPCookie?
@@ -139,9 +142,9 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
                         }
                     }
 
-                    expect(previousCookie?.domain).toEventually(equal("https://domain1.com"))
+                    expect(ratCookies?.count).toEventually(equal(1))
+                    expect(previousCookie?.domain).to(equal("https://domain1.com"))
                     expect(replacedCookie?.domain).to(equal("https://domain2.com"))
-                    expect(ratCookies?.count).to(equal(1))
                     expect(ratCookies?.first?.name).to(equal(analyticsCookieName))
                     expect(ratCookies?.first?.domain).to(equal("https://domain2.com"))
                 }
