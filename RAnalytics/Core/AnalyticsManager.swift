@@ -372,6 +372,7 @@ extension AnalyticsManager {
 
         // Update state with data from external collector
         state.userIdentifier = userIdentifierSelector.selectedTrackingIdentifier
+        state.easyIdentifier = analyticsExternalCollector.easyIdentifier
         state.loginMethod = analyticsExternalCollector.loginMethod
         state.loggedIn = analyticsExternalCollector.isLoggedIn
 
