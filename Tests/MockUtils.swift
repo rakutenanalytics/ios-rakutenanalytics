@@ -77,7 +77,7 @@ extension UserDefaultsMock: UserStorageHandleable {
 
 // MARK: - Session
 
-final class SessionMock: Sessionable {
+final class SessionMock: RAnalyticsSessionable {
     var willComplete: (() -> Void?)?
     var data: Data?
     var response: HTTPURLResponse?

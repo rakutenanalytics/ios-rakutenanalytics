@@ -9,7 +9,7 @@ import RLogger
     private var rpCookieRequestRetryCount: UInt
     private let rpCookieQueue: DispatchQueue
     private let cookieStorage: HTTPCookieStorable
-    private let session: Sessionable
+    private let session: RAnalyticsSessionable
     private let bundle: EnvironmentBundle
     private let maximumTimeOut: UInt
     private enum Constants {
@@ -64,7 +64,7 @@ import RLogger
     /// - Returns: A newly-initialized Rp Cookie Fetcher or nil.
     init?(cookieStorage: HTTPCookieStorable,
           bundle: EnvironmentBundle,
-          session: Sessionable,
+          session: RAnalyticsSessionable,
           maximumTimeOut: UInt) {
         guard let endpointAddress = bundle.endpointAddress else {
             return nil
