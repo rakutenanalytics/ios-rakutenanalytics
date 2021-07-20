@@ -1,6 +1,6 @@
 # Changelog
 
-## 8.2.0 (2021-07-20)
+## 8.2.0 (2021-07-21)
 
 * [SDKCF-3847](https://jira.rakuten-it.com/jira/browse/SDKCF-3847): Added guide about [tracking member identifier state](index.html#id-sdk-and-omni-compatibility) when the app is using ID-SDK and OMNI.
 * [SDKCF-4012](https://jira.rakuten-it.com/jira/browse/SDKCF-4012): Fixed build error caused by protocol naming conflict between RAnalytics v8.1.0 and latest RPushPNP SDK v4.x.
