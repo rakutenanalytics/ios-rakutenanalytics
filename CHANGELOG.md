@@ -1,5 +1,13 @@
 # Changelog
 
+## 8.2.0 (2021-07-20)
+
+* [SDKCF-3847](https://jira.rakuten-it.com/jira/browse/SDKCF-3847): Added guide about [tracking member identifier state](index.html#id-sdk-and-omni-compatibility) when the app is using ID-SDK and OMNI.
+* [SDKCF-4012](https://jira.rakuten-it.com/jira/browse/SDKCF-4012): Fixed build error caused by protocol naming conflict between RAnalytics v8.1.0 and latest RPushPNP SDK v4.x.
+* [SDKCF-3895](https://jira.rakuten-it.com/jira/browse/SDKCF-3895): The module now recognizes and tracks 5G network type in the `mnetw` (mobile network) field.
+* [SDKCF-3870](https://jira.rakuten-it.com/jira/browse/SDKCF-3870): Added tracking of dual SIMs in new event fields `mcnd` (mobile carrier name "dual") and `mnetwd` (mobile network "dual"). 
+* Continued migration of module code to Swift. Includes migration phase [five](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-5).
+
 ## 8.1.1 (2021-06-29)
 
 * [SDKCF-3903](https://jira.rakuten-it.com/jira/browse/SDKCF-3903): Fixed serialization of floating numbers in experimental custom serializer.
