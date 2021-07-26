@@ -17,6 +17,11 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         RLogger.verbose("Application will finish launching with options = \(String(describing: launchOptions))")
 
+        // In any case, it is needed to keep the loading of AnalyticsManager singleton here
+        // in `r_autotrack_application(application:willFinishLaunchingWithOptions:)`
+        // because automatic events have to be tracked when the app is launched
+        _ = AnalyticsManager.shared()
+
         AnalyticsManager.shared().launchCollector?.setOrigin(.internal)
 
         // Delegates may not implement the original method

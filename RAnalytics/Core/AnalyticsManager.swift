@@ -155,14 +155,6 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     }
 }
 
-// MARK: - RuntimeLoadable
-
-extension AnalyticsManager: RuntimeLoadable {
-    public static func loadSwift() {
-        _ = AnalyticsManager.shared()
-    }
-}
-
 // MARK: - Configuration
 
 extension AnalyticsManager {
