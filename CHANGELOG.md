@@ -1,5 +1,10 @@
 # Changelog
 
+## 8.2.1 (2021-07-30)
+
+* **Important Note:** If you are using Xcode 13 to build your app, and you experience the issue below, you should upgrade your dependency to this version.
+* [SDKCF-4023](https://jira.rakuten-it.com/jira/browse/SDKCF-4023): Fixed Xcode 13 beta 3 issue where the unit tests target hangs at launch and the process gets terminated by the watchdog. Moved `AnalyticsManager` out of the Objective-C `+ (void)load` to prevent the deadlock.
+
 ## 8.2.0 (2021-07-21)
 
 * [SDKCF-3847](https://jira.rakuten-it.com/jira/browse/SDKCF-3847): Added guide about [tracking member identifier state](index.html#id-sdk-and-omni-compatibility) when the app is using ID-SDK and OMNI.
