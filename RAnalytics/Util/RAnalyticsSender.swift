@@ -10,8 +10,15 @@ private enum SenderConstants {
     static let retryInterval = TimeInterval(10.0)
 }
 
-@objc public final class RAnalyticsSender: NSObject, EndpointSettable {
-    @objc public var endpointURL: URL
+@objc public protocol Sendable: NSObjectProtocol {
+    var endpointURL: URL? { get set }
+    func setBatchingDelayBlock(_ batchingDelayBlock: @escaping @autoclosure BatchingDelayBlock)
+    func batchingDelayBlock() -> BatchingDelayBlock?
+    @objc(sendJSONObject:) func send(jsonObject: Any)
+}
+
+@objc public final class RAnalyticsSender: NSObject, EndpointSettable, Sendable {
+    @objc public var endpointURL: URL?
 
     /// Enable the experimental internal JSON serialization or not.
     /// The experimental internal JSON serialization fixes the float numbers decimals.
@@ -28,7 +35,7 @@ private enum SenderConstants {
     /// processed, though, we only invalidate that timer at the very end of the HTTP
     /// request. That's why we also need uploadRequested, set by scheduleBackgroundUpload,
     /// so that we know we have to restart our timer at that point.
-    @AtomicGetSet @objc dynamic var uploadTimer: Timer?
+    @AtomicGetSet var uploadTimer: Timer?
     @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?
@@ -40,9 +47,9 @@ private enum SenderConstants {
     ///   - endpoint: endpoint URL
     ///   - database: database to read/write
     ///   - databaseTable: name of database
-    @objc public convenience init?(endpoint: URL,
-                                   database: RAnalyticsDatabase,
-                                   databaseTable: String) {
+    convenience init(endpoint: URL,
+                     database: RAnalyticsDatabase,
+                     databaseTable: String) {
         self.init(endpoint: endpoint,
                   database: database,
                   databaseTable: databaseTable,
@@ -57,11 +64,11 @@ private enum SenderConstants {
     ///   - databaseTable: name of database
     ///   - bundle: the bundle
     ///   - session: the URL session
-    init?(endpoint: URL,
-          database: RAnalyticsDatabase,
-          databaseTable: String,
-          bundle: EnvironmentBundle,
-          session: SwiftySessionable) {
+    init(endpoint: URL,
+         database: RAnalyticsDatabase,
+         databaseTable: String,
+         bundle: EnvironmentBundle,
+         session: SwiftySessionable) {
         self.endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
@@ -165,7 +172,8 @@ fileprivate extension RAnalyticsSender {
     func doBackgroundUpload(records: [Data], identifiers: [Int64]) {
         /// If you make changes to the payload format, always confirm with RAT team
         /// that the server-side program will accept the updated format.
-        guard !records.isEmpty,
+        guard let endpointURL = endpointURL,
+              !records.isEmpty,
               let ratJsonRecords = [JsonRecord](ratDataRecords: records),
               !ratJsonRecords.isEmpty,
               let data = Data(ratJsonRecords: ratJsonRecords,
@@ -216,14 +224,14 @@ fileprivate extension RAnalyticsSender {
 }
 
 // MARK: Database handling
-@objc extension RAnalyticsSender {
-    public func insert(dataBlob: Data) {
+extension RAnalyticsSender {
+    func insert(dataBlob: Data) {
         database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
             self.scheduleUploadOrPerformImmediately()
         }
     }
 
-    func fetchAndUpload() {
+    @objc func fetchAndUpload() {
         database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
 
             assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")
@@ -241,7 +249,7 @@ fileprivate extension RAnalyticsSender {
 }
 
 // MARK: Notification handling
-@objc extension RAnalyticsSender {
+extension RAnalyticsSender {
     fileprivate func configureNotifications() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(appDidBecomeActive),
@@ -249,7 +257,7 @@ fileprivate extension RAnalyticsSender {
                                                object: nil)
     }
 
-    func appDidBecomeActive() {
+    @objc func appDidBecomeActive() {
         scheduleUploadOrPerformImmediately()
     }
 }
@@ -258,7 +266,7 @@ fileprivate extension RAnalyticsSender {
 extension RAnalyticsSender {
     func logSentRecords(_ records: [Any]) {
         #if DEBUG
-        var sentLog = "Successfully sent events to \(self.endpointURL) from \(self.description)."
+        var sentLog = "Successfully sent events to \(String(describing: self.endpointURL)) from \(self.description)."
         for (index, value) in records.enumerated() {
             sentLog.append("\n\(index), \(value)")
         }
@@ -267,7 +275,7 @@ extension RAnalyticsSender {
     }
 }
 
-// MARK: Temporary for unit tests
+// MARK: Public API
 extension RAnalyticsSender {
     @objc public convenience init?(endpoint: URL,
                                    databaseName: String,
@@ -275,7 +283,6 @@ extension RAnalyticsSender {
         guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName) else {
             return nil
         }
-
         self.init(endpoint: endpoint,
                   database: RAnalyticsDatabase.database(connection: connection),
                   databaseTable: databaseTableName)

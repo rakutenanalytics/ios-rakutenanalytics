@@ -2,15 +2,15 @@
 #import <OCMock/OCMock.h>
 #import <OHHTTPStubs/OHHTTPStubs.h>
 #import <RAnalytics/RAnalytics.h>
-
-#import "../../RAnalytics/Util/Private/_RAnalyticsHelpers.h"
+#import <sqlite3.h>
+#import "UnitTests-Swift.h"
+@import CoreTelephony;
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
-
-@interface RAnalyticsRATTracker ()
-- (instancetype)initInstance;
-@end
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
+#pragma clang diagnostic ignored "-Wnonnull"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
 @interface RpCookieTests : XCTestCase
 @end
@@ -42,13 +42,17 @@
     [super tearDown];
 }
 
+- (RAnalyticsRATTracker *)createTracker {
+    return [RAnalyticsRATTracker create];
+}
+
 - (void)testCookieIsSavedOnRATInstanceInitialization
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
     [self setRpCookieWithName:@"TestCookieName" value:@"TestCookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
 
-    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
+    [self createTracker];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSHTTPCookie *cookie = [self rpCookieFromStorage];
         XCTAssertEqualObjects(@"TestCookieName", cookie.name);
@@ -70,7 +74,7 @@
                                              headers:nil];
     }];
     
-    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
+    [self createTracker];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         XCTAssertNil([self rpCookieFromStorage]);
         [expectation fulfill];
@@ -84,7 +88,7 @@
     
     [self setRpCookieWithName:@"Rp" value:@"CookieValue" expiryDate:@"Fri, 16-Nov-16 16:59:07 GMT"];
     
-    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
+    [self createTracker];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         XCTAssertNil([self rpCookieFromStorage]);
         [expectation fulfill];
@@ -99,7 +103,7 @@
     
     [self setRpCookieWithName:@"Rp" value:@"CookieValue" expiryDate:@"Fri, 16-Nov-50 16:59:07 GMT"];
 
-    RAnalyticsRATTracker __unused *tracker = [[RAnalyticsRATTracker alloc] initInstance];
+    [self createTracker];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         XCTAssertEqualObjects(@"CookieValue", [self rpCookieFromStorage].value);
         [expectation fulfill];
@@ -112,7 +116,7 @@
 
 - (NSHTTPCookie *)rpCookieFromStorage
 {
-    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:_RAnalyticsEndpointAddress()];
+    NSArray<NSHTTPCookie *> *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage cookiesForURL:[BundleHelper endpointAddress]];
     return cookies.firstObject;
 }
 
@@ -132,4 +136,3 @@
 @end
 
 #pragma clang diagnostic pop
-

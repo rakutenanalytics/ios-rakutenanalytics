@@ -3,20 +3,6 @@ import Nimble
 import WebKit
 @testable import RAnalytics
 
-// MARK: - Simple Container Mock
-
-private final class ContainerMock: NSObject, SimpleDependenciesContainable {
-    public let notificationHandler: NotificationObservable = NotificationCenter.default
-    public let userStorageHandler: UserStorageHandleable = UserDefaultsMock()
-    public let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManagerMock()
-    public let httpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
-    public let keychainHandler: KeychainHandleable = KeychainHandlerMock()
-    public let analyticsTracker = AnalyticsTrackerMock()
-    public let locationManager: LocationManageable = LocationManagerMock()
-    public let bundle: EnvironmentBundle = Bundle.main
-    public let tracker: Trackable = AnalyticsTrackerMock()
-}
-
 // MARK: - RAnalyticsCookieInjectorSpec
 
 final class RAnalyticsCookieInjectorSpec: QuickSpec {
@@ -24,8 +10,11 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
         describe("RAnalyticsCookieInjector") {
             let deviceID = "cc851515e51366f4856d165c3ea117e592db6fbc"
             let idfa = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
-            let containerMock = ContainerMock()
-            let cookieStore: WKHTTPCookieStore! = containerMock.httpCookieStore as? WKHTTPCookieStore
+
+            let containerMock = SimpleContainerMock()
+            containerMock.adIdentifierManager = ASIdentifierManagerMock()
+
+            let cookieStore: WKHTTPCookieStore! = containerMock.wkHttpCookieStore as? WKHTTPCookieStore
             let adIdentifierManager: ASIdentifierManagerMock! = containerMock.adIdentifierManager as? ASIdentifierManagerMock
             let cookieInjector = RAnalyticsCookieInjector(dependenciesContainer: containerMock)
             let analyticsCookieName = "ra_uid"

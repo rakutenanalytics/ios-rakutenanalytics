@@ -2,8 +2,12 @@ import Foundation
 import SystemConfiguration
 import RLogger
 
+protocol ReachabilityNotifiable {
+    init?(host: String, callback: @escaping SCNetworkReachabilityCallBack)
+}
+
 /// The Reachability Notifier calls the callback when the network status changes.
-@objc public final class ReachabilityNotifier: NSObject {
+final class ReachabilityNotifier: NSObject, ReachabilityNotifiable {
     private let reachability: SCNetworkReachability
 
     /// Creates a new instance of `ReachabilityNotifier`.
@@ -13,7 +17,7 @@ import RLogger
     ///     - callback: the network reachability callback.
     ///
     /// - Returns: a new instance of `ReachabilityNotifier`.
-    @objc public init?(host: String, callback: @escaping SCNetworkReachabilityCallBack) {
+    init?(host: String, callback: @escaping SCNetworkReachabilityCallBack) {
         guard let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, host) else {
             RLogger.error("SCNetworkReachabilityCreateWithName failed")
             return nil

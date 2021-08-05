@@ -7,9 +7,9 @@ included:
 disabled_rules:
 - trailing_whitespace
 - nesting
-- max_length
 - identifier_name
 - todo
+- cyclomatic_complexity
 
 opt_in_rules:
 - empty_count

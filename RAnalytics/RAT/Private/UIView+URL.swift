@@ -5,7 +5,7 @@ extension UIView {
     /// Recursively try to find a URL in a view hierarchy.
     ///
     /// - Returns: the `WKWebView`'s URL or `nil`.
-    @objc public func getWebViewURL() -> URL? {
+    func getWebViewURL() -> URL? {
         var url: URL?
 
         if let webViewURL = (self as? WKWebView)?.url {

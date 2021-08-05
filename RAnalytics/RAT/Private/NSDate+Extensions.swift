@@ -1,7 +1,7 @@
 import Foundation
 
 extension NSDate {
-    @objc public var toString: String {
+    var toString: String {
         // Using the following code would result in libICU being lazily loaded along with
         // its 16MB of data, and the latter would never get deallocated. No thanks, iOS!
         //
@@ -43,7 +43,7 @@ extension NSDate {
                       time.tm_sec)
     }
 
-    @objc public static func daysPassedSinceDate(_ date: NSDate?) -> Int64 {
+    static func daysPassedSinceDate(_ date: Date?) -> Int64 {
         guard let date = date else {
             return Int64(0)
         }

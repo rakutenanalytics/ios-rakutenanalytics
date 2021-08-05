@@ -11,6 +11,7 @@ final class RABEventBroadcasterSpec: QuickSpec {
             var dependenciesContainer: SimpleContainerMock!
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
+                dependenciesContainer.tracker = AnalyticsTrackerMock()
             }
             it("should track AnalyticsManager.Event.Name.custom with eventName and eventData when an event is broadcasted with data") {
                 let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)

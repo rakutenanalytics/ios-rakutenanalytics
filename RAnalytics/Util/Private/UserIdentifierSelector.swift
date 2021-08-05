@@ -11,7 +11,7 @@ final class UserIdentifierSelector: NSObject {
     ///   - userIdentifiable: The user identifiable.
     ///
     /// - Returns: An instance of UserIdentifierSelector.
-    @objc init(userIdentifiable: UserIdentifiable) {
+    init(userIdentifiable: UserIdentifiable) {
         self.userIdentifiable = userIdentifiable
         super.init()
     }
@@ -19,7 +19,7 @@ final class UserIdentifierSelector: NSObject {
     /// Returns the selected tracking identifier
     ///
     /// - Returns: A tracking identifier.
-    @objc var selectedTrackingIdentifier: String {
+    var selectedTrackingIdentifier: String {
         let selectedTrackingIdentifier = userIdentifiable.userIdentifier ?? userIdentifiable.trackingIdentifier
         guard let aTrackingIdentifier = selectedTrackingIdentifier else {
             return trackingIdentifierNoLoginFound

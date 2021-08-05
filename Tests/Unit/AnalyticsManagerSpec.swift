@@ -5,23 +5,15 @@ import WebKit
 import CoreLocation
 @testable import RAnalytics
 
-private final class SimpleContainerWithEmptyBundleMock: NSObject, SimpleDependenciesContainable {
-    public let notificationHandler: NotificationObservable = NotificationCenter.default
-    public let userStorageHandler: UserStorageHandleable = UserDefaults.standard
-    public let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
-    public let httpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
-    public let keychainHandler: KeychainHandleable = KeychainHandler()
-    public let analyticsTracker = AnalyticsTracker()
-    public let locationManager: LocationManageable = LocationManagerMock()
-    public let bundle: EnvironmentBundle = BundleMock()
-    public let tracker: Trackable = AnalyticsTracker()
-}
-
 final class AnalyticsManagerSpec: QuickSpec {
     override func spec() {
         describe("AnalyticsManager") {
-            let dependenciesContainerWithEmptyBundle = SimpleContainerWithEmptyBundleMock()
+            let dependenciesContainerWithEmptyBundle = SimpleContainerMock()
+            dependenciesContainerWithEmptyBundle.bundle = BundleMock()
+
             let dependenciesContainer = SimpleContainerMock()
+            dependenciesContainer.locationManager = LocationManagerMock()
+            dependenciesContainer.tracker = AnalyticsTrackerMock()
 
             beforeEach {
                 (dependenciesContainer.locationManager as? LocationManagerMock)?.startUpdatingLocationIsCalled = false
@@ -95,7 +87,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }()
 
                 it("RAnalyticsRATTracker should process the page visit event when shouldTrackPageView is true") {
-                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView ?? false
+                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView
                     AnalyticsManager.shared().shouldTrackPageView = true
                     expect(RAnalyticsRATTracker.shared().process(event: event, state: state)).to(beTrue())
 
@@ -103,7 +95,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
 
                 it("RAnalyticsRATTracker should not process the page visit event when shouldTrackPageView is false") {
-                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView ?? false
+                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView
                     AnalyticsManager.shared().shouldTrackPageView = false
                     expect(RAnalyticsRATTracker.shared().process(event: event, state: state)).to(beFalse())
 

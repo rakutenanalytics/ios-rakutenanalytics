@@ -1,18 +1,17 @@
 import Foundation
 import SQLite3
-import struct RAnalytics.SQlite3Pointer
-import class RAnalytics.RAnalyticsDatabase
+@testable import RAnalytics
 
-@objc public class DatabaseTestUtils: NSObject {
-    @objc public class func openRegularConnection() -> SQlite3Pointer? {
+@objc final class DatabaseTestUtils: NSObject {
+    @objc static func openRegularConnection() -> SQlite3Pointer? {
         return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)
     }
 
-    @objc public class func openReadonlyConnection() -> SQlite3Pointer? {
+    @objc static func openReadonlyConnection() -> SQlite3Pointer? {
         return openConnection(SQLITE_OPEN_READONLY) // will fail if database is not created
     }
 
-    @objc public class func openConnection(_ flags: Int32) -> SQlite3Pointer? {
+    @objc static func openConnection(_ flags: Int32) -> SQlite3Pointer? {
         var connection: SQlite3Pointer?
 
         // With 2 connections open we cannot use temporary databases because they are not shared.
@@ -26,11 +25,11 @@ import class RAnalytics.RAnalyticsDatabase
         return connection
     }
 
-    @objc public class func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
+    @objc static func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
         return RAnalyticsDatabase.database(connection: connection)
     }
 
-    @objc public class func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
+    @objc static func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
         var tableCount = Int32(0)
         let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
 
@@ -44,7 +43,7 @@ import class RAnalytics.RAnalyticsDatabase
         return tableCount > 0
     }
 
-    @objc public class func deleteTableIfExists(_ table: String, connection: SQlite3Pointer) {
+    @objc static func deleteTableIfExists(_ table: String, connection: SQlite3Pointer) {
         let query = "DROP TABLE IF EXISTS '\(table)'"
 
         var statement: SQlite3Pointer?
@@ -54,7 +53,7 @@ import class RAnalytics.RAnalyticsDatabase
         sqlite3_finalize(statement)
     }
 
-    @objc public class func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
+    @objc static func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
         var result = [Data]()
         let query = "select * from \(table)"
 
@@ -77,7 +76,7 @@ import class RAnalytics.RAnalyticsDatabase
         return result
     }
 
-    @objc public class func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
+    @objc static func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
         assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
 
         let createTableQuery = "create table if not exists \(table) (id integer primary key, data blob)"
@@ -100,5 +99,12 @@ import class RAnalytics.RAnalyticsDatabase
 
         sqlite3_finalize(statement)
         assert(sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK)
+    }
+
+    @objc static func databaseName(connection: SQlite3Pointer) -> String? {
+        guard let dbName = sqlite3_db_filename(connection, nil) else {
+            return nil
+        }
+        return String(cString: dbName)
     }
 }

@@ -1,17 +1,7 @@
 import Quick
 import Nimble
 import UIKit
-
-private final class ApplicationMock: AnalyticsStatusBarOrientationGettable {
-    private let injectedValue: UIInterfaceOrientation
-    init(_ injectedValue: UIInterfaceOrientation) {
-        self.injectedValue = injectedValue
-    }
-
-    var analyticsStatusBarOrientation: UIInterfaceOrientation {
-        injectedValue
-    }
-}
+@testable import RAnalytics
 
 final class RStatusBarOrientationHandlerSpec: QuickSpec {
     override func spec() {

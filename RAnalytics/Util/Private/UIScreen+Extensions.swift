@@ -1,6 +1,6 @@
 import Foundation
 
-@objc public protocol Screenable {
+protocol Screenable {
     var bounds: CGRect { get }
 }
 

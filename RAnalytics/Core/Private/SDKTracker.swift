@@ -1,11 +1,12 @@
 import Foundation
+import RLogger
 
-@objc final class SDKTracker: NSObject, Tracker {
+final class SDKTracker: NSObject, Tracker {
     private static let SDKTableName = "RAKUTEN_ANALYTICS_SDK_TABLE"
     private static let SDKDatabaseName = "RAnalyticsSDKTracker.db"
     private var sender: RAnalyticsSender
 
-    var endpointURL: URL {
+    var endpointURL: URL? {
         get {
             sender.endpointURL
         }
@@ -15,19 +16,22 @@ import Foundation
     }
 
     init?(bundle: EnvironmentBundle, session: SwiftySessionable, batchingDelay: TimeInterval = 60.0) {
-        guard let endpointURL = bundle.endpointAddress,
-              let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: SDKTracker.SDKDatabaseName) else {
+        guard let endpointURL = bundle.endpointAddress else {
+            let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.eventsNotProcessedBySDKTracker)"
+            RLogger.error(message)
             return nil
         }
+        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: SDKTracker.SDKDatabaseName) else {
+            RLogger.error("\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
+            return nil
+        }
+
         let database = RAnalyticsDatabase.database(connection: connection)
-        guard let aSender = RAnalyticsSender(endpoint: endpointURL,
-                                             database: database,
-                                             databaseTable: SDKTracker.SDKTableName,
-                                             bundle: Bundle.main,
-                                             session: session) else {
-            return nil
-        }
-        sender = aSender
+        sender = RAnalyticsSender(endpoint: endpointURL,
+                                  database: database,
+                                  databaseTable: SDKTracker.SDKTableName,
+                                  bundle: Bundle.main,
+                                  session: session)
         sender.setBatchingDelayBlock(batchingDelay) // default is 1 minute.
 
         super.init()

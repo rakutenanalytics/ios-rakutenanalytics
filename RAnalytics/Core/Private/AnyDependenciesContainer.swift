@@ -1,25 +1,25 @@
 import Foundation
 
 /// A container that can register any dependencies and resolve any types of dependencies
-@objc public final class AnyDependenciesContainer: NSObject {
+final class AnyDependenciesContainer: NSObject {
     private var swiftyContainer = SwiftyDependenciesContainer<NSObject>()
 
     /// Register an  instance (inheriting from NSObject)
     /// @warning Returns false if the instance is already registered
     /// @warning Register only one element per type.
-    @objc @discardableResult public func registerObject(_ element: NSObject) -> Bool {
+    @discardableResult func registerObject(_ element: NSObject) -> Bool {
         swiftyContainer.register(element)
     }
 
     /// Returns an instance for a given type
     /// @warning Returns the first found instance for a given type (inheriting from NSObject)
-    @objc public func resolveObject(_ typeToResolve: NSObject.Type) -> NSObject? {
+    func resolveObject(_ typeToResolve: NSObject.Type) -> NSObject? {
         swiftyContainer.resolve(typeToResolve)
     }
 }
 
 extension AnyDependenciesContainer: NSCopying {
-    public func copy(with zone: NSZone? = nil) -> Any {
+    func copy(with zone: NSZone? = nil) -> Any {
         let copiedInstance = AnyDependenciesContainer()
         copiedInstance.swiftyContainer = swiftyContainer
         return copiedInstance
@@ -38,14 +38,15 @@ extension AnyDependenciesContainer {
 
 // MARK: - Swifty Dependencies Container
 
-public struct SwiftyDependenciesContainer<T: Equatable> {
+struct SwiftyDependenciesContainer<T: Equatable> {
     private var elements = [T]()
 
-    public init() {}
+    init() {}
 
     /// Register an  instance conforming to Equatable protocol if it's not already contained
     /// Register only one element per type.
-    @discardableResult public mutating func register(_ element: T) -> Bool {
+    @discardableResult
+    mutating func register(_ element: T) -> Bool {
         let contained = elements.contains { $0 == element }
         guard !contained else { return false }
         let containedType = elements.contains { type(of: $0) == type(of: element) }
@@ -56,7 +57,7 @@ public struct SwiftyDependenciesContainer<T: Equatable> {
 
     /// Returns an instance for a given type
     /// @warning Returns the first found instance for a given type
-    public func resolve<T>(_ typeToResolve: T.Type) -> T? {
+    func resolve<T>(_ typeToResolve: T.Type) -> T? {
         let result = elements.first {
             guard let element = $0 as? T else {
                 return false

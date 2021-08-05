@@ -2,9 +2,7 @@ import Foundation
 import RLogger
 
 /// A class that injects a cookie in the HTTP Cookie Store
-/// @warning RAnalyticsCookieInjector is declared as public to be accessible from Objective-C
-/// @warning RAnalyticsCookieInjector will have to be private when the callers are migrated to Swift
-@objc public final class RAnalyticsCookieInjector: NSObject {
+final class RAnalyticsCookieInjector: NSObject {
     private enum TrackingCookieConstants {
         static let name = "ra_uid"
         static let defaultDomain = ".rakuten.co.jp"
@@ -14,8 +12,8 @@ import RLogger
     private let adIdentifierManager: AdvertisementIdentifiable
 
     /// Initialize RAnalyticsCookieInjector with a dependenciesFactory
-    @objc public init(dependenciesContainer: SimpleDependenciesContainable) {
-        self.httpCookieStore = dependenciesContainer.httpCookieStore
+    init(dependenciesContainer: SimpleDependenciesContainable) {
+        self.httpCookieStore = dependenciesContainer.wkHttpCookieStore
         self.adIdentifierManager = dependenciesContainer.adIdentifierManager
         super.init()
     }
@@ -26,13 +24,13 @@ import RLogger
 extension RAnalyticsCookieInjector {
     /// Inject app-to-web tracking cookie
     ///
-    /// @param domain  Domain to set on cookie, if nil default domain will be used
-    /// @param deviceIdentifier Device identifier string
-    ///
-    /// completionHandler:  Injected cookie or nil if cookie cannot be created or injected
-    @objc public func injectAppToWebTrackingCookie(domain: String?,
-                                                   deviceIdentifier: String,
-                                                   completionHandler: ((HTTPCookie?) -> Void)?) {
+    /// - Parameters:
+    ///     - domain:  Domain to set on cookie, if nil default domain will be used
+    ///     - deviceIdentifier: Device identifier string
+    ///     - completionHandler: Injected cookie or nil if cookie cannot be created or injected
+    func injectAppToWebTrackingCookie(domain: String?,
+                                      deviceIdentifier: String,
+                                      completionHandler: ((HTTPCookie?) -> Void)?) {
         guard !deviceIdentifier.isEmpty,
               let trackingCookieValue = trackingCookieValue(deviceIdentifier: deviceIdentifier),
               let trackingCookie = trackingCookie(domain: domain, value: trackingCookieValue) else {

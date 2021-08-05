@@ -12,9 +12,7 @@ extension Notification.Name {
     static let discoverPreviewShowMore         = Self("_rem_discover_discoverpreview_showmore")
 }
 
-/// @warning This extension is declared as public to be used in Objective-C classes
-/// @warning This extension will have to be internal when the callers are migrated to Swift
-@objc extension NSNotification {
+extension NSNotification {
     static let discoverPageVisit = Notification.Name.discoverPageVisit
     static let discoverPageTap = Notification.Name.discoverPageTap
     static let discoverPageRedirect = Notification.Name.discoverPageRedirect

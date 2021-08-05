@@ -2,7 +2,7 @@ import Foundation
 
 extension NSObject {
     /// - Returns: a positive number > 0 or `nil`.
-    @objc public var positiveIntegerNumber: NSNumber? {
+    var positiveIntegerNumber: NSNumber? {
         switch self {
         case let object as Int where object > 0:
             return NSNumber(value: object)

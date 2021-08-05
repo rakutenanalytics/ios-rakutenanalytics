@@ -3,21 +3,30 @@ import CoreTelephony
 
 /// Mobile Network Type
 /// - Note: This maps the values for the otherwise-undocumented MOBILE_NETWORK_TYPE RAT parameter.
-@objc public enum RATMobileNetworkType: Int {
+enum RATMobileNetworkType: Int {
     case wifi = 1
     case cellularOther = 3
     case cellularLTE = 4
     case cellular5G = 5
 }
 
+protocol TelephonyHandleable {
+    var reachabilityStatus: NSNumber? { get set }
+    var mcn: String { get }
+    var mcnd: String { get }
+    var mnetw: NSNumber? { get }
+    var mnetwd: NSNumber? { get }
+    func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
+}
+
 /// The Telephony Handler handles the core telephony framework.
-@objc public final class TelephonyHandler: NSObject {
-    private var telephonyNetworkInfo: TelephonyHandleable
+final class TelephonyHandler: NSObject, TelephonyHandleable {
+    private var telephonyNetworkInfo: TelephonyNetworkInfoHandleable
     private let notificationCenter: NotificationObservable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
     private var currentCarrierName: String? // used for iOS <= 11.x
     private var currentCarrierRadio: String? // used for iOS <= 11.x
-    @objc public var reachabilityStatus: NSNumber?
+    var reachabilityStatus: NSNumber?
 
     /// Creates a new instance of `TelephonyHandler`.
     ///
@@ -26,8 +35,8 @@ import CoreTelephony
     ///   - notificationCenter: The notification center.
     ///
     /// - Returns: a new instance of `TelephonyHandler`.
-    @objc public init(telephonyNetworkInfo: TelephonyHandleable,
-                      notificationCenter: NotificationObservable) {
+    init(telephonyNetworkInfo: TelephonyNetworkInfoHandleable,
+         notificationCenter: NotificationObservable) {
         self.telephonyNetworkInfo = telephonyNetworkInfo
         self.notificationCenter = notificationCenter
 
@@ -61,7 +70,7 @@ import CoreTelephony
 
     private func updateCarrierInfos() {
         if self.telephonyNetworkInfo.responds(to: #selector(getter: CTTelephonyNetworkInfo.subscriberCellularProvider)) {
-            self.currentCarrierName = self.telephonyNetworkInfo.subscriberCellularProvider?.displayedCarrierName
+            self.currentCarrierName = self.telephonyNetworkInfo.subscriber?.displayedCarrierName
         }
 
         if self.telephonyNetworkInfo.responds(to: #selector(getter: CTTelephonyNetworkInfo.currentRadioAccessTechnology)) {
@@ -77,7 +86,7 @@ extension TelephonyHandler {
     ///
     /// - Parameters:
     ///   - telephonyNetworkInfo: The telephony network info.
-    @objc public func update(telephonyNetworkInfo: TelephonyHandleable) {
+    func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable) {
         self.telephonyNetworkInfo = telephonyNetworkInfo
     }
 }
@@ -100,7 +109,7 @@ extension TelephonyHandler {
 
 extension TelephonyHandler {
     /// - Returns: The name of the primary carrier.
-    @objc public var mcn: String {
+    var mcn: String {
         if #available(iOS 12.0, *) {
             return primaryMcn
 
@@ -112,14 +121,14 @@ extension TelephonyHandler {
     @available(iOS 12.0, *)
     private var primaryMcn: String {
         guard let carrierKey = selectedCarrierKey,
-              let carrier = telephonyNetworkInfo.serviceSubscriberCellularProviders?[carrierKey] else {
+              let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
             return ""
         }
         return carrier.displayedCarrierName ?? ""
     }
 
     /// - Returns: The name of the secondary carrier.
-    @objc public var mcnd: String {
+    var mcnd: String {
         if #available(iOS 12.0, *) {
             return eSimMcn
 
@@ -132,11 +141,11 @@ extension TelephonyHandler {
     private var eSimMcn: String {
         // Note: Only one eSIM can be enabled on iOS.
         // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
-        let otherKey = telephonyNetworkInfo.serviceSubscriberCellularProviders?.filter {
+        let otherKey = telephonyNetworkInfo.subscribers?.filter {
             selectedCarrierKey != $0.key
         }.keys.first
         if let key = otherKey,
-           let carrier = telephonyNetworkInfo.serviceSubscriberCellularProviders?[key] {
+           let carrier = telephonyNetworkInfo.subscribers?[key] {
             return carrier.displayedCarrierName ?? ""
         }
         return ""
@@ -147,7 +156,7 @@ extension TelephonyHandler {
 
 extension TelephonyHandler {
     /// - Returns: The network status of the primary carrier.
-    @objc public var mnetw: NSNumber? {
+    var mnetw: NSNumber? {
         if #available(iOS 12.0, *) {
             return primaryMnetw
 
@@ -169,7 +178,7 @@ extension TelephonyHandler {
     }
 
     /// - Returns: The network status of the secondary carrier.
-    @objc public var mnetwd: NSNumber? {
+    var mnetwd: NSNumber? {
         if #available(iOS 12.0, *) {
             return eSimMnetwd
 
@@ -230,16 +239,17 @@ private extension TelephonyHandler {
 
 // MARK: - CTCarrier
 
-private extension CTCarrier {
-    /// - Returns: The carrier name maximum length.
-    private static let carrierNameLengthMax: Int = 32
+/// - Returns: The carrier name maximum length.
+private let carrierNameLengthMax: Int = 32
+
+private extension Carrierable {
 
     /// - Returns: The displayed carrier name.
     var displayedCarrierName: String? {
         var name: String?
 
         if let carrierName = carrierName {
-            name = carrierName[0..<min(CTCarrier.carrierNameLengthMax, carrierName.count)]
+            name = carrierName[0..<min(carrierNameLengthMax, carrierName.count)]
         }
 
         if !name.isEmpty && !mobileNetworkCode.isEmpty {
@@ -261,5 +271,21 @@ private extension String {
             return self == CTRadioAccessTechnologyNR || self == CTRadioAccessTechnologyNRNSA
         }
         return false
+    }
+}
+
+// MARK: - Network Type
+
+extension String {
+    var networkType: RATMobileNetworkType {
+        if isLTE {
+            return .cellularLTE
+
+        } else if is5G {
+            return .cellular5G
+
+        } else {
+            return .cellularOther
+        }
     }
 }

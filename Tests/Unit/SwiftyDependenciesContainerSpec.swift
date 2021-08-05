@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+@testable import RAnalytics
 
 private class Dependency {
     let name: String

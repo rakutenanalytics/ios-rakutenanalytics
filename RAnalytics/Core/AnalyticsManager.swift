@@ -25,7 +25,7 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     /// Retrieve the shared instance.
     ///
     /// - Returns: The shared instance.
-    @objc(sharedInstance) dynamic public static func shared() -> AnalyticsManager {
+    @objc(sharedInstance) public static func shared() -> AnalyticsManager {
         singleton
     }
 
@@ -98,7 +98,7 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
 
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
-    @objc private(set) var locationManagerIsUpdating: Bool = false
+    private(set) var locationManagerIsUpdating: Bool = false
     private var deviceIdentifier: String?
 
     /// Session cookie. We use an UUID automatically created at startup and
@@ -108,8 +108,8 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     private var cookieDomainBlock: WebTrackingCookieDomainBlock?
 
     /// Trackers Set
-    /// - Note: The yype 'Tracker' has to conform to protocol `Hashable` in order to use `Set` instead of `NSMutableSet`
-    @objc dynamic private(set) var trackers: NSMutableSet
+    /// - Note: The 'Tracker' type has to conform to protocol `Hashable` in order to use `Set` instead of `NSMutableSet`
+    private(set) var trackers: NSMutableSet
     private(set) var trackersLockableObject: LockableObject<NSMutableSet>
 
     /// Dependencies
@@ -119,8 +119,7 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     @objc private let analyticsLaunchCollector: RAnalyticsLaunchCollector
     @objc private let analyticsExternalCollector: RAnalyticsExternalCollector
 
-    /// - Note: dynamic is only used for message dispatch in RAnalyticsManagerTests (Objective-C)
-    @objc dynamic private let eventChecker: EventChecker
+    private let eventChecker: EventChecker
 
     init(dependenciesContainer: SimpleDependenciesContainable) {
         analyticsExternalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)

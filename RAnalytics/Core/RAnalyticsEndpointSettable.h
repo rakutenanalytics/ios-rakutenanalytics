@@ -9,12 +9,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 RSDKA_EXPORT NS_SWIFT_NAME(EndpointSettable) @protocol RAnalyticsEndpointSettable <NSObject>
 
-@required
-
 /**
  * Property for setting the endpoint URL at runtime.
  */
-@property (nonatomic, copy) NSURL *endpointURL;
+@property (nonatomic, copy) NSURL * _Nullable endpointURL;
 
 @end
 

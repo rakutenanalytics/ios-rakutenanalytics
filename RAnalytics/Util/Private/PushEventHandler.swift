@@ -3,7 +3,7 @@ import Foundation
 struct PushEventHandler {
     let userStorageHandler: UserStorageHandleable?
 
-    init(bundle: Bundleable, userDefaultsType: UserStorageHandleable.Type) {
+    init(bundle: EnvironmentBundle, userDefaultsType: UserStorageHandleable.Type) {
         guard let appGroupId = bundle.object(forInfoDictionaryKey: RPushAppGroupIdentifierPlistKey) as? String else {
             userStorageHandler = nil
             return

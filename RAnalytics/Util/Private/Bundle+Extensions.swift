@@ -1,13 +1,5 @@
 import Foundation
 
-// MARK: - Bundleable
-
-protocol Bundleable {
-    func object(forInfoDictionaryKey key: String) -> Any?
-}
-
-extension Bundle: Bundleable {}
-
 // MARK: - Version
 
 extension Bundle {

@@ -1,7 +1,7 @@
 import Foundation
 
-@objc protocol URLSessionTaskable {
-    @objc func resume()
+protocol URLSessionTaskable {
+    func resume()
 }
 
 extension URLSessionTask: URLSessionTaskable {}

@@ -1,7 +1,7 @@
 import Foundation
 import CoreLocation
 
-@objc public protocol LocationManageable {
+protocol LocationManageable: AnyObject {
     var desiredAccuracy: CLLocationAccuracy { get set }
     var delegate: CLLocationManagerDelegate? { get set }
     var location: CLLocation? { get }
@@ -10,4 +10,4 @@ import CoreLocation
     func stopUpdatingLocation()
 }
 
-@objc extension CLLocationManager: LocationManageable {}
+extension CLLocationManager: LocationManageable {}

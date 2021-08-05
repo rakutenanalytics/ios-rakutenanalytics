@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 
-@testable import class RAnalytics.RAnalyticsSender
+@testable import RAnalytics
 
 class SenderTests: QuickSpec {
 
@@ -45,7 +45,7 @@ class SenderTests: QuickSpec {
                                             database: database,
                                             databaseTable: databaseTableName,
                                             bundle: bundle,
-                                            session: URLSession.shared)!
+                                            session: URLSession.shared)
                 }
 
                 it("should send given payload when enableInternalSerialization is false") {

@@ -140,6 +140,9 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsLaunchCollector") {
             let dependenciesFactory = SimpleContainerMock()
+            dependenciesFactory.keychainHandler = KeychainHandlerMock()
+            dependenciesFactory.userStorageHandler = UserDefaultsMock()
+            dependenciesFactory.tracker = AnalyticsTrackerMock()
 
             afterEach {
                 // Reset with default values

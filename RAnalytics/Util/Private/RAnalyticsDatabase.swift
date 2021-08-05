@@ -2,7 +2,7 @@ import Foundation
 import SQLite3
 import RLogger
 
-public typealias SQlite3Pointer = OpaquePointer
+typealias SQlite3Pointer = OpaquePointer
 
 ///
 /// Internal class used to centralize access to the analytics database.
@@ -11,7 +11,7 @@ public typealias SQlite3Pointer = OpaquePointer
 /// need to otherwise synchronize calls to them. Completion blocks are then
 /// executed on the caller's operation queue.
 ///
-public final class RAnalyticsDatabase: NSObject {
+final class RAnalyticsDatabase: NSObject {
 
     private static let RAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
     private static let RAnalyticsDBTableCreationFailureErrorCode = 1
@@ -33,7 +33,7 @@ public final class RAnalyticsDatabase: NSObject {
     /// - Parameter connection: SQLite DB connection
     ///
     @discardableResult
-    @objc public static func database(connection: SQlite3Pointer) -> RAnalyticsDatabase {
+    static func database(connection: SQlite3Pointer) -> RAnalyticsDatabase {
         return RAnalyticsDatabase(connection: connection)
     }
 

@@ -2,7 +2,7 @@ import Foundation
 import SystemConfiguration
 
 /// Reachability status
-@objc public enum RATReachabilityStatus: Int {
+enum RATReachabilityStatus: Int {
     case offline
     case wwan
     case wifi

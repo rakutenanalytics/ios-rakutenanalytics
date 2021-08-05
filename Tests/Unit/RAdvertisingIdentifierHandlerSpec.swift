@@ -9,6 +9,8 @@ final class RAdvertisingIdentifierHandlerSpec: QuickSpec {
         describe("RAdvertisingIdentifierHandler") {
             describe("idfa") {
                 let dependenciesContainer = SimpleContainerMock()
+                dependenciesContainer.adIdentifierManager = ASIdentifierManagerMock()
+
                 let mock = (dependenciesContainer.adIdentifierManager as? ASIdentifierManagerMock)
 
                 it("should return nil when idfa UUID is empty") {

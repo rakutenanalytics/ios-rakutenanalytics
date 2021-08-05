@@ -60,3 +60,11 @@ extension NSString {
         (self as String).ratEncrypt as NSString?
     }
 }
+
+// MARK: - Bundle Helper
+
+@objc public final class BundleHelper: NSObject {
+    @objc public static func endpointAddress() -> URL? {
+        Bundle.main.endpointAddress
+    }
+}

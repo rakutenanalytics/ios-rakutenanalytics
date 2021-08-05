@@ -16,13 +16,14 @@ final class RAnalyticsStateSpec: QuickSpec {
             let currentVersion = "2.0"
             let lastVersion = "1.0"
             let bundle = Bundle(for: RAnalyticsStateSpec.self)
+            let dateComponents = DateComponents(year: 2016,
+                                                month: 6,
+                                                day: 10,
+                                                hour: 9,
+                                                minute: 15,
+                                                second: 30)
             let calendar = Calendar(identifier: .gregorian)
-            let sessionStartDate = calendar.date(from: DateComponents(year: 2016,
-                                                                      month: 6,
-                                                                      day: 10,
-                                                                      hour: 9,
-                                                                      minute: 15,
-                                                                      second: 30))
+            let sessionStartDate = calendar.date(from: dateComponents)
             let initialLaunchDate = calendar.date(from: DateComponents(year: 2016,
                                                                        month: 6,
                                                                        day: 10))

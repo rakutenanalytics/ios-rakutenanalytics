@@ -6,7 +6,8 @@ import UIKit
 // MARK: - AnalyticsManager.Event
 
 private func defaultEvent() -> AnalyticsManager.Event {
-    AnalyticsManager.Event(name: _RATGenericEventName, parameters: [_RATETypeParameter: "value1"])
+    AnalyticsManager.Event(name: RAnalyticsRATTracker.Constants.RATGenericEventName,
+                           parameters: [RAnalyticsRATTracker.Constants.RATETypeParameter: "value1"])
 }
 
 // MARK: - RAnalyticsEventSpec
@@ -17,8 +18,8 @@ final class RAnalyticsEventSpec: QuickSpec {
             describe("init") {
                 it("should have the correct default values") {
                     let event = defaultEvent()
-                    expect(event.name).to(equal(_RATGenericEventName))
-                    expect(event.parameters[_RATETypeParameter] as? String).to(equal("value1"))
+                    expect(event.name).to(equal(RAnalyticsRATTracker.Constants.RATGenericEventName))
+                    expect(event.parameters[RAnalyticsRATTracker.Constants.RATETypeParameter] as? String).to(equal("value1"))
                 }
             }
             describe("copy") {
@@ -43,7 +44,8 @@ final class RAnalyticsEventSpec: QuickSpec {
                 }
                 it("should be false if it has not the same properties") {
                     let event = defaultEvent()
-                    let otherEvent = AnalyticsManager.Event(name: "otherName", parameters: [_RATETypeParameter: "value2"])
+                    let otherEvent = AnalyticsManager.Event(name: "otherName",
+                                                            parameters: [RAnalyticsRATTracker.Constants.RATETypeParameter: "value2"])
                     expect(event.name).toNot(equal(otherEvent.name))
                     expect(event.parameters == otherEvent.parameters).to(beFalse())
                     expect(event).toNot(equal(otherEvent))
@@ -70,7 +72,8 @@ final class RAnalyticsEventSpec: QuickSpec {
                 }
                 it("should not be equal if the properties are not equal") {
                     let event = defaultEvent()
-                    let otherEvent = AnalyticsManager.Event(name: "otherName", parameters: [_RATETypeParameter: "value2"])
+                    let otherEvent = AnalyticsManager.Event(name: "otherName",
+                                                            parameters: [RAnalyticsRATTracker.Constants.RATETypeParameter: "value2"])
                     expect(event.hash).toNot(equal(otherEvent.hash))
                 }
             }

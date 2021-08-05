@@ -42,3 +42,27 @@ extension NSObject {
         return nil
     }
 }
+
+extension NSObject {
+    static func isAppleClass(_ cls: AnyClass?) -> Bool {
+        guard let appleClass = cls,
+              let bundleIdentifier = Bundle(for: appleClass.self).bundleIdentifier else {
+            return false
+        }
+        return bundleIdentifier.hasPrefix("com.apple.")
+    }
+
+    static func isApplePrivateClass(_ cls: AnyClass?) -> Bool {
+        guard let cls = cls else {
+            return false
+        }
+        return NSStringFromClass(cls).hasPrefix("_") && NSObject.isAppleClass(cls)
+    }
+
+    static func isNullableObjectEqual(_ objA: NSObject?, to objB: NSObject?) -> Bool {
+        guard let objectA = objA, let objectB = objB else {
+            return objA == nil && objB == nil
+        }
+        return objectA.isEqual(objectB)
+    }
+}

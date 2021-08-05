@@ -13,11 +13,12 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             var dependenciesContainer: SimpleContainerMock!
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
+                dependenciesContainer.userStorageHandler = UserDefaultsMock()
+                dependenciesContainer.tracker = AnalyticsTrackerMock()
             }
             describe("init") {
                 it("should have the correct default values") {
-                    let container = SimpleContainerMock()
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: container)
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     expect(externalCollector.isLoggedIn).to(beFalse())
                     expect(externalCollector.trackingIdentifier).to(beNil())
                     expect(externalCollector.userIdentifier).to(beNil())

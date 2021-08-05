@@ -2,11 +2,11 @@ import Foundation
 import RLogger
 
 /// This class checks if an event should be processed.
-@objc public final class EventChecker: NSObject {
-    @objc public var shouldTrackEventHandler: ((String) -> (Bool))?
+final class EventChecker: NSObject {
+    var shouldTrackEventHandler: ((String) -> (Bool))?
     private let disabledEventsAtBuildTime: [String]?
 
-    @objc public init(disabledEventsAtBuildTime: [String]?) {
+    init(disabledEventsAtBuildTime: [String]?) {
         self.disabledEventsAtBuildTime = disabledEventsAtBuildTime
         super.init()
     }
@@ -39,7 +39,7 @@ extension EventChecker {
     ///   `true`.
     ///
     /// Note: The Runtime configuration (`shouldTrackEventHandler`) overrides the Build time configuration (`RATDisabledEventsList`)
-    @objc public func shouldProcess(_ eventName: String) -> Bool {
+    func shouldProcess(_ eventName: String) -> Bool {
         guard shouldTrackEventHandler != nil else {
             return shouldTrackEventAtBuildtime(eventName)
         }

@@ -5,7 +5,7 @@ import Foundation
 /// func set(_ value: Any?, forKey defaultName: String)
 /// Declaring this method instead solves this error:
 /// set(value: Any?, forKey defaultName: String)
-@objc public protocol UserStorageHandleable {
+protocol UserStorageHandleable {
     init?(suiteName suitename: String?)
     func dictionary(forKey defaultName: String) -> [String: Any]?
     func object(forKey defaultName: String) -> Any?
@@ -17,7 +17,7 @@ import Foundation
 }
 
 extension UserDefaults: UserStorageHandleable {
-    public func set(value: Any?, forKey defaultName: String) {
+    func set(value: Any?, forKey defaultName: String) {
         set(value, forKey: defaultName)
     }
 }

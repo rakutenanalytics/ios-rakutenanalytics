@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+@testable import RAnalytics
 
 final class EventCheckerSpec: QuickSpec {
     override func spec() {

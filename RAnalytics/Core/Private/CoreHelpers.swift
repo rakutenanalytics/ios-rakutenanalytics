@@ -1,18 +1,18 @@
 import Foundation
 import UIKit
 
-@objc public class RAnalyticsConstants: NSObject {
-    @objc public static let RAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
-    @objc public static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
+enum RAnalyticsConstants {
+    static let RAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
+    static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
 }
 
-@objc public class CoreHelpers: NSObject {
+final class CoreHelpers: NSObject {
     private enum Constants {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
     }
 
-    @objc public static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
+    static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
         var dict = [String: Any]()
         if let state = state {
             dict["app_ver"] = state.currentVersion
@@ -24,7 +24,7 @@ import UIKit
         return dict
     }
 
-    @objc public static let applicationInfo: [String: Any]? = {
+    static let applicationInfo: [String: Any]? = {
         var dict = [String: Any]()
 
         // Collect build environment (Xcode version and build SDK)

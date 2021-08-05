@@ -38,22 +38,37 @@ internal enum RAnalyticsDatabaseHelper {
     }
 }
 
-@objc public extension RAnalyticsDatabase {
+extension RAnalyticsDatabase {
 
-    @objc(mkAnalyticsDBConnectionWithName:)
     static func mkAnalyticsDBConnection(databaseName: String) -> SQlite3Pointer? {
 
         let documentsDirectoryPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         let databasePath = documentsDirectoryPath?.appendingPathComponent(databaseName)
 
         var connection: SQlite3Pointer?
-        guard sqlite3_open(databasePath?.path, &connection) == SQLITE_OK else {
+        guard let databasePath = databasePath,
+              sqlite3_open(databasePath.path, &connection) == SQLITE_OK,
+              let connection = connection else {
+
             RLogger.error("Failed to open database: \(String(describing: databasePath))")
-            sqlite3_close(connection)
-            return nil
+            RLogger.error("Using in-memory database")
+            return mkAnalyticsInMemoryDBConnection()
         }
 
         atexit_b {
+            // Try to finalize all prepared statements before closing the app
+            sqlite3_close(connection)
+        }
+
+        return connection
+    }
+
+    private static func mkAnalyticsInMemoryDBConnection() -> SQlite3Pointer? {
+        var connection: SQlite3Pointer?
+        sqlite3_open("file::memory:?cache=shared", &connection)
+
+        atexit_b {
+            // Try to finalize all prepared statements before closing the app
             sqlite3_close(connection)
         }
 

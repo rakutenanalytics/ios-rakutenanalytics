@@ -2,8 +2,12 @@ import Quick
 import Nimble
 @testable import RAnalytics
 
-final class BundleMock: EnvironmentBundle {
+final class BundleMock: NSObject, EnvironmentBundle {
+    var languageCode: Any?
+    var accountIdentifier: Int64 { mutableAccountIdentifier }
+    var applicationIdentifier: Int64 { mutableApplicationIdentifier }
     var disabledEventsAtBuildTime: [String]?
+    var duplicateAccounts: [RATAccount]?
     var bundleIdentifier: String?
     var useDefaultSharedCookieStorage: Bool {
         (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
@@ -16,9 +20,9 @@ final class BundleMock: EnvironmentBundle {
     var dictionary: [String: Any]?
     var mutableEndpointAddress: URL?
     var mutableEnableInternalSerialization: Bool = false
-}
+    var mutableAccountIdentifier: Int64 = 1
+    var mutableApplicationIdentifier: Int64 = 1
 
-extension BundleMock: Bundleable {
     func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
 }
 

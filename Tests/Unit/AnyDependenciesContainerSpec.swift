@@ -2,6 +2,7 @@ import Quick
 import Nimble
 import AdSupport
 import WebKit
+@testable import RAnalytics
 
 private final class RAnalyticsHandler1: NSObject {}
 private final class RAnalyticsHandler2: NSObject {}
