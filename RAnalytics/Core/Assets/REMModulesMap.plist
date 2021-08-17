@@ -2,45 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>org.cocoapods.RPerformanceTracking</key>
-	<string>performance-tracking</string>
-	<key>org.cocoapods.RakutenGlobalPointClient</key>
-	<string>api-rae-globalpoint</string>
-	<key>org.cocoapods.RakutenGlobalMemberInformationClient</key>
-	<string>api-rae-globalmemberinformation</string>
-	<key>org.cocoapods.RakutenPushNotificationPlatformClient</key>
-	<string>api-rae-pnp</string>
-	<key>org.cocoapods.RakutenMemberInformationClient</key>
-	<string>api-rae-memberinformation</string>
-	<key>org.cocoapods.RSDKDeviceInformation</key>
-	<string>deviceinformation</string>
-	<key>org.cocoapods.RakutenWebClientKit</key>
-	<string>api-kit</string>
-	<key>org.cocoapods.RakutenEngineClient</key>
-	<string>api-rae-engine</string>
 	<key>org.cocoapods.RPing</key>
 	<string>ping</string>
-	<key>org.cocoapods.RPoints</key>
-	<string>points</string>
-	<key>org.cocoapods.RakutenAPIs</key>
-	<string>rakutenapis</string>
 	<key>org.cocoapods.RAnalytics</key>
 	<string>analytics</string>
 	<key>org.cocoapods.RDiscover</key>
 	<string>discover</string>
 	<key>org.cocoapods.RFeedback</key>
 	<string>feedback</string>
-	<key>org.cocoapods.RAuthentication</key>
-	<string>authentication</string>
-	<key>org.cocoapods.RakutenIdInformationClient</key>
-	<string>api-rae-idinformation</string>
-	<key>org.cocoapods.StitchSDK</key>
-	<string>stitch</string>
 	<key>org.cocoapods.RPushPNP</key>
 	<string>pushpnp</string>
-	<key>org.cocoapods.RRemoteConfig</key>
-	<string>remote-config</string>
-	<key>org.cocoapods.InAppMessaging</key>
+	<key>org.cocoapods.RInAppMessaging</key>
 	<string>inappmessaging</string>
 </dict>
 </plist>
