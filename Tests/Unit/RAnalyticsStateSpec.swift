@@ -2,6 +2,7 @@ import Quick
 import Nimble
 import CoreLocation
 import UIKit
+@testable import RAnalytics
 
 // MARK: - RAnalyticsStateSpec
 

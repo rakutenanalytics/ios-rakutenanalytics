@@ -61,17 +61,17 @@ import CoreLocation.CLLocation
 
     /// `CLLocation` object representing the last known location of the device.
     /// Only set if that information is available and AnalyticsManager.shouldTrackLastKnownLocation is `true`.
-    @objc public var lastKnownLocation: CLLocation?
+    @objc public internal(set) var lastKnownLocation: CLLocation?
 
     /// IDFA.
     /// Only set if AnalyticsManager.shouldTrackAdvertisingId is `true`.
-    @objc public var advertisingIdentifier: String?
+    @objc public internal(set) var advertisingIdentifier: String?
 
     /// This property stores the date when a new session is started.
-    @objc public var sessionStartDate: Date?
+    @objc public internal(set) var sessionStartDate: Date?
 
     /// `true` if there's a user currently logged in, `false` otherwise.
-    @objc public var loggedIn: Bool = false
+    @objc public internal(set) var loggedIn: Bool = false
     @objc public var isLoggedIn: Bool { loggedIn }
 
     /// String uniquely identifying the last logged-in user, if any.
@@ -80,38 +80,38 @@ import CoreLocation.CLLocation
     ///
     /// Note: for users logged in with RAE, this is the "encrypted easy id"
     /// as returned by the `IdInformation/GetEncryptedEasyId/20140617` API.
-    @objc public var userIdentifier: String?
+    @objc public internal(set) var userIdentifier: String?
 
     /// The logged in user's easyid (unique member identifier).
-    @objc public var easyIdentifier: String?
+    @objc public internal(set) var easyIdentifier: String?
 
     /// The login method for the last logged-in user.
-    @objc public var loginMethod: RAnalyticsLoginMethod = .other
+    @objc public internal(set) var loginMethod: RAnalyticsLoginMethod = .other
 
     /// String identifying the origin of the launch or visit, if it can be determined.
-    @objc public var origin: RAnalyticsOrigin = .internal
+    @objc public internal(set) var origin: RAnalyticsOrigin = .internal
 
     /// Version of the app when it was last run.
-    @objc public var lastVersion: String?
+    @objc public internal(set) var lastVersion: String?
 
     /// Number of times the last-run version was launched.
-    @objc public var lastVersionLaunches: UInt = 0
+    @objc public internal(set) var lastVersionLaunches: UInt = 0
 
     /// Date the application was launched for the first time.
     /// This is nil on the first launch.
-    @objc public var initialLaunchDate: Date?
+    @objc public internal(set) var initialLaunchDate: Date?
 
     /// Date the application was installed.
-    @objc public var installLaunchDate: Date?
+    @objc public internal(set) var installLaunchDate: Date?
 
     /// Date the application was last launched (prior to this run).
-    @objc public var lastLaunchDate: Date?
+    @objc public internal(set) var lastLaunchDate: Date?
 
     /// Date the last-run version was launched for the first time.
-    @objc public var lastUpdateDate: Date?
+    @objc public internal(set) var lastUpdateDate: Date?
 
     /// Currently-visited view controller.
-    @objc public var currentPage: UIViewController?
+    @objc public internal(set) var currentPage: UIViewController?
 
     private let bundle: Bundle
 
