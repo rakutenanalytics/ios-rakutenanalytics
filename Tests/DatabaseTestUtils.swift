@@ -25,7 +25,7 @@ import SQLite3
         return connection
     }
 
-    @objc static func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
+    static func mkDatabase(connection: SQlite3Pointer) -> RAnalyticsDatabase {
         return RAnalyticsDatabase.database(connection: connection)
     }
 

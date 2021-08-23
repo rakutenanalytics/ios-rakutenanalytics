@@ -1,7 +1,7 @@
 import Foundation
 
 /// The Device Handler handles the device battery and the screen resolution.
-final class DeviceHandler: NSObject, DeviceHandleable {
+final class DeviceHandler: DeviceHandleable {
     private let device: DeviceCapability
     let screenResolution: String
 

@@ -16,7 +16,7 @@ protocol UserIdentifiable {
 
 /// This class tracks login, logout and push events.
 /// It creates event corressponding to each event, sends it to RAnalyticsManager's instance to process.
-final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
+final class RAnalyticsExternalCollector: UserIdentifiable {
     private enum Constants {
         static let loginStateKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState"
         static let trackingIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier"
@@ -124,10 +124,9 @@ final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
     private let tracker: Trackable?
 
     @available(*, unavailable)
-    override init() {
+    init() {
         self.userStorageHandler = nil
         self.tracker = nil
-        super.init()
     }
 
     /// Creates an external collector
@@ -141,7 +140,7 @@ final class RAnalyticsExternalCollector: NSObject, UserIdentifiable {
     init(dependenciesContainer: SimpleDependenciesContainable) {
         self.userStorageHandler = dependenciesContainer.userStorageHandler
         self.tracker = dependenciesContainer.tracker
-        super.init()
+
         addLoginObservers()
         addLoginFailureObservers()
         addLogoutObservers()

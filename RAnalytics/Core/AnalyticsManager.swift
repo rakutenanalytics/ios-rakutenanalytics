@@ -116,14 +116,14 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
     private let advertisingIdentifierHandler: RAdvertisingIdentifierHandler
     private let analyticsCookieInjector: RAnalyticsCookieInjector
     private let userIdentifierSelector: UserIdentifierSelector
-    @objc private let analyticsLaunchCollector: RAnalyticsLaunchCollector
-    @objc private let analyticsExternalCollector: RAnalyticsExternalCollector
-
+    private let externalCollector: RAnalyticsExternalCollector
     private let eventChecker: EventChecker
 
+    let launchCollector: RAnalyticsLaunchCollector
+
     init(dependenciesContainer: SimpleDependenciesContainable) {
-        analyticsExternalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-        analyticsLaunchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
+        externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+        launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
         self.locationManager = dependenciesContainer.locationManager
 
         let bundle = dependenciesContainer.bundle
@@ -137,7 +137,7 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
         advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesContainer: dependenciesContainer)
         analyticsCookieInjector = RAnalyticsCookieInjector(dependenciesContainer: dependenciesContainer)
 
-        userIdentifierSelector = UserIdentifierSelector(userIdentifiable: analyticsExternalCollector)
+        userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
         trackers = NSMutableSet()
         trackersLockableObject = LockableObject(trackers)
@@ -363,19 +363,19 @@ extension AnalyticsManager {
 
         // Update state with data from external collector
         state.userIdentifier = userIdentifierSelector.selectedTrackingIdentifier
-        state.easyIdentifier = analyticsExternalCollector.easyIdentifier
-        state.loginMethod = analyticsExternalCollector.loginMethod
-        state.loggedIn = analyticsExternalCollector.isLoggedIn
+        state.easyIdentifier = externalCollector.easyIdentifier
+        state.loginMethod = externalCollector.loginMethod
+        state.loggedIn = externalCollector.isLoggedIn
 
         // Update state with data from launch collector
-        state.initialLaunchDate = analyticsLaunchCollector.initialLaunchDate
-        state.installLaunchDate = analyticsLaunchCollector.installLaunchDate
-        state.lastUpdateDate = analyticsLaunchCollector.lastUpdateDate
-        state.lastLaunchDate = analyticsLaunchCollector.lastLaunchDate
-        state.lastVersion = analyticsLaunchCollector.lastVersion
-        state.lastVersionLaunches = analyticsLaunchCollector.lastVersionLaunches
-        state.currentPage = analyticsLaunchCollector.currentPage
-        state.origin = analyticsLaunchCollector.origin
+        state.initialLaunchDate = launchCollector.initialLaunchDate
+        state.installLaunchDate = launchCollector.installLaunchDate
+        state.lastUpdateDate = launchCollector.lastUpdateDate
+        state.lastLaunchDate = launchCollector.lastLaunchDate
+        state.lastVersion = launchCollector.lastVersion
+        state.lastVersionLaunches = launchCollector.lastVersionLaunches
+        state.currentPage = launchCollector.currentPage
+        state.origin = launchCollector.origin
 
         var processed = false
         trackersLockableObject.get().forEach { tracker in
@@ -407,7 +407,7 @@ extension AnalyticsManager {
     /// - Parameters:
     ///     - userID:  The user identifier. This can be the encrypted internal tracking ID.
     @objc public func setUserIdentifier(_ userID: String?) {
-        analyticsExternalCollector.userIdentifier = userID
+        externalCollector.userIdentifier = userID
     }
 
     /// Block to allow the app to set a custom domain on the app-to-web tracking cookie.

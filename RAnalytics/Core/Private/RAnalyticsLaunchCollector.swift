@@ -8,7 +8,7 @@ enum RAnalyticsLaunchCollectorError: Error {
 
 /// This class tracks launch events.
 /// It creates event corresponding to each event, sends it to RAnalyticsManager's instance to process.
-final class RAnalyticsLaunchCollector: NSObject {
+final class RAnalyticsLaunchCollector {
     private enum Constants {
         static let initialLaunchDateKey = "com.rakuten.esd.sdk.properties.analytics.launchInformation.initialLaunchDate"
         static let installLaunchDateKey = "com.rakuten.esd.sdk.properties.analytics.launchInformation.installLaunchDate"
@@ -60,12 +60,11 @@ final class RAnalyticsLaunchCollector: NSObject {
     private(set) var isUpdateLaunch: Bool = false
 
     @available(*, unavailable)
-    override init() {
+    init() {
         self.notificationHandler = nil
         self.userStorageHandler = nil
         self.keychainHandler = nil
         self.tracker = nil
-        super.init()
     }
 
     /// Creates a launch collector
@@ -79,8 +78,6 @@ final class RAnalyticsLaunchCollector: NSObject {
         self.userStorageHandler = dependenciesContainer.userStorageHandler
         self.keychainHandler = dependenciesContainer.keychainHandler
         self.tracker = dependenciesContainer.tracker
-
-        super.init()
 
         configureNotifications()
         configureLaunchValues()

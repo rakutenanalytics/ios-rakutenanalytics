@@ -2,13 +2,12 @@ import Foundation
 import RLogger
 
 /// This class checks if an event should be processed.
-final class EventChecker: NSObject {
+final class EventChecker {
     var shouldTrackEventHandler: ((String) -> (Bool))?
     private let disabledEventsAtBuildTime: [String]?
 
     init(disabledEventsAtBuildTime: [String]?) {
         self.disabledEventsAtBuildTime = disabledEventsAtBuildTime
-        super.init()
     }
 
     private func shouldTrackEventAtBuildtime(_ eventName: String) -> Bool {

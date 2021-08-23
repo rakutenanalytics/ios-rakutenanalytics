@@ -11,7 +11,7 @@ typealias SQlite3Pointer = OpaquePointer
 /// need to otherwise synchronize calls to them. Completion blocks are then
 /// executed on the caller's operation queue.
 ///
-final class RAnalyticsDatabase: NSObject {
+final class RAnalyticsDatabase {
 
     private static let RAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
     private static let RAnalyticsDBTableCreationFailureErrorCode = 1
@@ -39,7 +39,6 @@ final class RAnalyticsDatabase: NSObject {
 
     private init(connection: SQlite3Pointer) {
         self.connection = connection
-        super.init()
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(willTerminate),
                                                name: UIApplication.willTerminateNotification,

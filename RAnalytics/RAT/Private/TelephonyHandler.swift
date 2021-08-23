@@ -20,7 +20,7 @@ protocol TelephonyHandleable {
 }
 
 /// The Telephony Handler handles the core telephony framework.
-final class TelephonyHandler: NSObject, TelephonyHandleable {
+final class TelephonyHandler: TelephonyHandleable {
     private var telephonyNetworkInfo: TelephonyNetworkInfoHandleable
     private let notificationCenter: NotificationObservable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
@@ -39,8 +39,6 @@ final class TelephonyHandler: NSObject, TelephonyHandleable {
          notificationCenter: NotificationObservable) {
         self.telephonyNetworkInfo = telephonyNetworkInfo
         self.notificationCenter = notificationCenter
-
-        super.init()
 
         configure()
     }

@@ -22,7 +22,7 @@ protocol SimpleDependenciesContainable {
     var databaseConfiguration: DatabaseConfigurable? { get }
 }
 
-final class SimpleDependenciesContainer: NSObject, SimpleDependenciesContainable {
+final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     enum Constants {
         static let RATDatabaseName = "RSDKAnalytics.db"
         static let RATTableName = "RAKUTEN_ANALYTICS_TABLE"

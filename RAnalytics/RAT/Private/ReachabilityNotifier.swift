@@ -7,7 +7,7 @@ protocol ReachabilityNotifiable {
 }
 
 /// The Reachability Notifier calls the callback when the network status changes.
-final class ReachabilityNotifier: NSObject, ReachabilityNotifiable {
+final class ReachabilityNotifier: ReachabilityNotifiable {
     private let reachability: SCNetworkReachability
 
     /// Creates a new instance of `ReachabilityNotifier`.
@@ -34,8 +34,6 @@ final class ReachabilityNotifier: NSObject, ReachabilityNotifiable {
             RLogger.error("SCNetworkReachabilityScheduleWithRunLoop failed")
             return nil
         }
-
-        super.init()
 
         // We register for reachability updates, but to get the current reachability we need to query it,
         // so we do so from a background thread.

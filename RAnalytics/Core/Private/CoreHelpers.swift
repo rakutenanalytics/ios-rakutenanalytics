@@ -6,7 +6,7 @@ enum RAnalyticsConstants {
     static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
 }
 
-final class CoreHelpers: NSObject {
+final class CoreHelpers {
     private enum Constants {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier

@@ -16,12 +16,11 @@ protocol MoriGettable: AnyObject {
 /// A class to handle the status bar orientation
 /// The injected dependency has to conform to StatusBarOrientationGettable
 /// Initialization example: RStatusBarOrientationHandler(UIApplication.shared)
-final class RStatusBarOrientationHandler: NSObject {
+final class RStatusBarOrientationHandler {
     private let application: StatusBarOrientationGettable?
 
     init(application: StatusBarOrientationGettable?) {
         self.application = application
-        super.init()
     }
 }
 

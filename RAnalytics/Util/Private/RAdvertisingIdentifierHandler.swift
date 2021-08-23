@@ -1,7 +1,7 @@
 import Foundation
 
 /// A handler to get the IDFA from AdSupport framework
-final class RAdvertisingIdentifierHandler: NSObject {
+final class RAdvertisingIdentifierHandler {
     private let adIdentifierManager: AdvertisementIdentifiable
 
     /// Initialize RAdvertisingIdentifierHandler with a dependenciesFactory

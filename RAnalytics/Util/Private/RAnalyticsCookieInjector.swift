@@ -2,7 +2,7 @@ import Foundation
 import RLogger
 
 /// A class that injects a cookie in the HTTP Cookie Store
-final class RAnalyticsCookieInjector: NSObject {
+final class RAnalyticsCookieInjector {
     private enum TrackingCookieConstants {
         static let name = "ra_uid"
         static let defaultDomain = ".rakuten.co.jp"
@@ -15,7 +15,6 @@ final class RAnalyticsCookieInjector: NSObject {
     init(dependenciesContainer: SimpleDependenciesContainable) {
         self.httpCookieStore = dependenciesContainer.wkHttpCookieStore
         self.adIdentifierManager = dependenciesContainer.adIdentifierManager
-        super.init()
     }
 }
 

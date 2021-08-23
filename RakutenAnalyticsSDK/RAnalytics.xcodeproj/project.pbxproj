@@ -43,7 +43,6 @@
 		C923B87B25FF322A00F9CCA0 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83025FF322A00F9CCA0 /* String+Extensions.swift */; };
 		C923B87C25FF322A00F9CCA0 /* Array+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83125FF322A00F9CCA0 /* Array+RAT.swift */; };
 		C923B87E25FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */; };
-		C923B87F25FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */; };
 		C923B88025FF322A00F9CCA0 /* URLSession+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83525FF322A00F9CCA0 /* URLSession+Result.swift */; };
 		C923B88125FF322A00F9CCA0 /* AnalyticsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */; };
 		C923B88225FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83725FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift */; };
@@ -146,7 +145,6 @@
 		C923B83025FF322A00F9CCA0 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		C923B83125FF322A00F9CCA0 /* Array+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RAT.swift"; sourceTree = "<group>"; };
 		C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ASIdentifierManager+Extensions.swift"; sourceTree = "<group>"; };
-		C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsManager+Extensions.swift"; sourceTree = "<group>"; };
 		C923B83525FF322A00F9CCA0 /* URLSession+Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+Result.swift"; sourceTree = "<group>"; };
 		C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsTracker.swift; sourceTree = "<group>"; };
 		C923B83725FF322A00F9CCA0 /* WKHTTPCookieStore+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKHTTPCookieStore+Extensions.swift"; sourceTree = "<group>"; };
@@ -333,7 +331,6 @@
 		C923B82725FF322A00F9CCA0 /* Private */ = {
 			isa = PBXGroup;
 			children = (
-				C923B83425FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift */,
 				C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */,
 				C923B83125FF322A00F9CCA0 /* Array+RAT.swift */,
 				C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */,
@@ -541,7 +538,6 @@
 				C923B85C25FF322A00F9CCA0 /* NSNotification+Extensions.swift in Sources */,
 				C923B87825FF322A00F9CCA0 /* RAnalyticsDatabaseHelper.swift in Sources */,
 				C948A57C265E8877008BA975 /* NSObject+Number.swift in Sources */,
-				C923B87F25FF322A00F9CCA0 /* AnalyticsManager+Extensions.swift in Sources */,
 				C99056D02642C7870021E364 /* AnalyticsManager.swift in Sources */,
 				C923B88E25FF322A00F9CCA0 /* CLLocation+Extensions.swift in Sources */,
 				C97EF57D26736321006528B6 /* DatabaseConfiguration.swift in Sources */,

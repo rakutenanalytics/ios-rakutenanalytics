@@ -10,19 +10,18 @@ protocol KeychainHandleable {
 
 // MARK: - KeychainResult
 
-final class KeychainResult: NSObject {
+final class KeychainResult {
     let result: CFTypeRef?
     let status: OSStatus
     init(result: CFTypeRef?, status: OSStatus) {
         self.result = result
         self.status = status
-        super.init()
     }
 }
 
 // MARK: - KeychainHandler
 
-final class KeychainHandler: NSObject {
+final class KeychainHandler {
     private func query(for label: String) -> [String: Any] {
         var query = [String: Any]()
         query[kSecClass as String] = kSecClassGenericPassword

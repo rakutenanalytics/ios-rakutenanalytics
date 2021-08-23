@@ -5,7 +5,7 @@ protocol DatabaseConfigurable {
     var tableName: String { get }
 }
 
-final class DatabaseConfiguration: NSObject, DatabaseConfigurable {
+final class DatabaseConfiguration: DatabaseConfigurable {
     let database: RAnalyticsDatabase
     let tableName: String
 

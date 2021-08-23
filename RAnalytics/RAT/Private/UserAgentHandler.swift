@@ -5,7 +5,7 @@ protocol UserAgentHandleable {
 }
 
 /// The User Agent Handler handles the creation of the RAT user agent.
-final class UserAgentHandler: NSObject {
+final class UserAgentHandler {
     private let bundle: EnvironmentBundle
 
     /// Creates a new instance of `UserAgentHandler`.
