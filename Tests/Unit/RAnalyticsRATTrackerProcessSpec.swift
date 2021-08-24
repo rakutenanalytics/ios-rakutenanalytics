@@ -1,3 +1,6 @@
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
+
 import Quick
 import Nimble
 import SQLite3
@@ -61,13 +64,19 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 it("should process the install event") {
                     let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.install, parameters: nil)
                     var appInfoPayload: String?
+                    var sdkInfoPayload: [String: Any]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
-                        appInfoPayload = ($0?["cp"] as? [String: Any])?["app_info"] as? String
+                        let cp = $0?["cp"] as? [String: Any]
+                        appInfoPayload = cp?["app_info"] as? String
+                        sdkInfoPayload = cp?["sdk_info"] as? [String: Any]
                     }
                     expect(appInfoPayload).toEventuallyNot(beNil())
                     expect(appInfoPayload?.contains("xcode")).to(beTrue())
                     expect(appInfoPayload?.contains("iphonesimulator")).to(beTrue())
+
+                    expect(sdkInfoPayload).toNot(beNil())
+                    expect(sdkInfoPayload?["analytics"] as? String).toNot(beNil())
                 }
 
                 it("should process the sessionStart event") {

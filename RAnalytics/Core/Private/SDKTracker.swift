@@ -30,7 +30,7 @@ final class SDKTracker: NSObject, Tracker {
         sender = RAnalyticsSender(endpoint: endpointURL,
                                   database: database,
                                   databaseTable: SDKTracker.SDKTableName,
-                                  bundle: Bundle.main,
+                                  bundle: bundle,
                                   session: session)
         sender.setBatchingDelayBlock(batchingDelay) // default is 1 minute.
 
@@ -47,8 +47,22 @@ final class SDKTracker: NSObject, Tracker {
             return false
         }
 
+        let payload = payload(for: event, state: state)
+
+        sender.send(jsonObject: payload)
+
+        return true
+    }
+}
+
+// MARK: - Utils
+
+private extension SDKTracker {
+    func payload(for event: RAnalyticsEvent, state: RAnalyticsState) -> [String: Any] {
+        let eventName = event.name
+
         var payload: [String: Any] = [:]
-        var extra: [String: Any] = [:]
+        var extra: [String: Any] = event.installParameters
 
         payload["acc"] = 477
         payload["aid"] = 1
@@ -56,20 +70,6 @@ final class SDKTracker: NSObject, Tracker {
         let substring = eventName["_rem".count..<eventName.count]
         let etype = "_rem_internal\(substring)"
         payload["etype"] = etype
-
-        let appAndSDKDict = CoreHelpers.applicationInfo
-
-        if let sdkInfo = appAndSDKDict?[RAnalyticsConstants.RAnalyticsSDKInfoKey] as? [String: Any],
-           !sdkInfo.isEmpty,
-           let data = try? JSONSerialization.data(withJSONObject: sdkInfo, options: .prettyPrinted) {
-            extra["sdk_info"] = String(data: data, encoding: .utf8)
-        }
-
-        if let appInfo = appAndSDKDict?[RAnalyticsConstants.RAnalyticsAppInfoKey] as? [String: Any],
-           !appInfo.isEmpty,
-           let data = try? JSONSerialization.data(withJSONObject: appInfo, options: .prettyPrinted) {
-            extra["app_info"] = String(data: data, encoding: .utf8)
-        }
 
         // If the event already had a 'cp' field, those values take precedence
         if let cpDictionary = payload["cp"] as? [String: Any] {
@@ -80,8 +80,6 @@ final class SDKTracker: NSObject, Tracker {
 
         payload += CoreHelpers.sharedPayload(for: state)
 
-        sender.send(jsonObject: payload)
-
-        return true
+        return payload
     }
 }

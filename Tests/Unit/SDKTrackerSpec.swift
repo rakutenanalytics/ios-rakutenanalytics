@@ -27,6 +27,8 @@ final class SDKTrackerSpec: QuickSpec {
 
                     let sdkTracker = SDKTracker(bundle: bundle, session: urlSession)
                     expect(sdkTracker).toNot(beNil())
+                    expect(sdkTracker?.endpointURL).toNot(beNil())
+                    expect(sdkTracker?.endpointURL?.absoluteString).to(equal("https://endpoint.co.jp"))
                 }
             }
 
@@ -45,23 +47,33 @@ final class SDKTrackerSpec: QuickSpec {
                 it("should process the event when the event is _rem_install") {
                     bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp")!
                     let sdkTracker = SDKTracker(bundle: bundle, session: urlSession, batchingDelay: 1)
+
                     expect(sdkTracker?.process(event: installEvent, state: state)).to(beTrue())
+
                     expect(urlSession.urlRequest).toNotEventually(beNil(), timeout: .seconds(2))
-                    expect(urlSession.urlRequest?.httpBody).toNotEventually(beNil(), timeout: .seconds(2))
+                    expect(urlSession.urlRequest?.httpBody).toNot(beNil())
 
                     let str = String(data: urlSession.urlRequest!.httpBody!, encoding: .utf8)!
                     let jsonString = str["cpkg_none=".count..<str.count]
-                    let dict = try? JSONSerialization.jsonObject(with: jsonString.data(using: .utf8)!, options: [])
-                    expect(dict).toNotEventually(beNil(), timeout: .seconds(2))
 
-                    let json = dict as? [[String: Any]]
-                    expect(json).toNotEventually(beNil(), timeout: .seconds(2))
-                    expect(json?[0]["acc"] as? Int).toEventually(equal(477), timeout: .seconds(2))
-                    expect(json?[0]["aid"] as? Int).toEventually(equal(1), timeout: .seconds(2))
+                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonString.data(using: .utf8)!, options: [])
+                    expect(jsonObject).toNot(beNil())
 
-                    let cpDictionary = json?[0]["cp"] as? [String: Any]
-                    expect((cpDictionary?["app_info"] as? String)?.contains("xcode")).toEventually(beTrue(), timeout: .seconds(2))
-                    expect((cpDictionary?["app_info"] as? String)?.contains("iphonesimulator")).toEventually(beTrue(), timeout: .seconds(2))
+                    let jsonArray = jsonObject as? [[String: Any]]
+                    expect(jsonArray).toNot(beNil())
+                    expect(jsonArray?[0]["acc"] as? Int).to(equal(477))
+                    expect(jsonArray?[0]["aid"] as? Int).to(equal(1))
+
+                    let cpDictionary = jsonArray?[0]["cp"] as? [String: Any]
+                    expect(cpDictionary).toNot(beNil())
+
+                    let appInfo = cpDictionary?["app_info"] as? String
+                    expect(appInfo?.contains("xcode")).to(beTrue())
+                    expect(appInfo?.contains("iphonesimulator")).to(beTrue())
+
+                    let sdkInfo = cpDictionary?["sdk_info"] as? [String: Any]
+                    expect(sdkInfo).toNot(beNil())
+                    expect(sdkInfo?["analytics"] as? String).toNot(beNil())
                 }
             }
         }

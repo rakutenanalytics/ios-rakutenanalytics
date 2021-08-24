@@ -11,6 +11,7 @@ class SenderTests: QuickSpec {
             let sessionMock = URLSessionMock.mock(originalInstance: .shared)
             let databaseTableName = "testTableName"
             let payload = ["key": "value"]
+            let bundle = BundleMock()
 
             var sender: RAnalyticsSender!
             var databaseConnection: SQlite3Pointer!
@@ -24,7 +25,9 @@ class SenderTests: QuickSpec {
 
                 sender = RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
                                           database: database,
-                                          databaseTable: databaseTableName)
+                                          databaseTable: databaseTableName,
+                                          bundle: bundle,
+                                          session: URLSession.shared)
             }
 
             afterEach {
@@ -33,28 +36,16 @@ class SenderTests: QuickSpec {
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
                 databaseConnection = nil
                 database = nil
+                bundle.mutableEnableInternalSerialization = false
             }
 
             context("JSON serialization") {
-                let bundle = BundleMock()
-
-                func createSender(bundle: EnvironmentBundle) -> RAnalyticsSender {
-                    let databaseConnection = DatabaseTestUtils.openRegularConnection()!
-                    let database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
-                    return RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
-                                            database: database,
-                                            databaseTable: databaseTableName,
-                                            bundle: bundle,
-                                            session: URLSession.shared)
-                }
-
                 it("should send given payload when enableInternalSerialization is false") {
                     var isSendingCompleted = false
                     stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = false
-                    let sender = createSender(bundle: bundle)
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
                 }
@@ -65,7 +56,6 @@ class SenderTests: QuickSpec {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = true
-                    let sender = createSender(bundle: bundle)
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
                 }
@@ -172,12 +162,12 @@ class SenderTests: QuickSpec {
                     }
 
                     NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: self)
-
+                    expect(didReceiveNotification).toEventually(beTrue())
                     expect(isSendingCompleted).toEventually(beTrue())
+
                     let dbContent = DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection)
                     expect(uploadsToRat).to(equal(1))
                     expect(dbContent).to(beEmpty())
-                    expect(didReceiveNotification).toEventually(beTrue())
 
                     NotificationCenter.default.removeObserver(uploadObserver)
                     NotificationCenter.default.removeObserver(didBecomeActiveObserver)

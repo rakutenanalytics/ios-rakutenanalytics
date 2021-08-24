@@ -98,7 +98,7 @@ extension Bundle: EnvironmentBundle {
 
     static let sdkComponentMap: NSDictionary? = {
         guard let bundle = assetsBundle,
-              let filePath = bundle.path(forResource: "REMModulesMap", ofType: "plist") else {
+              let filePath = bundle.path(forResource: "RModulesList", ofType: "plist") else {
             return nil
         }
         return NSDictionary(contentsOfFile: filePath)
