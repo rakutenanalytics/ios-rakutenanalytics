@@ -3,6 +3,7 @@
 import Quick
 import Nimble
 import CoreTelephony
+import SQLite3
 @testable import RAnalytics
 
 // MARK: - RAnalyticsRATTrackerPayloadSpec
@@ -41,6 +42,8 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
             afterEach {
                 DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
+                sqlite3_close(databaseConnection)
+                databaseConnection = nil
             }
 
             describe("process(event:state:)") {

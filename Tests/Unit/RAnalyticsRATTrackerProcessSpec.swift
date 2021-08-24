@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+import SQLite3
 @testable import RAnalytics
 
 // MARK: - RAnalyticsRATTrackerProcessSpec
@@ -37,6 +38,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
             afterEach {
                 DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
+                sqlite3_close(databaseConnection)
+                databaseConnection = nil
             }
 
             describe("process(event:state:)") {

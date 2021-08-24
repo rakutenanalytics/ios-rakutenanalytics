@@ -7,14 +7,10 @@ import Nimble
 class RAnalyticsRATTrackerInitSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsRATTracker") {
-            let databaseTableName = "testTableName_RAnalyticsRATTrackerSpec"
-            let connection = DatabaseTestUtils.openRegularConnection()!
-            let database = RAnalyticsDatabase.database(connection: connection)
             let dependenciesContainer = SimpleContainerMock()
             let bundle = BundleMock()
             bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp/")!
             dependenciesContainer.bundle = bundle
-            dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
 
             describe("init") {
                 it("should not be nil") {
