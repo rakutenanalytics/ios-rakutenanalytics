@@ -23,7 +23,7 @@ Once per version the SDK will send this event containing:
 * `cp.sdk_info`: info about SDKs integrated in the app
 * `cp.app_info`: info about the runtime environment
 
-To get your library/SDK listed in `cp.sdk_info` you need to add its bundle identifier as `key` and its display name as `value` to the [REMModulesMap plist file](https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse/RAnalytics/Core/Assets/REMModulesMap.plist#5-6) in the RAnalytics module and raise a Pull Request.
+To get your library/SDK listed in `cp.sdk_info` you need to add its bundle identifier as `key` and its display name as `value` to the [RModulesList plist file](https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse/RAnalytics/Core/Assets/RModulesList.plist#5-6) in the RAnalytics module and raise a Pull Request.
 
 ### Custom Events
 To be implemented
