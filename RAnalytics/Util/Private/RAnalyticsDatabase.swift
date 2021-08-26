@@ -177,7 +177,7 @@ final class RAnalyticsDatabase {
                      then completion: @escaping () -> Void) {
 
         guard !appWillTerminate else {
-            RLogger.debug("RAnalyticsDatabase - deleteBlobs is canceled because the app will terminate")
+            RLogger.debug("RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
             return
         }
 
@@ -240,7 +240,7 @@ private extension RAnalyticsDatabase {
 
     func prepareTable(_ table: String) -> NSError? {
         guard !appWillTerminate else {
-            RLogger.error("RAnalyticsDatabase - prepareTable is canceled because the app will terminate")
+            RLogger.error("RAnalyticsDatabase - prepareTable is cancelled because the app will terminate")
             return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
                            code: RAnalyticsDatabase.RAnalyticsDBAppWillTerminateErrorCode,
                            userInfo: [NSLocalizedDescriptionKey: "The app is terminating."])

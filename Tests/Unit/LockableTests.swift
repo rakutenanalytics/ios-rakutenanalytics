@@ -53,35 +53,34 @@ class LockableTests: QuickSpec {
 
             context("when calling `withSynchronized`") {
 
-                let obj1 = LockableObject(1)
-                let obj2 = LockableObject(2)
-                let obj3 = LockableObject(3)
+                let objects = [LockableObject(1), LockableObject(2), LockableObject(3)]
+                let dispatchQueue = DispatchQueue.global(qos: .default)
 
-                it("will lock all given Lockable objects") {
+                for _ in 1...50 {
+                    it("will lock all given Lockable objects") {
 
-                    DispatchQueue.global(qos: .background).async {
-                        Synchronizable.withSynchronized([obj1, obj2, obj3]) {
-                            expect([obj1, obj2, obj3]).to(allPass({ $0?.isLocked == true }))
-                            usleep(useconds_t(0.5 * Double(USEC_PER_SEC)))
+                        let objects = [LockableObject(1), LockableObject(2), LockableObject(3)]
+
+                        dispatchQueue.async {
+                            Synchronizable.withSynchronized(objects) {
+                                expect(objects).to(allPass({ $0?.isLocked == true }))
+                                usleep(useconds_t(0.2 * Double(USEC_PER_SEC)))
+                            }
                         }
+
+                        expect(objects).toEventually(allPass({ $0?.isLocked == true }))
                     }
 
-                    expect([obj1, obj2, obj3]).toEventually(allPass({ $0?.isLocked == true }))
-                }
-
-                it("will unlock all given Lockable objects after closure is finished") {
-                    let obj1 = LockableObject(1)
-                    let obj2 = LockableObject(2)
-                    let obj3 = LockableObject(3)
-
-                    DispatchQueue.global(qos: .background).async {
-                        Synchronizable.withSynchronized([obj1, obj2, obj3]) {
-                            usleep(useconds_t(0.5 * Double(USEC_PER_SEC)))
+                    it("will unlock all given Lockable objects after closure is finished") {
+                        dispatchQueue.async {
+                            Synchronizable.withSynchronized(objects) {
+                                usleep(useconds_t(0.2 * Double(USEC_PER_SEC)))
+                            }
                         }
-                    }
 
-                    expect([obj1, obj2, obj3]).toEventually(allPass({ $0?.isLocked == true })) // wait for lock
-                    expect([obj1, obj2, obj3]).toEventually(allPass({ $0?.isLocked == false }))
+                        expect(objects).toEventually(allPass({ $0?.isLocked == true })) // wait for lock
+                        expect(objects).toEventually(allPass({ $0?.isLocked == false }))
+                    }
                 }
             }
         }

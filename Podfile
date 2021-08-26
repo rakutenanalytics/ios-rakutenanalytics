@@ -23,6 +23,10 @@ abstract_target 'Common' do
       pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
   end
 
+  target 'IntegrationTests' do
+      pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+  end
+
   target 'CoreTests' do
     pod 'RAnalytics/Core', :inhibit_warnings => false, :path => './RAnalytics.podspec'
   end

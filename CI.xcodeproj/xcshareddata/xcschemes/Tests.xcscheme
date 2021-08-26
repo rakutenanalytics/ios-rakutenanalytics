@@ -48,6 +48,20 @@
                ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "45ABC4B826DE06C00030BB70"
+               BuildableName = "IntegrationTests.xctest"
+               BlueprintName = "IntegrationTests"
+               ReferencedContainer = "container:CI.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -103,6 +117,16 @@
                BlueprintIdentifier = "16E4817C20B3A789006CB857"
                BuildableName = "FunctionalTests.xctest"
                BlueprintName = "FunctionalTests"
+               ReferencedContainer = "container:CI.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "45ABC4B826DE06C00030BB70"
+               BuildableName = "IntegrationTests.xctest"
+               BlueprintName = "IntegrationTests"
                ReferencedContainer = "container:CI.xcodeproj">
             </BuildableReference>
          </TestableReference>
