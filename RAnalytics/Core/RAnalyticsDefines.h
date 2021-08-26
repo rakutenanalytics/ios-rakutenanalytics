@@ -9,6 +9,11 @@
 #define RSDKA_BUILD_USER_NOTIFICATION_SUPPORT
 #endif
 
+/*
+ * This declaration is needed for retrieving the RAnalyticsEvent.h constants in Swift.
+ */
+@class RAnalyticsEvent;
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NSTimeInterval(^BatchingDelayBlock)(void);
