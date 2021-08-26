@@ -3,7 +3,7 @@ import Nimble
 
 @testable import RAnalytics
 
-class SenderTests: QuickSpec {
+class SenderSpec: QuickSpec {
 
     override func spec() {
 
@@ -68,7 +68,7 @@ class SenderTests: QuickSpec {
 
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(0))
-                    
+
                     sender.uploadTimer?.invalidate()
                 })
 
@@ -78,7 +78,7 @@ class SenderTests: QuickSpec {
                     sender.setBatchingDelayBlock(15.0)
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(15.0))
-                    
+
                     sender.uploadTimer?.invalidate()
                 }
             }
@@ -171,9 +171,10 @@ class SenderTests: QuickSpec {
                     expect(didReceiveNotification).toEventually(beTrue())
                     expect(isSendingCompleted).toEventually(beTrue())
 
-                    let dbContent = DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection)
+                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                    expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
+
                     expect(uploadsToRat).to(equal(1))
-                    //expect(dbContent).to(beEmpty())
 
                     NotificationCenter.default.removeObserver(uploadObserver)
                     NotificationCenter.default.removeObserver(didBecomeActiveObserver)

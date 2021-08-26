@@ -12,7 +12,7 @@
 		3A2A3E8B2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2A3E8A2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift */; };
 		3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */; };
 		3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */; };
-		45B5732825AE2C2E005A80F7 /* SenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5732725AE2C2E005A80F7 /* SenderTests.swift */; };
+		45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5732725AE2C2E005A80F7 /* SenderSpec.swift */; };
 		45B5733925AE36F5005A80F7 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5733825AE36F5005A80F7 /* URLSessionMock.swift */; };
 		45B5733F25AE3741005A80F7 /* WeakWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5733E25AE3741005A80F7 /* WeakWrapper.swift */; };
 		45B5734025AE3741005A80F7 /* WeakWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5733E25AE3741005A80F7 /* WeakWrapper.swift */; };
@@ -101,7 +101,7 @@
 		3A2A3E8A2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyDependenciesContainerSpec.swift; sourceTree = "<group>"; };
 		3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RStatusBarOrientationHandlerSpec.swift; sourceTree = "<group>"; };
 		3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollectorSpec.swift; sourceTree = "<group>"; };
-		45B5732725AE2C2E005A80F7 /* SenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenderTests.swift; sourceTree = "<group>"; };
+		45B5732725AE2C2E005A80F7 /* SenderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenderSpec.swift; sourceTree = "<group>"; };
 		45B5733825AE36F5005A80F7 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
 		45B5733E25AE3741005A80F7 /* WeakWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakWrapper.swift; sourceTree = "<group>"; };
 		45E3BC3A2581403E00319ECF /* DatabaseTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseTestUtils.swift; sourceTree = "<group>"; };
@@ -228,7 +228,7 @@
 				5AB254A220744B1800BF3EE9 /* RpCookieTests.m */,
 				3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */,
 				C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */,
-				45B5732725AE2C2E005A80F7 /* SenderTests.swift */,
+				45B5732725AE2C2E005A80F7 /* SenderSpec.swift */,
 				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
 				3A2A3E8A2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift */,
 				C954C666269439CE002AAFF7 /* TelephonyHandlerSpec.swift */,
@@ -545,7 +545,7 @@
 				C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */,
 				C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */,
 				C9010C222670BBDB00769C83 /* RAnalyticsRATTrackerInitSpec.swift in Sources */,
-				45B5732825AE2C2E005A80F7 /* SenderTests.swift in Sources */,
+				45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */,
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				C969127A25CAC5670073D804 /* RABEventBroadcasterSpec.swift in Sources */,
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
