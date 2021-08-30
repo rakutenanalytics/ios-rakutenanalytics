@@ -38,7 +38,7 @@ final class RAnalyticsLaunchCollector {
 
     /// String identifying the origin of the launch or visit, if it can be determined.
     /// Default value: .internal
-    private(set) var origin: AnalyticsManager.State.Origin = .internal
+    internal var origin: AnalyticsManager.State.Origin = .internal
 
     /// Currently-visited view controller.
     private(set) var currentPage: UIViewController?
@@ -331,11 +331,5 @@ private extension RAnalyticsLaunchCollector {
             userStorageHandler?.set(value: NSNumber(value: lastVersionLaunches), forKey: Constants.lastVersionLaunchesKey)
         }
         userStorageHandler?.set(value: now, forKey: Constants.lastLaunchDateKey)
-    }
-}
-
-extension RAnalyticsLaunchCollector {
-    func setOrigin(_ value: AnalyticsManager.State.Origin) {
-        origin = value
     }
 }
