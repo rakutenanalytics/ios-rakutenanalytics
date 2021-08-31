@@ -4,6 +4,8 @@ import UIKit
 enum RAnalyticsConstants {
     static let RAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
     static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
+    static let appInfoKey = "app_info"
+    static let sdkDependenciesKey = "r_sdk_dependencies"
 }
 
 final class CoreHelpers {
@@ -24,7 +26,7 @@ final class CoreHelpers {
         return dict
     }
 
-    static let applicationInfo: [String: Any]? = {
+    private static let collectedInfos: [String: Any]? = {
         var dict = [String: Any]()
 
         // Collect build environment (Xcode version and build SDK)
@@ -80,4 +82,23 @@ final class CoreHelpers {
 
         return dict
     }()
+
+    static var appInfo: String? {
+        guard let collectedInfos = CoreHelpers.collectedInfos,
+              let appInfo = collectedInfos[RAnalyticsConstants.RAnalyticsAppInfoKey] as? [String: Any],
+              !appInfo.isEmpty,
+              let data = try? JSONSerialization.data(withJSONObject: appInfo, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
+    static var sdkDependencies: [String: Any]? {
+        guard let collectedInfos = CoreHelpers.collectedInfos,
+              let sdkInfo = collectedInfos[RAnalyticsConstants.RAnalyticsSDKInfoKey] as? [String: Any],
+              !sdkInfo.isEmpty else {
+            return nil
+        }
+        return sdkInfo
+    }
 }

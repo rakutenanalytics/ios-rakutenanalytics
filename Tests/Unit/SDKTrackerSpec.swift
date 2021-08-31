@@ -67,11 +67,11 @@ final class SDKTrackerSpec: QuickSpec {
                     let cpDictionary = jsonArray?[0]["cp"] as? [String: Any]
                     expect(cpDictionary).toNot(beNil())
 
-                    let appInfo = cpDictionary?["app_info"] as? String
+                    let appInfo = cpDictionary?[RAnalyticsConstants.appInfoKey] as? String
                     expect(appInfo?.contains("xcode")).to(beTrue())
                     expect(appInfo?.contains("iphonesimulator")).to(beTrue())
 
-                    let sdkInfo = cpDictionary?["sdk_info"] as? [String: Any]
+                    let sdkInfo = jsonArray?[0][RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
                     expect(sdkInfo).toNot(beNil())
                     expect(sdkInfo?["analytics"] as? String).toNot(beNil())
                 }

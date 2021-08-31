@@ -78,6 +78,8 @@ private extension SDKTracker {
 
         payload["cp"] = extra
 
+        payload[RAnalyticsConstants.sdkDependenciesKey] = CoreHelpers.sdkDependencies
+
         payload += CoreHelpers.sharedPayload(for: state)
 
         return payload

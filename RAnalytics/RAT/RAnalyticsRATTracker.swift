@@ -454,6 +454,7 @@ extension RAnalyticsRATTracker {
 
         // MARK: _rem_install
         case RAnalyticsEvent.Name.install:
+            payload[RAnalyticsConstants.sdkDependenciesKey] = CoreHelpers.sdkDependencies
             extra.addEntries(from: event.installParameters)
 
         // MARK: _rem_launch

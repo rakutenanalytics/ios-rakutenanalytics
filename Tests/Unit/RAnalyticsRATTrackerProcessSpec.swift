@@ -68,8 +68,9 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
                         let cp = $0?["cp"] as? [String: Any]
-                        appInfoPayload = cp?["app_info"] as? String
-                        sdkInfoPayload = cp?["sdk_info"] as? [String: Any]
+                        appInfoPayload = cp?[RAnalyticsConstants.appInfoKey] as? String
+
+                        sdkInfoPayload = $0?[RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
                     }
                     expect(appInfoPayload).toEventuallyNot(beNil())
                     expect(appInfoPayload?.contains("xcode")).to(beTrue())
