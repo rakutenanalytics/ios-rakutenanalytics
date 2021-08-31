@@ -33,6 +33,8 @@ class SenderSpec: QuickSpec {
             afterEach {
                 URLSessionMock.stopMockingURLSession()
 
+                sender.uploadTimer?.invalidate()
+
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
                 databaseConnection = nil
                 database = nil
@@ -68,8 +70,6 @@ class SenderSpec: QuickSpec {
 
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(0))
-
-                    sender.uploadTimer?.invalidate()
                 })
 
                 it("should succeed with custom batching delay") {
@@ -78,8 +78,6 @@ class SenderSpec: QuickSpec {
                     sender.setBatchingDelayBlock(15.0)
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(15.0))
-
-                    sender.uploadTimer?.invalidate()
                 }
             }
 
@@ -137,8 +135,6 @@ class SenderSpec: QuickSpec {
 
                     let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
                     expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
-
-                    sender.uploadTimer?.invalidate()
                 })
 
                 it("should not send duplicate events when app becomes active") {
