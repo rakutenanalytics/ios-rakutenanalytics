@@ -14,7 +14,7 @@ The lane also uploads SPM Package to release or snapshot repo.
 
 ## Deploy Snapshot
 
-1. To deploy a **snapshot** you must set the environment variable `SNAPSHOT_GITHUB_TOKEN` - this value can be found on the internal accounts [page](https://confluence.rakuten-it.com/confluence/display/MTSD/Internal+accounts+for+SDK+Team) under "Github CI Publishing Account".
+1. To deploy a **snapshot** you must set the environment variable `SNAPSHOT_GITHUB_TOKEN` - this value can be found on the internal accounts [page](https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team) under "Github CI Publishing Account".
 1. From a clean checkout, update the public framework podspec `RakutenAnalyticsSDK/RAnalytics.podspec` `version` attribute e.g. set `version` to `8.0.0-snapshot-1`
 1. Update the public framework podspec `source` attribute to point at the `ios-analytics-framework-snapshot` repo
 1. Run `bundle exec fastlane ios deploy_framework version:"{snapshot-version}"`
@@ -28,7 +28,7 @@ The lane also uploads SPM Package to release or snapshot repo.
 
 ## Deploy Release
 
-1. To deploy a **release** you must set the environment variables `RELEASE_GITHUB_TOKEN` and `RELEASE_GHE_TOKEN`. These token values can be found on the internal accounts [page](https://confluence.rakuten-it.com/confluence/display/MTSD/Internal+accounts+for+SDK+Team).
+1. To deploy a **release** you must set the environment variables `RELEASE_GITHUB_TOKEN` and `RELEASE_GHE_TOKEN`. These token values can be found on the internal accounts [page](https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team).
 1. Make a PR to update the public framework podspec `RakutenAnalyticsSDK/RAnalytics.podspec` `version` e.g. set `version` to `8.0.0` and get it merged.
 1. Execute the release from the latest commit that includes the podspec version update
     * For automated release, run the [Jenkins release job](http://jenkins-mtsd.rakuten-it.com/job/sdk/job/public-analytics/) by setting the version and branch build parameters

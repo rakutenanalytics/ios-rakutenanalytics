@@ -1,6 +1,6 @@
 # Contributing
 ## Found a bug or have a suggestion?
-If you find a bug in the source code or you have a suggestion for an improvement or new feature, please [submit](https://developers.rakuten.com/intra/support) an `Analytics SDK (RAT-SDK)` issue. Even better, you can submit a Pull Request. If the change is non-trivial you should submit an issue to discuss with the SDK team before working on your PR.
+If you find a bug in the source code or you have a suggestion for an improvement or new feature, please [submit](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ) an `Analytics SDK` issue. Even better, you can submit a Pull Request. If the change is non-trivial you should submit an issue to discuss with the SDK team before working on your PR.
  
 ## Submit an Issue
 Please fill the following information in each (bug) issue you submit:

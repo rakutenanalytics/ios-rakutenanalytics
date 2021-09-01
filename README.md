@@ -51,7 +51,7 @@ pod 'RAnalytics/Core'
 
 # Getting support
 
-For support (bug reports, feature requests, questions etc.) please check our [FAQ page](https://developers.rakuten.net/hc/en-us) or contact us by raising an `Analytics SDK (RAT-SDK)` inquiry from our [support page](https://developers.rakuten.com/intra/support).
+To get support (crash or bug reports, feature requests, questions etc.) please go to our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
 
 
 # Getting started
@@ -139,7 +139,7 @@ The SDK will automatically send events to the Rakuten Analytics Tracker for cert
 | `_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.    |
 
 
-For a full list and more details see the [SDK Standard Event Spec](https://confluence.rakuten-it.com/confluence/display/MTSD/Analytics+SDK+-+SDK+Tracking+Specification+for+RAT#AnalyticsSDK-SDKTrackingSpecificationforRAT-AutomaticsEvents).
+For a full list and more details see the [SDK Standard Event Spec](https://confluence.rakuten-it.com/confluence/display/MAGS/Analytics+SDK+-+SDK+Tracking+Specification+for+RAT#AnalyticsSDKSDKTrackingSpecificationforRAT-AutomaticsEvents).
 
 ##### Push notification tracking identifier
 

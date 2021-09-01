@@ -34,7 +34,7 @@
 
 ## 8.0.0 (2021-03-04)
 
-* The module can now be built and deployed as a binary framework. See [Confluence](https://confluence.rakuten-it.com/confluence/display/MTSD/iOS+Analytics+SDK+on+GitHub+-+Make+SDK+public) for details.
+* The module can now be built and deployed as a binary framework. See [Confluence](https://confluence.rakuten-it.com/confluence/display/MAGS/iOS+Analytics+SDK+on+GitHub+-+Make+SDK+public) for details.
 * [SDKCF-3163](https://jira.rakuten-it.com/jira/browse/SDKCF-3163): Added runtime and buildtime configuration of the automatically tracked events. See [Configure automatic tracking](advanced_usage.html#configure-automatic-tracking).
 * [SDKCF-3190](https://jira.rakuten-it.com/jira/browse/SDKCF-3190): `RAnalyticsManager#shouldTrackPageView` has been deprecated. Apps can use the newly introduced `RAnalyticsManager#shouldTrackEventHandler` property instead.
 * Partly migrated the module code to Swift. Includes migration phases [one](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-1) and [two](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-2) which consists mainly of private classes.
