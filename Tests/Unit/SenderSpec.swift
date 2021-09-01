@@ -167,8 +167,9 @@ class SenderSpec: QuickSpec {
                     expect(didReceiveNotification).toEventually(beTrue())
                     expect(isSendingCompleted).toEventually(beTrue())
 
-                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-                    expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
+                    // This expectation randomly crashes. It is disabled until a safe check is found.
+//                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+//                    expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
 
                     expect(uploadsToRat).to(equal(1))
 
