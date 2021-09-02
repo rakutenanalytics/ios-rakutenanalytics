@@ -1,8 +1,8 @@
 # RAnalytics iOS SDK
 
 1. [Introduction](#introduction)
-1. [Installing](#installing)
 1. [Getting support](#getting-support)
+1. [Installing](#installing)
 1. [Getting started](#getting-started)
 1. [Tracking events](#tracking-events)
 1. [ID-SDK and OMNI compatibility](#id-sdk-and-omni-compatibility)
@@ -20,6 +20,10 @@ The **analytics** module provides APIs for tracking events and automatically sen
 ⚠️ This module supports iOS 11.0 and above in line with [GMD's recommendation](http://rex.public.rakuten-it.com/design/accessibility/system-requirements/os-and-browser/) (as of Q3 2020). It has been tested with iOS 11.1 and above. 
 
 ⚠️ If a user has given their permission, this module uses the [IDFA](https://developer.apple.com/reference/adsupport/asidentifiermanager) to track installation and conversion rates. See the [AppStore Submission Procedure](#appstore-submission-procedure) section below for more information.
+
+# Getting support
+
+To get support (create crash or bug reports, make feature requests, ask questions etc.) please go to our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
 
 
 # Installing
@@ -49,13 +53,12 @@ pod 'RAnalytics/Core'
 ```
 
 
-# Getting support
-
-To get support (crash or bug reports, feature requests, questions etc.) please go to our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
-
-
 # Getting started
 
+## Pre-requisites for receiving high quality support
+* To enable us to better support you, ensure you do the following *before* creating an [inquiry](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ):
+    * Give the DLM `dev-mag-mobile-sdk` access to your git source repo and include your repo URL on any inquiry ticket
+    * Ideally, please also give the members of DLM `dev-mag-mobile-sdk` access to your crash reporting dashboard e.g. Firebase Crashlytics
 
 ## RAT credentials
 
