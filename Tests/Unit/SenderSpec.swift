@@ -36,6 +36,7 @@ class SenderSpec: QuickSpec {
                 sender.uploadTimer?.invalidate()
 
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
+                database.closeConnection()
                 databaseConnection = nil
                 database = nil
                 bundle.mutableEnableInternalSerialization = false
@@ -167,9 +168,8 @@ class SenderSpec: QuickSpec {
                     expect(didReceiveNotification).toEventually(beTrue())
                     expect(isSendingCompleted).toEventually(beTrue())
 
-                    // This expectation randomly crashes. It is disabled until a safe check is found.
-//                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-//                    expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
+                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                    expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
 
                     expect(uploadsToRat).to(equal(1))
 

@@ -55,22 +55,12 @@ extension RAnalyticsDatabase {
             return mkAnalyticsInMemoryDBConnection()
         }
 
-        atexit_b {
-            // Try to finalize all prepared statements before closing the app
-            sqlite3_close(connection)
-        }
-
         return connection
     }
 
     private static func mkAnalyticsInMemoryDBConnection() -> SQlite3Pointer? {
         var connection: SQlite3Pointer?
         sqlite3_open("file::memory:?cache=shared", &connection)
-
-        atexit_b {
-            // Try to finalize all prepared statements before closing the app
-            sqlite3_close(connection)
-        }
 
         return connection
     }

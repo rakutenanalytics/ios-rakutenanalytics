@@ -24,7 +24,7 @@ final class RAnalyticsRATExpecter {
                                             headerFields: nil)
 
         var payload: [String: Any]?
-        session?.completion = {
+        session?.completion = { [unowned self] in
             let data = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection).first
             payload = try? JSONSerialization.jsonObject(with: data!,
                                                         options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]

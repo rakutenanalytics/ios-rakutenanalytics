@@ -45,6 +45,10 @@ final class RAnalyticsDatabase {
                                                object: nil)
     }
 
+    deinit {
+        queue.cancelAllOperations()
+    }
+
     ///
     /// Insert a new, single blob into a table.
     ///
@@ -211,6 +215,15 @@ final class RAnalyticsDatabase {
             }
             sqlite3_finalize(statement)
         }
+    }
+
+    /// Safely closes DB connection after all operations are finished.
+    /// Calling this method makes this RAnalyticsDatabase object unusable. Use for tests only.
+    func closeConnection() {
+        let operation = BlockOperation(block: {
+            sqlite3_close(self.connection)
+        })
+        queue.addOperations([operation], waitUntilFinished: true)
     }
 }
 

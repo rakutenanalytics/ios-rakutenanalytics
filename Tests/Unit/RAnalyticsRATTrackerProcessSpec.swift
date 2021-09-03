@@ -41,7 +41,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
             afterEach {
                 DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
-                sqlite3_close(databaseConnection)
+                dependenciesContainer.databaseConfiguration?.database.closeConnection()
                 databaseConnection = nil
             }
 

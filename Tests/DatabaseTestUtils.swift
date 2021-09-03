@@ -4,7 +4,7 @@ import SQLite3
 
 @objc final class DatabaseTestUtils: NSObject {
     @objc static func openRegularConnection() -> SQlite3Pointer? {
-        return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)
+        return openConnection(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX)
     }
 
     @objc static func openReadonlyConnection() -> SQlite3Pointer? {
