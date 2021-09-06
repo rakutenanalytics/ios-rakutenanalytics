@@ -416,10 +416,13 @@ extension AnalyticsManager {
     /// - Parameters:
     ///     - tracker  Any object that comforms to the @ref RAnalyticsTracker protocol.
     @objc(addTracker:) public func add(_ tracker: Tracker) {
-        if !trackersLockableObject.get().contains(tracker) {
-            trackersLockableObject.get().add(tracker)
+        trackersLockableObject.lock()
+        let trackers = trackersLockableObject.get()
+        if !trackers.contains(tracker) {
+            trackers.add(tracker)
             RLogger.debug("Added tracker \(tracker)")
         }
+        trackersLockableObject.unlock()
     }
 
     /// Set the user identifier of the logged in user.

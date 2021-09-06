@@ -12,6 +12,7 @@
 		3A2A3E8B2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2A3E8A2577B798008D83A1 /* SwiftyDependenciesContainerSpec.swift */; };
 		3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */; };
 		3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */; };
+		4597CFBB26E78E9600781E4F /* MockUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96912A325CAC62B0073D804 /* MockUtils.swift */; };
 		45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */; };
 		45ABC4CF26DE08A40030BB70 /* IntegrationTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */; };
 		45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5732725AE2C2E005A80F7 /* SenderSpec.swift */; };
@@ -598,6 +599,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */,
+				4597CFBB26E78E9600781E4F /* MockUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

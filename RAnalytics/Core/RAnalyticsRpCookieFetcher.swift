@@ -9,8 +9,16 @@ import RLogger
 
 @objc public final class RAnalyticsRpCookieFetcher: NSObject, EndpointSettable {
     /// The endpoint to fetch the Rp Cookie.
-    @objc public var endpointURL: URL?
+    @objc public var endpointURL: URL? {
+        get {
+            self._endpointURL
+        }
+        set {
+            self._endpointURL = newValue
+        }
+    }
 
+    @AtomicGetSet private var _endpointURL: URL?
     private var retryInterval: TimeInterval
     private var rpCookieRequestRetryCount: UInt
     private let rpCookieQueue: DispatchQueue
@@ -38,7 +46,7 @@ import RLogger
 
     @available(*, unavailable)
     override init() {
-        endpointURL = URL(string: "")!
+        _endpointURL = nil
         retryInterval = 0
         rpCookieRequestRetryCount = 0
         rpCookieQueue = DispatchQueue(label: "")
@@ -80,7 +88,7 @@ import RLogger
             RLogger.error(message)
             return nil
         }
-        endpointURL = endpointAddress
+        _endpointURL = endpointAddress
         retryInterval = Constants.initialRetryInterval
         rpCookieRequestRetryCount = 0
         rpCookieQueue = DispatchQueue(label: "com.rakuten.tech.analytics.rpcookie")

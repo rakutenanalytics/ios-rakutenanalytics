@@ -18,8 +18,16 @@ private enum SenderConstants {
 }
 
 @objc public final class RAnalyticsSender: NSObject, EndpointSettable, Sendable {
-    @objc public var endpointURL: URL?
+    @objc public var endpointURL: URL? {
+        get {
+            self._endpointURL
+        }
+        set {
+            self._endpointURL = newValue
+        }
+    }
 
+    @AtomicGetSet private var _endpointURL: URL?
     /// Enable the experimental internal JSON serialization or not.
     /// The experimental internal JSON serialization fixes the float numbers decimals.
     private let enableInternalSerialization: Bool
@@ -69,7 +77,7 @@ private enum SenderConstants {
          databaseTable: String,
          bundle: EnvironmentBundle,
          session: SwiftySessionable) {
-        self.endpointURL = endpoint
+        self._endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
         self.batchingDelayClosure = { return SenderConstants.defaultUploadInterval }
