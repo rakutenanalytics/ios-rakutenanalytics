@@ -157,9 +157,29 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
 // MARK: - Configuration
 
 extension AnalyticsManager {
+    /// Add the `SDKTracker` to the trackers array
+    ///
+    /// - Returns `true` if the `SDKTracker` is added, `false` otherwise.
+    private func addSDKTracker() -> Bool {
+        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: SDKTrackerConstants.databaseName) else {
+            return false
+        }
+
+        let database = RAnalyticsDatabase.database(connection: connection)
+        let databaseConfiguration = DatabaseConfiguration(database: database, tableName: SDKTrackerConstants.tableName)
+
+        guard let sdkTracker = SDKTracker(bundle: Bundle.main,
+                                          session: URLSession.shared,
+                                          databaseConfiguration: databaseConfiguration) else {
+            return false
+        }
+        add(sdkTracker)
+        return true
+    }
+
     private func configure() {
-        if let sdkTracker = SDKTracker(bundle: Bundle.main, session: URLSession.shared) {
-            add(sdkTracker)
+        if !addSDKTracker() {
+            RLogger.error("\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
         }
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
