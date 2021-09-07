@@ -29,6 +29,12 @@ platform :ios do
     shared_sample(options)
   end
 
+  # Run build_sample first before running upload_sample
+  desc "Upload sample"
+  lane :upload_sample do |options|
+    appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSample.ipa", dsym: "./artifacts/device/RAnalyticsSample.app.dSYM.zip")
+  end
+
   desc "Build and release public framework, options are 'version' (string, mandatory), 'release' (boolean, defaults false), 'skip_build' (boolean), 'skip_upload' (boolean), 'skip_pod_push' (boolean), 'target_branch'"
   lane :deploy_framework do |options|
     version = options[:version]
