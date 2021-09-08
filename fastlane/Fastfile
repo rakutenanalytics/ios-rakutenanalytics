@@ -29,8 +29,8 @@ platform :ios do
     shared_sample(options)
   end
 
-  # Run build_sample first before running upload_sample
-  desc "Upload sample"
+  # Upload sample
+  desc "Upload sample - note: build_sample must be run prior"
   lane :upload_sample do |options|
     appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSample.ipa", dsym: "./artifacts/device/RAnalyticsSample.app.dSYM.zip")
   end
