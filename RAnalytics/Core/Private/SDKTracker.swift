@@ -65,19 +65,19 @@ private extension SDKTracker {
         var payload: [String: Any] = [:]
         var extra: [String: Any] = event.installParameters
 
-        payload["acc"] = 477
-        payload["aid"] = 1
+        payload[PayloadParameterKeys.acc] = 477
+        payload[PayloadParameterKeys.aid] = 1
 
         let substring = eventName["_rem".count..<eventName.count]
         let etype = "_rem_internal\(substring)"
-        payload["etype"] = etype
+        payload[PayloadParameterKeys.etype] = etype
 
         // If the event already had a 'cp' field, those values take precedence
-        if let cpDictionary = payload["cp"] as? [String: Any] {
+        if let cpDictionary = payload[PayloadParameterKeys.cp] as? [String: Any] {
             extra += cpDictionary
         }
 
-        payload["cp"] = extra
+        payload[PayloadParameterKeys.cp] = extra
 
         payload[RAnalyticsConstants.sdkDependenciesKey] = CoreHelpers.sdkDependencies
 

@@ -88,10 +88,10 @@ final class SDKTrackerSpec: QuickSpec {
                     let jsonArray = jsonObject as? [[String: Any]]
                     expect(jsonArray).toNot(beNil())
                     expect(jsonArray?.count).to(equal(1))
-                    expect(jsonArray?[0]["acc"] as? Int).to(equal(477))
-                    expect(jsonArray?[0]["aid"] as? Int).to(equal(1))
+                    expect(jsonArray?[0][PayloadParameterKeys.acc] as? Int).to(equal(477))
+                    expect(jsonArray?[0][PayloadParameterKeys.aid] as? Int).to(equal(1))
 
-                    let cpDictionary = jsonArray?[0]["cp"] as? [String: Any]
+                    let cpDictionary = jsonArray?[0][PayloadParameterKeys.cp] as? [String: Any]
                     expect(cpDictionary).toNot(beNil())
 
                     let appInfo = cpDictionary?[RAnalyticsConstants.appInfoKey] as? String

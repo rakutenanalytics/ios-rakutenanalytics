@@ -51,7 +51,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     var payload: [String: Any]?
 
                     expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                        payload = $0
+                        payload = $0.first
                     }
                     expect(payload).toEventuallyNot(beNil())
 
@@ -78,7 +78,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                              TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["mcn"] as? String).to(equal(""))
@@ -101,7 +101,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                              TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["mcn"] as? String).to(equal("Rakuten Mobile"))
@@ -124,7 +124,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                              TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["mcn"] as? String).to(equal("Rakuten Mobile"))
@@ -269,7 +269,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                                                      TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryRadio]
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
 
@@ -369,7 +369,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         var payload: [String: Any]?
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect((payload?["mori"] as? NSNumber)?.intValue).to(equal(value))
@@ -381,7 +381,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         var payload: [String: Any]?
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["userid"] as? String).to(equal("userId"))
@@ -395,7 +395,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         state.userIdentifier = nil
 
                         expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["userid"] as? String).to(beNil())
@@ -407,7 +407,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         var payload: [String: Any]?
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["easyid"] as? String).to(equal("easyId"))
@@ -421,7 +421,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         state.easyIdentifier = nil
 
                         expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
-                            payload = $0
+                            payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(payload?["easyid"] as? String).to(beNil())

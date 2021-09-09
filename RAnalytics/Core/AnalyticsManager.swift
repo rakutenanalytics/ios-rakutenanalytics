@@ -394,7 +394,7 @@ extension AnalyticsManager {
         state.lastLaunchDate = launchCollector.lastLaunchDate
         state.lastVersion = launchCollector.lastVersion
         state.lastVersionLaunches = launchCollector.lastVersionLaunches
-        state.currentPage = launchCollector.currentPage
+        state.referralTracking = launchCollector.referralTracking
         state.origin = launchCollector.origin
 
         var processed = false

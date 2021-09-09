@@ -31,7 +31,7 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
 
             describe("accountIdentifier") {
                 it("should equal to the given account identifier") {
-                    bundle.mutableAccountIdentifier = 10
+                    bundle.accountIdentifier = 10
 
                     let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker.accountIdentifier).to(equal(10))
@@ -44,7 +44,7 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
 
             describe("applicationIdentifier") {
                 it("should equal to the given application identifier") {
-                    bundle.mutableApplicationIdentifier = 10
+                    bundle.applicationIdentifier = 10
 
                     let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker.applicationIdentifier).to(equal(10))
@@ -57,12 +57,12 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
 
             describe("event(withEventType:parameters:)") {
                 it("should not return nil") {
-                    let params: [String: Any] = ["acc": 555]
+                    let params: [String: Any] = [PayloadParameterKeys.acc: 555]
                     let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     let event = ratTracker.event(withEventType: "login", parameters: params)
                     expect(event).toNot(beNil())
                     expect(event.name).to(equal("rat.login"))
-                    expect(event.parameters["acc"] as? Int).to(equal(params["acc"] as? Int))
+                    expect(event.parameters[PayloadParameterKeys.acc] as? Int).to(equal(params[PayloadParameterKeys.acc] as? Int))
                 }
             }
 

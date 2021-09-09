@@ -110,8 +110,8 @@ import CoreLocation.CLLocation
     /// Date the last-run version was launched for the first time.
     @objc public internal(set) var lastUpdateDate: Date?
 
-    /// Currently-visited view controller.
-    @objc public internal(set) var currentPage: UIViewController?
+    /// Referral tracking type
+    internal var referralTracking: ReferralTrackingType
 
     private let bundle: Bundle
 
@@ -120,6 +120,7 @@ import CoreLocation.CLLocation
         sessionIdentifier = ""
         deviceIdentifier = ""
         currentVersion = ""
+        referralTracking = .none
         bundle = Bundle(for: RAnalyticsState.self)
         super.init()
     }
@@ -137,6 +138,7 @@ import CoreLocation.CLLocation
                       bundle: Bundle) {
         self.sessionIdentifier = sessionIdentifier
         self.deviceIdentifier = deviceIdentifier
+        referralTracking = .none
         self.bundle = bundle
         currentVersion = bundle.shortVersion ?? bundle.version ?? ""
         super.init()
@@ -177,7 +179,7 @@ import CoreLocation.CLLocation
             ^ installLaunchDate.hashValue
             ^ lastLaunchDate.hashValue
             ^ lastUpdateDate.hashValue
-            ^ currentPage.safeHashValue
+            ^ referralTracking.hashValue
     }
 
     @objc public override func isEqual(_ object: Any?) -> Bool {
@@ -201,7 +203,7 @@ import CoreLocation.CLLocation
             && installLaunchDate == object.installLaunchDate
             && lastLaunchDate == object.lastLaunchDate
             && lastUpdateDate == object.lastUpdateDate
-            && currentPage == object.currentPage
+            && referralTracking == object.referralTracking
     }
 }
 
@@ -224,7 +226,7 @@ extension RAnalyticsState: NSCopying {
         state.installLaunchDate = installLaunchDate
         state.lastLaunchDate = lastLaunchDate
         state.lastUpdateDate = lastUpdateDate
-        state.currentPage = currentPage
+        state.referralTracking = referralTracking
         return state
     }
 }

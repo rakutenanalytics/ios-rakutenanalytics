@@ -39,8 +39,14 @@ final class RAnalyticsStateSpec: QuickSpec {
                 viewController.view.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
                 return viewController
             }()
+            let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
+                                         accountIdentifier: 1,
+                                         applicationIdentifier: 2,
+                                         link: nil,
+                                         component: nil,
+                                         customParameters: nil)
             let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
-            let defaultState: AnalyticsManager.State = {
+            let stateForVisitedPage: AnalyticsManager.State = {
                 let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                    deviceIdentifier: deviceIdentifier,
                                                    bundle: bundle)
@@ -50,7 +56,27 @@ final class RAnalyticsStateSpec: QuickSpec {
                 state.origin = .external
                 state.lastVersion = "1.0"
                 state.lastVersionLaunches = 10
-                state.currentPage = currentPage
+                state.referralTracking = .page(currentPage: currentPage)
+                state.sessionStartDate = sessionStartDate
+                state.initialLaunchDate = initialLaunchDate
+                state.lastLaunchDate = lastLaunchDate
+                state.lastUpdateDate = lastUpdateDate
+                state.userIdentifier = userIdentifier
+                state.easyIdentifier = easyIdentifier
+                state.loggedIn = true
+                return state
+            }()
+            let stateForReferralAppTracking: AnalyticsManager.State = {
+                let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                   deviceIdentifier: deviceIdentifier,
+                                                   bundle: bundle)
+                state.advertisingIdentifier = advertisingIdentifier
+                state.lastKnownLocation = location
+                state.loginMethod = .oneTapLogin
+                state.origin = .external
+                state.lastVersion = "1.0"
+                state.lastVersionLaunches = 10
+                state.referralTracking = .referralApp(model)
                 state.sessionStartDate = sessionStartDate
                 state.initialLaunchDate = initialLaunchDate
                 state.lastLaunchDate = lastLaunchDate
@@ -82,12 +108,27 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.lastVersionLaunches).to(equal(0))
                     expect(state.loginMethod).to(equal(.other))
                     expect(state.origin).to(equal(.internal))
-                    expect(state.currentPage).to(beNil())
+                    expect(state.referralTracking).to(equal(ReferralTrackingType.none))
                 }
             }
             describe("setting") {
-                it("should have the expected values") {
-                    let state = defaultState
+                context("Visited page") {
+                    it("should have the expected values") {
+                        let state = stateForVisitedPage
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.page(currentPage: currentPage)))
+                    }
+                }
+
+                context("Referral app tracking") {
+                    it("should have the expected values") {
+                        let state = stateForReferralAppTracking
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.referralApp(model)))
+                    }
+                }
+
+                func verify(_ state: AnalyticsManager.State) {
                     expect(state.sessionIdentifier).to(equal(sessionIdentifier))
                     expect(state.deviceIdentifier).to(equal(deviceIdentifier))
                     expect(state.currentVersion).to(equal(currentVersion))
@@ -105,15 +146,32 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.lastVersionLaunches).to(equal(10))
                     expect(state.loginMethod).to(equal(.oneTapLogin))
                     expect(state.origin).to(equal(.external))
-                    expect(state.currentPage).to(equal(currentPage))
                 }
             }
             describe("copy") {
-                it("should have the expected values") {
-                    guard let state = defaultState.copy() as? AnalyticsManager.State else {
-                        assertionFailure("AnalyticsManager.State copy fails")
-                        return
+                context("Visited page") {
+                    it("should have the expected values") {
+                        guard let state = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.page(currentPage: currentPage)))
                     }
+                }
+
+                context("Referral app tracking") {
+                    it("should have the expected values") {
+                        guard let state = stateForReferralAppTracking.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.referralApp(model)))
+                    }
+                }
+
+                func verify(_ state: AnalyticsManager.State) {
                     expect(state.sessionIdentifier).to(equal(sessionIdentifier))
                     expect(state.deviceIdentifier).to(equal(deviceIdentifier))
                     expect(state.currentVersion).to(equal(currentVersion))
@@ -131,44 +189,86 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.lastVersionLaunches).to(equal(10))
                     expect(state.loginMethod).to(equal(.oneTapLogin))
                     expect(state.origin).to(equal(.external))
-                    expect(state.currentPage).to(equal(currentPage))
                 }
             }
             describe("equal") {
-                it("should be true if it has the same properties of an other state") {
-                    let state = defaultState
-                    guard let copiedState = defaultState.copy() as? AnalyticsManager.State else {
-                        assertionFailure("AnalyticsManager.State copy fails")
-                        return
+                context("Visited page") {
+                    it("should be true if it has the same properties of an other state") {
+                        let state = stateForVisitedPage
+                        guard let copiedState = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state).to(equal(copiedState))
                     }
-                    expect(state).to(equal(copiedState))
+                    it("should be false if it has not the same properties of an other state") {
+                        let state = stateForVisitedPage
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state).toNot(equal(otherState))
+                    }
+                    it("should be false if it doesn't match the State type") {
+                        let state = stateForVisitedPage
+                        let anObject = UIView()
+                        expect(state).toNot(equal(anObject))
+                    }
                 }
-                it("should be false if it has not the same properties of an other state") {
-                    let state = defaultState
-                    let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
-                                                            deviceIdentifier: "differentDeviceId")
-                    expect(state).toNot(equal(otherState))
-                }
-                it("should be false if it doesn't match the State type") {
-                    let state = defaultState
-                    let anObject = UIView()
-                    expect(state).toNot(equal(anObject))
+
+                context("Referral app tracking") {
+                    it("should be true if it has the same properties of an other state") {
+                        let state = stateForReferralAppTracking
+                        guard let copiedState = stateForReferralAppTracking.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state).to(equal(copiedState))
+                    }
+                    it("should be false if it has not the same properties of an other state") {
+                        let state = stateForReferralAppTracking
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state).toNot(equal(otherState))
+                    }
+                    it("should be false if it doesn't match the State type") {
+                        let state = stateForReferralAppTracking
+                        let anObject = UIView()
+                        expect(state).toNot(equal(anObject))
+                    }
                 }
             }
             describe("hash") {
-                it("should be identical if it is a copy of an other state") {
-                    let state = defaultState
-                    guard let copiedState = defaultState.copy() as? AnalyticsManager.State else {
-                        assertionFailure("AnalyticsManager.State copy fails")
-                        return
+                context("Visited page") {
+                    it("should be identical if it is a copy of an other state") {
+                        let state = stateForVisitedPage
+                        guard let copiedState = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state.hash).to(equal(copiedState.hash))
                     }
-                    expect(state.hash).to(equal(copiedState.hash))
+                    it("should not be identical if the properties are different") {
+                        let state = stateForVisitedPage
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state.hash).toNot(equal(otherState.hash))
+                    }
                 }
-                it("should not be identical if the properties are different") {
-                    let state = defaultState
-                    let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
-                                                            deviceIdentifier: "differentDeviceId")
-                    expect(state.hash).toNot(equal(otherState.hash))
+
+                context("Referral app tracking") {
+                    it("should be identical if it is a copy of an other state") {
+                        let state = stateForReferralAppTracking
+                        guard let copiedState = stateForReferralAppTracking.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state.hash).to(equal(copiedState.hash))
+                    }
+                    it("should not be identical if the properties are different") {
+                        let state = stateForReferralAppTracking
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state.hash).toNot(equal(otherState.hash))
+                    }
                 }
             }
         }

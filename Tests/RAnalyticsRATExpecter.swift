@@ -15,7 +15,7 @@ final class RAnalyticsRATExpecter {
     func expectEvent(_ event: RAnalyticsEvent,
                      state: RAnalyticsState,
                      equal eventName: String,
-                     completion: (([String: Any]?) -> Void)? = nil) {
+                     completion: (([[String: Any]]) -> Void)? = nil) {
         let session = dependenciesContainer.session as? SwityURLSessionMock
 
         session?.response = HTTPURLResponse(url: endpointURL,
@@ -23,17 +23,16 @@ final class RAnalyticsRATExpecter {
                                             httpVersion: nil,
                                             headerFields: nil)
 
-        var payload: [String: Any]?
+        var payloads = [[String: Any]]()
         session?.completion = { [unowned self] in
-            let data = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection).first
-            payload = try? JSONSerialization.jsonObject(with: data!,
-                                                        options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
+            let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
+            payloads = result.deserialize()
         }
 
         let processed = ratTracker.process(event: event, state: state)
         expect(processed).to(beTrue())
-        expect(payload).toEventuallyNot(beNil())
-        expect(payload?["etype"] as? String).toEventually(equal(eventName))
-        completion?(payload)
+        expect(payloads).toEventuallyNot(beNil())
+        expect(payloads.first?[PayloadParameterKeys.etype] as? String).toEventually(equal(eventName))
+        completion?(payloads)
     }
 }

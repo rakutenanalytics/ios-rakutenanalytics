@@ -1,3 +1,5 @@
+// swiftlint:disable line_length
+
 import Quick
 import Nimble
 import CoreTelephony
@@ -67,10 +69,10 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
 
                             // expect
                             expect(payloads.count).to(equal(accounts.count))
-                            payloads.sort { ($0["acc"] as! Int) < $1["acc"] as! Int } // swiftlint:disable:this force_cast
+                            payloads.sort { ($0[PayloadParameterKeys.acc] as! Int) < $1[PayloadParameterKeys.acc] as! Int } // swiftlint:disable:this force_cast
                             for (i, account) in accounts.enumerated() {
-                                expect(payloads[i]["acc"] as? Int).to(equal(account.acc))
-                                expect(payloads[i]["aid"] as? Int).to(equal(account.aid))
+                                expect(payloads[i][PayloadParameterKeys.acc] as? Int).to(equal(account.acc))
+                                expect(payloads[i][PayloadParameterKeys.aid] as? Int).to(equal(account.aid))
                                 expect(payloads[i]["foo"] as? String).to(equal("bar"))
                             }
                         }
@@ -88,8 +90,8 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
 
                             // expect
                             sender.sendSpy = { payload in
-                                expect(payload["acc"] as? Int).to(equal(199))
-                                expect(payload["aid"] as? Int).to(equal(2))
+                                expect(payload[PayloadParameterKeys.acc] as? Int).to(equal(199))
+                                expect(payload[PayloadParameterKeys.aid] as? Int).to(equal(2))
                             }
                             ratTracker.duplicateEvent(
                                 named: RAnalyticsEvent.Name.initialLaunch,
@@ -121,8 +123,8 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                             // expect
                             let expectedAcc1 = accounts.first
                             expect(payloads.count).to(equal(1))
-                            expect(payloads.first?["acc"] as? Int).to(equal(expectedAcc1?.acc))
-                            expect(payloads.first?["aid"] as? Int).to(equal(expectedAcc1?.aid))
+                            expect(payloads.first?[PayloadParameterKeys.acc] as? Int).to(equal(expectedAcc1?.acc))
+                            expect(payloads.first?[PayloadParameterKeys.aid] as? Int).to(equal(expectedAcc1?.aid))
                             expect(payloads.first?["foo"] as? String).to(equal("bar"))
                         }
 

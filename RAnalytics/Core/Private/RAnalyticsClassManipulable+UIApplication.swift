@@ -51,20 +51,26 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
     /*
      * Methods below are only added if the delegate implements the original method.
      */
-    @objc func r_autotrack_application(_ application: UIApplication, handleOpen url: URL) -> Bool {
+    @objc func r_autotrack_application(_ application: UIApplication,
+                                       handleOpen url: URL) -> Bool {
         RLogger.verbose("Application was asked to open URL \(url.absoluteString)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
+
+        AnalyticsManager.shared().trackReferralApp(url: url)
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application, handleOpen: url)
     }
 
-    @objc func r_autotrack_application(_ app: UIApplication, open url: URL,
+    @objc func r_autotrack_application(_ app: UIApplication,
+                                       open url: URL,
                                        options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         RLogger.verbose("Application was asked to open URL \(url.absoluteString) with options =  \(options)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
+
+        AnalyticsManager.shared().trackReferralApp(url: url)
 
         return r_autotrack_application(app, open: url, options: options)
     }
@@ -77,6 +83,8 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         RLogger.verbose(message)
 
         AnalyticsManager.shared().launchCollector.origin = .external
+
+        AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: sourceApplication)
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application,
@@ -93,6 +101,10 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         RLogger.verbose("Application was asked to continue user activity \(userActivity.debugDescription)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
+
+        if let url = userActivity.webpageURL {
+            AnalyticsManager.shared().trackReferralApp(url: url)
+        }
 
         // If we're executing this, the original method exists
         return r_autotrack_application(application,

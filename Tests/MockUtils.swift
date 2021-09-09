@@ -126,14 +126,12 @@ final class HTTPCookieStorageMock: HTTPCookieStorable {
 // MARK: - Tracker
 
 final class TrackerMock: NSObject, Tracker {
+    var state: RAnalyticsState?
     var endpointURL: URL? = URL(string: "https://endpoint.co.jp")
 
-    override init() {
-        super.init()
-    }
-
     func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
-        false
+        self.state = state
+        return true
     }
 }
 
@@ -250,7 +248,7 @@ enum Tracking {
 
         let currentPage = CustomPage()
         currentPage.view.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-        defaultState.currentPage = currentPage
+        defaultState.referralTracking = .page(currentPage: currentPage)
 
         return defaultState
     }()

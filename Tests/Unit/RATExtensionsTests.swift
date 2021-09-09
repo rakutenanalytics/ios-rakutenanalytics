@@ -4,8 +4,8 @@ import Nimble
 
 final class BundleMock: NSObject, EnvironmentBundle {
     var languageCode: Any?
-    var accountIdentifier: Int64 { mutableAccountIdentifier }
-    var applicationIdentifier: Int64 { mutableApplicationIdentifier }
+    var accountIdentifier: Int64 = 1
+    var applicationIdentifier: Int64 = 1
     var disabledEventsAtBuildTime: [String]?
     var duplicateAccounts: [RATAccount]?
     var bundleIdentifier: String?
@@ -20,8 +20,6 @@ final class BundleMock: NSObject, EnvironmentBundle {
     var dictionary: [String: Any]?
     var mutableEndpointAddress: URL?
     var mutableEnableInternalSerialization: Bool = false
-    var mutableAccountIdentifier: Int64 = 1
-    var mutableApplicationIdentifier: Int64 = 1
 
     func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
 }

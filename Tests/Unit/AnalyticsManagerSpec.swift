@@ -64,6 +64,39 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("trackReferralApp") {
+                let bundleIdentifier = "jp.co.rakuten.app"
+                let parameters = "\(PayloadParameterKeys.refAccountIdentifier)=1&\(PayloadParameterKeys.refApplicationIdentifier)=2"
+                let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
+                                             accountIdentifier: 1,
+                                             applicationIdentifier: 2,
+                                             link: nil,
+                                             component: nil,
+                                             customParameters: [:])
+
+                it("should track the referral app when a URL Scheme is opened") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let appURL = URL(string: "app://?\(parameters)")!
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.trackReferralApp(url: appURL, sourceApplication: bundleIdentifier)
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
+                }
+
+                it("should track the referral app when a Universal Link is opened") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.trackReferralApp(url: universalLinkURL, sourceApplication: nil)
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
+                }
+            }
+
             describe("process") {
                 it("should not process the event if its prefix is unknown") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
@@ -76,13 +109,58 @@ final class AnalyticsManagerSpec: QuickSpec {
                     let result = analyticsManager.process(RAnalyticsEvent(name: "rat.foo", parameters: nil))
                     expect(result).to(beTrue())
                 }
+
+                it("should process the event without referral tracking") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.launchCollector.referralTracking = ReferralTrackingType.none
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.process(RAnalyticsEvent(name: "custom", parameters: nil))
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.none))
+                }
+
+                it("should process the event with a visited page") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+                    let referralTrackingType = ReferralTrackingType.page(currentPage: UIViewController())
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.launchCollector.referralTracking = referralTrackingType
+                    analyticsManager.process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil))
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(referralTrackingType))
+                }
+
+                it("should process the event with a referral app tracking") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+                    let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
+                                                 accountIdentifier: 1,
+                                                 applicationIdentifier: 2,
+                                                 link: nil,
+                                                 component: nil,
+                                                 customParameters: nil)
+                    let referralTrackingType = ReferralTrackingType.referralApp(model)
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.launchCollector.referralTracking = referralTrackingType
+                    analyticsManager.process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil))
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(referralTrackingType))
+                }
             }
 
             describe("shouldTrackPageView") {
                 let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
                 let state: RAnalyticsState = {
                     let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB", deviceIdentifier: "deviceId")
-                    state.currentPage = UIViewController()
+                    state.referralTracking = .page(currentPage: UIViewController())
                     return state
                 }()
 

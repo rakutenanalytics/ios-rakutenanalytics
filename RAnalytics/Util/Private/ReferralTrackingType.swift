@@ -1,0 +1,7 @@
+import Foundation
+
+enum ReferralTrackingType: Hashable {
+    case none
+    case page(currentPage: UIViewController?) // Currently-visited view controller.
+    case referralApp(ReferralAppModel)
+}

@@ -40,8 +40,8 @@ final class RAnalyticsLaunchCollector {
     /// Default value: .internal
     internal var origin: AnalyticsManager.State.Origin = .internal
 
-    /// Currently-visited view controller.
-    private(set) var currentPage: UIViewController?
+    /// The referral tracking type.
+    internal var referralTracking: ReferralTrackingType
 
     /// The identifier is computed from push payload.
     /// It is used for tracking push notification. It is also sent together with a push notification event.
@@ -65,6 +65,7 @@ final class RAnalyticsLaunchCollector {
         self.userStorageHandler = nil
         self.keychainHandler = nil
         self.tracker = nil
+        self.referralTracking = .none
     }
 
     /// Creates a launch collector
@@ -78,6 +79,7 @@ final class RAnalyticsLaunchCollector {
         self.userStorageHandler = dependenciesContainer.userStorageHandler
         self.keychainHandler = dependenciesContainer.keychainHandler
         self.tracker = dependenciesContainer.tracker
+        self.referralTracking = .none
 
         configureNotifications()
         configureLaunchValues()
@@ -194,9 +196,9 @@ extension RAnalyticsLaunchCollector {
         /// Keep a strong reference to the view controller in the launch collector only for the
         /// time the event is being processed. Note that it will be carried on by the analytics
         /// manager state, too.
-        currentPage = viewController
+        referralTracking = .page(currentPage: viewController)
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil)
-        currentPage = nil
+        referralTracking = .none
 
         /// Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external
         /// call or push notification.

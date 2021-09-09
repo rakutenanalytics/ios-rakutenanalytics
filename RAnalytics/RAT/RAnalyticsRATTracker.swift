@@ -14,11 +14,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 @objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
     enum Constants {
         static let RATEventPrefix      = "rat."
-        static let RATETypeParameter   = "etype"
-        static let RATCPParameter      = "cp"
         static let RATGenericEventName = "rat.generic"
-        static let RATPGNParameter     = "pgn"
-        static let RATREFParameter     = "ref"
         static let RATReachabilityHost = "8.8.8.8" // Google DNS Server
         static let RATBatchingDelay: TimeInterval = 1.0 // Batching delay is 1 second by default
     }
@@ -238,19 +234,19 @@ private extension RAnalyticsRATTracker {
     ///     - state: the State.
     func addAutomaticFields(_ payload: NSMutableDictionary, state: RAnalyticsState) {
         // MARK: acc
-        if let acc = (payload["acc"] as? NSNumber)?.positiveIntegerNumber {
-            payload["acc"] = acc
+        if let acc = (payload[PayloadParameterKeys.acc] as? NSNumber)?.positiveIntegerNumber {
+            payload[PayloadParameterKeys.acc] = acc
 
         } else {
-            payload["acc"] = NSNumber(value: self.accountIdentifier)
+            payload[PayloadParameterKeys.acc] = NSNumber(value: self.accountIdentifier)
         }
 
         // MARK: aid
-        if let aid = (payload["aid"] as? NSNumber)?.positiveIntegerNumber {
-            payload["aid"] = aid
+        if let aid = (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber {
+            payload[PayloadParameterKeys.aid] = aid
 
         } else {
-            payload["aid"] = NSNumber(value: self.applicationIdentifier)
+            payload[PayloadParameterKeys.aid] = NSNumber(value: self.applicationIdentifier)
         }
 
         if deviceHandler.batteryState != .unknown {
@@ -375,7 +371,24 @@ extension RAnalyticsRATTracker {
 
         if let sender = sender {
             sender.send(jsonObject: payload)
-            duplicateEvent(named: event.name, with: payload, sender: sender)
+
+            switch state.referralTracking {
+            case .referralApp(let referralAppModel):
+                let referralAppAccount = RATAccount(accountId: referralAppModel.accountIdentifier,
+                                                    applicationId: referralAppModel.applicationIdentifier,
+                                                    disabledEvents: nil)
+
+                let referralPayload = payload.duplicate(for: referralAppAccount)
+                referralPayload[PayloadParameterKeys.etype] = EventsName.deeplink
+
+                sender.send(jsonObject: referralPayload)
+
+                duplicateEvent(named: event.name, with: payload, exclude: referralAppAccount, sender: sender)
+
+            default:
+                duplicateEvent(named: event.name, with: payload, sender: sender)
+            }
+
             return true
 
         } else {
@@ -413,7 +426,7 @@ extension RAnalyticsRATTracker {
         let payload = NSMutableDictionary()
         let extra = NSMutableDictionary()
 
-        payload[Constants.RATETypeParameter] = event.name
+        payload[PayloadParameterKeys.etype] = event.name
 
         if !updatePayload(payload, extra: extra, event: event, state: state) {
             return nil
@@ -422,11 +435,11 @@ extension RAnalyticsRATTracker {
         if let dict = extra as? [String: Any],
            !dict.isEmpty {
             // If the event already had a 'cp' field, those values take precedence
-            if let params = payload[Constants.RATCPParameter] as? [AnyHashable: Any] {
+            if let params = payload[PayloadParameterKeys.cp] as? [AnyHashable: Any] {
                 extra.addEntries(from: params)
             }
 
-            payload[Constants.RATCPParameter] = extra
+            payload[PayloadParameterKeys.cp] = extra
         }
 
         addAutomaticFields(payload, state: state)
@@ -483,9 +496,29 @@ extension RAnalyticsRATTracker {
         // MARK: _rem_visit
         case RAnalyticsEvent.Name.pageVisit where AnalyticsManager.shared().shouldTrackPageView == true:
             // Override etype
-            payload[Constants.RATETypeParameter] = "pv"
+            payload[PayloadParameterKeys.etype] = EventsName.pageVisit
 
-            if !updatePageVisitPayload(for: event, state: state, payload: payload, extra: extra) {
+            switch state.referralTracking {
+            case .page(let currentPage):
+                guard let currentPage = currentPage else {
+                    return false
+                }
+                if !updatePayloadForCurrentPage(for: event,
+                                                state: state,
+                                                payload: payload,
+                                                extra: extra,
+                                                currentPage: currentPage) {
+                    return false
+                }
+
+            case .referralApp(let referralAppModel):
+                updatePayloadForReferralApp(for: event,
+                                            state: state,
+                                            payload: payload,
+                                            extra: extra,
+                                            referralApp: referralAppModel)
+
+            case .none:
                 return false
             }
 
@@ -519,7 +552,7 @@ extension RAnalyticsRATTracker {
                 return false
             }
 
-            payload[Constants.RATETypeParameter] = eventName
+            payload[PayloadParameterKeys.etype] = eventName
 
             if let topLevelObject = event.parameters[RAnalyticsCustomEventTopLevelObjectParameter] as? [AnyHashable: Any],
                !topLevelObject.isEmpty {
@@ -540,7 +573,7 @@ extension RAnalyticsRATTracker {
             guard let etype = event.eType else {
                 return false
             }
-            payload[Constants.RATETypeParameter] = etype
+            payload[PayloadParameterKeys.etype] = etype
 
         // MARK: Unsupported events
         default:
@@ -563,14 +596,11 @@ private extension RAnalyticsRATTracker {
     ///     - extra: the Extra Payload to update.
     ///
     /// - Returns: `true` if the update is complete or `false`.
-    func updatePageVisitPayload(for pageVisitEvent: RAnalyticsEvent,
-                                state: RAnalyticsState,
-                                payload: NSMutableDictionary,
-                                extra: NSMutableDictionary) -> Bool {
-        guard let currentPage = state.currentPage else {
-            return false
-        }
-
+    func updatePayloadForCurrentPage(for pageVisitEvent: RAnalyticsEvent,
+                                     state: RAnalyticsState,
+                                     payload: NSMutableDictionary,
+                                     extra: NSMutableDictionary,
+                                     currentPage: UIViewController) -> Bool {
         var pageIdentifier = pageVisitEvent.parameters["page_id"] as? String
         var pageTitle = currentPage.navigationItem.title ?? currentPage.title
         let pageURL = currentPage.view.getWebViewURL()?.absoluteURL
@@ -599,11 +629,11 @@ private extension RAnalyticsRATTracker {
             return false
         }
 
-        payload[Constants.RATPGNParameter] = pageIdentifier
+        payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
         if !lastVisitedPageIdentifier.isEmpty {
-            payload[Constants.RATREFParameter] = lastVisitedPageIdentifier
+            payload[PayloadParameterKeys.ref] = lastVisitedPageIdentifier
         }
         self.lastVisitedPageIdentifier = pageIdentifier
 
@@ -616,7 +646,7 @@ private extension RAnalyticsRATTracker {
             origin = result
             self.carriedOverOrigin = nil
         }
-        extra["ref_type"] = origin.toString
+        extra[PayloadParameterKeys.refType] = origin.toString
 
         if let pageTitle = pageTitle {
             extra["title"] = pageTitle
@@ -628,13 +658,33 @@ private extension RAnalyticsRATTracker {
 
         return true
     }
+
+    func updatePayloadForReferralApp(for pageVisitEvent: RAnalyticsEvent,
+                                     state: RAnalyticsState,
+                                     payload: NSMutableDictionary,
+                                     extra: NSMutableDictionary,
+                                     referralApp: ReferralAppModel) {
+        payload[PayloadParameterKeys.ref] = referralApp.bundleIdentifier
+
+        extra[PayloadParameterKeys.refType] = RAnalyticsOrigin.external.toString
+        if let link = referralApp.link,
+           !link.isEmpty {
+            extra[PayloadParameterKeys.refLink] = link
+        }
+        if let comp = referralApp.component,
+           !comp.isEmpty {
+            extra[PayloadParameterKeys.refComponent] = comp
+        }
+
+        referralApp.customParameters?.forEach { extra[$0.key] = $0.value }
+    }
 }
 
 // MARK: - eType
 
 private extension RAnalyticsEvent {
     var eType: String? {
-        var etype = parameters[RAnalyticsRATTracker.Constants.RATETypeParameter] as? String
+        var etype = parameters[PayloadParameterKeys.etype] as? String
 
         if etype.isEmpty && name != RAnalyticsRATTracker.Constants.RATGenericEventName {
             etype = name[RAnalyticsRATTracker.Constants.RATEventPrefix.count..<name.count]

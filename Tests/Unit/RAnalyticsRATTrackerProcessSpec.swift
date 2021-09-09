@@ -1,3 +1,4 @@
+// swiftlint:disable line_length
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
@@ -20,8 +21,12 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 let databaseTableName = "testTableName_RAnalyticsRATTrackerSpec"
                 databaseConnection = DatabaseTestUtils.openRegularConnection()!
                 let database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
+
                 let bundle = BundleMock()
+                bundle.accountIdentifier = 777
+                bundle.applicationIdentifier = 888
                 bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp/")!
+
                 dependenciesContainer.bundle = bundle
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
                 dependenciesContainer.session = SwityURLSessionMock()
@@ -67,10 +72,10 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     var sdkInfoPayload: [String: Any]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
-                        let cp = $0?["cp"] as? [String: Any]
+                        let cp = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         appInfoPayload = cp?[RAnalyticsConstants.appInfoKey] as? String
 
-                        sdkInfoPayload = $0?[RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
+                        sdkInfoPayload = $0.first?[RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
                     }
                     expect(appInfoPayload).toEventuallyNot(beNil())
                     expect(appInfoPayload?.contains("xcode")).to(beTrue())
@@ -85,7 +90,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     var cpPayload: [String: Any]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.sessionStart) {
-                        cpPayload = $0?["cp"] as? [String: Any]
+                        cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                     }
                     expect(cpPayload).toEventuallyNot(beNil())
 
@@ -105,7 +110,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     var cpPayload: [String: Any]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.applicationUpdate) {
-                        cpPayload = $0?["cp"] as? [String: Any]
+                        cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                     }
                     expect(cpPayload).toEventuallyNot(beNil())
                     expect(cpPayload?["launches_since_last_upgrade"] as? Int).to(beGreaterThan(0))
@@ -121,7 +126,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         state.loginMethod = .oneTapLogin
 
                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.login) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["login_method"] as? String).to(equal(RAnalyticsLoginMethod.oneTapLogin.toString))
@@ -135,7 +140,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         state.loginMethod = .passwordInput
 
                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.login) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["login_method"] as? String).to(equal(RAnalyticsLoginMethod.passwordInput.toString))
@@ -149,7 +154,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         state.loginMethod = .other
 
                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.login) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toAfterTimeout(beNil())
                     }
@@ -162,7 +167,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.logout) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["logout_method"] as? String).to(equal(RAnalyticsEvent.LogoutMethod.local.toLogoutString))
@@ -174,7 +179,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.logout) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["logout_method"] as? String).to(equal(RAnalyticsEvent.LogoutMethod.global.toLogoutString))
@@ -185,7 +190,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.logout) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventually(beNil())
                     }
@@ -198,7 +203,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.loginFailure) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["type"] as? String).to(equal("password_login"))
@@ -211,7 +216,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.loginFailure) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["type"] as? String).to(equal("sso_login"))
@@ -224,7 +229,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.loginFailure) {
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(cpPayload).toEventuallyNot(beNil())
                         expect(cpPayload?["idsdk_error"] as? String).to(equal("IDSDK Login Error"))
@@ -233,99 +238,149 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 }
 
                 context("Page Visit") {
-                    it("should process the pageVisit event with an internal ref and pgn equal to the page identifier") {
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
+                    context("The referral tracking is a Visited Page") {
+                        it("should process the pageVisit event with an internal ref and pgn equal to the page identifier") {
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
 
-                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "pv") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: EventsName.pageVisit) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
+                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("internal"))
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(payload?["pgn"] as? String).to(equal("TestPage"))
-                        expect(cpPayload?["ref_type"] as? String).to(equal("internal"))
+
+                        it("should process the pageVisit event with an internal ref and pgn equal to CustomPage") {
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: EventsName.pageVisit) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomPage.self)))
+                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("internal"))
+                        }
+
+                        it("should process the second pageVisit event with ref equal to the first pageVisit event's page identifier") {
+                            let firstPage = "FirstPage"
+                            let secondPage = "SecondPage"
+
+                            let firstEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": firstPage])
+                            let secondEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": secondPage])
+
+                            var payload: [String: Any]?
+
+                            ratTracker.process(event: firstEvent, state: Tracking.defaultState)
+
+                            let session = dependenciesContainer.session as? SwityURLSessionMock
+
+                            session?.completion = {
+                                let databaseConfiguration: DatabaseConfiguration! = dependenciesContainer.databaseConfiguration as? DatabaseConfiguration
+                                let data = DatabaseTestUtils.fetchTableContents(databaseConfiguration.tableName,
+                                                                                connection: databaseConnection)[1]
+                                payload = try? JSONSerialization.jsonObject(with: data,
+                                                                            options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
+                            }
+                            ratTracker.process(event: secondEvent, state: Tracking.defaultState)
+
+                            expect(payload).toEventuallyNot(beNil())
+                            expect((payload)?[PayloadParameterKeys.pgn] as? String).to(equal(secondPage))
+                            expect((payload)?[PayloadParameterKeys.ref] as? String).to(equal(firstPage))
+                        }
+
+                        it("should process the pageVisit event with an external ref") {
+                            let pageId = "TestPage"
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                            state.origin = .external
+
+                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(pageId))
+                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("external"))
+                        }
+
+                        it("should process the pageVisit event with a push ref") {
+                            let pageId = "TestPage"
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                            state.origin = .push
+
+                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(pageId))
+                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("push"))
+                        }
+
                     }
 
-                    it("should process the pageVisit event with an internal ref and pgn equal to CustomPage") {
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
+                    context("The referral tracking is an App") {
+                        it("should process a pageVisit event and a deeplink event") {
+                            var payloads = [[String: Any]]()
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                            let state = RAnalyticsState(sessionIdentifier: "sessionIdentifier", deviceIdentifier: "deviceIdentifier")
+                            let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
+                                                         accountIdentifier: 111,
+                                                         applicationIdentifier: 222,
+                                                         link: "campaignCode",
+                                                         component: "news",
+                                                         customParameters: ["key1": "value1"])
+                            state.referralTracking = .referralApp(model)
 
-                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "pv") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                                payloads = $0
+                            }
+
+                            expect(payloads.isEmpty).toEventually(beFalse())
+                            expect(payloads.count).to(equal(2))
+
+                            let payload1 = payloads[0]
+                            let cpPayload1 = payload1[PayloadParameterKeys.cp] as? [String: Any]
+
+                            let payload2 = payloads[1]
+                            let cpPayload2 = payload2[PayloadParameterKeys.cp] as? [String: Any]
+
+                            expect(payload1[PayloadParameterKeys.etype] as? String).to(equal(EventsName.pageVisit))
+                            expect(payload1[PayloadParameterKeys.acc] as? Int).to(equal(777))
+                            expect(payload1[PayloadParameterKeys.aid] as? Int).to(equal(888))
+                            expect(payload1[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))
+                            expect(cpPayload1).toNot(beNil())
+                            expect(cpPayload1?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                            expect(cpPayload1?[PayloadParameterKeys.refLink] as? String).to(equal("campaignCode"))
+                            expect(cpPayload1?[PayloadParameterKeys.refComponent] as? String).to(equal("news"))
+
+                            expect(payload2).toNot(beNil())
+                            expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(EventsName.deeplink))
+                            expect(payload2[PayloadParameterKeys.acc] as? Int).to(equal(111))
+                            expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(222))
+                            expect(payload2[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))
+                            expect(cpPayload2).toNot(beNil())
+                            expect(cpPayload2?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                            expect(cpPayload2?[PayloadParameterKeys.refLink] as? String).to(equal("campaignCode"))
+                            expect(cpPayload2?[PayloadParameterKeys.refComponent] as? String).to(equal("news"))
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(payload?["pgn"] as? String).to(equal(NSStringFromClass(CustomPage.self)))
-                        expect(cpPayload?["ref_type"] as? String).to(equal("internal"))
-                    }
-
-                    it("should process the second pageVisit event with ref equal to the first pageVisit event's page identifier") {
-                        let firstPage = "FirstPage"
-                        let secondPage = "SecondPage"
-
-                        let firstEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": firstPage])
-                        let secondEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": secondPage])
-
-                        var payload: [String: Any]?
-
-                        ratTracker.process(event: firstEvent, state: Tracking.defaultState)
-
-                        let session = dependenciesContainer.session as? SwityURLSessionMock
-
-                        session?.completion = {
-                            let databaseConfiguration: DatabaseConfiguration! = dependenciesContainer.databaseConfiguration as? DatabaseConfiguration
-                            let data = DatabaseTestUtils.fetchTableContents(databaseConfiguration.tableName,
-                                                                            connection: databaseConnection)[1]
-                            payload = try? JSONSerialization.jsonObject(with: data,
-                                                                        options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
-                        }
-                        ratTracker.process(event: secondEvent, state: Tracking.defaultState)
-
-                        expect(payload).toEventuallyNot(beNil())
-                        expect((payload)?["pgn"] as? String).to(equal(secondPage))
-                        expect((payload)?["ref"] as? String).to(equal(firstPage))
-                    }
-
-                    it("should process the pageVisit event with an external ref") {
-                        let pageId = "TestPage"
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
-
-                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
-                        state.origin = .external
-
-                        expecter.expectEvent(event, state: state, equal: "pv") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(payload?["pgn"] as? String).to(equal(pageId))
-                        expect(cpPayload?["ref_type"] as? String).to(equal("external"))
-                    }
-
-                    it("should process the pageVisit event with a push ref") {
-                        let pageId = "TestPage"
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
-
-                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
-                        state.origin = .push
-
-                        expecter.expectEvent(event, state: state, equal: "pv") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(payload?["pgn"] as? String).to(equal(pageId))
-                        expect(cpPayload?["ref_type"] as? String).to(equal("push"))
                     }
                 }
 
@@ -338,8 +393,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotification) {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).toNot(beNil())
@@ -352,8 +407,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotification) {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).toNot(beNil())
@@ -371,8 +426,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     var cpPayload: [String: Any]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: discoverEvent) {
-                        payload = $0
-                        cpPayload = $0?["cp"] as? [String: Any]
+                        payload = $0.first
+                        cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                     }
                     expect(payload).toEventuallyNot(beNil())
                     expect(cpPayload).toNot(beNil())
@@ -415,8 +470,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: "etypeName") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).toNot(beNil())
@@ -432,8 +487,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         var cpPayload: [String: Any]?
 
                         expecter.expectEvent(event, state: Tracking.defaultState, equal: "etypeName") {
-                            payload = $0
-                            cpPayload = $0?["cp"] as? [String: Any]
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).to(beNil())
