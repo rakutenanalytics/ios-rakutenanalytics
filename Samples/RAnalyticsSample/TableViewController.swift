@@ -48,7 +48,8 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     var accountId: Int64 = 0
     var serviceId: Int64 = 0
     private let demoAppURL = URL(string: "demoapp://")
-    private let demoAppUniversalLinkURL = URL(string: "https://documents.developers.rakuten.com")
+    //private let demoAppUniversalLinkURL = URL(string: "https://documents.developers.rakuten.com")
+    private let demoAppUniversalLinkURL = URL(string: "digitalfox.fr") // This public domain is temporarily used until documents.developers.rakuten.com is fixed
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
 
