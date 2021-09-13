@@ -49,6 +49,10 @@
 	</array>
 	<key>RATDisableSharedCookieStorage</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>demoapp</string>
+	</array>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>RAnalyticsSample app needs IDFA to track User ID.</string>
 </dict>

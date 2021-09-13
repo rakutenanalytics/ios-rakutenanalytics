@@ -2,26 +2,55 @@ import UIKit
 import RAnalytics
 import WebKit
 
-struct GlobalConstants {
+enum GlobalConstants {
     static let kLocationTracking = "Location_Tracking"
     static let kIDFATracking = "IDFA_Tracking"
     static let kRATAccountID = "RAT_Account_ID"
     static let kRATAppID = "RAT_App_ID"
+    static let kRATUrlScheme = "Open URL Scheme"
+    static let kRATUniversalLink = "Open Universal Link"
+}
+
+enum TableViewCellType: Int, CaseIterable {
+    case location, idfa, accountID, appID, urlScheme, universalLink
+    
+    var cellIdentifier: String {
+        switch self {
+        case .location, .idfa:
+            return "SwitchTableViewCell"
+        case .accountID, .appID:
+            return "TextFieldTableViewCell"
+        case .urlScheme, .universalLink:
+            return "BaseTableViewCell"
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .location:
+            return GlobalConstants.kLocationTracking
+        case .idfa:
+            return GlobalConstants.kIDFATracking
+        case .accountID:
+            return GlobalConstants.kRATAccountID
+        case .appID:
+            return GlobalConstants.kRATAppID
+        case .urlScheme:
+            return GlobalConstants.kRATUrlScheme
+        case .universalLink:
+            return GlobalConstants.kRATUniversalLink
+        }
+    }
 }
 
 class TableViewController: UITableViewController, BaseCellDelegate {
 
     var accountId: Int64 = 0
     var serviceId: Int64 = 0
+    private let demoAppURL = URL(string: "demoapp://")
+    private let demoAppUniversalLinkURL = URL(string: "https://documents.developers.rakuten.com")
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
-
-    let titles: [String] = [
-        GlobalConstants.kLocationTracking,
-        GlobalConstants.kIDFATracking,
-        GlobalConstants.kRATAccountID,
-        GlobalConstants.kRATAppID
-    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,16 +111,55 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.titles.count
+        return TableViewCellType.allCases.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = indexPath.row < 2 ? "SwitchTableViewCell" : "TextFieldTableViewCell"
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? BaseTableViewCell else {
+        guard let cellType = TableViewCellType(rawValue: indexPath.row),
+              let cell = tableView.dequeueReusableCell(withIdentifier: cellType.cellIdentifier, for: indexPath) as? BaseTableViewCell else {
             return UITableViewCell()
         }
+        
         cell.delegate = self
-        cell.title = self.titles[indexPath.row]
+        cell.title = cellType.title
         return cell
+    }
+
+    // MARK: - UITableViewDelegate
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cellType = TableViewCellType(rawValue: indexPath.row) else {
+            return
+        }
+        
+        switch cellType {
+        case .urlScheme:
+            guard let url = demoAppURL,
+                  UIApplication.shared.canOpenURL(url) else {
+                UIAlertController.showError("Could not open URL Scheme", from: self)
+                return
+            }
+            UIApplication.shared.open(url, options: [:])
+            
+        case .universalLink:
+            guard let url = demoAppUniversalLinkURL,
+                  UIApplication.shared.canOpenURL(url) else {
+                UIAlertController.showError("Could not open Universal Link", from: self)
+                return
+            }
+            UIApplication.shared.open(url, options: [:])
+            
+        default: ()
+        }
+    }
+}
+
+// MARK: - Alert
+
+private extension UIAlertController {
+    static func showError(_ message: String, from viewController: UIViewController) {
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
+        viewController.present(alertController, animated: true)
     }
 }

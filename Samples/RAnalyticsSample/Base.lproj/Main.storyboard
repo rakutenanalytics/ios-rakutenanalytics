@@ -71,6 +71,13 @@
                                     <outlet property="usingSwitch" destination="qf0-5e-ojh" id="FTF-zt-7A6"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="BaseTableViewCell" id="TCz-zl-Bul" userLabel="BaseTableViewCell" customClass="BaseTableViewCell" customModule="RAnalyticsSample" customModuleProvider="target">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="TCz-zl-Bul" id="FWh-lQ-0yl">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="1kG-P0-JYO" id="RA1-aU-sff"/>

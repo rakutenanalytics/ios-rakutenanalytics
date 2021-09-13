@@ -100,17 +100,17 @@
 		5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */ = {
 			isa = PBXGroup;
 			children = (
+				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
+				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
+				5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */,
+				5AB66CC62016CE8A0028CEBC /* Info.plist */,
+				5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */,
+				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
 				C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */,
 				6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */,
-				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
-				5AB66CBE2016CE8A0028CEBC /* Main.storyboard */,
-				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
-				5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */,
-				5AB66CC62016CE8A0028CEBC /* Info.plist */,
-				5AB66CD820171F730028CEBC /* TableViewController.swift */,
-				5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */,
-				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
 				5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */,
+				5AB66CD820171F730028CEBC /* TableViewController.swift */,
+				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
 			);
 			path = RAnalyticsSample;
 			sourceTree = "<group>";
