@@ -13,7 +13,7 @@ enum GlobalConstants {
 
 enum TableViewCellType: Int, CaseIterable {
     case location, idfa, accountID, appID, urlScheme, universalLink
-    
+
     var cellIdentifier: String {
         switch self {
         case .location, .idfa:
@@ -24,7 +24,7 @@ enum TableViewCellType: Int, CaseIterable {
             return "BaseTableViewCell"
         }
     }
-    
+
     var title: String {
         switch self {
         case .location:
@@ -47,9 +47,43 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 
     var accountId: Int64 = 0
     var serviceId: Int64 = 0
-    private let demoAppURL = URL(string: "demoapp://")
-    //private let demoAppUniversalLinkURL = URL(string: "https://documents.developers.rakuten.com")
-    private let demoAppUniversalLinkURL = URL(string: "digitalfox.fr") // This public domain is temporarily used until documents.developers.rakuten.com is fixed
+
+    enum Constants {
+        static let bundleIdentifier = Bundle.main.bundleIdentifier!
+
+        /// This public domain is temporarily used until documents.developers.rakuten.com is fixed
+        static let domain = "digitalfox.fr"
+        // static let domain = "documents.developers.rakuten.com"
+    }
+
+    private var refAccountIdentifier: Int64 {
+        guard accountId == 0 else {
+            return accountId
+        }
+        return (Bundle.main.object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber)!.int64Value
+    }
+
+    private var refApplicationIdentifier: Int64 {
+        guard serviceId == 0 else {
+            return serviceId
+        }
+        return (Bundle.main.object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber)!.int64Value
+    }
+
+    private var parameters: String {
+        let link = "campaignCode"
+        let component = "news"
+        let customParameters = "custom_param1=japan&custom_param2=tokyo"
+        return "ref_acc=\(refAccountIdentifier)&ref_aid=\(refApplicationIdentifier)&ref_link=\(link)&ref_comp=\(component)&\(customParameters)"
+    }
+
+    private var demoAppURL: URL? {
+        URL(string: "demoapp://?\(parameters)")
+    }
+
+    private var demoAppUniversalLinkURL: URL? {
+        URL(string: "https://\(Constants.domain)?ref=\(Constants.bundleIdentifier)&\(parameters)")
+    }
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
 
@@ -120,7 +154,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
               let cell = tableView.dequeueReusableCell(withIdentifier: cellType.cellIdentifier, for: indexPath) as? BaseTableViewCell else {
             return UITableViewCell()
         }
-        
+
         cell.delegate = self
         cell.title = cellType.title
         return cell
@@ -132,7 +166,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         guard let cellType = TableViewCellType(rawValue: indexPath.row) else {
             return
         }
-        
+
         switch cellType {
         case .urlScheme:
             guard let url = demoAppURL,
@@ -141,7 +175,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                 return
             }
             UIApplication.shared.open(url, options: [:])
-            
+
         case .universalLink:
             guard let url = demoAppUniversalLinkURL,
                   UIApplication.shared.canOpenURL(url) else {
@@ -149,7 +183,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                 return
             }
             UIApplication.shared.open(url, options: [:])
-            
+
         default: ()
         }
     }
