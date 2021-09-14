@@ -33,7 +33,7 @@ internal class LockableObject<T>: LockableResource {
     private let dispatchGroup = DispatchGroup()
     private let transactionQueue = DispatchQueue(label: "LockableObject.Transaction", qos: .default)
     private var lockingThread: Thread?
-    private var lockCount: UInt = 0
+    private(set) var lockCount: UInt = 0
 
     var isLocked: Bool { transactionQueue.sync { _isLocked } }
     private var _isLocked: Bool { lockCount > 0 }
@@ -69,6 +69,9 @@ internal class LockableObject<T>: LockableResource {
 
     func unlock() {
         transactionQueue.sync {
+            guard !self.checkIfThreadShouldWait(threadSafe: false) else {
+                return
+            }
             if lockCount > 0 {
                 lockCount -= 1
                 if lockCount == 0 {
