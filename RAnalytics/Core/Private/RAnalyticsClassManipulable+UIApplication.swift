@@ -70,7 +70,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().launchCollector.origin = .external
 
-        AnalyticsManager.shared().trackReferralApp(url: url)
+        AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: options[.sourceApplication] as? String)
 
         return r_autotrack_application(app, open: url, options: options)
     }
