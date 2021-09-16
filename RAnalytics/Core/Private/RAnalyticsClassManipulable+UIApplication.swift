@@ -59,8 +59,11 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().trackReferralApp(url: url)
 
-        // If we're executing this, the original method exists
-        return r_autotrack_application(application, handleOpen: url)
+        // Delegates may not implement the original method
+        if responds(to: #selector(r_autotrack_application(_:handleOpen:))) {
+            return r_autotrack_application(application, handleOpen: url)
+        }
+        return true
     }
 
     @objc func r_autotrack_application(_ app: UIApplication,
@@ -72,7 +75,11 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: options[.sourceApplication] as? String)
 
-        return r_autotrack_application(app, open: url, options: options)
+        // Delegates may not implement the original method
+        if responds(to: #selector(r_autotrack_application(_:open:options:))) {
+            return r_autotrack_application(app, open: url, options: options)
+        }
+        return true
     }
 
     @objc func r_autotrack_application(_ application: UIApplication,
@@ -86,11 +93,14 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: sourceApplication)
 
-        // If we're executing this, the original method exists
-        return r_autotrack_application(application,
-                                       open: url,
-                                       sourceApplication: sourceApplication,
-                                       annotation: annotation)
+        // Delegates may not implement the original method
+        if responds(to: #selector(r_autotrack_application(_:open:sourceApplication:annotation:))) {
+            return r_autotrack_application(application,
+                                           open: url,
+                                           sourceApplication: sourceApplication,
+                                           annotation: annotation)
+        }
+        return true
     }
 
     @objc func r_autotrack_application(
@@ -106,10 +116,13 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             AnalyticsManager.shared().trackReferralApp(url: url)
         }
 
-        // If we're executing this, the original method exists
-        return r_autotrack_application(application,
-                                       continue: userActivity,
-                                       restorationHandler: restorationHandler)
+        // Delegates may not implement the original method
+        if responds(to: #selector(r_autotrack_application(_:continue:restorationHandler:))) {
+            return r_autotrack_application(application,
+                                           continue: userActivity,
+                                           restorationHandler: restorationHandler)
+        }
+        return true
     }
 
     /*
@@ -192,34 +205,34 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             with: #selector(r_autotrack_application(_:didFinishLaunchingWithOptions:)),
             onlyIfPresent: false)
 
-        /*
-         * Attention: The selectors below should _only_ be swizzled if the delegate responds to
-         * them (i.e. onlyIfPresent = true).
-         */
-
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:handleOpen:)),
             inClass: recipient,
             with: #selector(r_autotrack_application(_:handleOpen:)),
-            onlyIfPresent: true)
+            onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:open:options:)),
             inClass: recipient,
             with: #selector(r_autotrack_application(_:open:options:)),
-            onlyIfPresent: true)
+            onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:open:sourceApplication:annotation:)),
             inClass: recipient,
             with: #selector(r_autotrack_application(_:open:sourceApplication:annotation:)),
-            onlyIfPresent: true)
+            onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:continue:restorationHandler:)),
             inClass: recipient,
             with: #selector(r_autotrack_application(_:continue:restorationHandler:)),
-            onlyIfPresent: true)
+            onlyIfPresent: false)
+
+        /*
+         * Attention: The selectors below should _only_ be swizzled if the delegate responds to
+         * them (i.e. onlyIfPresent = true).
+         */
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:)),
