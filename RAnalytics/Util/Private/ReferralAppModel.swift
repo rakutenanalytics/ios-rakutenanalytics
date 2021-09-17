@@ -1,5 +1,11 @@
 import Foundation
 
+private let reservedQueryItemNames = [PayloadParameterKeys.ref,
+                                      PayloadParameterKeys.refAccountIdentifier,
+                                      PayloadParameterKeys.refApplicationIdentifier,
+                                      PayloadParameterKeys.refLink,
+                                      PayloadParameterKeys.refComponent]
+
 struct ReferralAppModel: Hashable {
     /// The referral app's bundle identifier
     let bundleIdentifier: String
@@ -35,13 +41,15 @@ extension ReferralAppModel {
         self.bundleIdentifier = bundleIdentifier
 
         guard let accString = queryItems.first(where: { $0.name == PayloadParameterKeys.refAccountIdentifier })?.value,
-              let accountIdentifier = Int(accString) else {
+              let accountIdentifier = Int(accString),
+              accountIdentifier > 0 else {
             return nil
         }
         self.accountIdentifier = accountIdentifier
 
         guard let aidString = queryItems.first(where: { $0.name == PayloadParameterKeys.refApplicationIdentifier })?.value,
-              let applicationIdentifier = Int(aidString) else {
+              let applicationIdentifier = Int(aidString),
+              applicationIdentifier > 0 else {
             return nil
         }
         self.applicationIdentifier = applicationIdentifier
@@ -52,7 +60,7 @@ extension ReferralAppModel {
 
         if !queryItems.isEmpty {
             customParameters = queryItems.reduce(into: [:]) { params, queryItem in
-                if !queryItem.name.starts(with: PayloadParameterKeys.ref) {
+                if !reservedQueryItemNames.contains(queryItem.name) {
                     params?[queryItem.name] = queryItem.value
                 }
             }

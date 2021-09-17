@@ -73,7 +73,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     private var parameters: String {
         let link = "campaignCode"
         let component = "news"
-        let customParameters = "custom_param1=japan&custom_param2=tokyo"
+        let customParameters = "custom_param1=japan&custom_param2=tokyo&ref_custom_param1=italy&ref_custom_param2=rome"
         return "ref_acc=\(refAccountIdentifier)&ref_aid=\(refApplicationIdentifier)&ref_link=\(link)&ref_comp=\(component)&\(customParameters)"
     }
 

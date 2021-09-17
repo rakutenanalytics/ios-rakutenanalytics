@@ -192,9 +192,19 @@ final class ReferralAppModelSpec: QuickSpec {
                     }
 
                     context("Only a link and custom parameters are provided") {
-                        it("should be initialized with expected values") {
+                        context("custom params start with ref_") {
+                            verifyCustomParams(prefix: "ref_key")
+                        }
+
+                        context("custom params does not start with ref_") {
+                            it("should be initialized with expected values") {
+                                verifyCustomParams(prefix: "key")
+                            }
+                        }
+
+                        func verifyCustomParams(prefix: String) {
                             (0...5).forEach { index in
-                                customParameters["key\(index)"] = "value\(index)"
+                                customParameters["\(prefix)\(index)"] = "value\(index)"
 
                                 let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(customParameters.toQuery)"
 
@@ -218,9 +228,21 @@ final class ReferralAppModelSpec: QuickSpec {
                     }
 
                     context("Only a component and custom parameters are provided") {
-                        it("should be initialized with expected values") {
+                        context("custom params start with ref_") {
+                            it("should be initialized with expected values") {
+                                verifyCustomParams(prefix: "ref_key")
+                            }
+                        }
+
+                        context("custom params does not start with ref_") {
+                            it("should be initialized with expected values") {
+                                verifyCustomParams(prefix: "key")
+                            }
+                        }
+
+                        func verifyCustomParams(prefix: String) {
                             (0...5).forEach { index in
-                                customParameters["key\(index)"] = "value\(index)"
+                                customParameters["\(prefix)\(index)"] = "value\(index)"
 
                                 let commonParameters = "\(mandatoryParametersQueryItems)&\(componentQueryItem)&\(customParameters.toQuery)"
 
@@ -245,9 +267,21 @@ final class ReferralAppModelSpec: QuickSpec {
                     }
 
                     context("Link, component and custom parameters are provided") {
-                        it("should be initialized with expected values") {
+                        context("custom params start with ref_") {
+                            it("should be initialized with expected values") {
+                                verifyCustomParams(prefix: "ref_key")
+                            }
+                        }
+
+                        context("custom params does not start with ref_") {
+                            it("should be initialized with expected values") {
+                                verifyCustomParams(prefix: "key")
+                            }
+                        }
+
+                        func verifyCustomParams(prefix: String) {
                             (0...5).forEach { index in
-                                customParameters["key\(index)"] = "value\(index)"
+                                customParameters["\(prefix)\(index)"] = "value\(index)"
 
                                 let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(componentQueryItem)&\(customParameters.toQuery)"
 
