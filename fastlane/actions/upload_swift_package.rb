@@ -40,8 +40,7 @@ module Fastlane
               api_token: ENV["RELEASE_GITHUB_TOKEN"],
               server_url: "https://api.github.com",
               http_method: "GET",
-              path: "/repos/#{release_repo}/contents/Package.swift",
-              body: { branch: "#{target_branch}" },
+              path: "/repos/#{release_repo}/contents/Package.swift?ref=#{target_branch}",
               error_handlers: {
                 404 => proc do |result|
                   UI.message("Package.swift doesn't exist in the repo")
