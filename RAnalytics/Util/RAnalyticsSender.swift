@@ -87,7 +87,12 @@ private enum SenderConstants {
             return
         }
 
+        // SDKCF-4287: fix a crash that can occur with a corrupted payload.
+        // Use RLogger version 2.x.x instead and log(message:)
+        #if DEBUG
         RLogger.verbose("Storing event with the following payload: \(payloadString)")
+        #endif
+        
         insert(dataBlob: data)
     }
 
