@@ -45,8 +45,8 @@ enum TableViewCellType: Int, CaseIterable {
 
 class TableViewController: UITableViewController, BaseCellDelegate {
 
-    var accountId: Int64 = 0
-    var serviceId: Int64 = 0
+    var accountId: Int64?
+    var serviceId: Int64?
 
     enum Constants {
         static let bundleIdentifier = Bundle.main.bundleIdentifier!
@@ -57,17 +57,17 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }
 
     private var refAccountIdentifier: Int64 {
-        guard accountId == 0 else {
-            return accountId
+        guard let accountId = accountId else {
+            return (Bundle.main.object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber)!.int64Value
         }
-        return (Bundle.main.object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber)!.int64Value
+        return accountId
     }
 
     private var refApplicationIdentifier: Int64 {
-        guard serviceId == 0 else {
-            return serviceId
+        guard let serviceId = serviceId else {
+            return (Bundle.main.object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber)!.int64Value
         }
-        return (Bundle.main.object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber)!.int64Value
+        return serviceId
     }
 
     private var parameters: String {
