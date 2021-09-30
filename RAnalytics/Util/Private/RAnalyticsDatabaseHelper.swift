@@ -43,19 +43,19 @@ extension RAnalyticsDatabase {
     static func mkAnalyticsDBConnection(databaseName: String) -> SQlite3Pointer? {
 
         let documentsDirectoryPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let databasePath = documentsDirectoryPath?.appendingPathComponent(databaseName)
+        let databaseFilePath = documentsDirectoryPath?.appendingPathComponent(databaseName)
 
         var connection: SQlite3Pointer?
-        guard let databasePath = databasePath,
+        guard let databasePath = databaseFilePath,
               sqlite3_open(databasePath.path, &connection) == SQLITE_OK,
-              let connection = connection else {
+              let databaseConnection = connection else {
 
-            RLogger.error("Failed to open database: \(String(describing: databasePath))")
+            RLogger.error("Failed to open database: \(String(describing: databaseFilePath))")
             RLogger.error("Using in-memory database")
             return mkAnalyticsInMemoryDBConnection()
         }
 
-        return connection
+        return databaseConnection
     }
 
     private static func mkAnalyticsInMemoryDBConnection() -> SQlite3Pointer? {
