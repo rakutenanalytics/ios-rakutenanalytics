@@ -5,7 +5,7 @@ enum RAnalyticsConstants {
     static let RAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
     static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
     static let appInfoKey = "app_info"
-    static let sdkDependenciesKey = "r_sdk_dependencies"
+    static let sdkDependenciesKey = "rsdks"
 }
 
 final class CoreHelpers {
