@@ -23,9 +23,10 @@ final class RAnalyticsDatabase {
         let queue = OperationQueue()
         queue.name = "com.rakuten.esd.sdk.analytics.database"
         queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .default
         return queue
     }()
-    private var appWillTerminate = false
+    @AtomicGetSet private var appWillTerminate = false
 
     ///
     /// Creates DB manager instance with SQLite connection
@@ -182,6 +183,7 @@ final class RAnalyticsDatabase {
 
         guard !appWillTerminate else {
             RLogger.debug("RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
+            completion()
             return
         }
 
@@ -282,6 +284,6 @@ private extension RAnalyticsDatabase {
 private extension RAnalyticsDatabase {
 
     @objc func willTerminate() {
-        appWillTerminate = true
+        _appWillTerminate.mutate { $0 = true }
     }
 }
