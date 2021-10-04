@@ -102,7 +102,10 @@ private enum SenderConstants {
             return
         }
 
-        RLogger.verbose("Storing event with the following payload: \(payloadString)")
+        #if DEBUG
+        RLogger.verbose(message: "Storing event with the following payload: \(payloadString)")
+        #endif
+
         insert(dataBlob: data)
     }
 
