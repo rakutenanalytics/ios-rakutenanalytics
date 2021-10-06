@@ -6,26 +6,6 @@ private let reservedQueryItemNames = [PayloadParameterKeys.ref,
                                       PayloadParameterKeys.refLink,
                                       PayloadParameterKeys.refComponent]
 
-struct ReferralAppModel: Hashable {
-    /// The referral app's bundle identifier
-    let bundleIdentifier: String
-
-    /// The referral app's RAT account identifier
-    let accountIdentifier: Int
-
-    /// The referral app's RAT application identifier
-    let applicationIdentifier: Int
-
-    /// The unique identifier of the referral trigger
-    let link: String?
-
-    /// The referral app's component
-    let component: String?
-
-    /// The custom parameters
-    var customParameters: [String: String]?
-}
-
 // MARK: - Init with URL
 
 extension ReferralAppModel {
@@ -41,14 +21,14 @@ extension ReferralAppModel {
         self.bundleIdentifier = bundleIdentifier
 
         guard let accString = queryItems.first(where: { $0.name == PayloadParameterKeys.refAccountIdentifier })?.value,
-              let accountIdentifier = Int(accString),
+              let accountIdentifier = Int64(accString),
               accountIdentifier > 0 else {
             return nil
         }
         self.accountIdentifier = accountIdentifier
 
         guard let aidString = queryItems.first(where: { $0.name == PayloadParameterKeys.refApplicationIdentifier })?.value,
-              let applicationIdentifier = Int(aidString),
+              let applicationIdentifier = Int64(aidString),
               applicationIdentifier > 0 else {
             return nil
         }
@@ -65,5 +45,44 @@ extension ReferralAppModel {
                 }
             }
         }
+    }
+}
+
+// MARK: - Query
+
+extension ReferralAppModel {
+    var query: String {
+        var query = [String]()
+
+        if let encodedKey = PayloadParameterKeys.refAccountIdentifier.addEncodingForRFC3986UnreservedCharacters(),
+           let encodedValue = "\(accountIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
+            query.append("\(encodedKey)=\(encodedValue)")
+        }
+
+        if let encodedKey = PayloadParameterKeys.refApplicationIdentifier.addEncodingForRFC3986UnreservedCharacters(),
+           let encodedValue = "\(applicationIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
+            query.append("\(encodedKey)=\(encodedValue)")
+        }
+
+        if let encodedKey = PayloadParameterKeys.refLink.addEncodingForRFC3986UnreservedCharacters(),
+           let encodedValue = link?.addEncodingForRFC3986UnreservedCharacters() {
+            query.append("\(encodedKey)=\(encodedValue)")
+        }
+
+        if let encodedKey = PayloadParameterKeys.refComponent.addEncodingForRFC3986UnreservedCharacters(),
+           let encodedValue = component?.addEncodingForRFC3986UnreservedCharacters() {
+            query.append("\(encodedKey)=\(encodedValue)")
+        }
+
+        if let customParameters = customParameters {
+            customParameters.forEach { item in
+                if let encodedKey = item.key.addEncodingForRFC3986UnreservedCharacters(),
+                   let encodedValue = item.value.addEncodingForRFC3986UnreservedCharacters() {
+                    query.append("\(encodedKey)=\(encodedValue)")
+                }
+            }
+        }
+
+        return query.joined(separator: "&")
     }
 }

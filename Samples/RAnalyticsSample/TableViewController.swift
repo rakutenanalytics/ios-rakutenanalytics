@@ -1,5 +1,6 @@
 import UIKit
 import RAnalytics
+import RLogger
 import WebKit
 
 enum GlobalConstants {
@@ -45,44 +46,23 @@ enum TableViewCellType: Int, CaseIterable {
 
 class TableViewController: UITableViewController, BaseCellDelegate {
 
-    var accountId: Int64?
-    var serviceId: Int64?
+    private var accountId: String = (Bundle.main.object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber)?.stringValue ?? ""
+    private var applicationId: String = (Bundle.main.object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber)?.stringValue ?? ""
+    private let link = "campaignCode"
+    private let component =  "news"
+    private let customParameters: [String: String] = {
+        var customParameters = [String: String]()
+        customParameters["custom_param1"] = "japan"
+        customParameters["custom_param2"] = "tokyo"
+        customParameters["ref_custom_param1"] = "italy"
+        customParameters["ref_custom_param2"] = "rome"
+        return customParameters
+    }()
 
     enum Constants {
-        static let bundleIdentifier = Bundle.main.bundleIdentifier!
-
         /// This public domain is temporarily used until documents.developers.rakuten.com is fixed
         static let domain = "digitalfox.fr"
         // static let domain = "documents.developers.rakuten.com"
-    }
-
-    private var refAccountIdentifier: Int64 {
-        guard let accountId = accountId else {
-            return (Bundle.main.object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber)!.int64Value
-        }
-        return accountId
-    }
-
-    private var refApplicationIdentifier: Int64 {
-        guard let serviceId = serviceId else {
-            return (Bundle.main.object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber)!.int64Value
-        }
-        return serviceId
-    }
-
-    private var parameters: String {
-        let link = "campaignCode"
-        let component = "news"
-        let customParameters = "custom_param1=japan&custom_param2=tokyo&ref_custom_param1=italy&ref_custom_param2=rome"
-        return "ref_acc=\(refAccountIdentifier)&ref_aid=\(refApplicationIdentifier)&ref_link=\(link)&ref_comp=\(component)&\(customParameters)"
-    }
-
-    private var demoAppURL: URL? {
-        URL(string: "demoapp://?\(parameters)")
-    }
-
-    private var demoAppUniversalLinkURL: URL? {
-        URL(string: "https://\(Constants.domain)?ref=\(Constants.bundleIdentifier)&\(parameters)")
     }
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
@@ -90,12 +70,6 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
-        guard let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int64,
-              let serviceId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int64 else {
-            return
-        }
-        self.accountId = accountId
-        self.serviceId = serviceId
     }
 
     func update(_ dict: [String: Any]) {
@@ -109,24 +83,20 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = flag
         }
 
-        if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String,
-           let accountId = Int64(accountIdString),
-           !accountIdString.isEmpty {
-            self.accountId = accountId
+        if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String {
+            self.accountId = accountIdString
         }
 
-        if let appIdString = dict[GlobalConstants.kRATAppID] as? String,
-           let appId = Int64(appIdString),
-           !appIdString.isEmpty {
-            self.serviceId = appId
+        if let appIdString = dict[GlobalConstants.kRATAppID] as? String {
+            self.applicationId = appIdString
         }
     }
 
     @IBAction func spool(_ sender: Any) {
         RAnalyticsRATTracker.shared().event(withEventType: "SampleEvent",
                                             parameters: ["foo": "bar",
-                                                         "acc": self.accountId,
-                                                         "aid": self.serviceId]).track()
+                                                         "acc": accountId,
+                                                         "aid": applicationId]).track()
 
         if #available(iOS 11.0, *) {
             WKWebsiteDataStore.default().httpCookieStore.getAllCookies { (cookies) in
@@ -167,9 +137,17 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             return
         }
 
+        guard let model = ReferralAppModel(accountIdentifier: Int64(accountId) ?? 0,
+                                           applicationIdentifier: Int64(applicationId) ?? 0,
+                                           link: link,
+                                           component: component,
+                                           customParameters: customParameters) else {
+            return
+        }
+
         switch cellType {
         case .urlScheme:
-            guard let url = demoAppURL,
+            guard let url = model.urlScheme(appScheme: "demoapp"),
                   UIApplication.shared.canOpenURL(url) else {
                 UIAlertController.showError("Could not open URL Scheme", from: self)
                 return
@@ -177,7 +155,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             UIApplication.shared.open(url, options: [:])
 
         case .universalLink:
-            guard let url = demoAppUniversalLinkURL,
+            guard let url = model.universalLink(domain: Constants.domain),
                   UIApplication.shared.canOpenURL(url) else {
                 UIAlertController.showError("Could not open Universal Link", from: self)
                 return

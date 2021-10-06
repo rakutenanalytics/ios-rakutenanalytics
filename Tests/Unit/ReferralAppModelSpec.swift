@@ -1,4 +1,6 @@
 // swiftlint:disable line_length
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
 import Quick
 import Nimble
@@ -9,17 +11,48 @@ import Nimble
 final class ReferralAppModelSpec: QuickSpec {
     override func spec() {
         describe("ReferralAppModel") {
-            describe("init") {
+            let bundleIdentifier = "jp.co.rakuten.app-name"
+            let encodedBundleIdentifier = bundleIdentifier.addEncodingForRFC3986UnreservedCharacters()!
+            let link = "campaignCode\(CharacterSet.RFC3986ReservedCharacters)"
+            let encodedLink = link.addEncodingForRFC3986UnreservedCharacters()!
+            let component = "news\(CharacterSet.RFC3986ReservedCharacters)"
+            let encodedComponent = component.addEncodingForRFC3986UnreservedCharacters()!
+            let bundleIdentifierQueryItem = "\(PayloadParameterKeys.ref)=\(encodedBundleIdentifier)"
+            let accountIdentifier: Int64 = 1
+            let accountIdentifierQueryItem = "\(PayloadParameterKeys.refAccountIdentifier)=\(accountIdentifier)"
+            let applicationIdentifier: Int64 = 2
+            let applicationIdentifierQueryItem = "\(PayloadParameterKeys.refApplicationIdentifier)=\(applicationIdentifier)"
+            let linkQueryItem = "\(PayloadParameterKeys.refLink)=\(encodedLink)"
+            let componentQueryItem = "\(PayloadParameterKeys.refComponent)=\(encodedComponent)"
+            let mandatoryParametersQueryItems = "\(accountIdentifierQueryItem)&\(applicationIdentifierQueryItem)"
+            let encodedStandardCharacters = "abcdefghijklmnopqrstuvwxyz".addEncodingForRFC3986UnreservedCharacters()!
+            let encodedSpecialCharacters = CharacterSet.RFC3986ReservedCharacters.addEncodingForRFC3986UnreservedCharacters()!
+            let customParameters: [String: String] = {
+                var customParameters = [String: String]()
+                customParameters["custom_param1"] = "japan"
+                customParameters["custom_param2"] = "tokyo"
+                customParameters["ref_custom_param1\(CharacterSet.RFC3986ReservedCharacters)"] = "italy\(CharacterSet.RFC3986ReservedCharacters)"
+                customParameters["ref_custom_param2\(CharacterSet.RFC3986ReservedCharacters)"] = "rome\(CharacterSet.RFC3986ReservedCharacters)"
+                return customParameters
+            }()
+            let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
+                                         accountIdentifier: accountIdentifier,
+                                         applicationIdentifier: applicationIdentifier,
+                                         link: link,
+                                         component: component,
+                                         customParameters: customParameters)
+
+            describe("init(bundleIdentifier:accountIdentifier:applicationIdentifier:link:component:customParameters:)") {
                 context("Initialization with mandatory parameters") {
                     it("should be initialized with expected values") {
-                        let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
+                        let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
                                                      accountIdentifier: 1,
                                                      applicationIdentifier: 2,
                                                      link: nil,
                                                      component: nil,
                                                      customParameters: [:])
 
-                        expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                        expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                         expect(model.accountIdentifier).to(equal(1))
                         expect(model.applicationIdentifier).to(equal(2))
                         expect(model.link).to(beNil())
@@ -30,32 +63,24 @@ final class ReferralAppModelSpec: QuickSpec {
 
                 context("Initialization with mandatory and optional parameters") {
                     it("should be initialized with expected values") {
-                        let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
+                        let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
                                                      accountIdentifier: 1,
                                                      applicationIdentifier: 2,
-                                                     link: "campaignCode",
-                                                     component: "news",
+                                                     link: link,
+                                                     component: component,
                                                      customParameters: ["key1": "value1"])
 
-                        expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                        expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                         expect(model.accountIdentifier).to(equal(1))
                         expect(model.applicationIdentifier).to(equal(2))
-                        expect(model.link).to(equal("campaignCode"))
-                        expect(model.component).to(equal("news"))
+                        expect(model.link).to(equal(link))
+                        expect(model.component).to(equal(component))
                         expect(model.customParameters).to(equal(["key1": "value1"]))
                     }
                 }
             }
 
             describe("init(url:sourceApplication:)") {
-                let bundleIdentifier = "jp.co.rakuten.app"
-                let bundleIdentifierQueryItem = "\(PayloadParameterKeys.ref)=\(bundleIdentifier)"
-                let accountIdentifierQueryItem = "\(PayloadParameterKeys.refAccountIdentifier)=1"
-                let applicationIdentifierQueryItem = "\(PayloadParameterKeys.refApplicationIdentifier)=2"
-                let linkQueryItem = "\(PayloadParameterKeys.refLink)=campaignCode"
-                let componentQueryItem = "\(PayloadParameterKeys.refComponent)=news"
-                let mandatoryParametersQueryItems = "\(accountIdentifierQueryItem)&\(applicationIdentifierQueryItem)"
-
                 it("should fail when mandatory parameters are missing") {
                     // URL Scheme
                     expect(ReferralAppModel(url: URL(string: "app://")!, sourceApplication: bundleIdentifier)).to(beNil())
@@ -63,12 +88,24 @@ final class ReferralAppModelSpec: QuickSpec {
                     expect(ReferralAppModel(url: URL(string: "app://?\(applicationIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
 
                     // Universal Link
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(accountIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(applicationIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(accountIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(applicationIdentifierQueryItem)")!, sourceApplication: bundleIdentifier)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(accountIdentifierQueryItem)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(applicationIdentifierQueryItem)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(accountIdentifierQueryItem)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(applicationIdentifierQueryItem)")!, sourceApplication: nil)).to(beNil())
+                }
+
+                it("should fail when mandatory parameters are unexpected") {
+                    // URL Scheme
+
+                    expect(ReferralAppModel(url: URL(string: "app://\(PayloadParameterKeys.refAccountIdentifier)=\(encodedStandardCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "app://\(PayloadParameterKeys.refAccountIdentifier)=\(encodedSpecialCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
+
+                    // Universal Link
+
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(PayloadParameterKeys.refAccountIdentifier)=\(encodedStandardCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(PayloadParameterKeys.refAccountIdentifier)=\(encodedSpecialCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: nil)).to(beNil())
                 }
 
                 context("Initialization with mandatory parameters") {
@@ -78,12 +115,12 @@ final class ReferralAppModelSpec: QuickSpec {
                         verify(model: appModel)
 
                         let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(mandatoryParametersQueryItems)")!
-                        let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                        let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                         verify(model: universalModel)
                     }
 
                     func verify(model: ReferralAppModel) {
-                        expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                        expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                         expect(model.accountIdentifier).to(equal(1))
                         expect(model.applicationIdentifier).to(equal(2))
                         expect(model.link).to(beNil())
@@ -94,9 +131,11 @@ final class ReferralAppModelSpec: QuickSpec {
 
                 context("Initialization with mandatory and optional parameters") {
                     var customParameters = [String: String]()
+                    var encodedCustomParameters = [String: String]()
 
                     afterEach {
                         customParameters.removeAll()
+                        encodedCustomParameters.removeAll()
                     }
 
                     context("Only a link is provided") {
@@ -106,15 +145,15 @@ final class ReferralAppModelSpec: QuickSpec {
                             verify(model: appModel)
 
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
                         }
 
                         func verify(model: ReferralAppModel) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
-                            expect(model.link).to(equal("campaignCode"))
+                            expect(model.link).to(equal(link))
                             expect(model.component).to(beNil())
                             expect(model.customParameters).to(equal([:]))
                         }
@@ -128,16 +167,16 @@ final class ReferralAppModelSpec: QuickSpec {
                             verify(model: appModel)
 
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
                         }
 
                         func verify(model: ReferralAppModel) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
                             expect(model.link).to(beNil())
-                            expect(model.component).to(equal("news"))
+                            expect(model.component).to(equal(component))
                             expect(model.customParameters).to(equal([:]))
                         }
                     }
@@ -145,22 +184,29 @@ final class ReferralAppModelSpec: QuickSpec {
                     context("Only custom parameters are provided") {
                         it("should be initialized with expected values") {
                             (0...5).forEach { index in
-                                customParameters["key\(index)"] = "value\(index)"
+                                let key = "key\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
+                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
-                                let commonParameters = "\(mandatoryParametersQueryItems)&\(customParameters.toQuery)"
+                                customParameters[key] = value
+
+                                encodedCustomParameters[encodedKey] = encodedValue
+
+                                let commonParameters = "\(mandatoryParametersQueryItems)&\(encodedCustomParameters.toRQuery)"
 
                                 let url = URL(string: "app://?\(commonParameters)")!
                                 let appModel = ReferralAppModel(url: url, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
 
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
                             }
                         }
 
                         func verify(model: ReferralAppModel, customParameters: [String: String]) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
                             expect(model.link).to(beNil())
@@ -177,51 +223,58 @@ final class ReferralAppModelSpec: QuickSpec {
                             verify(model: appModel)
 
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                            let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
                         }
 
                         func verify(model: ReferralAppModel) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
-                            expect(model.link).to(equal("campaignCode"))
-                            expect(model.component).to(equal("news"))
+                            expect(model.link).to(equal(link))
+                            expect(model.component).to(equal(component))
                             expect(model.customParameters).to(equal([:]))
                         }
                     }
 
                     context("Only a link and custom parameters are provided") {
                         context("custom params start with ref_") {
-                            verifyCustomParams(prefix: "ref_key")
+                            verifyCustomParams(key: "ref_key")
                         }
 
                         context("custom params does not start with ref_") {
                             it("should be initialized with expected values") {
-                                verifyCustomParams(prefix: "key")
+                                verifyCustomParams(key: "key")
                             }
                         }
 
-                        func verifyCustomParams(prefix: String) {
+                        func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                customParameters["\(prefix)\(index)"] = "value\(index)"
+                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
+                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
-                                let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(customParameters.toQuery)"
+                                customParameters[key] = value
+
+                                encodedCustomParameters[encodedKey] = encodedValue
+
+                                let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(encodedCustomParameters.toRQuery)"
 
                                 let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
 
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
                             }
                         }
 
                         func verify(model: ReferralAppModel, customParameters: [String: String]) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
-                            expect(model.link).to(equal("campaignCode"))
+                            expect(model.link).to(equal(link))
                             expect(model.component).to(beNil())
                             expect(model.customParameters).to(equal(customParameters))
                         }
@@ -230,38 +283,45 @@ final class ReferralAppModelSpec: QuickSpec {
                     context("Only a component and custom parameters are provided") {
                         context("custom params start with ref_") {
                             it("should be initialized with expected values") {
-                                verifyCustomParams(prefix: "ref_key")
+                                verifyCustomParams(key: "ref_key")
                             }
                         }
 
                         context("custom params does not start with ref_") {
                             it("should be initialized with expected values") {
-                                verifyCustomParams(prefix: "key")
+                                verifyCustomParams(key: "key")
                             }
                         }
 
-                        func verifyCustomParams(prefix: String) {
+                        func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                customParameters["\(prefix)\(index)"] = "value\(index)"
+                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
+                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
-                                let commonParameters = "\(mandatoryParametersQueryItems)&\(componentQueryItem)&\(customParameters.toQuery)"
+                                customParameters[key] = value
+
+                                encodedCustomParameters[encodedKey] = encodedValue
+
+                                let commonParameters = "\(mandatoryParametersQueryItems)&\(componentQueryItem)&\(encodedCustomParameters.toRQuery)"
 
                                 let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!,
                                                                 sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
 
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
                             }
                         }
 
                         func verify(model: ReferralAppModel, customParameters: [String: String]) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
                             expect(model.link).to(beNil())
-                            expect(model.component).to(equal("news"))
+                            expect(model.component).to(equal(component))
                             expect(model.customParameters).to(equal(customParameters))
                         }
                     }
@@ -269,41 +329,159 @@ final class ReferralAppModelSpec: QuickSpec {
                     context("Link, component and custom parameters are provided") {
                         context("custom params start with ref_") {
                             it("should be initialized with expected values") {
-                                verifyCustomParams(prefix: "ref_key")
+                                verifyCustomParams(key: "ref_key")
                             }
                         }
 
                         context("custom params does not start with ref_") {
                             it("should be initialized with expected values") {
-                                verifyCustomParams(prefix: "key")
+                                verifyCustomParams(key: "key")
                             }
                         }
 
-                        func verifyCustomParams(prefix: String) {
+                        func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                customParameters["\(prefix)\(index)"] = "value\(index)"
+                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
+                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
-                                let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(componentQueryItem)&\(customParameters.toQuery)"
+                                customParameters[key] = value
+
+                                encodedCustomParameters[encodedKey] = encodedValue
+
+                                let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)&\(componentQueryItem)&\(encodedCustomParameters.toRQuery)"
 
                                 let appURL = URL(string: "app://?\(commonParameters)")!
                                 let appModel = ReferralAppModel(url: appURL, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
 
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
-                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: bundleIdentifier)!
+                                let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
                             }
                         }
 
                         func verify(model: ReferralAppModel, customParameters: [String: String]) {
-                            expect(model.bundleIdentifier).to(equal("jp.co.rakuten.app"))
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
                             expect(model.accountIdentifier).to(equal(1))
                             expect(model.applicationIdentifier).to(equal(2))
-                            expect(model.link).to(equal("campaignCode"))
-                            expect(model.component).to(equal("news"))
+                            expect(model.link).to(equal(link))
+                            expect(model.component).to(equal(component))
                             expect(model.customParameters).to(equal(customParameters))
                         }
                     }
+                }
+            }
+
+            describe("init(link:component:customParameters:)") {
+                it("should return nil when bundleIdentifier is nil") {
+                    let bundle = BundleMock()
+                    bundle.bundleIdentifier = nil
+                    let model = ReferralAppModel(bundle: bundle)
+                    expect(model).to(beNil())
+                }
+
+                it("should return expected url scheme and expected universal link with minimal non-optional parameters") {
+                    let model = ReferralAppModel()
+                    expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=477&ref_aid=1"))
+                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=477&ref_aid=1"))
+                }
+
+                it("should return expected url scheme and expected universal link with all parameters") {
+                    let model = ReferralAppModel(link: link,
+                                                 component: component,
+                                                 customParameters: customParameters,
+                                                 bundle: Bundle.main)
+                    let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
+                    expect(urlScheme?.starts(with: "app://?ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
+                    expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                    let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
+                    expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
+                    expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                }
+            }
+
+            describe("init(accountIdentifier:applicationIdentifier:link:component:customParameters:)") {
+                it("should return nil when bundleIdentifier is nil") {
+                    let bundle = BundleMock()
+                    bundle.bundleIdentifier = nil
+                    let model = ReferralAppModel(accountIdentifier: accountIdentifier,
+                                                 applicationIdentifier: applicationIdentifier,
+                                                 bundle: bundle)
+                    expect(model).to(beNil())
+                }
+
+                it("should return expected url scheme and expected universal link with minimal non-optional parameters") {
+                    let model = ReferralAppModel(accountIdentifier: accountIdentifier,
+                                                 applicationIdentifier: applicationIdentifier)
+                    expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=1&ref_aid=2"))
+                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=1&ref_aid=2"))
+                }
+
+                it("should return expected url scheme and expected universal link with all parameters") {
+                    let model = ReferralAppModel(accountIdentifier: accountIdentifier,
+                                                 applicationIdentifier: applicationIdentifier,
+                                                 link: link,
+                                                 component: component,
+                                                 customParameters: customParameters,
+                                                 bundle: Bundle.main)
+                    let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
+                    expect(urlScheme?.starts(with: "app://?ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
+                    expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                    let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
+                    expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
+                    expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                }
+            }
+
+            describe("urlScheme(appScheme:)") {
+                it("should return nil if the app scheme is empty") {
+                    let urlScheme = model.urlScheme(appScheme: "")?.absoluteString
+                    expect(urlScheme).to(beNil())
+                }
+
+                it("should return the expected URL") {
+                    let urlScheme = model.urlScheme(appScheme: "app")?.absoluteString
+
+                    expect(urlScheme?.starts(with: "app://?ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                    expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
+                    expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
+                }
+            }
+
+            describe("universalLink(domain:)") {
+                it("should return nil if the domain is empty") {
+                    let universalLink = model.universalLink(domain: "")?.absoluteString
+                    expect(universalLink).to(beNil())
+                }
+
+                it("should return the expected URL") {
+                    let universalLink = model.universalLink(domain: "rakuten.co.jp")?.absoluteString
+
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.app-name&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                    expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
+                    expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
                 }
             }
         }

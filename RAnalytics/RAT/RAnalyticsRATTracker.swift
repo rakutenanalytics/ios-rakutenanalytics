@@ -5,7 +5,7 @@ import CoreLocation
 import RDeviceIdentifier
 
 // swiftlint:disable type_name
-public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int) -> Bool
+public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool
 
 /// Concrete implementation of @ref RAnalyticsTracker that sends events to RAT.
 ///
@@ -738,7 +738,7 @@ extension RAnalyticsRATTracker {
     /// - Parameters:
     ///     - accountId: RAT account ID.
     ///     - applicationId: RAT application ID.
-    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int, applicationId: Int) {
+    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int64, applicationId: Int64) {
         duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
     }
 }

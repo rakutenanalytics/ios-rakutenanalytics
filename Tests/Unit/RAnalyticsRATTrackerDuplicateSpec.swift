@@ -54,7 +54,7 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                     context("build time account config non-existent") {
                         it("should generate payloads for duplicate accounts") {
                             // given
-                            let accounts = [
+                            let accounts: [(acc: Int64, aid: Int64)] = [
                                 (acc: 420, aid: 69),
                                 (acc: 421, aid: 60)
                             ].sorted {$0.0 < $1.0}
@@ -71,8 +71,8 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                             expect(payloads.count).to(equal(accounts.count))
                             payloads.sort { ($0[PayloadParameterKeys.acc] as! Int) < $1[PayloadParameterKeys.acc] as! Int } // swiftlint:disable:this force_cast
                             for (i, account) in accounts.enumerated() {
-                                expect(payloads[i][PayloadParameterKeys.acc] as? Int).to(equal(account.acc))
-                                expect(payloads[i][PayloadParameterKeys.aid] as? Int).to(equal(account.aid))
+                                expect(payloads[i][PayloadParameterKeys.acc] as? Int64).to(equal(account.acc))
+                                expect(payloads[i][PayloadParameterKeys.aid] as? Int64).to(equal(account.aid))
                                 expect(payloads[i]["foo"] as? String).to(equal("bar"))
                             }
                         }
@@ -104,7 +104,7 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                     context("build time account config non-existent") {
                         it("should generate payloads for duplicate accounts when event is allowed to be duped at runtime") {
                             // given
-                            let accounts = [
+                            let accounts: [(acc: Int64, aid: Int64)] = [
                                 (acc: 420, aid: 69),
                                 (acc: 421, aid: 60)
                             ]
@@ -123,8 +123,8 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                             // expect
                             let expectedAcc1 = accounts.first
                             expect(payloads.count).to(equal(1))
-                            expect(payloads.first?[PayloadParameterKeys.acc] as? Int).to(equal(expectedAcc1?.acc))
-                            expect(payloads.first?[PayloadParameterKeys.aid] as? Int).to(equal(expectedAcc1?.aid))
+                            expect(payloads.first?[PayloadParameterKeys.acc] as? Int64).to(equal(expectedAcc1?.acc))
+                            expect(payloads.first?[PayloadParameterKeys.aid] as? Int64).to(equal(expectedAcc1?.aid))
                             expect(payloads.first?["foo"] as? String).to(equal("bar"))
                         }
 

@@ -1,12 +1,10 @@
 import Foundation
 import UIKit
 
-protocol EnvironmentBundle {
+protocol EnvironmentBundle: Bundleable {
     var languageCode: Any? { get }
     var bundleIdentifier: String? { get }
     var useDefaultSharedCookieStorage: Bool { get }
-    var accountIdentifier: Int64 { get }
-    var applicationIdentifier: Int64 { get }
     var endpointAddress: URL? { get }
     var enableInternalSerialization: Bool { get }
     var disabledEventsAtBuildTime: [String]? { get }
@@ -17,11 +15,6 @@ protocol EnvironmentBundle {
 }
 
 extension Bundle: EnvironmentBundle {
-    private enum Constants {
-        static let defaultAccountIdentifier: Int64 = 477
-        static let defaultApplicationIdentifier: Int64 = 1
-    }
-
     var languageCode: Any? {
         if let preferredLocaleLanguage = NSLocale.preferredLanguages.first,
            let preferredLocalizationLanguage = preferredLocalizations.first {
@@ -37,20 +30,6 @@ extension Bundle: EnvironmentBundle {
             return true
         }
         return !result.boolValue
-    }
-
-    var accountIdentifier: Int64 {
-        guard let plistObj = object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber else {
-            return Constants.defaultAccountIdentifier
-        }
-        return plistObj.int64Value
-    }
-
-    var applicationIdentifier: Int64 {
-        guard let plistObj = object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber else {
-            return Constants.defaultApplicationIdentifier
-        }
-        return plistObj.int64Value
     }
 
     var endpointAddress: URL? {

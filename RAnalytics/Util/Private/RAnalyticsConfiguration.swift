@@ -15,8 +15,8 @@ extension RAnalyticsConfiguration: Codable {
 // MARK: - RATAccount
 
 struct RATAccount {
-    let accountId: Int
-    let applicationId: Int
+    let accountId: Int64
+    let applicationId: Int64
     let disabledEvents: [String]?
 }
 
