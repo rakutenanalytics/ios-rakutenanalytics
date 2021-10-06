@@ -168,80 +168,11 @@ The SDK will automatically generate certain attributes about the state of the de
 
 # ID-SDK and OMNI Compatibility
 
-If you have integrated the [ID-SDK](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/) into your app and you use OMNI for login, you need to use our RAnalytics IDToken add-on to be able to track the user's member identifier (normally Easy ID) to RAT.
+If you have integrated [ID-SDK](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/) into your app and you use OMNI for login, you should use our [RAnalytics IDToken Addon library](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) to track the user's member identifier (normally Easy ID) and login state to RAT. See the library's [repository](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) for integration and usage details.
 
-## Installing Add-On
+## Verifying successful integration
 
-Our add-on library is only available as a Swift package. 
-
-Add the Swift library URL `https://gitpub.rakuten-it.com/scm/eco/ios-analytics-idtoken.git` as a dependency in your project. 
-
-We recommend adding it with "version" and "up to next major" *package requirements*. Xcode will pick the latest version.
-
-Note that the dependency can also be added as an SSH URL `ssh://git@gitpub.rakuten-it.com:7999/eco/ios-analytics-idtoken.git` if necessary, e.g. for CI access.
-
-See Apple's [guide](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) for more details.
-
-## Usage
-
-### Import the module
-
-Add the following to your Swift file:
-
-```swift
-import RAnalyticsIDToken
-```
-
-### Handle login
-
-When you successfully [acquire an ID-SDK session](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/#session-request) send the user's member identifier to RAnalytics SDK using `setMemberIdentifier` as follows:
-
-```swift
-client.session(request: sessionRequest,
-               mediationOptions: mediationOptions) { result in
-    if case let .success(session) = result {
-      self.session = session
-      RATIdToken.setMemberIdentifier(from: session.idToken)
-    }
-}
-```
-
-See [our demoapp source](https://gitpub.rakuten-it.com/projects/ECO/repos/core-demoapp/browse/ios/EcosystemDemo/SDKServices/Auth/IDService.swift#141) for an example.
-
-### Handle login failure
-
-If user login fails, notify the RAnalytics SDK using `setMemberError` as follows:
-
-```swift
-client.session(request: sessionRequest,
-               mediationOptions: mediationOptions) { result in
-    switch result {
-    case .success(let session):
-        // handle success
-    case .failure(let error):
-        // handle failure
-        RATIdToken.setMemberError(error)
-    }
-```
-
-See [our demoapp source](https://gitpub.rakuten-it.com/projects/ECO/repos/core-demoapp/browse/ios/EcosystemDemo/SDKServices/Auth/IDService.swift#145) for an example.
-
-### Handle logout
-
-When a user logs out, notify the RAnalytics SDK using `removeMemberIdentifier` as follows:
-
-```swift
-session.logout() { result in
-  if case .success = result {
-    // Successfully logged out.
-    RATIdToken.removeMemberIdentifier()
-  } else if case let .failure(error) = result {
-    // Failed.
-  }
-}
-```
-
-See [our demoapp source](https://gitpub.rakuten-it.com/projects/ECO/repos/core-demoapp/browse/ios/EcosystemDemo/SDKServices/Auth/IDService.swift#160) for an example.
+If the addon library was correctly integrated, the events sent to RAT for a logged-in user will contain an `easyid` field containing the user's member identfier (Easy ID). See [here](#using-kibana-to-verify-successful-integration) for a guide on how to check the events sent to RAT.
 
 # RAT Examples
 
