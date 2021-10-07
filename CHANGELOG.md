@@ -1,5 +1,9 @@
 # Changelog
 
+## 8.2.2 (2021-10-07)
+
+* [SDKCF-4310](https://jira.rakuten-it.com/jira/browse/SDKCF-4310): Fixed a rare crash that can occur when the formatted string of the event payload is logged.
+
 ## 8.2.1 (2021-07-30)
 
 * **Important Note:** If you are using Xcode 13 to build your app, and you experience the issue below, you should upgrade your dependency to this version.
