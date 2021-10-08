@@ -1,3 +1,5 @@
+import protocol RSDKUtils.URLSessionTaskable
+
 internal extension URLSession {
 
     func dataTask(with request: URLRequest,

@@ -1,3 +1,4 @@
+import RSDKUtils
 // MARK: - Dependencies Factory
 
 protocol DependenciesFactory {

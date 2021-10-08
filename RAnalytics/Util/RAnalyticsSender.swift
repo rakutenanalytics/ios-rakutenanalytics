@@ -1,5 +1,5 @@
 import Foundation
-import RLogger
+import RSDKUtils
 
 private enum SenderConstants {
     static let tableBlobLimit = UInt(5000)

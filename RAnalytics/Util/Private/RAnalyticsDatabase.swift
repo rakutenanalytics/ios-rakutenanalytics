@@ -1,6 +1,6 @@
 import Foundation
 import SQLite3
-import RLogger
+import RSDKUtils
 
 typealias SQlite3Pointer = OpaquePointer
 

@@ -14,7 +14,8 @@ inhibit_all_warnings!
 workspace 'RakutenAnalyticsSDK'
 
 target 'RAnalytics' do
-  pod 'RLogger', :build_type => :static_framework
+  pod 'RSDKUtils/Main', '~> 2.0', :build_type => :static_framework
+  pod 'RSDKUtils/RLogger', :build_type => :static_framework
   pod 'RDeviceIdentifier', :build_type => :static_framework
 end
 

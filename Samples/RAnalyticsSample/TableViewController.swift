@@ -1,6 +1,6 @@
 import UIKit
 import RAnalytics
-import RLogger
+import RSDKUtils
 import WebKit
 
 enum GlobalConstants {

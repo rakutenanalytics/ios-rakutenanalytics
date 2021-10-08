@@ -1,5 +1,5 @@
-module RLogger {
-    link "RLogger"
+module RSDKUtils {
+    link "RSDKUtils"
 }
 
 module RDeviceIdentifier {

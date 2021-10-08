@@ -1,5 +1,6 @@
 import Foundation
 import CommonCrypto.CommonDigest
+import RSDKUtils
 
 extension String {
     var ratEncrypt: String? {
@@ -19,11 +20,5 @@ private extension Data {
         CC_SHA256(bytes, UInt32(count), &hash)
 
         return Data(bytes: hash, count: digestLength)
-    }
-
-    var hexString: String {
-        var bytes = [UInt8](repeating: 0, count: count)
-        (self as NSData).getBytes(&bytes, length: count)
-        return bytes.map { String(format: "%02x", $0) }.joined()
     }
 }

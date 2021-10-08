@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+import RSDKUtils
 
 @testable import RAnalytics
 
@@ -185,7 +186,7 @@ class SenderSpec: QuickSpec {
                                                            statusCode: statusCode,
                                                            httpVersion: nil,
                                                            headerFields: nil)
-                sessionMock.completionHandler = completion
+                sessionMock.onCompletedTask = completion
                 sessionMock.responseData = nil
                 sessionMock.responseError = nil
             }

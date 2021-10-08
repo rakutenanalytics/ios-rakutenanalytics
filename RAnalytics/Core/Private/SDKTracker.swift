@@ -1,5 +1,5 @@
 import Foundation
-import RLogger
+import RSDKUtils
 
 enum SDKTrackerConstants {
     static let tableName = "RAKUTEN_ANALYTICS_SDK_TABLE"

@@ -3,6 +3,7 @@ import CoreLocation
 import WebKit
 import AdSupport
 import CoreTelephony
+import RSDKUtils
 
 protocol SimpleDependenciesContainable {
     var notificationHandler: NotificationObservable { get }

@@ -1,5 +1,5 @@
 import Foundation
-import RLogger
+import struct RSDKUtils.RLogger
 
 enum LoginFailureKey {
     static let type = "type"

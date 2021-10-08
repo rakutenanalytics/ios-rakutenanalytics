@@ -1,6 +1,6 @@
 import Foundation
 import SQLite3
-import RLogger
+import struct RSDKUtils.RLogger
 
 internal enum RAnalyticsDatabaseHelper {
 

@@ -1,5 +1,5 @@
 import UserNotifications
-import RLogger
+import struct RSDKUtils.RLogger
 
 // This mimics RSDKA_BUILD_USER_NOTIFICATION_SUPPORT preprocessor macro in RAnalyticsDefines.h
 #if canImport(UserNotifications)

@@ -1,5 +1,5 @@
 import Foundation
-import RLogger
+import struct RSDKUtils.RLogger
 
 /// This class checks if an event should be processed.
 final class EventChecker {

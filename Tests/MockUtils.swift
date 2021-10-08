@@ -3,6 +3,7 @@ import CoreLocation
 import CoreTelephony
 import AdSupport
 import WebKit
+import RSDKUtils
 @testable import RAnalytics
 
 // MARK: - Tracker
@@ -80,7 +81,7 @@ extension UserDefaultsMock: UserStorageHandleable {
 
 // MARK: - Session
 
-final class SessionMock: RAnalyticsSessionable {
+final class SessionMock: Sessionable {
     var willComplete: (() -> Void?)?
     var data: Data?
     var response: HTTPURLResponse?

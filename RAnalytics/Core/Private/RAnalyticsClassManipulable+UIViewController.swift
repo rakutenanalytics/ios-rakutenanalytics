@@ -1,5 +1,5 @@
 import UIKit
-import RLogger
+import struct RSDKUtils.RLogger
 
 extension UIViewController: RAnalyticsClassManipulable, RuntimeLoadable {
 

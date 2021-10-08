@@ -1,5 +1,5 @@
 import Foundation
-import RLogger
+import struct RSDKUtils.RLogger
 
 /// A class that injects a cookie in the HTTP Cookie Store
 final class RAnalyticsCookieInjector {

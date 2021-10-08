@@ -93,7 +93,7 @@
     XCTestExpectation* expectation = [XCTestExpectation.new initWithDescription:@"should not be called"];
     [expectation setInverted:true];
     
-    OCMStub([mockManager process:[OCMArg any]]).andDo(^(NSInvocation *invocation){ [expectation fulfill]; });
+    OCMStub([mockManager process:[OCMArg any]]).andDo(^(__unused NSInvocation *invocation){ [expectation fulfill]; });
     
     [center.delegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:^{ /* empty */ }];
     

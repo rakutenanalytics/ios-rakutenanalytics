@@ -1,6 +1,6 @@
 import Foundation
 import SystemConfiguration
-import RLogger
+import struct RSDKUtils.RLogger
 
 protocol ReachabilityNotifiable {
     init?(host: String, callback: @escaping SCNetworkReachabilityCallBack)

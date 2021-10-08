@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import AdSupport
 import WebKit
-import RLogger
+import RSDKUtils
 import RDeviceIdentifier
 
 // swiftlint:disable type_name
