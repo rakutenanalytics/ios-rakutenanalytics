@@ -3,7 +3,8 @@ set -e
 
 FRAMEWORK_NAME=RAnalytics
 FRAMEWORK_DSYM=RAnalytics.framework.dSYM
-BUILD_FOLDER=build
+SIMULATOR_ARCHIVE_FOLDER=simulator.xcarchive
+DEVICE_ARCHIVE_FOLDER=device.xcarchive
 OUTPUT_FOLDER=output
 
 RAKUTEN_ANALYTICS_SDK_PROJECT_PATH="RAnalytics.xcodeproj/project.pbxproj"
@@ -11,22 +12,16 @@ PODSPEC_FILE_PATH="$FRAMEWORK_NAME.podspec"
 
 dSymDWARFFilePath="$FRAMEWORK_DSYM/Contents/Resources/DWARF/$FRAMEWORK_NAME"
 frameworkBinaryPath="$FRAMEWORK_NAME.xcframework/ios-arm64/$FRAMEWORK_NAME.framework/RAnalytics"
-currentDerivedDataPathSimulator=""
-currentDerivedDataPathDevice=""
-
-updateDerivedDataPathsWithScheme()
-{
-    currentDerivedDataPathSimulator="$BUILD_FOLDER/Build/Products/$1-iphonesimulator"
-    currentDerivedDataPathDevice="$BUILD_FOLDER/Build/Products/$1-iphoneos"
-}
 
 # clean previous builds
-rm -rf $BUILD_FOLDER
+rm -rf $SIMULATOR_ARCHIVE_FOLDER
+rm -rf $DEVICE_ARCHIVE_FOLDER
 rm -rf $OUTPUT_FOLDER/Debug
 rm -rf $OUTPUT_FOLDER/Release
 
 # create folder where we place built frameworks
-mkdir $BUILD_FOLDER
+mkdir $SIMULATOR_ARCHIVE_FOLDER
+mkdir $DEVICE_ARCHIVE_FOLDER
 
 # install RakutenAnalyticsSDK workspace and pods
 bundle install
@@ -49,49 +44,43 @@ else
 fi
 
 # clean derived data
-xcodebuild clean -workspace RakutenAnalyticsSDK.xcworkspace -scheme $FRAMEWORK_NAME-Framework -derivedDataPath $BUILD_FOLDER
+xcodebuild clean -workspace RakutenAnalyticsSDK.xcworkspace -scheme $FRAMEWORK_NAME-Framework
 
 shemes=("Debug" "Release")
 for scheme in ${shemes[@]}; do
-
-    updateDerivedDataPathsWithScheme $scheme
 
     # build simulator framework
     xcodebuild archive \
         -workspace RakutenAnalyticsSDK.xcworkspace \
         -scheme $FRAMEWORK_NAME-Framework \
-        -destination="iOS Simulator" \
         -sdk iphonesimulator \
-        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
-        -derivedDataPath $BUILD_FOLDER \
-        build | xcpretty
+        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
+        -archivePath $SIMULATOR_ARCHIVE_FOLDER | xcpretty
 
     # build device framework
     xcodebuild archive \
         -workspace RakutenAnalyticsSDK.xcworkspace \
         -scheme $FRAMEWORK_NAME-Framework \
-        -destination="iOS" \
         -sdk iphoneos \
-        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
-        -derivedDataPath $BUILD_FOLDER \
-        build | xcpretty
+        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
+        -archivePath $DEVICE_ARCHIVE_FOLDER | xcpretty
 
     # create xcframework
     xcodebuild -create-xcframework \
-        -framework $currentDerivedDataPathSimulator/$FRAMEWORK_NAME.framework \
-        -framework $currentDerivedDataPathDevice/$FRAMEWORK_NAME.framework \
+        -framework $SIMULATOR_ARCHIVE_FOLDER/Products/Library/Frameworks/$FRAMEWORK_NAME.framework \
+        -framework $DEVICE_ARCHIVE_FOLDER/Products/Library/Frameworks/$FRAMEWORK_NAME.framework \
         -output $OUTPUT_FOLDER/$scheme/$FRAMEWORK_NAME.xcframework
 
-    UUIDs=$(dwarfdump --uuid "$currentDerivedDataPathDevice/$FRAMEWORK_DSYM" | cut -d ' ' -f2)
+    UUIDs=$(dwarfdump --uuid "$DEVICE_ARCHIVE_FOLDER/dSYMs/$FRAMEWORK_DSYM" | cut -d ' ' -f2)
     echo "dwarfdump UUIDs: $UUIDs"
 
     outputDSYM=$OUTPUT_FOLDER/$scheme/$FRAMEWORK_NAME.framework.dSYM
-    cp -r $currentDerivedDataPathDevice/$FRAMEWORK_DSYM $outputDSYM
+    cp -r "$DEVICE_ARCHIVE_FOLDER/dSYMs/$FRAMEWORK_DSYM" $outputDSYM
 
     # find and copy bitcode symbols
     # see https://instabug.com/blog/ios-binary-framework/
     # (we don't want to distribute xcframework with embedded dSYMs and bitcode symbols using `-debug-symbols` parameter)
-    for file in `find "$currentDerivedDataPathDevice" -name "*.bcsymbolmap" -type f`; do
+    for file in `find "$DEVICE_ARCHIVE_FOLDER/Products/Library/Frameworks" -name "*.bcsymbolmap" -type f`; do
         fileName=$(basename "$file" ".bcsymbolmap")
         for UUID in $UUIDs; do
             if [[ "$UUID" = "$fileName" ]]; then
