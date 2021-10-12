@@ -60,9 +60,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }()
 
     enum Constants {
-        /// This public domain is temporarily used until documents.developers.rakuten.com is fixed
-        static let domain = "digitalfox.fr"
-        // static let domain = "documents.developers.rakuten.com"
+        static let domain = "check.rat.rakuten.co.jp"
     }
 
     @IBOutlet weak var spoolButton: UIBarButtonItem!
