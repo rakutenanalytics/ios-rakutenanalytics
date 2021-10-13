@@ -13,6 +13,7 @@
 1. [Support for App Extensions](#support-for-app-extensions)
 1. [Creating a custom tracker](#creating-a-custom-tracker)
 1. [Fetching a RP Cookie](#fetching-a-rp-cookie)
+1. [App-to-App referral tracking](#app-to-app-referral-tracking)
 1. [Event triggers](#event-triggers)
 
 ## Configure a custom endpoint
@@ -415,6 +416,26 @@ fetcher?.getRpCookieCompletionHandler({ cookie, _ in
     }
     print(cookie)
 })
+```
+
+## App-to-App referral tracking
+
+App to app referral tracking allows teams to track the behavior of users when they interact with deeplinks.
+
+### Create and open URL Scheme for App-to-App referral tracking
+```swift
+guard let  url = ReferralAppModel().urlScheme(appScheme: "app"), UIApplication.shared.canOpenURL(url) else {
+    return
+}
+UIApplication.shared.open(url, options: [:])
+```
+
+### Create and open Universal Link for App-to-App referral tracking
+```swift
+guard let  url = ReferralAppModel().universalLink(domain: "domain.com"), UIApplication.shared.canOpenURL(url) else {
+    return
+}
+UIApplication.shared.open(url, options: [:])
 ```
 
 ## Event triggers
