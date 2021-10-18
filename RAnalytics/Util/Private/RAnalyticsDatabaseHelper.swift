@@ -40,17 +40,16 @@ internal enum RAnalyticsDatabaseHelper {
 
 extension RAnalyticsDatabase {
 
-    static func mkAnalyticsDBConnection(databaseName: String) -> SQlite3Pointer? {
-
-        let documentsDirectoryPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        let databaseFilePath = documentsDirectoryPath?.appendingPathComponent(databaseName)
-
+    static func mkAnalyticsDBConnection(databaseName: String,
+                                        databaseParentDirectory: FileManager.SearchPathDirectory) -> SQlite3Pointer? {
         var connection: SQlite3Pointer?
-        guard let databasePath = databaseFilePath,
+        let databaseFileURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
+
+        guard let databasePath = databaseFileURL,
               sqlite3_open(databasePath.path, &connection) == SQLITE_OK,
               let databaseConnection = connection else {
 
-            RLogger.error("Failed to open database: \(String(describing: databaseFilePath))")
+            RLogger.error("Failed to open database: \(String(describing: databaseFileURL))")
             RLogger.error("Using in-memory database")
             return mkAnalyticsInMemoryDBConnection()
         }

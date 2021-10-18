@@ -11,6 +11,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
         describe("AnalyticsManager") {
             let appBundleIdentifier = "jp.co.rakuten.app-name"
             let encodedAppBundleIdentifier = appBundleIdentifier.addEncodingForRFC3986UnreservedCharacters()!
+            let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseTableName = "testTableName_ReferralAppTrackingIntegrationSpec"
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
@@ -25,7 +26,8 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
             let parameters = "\(PayloadParameterKeys.refAccountIdentifier)=\(refAccountIdentifier)&\(PayloadParameterKeys.refApplicationIdentifier)=\(refApplicationIdentifier)&\(PayloadParameterKeys.refLink)=\(encodedLink)&\(PayloadParameterKeys.refComponent)=\(encodedComponent)"
 
             beforeEach {
-                databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseTableName)!
+                databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseTableName,
+                                                                                databaseParentDirectory: databaseDirectory)!
                 database = RAnalyticsDatabase.database(connection: databaseConnection)
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
                 dependenciesContainer.session = session

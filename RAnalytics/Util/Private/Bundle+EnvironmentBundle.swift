@@ -110,6 +110,22 @@ extension Bundle: EnvironmentBundle {
         }
         return Self._configuration
     }
+
+    /// - Returns `.applicationSupportDirectory` or `.documentDirectory` regarding the value of `RATStoreDatabaseInApplicationSupportDirectory` in the app's `Info.plist`, `.documentDirectory` otherwise.
+    ///
+    /// - Enable `.documentDirectory` storage:
+    /// <key>RATStoreDatabaseInApplicationSupportDirectory</key>
+    /// <false/>
+    ///
+    /// - Enable `.applicationSupportDirectory` storage:
+    /// <key>RATStoreDatabaseInApplicationSupportDirectory</key>
+    /// <true/>
+    var databaseParentDirectory: FileManager.SearchPathDirectory {
+        guard let result = object(forInfoDictionaryKey: "RATStoreDatabaseInApplicationSupportDirectory") as? Bool else {
+            return .documentDirectory
+        }
+        return result ? .applicationSupportDirectory : .documentDirectory
+    }
 }
 
 private extension String {

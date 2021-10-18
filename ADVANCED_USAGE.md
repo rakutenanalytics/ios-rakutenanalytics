@@ -438,6 +438,25 @@ guard let  url = ReferralAppModel().universalLink(domain: "domain.com"), UIAppli
 UIApplication.shared.open(url, options: [:])
 ```
 
+## How to configure the database directory path
+It is possible to change the database directory path in the app's `Info.plist`.
+
+By default the database directory path is `Documents`.
+
+It is possible to store the database file in Library/Application Support:
+
+- Enable `Library/Application Support` storage:
+```xml
+<key>RATStoreDatabaseInApplicationSupportDirectory</key>
+<true/>
+```
+
+- Disable `Library/Application Support` storage:
+```xml
+<key>RATStoreDatabaseInApplicationSupportDirectory</key>
+<false/>
+```
+
 ## Event triggers
 
 ### UIApplication NSNotification

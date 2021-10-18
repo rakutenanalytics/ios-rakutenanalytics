@@ -65,6 +65,7 @@
 		C9E958B426419B720077881B /* CoreSubspecSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E9587826419A830077881B /* CoreSubspecSpec.swift */; };
 		C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */; };
 		C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */; };
+		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +163,7 @@
 		C9E9587826419A830077881B /* CoreSubspecSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreSubspecSpec.swift; sourceTree = "<group>"; };
 		C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKTrackerSpec.swift; sourceTree = "<group>"; };
 		C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerSpec.swift; sourceTree = "<group>"; };
+		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +213,7 @@
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
 				C9E9587826419A830077881B /* CoreSubspecSpec.swift */,
+				C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */,
 				C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */,
 				C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
@@ -623,6 +626,7 @@
 				C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */,
 				C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */,
 				C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */,
+				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
 				45E3BC5025814D3600319ECF /* TestUtils.swift in Sources */,
 				C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */,

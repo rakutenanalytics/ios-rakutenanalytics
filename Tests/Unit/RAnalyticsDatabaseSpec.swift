@@ -1,3 +1,7 @@
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
+// swiftlint:disable line_length
+
 import Quick
 import Nimble
 import SQLite3
@@ -445,45 +449,56 @@ class RAnalyticsDatabaseSpec: QuickSpec {
             }
 
             context("when calling mkAnalyticsDBConnection") {
+                verify(.applicationSupportDirectory)
+                verify(.documentDirectory)
 
-                it("should open a connection to given database file name") {
-                    let connection: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db")
-                    expect(DatabaseTestUtils.databaseName(connection: connection)).to(endWith("/db"))
-                }
+                func verify(_ databaseParentDirectory: FileManager.SearchPathDirectory) {
+                    it("should open a connection to given database file name") {
+                        let connection: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db",
+                                                                                                     databaseParentDirectory: databaseParentDirectory)
+                        expect(DatabaseTestUtils.databaseName(connection: connection)).to(endWith("/db"))
+                    }
 
-                it("should be able to open multiple connections to given database file name") {
-                    let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db")
-                    let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db")
-                    expect(DatabaseTestUtils.databaseName(connection: connectionA)).to(equal(DatabaseTestUtils.databaseName(connection: connectionB)))
-                }
+                    it("should be able to open multiple connections to given database file name") {
+                        let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        expect(DatabaseTestUtils.databaseName(connection: connectionA)).to(equal(DatabaseTestUtils.databaseName(connection: connectionB)))
+                    }
 
-                it("should open a connection to in-memory database in case of error") {
-                    // swiftlint:disable:next line_length
-                    let connection: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "") // using invalid path to generate error
-                    expect(DatabaseTestUtils.databaseName(connection: connection)).toNot(beNil())
-                    expect(DatabaseTestUtils.databaseName(connection: connection)).to(equal("")) // in-memory databases return empty string as a name
-                }
+                    it("should open a connection to in-memory database in case of error") {
+                        let connection: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "",
+                                                                                                     databaseParentDirectory: databaseParentDirectory) // using invalid path to generate error
+                        expect(DatabaseTestUtils.databaseName(connection: connection)).toNot(beNil())
+                        expect(DatabaseTestUtils.databaseName(connection: connection)).to(equal("")) // in-memory databases return empty string as a name
+                    }
 
-                it("should be able to open multiple connections to in-memory database") {
-                    let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "")
-                    let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "")
-                    expect(DatabaseTestUtils.databaseName(connection: connectionA)).to(equal(""))
-                    expect(DatabaseTestUtils.databaseName(connection: connectionB)).to(equal(""))
-                }
+                    it("should be able to open multiple connections to in-memory database") {
+                        let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        expect(DatabaseTestUtils.databaseName(connection: connectionA)).to(equal(""))
+                        expect(DatabaseTestUtils.databaseName(connection: connectionB)).to(equal(""))
+                    }
 
-                it("should open connection to the same in-memory database") {
-                    let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "")
-                    let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "")
-                    let databaseA = DatabaseTestUtils.mkDatabase(connection: connectionA)
+                    it("should open connection to the same in-memory database") {
+                        let connectionA: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        let connectionB: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "",
+                                                                                                      databaseParentDirectory: databaseParentDirectory)
+                        let databaseA = DatabaseTestUtils.mkDatabase(connection: connectionA)
 
-                    waitUntil { done in
-                        let blob = "foo".data(using: .utf8)!
-                        let anotherBlob = "bar".data(using: .utf8)!
+                        waitUntil { done in
+                            let blob = "foo".data(using: .utf8)!
+                            let anotherBlob = "bar".data(using: .utf8)!
 
-                        databaseA.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
-                            let insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connectionB)
-                            expect(insertedBlobs).to(elementsEqual([blob, anotherBlob]))
-                            done()
+                            databaseA.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
+                                let insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connectionB)
+                                expect(insertedBlobs).to(elementsEqual([blob, anotherBlob]))
+                                done()
+                            }
                         }
                     }
                 }

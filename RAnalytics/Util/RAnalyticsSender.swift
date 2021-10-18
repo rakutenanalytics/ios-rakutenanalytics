@@ -290,8 +290,10 @@ extension RAnalyticsSender {
 extension RAnalyticsSender {
     @objc public convenience init?(endpoint: URL,
                                    databaseName: String,
-                                   databaseTableName: String) {
-        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName) else {
+                                   databaseTableName: String,
+                                   databaseParentDirectory: FileManager.SearchPathDirectory = .documentDirectory) {
+        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
+                                                                          databaseParentDirectory: databaseParentDirectory) else {
             return nil
         }
         self.init(endpoint: endpoint,

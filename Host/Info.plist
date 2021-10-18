@@ -45,5 +45,7 @@
 	<string>https://rat.rakuten.co.jp/</string>
 	<key>RATEnableInternalSerialization</key>
 	<false/>
+	<key>RATStoreDatabaseInApplicationSupportDirectory</key>
+	<false/>
 </dict>
 </plist>

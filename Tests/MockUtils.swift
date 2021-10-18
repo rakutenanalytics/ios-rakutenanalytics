@@ -190,11 +190,9 @@ final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
     public var session: SwiftySessionable = URLSession.shared
     public var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
     public var databaseConfiguration: DatabaseConfigurable? = {
-        if let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: Constants.RATDatabaseName) {
-            let database = RAnalyticsDatabase.database(connection: connection)
-            return DatabaseConfiguration(database: database, tableName: Constants.RATTableName)
-        }
-        return nil
+        DatabaseConfigurationHandler.create(databaseName: Constants.RATDatabaseName,
+                                            tableName: Constants.RATTableName,
+                                            databaseParentDirectory: .documentDirectory)
     }()
 }
 

@@ -161,12 +161,11 @@ extension AnalyticsManager {
     ///
     /// - Returns `true` if the `SDKTracker` is added, `false` otherwise.
     private func addSDKTracker() -> Bool {
-        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: SDKTrackerConstants.databaseName) else {
+        guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: SDKTrackerConstants.databaseName,
+                                                                              tableName: SDKTrackerConstants.tableName,
+                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory) else {
             return false
         }
-
-        let database = RAnalyticsDatabase.database(connection: connection)
-        let databaseConfiguration = DatabaseConfiguration(database: database, tableName: SDKTrackerConstants.tableName)
 
         guard let sdkTracker = SDKTracker(bundle: Bundle.main,
                                           session: URLSession.shared,

@@ -8,6 +8,7 @@ import SQLite3
 final class SDKTrackerSpec: QuickSpec {
     override func spec() {
         describe("SDKTracker") {
+            let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "test_RAnalyticsSDKTracker.db"
             let databaseTableName = "testTableName_SDKTrackerSpec"
             let urlSession = SwityURLSessionMock()
@@ -19,7 +20,8 @@ final class SDKTrackerSpec: QuickSpec {
             beforeEach {
                 urlSession.urlRequest = nil
 
-                databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName)
+                databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
+                                                                                databaseParentDirectory: databaseDirectory)
                 database = RAnalyticsDatabase.database(connection: databaseConnection)
                 databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
             }

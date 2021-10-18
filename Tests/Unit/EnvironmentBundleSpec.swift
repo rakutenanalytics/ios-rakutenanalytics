@@ -63,6 +63,21 @@ final class EnvironmentBundleSpec: QuickSpec {
                     expect(bundleMock.useDefaultSharedCookieStorage).to(beTrue())
                 }
             }
+
+            describe("databaseParentDirectory") {
+                it("should return the default value when RATStoreDatabaseInApplicationSupportDirectory is not set") {
+                    bundleMock.injectedDictionary = [:]
+                    expect(bundleMock.databaseParentDirectory).to(equal(.documentDirectory))
+                }
+
+                it("should return the expected value when RATStoreDatabaseInApplicationSupportDirectory is set") {
+                    bundleMock.injectedDictionary = ["RATStoreDatabaseInApplicationSupportDirectory": false]
+                    expect(bundleMock.databaseParentDirectory).to(equal(.documentDirectory))
+
+                    bundleMock.injectedDictionary = ["RATStoreDatabaseInApplicationSupportDirectory": true]
+                    expect(bundleMock.databaseParentDirectory).to(equal(.applicationSupportDirectory))
+                }
+            }
         }
     }
 }

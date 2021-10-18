@@ -24,9 +24,9 @@ protocol SimpleDependenciesContainable {
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
-    enum Constants {
-        static let RATDatabaseName = "RSDKAnalytics.db"
-        static let RATTableName = "RAKUTEN_ANALYTICS_TABLE"
+    enum RATTrackerConstants {
+        static let databaseName = "RSDKAnalytics.db"
+        static let tableName = "RAKUTEN_ANALYTICS_TABLE"
     }
 
     let notificationHandler: NotificationObservable = NotificationCenter.default
@@ -45,10 +45,8 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let session: SwiftySessionable = URLSession.shared
     let analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
     let databaseConfiguration: DatabaseConfigurable? = {
-        if let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: Constants.RATDatabaseName) {
-            let database = RAnalyticsDatabase.database(connection: connection)
-            return DatabaseConfiguration(database: database, tableName: Constants.RATTableName)
-        }
-        return nil
+        DatabaseConfigurationHandler.create(databaseName: RATTrackerConstants.databaseName,
+                                            tableName: RATTrackerConstants.tableName,
+                                            databaseParentDirectory: Bundle.main.databaseParentDirectory)
     }()
 }

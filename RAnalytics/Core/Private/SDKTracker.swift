@@ -21,7 +21,7 @@ final class SDKTracker: NSObject, Tracker {
     init?(bundle: EnvironmentBundle,
           session: SwiftySessionable,
           batchingDelay: TimeInterval = 60.0,
-          databaseConfiguration: DatabaseConfiguration) {
+          databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = bundle.endpointAddress else {
             let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.eventsNotProcessedBySDKTracker)"
             RLogger.error(message)

@@ -8,20 +8,21 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
 
     override func spec() {
         describe("RAnalyticsDatabase") {
-
+            let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "RSDKAnalytics_Test.db"
             let events = [mkEvent, mkAnotherEvent]
             var connection: SQlite3Pointer!
             var databaseURL: URL!
 
             beforeSuite {
-                let documentsDirectoryPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                databaseURL = documentsDirectoryPath.appendingPathComponent(databaseName)
+                databaseURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
+
                 try? FileManager.default.removeItem(at: databaseURL)
             }
 
             beforeEach {
-                connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName)
+                connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
+                                                                        databaseParentDirectory: databaseParentDirectory)
             }
 
             afterEach {

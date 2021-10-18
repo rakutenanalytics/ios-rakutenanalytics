@@ -14,3 +14,16 @@ final class DatabaseConfiguration: DatabaseConfigurable {
         self.tableName = tableName
     }
 }
+
+enum DatabaseConfigurationHandler {
+    static func create(databaseName: String,
+                       tableName: String,
+                       databaseParentDirectory: FileManager.SearchPathDirectory) -> DatabaseConfigurable? {
+        guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
+                                                                          databaseParentDirectory: databaseParentDirectory) else {
+            return nil
+        }
+        let database = RAnalyticsDatabase.database(connection: connection)
+        return DatabaseConfiguration(database: database, tableName: tableName)
+    }
+}
