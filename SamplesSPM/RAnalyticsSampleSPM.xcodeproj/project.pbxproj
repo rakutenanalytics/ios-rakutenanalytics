@@ -15,6 +15,7 @@
 		4538B98D2620C626009952BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9832620C625009952BE /* AppDelegate.swift */; };
 		4538B98E2620C626009952BE /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9842620C625009952BE /* TextFieldTableViewCell.swift */; };
 		4538B9902620C626009952BE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9862620C626009952BE /* SwitchTableViewCell.swift */; };
+		456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = 456625A7271E10F60008135E /* RSDKUtilsMain */; };
 		C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B7229261DBA5F00CF91BA /* Assets.xcassets */; };
 		C96B722D261DBA5F00CF91BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -39,6 +40,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4538B9772620C5DD009952BE /* RAnalytics in Frameworks */,
+				456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +115,7 @@
 			name = RAnalyticsSampleSPM;
 			packageProductDependencies = (
 				4538B9762620C5DD009952BE /* RAnalytics */,
+				456625A7271E10F60008135E /* RSDKUtilsMain */,
 			);
 			productName = RAnalyticsSampleSPM;
 			productReference = C96B7222261DBA5E00CF91BA /* RAnalyticsSampleSPM.app */;
@@ -143,6 +146,7 @@
 			mainGroup = C96B7219261DBA5E00CF91BA;
 			packageReferences = (
 				4538B9752620C5DD009952BE /* XCRemoteSwiftPackageReference "ios-analytics-framework-snapshots" */,
+				456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */,
 			);
 			productRefGroup = C96B7223261DBA5E00CF91BA /* Products */;
 			projectDirPath = "";
@@ -245,7 +249,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -300,7 +304,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -386,6 +390,14 @@
 				kind = branch;
 			};
 		};
+		456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rakutentech/ios-sdkutils.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -393,6 +405,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4538B9752620C5DD009952BE /* XCRemoteSwiftPackageReference "ios-analytics-framework-snapshots" */;
 			productName = RAnalytics;
+		};
+		456625A7271E10F60008135E /* RSDKUtilsMain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
+			productName = RSDKUtilsMain;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

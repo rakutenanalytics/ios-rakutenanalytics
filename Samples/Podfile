@@ -3,7 +3,7 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 workspace 'RAnalyticsSample.xcworkspace'
 
-platform :ios, "11.0"
+platform :ios, "12.0"
 use_frameworks!
 
 framework_name = 'RAnalytics.zip'

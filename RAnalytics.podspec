@@ -6,9 +6,9 @@ Pod::Spec.new do |s|
   s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
-  s.platform     = :ios, "11.0"
+  s.platform     = :ios, "12.0"
   s.requires_arc = true
-  s.swift_version = '5.3'
+  s.swift_versions = ['5.1', '5.2', '5.3', '5.4', '5.5']
 
   options = {
     'CLANG_ENABLE_MODULES'    => 'YES',

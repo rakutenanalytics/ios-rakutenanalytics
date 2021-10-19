@@ -1,7 +1,11 @@
 import UIKit
 import RAnalytics
-import RSDKUtils
 import WebKit
+#if canImport(RSDKUtilsMain)
+import RSDKUtilsMain // for RAnalyticsSampleSPM
+#else
+import RSDKUtils
+#endif
 
 enum GlobalConstants {
     static let kLocationTracking = "Location_Tracking"
@@ -96,15 +100,13 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                                                          "acc": accountId,
                                                          "aid": applicationId]).track()
 
-        if #available(iOS 11.0, *) {
-            WKWebsiteDataStore.default().httpCookieStore.getAllCookies { (cookies) in
-                _ = cookies.map { (cookie) in
-                    print(cookie)
-                }
+        WKWebsiteDataStore.default().httpCookieStore.getAllCookies { (cookies) in
+            _ = cookies.map { (cookie) in
+                print(cookie)
             }
-            // For quick testing of _RAnalyticsCookieInjector load a zero-frame webview
-            WKWebView(frame: .zero).load(URLRequest(url: URL(string: "https://corp.rakuten.co.jp")!))
         }
+        // For quick testing of _RAnalyticsCookieInjector load a zero-frame webview
+        WKWebView(frame: .zero).load(URLRequest(url: URL(string: "https://corp.rakuten.co.jp")!))
     }
 
     // MARK: - Table view data source

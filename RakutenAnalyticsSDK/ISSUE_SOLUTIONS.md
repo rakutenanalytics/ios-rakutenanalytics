@@ -22,7 +22,7 @@ enable_user_defined_build_types!
 source 'https://cdn.cocoapods.org/'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
  
-platform :ios, '11.0'
+platform :ios, '12.0'
 inhibit_all_warnings!
  
 workspace 'RakutenAnalyticsSDK'

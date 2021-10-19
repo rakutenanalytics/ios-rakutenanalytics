@@ -17,15 +17,23 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>demoapp</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>App needs location when in use.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>RAnalyticsSample app needs IDFA to track User ID.</string>
 	<key>RATAccountIdentifier</key>
 	<integer>123</integer>
 	<key>RATAppIdentifier</key>
 	<integer>456</integer>
+	<key>RATDisableSharedCookieStorage</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -47,13 +55,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>RATDisableSharedCookieStorage</key>
-	<true/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>demoapp</string>
-	</array>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>RAnalyticsSample app needs IDFA to track User ID.</string>
 </dict>
 </plist>

@@ -2,7 +2,7 @@
 Records user activity and automatically sends tracking events to the configured analytics cloud service.
 
 ## Minimum version
-Supports iOS 11.0 and above and has been tested with iOS 11.1 and above.
+Supports iOS 12.0 and above and has been tested with iOS 12.5 and above.
 
 ## Users
 It is intended to be used only by Rakuten approved applications.
