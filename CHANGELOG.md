@@ -1,5 +1,21 @@
 # Changelog
 
+## 8.3.0 (2021-10-22)
+
+### New features
+* [SDKCF-4178](https://jira.rakuten-it.com/jira/browse/SDKCF-4178): Added new feature to track app-to-app referrals. See the [feature guide](advanced_usage.html#app-to-app-referral-tracking).
+* [SDKCF-3927](https://jira.rakuten-it.com/jira/browse/SDKCF-3927): Added new feature to track events to multiple RAT accounts. See the [feature guide](advanced_usage.html#duplicate-events-across-multiple-rat-accounts).
+
+### Bug fixes
+* [SDKCF-4286](https://jira.rakuten-it.com/jira/browse/SDKCF-4286): Improved database handling to reduce likelihood of rare crash occurring.
+
+### Improvements
+* Completed migration of main module code to Swift with [phase six](https://jira.rakuten-it.com/jira/issues/?jql=labels%20%3D%20swift-migration-phase-6).
+
+## 8.2.2 (2021-10-07)
+
+* [SDKCF-4310](https://jira.rakuten-it.com/jira/browse/SDKCF-4310): Fixed a rare crash that can occur when the formatted string of the event payload is logged.
+
 ## 8.2.1 (2021-07-30)
 
 * **Important Note:** If you are using Xcode 13 to build your app, and you experience the issue below, you should upgrade your dependency to this version.
