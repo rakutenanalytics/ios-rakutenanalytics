@@ -420,9 +420,13 @@ fetcher?.getRpCookieCompletionHandler({ cookie, _ in
 
 ## App-to-App referral tracking
 
-App to app referral tracking allows teams to track the behavior of users when they interact with deeplinks.
+App to app referral tracking of deeplinks from 'referral' apps to 'referred' apps allows teams to track the behavior of users.
 
-### Create and open URL Scheme for App-to-App referral tracking
+Note that:
+- The Analytics SDK _automatically_ tracks incoming deeplinks in the referred app as long as they are in the expected format.
+- To generate deeplinks in the referral app in the correct format you should use the `ReferralAppModel` helpers.
+
+### Create and open URL Scheme deeplink in 'referral' app
 ```swift
 guard let  url = ReferralAppModel().urlScheme(appScheme: "app"), UIApplication.shared.canOpenURL(url) else {
     return
@@ -430,13 +434,39 @@ guard let  url = ReferralAppModel().urlScheme(appScheme: "app"), UIApplication.s
 UIApplication.shared.open(url, options: [:])
 ```
 
-### Create and open Universal Link for App-to-App referral tracking
+### Create and open Universal Link deeplink in 'referral' app
 ```swift
 guard let  url = ReferralAppModel().universalLink(domain: "domain.com"), UIApplication.shared.canOpenURL(url) else {
     return
 }
 UIApplication.shared.open(url, options: [:])
 ```
+
+### Optional parameters
+
+It is also possible to include the following _optional_ parameters when creating a deeplink:
+- `link` - unique identifier of the referral trigger e.g., `"campaign-abc123"`
+- `component` - component in the referral app e.g., `"checkout"`
+- `customParameters` - `[String: String]` dictionary of key-value pairs e.g., `["custom1": "value1"]`
+
+```swift
+guard let model = ReferralAppModel(link: "campaign-abc123",
+                                   component: "checkout",
+                                   customParameters: ["custom1": "value1"]) else {
+    return
+}
+// create deeplink url from model using `urlScheme(appScheme:)` or `universalLink(domain:)`
+```
+
+See the [feature page](https://confluence.rakuten-it.com/confluence/display/MAGS/RAnalytics+SDK%3A+App+to+App+tracking#RAnalyticsSDK:ApptoApptracking-FunctionalSpec) sections "Standard Referral Parameters" and "Custom Referral Parameters" for more details.
+
+### Events sent to RAT
+
+If Analytics SDK v8.3.0 or later is integrated in the referred-to app, the SDK automatically sends two events to RAT:
+- an etype `pv` visit event sent to the **referred** app's RAT account
+- an etype `deeplink` event sent to the **referral** app's RAT account
+
+See the [feature page](https://confluence.rakuten-it.com/confluence/display/MAGS/RAnalytics+SDK%3A+App+to+App+tracking) or [RAT's guide](https://confluence.rakuten-it.com/confluence/x/SOs1rw) to understand more about app-to-app referral tracking with RAT.
 
 ## Event triggers
 
