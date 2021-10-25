@@ -81,7 +81,7 @@ extension RAnalyticsCookieInjector {
         cookiesToDelete.forEach { (cookie) in
             group.enter()
             httpCookieStore.delete(cookie: cookie) {
-                RLogger.verbose("Delete cookie %@ on webview", arguments: cookie)
+                RLogger.verbose(message: "Delete cookie \(cookie) on webview")
                 group.leave()
             }
         }
@@ -94,7 +94,7 @@ extension RAnalyticsCookieInjector {
 
     private func storeCookie(cookieToStore: HTTPCookie, completionHandler:@escaping () -> Void) {
         httpCookieStore.set(cookie: cookieToStore) {
-            RLogger.verbose("Set cookie %@ on webview", arguments: cookieToStore)
+            RLogger.verbose(message: "Set cookie \(cookieToStore) on webview")
             completionHandler()
         }
     }

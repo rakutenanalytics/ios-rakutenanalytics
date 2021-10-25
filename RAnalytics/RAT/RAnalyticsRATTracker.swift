@@ -162,7 +162,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             self.sender?.setBatchingDelayBlock(Constants.RATBatchingDelay)
 
         } else {
-            RLogger.error(ErrorMessage.senderCreationFailed)
+            RLogger.error(message: ErrorMessage.senderCreationFailed)
             self.sender = nil
         }
 
@@ -193,11 +193,11 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
                 if let error = error {
                     let errorReason = String(describing: error.localizedFailureReason)
                     let errorMessage = "RAnalyticsRATTracker - RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"
-                    RLogger.error(errorMessage)
+                    RLogger.error(message: errorMessage)
                 }
             }
         } else {
-            RLogger.error(ErrorMessage.rpCookieFetcherCreationFailed)
+            RLogger.error(message: ErrorMessage.rpCookieFetcherCreationFailed)
             self.rpCookieFetcher = nil
         }
 
@@ -392,7 +392,7 @@ extension RAnalyticsRATTracker {
             return true
 
         } else {
-            RLogger.error("The event \(event.name) could not be processed by the RAT Tracker.")
+            RLogger.error(message: "The event \(event.name) could not be processed by the RAT Tracker.")
             logTrackingError()
             return false
         }
@@ -410,7 +410,7 @@ extension RAnalyticsRATTracker {
         }
 
         if !message.isEmpty {
-            RLogger.error("\(message)\(ErrorMessage.eventsNotProcessedByRATTracker)")
+            RLogger.error(message: "\(message)\(ErrorMessage.eventsNotProcessedByRATTracker)")
         }
     }
 

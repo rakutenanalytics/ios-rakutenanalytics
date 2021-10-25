@@ -85,7 +85,7 @@ import RSDKUtils
           maximumTimeOut: UInt) {
         guard let endpointAddress = bundle.endpointAddress else {
             let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.rpCookieCantBeFetched)"
-            RLogger.error(message)
+            RLogger.error(message: message)
             return nil
         }
         _endpointURL = endpointAddress
@@ -119,7 +119,7 @@ extension RAnalyticsRpCookieFetcher: RAnalyticsRpCookieFetchable {
                     completionHandler(cookie, nil)
 
                 case .failure(let error):
-                    RLogger.error("\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
+                    RLogger.error(message: "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
                     completionHandler(nil, error as NSError)
                 }
             }
@@ -134,7 +134,7 @@ extension RAnalyticsRpCookieFetcher: RAnalyticsRpCookieFetchable {
             return try getRpCookie(from: cookieStorage)
 
         } catch {
-            RLogger.error("\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
+            RLogger.error(message: "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
             return nil
         }
     }

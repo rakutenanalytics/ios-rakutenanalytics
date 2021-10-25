@@ -178,7 +178,7 @@ extension AnalyticsManager {
 
     private func configure() {
         if !addSDKTracker() {
-            RLogger.error("\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
+            RLogger.error(message: "\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
         }
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
@@ -250,7 +250,7 @@ extension AnalyticsManager {
                 case .authorizedWhenInUse: statusString = "Authorized When In Use"
                 default: statusString = "Value (\(String(describing: status)))"
                 }
-                RLogger.debug("Location services' authorization status changed to [\(statusString)].")
+                RLogger.debug(message: "Location services' authorization status changed to [\(statusString)].")
             }
         }
         #endif
@@ -269,7 +269,7 @@ extension AnalyticsManager {
         guard !locationManagerIsUpdating else {
             return
         }
-        RLogger.verbose("Start monitoring location")
+        RLogger.verbose(message: "Start monitoring location")
         locationManager.startUpdatingLocation()
         locationManagerIsUpdating = true
     }
@@ -278,7 +278,7 @@ extension AnalyticsManager {
         guard locationManagerIsUpdating else {
             return
         }
-        RLogger.verbose("Stop monitoring location")
+        RLogger.verbose(message: "Stop monitoring location")
         locationManager.stopUpdatingLocation()
         locationManagerIsUpdating = false
     }
@@ -298,15 +298,15 @@ extension AnalyticsManager: CLLocationManagerDelegate {
     }
 
     public func locationManagerDidPauseLocationUpdates(_ manager: CLLocationManager) {
-        RLogger.verbose("Location updates paused.")
+        RLogger.verbose(message: "Location updates paused.")
     }
 
     public func locationManagerDidResumeLocationUpdates(_ manager: CLLocationManager) {
-        RLogger.verbose("Location updates resumed.")
+        RLogger.verbose(message: "Location updates resumed.")
     }
 
     public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
-        RLogger.error("Failed to acquire device location: \(String(describing: error?.localizedDescription))")
+        RLogger.error(message: "Failed to acquire device location: \(String(describing: error?.localizedDescription))")
     }
 }
 
@@ -352,7 +352,7 @@ extension AnalyticsManager {
         }
 
         if deviceIdentifier == nil {
-            RLogger.error("RDeviceIdentifier is not properly configured! See 'Configuring the keychain' in the README for instructions")
+            RLogger.error(message: "RDeviceIdentifier is not properly configured! See 'Configuring the keychain' in the README for instructions")
         }
 
         let notOptionalDeviceIdentifier = deviceIdentifier ?? Constants.defaultDeviceIdentifier
@@ -398,14 +398,14 @@ extension AnalyticsManager {
 
         var processed = false
         trackersLockableObject.get().forEach { tracker in
-            RLogger.debug("Using tracker \(tracker)")
+            RLogger.debug(message: "Using tracker \(tracker)")
 
             if let tracker = tracker as? Tracker {
                 processed = tracker.process(event: event, state: state) || processed
             }
         }
         if !processed {
-            RLogger.debug("No tracker processed event \(event.name)")
+            RLogger.debug(message: "No tracker processed event \(event.name)")
         }
         return processed
     }
@@ -419,7 +419,7 @@ extension AnalyticsManager {
         let trackers = trackersLockableObject.get()
         if !trackers.contains(tracker) {
             trackers.add(tracker)
-            RLogger.debug("Added tracker \(tracker)")
+            RLogger.debug(message: "Added tracker \(tracker)")
         }
         trackersLockableObject.unlock()
     }

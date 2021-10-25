@@ -19,7 +19,7 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
                       inClass: self,
                       with: #selector(r_autotrack_setUserNotificationCenterDelegate),
                       onlyIfPresent: true)
-        RLogger.verbose("Installed auto-tracking hooks for UNNotificationCenter")
+        RLogger.verbose(message: "Installed auto-tracking hooks for UNNotificationCenter")
     }
 
     @objc(r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
@@ -38,7 +38,7 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
 
     @objc func r_autotrack_setUserNotificationCenterDelegate(_ delegate: UNUserNotificationCenterDelegate?) {
 
-        RLogger.verbose("User notification center delegate is being set to %@ \(String(describing: delegate))")
+        RLogger.verbose(message: "User notification center delegate is being set to %@ \(String(describing: delegate))")
         let swizzleSelector = #selector(r_autotrack_userNotificationCenter(_:didReceive:withCompletionHandler:))
         let delegateSelector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
 

@@ -375,7 +375,7 @@ private extension RAnalyticsExternalCollector {
 private extension RAnalyticsExternalCollector {
     func update() {
         guard let userStorageHandler = userStorageHandler else {
-            RLogger.warning("RAnalyticsExternalCollector can't be created without userStorageHandler dependency")
+            RLogger.warning(message: "RAnalyticsExternalCollector can't be created without userStorageHandler dependency")
             return
         }
         isLoggedIn = userStorageHandler.bool(forKey: Constants.loginStateKey)

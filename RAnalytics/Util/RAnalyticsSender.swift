@@ -98,7 +98,7 @@ private enum SenderConstants {
     public func send(jsonObject: Any) {
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
-            RLogger.error("Sender failed to serialize event dictionary")
+            RLogger.error(message: "Sender failed to serialize event dictionary")
             return
         }
 
@@ -189,7 +189,7 @@ fileprivate extension RAnalyticsSender {
               !ratJsonRecords.isEmpty,
               let data = Data(ratJsonRecords: ratJsonRecords,
                               internalSerialization: enableInternalSerialization) else {
-            RLogger.error("Sender error: failed to create RAT request body data")
+            RLogger.error(message: "Sender error: failed to create RAT request body data")
             return
         }
 
@@ -249,10 +249,10 @@ extension RAnalyticsSender {
 
             /// Get a group of records and start uploading them.
             if let records = blobs, let identifiers = identifiers {
-                RLogger.debug("Events fetched from DB table %@ \(self.databaseTableName) now upload them")
+                RLogger.debug(message: "Events fetched from DB table %@ \(self.databaseTableName) now upload them")
                 self.doBackgroundUpload(records: records, identifiers: identifiers)
             } else {
-                RLogger.debug("No events found in DB table \(self.databaseTableName) so end upload")
+                RLogger.debug(message: "No events found in DB table \(self.databaseTableName) so end upload")
                 self.backgroundUploadEnded()
             }
         }
@@ -281,7 +281,7 @@ extension RAnalyticsSender {
         for (index, value) in records.enumerated() {
             sentLog.append("\n\(index), \(value)")
         }
-        RLogger.debug(sentLog)
+        RLogger.debug(message: sentLog)
         #endif
     }
 }

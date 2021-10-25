@@ -24,7 +24,7 @@ final class SDKTracker: NSObject, Tracker {
           databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = bundle.endpointAddress else {
             let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.eventsNotProcessedBySDKTracker)"
-            RLogger.error(message)
+            RLogger.error(message: message)
             return nil
         }
 

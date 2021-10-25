@@ -182,7 +182,7 @@ final class RAnalyticsDatabase {
                      then completion: @escaping () -> Void) {
 
         guard !appWillTerminate else {
-            RLogger.debug("RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
+            RLogger.debug(message: "RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
             completion()
             return
         }
@@ -255,7 +255,7 @@ private extension RAnalyticsDatabase {
 
     func prepareTable(_ table: String) -> NSError? {
         guard !appWillTerminate else {
-            RLogger.error("RAnalyticsDatabase - prepareTable is cancelled because the app will terminate")
+            RLogger.error(message: "RAnalyticsDatabase - prepareTable is cancelled because the app will terminate")
             return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
                            code: RAnalyticsDatabase.RAnalyticsDBAppWillTerminateErrorCode,
                            userInfo: [NSLocalizedDescriptionKey: "The app is terminating."])
@@ -270,7 +270,7 @@ private extension RAnalyticsDatabase {
         guard sqlite3_exec(connection, query, nil, nil, nil) == SQLITE_OK else {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
             let message = "Failed to create table: \(errorMsg), code \(sqlite3_errcode(connection))"
-            RLogger.error(message)
+            RLogger.error(message: message)
             return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
                            code: RAnalyticsDatabase.RAnalyticsDBTableCreationFailureErrorCode,
                            userInfo: [NSLocalizedDescriptionKey: message])

@@ -15,13 +15,13 @@ final class EventChecker {
               disabledEventsAtBuildTime.contains(eventName) else {
             return true
         }
-        RLogger.debug("\(eventName) is disabled at build time")
+        RLogger.debug(message: "\(eventName) is disabled at build time")
         return false
     }
 
     private func shouldTrackEventAtRuntime(_ eventName: String) -> Bool {
         if let shouldTrackEventHandler = shouldTrackEventHandler, !shouldTrackEventHandler(eventName) {
-            RLogger.debug("\(eventName) is disabled at runtime")
+            RLogger.debug(message: "\(eventName) is disabled at runtime")
             return false
         }
         return true

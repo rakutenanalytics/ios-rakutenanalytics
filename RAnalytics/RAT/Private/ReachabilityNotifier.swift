@@ -19,19 +19,19 @@ final class ReachabilityNotifier: ReachabilityNotifiable {
     /// - Returns: a new instance of `ReachabilityNotifier`.
     init?(host: String, callback: @escaping SCNetworkReachabilityCallBack) {
         guard let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, host) else {
-            RLogger.error("SCNetworkReachabilityCreateWithName failed")
+            RLogger.error(message: "SCNetworkReachabilityCreateWithName failed")
             return nil
         }
 
         self.reachability = reachability
 
         guard SCNetworkReachabilitySetCallback(reachability, callback, nil) else {
-            RLogger.error("SCNetworkReachabilitySetCallback failed")
+            RLogger.error(message: "SCNetworkReachabilitySetCallback failed")
             return nil
         }
 
         guard SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue) else {
-            RLogger.error("SCNetworkReachabilityScheduleWithRunLoop failed")
+            RLogger.error(message: "SCNetworkReachabilityScheduleWithRunLoop failed")
             return nil
         }
 

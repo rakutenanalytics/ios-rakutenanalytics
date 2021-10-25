@@ -8,11 +8,11 @@ extension UIViewController: RAnalyticsClassManipulable, RuntimeLoadable {
                       inClass: self,
                       with: #selector(r_autotrack_viewDidAppear),
                       onlyIfPresent: true)
-        RLogger.verbose("Installed auto-tracking hooks for UIViewController")
+        RLogger.verbose(message: "Installed auto-tracking hooks for UIViewController")
     }
 
     @objc func r_autotrack_viewDidAppear(_ animated: Bool) {
-        RLogger.verbose("View did appear for \(type(of: self))")
+        RLogger.verbose(message: "View did appear for \(type(of: self))")
         AnalyticsManager.shared().launchCollector.didPresentViewController(self)
         r_autotrack_viewDidAppear(animated)
     }
