@@ -449,9 +449,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
             }
 
             context("when calling mkAnalyticsDBConnection") {
-                verify(.applicationSupportDirectory)
-                verify(.documentDirectory)
-
                 func verify(_ databaseParentDirectory: FileManager.SearchPathDirectory) {
                     it("should open a connection to given database file name") {
                         let connection: SQlite3Pointer! = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: "db",
@@ -502,6 +499,9 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                         }
                     }
                 }
+
+                verify(.applicationSupportDirectory)
+                verify(.documentDirectory)
             }
         }
     }

@@ -48,9 +48,7 @@ final class SDKTracker: NSObject, Tracker {
             return false
         }
 
-        let payload = payload(for: event, state: state)
-
-        sender.send(jsonObject: payload)
+        sender.send(jsonObject: payload(for: event, state: state))
 
         return true
     }
