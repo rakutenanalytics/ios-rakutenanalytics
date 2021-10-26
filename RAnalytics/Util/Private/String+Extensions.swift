@@ -13,9 +13,3 @@ extension String {
         return String(self[start ..< end])
     }
 }
-
-extension String {
-    func addEncodingForRFC3986UnreservedCharacters() -> String? {
-        addingPercentEncoding(withAllowedCharacters: CharacterSet.RFC3986UnreservedCharacters)
-    }
-}

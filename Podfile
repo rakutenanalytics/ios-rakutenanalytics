@@ -8,8 +8,8 @@ inhibit_all_warnings!
 abstract_target 'Common' do
   pod 'RAnalyticsBroadcast', :inhibit_warnings => false, :path => './RAnalyticsBroadcast.podspec'
   pod 'RDeviceIdentifier', :git => 'https://gitpub.rakuten-it.com/scm/eco/ios-deviceid.git'
-  pod 'RSDKUtils', '~> 2.0', :testspecs => ['Nimble', 'TestHelpers']
-  pod 'RSDKUtils/RLogger'
+  pod 'RSDKUtils', :testspecs => ['Nimble', 'TestHelpers'], :git => 'https://github.com/rakutentech/ios-sdkutils'
+  pod 'RSDKUtils/RLogger', :git => 'https://github.com/rakutentech/ios-sdkutils'
   pod 'OCMock'
   pod 'OHHTTPStubs', '~> 8.0'
   pod 'Kiwi', '~> 3.0'

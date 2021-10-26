@@ -98,7 +98,6 @@
 		C99056D62642C7A90021E364 /* SDKTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99056D52642C7A90021E364 /* SDKTracker.swift */; };
 		C9AEFF80270B1D6300F21180 /* ReferralAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AEFF7F270B1D6300F21180 /* ReferralAppModel.swift */; };
 		C9AEFF82270B1D7200F21180 /* ReferralAppModel+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */; };
-		C9B48084270C3356003F0B3A /* CharacterSet+RFC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B48083270C3356003F0B3A /* CharacterSet+RFC.swift */; };
 		C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */; };
 		C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9B5F778264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */; };
@@ -204,7 +203,6 @@
 		C99056D52642C7A90021E364 /* SDKTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SDKTracker.swift; sourceTree = "<group>"; };
 		C9AEFF7F270B1D6300F21180 /* ReferralAppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralAppModel.swift; sourceTree = "<group>"; };
 		C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReferralAppModel+URL.swift"; sourceTree = "<group>"; };
-		C9B48083270C3356003F0B3A /* CharacterSet+RFC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CharacterSet+RFC.swift"; sourceTree = "<group>"; };
 		C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Extensions.swift"; sourceTree = "<group>"; };
 		C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDeviceIdentifier.h; sourceTree = "<group>"; };
 		C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsDeviceIdentifier.m; sourceTree = "<group>"; };
@@ -345,7 +343,6 @@
 				C923B83325FF322A00F9CCA0 /* ASIdentifierManager+Extensions.swift */,
 				C97EF57526736321006528B6 /* Bundle+EnvironmentBundle.swift */,
 				C923B84525FF322A00F9CCA0 /* Bundle+Extensions.swift */,
-				C9B48083270C3356003F0B3A /* CharacterSet+RFC.swift */,
 				C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */,
 				C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */,
 				C97EF57A26736321006528B6 /* CTTelephonyNetworkInfo+Extensions.swift */,
@@ -593,7 +590,6 @@
 				C923B87C25FF322A00F9CCA0 /* Array+RAT.swift in Sources */,
 				C923B86B25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m in Sources */,
 				C97EF57126736307006528B6 /* RAnalyticsEvent+ExtraParameters.swift in Sources */,
-				C9B48084270C3356003F0B3A /* CharacterSet+RFC.swift in Sources */,
 				C923B88F25FF322A00F9CCA0 /* NotificationCenter+Extensions.swift in Sources */,
 				C923B88D25FF322A00F9CCA0 /* Synchronizable.swift in Sources */,
 				C94F90E026E0A3BF0068B44E /* PayloadParameterKeys.swift in Sources */,

@@ -1,4 +1,5 @@
 import Foundation
+import RSDKUtils
 
 private let reservedQueryItemNames = [PayloadParameterKeys.ref,
                                       PayloadParameterKeys.refAccountIdentifier,
