@@ -136,8 +136,8 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
             }
             describe("analyticsEventHasBeenSentWith") {
                 let sentTrackingId = "a_good_tracking_id"
-                let appGroupDictionary = [RPushAppGroupIdentifierPlistKey: "appGroupId"]
-                let openCountDictionary = [RPushOpenCountSentUserDefaultKey: [sentTrackingId: true]]
+                let appGroupDictionary = [RPushTrackingKeys.AppGroupIdentifierPlistKey: "appGroupId"]
+                let openCountDictionary = [RPushTrackingKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
 
                 context("RRPushAppGroupIdentifierPlistKey is not set in the main bundle") {
                     let pushEventHandler = PushEventHandler(bundle: BundleMock(), userDefaultsType: UserDefaultsMock.self)

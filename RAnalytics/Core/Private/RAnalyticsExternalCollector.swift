@@ -395,7 +395,7 @@ private extension RAnalyticsExternalCollector {
     func addNotificationName(_ name: String, selector: Selector) {
         NotificationCenter.default.addObserver(self,
                                                selector: selector,
-                                               name: NSNotification.Name(rawValue: name),
+                                               name: Notification.Name(rawValue: name),
                                                object: nil)
     }
 }

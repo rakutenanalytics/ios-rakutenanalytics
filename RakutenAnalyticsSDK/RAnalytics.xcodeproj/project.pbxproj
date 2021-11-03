@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		452B8DEE2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452B8DED2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift */; };
 		4BB2042C26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042B26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift */; };
 		4BB204302684819400BD72B4 /* RAnalyticsConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */; };
 		C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */; };
@@ -25,9 +26,6 @@
 		C923B86A25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */; };
 		C923B86B25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */; };
 		C923B86F25FF322A00F9CCA0 /* RAnalyticsSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */; };
-		C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C923B87125FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */; };
-		C923B87225FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */; };
 		C923B87325FF322A00F9CCA0 /* Data+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82825FF322A00F9CCA0 /* Data+RAT.swift */; };
 		C923B87425FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82925FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift */; };
 		C923B87525FF322A00F9CCA0 /* EventChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82A25FF322A00F9CCA0 /* EventChecker.swift */; };
@@ -55,7 +53,6 @@
 		C923B89225FF322A00F9CCA0 /* KeychainHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */; };
 		C923B89425FF322A00F9CCA0 /* MainThreadExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84925FF322A00F9CCA0 /* MainThreadExecutor.swift */; };
 		C923B89525FF322A00F9CCA0 /* Optional+CLLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84A25FF322A00F9CCA0 /* Optional+CLLocation.swift */; };
-		C923B89625FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B89925FF322A00F9CCA0 /* RAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B84F25FF322A00F9CCA0 /* RAnalytics.m */; };
 		C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B85025FF322A00F9CCA0 /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C925314426650A33005A6051 /* ReachabilityNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C925314126650A33005A6051 /* ReachabilityNotifier.swift */; };
@@ -109,6 +106,7 @@
 /* Begin PBXFileReference section */
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		452B8DED2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsProgressNotifications.swift; sourceTree = "<group>"; };
 		4BB2042B26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RAnalyticsRATTracker+Duplicate.swift"; sourceTree = "<group>"; };
 		4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsConfiguration.swift; sourceTree = "<group>"; };
 		C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEvent.swift; sourceTree = "<group>"; };
@@ -127,9 +125,6 @@
 		C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollector.swift; sourceTree = "<group>"; };
 		C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsSwiftLoader.m; sourceTree = "<group>"; };
 		C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsSender.swift; sourceTree = "<group>"; };
-		C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsPushTrackingUtility.h; sourceTree = "<group>"; };
-		C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsProgressNotifications.m; sourceTree = "<group>"; };
-		C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsPushTrackingUtility.m; sourceTree = "<group>"; };
 		C923B82825FF322A00F9CCA0 /* Data+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+RAT.swift"; sourceTree = "<group>"; };
 		C923B82925FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
 		C923B82A25FF322A00F9CCA0 /* EventChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventChecker.swift; sourceTree = "<group>"; };
@@ -157,7 +152,6 @@
 		C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainHandler.swift; sourceTree = "<group>"; };
 		C923B84925FF322A00F9CCA0 /* MainThreadExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainThreadExecutor.swift; sourceTree = "<group>"; };
 		C923B84A25FF322A00F9CCA0 /* Optional+CLLocation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+CLLocation.swift"; sourceTree = "<group>"; };
-		C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsProgressNotifications.h; sourceTree = "<group>"; };
 		C923B84F25FF322A00F9CCA0 /* RAnalytics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalytics.m; sourceTree = "<group>"; };
 		C923B85025FF322A00F9CCA0 /* RAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
 		C925314126650A33005A6051 /* ReachabilityNotifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilityNotifier.swift; sourceTree = "<group>"; };
@@ -315,10 +309,7 @@
 			isa = PBXGroup;
 			children = (
 				C923B82725FF322A00F9CCA0 /* Private */,
-				C923B84B25FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h */,
-				C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */,
-				C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */,
-				C923B82625FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m */,
+				452B8DED2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift */,
 				C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */,
 				C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */,
 				C9AEFF7F270B1D6300F21180 /* ReferralAppModel.swift */,
@@ -422,8 +413,6 @@
 			files = (
 				C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */,
 				C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */,
-				C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */,
-				C923B89625FF322A00F9CCA0 /* RAnalyticsProgressNotifications.h in Headers */,
 				C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */,
 				C923B86325FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h in Headers */,
 				C923B88C25FF322A00F9CCA0 /* SwiftHeader.h in Headers */,
@@ -514,7 +503,6 @@
 				C9D40ADB26D3D30A0069393D /* RAnalyticsEvent+Install.swift in Sources */,
 				C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */,
 				C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */,
-				C923B87225FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.m in Sources */,
 				C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */,
 				C923B86125FF322A00F9CCA0 /* CoreHelpers.swift in Sources */,
 				C923B87A25FF322A00F9CCA0 /* Optional+String.swift in Sources */,
@@ -540,6 +528,7 @@
 				C926164E26D641B300119292 /* RAnalyticsTracker.swift in Sources */,
 				C94F90E426E0A3BF0068B44E /* ReferralTrackingType.swift in Sources */,
 				C99056D02642C7870021E364 /* AnalyticsManager.swift in Sources */,
+				452B8DEE2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift in Sources */,
 				C923B88E25FF322A00F9CCA0 /* CLLocation+Extensions.swift in Sources */,
 				C97EF57D26736321006528B6 /* DatabaseConfiguration.swift in Sources */,
 				C923B86825FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift in Sources */,
@@ -562,7 +551,6 @@
 				C99056D62642C7A90021E364 /* SDKTracker.swift in Sources */,
 				C97EF56D26736307006528B6 /* RAnalyticsLoginMethod+Extensions.swift in Sources */,
 				C97EF57026736307006528B6 /* String+LogoutMethod.swift in Sources */,
-				C923B87125FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m in Sources */,
 				C9AEFF80270B1D6300F21180 /* ReferralAppModel.swift in Sources */,
 				C923B86F25FF322A00F9CCA0 /* RAnalyticsSender.swift in Sources */,
 				C925314426650A33005A6051 /* ReachabilityNotifier.swift in Sources */,

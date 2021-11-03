@@ -34,7 +34,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         loginMethods.forEach {
                             let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                            let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.\($0)")
+                            let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.\($0)")
                             expect(externalCollector.trackingIdentifier).to(beNil())
                             expect(externalCollector.loginMethod).to(equal(.other))
                             expect(externalCollector.isLoggedIn).to(beFalse())
@@ -63,7 +63,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                         let trackingIdentifier = "trackingIdentifier"
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.other")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.other")
 
                         expect(externalCollector.trackingIdentifier).to(beNil())
                         expect(externalCollector.loginMethod).to(equal(.other))
@@ -71,7 +71,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
 
-                        let passwordNotificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.password")
+                        let passwordNotificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.password")
                         NotificationCenter.default.post(name: passwordNotificationName, object: trackingIdentifier)
 
                         expect(externalCollector.loginMethod).toEventually(equal(.passwordInput))
@@ -91,7 +91,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                         let easyIdentifier = "easyIdentifier"
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.idtoken_memberid")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.idtoken_memberid")
 
                         expect(externalCollector.easyIdentifier).to(beNil())
                         expect(externalCollector.loginMethod).to(equal(.other))
@@ -99,7 +99,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
 
-                        let passwordNotificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).login.password")
+                        let passwordNotificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.password")
                         NotificationCenter.default.post(name: passwordNotificationName, object: easyIdentifier)
 
                         expect(externalCollector.loginMethod).toEventually(equal(.passwordInput))
@@ -136,10 +136,10 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         switch notificationName {
                         case "\(self.notificationBaseName).login.failure":
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: notificationName), object: params)
+                            NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: params)
 
                         case "\(self.notificationBaseName).login.failure.idtoken_memberid":
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: notificationName), object: idsdkError)
+                            NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: idsdkError)
 
                         default:
                             assertionFailure("Unexpected login failure case.")
@@ -174,7 +174,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                     logoutMethods.forEach {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).logout.\($0)")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).logout.\($0)")
 
                         expect(externalCollector.trackingIdentifier).to(beNil())
                         expect(externalCollector.easyIdentifier).to(beNil())
@@ -182,7 +182,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
 
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "\(self.notificationBaseName).login.other"),
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "\(self.notificationBaseName).login.other"),
                                                         object: trackingIdentifier)
 
                         expect(externalCollector.isLoggedIn).toEventually(beTrue())
@@ -218,7 +218,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         expect(externalCollector.isLoggedIn).to(beFalse())
 
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
@@ -240,7 +240,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         expect(externalCollector.isLoggedIn).to(beFalse())
 
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
@@ -263,7 +263,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         expect(externalCollector.isLoggedIn).to(beFalse())
 
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
@@ -287,7 +287,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         expect(externalCollector.isLoggedIn).to(beFalse())
 
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).ssodialog")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).ssodialog")
 
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
@@ -310,7 +310,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         expect(externalCollector.isLoggedIn).to(beFalse())
 
-                        let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).\($0.key)")
+                        let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).\($0.key)")
 
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
@@ -331,7 +331,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     expect(externalCollector.isLoggedIn).to(beFalse())
 
-                    let notificationName = NSNotification.Name(rawValue: "\(self.notificationBaseName).custom")
+                    let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).custom")
 
                     expect(tracker?.eventName).to(beNil())
                     expect(tracker?.params).to(beNil())

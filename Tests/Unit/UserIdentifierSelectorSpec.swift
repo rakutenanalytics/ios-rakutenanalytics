@@ -7,7 +7,7 @@ import Nimble
 final class UserIdentifierSelectorSpec: QuickSpec {
     override func spec() {
         describe("UserIdentifierSelector") {
-            let notificationName = NSNotification.Name(rawValue: "com.rakuten.esd.sdk.events.login.other")
+            let notificationName = Notification.Name(rawValue: "com.rakuten.esd.sdk.events.login.other")
             let noLoginFound = "NO_LOGIN_FOUND"
             let dependenciesContainer = SimpleContainerMock()
 

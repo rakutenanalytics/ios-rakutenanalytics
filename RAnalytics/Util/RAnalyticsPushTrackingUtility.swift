@@ -1,5 +1,11 @@
 import Foundation
 
+internal enum RPushTrackingKeys {
+    /// Info.plist key whose value holds the name of the App Group set by the App.
+    static let AppGroupIdentifierPlistKey = "RPushAppGroupIdentifier"
+    static let OpenCountSentUserDefaultKey = "com.analytics.push.sentOpenCount"
+}
+
 /// Constructs the tracking identifier from the push payload.
 @objc public final class RAnalyticsPushTrackingUtility: NSObject {
     private enum PushKeys {

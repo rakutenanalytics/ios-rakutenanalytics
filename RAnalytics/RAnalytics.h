@@ -1,7 +1,5 @@
 // Core
 #import <RAnalytics/RAnalyticsDefines.h>
-#import <RAnalytics/RAnalyticsPushTrackingUtility.h>
-#import <RAnalytics/RAnalyticsProgressNotifications.h>
 #import <RAnalytics/RAnalyticsDeviceIdentifier.h>
 
 // RAT

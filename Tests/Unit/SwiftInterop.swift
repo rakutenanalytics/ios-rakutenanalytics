@@ -1,6 +1,6 @@
 import XCTest
-import RAnalytics
 import RDeviceIdentifier
+@testable import RAnalytics
 
 public class SwiftInterop: XCTestCase {
     @objc
@@ -62,7 +62,7 @@ public class SwiftInterop: XCTestCase {
         }
     }
 
-    public func testSwiftInterop() {
+    func testSwiftInterop() {
         let rat: RAnalyticsRATTracker = RAnalyticsRATTracker.shared()
         XCTAssertNotNil(rat)
 
@@ -88,8 +88,8 @@ public class SwiftInterop: XCTestCase {
         XCTAssertNotNil(tracker.lastState)
 
         let nCenter = NotificationCenter.default
-        nCenter.post(name: NSNotification.Name.RAnalyticsWillUpload, object: nil)
-        nCenter.post(name: NSNotification.Name.RAnalyticsUploadFailure, object: nil)
-        nCenter.post(name: NSNotification.Name.RAnalyticsUploadSuccess, object: nil)
+        nCenter.post(name: Notification.Name.RAnalyticsWillUpload, object: nil)
+        nCenter.post(name: Notification.Name.RAnalyticsUploadFailure, object: nil)
+        nCenter.post(name: Notification.Name.RAnalyticsUploadSuccess, object: nil)
     }
 }

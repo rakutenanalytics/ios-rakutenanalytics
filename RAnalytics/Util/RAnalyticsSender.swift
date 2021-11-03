@@ -227,7 +227,7 @@ fileprivate extension RAnalyticsSender {
     }
 
     private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) {
-        NotificationCenter.default.post(name: NSNotification.Name.RAnalyticsUploadFailure,
+        NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadFailure,
                                         object: ratJsonRecords,
                                         userInfo: [NSUnderlyingErrorKey: error])
         backgroundUploadEnded()
