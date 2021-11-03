@@ -494,7 +494,7 @@ extension RAnalyticsRATTracker {
             extra.addEntries(from: event.logoutParameters)
 
         // MARK: _rem_visit
-        case RAnalyticsEvent.Name.pageVisit where AnalyticsManager.shared().shouldTrackPageView == true:
+        case RAnalyticsEvent.Name.pageVisit:
             // Override etype
             payload[PayloadParameterKeys.etype] = EventsName.pageVisit
 

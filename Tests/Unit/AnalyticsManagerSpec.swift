@@ -156,31 +156,6 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
-            describe("shouldTrackPageView") {
-                let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
-                let state: RAnalyticsState = {
-                    let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB", deviceIdentifier: "deviceId")
-                    state.referralTracking = .page(currentPage: UIViewController())
-                    return state
-                }()
-
-                it("RAnalyticsRATTracker should process the page visit event when shouldTrackPageView is true") {
-                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView
-                    AnalyticsManager.shared().shouldTrackPageView = true
-                    expect(RAnalyticsRATTracker.shared().process(event: event, state: state)).to(beTrue())
-
-                    AnalyticsManager.shared().shouldTrackPageView = shouldTrackPageView
-                }
-
-                it("RAnalyticsRATTracker should not process the page visit event when shouldTrackPageView is false") {
-                    let shouldTrackPageView = AnalyticsManager.shared().shouldTrackPageView
-                    AnalyticsManager.shared().shouldTrackPageView = false
-                    expect(RAnalyticsRATTracker.shared().process(event: event, state: state)).to(beFalse())
-
-                    AnalyticsManager.shared().shouldTrackPageView = shouldTrackPageView
-                }
-            }
-
             // Note: RAnalyticsSessionEndEventName is added to the RAnalyticsConfiguration.plist file for the key: RATDisabledEventsList
             describe("shouldTrackEventHandler") {
                 context("shouldTrackEventHandler is nil") {

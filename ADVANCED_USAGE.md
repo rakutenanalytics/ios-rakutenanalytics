@@ -75,7 +75,7 @@ ATTrackingManager.requestTrackingAuthorization { status in
 
 ## Configure page view tracking
 
-By default the SDK automatically tracks page views/visits (`pv` etype in RAT). The automatic tracking can be disabled by setting `RAnalyticsManager#shouldTrackPageView` to `false`. This property is now deprecated and we recommend to use the below feature [Configure automatic tracking](#configure-automatic-tracking) instead.
+By default the SDK automatically tracks page views/visits (`pv` etype in RAT). The automatic tracking can be disabled by adding `_rem_visit` to disabled events list. More details can be found in [Configure automatic tracking](#configure-automatic-tracking) section.
 
 
 ## Configure automatic tracking

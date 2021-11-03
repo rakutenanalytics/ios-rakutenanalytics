@@ -29,10 +29,6 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
         singleton
     }
 
-    /// Control whether the SDK should track page views. Defaults to `YES`.
-    @available(*, deprecated, message: "RAnalyticsManager#shouldTrackEventHandler should be used instead.")
-    @objc public var shouldTrackPageView: Bool = false
-
     /// Control whether the SDK should track the device's location or not.
     /// This property is set to `YES` by default, which means @ref RAnalyticsManager will use the device's location.
     ///
@@ -131,7 +127,6 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
-        shouldTrackPageView = true
 
         // Inject the Dependencies Container
         advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesContainer: dependenciesContainer)

@@ -206,6 +206,19 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 # Knowledge Base
 
+## Migrating from previous versions to v9
+
+### shouldTrackPageView
+`shouldTrackPageView` var in `AnalyticsManager` has been removed in version 9.0.0
+To disable automatic page view tracking you should add `_rem_visit` to `RATDisabledEventsList` array in your Info.plist file OR use `AnalyticsManager.shared().shouldTrackEvent` to filter out `AnalyticsManager.Event.Name.pageVisit` event:
+```swift
+AnalyticsManager.shared().shouldTrackEvent = { eventName in
+    eventName != AnalyticsManager.Event.Name.pageVisit
+}
+```
+You can learn more about Automatic Tracking Configuration feature in [Advanced Usage](advanced_usage.html#configure-automatic-tracking) docs.
+
+
 ## Migrating from v2 to v3
 
 * 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
