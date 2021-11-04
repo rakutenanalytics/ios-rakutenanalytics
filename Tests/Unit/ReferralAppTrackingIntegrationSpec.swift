@@ -72,7 +72,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 let payload2 = payloads[1]
                 let cpPayload2 = payload2[PayloadParameterKeys.cp] as? [String: Any]
 
-                expect(payload1[PayloadParameterKeys.etype] as? String).to(equal(EventsName.pageVisit))
+                expect(payload1[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.pageVisitForRAT))
                 expect(payload1[PayloadParameterKeys.acc] as? Int).to(equal(477))
                 expect(payload1[PayloadParameterKeys.aid] as? Int).to(equal(1))
                 expect(payload1[PayloadParameterKeys.ref] as? String).to(equal(appBundleIdentifier))
@@ -82,7 +82,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 expect(cpPayload1?[PayloadParameterKeys.refComponent] as? String).to(equal(component))
 
                 expect(payload2).toNot(beNil())
-                expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(EventsName.deeplink))
+                expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
                 expect(payload2[PayloadParameterKeys.acc] as? Int).to(equal(1))
                 expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(2))
                 expect(payload2[PayloadParameterKeys.ref] as? String).to(equal(appBundleIdentifier))

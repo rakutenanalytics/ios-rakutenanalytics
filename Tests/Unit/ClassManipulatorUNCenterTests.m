@@ -2,6 +2,7 @@
 #if __has_include(<UserNotifications/UserNotifications.h>)
 #import <UserNotifications/UserNotifications.h>
 #import <RAnalytics/RAnalytics.h>
+#import "UnitTests-Swift.h"
 #import <OCMock/OCMock.h>
 
 @interface UNDelegate : NSObject <UNUserNotificationCenterDelegate>
@@ -69,9 +70,9 @@
     OCMVerify([mockManager process:[OCMArg checkWithBlock:^BOOL(id obj) {
         RAnalyticsEvent *event = obj;
         XCTAssertNotNil(event);
-        BOOL expected = ([event.name isEqualToString:RAnalyticsPushNotificationEventName]);
+        BOOL expected = ([event.name isEqualToString:RAnalyticsEvent.pushNotification]);
         XCTAssertTrue(expected, @"Unexpected event processed: %@", event.name);
-        XCTAssertTrue([event.parameters[RAnalyticsPushNotificationTrackingIdentifierParameter] isEqualToString:@"rid:1234abcd"]);
+        XCTAssertTrue([event.parameters[RAnalyticsEvent.pushTrackingIdentifier] isEqualToString:@"rid:1234abcd"]);
         return expected;
     }]]);
     

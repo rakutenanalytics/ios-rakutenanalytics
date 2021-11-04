@@ -10,7 +10,6 @@
 		4BB2042C26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042B26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift */; };
 		4BB204302684819400BD72B4 /* RAnalyticsConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */; };
 		C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */; };
-		C923B85525FF322A00F9CCA0 /* RAnalyticsEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */; };
 		C923B85825FF322A00F9CCA0 /* RAnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */; };
 		C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B85C25FF322A00F9CCA0 /* NSNotification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */; };
@@ -25,7 +24,6 @@
 		C923B86825FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81A25FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift */; };
 		C923B86A25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */; };
 		C923B86B25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */; };
-		C923B86D25FF322A00F9CCA0 /* RAnalyticsEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B86F25FF322A00F9CCA0 /* RAnalyticsSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */; };
 		C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B87125FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */; };
@@ -72,7 +70,6 @@
 		C948A57C265E8877008BA975 /* NSObject+Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = C948A574265E8877008BA975 /* NSObject+Number.swift */; };
 		C948A57E265E8877008BA975 /* DeviceHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C948A576265E8877008BA975 /* DeviceHandler.swift */; };
 		C94F90E026E0A3BF0068B44E /* PayloadParameterKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90DB26E0A3BF0068B44E /* PayloadParameterKeys.swift */; };
-		C94F90E126E0A3BF0068B44E /* EventsName.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90DC26E0A3BF0068B44E /* EventsName.swift */; };
 		C94F90E226E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90DD26E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift */; };
 		C94F90E426E0A3BF0068B44E /* ReferralTrackingType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90DF26E0A3BF0068B44E /* ReferralTrackingType.swift */; };
 		C959745E265E905800074479 /* UserAgentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C959745D265E905800074479 /* UserAgentHandler.swift */; };
@@ -115,7 +112,6 @@
 		4BB2042B26841F1900BD72B4 /* RAnalyticsRATTracker+Duplicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RAnalyticsRATTracker+Duplicate.swift"; sourceTree = "<group>"; };
 		4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsConfiguration.swift; sourceTree = "<group>"; };
 		C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEvent.swift; sourceTree = "<group>"; };
-		C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsEvent.m; sourceTree = "<group>"; };
 		C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsState.swift; sourceTree = "<group>"; };
 		C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDefines.h; sourceTree = "<group>"; };
 		C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extensions.swift"; sourceTree = "<group>"; };
@@ -130,7 +126,6 @@
 		C923B81A25FF322A00F9CCA0 /* RAnalyticsExternalCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollector.swift; sourceTree = "<group>"; };
 		C923B81C25FF322A00F9CCA0 /* RAnalyticsLaunchCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollector.swift; sourceTree = "<group>"; };
 		C923B81D25FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsSwiftLoader.m; sourceTree = "<group>"; };
-		C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsEvent.h; sourceTree = "<group>"; };
 		C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsSender.swift; sourceTree = "<group>"; };
 		C923B82425FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsPushTrackingUtility.h; sourceTree = "<group>"; };
 		C923B82525FF322A00F9CCA0 /* RAnalyticsProgressNotifications.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsProgressNotifications.m; sourceTree = "<group>"; };
@@ -177,7 +172,6 @@
 		C948A574265E8877008BA975 /* NSObject+Number.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSObject+Number.swift"; sourceTree = "<group>"; };
 		C948A576265E8877008BA975 /* DeviceHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceHandler.swift; sourceTree = "<group>"; };
 		C94F90DB26E0A3BF0068B44E /* PayloadParameterKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PayloadParameterKeys.swift; sourceTree = "<group>"; };
-		C94F90DC26E0A3BF0068B44E /* EventsName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsName.swift; sourceTree = "<group>"; };
 		C94F90DD26E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnalyticsManager+ReferralAppTracking.swift"; sourceTree = "<group>"; };
 		C94F90DF26E0A3BF0068B44E /* ReferralTrackingType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralTrackingType.swift; sourceTree = "<group>"; };
 		C959745D265E905800074479 /* UserAgentHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserAgentHandler.swift; sourceTree = "<group>"; };
@@ -281,8 +275,6 @@
 				C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */,
 				C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */,
 				C926163D26D4E4FE00119292 /* RAnalyticsEndpointSettable.swift */,
-				C923B81F25FF322A00F9CCA0 /* RAnalyticsEvent.h */,
-				C923B80625FF322A00F9CCA0 /* RAnalyticsEvent.m */,
 				C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */,
 				C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */,
 				C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */,
@@ -352,7 +344,6 @@
 				C99056D22642C7960021E364 /* Dictionary+Extensions.swift */,
 				C9705FE6269C4605004D1715 /* ErrorMessage.swift */,
 				C923B82A25FF322A00F9CCA0 /* EventChecker.swift */,
-				C94F90DC26E0A3BF0068B44E /* EventsName.swift */,
 				C9F0AEAD27183ACC00676992 /* FileManager+Extensions.swift */,
 				C96B73E4261E479600CF91BA /* HTTPCookieStorage+Extensions.swift */,
 				C923B84725FF322A00F9CCA0 /* KeychainHandler.swift */,
@@ -429,7 +420,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C923B86D25FF322A00F9CCA0 /* RAnalyticsEvent.h in Headers */,
 				C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */,
 				C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */,
 				C923B87025FF322A00F9CCA0 /* RAnalyticsPushTrackingUtility.h in Headers */,
@@ -517,12 +507,10 @@
 				4BB204302684819400BD72B4 /* RAnalyticsConfiguration.swift in Sources */,
 				C9F0AEAE27183ACC00676992 /* FileManager+Extensions.swift in Sources */,
 				C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */,
-				C923B85525FF322A00F9CCA0 /* RAnalyticsEvent.m in Sources */,
 				C923B87625FF322A00F9CCA0 /* UIViewController+Extensions.swift in Sources */,
 				C94F90E226E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift in Sources */,
 				C923B85F25FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift in Sources */,
 				C97EF58026736321006528B6 /* UIScreen+Extensions.swift in Sources */,
-				C94F90E126E0A3BF0068B44E /* EventsName.swift in Sources */,
 				C9D40ADB26D3D30A0069393D /* RAnalyticsEvent+Install.swift in Sources */,
 				C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */,
 				C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */,

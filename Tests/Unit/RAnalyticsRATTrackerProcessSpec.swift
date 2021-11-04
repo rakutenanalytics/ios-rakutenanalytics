@@ -244,7 +244,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             var payload: [String: Any]?
                             var cpPayload: [String: Any]?
 
-                            expecter.expectEvent(event, state: Tracking.defaultState, equal: EventsName.pageVisit) {
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                 payload = $0.first
                                 cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                             }
@@ -259,7 +259,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             var payload: [String: Any]?
                             var cpPayload: [String: Any]?
 
-                            expecter.expectEvent(event, state: Tracking.defaultState, equal: EventsName.pageVisit) {
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                 payload = $0.first
                                 cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                             }
@@ -305,7 +305,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                             state.origin = .external
 
-                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                            expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                 payload = $0.first
                                 cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                             }
@@ -324,7 +324,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                             state.origin = .push
 
-                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                            expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                 payload = $0.first
                                 cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                             }
@@ -349,7 +349,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                                          customParameters: ["key1": "value1"])
                             state.referralTracking = .referralApp(model)
 
-                            expecter.expectEvent(event, state: state, equal: EventsName.pageVisit) {
+                            expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                 payloads = $0
                             }
 
@@ -362,7 +362,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             let payload2 = payloads[1]
                             let cpPayload2 = payload2[PayloadParameterKeys.cp] as? [String: Any]
 
-                            expect(payload1[PayloadParameterKeys.etype] as? String).to(equal(EventsName.pageVisit))
+                            expect(payload1[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.pageVisitForRAT))
                             expect(payload1[PayloadParameterKeys.acc] as? Int).to(equal(777))
                             expect(payload1[PayloadParameterKeys.aid] as? Int).to(equal(888))
                             expect(payload1[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))
@@ -372,7 +372,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(cpPayload1?[PayloadParameterKeys.refComponent] as? String).to(equal("news"))
 
                             expect(payload2).toNot(beNil())
-                            expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(EventsName.deeplink))
+                            expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
                             expect(payload2[PayloadParameterKeys.acc] as? Int).to(equal(111))
                             expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(222))
                             expect(payload2[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))

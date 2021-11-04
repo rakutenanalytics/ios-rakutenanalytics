@@ -379,7 +379,7 @@ extension RAnalyticsRATTracker {
                                                     disabledEvents: nil)
 
                 let referralPayload = payload.duplicate(for: referralAppAccount)
-                referralPayload[PayloadParameterKeys.etype] = EventsName.deeplink
+                referralPayload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.deeplink
 
                 sender.send(jsonObject: referralPayload)
 
@@ -496,7 +496,7 @@ extension RAnalyticsRATTracker {
         // MARK: _rem_visit
         case RAnalyticsEvent.Name.pageVisit:
             // Override etype
-            payload[PayloadParameterKeys.etype] = EventsName.pageVisit
+            payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
 
             switch state.referralTracking {
             case .page(let currentPage):
@@ -547,19 +547,19 @@ extension RAnalyticsRATTracker {
 
         // MARK: _analytics_custom (wrapper for event name and its data)
         case RAnalyticsEvent.Name.custom:
-            guard let eventName = event.parameters[RAnalyticsCustomEventNameParameter] as? String,
+            guard let eventName = event.parameters[RAnalyticsEvent.Parameter.eventName] as? String,
                   !eventName.isEmpty else {
                 return false
             }
 
             payload[PayloadParameterKeys.etype] = eventName
 
-            if let topLevelObject = event.parameters[RAnalyticsCustomEventTopLevelObjectParameter] as? [AnyHashable: Any],
+            if let topLevelObject = event.parameters[RAnalyticsEvent.Parameter.topLevelObject] as? [AnyHashable: Any],
                !topLevelObject.isEmpty {
                 payload.addEntries(from: topLevelObject)
             }
 
-            if let parameters = event.parameters[RAnalyticsCustomEventDataParameter] as? [AnyHashable: Any],
+            if let parameters = event.parameters[RAnalyticsEvent.Parameter.eventData] as? [AnyHashable: Any],
                !parameters.isEmpty {
                 extra.addEntries(from: parameters)
             }

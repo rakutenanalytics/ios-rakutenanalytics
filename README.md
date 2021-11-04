@@ -225,6 +225,17 @@ This function has been removed in version 9.0.0:
 ```
 Simply replace `RAnalyticsRATTracker.endpointAddress()` by `RAnalyticsRATTracker.shared().endpointURL`.
 
+### Events
+
+#### RAnalyticsEvent.Name
+RAnalyticsEvent.Name is no longer accessible from Objective-C classes.
+
+#### RAnalyticsEvent.Parameter
+RAnalyticsEvent.Parameter is no longer accessible from Objective-C classes.
+
+#### RAnalyticsEvent.LogoutMethod
+RAnalyticsEvent.LogoutMethod is no longer accessible from Objective-C classes.
+
 ## Migrating from v2 to v3
 
 * 2.13.0 is the final version of the RSDKAnalytics podspec. It has been renamed to RAnalytics podspec from version 3.0.0.
