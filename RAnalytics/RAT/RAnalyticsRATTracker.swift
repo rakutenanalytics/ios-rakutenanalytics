@@ -742,17 +742,3 @@ extension RAnalyticsRATTracker {
         duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
     }
 }
-
-// MARK: - Deprecated Public API
-
-extension RAnalyticsRATTracker {
-    /// - Returns: the RAT Endpoint URL.
-    @available(*, deprecated, message: "RAnalyticsRATTracker#endpointURL should be used instead.")
-    @objc public static func endpointAddress() -> URL? {
-        let selector = #selector(getter: self.sender)
-        guard let sender = RAnalyticsRATTracker.shared().perform(selector)?.takeUnretainedValue() as? RAnalyticsSender else {
-            return nil
-        }
-        return sender.endpointURL
-    }
-}

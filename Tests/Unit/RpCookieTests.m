@@ -67,7 +67,7 @@
     XCTestExpectation *expectation = [self expectationWithDescription:@"expectation"];
     
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker.sharedInstance endpointURL]]];
     } withStubResponse:^OHHTTPStubsResponse *(__unused NSURLRequest *request) {
         return [OHHTTPStubsResponse responseWithData:[NSData new]
                                           statusCode:500
@@ -123,7 +123,7 @@
 - (void)setRpCookieWithName:(NSString *)cookieName value:(NSString *)cookieValue expiryDate:(NSString *)expiryDate
 {
     [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest *request) {
-        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker endpointAddress]]];
+        return [request.URL.absoluteString containsString:[NSString stringWithFormat:@"%@",[RAnalyticsRATTracker.sharedInstance endpointURL]]];
     } withStubResponse:^OHHTTPStubsResponse *(__unused NSURLRequest *request) {
         NSString* cookie = [NSString stringWithFormat:@"%@=%@; path=/; expires=%@; session-only=%@; domain=.rakuten.co.jp", cookieName, cookieValue, expiryDate, [NSNumber numberWithBool:NO]];
         NSDictionary* headers = @{@"Set-Cookie": cookie};

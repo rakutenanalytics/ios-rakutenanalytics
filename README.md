@@ -218,6 +218,12 @@ AnalyticsManager.shared().shouldTrackEvent = { eventName in
 ```
 You can learn more about Automatic Tracking Configuration feature in [Advanced Usage](advanced_usage.html#configure-automatic-tracking) docs.
 
+### Endpoint
+This function has been removed in version 9.0.0:
+```swift
+@objc public static func endpointAddress() -> URL?
+```
+Simply replace `RAnalyticsRATTracker.endpointAddress()` by `RAnalyticsRATTracker.shared().endpointURL`.
 
 ## Migrating from v2 to v3
 
