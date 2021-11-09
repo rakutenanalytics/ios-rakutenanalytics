@@ -20,7 +20,7 @@ final class TelephonyHandlerSpec: QuickSpec {
             describe("mcn, mcnd") {
                 it(#"should return mcn == "", mcnd == "" when there are no carriers"#) {
                     telephonyNetworkInfo.subscribers = nil
-                    telephonyNetworkInfo.dataServiceIdentifier = nil
+                    telephonyNetworkInfo.safeDataServiceIdentifier = nil
 
                     expect(telephonyHandler.mcn).to(equal(""))
                     expect(telephonyHandler.mcnd).to(equal(""))
@@ -28,7 +28,7 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                 it(#"should return mcn == Carrier1, mcnd == "" when there is only one carrier (Physical SIM is primary)"#) {
                     telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
                     expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
                     expect(telephonyHandler.mcnd).to(equal(""))
@@ -36,7 +36,7 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                 it(#"should return mcn == Carrier2, mcnd == "" when there is only one carrier (eSIM is primary)"#) {
                     telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
 
                     expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
                     expect(telephonyHandler.mcnd).to(equal(""))
@@ -45,7 +45,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 it("should return mcn == Carrier1, mcnd == Carrier2 when the primary carrier is Carrier1 (Physical SIM), the secondary carrier is Carrier 2 (eSIM)") {
                     telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
                     expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
                     expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
@@ -54,7 +54,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 it("should return mcn == Carrier2, mcnd == Carrier1 when the primary carrier is Carrier2 (eSIM), the secondary carrier is Carrier1 (Physical SIM)") {
                     telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
 
                     expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
                     expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
@@ -63,7 +63,7 @@ final class TelephonyHandlerSpec: QuickSpec {
 
             describe("mnetw and mnetwd") {
                 it("should return mnetw == nil, mnetwd == nil when there are no radios") {
-                    telephonyNetworkInfo.dataServiceIdentifier = nil
+                    telephonyNetworkInfo.safeDataServiceIdentifier = nil
                     telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = nil
 
                     expect(telephonyHandler.mnetw).to(beNil())
@@ -71,7 +71,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 }
 
                 it("should return mnetw == 3, mnetwd == nil when there are only one radio (Physical SIM is primary)") {
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
                     telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyEdge]
 
                     expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyEdge.networkType.rawValue))
@@ -79,7 +79,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 }
 
                 it("should return mnetw == 4, mnetwd == nil when there are only one radio (Physical SIM is primary)") {
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
                     telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE]
 
                     expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyLTE.networkType.rawValue))
@@ -88,7 +88,7 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                 if #available(iOS 14.1, *) {
                     it("should return mnetw == 5, mnetwd == nil when there are only one radio (Physical SIM is primary)") {
-                        telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
                         telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyNR]
 
                         expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyNR.networkType.rawValue))
@@ -97,7 +97,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 }
 
                 it("should return mnetw == 3, mnetwd == nil when there are only one radio (eSIM is primary)") {
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
                     telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyEdge]
 
                     expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyEdge.networkType.rawValue))
@@ -105,7 +105,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                 }
 
                 it("should return mnetw == 4, mnetwd == nil when there are only one radio (eSIM is primary)") {
-                    telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
                     telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
 
                     expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyLTE.networkType.rawValue))
@@ -114,7 +114,7 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                 if #available(iOS 14.1, *) {
                     it("should return mnetw == 5, mnetwd == nil when there are only one radio (eSIM is primary)") {
-                        telephonyNetworkInfo.dataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
                         telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyNR]
 
                         expect(telephonyHandler.mnetw?.intValue).to(equal(CTRadioAccessTechnologyNR.networkType.rawValue))
@@ -170,7 +170,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                     }
 
                     func verify(dataServiceIdentifier: String, primaryRadio: String, secondaryRadio: String) {
-                        telephonyNetworkInfo.dataServiceIdentifier = dataServiceIdentifier
+                        telephonyNetworkInfo.safeDataServiceIdentifier = dataServiceIdentifier
 
                         telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryRadio,
                                                                                     TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryRadio]
@@ -239,7 +239,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                     }
 
                     func verify(dataServiceIdentifier: String, primaryRadio: String, secondaryRadio: String) {
-                        telephonyNetworkInfo.dataServiceIdentifier = dataServiceIdentifier
+                        telephonyNetworkInfo.safeDataServiceIdentifier = dataServiceIdentifier
 
                         telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryRadio,
                                                                                     TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryRadio]

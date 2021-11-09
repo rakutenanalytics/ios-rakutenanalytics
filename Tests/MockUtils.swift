@@ -304,7 +304,7 @@ final class TelephonyNetworkInfoMock: NSObject, TelephonyNetworkInfoHandleable {
         static let secondaryCarrierKey = "0000000100000002"
     }
 
-    var dataServiceIdentifier: String? = Constants.primaryCarrierKey
+    var safeDataServiceIdentifier: String? = Constants.primaryCarrierKey
 
     var subscribers: [String: Carrierable]?
 

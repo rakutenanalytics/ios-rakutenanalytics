@@ -95,7 +95,7 @@ extension TelephonyHandler {
     @available(iOS 12.0, *)
     private var selectedCarrierKey: String? {
         if #available(iOS 13.0, *) {
-            return telephonyNetworkInfo.dataServiceIdentifier
+            return telephonyNetworkInfo.safeDataServiceIdentifier
 
         } else {
             return retrievedCarrierKey
