@@ -13,8 +13,11 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             var dependenciesContainer: SimpleContainerMock!
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
-                dependenciesContainer.userStorageHandler = UserDefaultsMock()
+                dependenciesContainer.userStorageHandler = UserDefaultsMock([:])
                 dependenciesContainer.tracker = AnalyticsTrackerMock()
+            }
+            beforeEach {
+                (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
             }
             describe("init") {
                 it("should have the correct default values") {
@@ -25,6 +28,48 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     expect(externalCollector.loginMethod).to(equal(.other))
                 }
             }
+            describe("userIdentifier") {
+                it("should set the expected value") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.userIdentifier = "myUserID"
+                    expect(externalCollector.userIdentifier).to(equal("myUserID"))
+                }
+
+                it("should save the user identifier in the user defaults") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.userIdentifier = "myUserID"
+                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.userIdentifierKey)
+                    expect(value).to(equal("myUserID"))
+                }
+
+                it("should delete the user identifier from the user defaults") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.userIdentifier = nil
+                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.userIdentifierKey)
+                    expect(value).to(beNil())
+                }
+            }
+            describe("easyIdentifier") {
+                it("should set the expected value") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.easyIdentifier = "myEasyID"
+                    expect(externalCollector.easyIdentifier).to(equal("myEasyID"))
+                }
+
+                it("should save the easy identifier in the user defaults") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.easyIdentifier = "myEasyID"
+                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+                    expect(value).to(equal("myEasyID"))
+                }
+
+                it("should delete the easy identifier from the user defaults") {
+                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                    externalCollector.easyIdentifier = nil
+                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+                    expect(value).to(beNil())
+                }
+            }
             describe("receiveLoginNotification") {
                 context("login methods are password and one_tap") {
                     it("should track AnalyticsManager.Event.Name.login when a login notification is received with a trackingIdentifier") {
@@ -33,6 +78,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         let loginMethods = ["password", "one_tap"]
 
                         loginMethods.forEach {
+                            (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
+
                             let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                             let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.\($0)")
                             expect(externalCollector.trackingIdentifier).to(beNil())

@@ -17,7 +17,7 @@ protocol UserIdentifiable {
 /// This class tracks login, logout and push events.
 /// It creates event corressponding to each event, sends it to RAnalyticsManager's instance to process.
 final class RAnalyticsExternalCollector: UserIdentifiable {
-    private enum Constants {
+    enum Constants {
         static let loginStateKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.loginState"
         static let trackingIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.trackingIdentifier"
         static let easyIdentifierKey = "com.rakuten.esd.sdk.properties.analytics.loginInformation.easyIdentifier"
@@ -80,7 +80,7 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
             }
             if let easyIdentifier = newValue,
                !easyIdentifier.isEmpty {
-                userStorageHandler?.set(value: trackingIdentifier, forKey: Constants.easyIdentifierKey)
+                userStorageHandler?.set(value: easyIdentifier, forKey: Constants.easyIdentifierKey)
 
             } else {
                 userStorageHandler?.removeObject(forKey: Constants.easyIdentifierKey)
