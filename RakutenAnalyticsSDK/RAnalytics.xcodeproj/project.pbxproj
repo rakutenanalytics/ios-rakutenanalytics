@@ -726,7 +726,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 8.2.1;
+				MARKETING_VERSION = 9.0.0;
 				MODULEMAP_PRIVATE_FILE = RAnalytics.private.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -759,7 +759,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 8.2.1;
+				MARKETING_VERSION = 9.0.0;
 				MODULEMAP_PRIVATE_FILE = RAnalytics.private.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.RAnalytics;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
