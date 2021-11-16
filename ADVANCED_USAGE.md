@@ -14,6 +14,7 @@
 1. [Creating a custom tracker](#creating-a-custom-tracker)
 1. [Fetching a RP Cookie](#fetching-a-rp-cookie)
 1. [App-to-App referral tracking](#app-to-app-referral-tracking)
+1. [How to configure the database directory path](#how-to-configure-the-database-directory-path)
 1. [Event triggers](#event-triggers)
 
 ## Configure a custom endpoint
@@ -467,6 +468,25 @@ If Analytics SDK v8.3.0 or later is integrated in the referred-to app, the SDK a
 - an etype `deeplink` event sent to the **referral** app's RAT account
 
 See the [feature page](https://confluence.rakuten-it.com/confluence/display/MAGS/RAnalytics+SDK%3A+App+to+App+tracking) or [RAT's guide](https://confluence.rakuten-it.com/confluence/x/SOs1rw) to understand more about app-to-app referral tracking with RAT.
+
+## How to configure the database directory path
+It is possible to change the database directory path in the app's `Info.plist`.
+
+By default the database directory path is `Documents`. It is possible to store the database file in `Library/Application Support`:
+
+- Enable `Library/Application Support` storage:
+```xml
+<key>RATStoreDatabaseInApplicationSupportDirectory</key>
+<true/>
+```
+
+- Disable `Library/Application Support` storage:
+```xml
+<key>RATStoreDatabaseInApplicationSupportDirectory</key>
+<false/>
+```
+
+⚠️ Note that **database migration is not supported** therefore if you use this setting in a pre-existing app you will lose any previously saved RAT events.
 
 ## Event triggers
 
