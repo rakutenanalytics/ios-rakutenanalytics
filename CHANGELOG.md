@@ -1,8 +1,29 @@
 # Changelog
 
+## 9.0.0 (2021-11-16)
+
+### Breaking changes
+* [SDKCF-4358](https://jira.rakuten-it.com/jira/browse/SDKCF-4358): The minimum supported OS version is now iOS 12.0.
+* [SDKCF-4016](https://jira.rakuten-it.com/jira/browse/SDKCF-4016): Removed deprecated `RAnalyticsRATTracker` `endpointAddress()` function. `endpointURL` should be used instead.
+* [SDKCF-4486](https://jira.rakuten-it.com/jira/browse/SDKCF-4486): Removed deprecated `AnalyticsManager` `shouldTrackPageView` property. `RAnalyticsManager#shouldTrackEventHandler` should be used instead. See the [Configure automatic tracking](advanced_usage.html#configure-automatic-tracking) guide.
+
+### Features
+* [SDKCF-4233](https://jira.rakuten-it.com/jira/browse/SDKCF-4233): Apps can now set the database directory path to `Library/Application Support` instead of the default `Documents` path. Note that **database migration is not supported** therefore if you use this setting in a pre-existing app you will lose any previously saved RAT events. See the [feature guide](advanced_usage.html#how-to-configure-the-database-directory-path).
+
+### Bug fixes
+* [SDKCF-4463](https://jira.rakuten-it.com/jira/browse/SDKCF-4463): Applied a workaround to prevent an Apple IDFA native crash in `UUID.unconditionallyBridgeFromObjectiveC`.
+* [SDKCF-4565](https://jira.rakuten-it.com/jira/browse/SDKCF-4565): Fixed issue where the member identifier (Easy ID) was not saved to UserDefaults.
+* [SDKCF-4547](https://jira.rakuten-it.com/jira/browse/SDKCF-4547): Suppressed unwanted TelephonyHandler error logs on simulator.
+
+### Improvements
+* [SDKCF-4350](https://jira.rakuten-it.com/jira/browse/SDKCF-4350) / [SDKCF-4423](https://jira.rakuten-it.com/jira/browse/SDKCF-4423): Refactored module to use common code from [RSDKUtils library](https://github.com/rakutentech/ios-sdkutils).
+* [SDKCF-4455](https://jira.rakuten-it.com/jira/browse/SDKCF-4455): Fixed module code to be compatible with Xcode 12.3, which some customers are still using to build their app.
+* [SDKCF-4484](https://jira.rakuten-it.com/jira/browse/SDKCF-4484): Migrated `RAnalyticsProgressNotifications` and `RAnalyticsPushTrackingUtility` constants to Swift.
+* [SDKCF-4483](https://jira.rakuten-it.com/jira/browse/SDKCF-4483): Migrated all `RAnalyticsEvent` event declarations to Swift.
+
 ## 8.3.0 (2021-10-22)
 
-### New features
+### Features
 * [SDKCF-4178](https://jira.rakuten-it.com/jira/browse/SDKCF-4178): Added new feature to track app-to-app referrals. See the [feature guide](advanced_usage.html#app-to-app-referral-tracking).
 * [SDKCF-3927](https://jira.rakuten-it.com/jira/browse/SDKCF-3927): Added new feature to track events to multiple RAT accounts. See the [feature guide](advanced_usage.html#duplicate-events-across-multiple-rat-accounts).
 
