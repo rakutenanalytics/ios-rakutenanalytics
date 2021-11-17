@@ -24,8 +24,6 @@ final class TelephonyHandler: TelephonyHandleable {
     private var telephonyNetworkInfo: TelephonyNetworkInfoHandleable
     private let notificationCenter: NotificationObservable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
-    private var currentCarrierName: String? // used for iOS <= 11.x
-    private var currentCarrierRadio: String? // used for iOS <= 11.x
     var reachabilityStatus: NSNumber?
 
     /// Creates a new instance of `TelephonyHandler`.
@@ -47,32 +45,11 @@ final class TelephonyHandler: TelephonyHandleable {
         if #available(iOS 13.0, *) {
             // Do nothing
 
-        } else  if #available(iOS 12.0, *) {
+        } else {
             // Listen to changes in radio access technology, to detect LTE.
             _ = notificationCenter.observe(forName: .CTServiceRadioAccessTechnologyDidChange, object: nil, queue: nil) { notification in
                 self.retrievedCarrierKey = notification.object as? String
             }
-
-        } else {
-            // Check immediately, then listen to changes.
-            updateCarrierInfos()
-
-            // Listen to changes in radio access technology, to detect LTE.
-            _ = notificationCenter.observe(forName: .CTRadioAccessTechnologyDidChange, object: nil, queue: nil) { _ in
-                DispatchQueue.main.async {
-                    self.updateCarrierInfos()
-                }
-            }
-        }
-    }
-
-    private func updateCarrierInfos() {
-        if self.telephonyNetworkInfo.responds(to: #selector(getter: CTTelephonyNetworkInfo.subscriberCellularProvider)) {
-            self.currentCarrierName = self.telephonyNetworkInfo.subscriber?.displayedCarrierName
-        }
-
-        if self.telephonyNetworkInfo.responds(to: #selector(getter: CTTelephonyNetworkInfo.currentRadioAccessTechnology)) {
-            self.currentCarrierRadio = self.telephonyNetworkInfo.currentRadioAccessTechnology
         }
     }
 }
@@ -92,7 +69,6 @@ extension TelephonyHandler {
 // MARK: - Carrier Key
 
 extension TelephonyHandler {
-    @available(iOS 12.0, *)
     private var selectedCarrierKey: String? {
         if #available(iOS 13.0, *) {
             return telephonyNetworkInfo.safeDataServiceIdentifier
@@ -108,16 +84,6 @@ extension TelephonyHandler {
 extension TelephonyHandler {
     /// - Returns: The name of the primary carrier.
     var mcn: String {
-        if #available(iOS 12.0, *) {
-            return primaryMcn
-
-        } else {
-            return currentCarrierName ?? ""
-        }
-    }
-
-    @available(iOS 12.0, *)
-    private var primaryMcn: String {
         guard let carrierKey = selectedCarrierKey,
               let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
             return ""
@@ -127,16 +93,6 @@ extension TelephonyHandler {
 
     /// - Returns: The name of the secondary carrier.
     var mcnd: String {
-        if #available(iOS 12.0, *) {
-            return eSimMcn
-
-        } else {
-            return ""
-        }
-    }
-
-    @available(iOS 12.0, *)
-    private var eSimMcn: String {
         // Note: Only one eSIM can be enabled on iOS.
         // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
         let otherKey = telephonyNetworkInfo.subscribers?.filter {
@@ -155,19 +111,6 @@ extension TelephonyHandler {
 extension TelephonyHandler {
     /// - Returns: The network status of the primary carrier.
     var mnetw: NSNumber? {
-        if #available(iOS 12.0, *) {
-            return primaryMnetw
-
-        } else {
-            guard let radioName = currentCarrierRadio else {
-                return networkType(for: "")
-            }
-            return networkType(for: radioName)
-        }
-    }
-
-    @available(iOS 12.0, *)
-    private var primaryMnetw: NSNumber? {
         guard let carrierKey = selectedCarrierKey,
               let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey] else {
             return networkType(for: "")
@@ -177,16 +120,6 @@ extension TelephonyHandler {
 
     /// - Returns: The network status of the secondary carrier.
     var mnetwd: NSNumber? {
-        if #available(iOS 12.0, *) {
-            return eSimMnetwd
-
-        } else {
-            return networkType(for: "")
-        }
-    }
-
-    @available(iOS 12.0, *)
-    private var eSimMnetwd: NSNumber? {
         guard let carrierKey = selectedCarrierKey else {
             return networkType(for: "")
         }
