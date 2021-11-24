@@ -16,8 +16,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSTimeInterval(^BatchingDelayBlock)(void);
-
 typedef NSString *__nullable(^WebTrackingCookieDomainBlock)(void);
 
 /*

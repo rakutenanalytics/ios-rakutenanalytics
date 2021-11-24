@@ -60,6 +60,7 @@
 		C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */; };
 		C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */; };
 		C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */; };
+		C9BFD6CC274E2A4B00CCBE8D /* ObjcInteropSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */; };
 		C9CCE45D268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CCE45C268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift */; };
 		C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */; };
 		C9E4BB3E260BA2430001F0B4 /* RATEncryptSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */; };
@@ -160,6 +161,7 @@
 		C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHandlerSpec.swift; sourceTree = "<group>"; };
 		C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSharedApplicationSpec.swift; sourceTree = "<group>"; };
 		C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleClassSpec.swift; sourceTree = "<group>"; };
+		C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcInteropSpec.m; sourceTree = "<group>"; };
 		C9CCE45C268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsCookieInjectorSpec.swift; sourceTree = "<group>"; };
 		C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStateSpec.swift; sourceTree = "<group>"; };
 		C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RATEncryptSpec.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */,
 				C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
+				C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */,
 				C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */,
 				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
 				C969127925CAC5670073D804 /* RABEventBroadcasterSpec.swift */,
@@ -610,6 +613,7 @@
 				C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */,
 				45E3BC4A2581476400319ECF /* RAnalyticsDatabaseSpec.swift in Sources */,
 				C9010E6F2672023600769C83 /* RAnalyticsRATExpecter.swift in Sources */,
+				C9BFD6CC274E2A4B00CCBE8D /* ObjcInteropSpec.m in Sources */,
 				C90330AA2673374E0015C687 /* RAnalyticsCookieInjector+Create.swift in Sources */,
 				C9010E862672026600769C83 /* RAnalyticsRATTracker+Create.swift in Sources */,
 				C954C667269439CE002AAFF7 /* TelephonyHandlerSpec.swift in Sources */,

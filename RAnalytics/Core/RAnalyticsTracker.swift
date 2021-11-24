@@ -1,5 +1,7 @@
 import Foundation
 
+public typealias BatchingDelayBlock = () -> TimeInterval
+
 /// Interface for tracker which can process an object of RAnalyticsEvent.
 /// The tracker conforming to this protocol will process events passed from `AnalyticsManager` only if the tracker is added to `AnalyticsManager`'s trackers.
 @objc(RAnalyticsTracker) public protocol Tracker: EndpointSettable {
