@@ -35,6 +35,28 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("webTrackingCookieDomain()") {
+                context("When web tracking cookie domain is nil") {
+                    it("should return a nil web tracking cookie domain") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                        analyticsManager.setWebTrackingCookieDomain {
+                            nil
+                        }
+                        expect(analyticsManager.webTrackingCookieDomain()).to(beNil())
+                    }
+                }
+
+                context("When web tracking cookie domain is not nil") {
+                    it("should return a non nil web tracking cookie domain") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                        analyticsManager.setWebTrackingCookieDomain {
+                            "mydomain.com"
+                        }
+                        expect(analyticsManager.webTrackingCookieDomain()).to(equal("mydomain.com"))
+                    }
+                }
+            }
+
             describe("set(endpointURL:)") {
                 it("should set the expected endpoint to the added trackers") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())

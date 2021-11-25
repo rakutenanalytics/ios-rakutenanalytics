@@ -24,6 +24,26 @@ describe(@"ObjcInterop", ^{
             });
         });
     });
+
+    describe(@"RAnalyticsManager", ^{
+        describe(@"setWebTrackingCookieDomainWithBlock", ^{
+            NSString *originalWebTrackingCookieDomain = RAnalyticsManager.sharedInstance.webTrackingCookieDomain;
+
+            it(@"should be able to set a web tracking cookie domain block", ^{
+                [RAnalyticsManager.sharedInstance setWebTrackingCookieDomainWithBlock:^NSString * _Nullable{
+                    return @"mydomain.com";
+                }];
+
+                [[RAnalyticsManager.sharedInstance.webTrackingCookieDomain shouldEventually] equal:@"mydomain.com"];
+            });
+
+            afterEach(^{
+                [RAnalyticsManager.sharedInstance setWebTrackingCookieDomainWithBlock:^NSString * _Nullable{
+                    return originalWebTrackingCookieDomain;
+                }];
+            });
+        });
+    });
 });
 
 SPEC_END

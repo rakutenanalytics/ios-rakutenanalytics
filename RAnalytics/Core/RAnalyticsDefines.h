@@ -16,8 +16,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSString *__nullable(^WebTrackingCookieDomainBlock)(void);
-
 /*
  * Exports a global, setting the proper visibility attributes so that it does not
  * get stripped at linktime.

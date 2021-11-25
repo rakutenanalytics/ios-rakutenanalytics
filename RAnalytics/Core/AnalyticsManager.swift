@@ -8,6 +8,8 @@ import RDeviceIdentifier
 // swiftlint:disable type_name
 public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
 
+public typealias WebTrackingCookieDomainBlock = () -> String?
+
 @objc public enum RAnalyticsLoggingLevel: Int {
     case verbose, debug, info, warning, error, none
 }
@@ -433,6 +435,11 @@ extension AnalyticsManager {
     ///     - cookieDomainBlock: The block returns the domain string to set on the cookie.
     @objc(setWebTrackingCookieDomainWithBlock:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock) {
         self.cookieDomainBlock = cookieDomainBlock
+    }
+
+    /// Returns the web tracking cookie domain set by `setWebTrackingCookieDomain(block:)`
+    @objc public func webTrackingCookieDomain() -> String? {
+        cookieDomainBlock?()
     }
 
     /// Set the endpoint URL for all the trackers at runtime.
