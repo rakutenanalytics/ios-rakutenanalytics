@@ -3,6 +3,7 @@ import CoreTelephony
 import CoreLocation
 import RDeviceIdentifier
 import struct RSDKUtils.RLogger
+import UIKit
 
 // swiftlint:disable type_name
 public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool

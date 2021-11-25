@@ -1,5 +1,6 @@
 import Foundation
 import RSDKUtils
+import UIKit
 
 private enum SenderConstants {
     static let tableBlobLimit = UInt(5000)

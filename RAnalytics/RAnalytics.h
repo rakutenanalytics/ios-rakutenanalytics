@@ -1,11 +1,19 @@
 // Core
-#import <RAnalytics/RAnalyticsDefines.h>
 #import <RAnalytics/RAnalyticsDeviceIdentifier.h>
 
-// RAT
-#if __has_include(<RAnalytics/RAnalyticsRATTracker.h>)
-#import <RAnalytics/RAnalyticsRATTracker.h>
+NS_ASSUME_NONNULL_BEGIN
+
+/*
+ * Exports a global, setting the proper visibility attributes so that it does not
+ * get stripped at linktime.
+ */
+#ifdef __cplusplus
+#define RSDKA_EXPORT extern "C" __attribute__((visibility ("default")))
+#else
+#define RSDKA_EXPORT extern __attribute__((visibility ("default")))
 #endif
+
+NS_ASSUME_NONNULL_END
 
 /// @internal
 RSDKA_EXPORT const NSString* const RAnalyticsVersion;

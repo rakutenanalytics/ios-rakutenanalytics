@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 /// The Device Handler handles the device battery and the screen resolution.
 final class DeviceHandler: DeviceHandleable {

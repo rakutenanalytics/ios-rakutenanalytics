@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 protocol DeviceCapability {
     var batteryState: UIDevice.BatteryState { get }

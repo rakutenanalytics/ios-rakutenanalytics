@@ -12,7 +12,6 @@
 		4BB204302684819400BD72B4 /* RAnalyticsConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */; };
 		C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */; };
 		C923B85825FF322A00F9CCA0 /* RAnalyticsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */; };
-		C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C923B85C25FF322A00F9CCA0 /* NSNotification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */; };
 		C923B85D25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B80F25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift */; };
 		C923B85E25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B81025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift */; };
@@ -44,7 +43,6 @@
 		C923B88625FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83B25FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift */; };
 		C923B88825FF322A00F9CCA0 /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83D25FF322A00F9CCA0 /* UserDefaults+Extensions.swift */; };
 		C923B88A25FF322A00F9CCA0 /* UserIdentifierSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B83F25FF322A00F9CCA0 /* UserIdentifierSelector.swift */; };
-		C923B88C25FF322A00F9CCA0 /* SwiftHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = C923B84125FF322A00F9CCA0 /* SwiftHeader.h */; };
 		C923B88D25FF322A00F9CCA0 /* Synchronizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84225FF322A00F9CCA0 /* Synchronizable.swift */; };
 		C923B88E25FF322A00F9CCA0 /* CLLocation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */; };
 		C923B88F25FF322A00F9CCA0 /* NotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923B84425FF322A00F9CCA0 /* NotificationCenter+Extensions.swift */; };
@@ -111,7 +109,6 @@
 		4BB2042F2684819400BD72B4 /* RAnalyticsConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsConfiguration.swift; sourceTree = "<group>"; };
 		C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEvent.swift; sourceTree = "<group>"; };
 		C923B80925FF322A00F9CCA0 /* RAnalyticsState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsState.swift; sourceTree = "<group>"; };
-		C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDefines.h; sourceTree = "<group>"; };
 		C923B80E25FF322A00F9CCA0 /* NSNotification+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSNotification+Extensions.swift"; sourceTree = "<group>"; };
 		C923B80F25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UNUserNotificationCenter.swift"; sourceTree = "<group>"; };
 		C923B81025FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UIApplication.swift"; sourceTree = "<group>"; };
@@ -143,7 +140,6 @@
 		C923B83B25FF322A00F9CCA0 /* RAdvertisingIdentifierHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAdvertisingIdentifierHandler.swift; sourceTree = "<group>"; };
 		C923B83D25FF322A00F9CCA0 /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 		C923B83F25FF322A00F9CCA0 /* UserIdentifierSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelector.swift; sourceTree = "<group>"; };
-		C923B84125FF322A00F9CCA0 /* SwiftHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwiftHeader.h; sourceTree = "<group>"; };
 		C923B84225FF322A00F9CCA0 /* Synchronizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Synchronizable.swift; sourceTree = "<group>"; };
 		C923B84325FF322A00F9CCA0 /* CLLocation+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocation+Extensions.swift"; sourceTree = "<group>"; };
 		C923B84425FF322A00F9CCA0 /* NotificationCenter+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
@@ -265,7 +261,6 @@
 				C99056CF2642C7870021E364 /* AnalyticsManager.swift */,
 				C923B82025FF322A00F9CCA0 /* Assets */,
 				C923B80C25FF322A00F9CCA0 /* Private */,
-				C923B80A25FF322A00F9CCA0 /* RAnalyticsDefines.h */,
 				C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */,
 				C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */,
 				C926163D26D4E4FE00119292 /* RAnalyticsEndpointSettable.swift */,
@@ -356,7 +351,6 @@
 				C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */,
 				C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */,
 				C923B83025FF322A00F9CCA0 /* String+Extensions.swift */,
-				C923B84125FF322A00F9CCA0 /* SwiftHeader.h */,
 				C923B84225FF322A00F9CCA0 /* Synchronizable.swift */,
 				C97EF57726736321006528B6 /* UIApplication+Extensions.swift */,
 				C97EF57B26736321006528B6 /* UIDevice+Extensions.swift */,
@@ -411,11 +405,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C923B85925FF322A00F9CCA0 /* RAnalyticsDefines.h in Headers */,
 				C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */,
 				C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */,
 				C923B86325FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h in Headers */,
-				C923B88C25FF322A00F9CCA0 /* SwiftHeader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,7 @@
 import Foundation
 import SQLite3
 import RSDKUtils
+import UIKit
 
 typealias SQlite3Pointer = OpaquePointer
 

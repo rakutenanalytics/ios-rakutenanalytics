@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 enum ReferralTrackingType: Hashable {
     case none

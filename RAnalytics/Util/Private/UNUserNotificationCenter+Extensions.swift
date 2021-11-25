@@ -1,4 +1,5 @@
 import Foundation
+import UserNotifications
 
 extension UNUserNotificationCenter {
     /// Check if the UNUserNotificationCenter's delegate is implemented.
