@@ -1,7 +1,6 @@
 import Foundation
 import CoreTelephony
 import CoreLocation
-import RDeviceIdentifier
 import struct RSDKUtils.RLogger
 import UIKit
 
@@ -298,7 +297,7 @@ private extension RAnalyticsRATTracker {
         }
 
         // MARK: model
-        payload["model"] = RDeviceIdentifier.modelIdentifier()
+        payload["model"] = UIDevice.current.modelIdentifier
 
         // Telephony Handler
         telephonyHandler.reachabilityStatus = reachabilityStatus

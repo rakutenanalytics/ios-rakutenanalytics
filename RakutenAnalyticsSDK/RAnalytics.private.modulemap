@@ -1,7 +1,3 @@
 module RSDKUtils {
     link "RSDKUtils"
 }
-
-module RDeviceIdentifier {
-    link "RDeviceIdentifier"
-}

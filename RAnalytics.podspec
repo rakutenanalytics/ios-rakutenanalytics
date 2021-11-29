@@ -34,7 +34,6 @@ Pod::Spec.new do |s|
       'CoreLocation',
       'AdSupport'
     ]
-    ss.dependency 'RDeviceIdentifier', '~> 1.0'
     ss.dependency 'RSDKUtils', '~> 2.1'
     ss.dependency 'RSDKUtils/RLogger', '~> 2.1'
     ss.libraries = 'sqlite3', 'z'

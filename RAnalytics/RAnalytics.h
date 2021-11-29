@@ -1,5 +1,4 @@
-// Core
-#import <RAnalytics/RAnalyticsDeviceIdentifier.h>
+@import Foundation;
 
 NS_ASSUME_NONNULL_BEGIN
 

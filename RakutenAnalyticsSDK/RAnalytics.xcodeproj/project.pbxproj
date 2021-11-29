@@ -91,8 +91,6 @@
 		C9AEFF80270B1D6300F21180 /* ReferralAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AEFF7F270B1D6300F21180 /* ReferralAppModel.swift */; };
 		C9AEFF82270B1D7200F21180 /* ReferralAppModel+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */; };
 		C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */; };
-		C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C9B5F778264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */; };
 		C9D40ADB26D3D30A0069393D /* RAnalyticsEvent+Install.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D40ADA26D3D30A0069393D /* RAnalyticsEvent+Install.swift */; };
 		C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */; };
 		C9E4BC91260C9AD20001F0B4 /* String+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */; };
@@ -188,8 +186,6 @@
 		C9AEFF7F270B1D6300F21180 /* ReferralAppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralAppModel.swift; sourceTree = "<group>"; };
 		C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReferralAppModel+URL.swift"; sourceTree = "<group>"; };
 		C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Extensions.swift"; sourceTree = "<group>"; };
-		C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalyticsDeviceIdentifier.h; sourceTree = "<group>"; };
-		C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RAnalyticsDeviceIdentifier.m; sourceTree = "<group>"; };
 		C9D40ADA26D3D30A0069393D /* RAnalyticsEvent+Install.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsEvent+Install.swift"; sourceTree = "<group>"; };
 		C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDependenciesContainer.swift; sourceTree = "<group>"; };
 		C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Encryption.swift"; sourceTree = "<group>"; };
@@ -261,8 +257,6 @@
 				C99056CF2642C7870021E364 /* AnalyticsManager.swift */,
 				C923B82025FF322A00F9CCA0 /* Assets */,
 				C923B80C25FF322A00F9CCA0 /* Private */,
-				C9B5F775264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h */,
-				C9B5F776264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m */,
 				C926163D26D4E4FE00119292 /* RAnalyticsEndpointSettable.swift */,
 				C923B80525FF322A00F9CCA0 /* RAnalyticsEvent.swift */,
 				C96B73DA261E476100CF91BA /* RAnalyticsRpCookieFetcher.swift */,
@@ -405,7 +399,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9B5F777264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.h in Headers */,
 				C923B89A25FF322A00F9CCA0 /* RAnalytics.h in Headers */,
 				C923B86325FF322A00F9CCA0 /* _RAnalyticsSwiftLoader.h in Headers */,
 			);
@@ -532,7 +525,6 @@
 				C97EF58226736321006528B6 /* UIDevice+Extensions.swift in Sources */,
 				C923B87425FF322A00F9CCA0 /* UNUserNotificationCenter+Extensions.swift in Sources */,
 				C923B88825FF322A00F9CCA0 /* UserDefaults+Extensions.swift in Sources */,
-				C9B5F778264A7BBA0039A6A5 /* RAnalyticsDeviceIdentifier.m in Sources */,
 				C97EF58126736321006528B6 /* CTTelephonyNetworkInfo+Extensions.swift in Sources */,
 				C923B89025FF322A00F9CCA0 /* Bundle+Extensions.swift in Sources */,
 				C923B88025FF322A00F9CCA0 /* URLSession+Result.swift in Sources */,

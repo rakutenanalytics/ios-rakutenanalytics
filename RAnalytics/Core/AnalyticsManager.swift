@@ -3,7 +3,6 @@ import CoreLocation
 import AdSupport
 import WebKit
 import RSDKUtils
-import RDeviceIdentifier
 
 // swiftlint:disable type_name
 public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
@@ -97,7 +96,6 @@ public typealias WebTrackingCookieDomainBlock = () -> String?
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
     private(set) var locationManagerIsUpdating: Bool = false
-    private var deviceIdentifier: String?
 
     /// Session cookie. We use an UUID automatically created at startup and
     /// regenerated when the app comes back from background, as per the specifications.
@@ -344,15 +342,7 @@ extension AnalyticsManager {
             return false
         }
 
-        if deviceIdentifier == nil {
-            deviceIdentifier = RAnalyticsUniqueDeviceIdentifier()
-        }
-
-        if deviceIdentifier == nil {
-            RLogger.error(message: "RDeviceIdentifier is not properly configured! See 'Configuring the keychain' in the README for instructions")
-        }
-
-        let notOptionalDeviceIdentifier = deviceIdentifier ?? Constants.defaultDeviceIdentifier
+        let notOptionalDeviceIdentifier = UIDevice.current.identifierForVendor?.uuidString ?? Constants.defaultDeviceIdentifier
 
         let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: notOptionalDeviceIdentifier)
 

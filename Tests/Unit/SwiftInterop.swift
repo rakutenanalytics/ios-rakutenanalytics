@@ -1,5 +1,4 @@
 import XCTest
-import RDeviceIdentifier
 @testable import RAnalytics
 
 public class SwiftInterop: XCTestCase {

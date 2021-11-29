@@ -129,7 +129,7 @@ import CoreLocation.CLLocation
     ///
     /// - Parameters:
     ///   - sessionIdentifier: The session identifier. Globally-unique string updated every time a new session starts.
-    ///   - deviceIdentifier: The device identifier. Globally-unique string identifying the current device across all Rakuten applications. Optional, because the app may not have enabled keychain sharing.
+    ///   - deviceIdentifier: The device identifier. Vendor-unique string identifying the current device across all Rakuten applications.
     ///   - bundle: The bundle. It is used to retrieve the version set in the info.plist file.
     ///
     /// - Returns: A new instance of State.
@@ -148,7 +148,7 @@ import CoreLocation.CLLocation
     ///
     /// - Parameters:
     ///   - sessionIdentifier: The session identifier. Globally-unique string updated every time a new session starts.
-    ///   - deviceIdentifier: The device identifier. Globally-unique string identifying the current device across all Rakuten applications. Optional, because the app may not have enabled keychain sharing.
+    ///   - deviceIdentifier: The device identifier. Vendor-unique string identifying the current device across all Rakuten applications.
     ///
     /// - Returns: A new instance of State.
     ///

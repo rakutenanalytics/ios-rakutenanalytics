@@ -78,16 +78,6 @@ pod 'RAnalytics/Core'
 | `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID` |
 
 
-
-## Configuring the keychain
-
-⚠️ This module requires keychain access to work properly. You must add a `jp.co.rakuten.ios.sdk.deviceinformation` keychain access group to your application's "Keychain Sharing" capabilities, as shown below.
-
-![keychain-setup.png](doc/keychain-setup.png)
-
-**Warning:** Note that `jp.co.rakuten.ios.sdk.deviceinformation`**must not** be the first entry in this list. The first entry must be your own application's bundle identifier.
-
-
 ## Using Kibana to verify successful integration
 
 RAT's [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) STG and PROD sites can be used to check events sent by your app.
@@ -371,7 +361,6 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 target 'MyApp' do
   pod 'RAnalytics', :build_type => :static_framework
   pod 'RLogger', :build_type => :static_framework
-  pod 'RDeviceIdentifier', :build_type => :static_framework
 end
 ```
 

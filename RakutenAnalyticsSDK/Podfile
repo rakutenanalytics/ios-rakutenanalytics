@@ -16,7 +16,6 @@ workspace 'RakutenAnalyticsSDK'
 target 'RAnalytics' do
   pod 'RSDKUtils', :build_type => :static_framework, :git => 'https://github.com/rakutentech/ios-sdkutils'
   pod 'RSDKUtils/RLogger', :build_type => :static_framework, :git => 'https://github.com/rakutentech/ios-sdkutils'
-  pod 'RDeviceIdentifier', :build_type => :static_framework
 end
 
 post_install do |installer|
