@@ -1,8 +1,8 @@
 import Foundation
 
-/// This class is used to get the correct tracking identifier.
-final class UserIdentifierSelector {
-    private let trackingIdentifierNoLoginFound = "NO_LOGIN_FOUND"
+/// `UserIdentifierSelector` is used to get the correct tracking identifier.
+struct UserIdentifierSelector {
+    /// The user identifiable.
     private let userIdentifiable: UserIdentifiable
 
     /// Creates a user identifier selector
@@ -17,12 +17,8 @@ final class UserIdentifierSelector {
 
     /// Returns the selected tracking identifier
     ///
-    /// - Returns: A tracking identifier.
-    var selectedTrackingIdentifier: String {
-        let selectedTrackingIdentifier = userIdentifiable.userIdentifier ?? userIdentifiable.trackingIdentifier
-        guard let aTrackingIdentifier = selectedTrackingIdentifier else {
-            return trackingIdentifierNoLoginFound
-        }
-        return aTrackingIdentifier
+    /// - Returns: A tracking identifier or nil.
+    var selectedTrackingIdentifier: String? {
+        userIdentifiable.userIdentifier ?? userIdentifiable.trackingIdentifier
     }
 }

@@ -8,7 +8,6 @@ final class UserIdentifierSelectorSpec: QuickSpec {
     override func spec() {
         describe("UserIdentifierSelector") {
             let notificationName = Notification.Name(rawValue: "com.rakuten.esd.sdk.events.login.other")
-            let noLoginFound = "NO_LOGIN_FOUND"
             let dependenciesContainer = SimpleContainerMock()
 
             beforeEach {
@@ -17,10 +16,10 @@ final class UserIdentifierSelectorSpec: QuickSpec {
             }
 
             describe("selectedTrackingIdentifier") {
-                it("should return \(noLoginFound) at initialization") {
+                it("should return nil at initialization") {
                     let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
-                    expect(userIdentifierSelector.selectedTrackingIdentifier).to(equal(noLoginFound))
+                    expect(userIdentifierSelector.selectedTrackingIdentifier).to(beNil())
                 }
                 context("trackingIdentifier is nil") {
                     it("should return userID when userID is set to non-empty value") {
@@ -33,14 +32,14 @@ final class UserIdentifierSelectorSpec: QuickSpec {
 
                         expect(userIdentifierSelector.selectedTrackingIdentifier).toEventually(equal("userID"))
                     }
-                    it("should return \(noLoginFound) when userID is nil") {
+                    it("should return nil when userID is nil") {
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let userIdentifierSelector = UserIdentifierSelector(userIdentifiable: externalCollector)
 
                         externalCollector.userIdentifier = nil
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
-                        expect(userIdentifierSelector.selectedTrackingIdentifier).toEventually(equal(noLoginFound))
+                        expect(userIdentifierSelector.selectedTrackingIdentifier).toEventually(beNil())
                     }
                 }
                 context("trackingIdentifier is not nil") {
