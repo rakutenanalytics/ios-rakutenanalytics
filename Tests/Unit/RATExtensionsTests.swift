@@ -22,6 +22,10 @@ final class BundleMock: NSObject, EnvironmentBundle {
     var mutableEnableInternalSerialization: Bool = false
 
     func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
+
+    var appGroupId: String? {
+        object(forInfoDictionaryKey: RPushTrackingKeys.AppGroupIdentifierPlistKey) as? String
+    }
 }
 
 final class RATUrlRequestExtensionSpec: QuickSpec {

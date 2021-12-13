@@ -8,6 +8,7 @@ import RSDKUtils
 protocol SimpleDependenciesContainable {
     var notificationHandler: NotificationObservable { get }
     var userStorageHandler: UserStorageHandleable { get }
+    var sharedUserStorageHandlerType: UserStorageHandleable.Type { get }
     var adIdentifierManager: AdvertisementIdentifiable { get }
     var wkHttpCookieStore: WKHTTPCookieStorable { get }
     var httpCookieStore: HTTPCookieStorable { get }
@@ -21,6 +22,7 @@ protocol SimpleDependenciesContainable {
     var session: SwiftySessionable { get }
     var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? { get }
     var databaseConfiguration: DatabaseConfigurable? { get }
+    var pushEventHandler: PushEventHandleable { get }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -31,6 +33,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
 
     let notificationHandler: NotificationObservable = NotificationCenter.default
     let userStorageHandler: UserStorageHandleable = UserDefaults.standard
+    let sharedUserStorageHandlerType: UserStorageHandleable.Type = UserDefaults.self
     let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
     let wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     let httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
@@ -49,4 +52,11 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
                                             tableName: RATTrackerConstants.tableName,
                                             databaseParentDirectory: Bundle.main.databaseParentDirectory)
     }()
+    let pushEventHandler: PushEventHandleable
+
+    init() {
+        let appGroupId = bundle.appGroupId
+        let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
+        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler)
+    }
 }

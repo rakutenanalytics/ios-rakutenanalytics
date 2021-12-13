@@ -134,21 +134,24 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                     }
                 }
             }
+
             describe("analyticsEventHasBeenSentWith") {
                 let sentTrackingId = "a_good_tracking_id"
                 let appGroupDictionary = [RPushTrackingKeys.AppGroupIdentifierPlistKey: "appGroupId"]
                 let openCountDictionary = [RPushTrackingKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
+                let userStorageHandler = UserDefaultsMock(suiteName: BundleMock().appGroupId)
 
                 context("RRPushAppGroupIdentifierPlistKey is not set in the main bundle") {
-                    let pushEventHandler = PushEventHandler(bundle: BundleMock(), userDefaultsType: UserDefaultsMock.self)
-
                     it("should return false when trackingIdentifier is not nil") {
-                        expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).to(beNil())
-                        expect(pushEventHandler.eventHasBeenSent(with: sentTrackingId)).to(beFalse())
+                        expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
+                                                                                       sharedUserStorageHandler: userStorageHandler))
+                            .to(beFalse())
                     }
+
                     it("should return false when trackingIdentifier is nil") {
-                        expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).to(beNil())
-                        expect(pushEventHandler.eventHasBeenSent(with: nil)).to(beFalse())
+                        expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
+                                                                                       sharedUserStorageHandler: userStorageHandler))
+                            .to(beFalse())
                     }
                 }
 
@@ -160,43 +163,57 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                     }()
 
                     context("valid open count dictionary") {
-                        let pushEventHandler: PushEventHandler = {
-                            let pushEventHandler = PushEventHandler(bundle: bundleMock, userDefaultsType: UserDefaultsMock.self)
-                            (pushEventHandler.userStorageHandler as? UserDefaultsMock)?.dictionary = openCountDictionary
-                            return pushEventHandler
-                        }()
+                        let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
+                        userStorageHandler?.dictionary = openCountDictionary
 
                         it("should return true when trackingIdentifier is not nil") {
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: sentTrackingId)).to(beTrue())
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beTrue())
                         }
+
                         it("should return false when trackingIdentifier is nil") {
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: nil)).to(beFalse())
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beFalse())
                         }
                     }
-                    context("invalid open count dictionary") {
-                        let pushEventHandler: PushEventHandler = PushEventHandler(bundle: bundleMock, userDefaultsType: UserDefaultsMock.self)
 
+                    context("invalid open count dictionary") {
                         it("should return false when trackingIdentifier is not nil and open count dictionary is empty") {
-                            (pushEventHandler.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: sentTrackingId)).to(beFalse())
+                            let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
+                            userStorageHandler?.dictionary = [:]
+
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beFalse())
                         }
+
                         it("should return false when trackingIdentifier is not nil and open count dictionary is nil") {
-                            (pushEventHandler.userStorageHandler as? UserDefaultsMock)?.dictionary = nil
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: sentTrackingId)).to(beFalse())
+                            let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
+                            userStorageHandler?.dictionary = nil
+
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beFalse())
                         }
+
                         it("should return false when trackingIdentifier is nil and open count dictionary is empty") {
-                            (pushEventHandler.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: nil)).to(beFalse())
+                            let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
+                            userStorageHandler?.dictionary = [:]
+
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beFalse())
                         }
+
                         it("should return false when trackingIdentifier is nil and open count dictionary is nil") {
-                            (pushEventHandler.userStorageHandler as? UserDefaultsMock)?.dictionary = nil
-                            expect(pushEventHandler.userStorageHandler as? UserDefaultsMock).toNot(beNil())
-                            expect(pushEventHandler.eventHasBeenSent(with: nil)).to(beFalse())
+                            let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
+                            userStorageHandler?.dictionary = nil
+
+                            expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
+                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                .to(beFalse())
                         }
                     }
                 }

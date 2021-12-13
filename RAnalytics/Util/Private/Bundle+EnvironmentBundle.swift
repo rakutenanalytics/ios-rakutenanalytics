@@ -12,6 +12,7 @@ protocol EnvironmentBundle: Bundleable {
     static var assetsBundle: Bundle? { get }
     static var sdkComponentMap: NSDictionary? { get }
     func object(forInfoDictionaryKey key: String) -> Any?
+    var appGroupId: String? { get }
 }
 
 extension Bundle: EnvironmentBundle {
@@ -125,6 +126,10 @@ extension Bundle: EnvironmentBundle {
             return .documentDirectory
         }
         return result ? .applicationSupportDirectory : .documentDirectory
+    }
+
+    var appGroupId: String? {
+        object(forInfoDictionaryKey: RPushTrackingKeys.AppGroupIdentifierPlistKey) as? String
     }
 }
 

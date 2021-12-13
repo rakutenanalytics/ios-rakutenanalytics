@@ -17,6 +17,7 @@
 
 @interface ClassManipulatorUNCenterTests : XCTestCase
 @property (nonatomic, copy) NSURL *url;
+@property (nonatomic, copy) NSUserDefaults *sharedUserDefaults;
 @end
 
 @implementation ClassManipulatorUNCenterTests
@@ -24,6 +25,17 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
 #pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
+
+- (void)setUp {
+    [super setUp];
+    _sharedUserDefaults = [NSUserDefaults.alloc initWithSuiteName:[NSBundle.mainBundle objectForInfoDictionaryKey:@"RPushAppGroupIdentifier"]];
+}
+
+- (void)tearDown {
+    [super tearDown];
+    [_sharedUserDefaults removeObjectForKey:@"com.analytics.push.sentOpenCount"];
+    [_sharedUserDefaults synchronize];
+}
 
 - (void)testUNSetDelegateMethodReplaced
 {
@@ -55,7 +67,7 @@
     XCTAssertTrue([delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
 }
 
-- (void)testDidReceiveUNNotification
+- (void)testDidReceiveUNNotification_shouldProcessEvent_ifTrackingIdentifierIsNotInAppGroup
 {
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
     UNDelegate *delegate = UNDelegate.new;
@@ -81,14 +93,14 @@
 
 - (void)testDidReceiveUNNotification_shouldNotProcessEvent_ifTrackingIdentifierIsAlreadyInAppGroup
 {
+    [_sharedUserDefaults setObject:@{@"rid:1234abcd":@YES} forKey:@"com.analytics.push.sentOpenCount"];
+    [_sharedUserDefaults synchronize];
+
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
     UNDelegate *delegate = UNDelegate.new;
     center.delegate = delegate;
     
     UNTextInputNotificationResponse* response = [self _createTestResponse];
-    
-    id trackingMock = OCMClassMock([RAnalyticsPushTrackingUtility class]);
-    OCMStub([trackingMock analyticsEventHasBeenSentWith: [OCMArg any]]).andReturn(true);
      
     id mockManager = OCMPartialMock(RAnalyticsManager.sharedInstance);
     XCTestExpectation* expectation = [XCTestExpectation.new initWithDescription:@"should not be called"];
@@ -101,7 +113,6 @@
     [self waitForExpectations:@[expectation] timeout:1];
 
     [mockManager stopMocking];
-    [trackingMock stopMocking];
 }
 
 -(UNTextInputNotificationResponse*) _createTestResponse {

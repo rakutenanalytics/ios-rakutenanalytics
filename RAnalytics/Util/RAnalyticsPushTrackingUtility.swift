@@ -48,8 +48,14 @@ internal enum RPushTrackingKeys {
     }
 
     /// - Returns: `true` or `false` based on the existence of the tracking identifier in the App Group User Defaults.
-    @objc public dynamic static func analyticsEventHasBeenSent(with trackingIdentifier: String?) -> Bool {
-        PushEventHandler(bundle: Bundle.main, userDefaultsType: UserDefaults.self).eventHasBeenSent(with: trackingIdentifier)
+    @objc public static func analyticsEventHasBeenSent(with trackingIdentifier: String?) -> Bool {
+        analyticsEventHasBeenSent(with: trackingIdentifier,
+                                  sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId))
+    }
+
+    internal static func analyticsEventHasBeenSent(with trackingIdentifier: String?,
+                                                   sharedUserStorageHandler: UserStorageHandleable?) -> Bool {
+        PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler).isEventAlreadySent(with: trackingIdentifier)
     }
 }
 

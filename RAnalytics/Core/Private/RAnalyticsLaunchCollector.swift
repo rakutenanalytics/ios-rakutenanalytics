@@ -49,6 +49,7 @@ final class RAnalyticsLaunchCollector {
 
     private let notificationHandler: NotificationObservable?
     private let userStorageHandler: UserStorageHandleable?
+    private let pushEventHandler: PushEventHandleable
     private let keychainHandler: KeychainHandleable?
     private let tracker: Trackable?
 
@@ -58,15 +59,6 @@ final class RAnalyticsLaunchCollector {
     private(set) var isInitialLaunch: Bool = false
     private(set) var isInstallLaunch: Bool = false
     private(set) var isUpdateLaunch: Bool = false
-
-    @available(*, unavailable)
-    init() {
-        self.notificationHandler = nil
-        self.userStorageHandler = nil
-        self.keychainHandler = nil
-        self.tracker = nil
-        self.referralTracking = .none
-    }
 
     /// Creates a launch collector
     ///
@@ -80,6 +72,7 @@ final class RAnalyticsLaunchCollector {
         self.keychainHandler = dependenciesContainer.keychainHandler
         self.tracker = dependenciesContainer.tracker
         self.referralTracking = .none
+        pushEventHandler = dependenciesContainer.pushEventHandler
 
         configureNotifications()
         configureLaunchValues()
@@ -259,11 +252,12 @@ extension RAnalyticsLaunchCollector {
         let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: userInfo)
 
         if let trackingId = trackingId,
-           !RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: trackingId) {
+           !pushEventHandler.isEventAlreadySent(with: trackingId) {
             pushTrackingIdentifier = trackingId
             let parameters = [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: trackingId]
             tracker?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification, parameters: parameters)
             isProcessed = true
+            pushEventHandler.cacheEvent(for: trackingId)
         }
 
         if UIApplication.RAnalyticsSharedApplication?.applicationState != .active {
@@ -283,9 +277,10 @@ private extension RAnalyticsLaunchCollector {
         if let pushTapTrackingDate = pushTapTrackingDate,
            let pushTrackingIdentifier = pushTrackingIdentifier,
            fabs(pushTapTrackingDate.timeIntervalSinceNow) < pushTapEventTimeLimit
-            && !RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: pushTrackingIdentifier) {
+            && !pushEventHandler.isEventAlreadySent(with: pushTrackingIdentifier) {
             tracker?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification,
                                 parameters: [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: pushTrackingIdentifier])
+            pushEventHandler.cacheEvent(for: pushTrackingIdentifier)
         }
 
         pushTrackingIdentifier = nil

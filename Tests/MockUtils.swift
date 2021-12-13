@@ -177,6 +177,7 @@ final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
 
     public var notificationHandler: NotificationObservable = NotificationCenter.default
     public var userStorageHandler: UserStorageHandleable = UserDefaults.standard
+    var sharedUserStorageHandlerType: UserStorageHandleable.Type = UserDefaults.self
     public var adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
     public var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     public var httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
@@ -194,6 +195,14 @@ final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
                                             tableName: Constants.RATTableName,
                                             databaseParentDirectory: .documentDirectory)
     }()
+    var pushEventHandler: PushEventHandleable
+
+    override init() {
+        let appGroupId = bundle.appGroupId
+        let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
+        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler)
+        super.init()
+    }
 }
 
 // MARK: - CustomPage
