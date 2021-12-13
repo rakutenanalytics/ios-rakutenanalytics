@@ -207,11 +207,15 @@ private extension RAnalyticsExternalCollector {
         update()
 
         if let anIdentifier = notification.object as? String {
+            // IDSDK Login
             if notification.name.rawValue.hasSuffix(Constants.idTokenEvent) {
                 self.easyIdentifier = anIdentifier
+                self.trackingIdentifier = nil
 
+            // RAE Login
             } else {
                 self.trackingIdentifier = anIdentifier
+                self.easyIdentifier = nil
             }
         }
 
