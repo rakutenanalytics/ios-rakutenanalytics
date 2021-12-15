@@ -12,6 +12,8 @@ final class CoreHelpers {
     private enum Constants {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
+        /// Current RAT SDK version
+        static let sdkVersion = "9.0.0"
     }
 
     static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
@@ -21,7 +23,7 @@ final class CoreHelpers {
         }
         dict["app_name"] = Constants.applicationName
         dict["mos"] = Constants.osVersion
-        dict["ver"] = RAnalyticsVersion
+        dict["ver"] = Constants.sdkVersion
         dict["ts1"] = Swift.max(0, round(NSDate().timeIntervalSince1970))
         return dict
     }

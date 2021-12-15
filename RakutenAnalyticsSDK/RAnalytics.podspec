@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
       'CLANG_MODULES_AUTOLINK'  => 'YES',
       'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
       'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-      'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'",
       # FIXME: `pod lib lint` attempts to build all available archs so we need to exclude Apple Silicon arm64 from simulator builds. 
       # See https://github.com/CocoaPods/CocoaPods/issues/10065#issuecomment-694266259
       'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'

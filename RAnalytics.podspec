@@ -14,8 +14,7 @@ Pod::Spec.new do |s|
     'CLANG_ENABLE_MODULES'    => 'YES',
     'CLANG_MODULES_AUTOLINK'  => 'YES',
     'GCC_C_LANGUAGE_STANDARD' => 'gnu99',
-    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    'OTHER_CFLAGS'            => "'-DRMSDK_ANALYTICS_VERSION=#{s.version.to_s}'"
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES'
   }
   s.pod_target_xcconfig  = options
   s.user_target_xcconfig = options
