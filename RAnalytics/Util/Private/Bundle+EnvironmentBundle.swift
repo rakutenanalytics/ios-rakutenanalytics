@@ -1,6 +1,11 @@
 import Foundation
 import UIKit
 
+internal enum AppGroupUserDefaultsKeys {
+    /// Info.plist key whose value holds the name of the App Group set by the App.
+    static let AppGroupIdentifierPlistKey = "RPushAppGroupIdentifier"
+}
+
 protocol EnvironmentBundle: Bundleable {
     var languageCode: Any? { get }
     var bundleIdentifier: String? { get }
@@ -129,7 +134,7 @@ extension Bundle: EnvironmentBundle {
     }
 
     var appGroupId: String? {
-        object(forInfoDictionaryKey: RPushTrackingKeys.AppGroupIdentifierPlistKey) as? String
+        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey) as? String
     }
 }
 

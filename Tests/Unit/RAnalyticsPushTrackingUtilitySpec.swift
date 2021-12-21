@@ -1,6 +1,7 @@
 import Quick
 import Nimble
 @testable import RAnalytics
+import Foundation
 
 final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
     override func spec() {
@@ -137,20 +138,27 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
 
             describe("analyticsEventHasBeenSentWith") {
                 let sentTrackingId = "a_good_tracking_id"
-                let appGroupDictionary = [RPushTrackingKeys.AppGroupIdentifierPlistKey: "appGroupId"]
-                let openCountDictionary = [RPushTrackingKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
-                let userStorageHandler = UserDefaultsMock(suiteName: BundleMock().appGroupId)
+                let appGroupDictionary = [AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey: "appGroupId"]
+                let openCountDictionary = [PushEventHandlerKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
+                let bundleMock = BundleMock()
+                let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
 
                 context("RRPushAppGroupIdentifierPlistKey is not set in the main bundle") {
                     it("should return false when trackingIdentifier is not nil") {
                         expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
-                                                                                       sharedUserStorageHandler: userStorageHandler))
+                                                                                       sharedUserStorageHandler: userStorageHandler,
+                                                                                       appGroupId: bundleMock.appGroupId,
+                                                                                       fileManager: FileManager.default,
+                                                                                       serializerType: JSONSerialization.self))
                             .to(beFalse())
                     }
 
                     it("should return false when trackingIdentifier is nil") {
                         expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
-                                                                                       sharedUserStorageHandler: userStorageHandler))
+                                                                                       sharedUserStorageHandler: userStorageHandler,
+                                                                                       appGroupId: bundleMock.appGroupId,
+                                                                                       fileManager: FileManager.default,
+                                                                                       serializerType: JSONSerialization.self))
                             .to(beFalse())
                     }
                 }
@@ -168,13 +176,19 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
 
                         it("should return true when trackingIdentifier is not nil") {
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beTrue())
                         }
 
                         it("should return false when trackingIdentifier is nil") {
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beFalse())
                         }
                     }
@@ -185,7 +199,10 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                             userStorageHandler?.dictionary = [:]
 
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beFalse())
                         }
 
@@ -194,7 +211,10 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                             userStorageHandler?.dictionary = nil
 
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: sentTrackingId,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beFalse())
                         }
 
@@ -203,7 +223,10 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                             userStorageHandler?.dictionary = [:]
 
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beFalse())
                         }
 
@@ -212,7 +235,10 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                             userStorageHandler?.dictionary = nil
 
                             expect(RAnalyticsPushTrackingUtility.analyticsEventHasBeenSent(with: nil,
-                                                                                           sharedUserStorageHandler: userStorageHandler))
+                                                                                           sharedUserStorageHandler: userStorageHandler,
+                                                                                           appGroupId: bundleMock.appGroupId,
+                                                                                           fileManager: FileManager.default,
+                                                                                           serializerType: JSONSerialization.self))
                                 .to(beFalse())
                         }
                     }

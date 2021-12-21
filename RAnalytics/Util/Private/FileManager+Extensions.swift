@@ -1,5 +1,16 @@
 import Foundation
 
+// MARK: - Protocol
+
+protocol FileManageable {
+    func createSafeFile(at url: URL)
+    func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL?
+    func removeItem(at URL: URL) throws
+    func fileExists(atPath path: String) -> Bool
+}
+
+extension FileManager: FileManageable {}
+
 // MARK: - Database Directories
 
 extension FileManager {
@@ -37,5 +48,18 @@ extension FileManager {
 
     func databaseFileURL(databaseName: String, databaseParentDirectory: FileManager.SearchPathDirectory) -> URL? {
         FileManager.default.analyticsDirectoryURL(databaseParentDirectory: databaseParentDirectory)?.appendingPathComponent(databaseName)
+    }
+}
+
+// MARK: - File
+
+extension FileManager {
+    /// Create a file at the given URL only if it does not exist.
+    func createSafeFile(at url: URL) {
+        guard fileExists(atPath: url.path) else {
+            createFile(atPath: url.path, contents: nil, attributes: nil)
+            return
+        }
+        return
     }
 }

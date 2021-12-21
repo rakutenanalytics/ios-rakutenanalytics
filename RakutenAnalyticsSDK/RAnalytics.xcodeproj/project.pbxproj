@@ -91,6 +91,9 @@
 		C9AEFF82270B1D7200F21180 /* ReferralAppModel+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */; };
 		C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */; };
 		C9D40ADB26D3D30A0069393D /* RAnalyticsEvent+Install.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D40ADA26D3D30A0069393D /* RAnalyticsEvent+Install.swift */; };
+		C9D647B7276AB0FF00C88F54 /* AnalyticsEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D647B5276AB0FF00C88F54 /* AnalyticsEventObserver.swift */; };
+		C9D647B8276AB0FF00C88F54 /* AnalyticsEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D647B6276AB0FF00C88F54 /* AnalyticsEventTracker.swift */; };
+		C9D647BA276AB10D00C88F54 /* AnalyticsEventPoster.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D647B9276AB10D00C88F54 /* AnalyticsEventPoster.swift */; };
 		C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */; };
 		C9E4BC91260C9AD20001F0B4 /* String+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */; };
 		C9E4BC92260C9AD20001F0B4 /* PushEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */; };
@@ -185,6 +188,9 @@
 		C9AEFF81270B1D7200F21180 /* ReferralAppModel+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReferralAppModel+URL.swift"; sourceTree = "<group>"; };
 		C9B5F4F72649350C0039A6A5 /* CLLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Extensions.swift"; sourceTree = "<group>"; };
 		C9D40ADA26D3D30A0069393D /* RAnalyticsEvent+Install.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsEvent+Install.swift"; sourceTree = "<group>"; };
+		C9D647B5276AB0FF00C88F54 /* AnalyticsEventObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventObserver.swift; sourceTree = "<group>"; };
+		C9D647B6276AB0FF00C88F54 /* AnalyticsEventTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTracker.swift; sourceTree = "<group>"; };
+		C9D647B9276AB10D00C88F54 /* AnalyticsEventPoster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventPoster.swift; sourceTree = "<group>"; };
 		C9DAD6CF26844FA1003C62AC /* SimpleDependenciesContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDependenciesContainer.swift; sourceTree = "<group>"; };
 		C9E4BC8F260C9AD20001F0B4 /* String+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Encryption.swift"; sourceTree = "<group>"; };
 		C9E4BC90260C9AD20001F0B4 /* PushEventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandler.swift; sourceTree = "<group>"; };
@@ -295,6 +301,7 @@
 			isa = PBXGroup;
 			children = (
 				C923B82725FF322A00F9CCA0 /* Private */,
+				C9D647B9276AB10D00C88F54 /* AnalyticsEventPoster.swift */,
 				452B8DED2732FA35000E7E60 /* RAnalyticsProgressNotifications.swift */,
 				C9E4BC95260C9AF20001F0B4 /* RAnalyticsPushTrackingUtility.swift */,
 				C923B82325FF322A00F9CCA0 /* RAnalyticsSender.swift */,
@@ -306,6 +313,8 @@
 		C923B82725FF322A00F9CCA0 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				C9D647B5276AB0FF00C88F54 /* AnalyticsEventObserver.swift */,
+				C9D647B6276AB0FF00C88F54 /* AnalyticsEventTracker.swift */,
 				C94F90DD26E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift */,
 				C923B83625FF322A00F9CCA0 /* AnalyticsTracker.swift */,
 				C923B83125FF322A00F9CCA0 /* Array+RAT.swift */,
@@ -476,14 +485,17 @@
 				C923B85E25FF322A00F9CCA0 /* RAnalyticsClassManipulable+UIApplication.swift in Sources */,
 				C9AEFF82270B1D7200F21180 /* ReferralAppModel+URL.swift in Sources */,
 				4BB204302684819400BD72B4 /* RAnalyticsConfiguration.swift in Sources */,
+				C9D647B8276AB0FF00C88F54 /* AnalyticsEventTracker.swift in Sources */,
 				C9F0AEAE27183ACC00676992 /* FileManager+Extensions.swift in Sources */,
 				C9DAD6D026844FA1003C62AC /* SimpleDependenciesContainer.swift in Sources */,
 				C923B87625FF322A00F9CCA0 /* UIViewController+Extensions.swift in Sources */,
 				C94F90E226E0A3BF0068B44E /* AnalyticsManager+ReferralAppTracking.swift in Sources */,
 				C923B85F25FF322A00F9CCA0 /* RAnalyticsClassManipulable.swift in Sources */,
+				C9D647B7276AB0FF00C88F54 /* AnalyticsEventObserver.swift in Sources */,
 				C97EF58026736321006528B6 /* UIScreen+Extensions.swift in Sources */,
 				C9D40ADB26D3D30A0069393D /* RAnalyticsEvent+Install.swift in Sources */,
 				C923B89125FF322A00F9CCA0 /* URLRequest+RAT.swift in Sources */,
+				C9D647BA276AB10D00C88F54 /* AnalyticsEventPoster.swift in Sources */,
 				C9B5F4F82649350C0039A6A5 /* CLLocationManager+Extensions.swift in Sources */,
 				C923B85425FF322A00F9CCA0 /* RAnalyticsEvent.swift in Sources */,
 				C923B86125FF322A00F9CCA0 /* CoreHelpers.swift in Sources */,

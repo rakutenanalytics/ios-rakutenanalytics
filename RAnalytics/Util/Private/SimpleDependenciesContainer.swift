@@ -23,6 +23,8 @@ protocol SimpleDependenciesContainable {
     var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? { get }
     var databaseConfiguration: DatabaseConfigurable? { get }
     var pushEventHandler: PushEventHandleable { get }
+    var fileManager: FileManageable { get }
+    var serializerType: JSONSerializable.Type { get }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -53,10 +55,15 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
                                             databaseParentDirectory: Bundle.main.databaseParentDirectory)
     }()
     let pushEventHandler: PushEventHandleable
+    let fileManager: FileManageable = FileManager.default
+    let serializerType: JSONSerializable.Type = JSONSerialization.self
 
     init() {
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
-        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler)
+        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
+                                            appGroupId: appGroupId,
+                                            fileManager: fileManager,
+                                            serializerType: serializerType)
     }
 }

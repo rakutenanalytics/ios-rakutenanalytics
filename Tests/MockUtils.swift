@@ -196,11 +196,16 @@ final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
                                             databaseParentDirectory: .documentDirectory)
     }()
     var pushEventHandler: PushEventHandleable
+    var fileManager: FileManageable = FileManager.default
+    var serializerType: JSONSerializable.Type = JSONSerialization.self
 
     override init() {
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
-        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler)
+        pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
+                                            appGroupId: appGroupId,
+                                            fileManager: fileManager,
+                                            serializerType: serializerType)
         super.init()
     }
 }
@@ -341,5 +346,54 @@ final class ApplicationMock: NSObject, StatusBarOrientationGettable {
 
     var analyticsStatusBarOrientation: UIInterfaceOrientation {
         injectedValue
+    }
+}
+
+// MARK: - FileManagerMock
+
+final class FileManagerMock: FileManageable {
+    var mockedContainerURL: URL?
+    var fileExists = true
+
+    func createSafeFile(at url: URL) {
+    }
+
+    func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL? {
+        mockedContainerURL
+    }
+
+    func fileExists(atPath path: String) -> Bool {
+        fileExists
+    }
+
+    func removeItem(at URL: URL) throws {
+    }
+}
+
+// MARK: - JSONSerializationMock
+
+final class JSONSerializationMock: JSONSerializable {
+    static var mockedData: Data?
+    static var mockedJsonObject = [[String: Any]]()
+
+    static func data(withJSONObject obj: Any, options opt: JSONSerialization.WritingOptions) throws -> Data {
+        mockedData ?? Data()
+    }
+
+    static func jsonObject(with data: Data, options opt: JSONSerialization.ReadingOptions) throws -> Any {
+        mockedJsonObject
+    }
+}
+
+// MARK: - AnalyticsManagerMock
+
+final class AnalyticsManagerMock: AnalyticsManageable {
+    var eventIsProcessed = false
+    var processedEvent: RAnalyticsEvent?
+
+    func process(_ event: RAnalyticsEvent) -> Bool {
+        eventIsProcessed = true
+        processedEvent = event
+        return true
     }
 }

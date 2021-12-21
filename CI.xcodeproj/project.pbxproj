@@ -61,6 +61,10 @@
 		C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */; };
 		C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */; };
 		C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */; };
+		C9B395FA2768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */; };
+		C9B395FE276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */; };
+		C9B39600276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B395FF276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift */; };
+		C9B39606276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B39605276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift */; };
 		C9BFD6CC274E2A4B00CCBE8D /* ObjcInteropSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */; };
 		C9CCE45D268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CCE45C268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift */; };
 		C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */; };
@@ -163,6 +167,10 @@
 		C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHandlerSpec.swift; sourceTree = "<group>"; };
 		C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSharedApplicationSpec.swift; sourceTree = "<group>"; };
 		C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleClassSpec.swift; sourceTree = "<group>"; };
+		C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventObserverSpec.swift; sourceTree = "<group>"; };
+		C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerSpec.swift; sourceTree = "<group>"; };
+		C9B395FF276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventPosterSpec.swift; sourceTree = "<group>"; };
+		C9B39605276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventIntegrationSpec.swift; sourceTree = "<group>"; };
 		C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcInteropSpec.m; sourceTree = "<group>"; };
 		C9CCE45C268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsCookieInjectorSpec.swift; sourceTree = "<group>"; };
 		C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStateSpec.swift; sourceTree = "<group>"; };
@@ -217,6 +225,9 @@
 			isa = PBXGroup;
 			children = (
 				C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */,
+				C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */,
+				C9B395FF276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift */,
+				C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */,
 				C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */,
 				C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */,
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
@@ -281,6 +292,7 @@
 		45ABC4CD26DE08550030BB70 /* Integration */ = {
 			isa = PBXGroup;
 			children = (
+				C9B39605276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift */,
 				45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */,
 				45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */,
 			);
@@ -590,6 +602,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */,
+				C9B39606276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift in Sources */,
 				4597CFBB26E78E9600781E4F /* MockUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -610,6 +623,7 @@
 				C94F90DA26DFC8C60068B44E /* Array+Extensions.swift in Sources */,
 				C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */,
 				4BB2042E268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */,
+				C9B395FA2768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift in Sources */,
 				5AB254A320744B1900BF3EE9 /* RpCookieTests.m in Sources */,
 				C9CCE45D268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift in Sources */,
 				C96912A425CAC62B0073D804 /* MockUtils.swift in Sources */,
@@ -634,6 +648,7 @@
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
 				3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */,
 				3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */,
+				C9B395FE276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift in Sources */,
 				C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */,
 				C9E4BBCC260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift in Sources */,
 				C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */,
@@ -644,6 +659,7 @@
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
 				45E3BC5025814D3600319ECF /* TestUtils.swift in Sources */,
+				C9B39600276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift in Sources */,
 				C967F90F27327F0E008696F5 /* RAnalyticsEvent+Helper.swift in Sources */,
 				C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */,
 			);

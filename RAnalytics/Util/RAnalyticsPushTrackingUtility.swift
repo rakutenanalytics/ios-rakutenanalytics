@@ -1,11 +1,5 @@
 import Foundation
 
-internal enum RPushTrackingKeys {
-    /// Info.plist key whose value holds the name of the App Group set by the App.
-    static let AppGroupIdentifierPlistKey = "RPushAppGroupIdentifier"
-    static let OpenCountSentUserDefaultKey = "com.analytics.push.sentOpenCount"
-}
-
 /// Constructs the tracking identifier from the push payload.
 @objc public final class RAnalyticsPushTrackingUtility: NSObject {
     private enum PushKeys {
@@ -50,12 +44,21 @@ internal enum RPushTrackingKeys {
     /// - Returns: `true` or `false` based on the existence of the tracking identifier in the App Group User Defaults.
     @objc public static func analyticsEventHasBeenSent(with trackingIdentifier: String?) -> Bool {
         analyticsEventHasBeenSent(with: trackingIdentifier,
-                                  sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId))
+                                  sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId),
+                                  appGroupId: Bundle.main.appGroupId,
+                                  fileManager: FileManager.default,
+                                  serializerType: JSONSerialization.self)
     }
 
     internal static func analyticsEventHasBeenSent(with trackingIdentifier: String?,
-                                                   sharedUserStorageHandler: UserStorageHandleable?) -> Bool {
-        PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler).isEventAlreadySent(with: trackingIdentifier)
+                                                   sharedUserStorageHandler: UserStorageHandleable?,
+                                                   appGroupId: String?,
+                                                   fileManager: FileManageable,
+                                                   serializerType: JSONSerializable.Type) -> Bool {
+        PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
+                         appGroupId: appGroupId,
+                         fileManager: fileManager,
+                         serializerType: serializerType).isEventAlreadySent(with: trackingIdentifier)
     }
 }
 

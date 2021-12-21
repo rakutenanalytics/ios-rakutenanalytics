@@ -24,7 +24,7 @@ final class BundleMock: NSObject, EnvironmentBundle {
     func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
 
     var appGroupId: String? {
-        object(forInfoDictionaryKey: RPushTrackingKeys.AppGroupIdentifierPlistKey) as? String
+        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey) as? String
     }
 }
 

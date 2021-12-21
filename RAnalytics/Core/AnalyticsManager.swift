@@ -13,6 +13,14 @@ public typealias WebTrackingCookieDomainBlock = () -> String?
     case verbose, debug, info, warning, error, none
 }
 
+// MARK: - AnalyticsManageable
+
+protocol AnalyticsManageable: AnyObject {
+    func process(_ event: RAnalyticsEvent) -> Bool
+}
+
+// MARK: - AnalyticsManager
+
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
     private enum Constants {
@@ -114,6 +122,7 @@ public typealias WebTrackingCookieDomainBlock = () -> String?
     private let userIdentifierSelector: UserIdentifierSelector
     private let externalCollector: RAnalyticsExternalCollector
     private let eventChecker: EventChecker
+    private let eventObserver: AnalyticsEventObserver
 
     let launchCollector: RAnalyticsLaunchCollector
 
@@ -124,6 +133,8 @@ public typealias WebTrackingCookieDomainBlock = () -> String?
 
         let bundle = dependenciesContainer.bundle
         eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
+
+        eventObserver = AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler)
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
@@ -172,6 +183,11 @@ extension AnalyticsManager {
     }
 
     private func configure() {
+        eventObserver.delegate = self
+
+        // Note: track cached events when the app is launched for the first time
+        eventObserver.trackCachedEvents()
+
         if !addSDKTracker() {
             RLogger.error(message: "\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
         }
@@ -307,28 +323,7 @@ extension AnalyticsManager: CLLocationManagerDelegate {
 
 // MARK: - Public API
 
-extension AnalyticsManager {
-    /// Set logging level
-    ///
-    /// - Parameters:
-    ///     - loggingLevel:  The logging level type.
-    @objc(setLoggingLevel:) public func set(loggingLevel: RAnalyticsLoggingLevel) {
-        switch loggingLevel {
-        case .verbose:
-            RLogger.loggingLevel = .verbose
-        case .debug:
-            RLogger.loggingLevel = .debug
-        case .info:
-            RLogger.loggingLevel = .info
-        case .warning:
-            RLogger.loggingLevel = .warning
-        case .error:
-            RLogger.loggingLevel = .error
-        case .none:
-            RLogger.loggingLevel = .none
-        }
-    }
-
+extension AnalyticsManager: AnalyticsManageable {
     /// Process an event. The manager passes the event to each registered tracker, in turn.
     ///
     /// - Parameters:
@@ -395,6 +390,29 @@ extension AnalyticsManager {
             RLogger.debug(message: "No tracker processed event \(event.name)")
         }
         return processed
+    }
+}
+
+extension AnalyticsManager {
+    /// Set logging level
+    ///
+    /// - Parameters:
+    ///     - loggingLevel:  The logging level type.
+    @objc(setLoggingLevel:) public func set(loggingLevel: RAnalyticsLoggingLevel) {
+        switch loggingLevel {
+        case .verbose:
+            RLogger.loggingLevel = .verbose
+        case .debug:
+            RLogger.loggingLevel = .debug
+        case .info:
+            RLogger.loggingLevel = .info
+        case .warning:
+            RLogger.loggingLevel = .warning
+        case .error:
+            RLogger.loggingLevel = .error
+        case .none:
+            RLogger.loggingLevel = .none
+        }
     }
 
     /// Add a tracker to tracker list.

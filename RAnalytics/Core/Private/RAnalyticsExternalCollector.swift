@@ -212,7 +212,7 @@ private extension RAnalyticsExternalCollector {
                 self.easyIdentifier = anIdentifier
                 self.trackingIdentifier = nil
 
-            // RAE Login
+                // RAE Login
             } else {
                 self.trackingIdentifier = anIdentifier
                 self.easyIdentifier = nil
