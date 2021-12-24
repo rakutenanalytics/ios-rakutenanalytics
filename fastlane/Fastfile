@@ -140,6 +140,17 @@ platform :ios do
       sh "bundle exec pod repo remove #{pod_repo}"
     end
   end
+
+  desc "Change and commit hardcoded version string in CoreHelpers.Constants.sdkVersion"
+  lane :commit_sdk_ver_bump do |options|
+    target_version = options[:version]
+    UI.user_error!("version param must be passed in") unless !target_version.to_s.empty?
+    replacing = "static let sdkVersion = \"#{target_version}\""
+    regex = "static let sdkVersion = .*"
+    constant_file = "CoreHelpers.swift"
+    sh "find .. -type f -name '#{constant_file}' -exec sed -i '' -e 's/#{regex}/#{replacing}/g' {} ';'"
+    git_commit(path: "**/#{constant_file}", message: "chore: bump sdkVersion to #{target_version}")
+  end  
 end
 
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
