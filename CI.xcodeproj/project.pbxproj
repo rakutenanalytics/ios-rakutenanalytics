@@ -56,6 +56,7 @@
 		C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */; };
 		C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */; };
 		C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */; };
+		C985A50727833D14007EDABE /* CoreHelpersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985A50627833D14007EDABE /* CoreHelpersSpec.swift */; };
 		C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */; };
 		C98D71D725A7207300B1D048 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */; };
 		C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */; };
@@ -162,6 +163,7 @@
 		C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherSpec.swift; sourceTree = "<group>"; };
 		C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementIdentifiableSpec.swift; sourceTree = "<group>"; };
 		C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBundleSpec.swift; sourceTree = "<group>"; };
+		C985A50627833D14007EDABE /* CoreHelpersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreHelpersSpec.swift; sourceTree = "<group>"; };
 		C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckerSpec.swift; sourceTree = "<group>"; };
 		C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
 		C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHandlerSpec.swift; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 				C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */,
 				3A25875724AB447E007E7AF7 /* ClassManipulatorUIApplicationTests.m */,
 				6D243BC71E1F8C19002F59FC /* ClassManipulatorUNCenterTests.m */,
+				C985A50627833D14007EDABE /* CoreHelpersSpec.swift */,
 				C9E9587826419A830077881B /* CoreSubspecSpec.swift */,
 				C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */,
 				C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */,
@@ -654,6 +657,7 @@
 				C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */,
 				C94F90CF26DF81450068B44E /* ReferralAppModelSpec.swift in Sources */,
 				C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */,
+				C985A50727833D14007EDABE /* CoreHelpersSpec.swift in Sources */,
 				C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */,
 				C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */,
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
