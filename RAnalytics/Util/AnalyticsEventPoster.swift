@@ -58,7 +58,7 @@ public enum AnalyticsEventPoster {
             case .success(let events):
                 cachedEvents = events
 
-            case .failure(_):
+            case .failure:
                 cachedEvents = [[String: Any]]()
             }
 
