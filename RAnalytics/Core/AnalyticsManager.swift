@@ -101,6 +101,9 @@ protocol AnalyticsManageable: AnyObject {
         }
     }
 
+    /// Enable or disable the tracking of an event from an iOS Extension.
+    @objc public var enableExtensionEventTracking: Bool = false
+
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
     private(set) var locationManagerIsUpdating: Bool = false
@@ -122,7 +125,7 @@ protocol AnalyticsManageable: AnyObject {
     private let userIdentifierSelector: UserIdentifierSelector
     private let externalCollector: RAnalyticsExternalCollector
     private let eventChecker: EventChecker
-    private let eventObserver: AnalyticsEventObserver
+    private let eventObserver: AnalyticsEventObserver?
 
     let launchCollector: RAnalyticsLaunchCollector
 
@@ -134,7 +137,7 @@ protocol AnalyticsManageable: AnyObject {
         let bundle = dependenciesContainer.bundle
         eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
 
-        eventObserver = AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler)
+        eventObserver = enableExtensionEventTracking ? AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler) : nil
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
@@ -183,10 +186,12 @@ extension AnalyticsManager {
     }
 
     private func configure() {
-        eventObserver.delegate = self
+        if enableExtensionEventTracking {
+            eventObserver?.delegate = self
 
-        // Note: track cached events when the app is launched for the first time
-        eventObserver.trackCachedEvents()
+            // Note: track cached events when the app is launched for the first time
+            eventObserver?.trackCachedEvents()
+        }
 
         if !addSDKTracker() {
             RLogger.error(message: "\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
