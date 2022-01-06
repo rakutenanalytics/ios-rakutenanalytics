@@ -87,7 +87,7 @@ platform :ios do
       UI.success "Successfully released snapshot v#{version}"
     else
       # release mode i.e. snapshot=false
-      private_repo = "ssed/ios-analytics-private-artifacts"
+      private_repo = "mag/ios-analytics-private-artifacts"
       UI.message "Upload PRIVATE artifacts to on-prem GHE repo: #{private_repo}, branch: #{target_branch}, description: #{release_description}"
 
       # upload all artifacts to private repo on GHE

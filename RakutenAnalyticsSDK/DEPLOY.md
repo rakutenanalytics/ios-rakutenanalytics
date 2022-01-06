@@ -38,6 +38,6 @@ The lane also uploads SPM Package to release or snapshot repo.
     1. Confirms the version parameter matches the podspec
     1. Builds xcframework (arm64 and x86_64) using xcodebuild
     1. Uploads SPM Package by updating Package.swift file in https://github.com/rakutentech/ios-analytics-framework repo
-    1. Uploads all the build artifacts (zipped frameworks, debug symbols) to an internal private repo as a github release https://ghe.rakuten-it.com/ssed/ios-analytics-private-artifacts/releases
+    1. Uploads all the build artifacts (zipped frameworks, debug symbols) to an internal private repo as a github release https://ghe.rakuten-it.com/mag/ios-analytics-private-artifacts/releases
     1. Uploads the zipped release framework as a github release to https://github.com/rakutentech/ios-analytics-framework/releases/
     1. Runs pod lib lint and pushes the podspec to spec repo

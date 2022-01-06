@@ -26,6 +26,10 @@ The **analytics** module provides APIs for tracking events and automatically sen
 To get support (create crash or bug reports, make feature requests, ask questions etc.) please go to our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
 
 
+# Source code repository
+
+The Analytics SDK source is hosted on Rakuten GitPub https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse - everyone with GitPub read access can view the source.
+
 # Installing
 
 To use the module in its default configuration your `Podfile` should contain:

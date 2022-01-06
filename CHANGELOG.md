@@ -1,5 +1,17 @@
 # Changelog
 
+## 9.1.0 (2022-01-06)
+
+### Bug fixes
+* [SDKCF-4765](https://jira.rakuten-it.com/jira/browse/SDKCF-4765): Fixed issue where the public binary was missing the Analytics version in the `rsdks` RAT event payload field. 
+
+### Improvements
+* [SDKCF-4698](https://jira.rakuten-it.com/jira/browse/SDKCF-4698): Improved the support for tracking of events from extensions for the RPushPNP SDK's Rich Push feature. The tracking can be enabled using the new `AnalyticsManager` property `enableExtensionEventTracking`, which is disabled by default.
+* [SDKCF-4705](https://jira.rakuten-it.com/jira/browse/SDKCF-4705): Added logic to prevent sending duplicate push notify events.
+* [SDKCF-4649](https://jira.rakuten-it.com/jira/browse/SDKCF-4649): Simplified setting of UserID/EasyID status in RAT payload. The SDK will no longer send `NO_LOGIN_FOUND` in the `userid` field. Instead, `userid` will be set for legacy Mobile SDK logged-in users or `easyid` will be set for ID SDK logged-in users.
+* [SDKCF-4580](https://jira.rakuten-it.com/jira/browse/SDKCF-4580): Replaced `RDeviceIdentifier` dependency with `UIDevice.identifierForVendor`. Apps no longer need to configure a special keychain access group for device id tracking.
+* [SDKCF-4567](https://jira.rakuten-it.com/jira/browse/SDKCF-4567) / [SDKCF-4568](https://jira.rakuten-it.com/jira/browse/SDKCF-4568): Migrated `WebTrackingCookieDomainBlock` and `BatchingDelayBlock` to Swift. The source migration to Swift is complete.
+
 ## 9.0.0 (2021-11-16)
 
 ### Breaking changes
