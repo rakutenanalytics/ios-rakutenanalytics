@@ -13,7 +13,7 @@ final class AnalyticsEventTrackerSpec: QuickSpec {
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()
                 bundleMock.dictionary = [:]
-                bundleMock.dictionary?[AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey] = "group.test"
+                bundleMock.dictionary?[AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey] = "group.test"
                 let sharedUserDefaults = UserDefaultsMock(suiteName: "group.test")
                 sharedUserDefaults?.dictionary = [:]
 
@@ -30,7 +30,7 @@ final class AnalyticsEventTrackerSpec: QuickSpec {
                 fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
                 fileManagerMock.fileExists = true
                 fileURL = fileManagerMock.mockedContainerURL?
-                    .appendingPathComponent(PushEventHandlerKeys.OpenCountCachedEventsFileName)
+                    .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
                 FileManager.default.createSafeFile(at: fileURL)
             }
 

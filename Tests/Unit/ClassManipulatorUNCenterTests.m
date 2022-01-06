@@ -40,7 +40,7 @@
 - (void)testUNSetDelegateMethodReplaced
 {
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
-    XCTAssertTrue([center respondsToSelector:@selector(r_autotrack_setUserNotificationCenterDelegate:)]);
+    XCTAssertTrue([center respondsToSelector:@selector(rAutotrackSetUserNotificationCenterDelegate:)]);
     XCTAssertTrue([center respondsToSelector:@selector(setDelegate:)]);
 }
 
@@ -49,7 +49,7 @@
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
     UNDelegate *delegate = UNDelegate.new;
     center.delegate = delegate;
-    XCTAssertTrue([center.delegate respondsToSelector:@selector(r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+    XCTAssertTrue([center.delegate respondsToSelector:@selector(rAutotrackUserNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
     XCTAssertTrue([center.delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
 }
 
@@ -58,12 +58,12 @@
     UNUserNotificationCenter *center = UNUserNotificationCenter.currentNotificationCenter;
     UNDelegate *delegate = UNDelegate.new;
     center.delegate = delegate;
-    XCTAssertTrue([center.delegate respondsToSelector:@selector(r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+    XCTAssertTrue([center.delegate respondsToSelector:@selector(rAutotrackUserNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
     XCTAssertTrue([center.delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
 
     center.delegate = nil;
     XCTAssertNil(center.delegate);
-    XCTAssertTrue([delegate respondsToSelector:@selector(r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
+    XCTAssertTrue([delegate respondsToSelector:@selector(rAutotrackUserNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
     XCTAssertTrue([delegate respondsToSelector:@selector(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)]);
 }
 

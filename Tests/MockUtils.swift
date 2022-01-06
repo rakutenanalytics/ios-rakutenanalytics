@@ -39,12 +39,15 @@ final class ASIdentifierManagerMock: NSObject, AdvertisementIdentifiable {
 
 final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
     func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
+        // no-op
     }
 
     func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+        // no-op
     }
 
     func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+        // no-op
     }
 }
 
@@ -119,7 +122,7 @@ final class SwityURLSessionMock: NSObject, SwiftySessionable {
 final class HTTPCookieStorageMock: HTTPCookieStorable {
     var cookiesArray: [HTTPCookie]?
 
-    func cookies(for URL: URL) -> [HTTPCookie]? {
+    func cookies(for url: URL) -> [HTTPCookie]? {
         cookiesArray
     }
 }
@@ -171,8 +174,8 @@ final class KeychainHandlerMock: NSObject, KeychainHandleable {
 
 final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
     enum Constants {
-        static let RATDatabaseName = "RSDKAnalytics.db"
-        static let RATTableName = "RAKUTEN_ANALYTICS_TABLE"
+        static let ratDatabaseName = "RSDKAnalytics.db"
+        static let ratTableName = "RAKUTEN_ANALYTICS_TABLE"
     }
 
     public var notificationHandler: NotificationObservable = NotificationCenter.default
@@ -191,8 +194,8 @@ final class SimpleContainerMock: NSObject, SimpleDependenciesContainable {
     public var session: SwiftySessionable = URLSession.shared
     public var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
     public var databaseConfiguration: DatabaseConfigurable? = {
-        DatabaseConfigurationHandler.create(databaseName: Constants.RATDatabaseName,
-                                            tableName: Constants.RATTableName,
+        DatabaseConfigurationHandler.create(databaseName: Constants.ratDatabaseName,
+                                            tableName: Constants.ratTableName,
                                             databaseParentDirectory: .documentDirectory)
     }()
     var pushEventHandler: PushEventHandleable
@@ -366,7 +369,8 @@ final class FileManagerMock: FileManageable {
         fileExists
     }
 
-    func removeItem(at URL: URL) throws {
+    func removeItem(at url: URL) throws {
+        // no-op
     }
 }
 

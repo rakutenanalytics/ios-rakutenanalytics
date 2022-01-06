@@ -273,12 +273,10 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         }
                         expect(payload).toEventuallyNot(beNil())
 
-                        switch reachabilityStatus {
-                        case .wifi:
+                        if reachabilityStatus == .wifi {
                             expect((payload?["mnetw"] as? NSNumber)?.intValue).to(equal(RATMobileNetworkType.wifi.rawValue))
                             expect((payload?["mnetwd"] as? NSNumber)?.intValue).to(equal(RATMobileNetworkType.wifi.rawValue))
-
-                        default:
+                        } else {
                             if primaryRadio.isEmpty {
                                 expect(payload?["mnetw"] as? String).to(equal(""))
 
@@ -313,7 +311,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         let processed = ratTracker.process(event: Tracking.defaultEvent, state: Tracking.defaultState)
                         expect(processed).to(beTrue())
 
-                        let sender = ratTracker.perform(Selector((("sender"))))?.takeUnretainedValue() as? RAnalyticsSender
+                        let sender = ratTracker.perform(Selector(("sender")))?.takeUnretainedValue() as? RAnalyticsSender
 
                         var uploadTimerInterval: TimeInterval?
 

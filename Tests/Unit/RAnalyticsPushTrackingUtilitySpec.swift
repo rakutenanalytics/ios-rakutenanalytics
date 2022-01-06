@@ -138,8 +138,8 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
 
             describe("analyticsEventHasBeenSentWith") {
                 let sentTrackingId = "a_good_tracking_id"
-                let appGroupDictionary = [AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey: "appGroupId"]
-                let openCountDictionary = [PushEventHandlerKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
+                let appGroupDictionary = [AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey: "appGroupId"]
+                let openCountDictionary = [PushEventHandlerKeys.openCountSentUserDefaultKey: [sentTrackingId: true]]
                 let bundleMock = BundleMock()
                 let userStorageHandler = UserDefaultsMock(suiteName: bundleMock.appGroupId)
 

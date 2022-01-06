@@ -7,11 +7,11 @@ final class PushEventHandlerSpec: QuickSpec {
     override func spec() {
         describe("PushEventHandler") {
             let sentTrackingId = "a_good_tracking_id"
-            let appGroupDictionary = [AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey: "appGroupId"]
-            let openCountDictionary = [PushEventHandlerKeys.OpenCountSentUserDefaultKey: [sentTrackingId: true]]
+            let appGroupDictionary = [AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey: "appGroupId"]
+            let openCountDictionary = [PushEventHandlerKeys.openCountSentUserDefaultKey: [sentTrackingId: true]]
             let bundleMock = BundleMock()
             bundleMock.dictionary = [:]
-            bundleMock.dictionary?[AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey] = "group.test"
+            bundleMock.dictionary?[AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey] = "group.test"
             let sharedUserDefaults = UserDefaultsMock(suiteName: "group.test")
             sharedUserDefaults?.dictionary = [:]
             let fileManagerMock = FileManagerMock()
@@ -114,7 +114,7 @@ final class PushEventHandlerSpec: QuickSpec {
                         }
 
                         it("should set the tracking identifier caching status to true") {
-                            let openSentMap = sharedUserDefaults?.object(forKey: PushEventHandlerKeys.OpenCountSentUserDefaultKey) as? [String: Bool]
+                            let openSentMap = sharedUserDefaults?.object(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey) as? [String: Bool]
                             expect(openSentMap?[sentTrackingId]).to(beTrue())
                         }
                     }
@@ -142,7 +142,7 @@ final class PushEventHandlerSpec: QuickSpec {
                             pushEventHandler.cacheEvent(for: sentTrackingId)
                             pushEventHandler.clearCache()
 
-                            expect(sharedUserDefaults?.object(forKey: PushEventHandlerKeys.OpenCountSentUserDefaultKey)).to(beNil())
+                            expect(sharedUserDefaults?.object(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)).to(beNil())
                         }
 
                         it("should return true") {
@@ -162,7 +162,7 @@ final class PushEventHandlerSpec: QuickSpec {
                     fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
                     fileManagerMock.fileExists = true
                     fileURL = fileManagerMock.mockedContainerURL?
-                        .appendingPathComponent(PushEventHandlerKeys.OpenCountCachedEventsFileName)
+                        .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
                     FileManager.default.createSafeFile(at: fileURL)
                 }
 
@@ -216,7 +216,7 @@ final class PushEventHandlerSpec: QuickSpec {
 
                             beforeEach {
                                 fileURL = fileManagerMock.mockedContainerURL?
-                                    .appendingPathComponent(PushEventHandlerKeys.OpenCountCachedEventsFileName)
+                                    .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
                                 FileManager.default.createSafeFile(at: fileURL)
                             }
 

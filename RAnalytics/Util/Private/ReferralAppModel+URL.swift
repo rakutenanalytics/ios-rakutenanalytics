@@ -53,37 +53,37 @@ extension ReferralAppModel {
 
 extension ReferralAppModel {
     var query: String {
-        var query = [String]()
+        var queryBuilder = [String]()
 
         if let encodedKey = PayloadParameterKeys.refAccountIdentifier.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = "\(accountIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
-            query.append("\(encodedKey)=\(encodedValue)")
+            queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
         if let encodedKey = PayloadParameterKeys.refApplicationIdentifier.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = "\(applicationIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
-            query.append("\(encodedKey)=\(encodedValue)")
+            queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
         if let encodedKey = PayloadParameterKeys.refLink.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = link?.addEncodingForRFC3986UnreservedCharacters() {
-            query.append("\(encodedKey)=\(encodedValue)")
+            queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
         if let encodedKey = PayloadParameterKeys.refComponent.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = component?.addEncodingForRFC3986UnreservedCharacters() {
-            query.append("\(encodedKey)=\(encodedValue)")
+            queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
         if let customParameters = customParameters {
             customParameters.forEach { item in
                 if let encodedKey = item.key.addEncodingForRFC3986UnreservedCharacters(),
                    let encodedValue = item.value.addEncodingForRFC3986UnreservedCharacters() {
-                    query.append("\(encodedKey)=\(encodedValue)")
+                    queryBuilder.append("\(encodedKey)=\(encodedValue)")
                 }
             }
         }
 
-        return query.joined(separator: "&")
+        return queryBuilder.joined(separator: "&")
     }
 }

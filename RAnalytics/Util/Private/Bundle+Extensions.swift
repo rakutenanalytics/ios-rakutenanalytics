@@ -33,7 +33,10 @@ extension Bundle {
             return false
         }
         // There must be only one result for "org-appextension-feature-password-management" scheme
-        let result = schemes.first { $0 == "org-appextension-feature-password-management" }
-        return result != nil ? canOpenURL : false
+        if schemes.contains(where: { $0 == "org-appextension-feature-password-management" }) {
+            return canOpenURL
+        } else {
+            return false
+        }
     }
 }

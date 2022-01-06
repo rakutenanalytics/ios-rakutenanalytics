@@ -14,9 +14,9 @@ typealias SQlite3Pointer = OpaquePointer
 ///
 final class RAnalyticsDatabase {
 
-    private static let RAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
-    private static let RAnalyticsDBTableCreationFailureErrorCode = 1
-    private static let RAnalyticsDBAppWillTerminateErrorCode = 2
+    private static let rAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
+    private static let rAnalyticsDBTableCreationFailureErrorCode = 1
+    private static let rAnalyticsDBAppWillTerminateErrorCode = 2
 
     private let connection: SQlite3Pointer
     private var tables = Set<String>()
@@ -103,7 +103,7 @@ final class RAnalyticsDatabase {
                 return
             }
 
-            blobs.forEach { blob in
+            let op: (Data) -> Void = { blob in
                 blob.withUnsafeBytes { bytes -> Void in
                     if sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(bytes.count), nil) == SQLITE_OK {
                         sqlite3_step(statement)
@@ -112,6 +112,7 @@ final class RAnalyticsDatabase {
                     sqlite3_reset(statement)
                 }
             }
+            blobs.forEach(op)
             sqlite3_finalize(statement)
 
             if maximumNumberOfBlobs != 0 {
@@ -250,15 +251,17 @@ private extension RAnalyticsDatabase {
         sqlite3_finalize(statement)
 
         let isPresent = tableCount > 0
-        if isPresent { tables.insert(table) }
+        if isPresent {
+            tables.insert(table)
+        }
         return isPresent
     }
 
     func prepareTable(_ table: String) -> NSError? {
         guard !appWillTerminate else {
             RLogger.error(message: "RAnalyticsDatabase - prepareTable is cancelled because the app will terminate")
-            return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
-                           code: RAnalyticsDatabase.RAnalyticsDBAppWillTerminateErrorCode,
+            return NSError(domain: RAnalyticsDatabase.rAnalyticsDBErrorDomain,
+                           code: RAnalyticsDatabase.rAnalyticsDBAppWillTerminateErrorCode,
                            userInfo: [NSLocalizedDescriptionKey: "The app is terminating."])
         }
 
@@ -272,8 +275,8 @@ private extension RAnalyticsDatabase {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
             let message = "Failed to create table: \(errorMsg), code \(sqlite3_errcode(connection))"
             RLogger.error(message: message)
-            return NSError(domain: RAnalyticsDatabase.RAnalyticsDBErrorDomain,
-                           code: RAnalyticsDatabase.RAnalyticsDBTableCreationFailureErrorCode,
+            return NSError(domain: RAnalyticsDatabase.rAnalyticsDBErrorDomain,
+                           code: RAnalyticsDatabase.rAnalyticsDBTableCreationFailureErrorCode,
                            userInfo: [NSLocalizedDescriptionKey: message])
         }
 

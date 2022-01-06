@@ -10,7 +10,7 @@ final class AnalyticsEventPosterSpec: QuickSpec {
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()
                 bundleMock.dictionary = [:]
-                bundleMock.dictionary?[AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey] = "group.test"
+                bundleMock.dictionary?[AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey] = "group.test"
                 let sharedUserDefaults = UserDefaultsMock(suiteName: "group.test")
                 sharedUserDefaults?.dictionary = [:]
 

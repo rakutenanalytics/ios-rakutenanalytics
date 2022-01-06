@@ -3,7 +3,7 @@ import UIKit
 
 internal enum AppGroupUserDefaultsKeys {
     /// Info.plist key whose value holds the name of the App Group set by the App.
-    static let AppGroupIdentifierPlistKey = "RPushAppGroupIdentifier"
+    static let appGroupIdentifierPlistKey = "RPushAppGroupIdentifier"
 }
 
 protocol EnvironmentBundle: Bundleable {
@@ -63,13 +63,13 @@ extension Bundle: EnvironmentBundle {
     }
 
     static let assetsBundle: Bundle? = {
-        guard let RAnalyticsManagerClass = NSClassFromString("RAnalyticsManager") else {
+        guard let rAnalyticsManagerClass = NSClassFromString("RAnalyticsManager") else {
             return nil
         }
         /// Can't use [NSBundle mainBundle] here, because it returns the path to XCTest.framework
         /// when running unit tests. Also, if the SDK is being bundled as a dynamic framework,
         /// then it comes in its own bundle.
-        let classBundle = Bundle(for: RAnalyticsManagerClass.self)
+        let classBundle = Bundle(for: rAnalyticsManagerClass.self)
         guard var assetsPath = classBundle.resourcePath else {
             return nil
         }
@@ -134,7 +134,7 @@ extension Bundle: EnvironmentBundle {
     }
 
     var appGroupId: String? {
-        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.AppGroupIdentifierPlistKey) as? String
+        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
     }
 }
 

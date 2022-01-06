@@ -2,43 +2,43 @@ import UserNotifications
 import struct RSDKUtils.RLogger
 
 #if canImport(UserNotifications)
-let RSDKABuildUserNotificationSupport = true
+let rSDKABuildUserNotificationSupport = true
 #else
-let RSDKABuildUserNotificationSupport = false
+let rSDKABuildUserNotificationSupport = false
 #endif
 
 extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable {
 
     @objc public static func loadSwift() {
-        guard RSDKABuildUserNotificationSupport else {
+        guard rSDKABuildUserNotificationSupport else {
             return
         }
 
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
-                      with: #selector(r_autotrack_setUserNotificationCenterDelegate),
+                      with: #selector(rAutotrackSetUserNotificationCenterDelegate),
                       onlyIfPresent: true)
         RLogger.verbose(message: "Installed auto-tracking hooks for UNNotificationCenter")
     }
 
-    @objc(r_autotrack_userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
-    func r_autotrack_userNotificationCenter(
+    @objc(rAutotrackUserNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
+    func rAutotrackUserNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void) {
 
         AnalyticsManager.shared().launchCollector.processPushNotificationResponse(response)
-        if responds(to: #selector(r_autotrack_userNotificationCenter(_:didReceive:withCompletionHandler:))) {
-            r_autotrack_userNotificationCenter(center,
-                                               didReceive: response,
-                                               withCompletionHandler: completionHandler)
+        if responds(to: #selector(rAutotrackUserNotificationCenter(_:didReceive:withCompletionHandler:))) {
+            rAutotrackUserNotificationCenter(center,
+                                             didReceive: response,
+                                             withCompletionHandler: completionHandler)
         }
     }
 
-    @objc func r_autotrack_setUserNotificationCenterDelegate(_ delegate: UNUserNotificationCenterDelegate?) {
+    @objc func rAutotrackSetUserNotificationCenterDelegate(_ delegate: UNUserNotificationCenterDelegate?) {
 
         RLogger.verbose(message: "User notification center delegate is being set to %@ \(String(describing: delegate))")
-        let swizzleSelector = #selector(r_autotrack_userNotificationCenter(_:didReceive:withCompletionHandler:))
+        let swizzleSelector = #selector(rAutotrackUserNotificationCenter(_:didReceive:withCompletionHandler:))
         let delegateSelector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))
 
         // set swizzle if currently not swizzled
@@ -50,6 +50,6 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
                                                    onlyIfPresent: true)
         }
 
-        r_autotrack_setUserNotificationCenterDelegate(delegate)
+        rAutotrackSetUserNotificationCenterDelegate(delegate)
     }
 }

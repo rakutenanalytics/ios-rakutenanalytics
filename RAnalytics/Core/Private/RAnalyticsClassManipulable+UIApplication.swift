@@ -6,33 +6,33 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
     @objc public static func loadSwift() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
-                      with: #selector(r_autotrack_setApplicationDelegate),
+                      with: #selector(rAutotrackSetApplicationDelegate),
                       onlyIfPresent: true)
         RLogger.verbose(message: "Installed auto-tracking hooks for UIApplication")
     }
 
     // MARK: Added to UIApplicationDelegate
-    @objc func r_autotrack_application(
+    @objc func rAutotrackApplication(
         _ application: UIApplication,
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         RLogger.verbose(message: "Application will finish launching with options = \(String(describing: launchOptions))")
 
         // In any case, it is needed to keep the loading of AnalyticsManager singleton here
-        // in `r_autotrack_application(application:willFinishLaunchingWithOptions:)`
+        // in `rAutotrackApplication(application:willFinishLaunchingWithOptions:)`
         // because automatic events have to be tracked when the app is launched
         _ = AnalyticsManager.shared()
 
         AnalyticsManager.shared().launchCollector.origin = .internal
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:willFinishLaunchingWithOptions:))) {
-            return r_autotrack_application(application,
-                                           willFinishLaunchingWithOptions: launchOptions)
+        if responds(to: #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:))) {
+            return rAutotrackApplication(application,
+                                         willFinishLaunchingWithOptions: launchOptions)
         }
         return true
     }
 
-    @objc func r_autotrack_application(
+    @objc func rAutotrackApplication(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -41,9 +41,9 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         AnalyticsManager.shared().launchCollector.origin = .internal
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:didFinishLaunchingWithOptions:))) {
-            return r_autotrack_application(application,
-                                           didFinishLaunchingWithOptions: launchOptions)
+        if responds(to: #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) {
+            return rAutotrackApplication(application,
+                                         didFinishLaunchingWithOptions: launchOptions)
         }
         return true
     }
@@ -51,8 +51,8 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
     /*
      * Methods below are only added if the delegate implements the original method.
      */
-    @objc func r_autotrack_application(_ application: UIApplication,
-                                       handleOpen url: URL) -> Bool {
+    @objc func rAutotrackApplication(_ application: UIApplication,
+                                     handleOpen url: URL) -> Bool {
         RLogger.verbose(message: "Application was asked to open URL \(url.absoluteString)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
@@ -60,15 +60,15 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         AnalyticsManager.shared().trackReferralApp(url: url)
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:handleOpen:))) {
-            return r_autotrack_application(application, handleOpen: url)
+        if responds(to: #selector(rAutotrackApplication(_:handleOpen:))) {
+            return rAutotrackApplication(application, handleOpen: url)
         }
         return true
     }
 
-    @objc func r_autotrack_application(_ app: UIApplication,
-                                       open url: URL,
-                                       options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    @objc func rAutotrackApplication(_ app: UIApplication,
+                                     open url: URL,
+                                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         RLogger.verbose(message: "Application was asked to open URL \(url.absoluteString) with options =  \(options)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
@@ -76,16 +76,16 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: options[.sourceApplication] as? String)
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:open:options:))) {
-            return r_autotrack_application(app, open: url, options: options)
+        if responds(to: #selector(rAutotrackApplication(_:open:options:))) {
+            return rAutotrackApplication(app, open: url, options: options)
         }
         return true
     }
 
-    @objc func r_autotrack_application(_ application: UIApplication,
-                                       open url: URL,
-                                       sourceApplication: String?,
-                                       annotation: Any) -> Bool {
+    @objc func rAutotrackApplication(_ application: UIApplication,
+                                     open url: URL,
+                                     sourceApplication: String?,
+                                     annotation: Any) -> Bool {
         let message = "Application was asked by \(sourceApplication ?? "nil") to open URL \(url.absoluteString) with annotation \(annotation)"
         RLogger.verbose(message: message)
 
@@ -94,16 +94,16 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: sourceApplication)
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:open:sourceApplication:annotation:))) {
-            return r_autotrack_application(application,
-                                           open: url,
-                                           sourceApplication: sourceApplication,
-                                           annotation: annotation)
+        if responds(to: #selector(rAutotrackApplication(_:open:sourceApplication:annotation:))) {
+            return rAutotrackApplication(application,
+                                         open: url,
+                                         sourceApplication: sourceApplication,
+                                         annotation: annotation)
         }
         return true
     }
 
-    @objc func r_autotrack_application(
+    @objc func rAutotrackApplication(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
@@ -117,10 +117,10 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         }
 
         // Delegates may not implement the original method
-        if responds(to: #selector(r_autotrack_application(_:continue:restorationHandler:))) {
-            return r_autotrack_application(application,
-                                           continue: userActivity,
-                                           restorationHandler: restorationHandler)
+        if responds(to: #selector(rAutotrackApplication(_:continue:restorationHandler:))) {
+            return rAutotrackApplication(application,
+                                         continue: userActivity,
+                                         restorationHandler: restorationHandler)
         }
         return true
     }
@@ -135,8 +135,8 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
      * UNUserNotificationCenter delegate method was implemented:
      * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:
      */
-    @objc func r_autotrack_application(_ application: UIApplication,
-                                       didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+    @objc func rAutotrackApplication(_ application: UIApplication,
+                                     didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
 
         RLogger.verbose(message: "Application did receive remote notification \(userInfo)")
 
@@ -145,7 +145,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             appState: application.applicationState)
 
         // If we're executing this, the original method exists
-        r_autotrack_application(application, didReceiveRemoteNotification: userInfo)
+        rAutotrackApplication(application, didReceiveRemoteNotification: userInfo)
     }
 
     /*
@@ -157,7 +157,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
      *
      * - this will be called for all push notifications when the app is launched
      */
-    @objc func r_autotrack_application(
+    @objc func rAutotrackApplication(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -169,25 +169,25 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             appState: application.applicationState)
 
         // If we're executing this, the original method exists
-        r_autotrack_application(application,
-                                didReceiveRemoteNotification: userInfo,
-                                fetchCompletionHandler: completionHandler)
+        rAutotrackApplication(application,
+                              didReceiveRemoteNotification: userInfo,
+                              fetchCompletionHandler: completionHandler)
     }
 
     // MARK: Added to UIApplication
-    @objc func r_autotrack_setApplicationDelegate(_ delegate: UIApplicationDelegate?) {
+    @objc func rAutotrackSetApplicationDelegate(_ delegate: UIApplicationDelegate?) {
 
         RLogger.verbose(message: "Application delegate is being set to \(String(describing: delegate))")
 
         defer {
-            r_autotrack_setApplicationDelegate(delegate)
+            rAutotrackSetApplicationDelegate(delegate)
         }
 
         guard let unwrappedDelegate = delegate,
               !unwrappedDelegate.responds(to:
-                                            #selector(r_autotrack_application(_:willFinishLaunchingWithOptions:))),
+                                            #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:))),
               !unwrappedDelegate.responds(to:
-                                            #selector(r_autotrack_application(_:didFinishLaunchingWithOptions:))) else {
+                                            #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) else {
             // This delegate has already been extended.
             return
         }
@@ -196,37 +196,37 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:willFinishLaunchingWithOptions:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:willFinishLaunchingWithOptions:)),
+            with: #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:didFinishLaunchingWithOptions:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:didFinishLaunchingWithOptions:)),
+            with: #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:handleOpen:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:handleOpen:)),
+            with: #selector(rAutotrackApplication(_:handleOpen:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:open:options:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:open:options:)),
+            with: #selector(rAutotrackApplication(_:open:options:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:open:sourceApplication:annotation:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:open:sourceApplication:annotation:)),
+            with: #selector(rAutotrackApplication(_:open:sourceApplication:annotation:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:continue:restorationHandler:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:continue:restorationHandler:)),
+            with: #selector(rAutotrackApplication(_:continue:restorationHandler:)),
             onlyIfPresent: false)
 
         /*
@@ -237,13 +237,13 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:didReceiveRemoteNotification:)),
+            with: #selector(rAutotrackApplication(_:didReceiveRemoteNotification:)),
             onlyIfPresent: true)
 
         UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:didReceiveRemoteNotification:fetchCompletionHandler:)),
             inClass: recipient,
-            with: #selector(r_autotrack_application(_:didReceiveRemoteNotification:fetchCompletionHandler:)),
+            with: #selector(rAutotrackApplication(_:didReceiveRemoteNotification:fetchCompletionHandler:)),
             onlyIfPresent: true)
     }
 }

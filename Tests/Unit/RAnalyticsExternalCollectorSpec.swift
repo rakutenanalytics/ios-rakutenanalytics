@@ -327,7 +327,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             describe("receiveSSODialogNotification") {
                 it("should track AnalyticsManager.Event.Name.pageVisit when a ssodialog notification is received") {
                     let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
-                    let UIViewControllerType = UIViewController.self
+                    let uiViewControllerType = UIViewController.self
                     let ssodialogParams = ["help", "privacypolicy", "forgotpassword", "register"]
 
                     ssodialogParams.forEach {
@@ -339,10 +339,10 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(tracker?.eventName).to(beNil())
                         expect(tracker?.params).to(beNil())
 
-                        NotificationCenter.default.post(name: notificationName, object: "\(UIViewControllerType)\($0)")
+                        NotificationCenter.default.post(name: notificationName, object: "\(uiViewControllerType)\($0)")
 
                         expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.pageVisit))
-                        expect(tracker?.params?["page_id"] as? String).toEventually(equal("\(UIViewControllerType)\($0)"))
+                        expect(tracker?.params?["page_id"] as? String).toEventually(equal("\(uiViewControllerType)\($0)"))
                         tracker?.reset()
                     }
                 }

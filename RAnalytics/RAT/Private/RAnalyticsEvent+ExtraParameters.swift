@@ -96,26 +96,18 @@ extension RAnalyticsEvent {
     // MARK: - Login Credential Found
 
     var loginCredentialFoundParameters: [String: Any] {
-        var extra = [String: Any]()
-
-        let source = parameters["source"] as? String
-        if !source.isEmpty {
-            extra["source"] = source
+        guard let source = parameters["source"] as? String, !source.isEmpty else {
+            return [:]
         }
-
-        return extra
+        return ["source": source]
     }
 
     // MARK: - Credential Strategies
 
     var credentialStrategiesParameters: [String: Any] {
-        var extra = [String: Any]()
-
-        if let strategies = parameters["strategies"] as? [String: Any],
-           !strategies.isEmpty {
-            extra["strategies"] = strategies
+        guard let strategies = parameters["strategies"] as? String, !strategies.isEmpty else {
+            return [:]
         }
-
-        return extra
+        return ["strategies": strategies]
     }
 }

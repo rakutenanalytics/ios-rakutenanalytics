@@ -12,9 +12,6 @@ extension ASIdentifierManager: AdvertisementIdentifiable {
     }
 
     var advertisingIdentifierUUIDString: String {
-        guard let result = safeAdvertisingIdentifier?.uuidString else {
-            return ""
-        }
-        return result
+        safeAdvertisingIdentifier?.uuidString ?? ""
     }
 }

@@ -247,16 +247,12 @@ extension AnalyticsManager {
         let status: CLAuthorizationStatus = type(of: locationManager).authorizationStatus()
 
         #if DEBUG
+        var lastStatus: CLAuthorizationStatus?
         Synchronizable.withSynchronized([authorizationStatusLockableObject]) {
-            var lastStatus: CLAuthorizationStatus?
-            var updated = false
-
-            updated = (status != lastStatus)
-            if updated {
+            let hasUpdated = status != lastStatus
+            if hasUpdated {
                 lastStatus = status
-            }
 
-            if updated {
                 var statusString = ""
                 switch status {
                 case .notDetermined:       statusString = "Not Determined"
@@ -346,11 +342,9 @@ extension AnalyticsManager: AnalyticsManageable {
 
         let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: notOptionalDeviceIdentifier)
 
-        if shouldTrackAdvertisingIdentifier {
-            if let advertisingIdentifier = advertisingIdentifierHandler.idfa {
-                // User has not disabled tracking
-                state.advertisingIdentifier = advertisingIdentifier
-            }
+        if shouldTrackAdvertisingIdentifier, let advertisingIdentifier = advertisingIdentifierHandler.idfa {
+            // User has not disabled tracking
+            state.advertisingIdentifier = advertisingIdentifier
         }
 
         if enableAppToWebTracking {
@@ -463,7 +457,7 @@ extension AnalyticsManager {
             .get()
             .compactMap { $0 as? EndpointSettable }
             .forEach { tracker in
-                if tracker.responds(to: Selector((("setEndpointURL:")))),
+                if tracker.responds(to: #selector(set(endpointURL:))),
                    let endpointURL = endpointURL ?? Bundle.main.endpointAddress {
                     tracker.endpointURL = endpointURL
                 }
