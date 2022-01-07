@@ -27,7 +27,6 @@ public enum AnalyticsEventPoster {
     /// - Parameters:
     ///    - name: the event name.
     ///    - parameters: the event parameters.
-    @available(iOS, unavailable, message: "This method is only for extension.")
     public static func post(name: String, parameters: [String: Any]?) {
         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId),
                                                 appGroupId: Bundle.main.appGroupId,
