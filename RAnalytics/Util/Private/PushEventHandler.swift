@@ -81,23 +81,23 @@ internal struct PushEventHandler {
         self.fileManager = fileManager
         self.serializerType = serializerType
 
-        do {
-            let fileURL = try eventsCacheFileURL()
+        switch eventsCacheFileURL() {
+        case .success(let fileURL):
             fileManager.createSafeFile(at: fileURL)
 
-        } catch {
+        case .failure(let error):
             RLogger.error(message: "PushEventHandler error: \(error.localizedDescription)")
         }
     }
 
     /// - Returns: the events cache file URL if it exists
     /// - Throws: an error otherwise.
-    private func eventsCacheFileURL() throws -> URL {
+    private func eventsCacheFileURL() -> Result<URL, PushEventError> {
         guard let appGroupId = appGroupId,
               let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
-            throw PushEventError.fileUrlIsNil
+            return .failure(.fileUrlIsNil)
         }
-        return url.appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
+        return .success(url.appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName))
     }
 }
 
@@ -151,9 +151,8 @@ extension PushEventHandler: PushEventHandleable {
     /// - Parameters:
     ///    - completion: the completion that notifies when the cached events is retrieved or not.
     internal func cachedEvents(completion: (Result<[[String: Any]], PushEventError>) -> Void) {
-        do {
-            let url = try eventsCacheFileURL()
-
+        switch eventsCacheFileURL() {
+        case .success(let url):
             coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: nil) { url in
                 do {
                     guard fileManager.fileExists(atPath: url.path) else {
@@ -175,12 +174,8 @@ extension PushEventHandler: PushEventHandleable {
                 }
             }
 
-        } catch {
-            guard let anError = error as? PushEventError else {
-                completion(.failure(.nativeError(error: error)))
-                return
-            }
-            completion(.failure(anError))
+        case .failure(let error):
+            completion(.failure(error))
         }
     }
 
@@ -192,9 +187,8 @@ extension PushEventHandler: PushEventHandleable {
     ///    - events: the events to save.
     ///    - completion: the completion that notifies when the saving task has been completed or failed.
     internal func save(events: [[String: Any]], completion: ((PushEventError?) -> Void)) {
-        do {
-            let url = try eventsCacheFileURL()
-
+        switch eventsCacheFileURL() {
+        case .success(let url):
             coordinator.coordinate(writingItemAt: url,
                                    options: .forReplacing,
                                    error: nil) { (url) in
@@ -215,12 +209,8 @@ extension PushEventHandler: PushEventHandleable {
                 }
             }
 
-        } catch {
-            guard let anError = error as? PushEventError else {
-                completion(.nativeError(error: error))
-                return
-            }
-            completion(anError)
+        case .failure(let error):
+            completion(error)
         }
     }
 

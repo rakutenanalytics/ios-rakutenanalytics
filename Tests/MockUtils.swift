@@ -378,14 +378,21 @@ final class FileManagerMock: FileManageable {
 
 final class JSONSerializationMock: JSONSerializable {
     static var mockedData: Data?
-    static var mockedJsonObject = [[String: Any]]()
+    static var mockedJsonObject: Any = [[String: Any]]()
+    static var error: Error?
 
     static func data(withJSONObject obj: Any, options opt: JSONSerialization.WritingOptions) throws -> Data {
-        mockedData ?? Data()
+        if let error = error {
+            throw error
+        }
+        return mockedData ?? Data()
     }
 
     static func jsonObject(with data: Data, options opt: JSONSerialization.ReadingOptions) throws -> Any {
-        mockedJsonObject
+        if let error = error {
+            throw error
+        }
+        return mockedJsonObject
     }
 }
 

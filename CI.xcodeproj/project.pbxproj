@@ -54,6 +54,7 @@
 		C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */; };
 		C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */; };
 		C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */; };
+		C971143927885EF6003C0125 /* PushEventErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C971143827885EF6003C0125 /* PushEventErrorSpec.swift */; };
 		C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */; };
 		C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */; };
 		C985A50727833D14007EDABE /* CoreHelpersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985A50627833D14007EDABE /* CoreHelpersSpec.swift */; };
@@ -161,6 +162,7 @@
 		C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollectorSpec.swift; sourceTree = "<group>"; };
 		C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEventSpec.swift; sourceTree = "<group>"; };
 		C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherSpec.swift; sourceTree = "<group>"; };
+		C971143827885EF6003C0125 /* PushEventErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushEventErrorSpec.swift; sourceTree = "<group>"; };
 		C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementIdentifiableSpec.swift; sourceTree = "<group>"; };
 		C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBundleSpec.swift; sourceTree = "<group>"; };
 		C985A50627833D14007EDABE /* CoreHelpersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreHelpersSpec.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
 				C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */,
 				C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */,
+				C971143827885EF6003C0125 /* PushEventErrorSpec.swift */,
 				C950D8E3276261A800DF9589 /* PushEventHandlerSpec.swift */,
 				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
 				C969127925CAC5670073D804 /* RABEventBroadcasterSpec.swift */,
@@ -650,6 +653,7 @@
 				C969127A25CAC5670073D804 /* RABEventBroadcasterSpec.swift in Sources */,
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
 				3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */,
+				C971143927885EF6003C0125 /* PushEventErrorSpec.swift in Sources */,
 				3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */,
 				C9B395FE276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift in Sources */,
 				C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */,

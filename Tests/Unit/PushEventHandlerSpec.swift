@@ -18,6 +18,12 @@ final class PushEventHandlerSpec: QuickSpec {
             var fileURL: URL!
             let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
+            let expectedError = NSError(domain: "domain", code: 456, userInfo: nil)
+
+            afterEach {
+                JSONSerializationMock.error = nil
+                fileManagerMock.fileExists = true
+            }
 
             context("App Group User Defaults") {
                 describe("isEventAlreadySent") {
@@ -160,7 +166,6 @@ final class PushEventHandlerSpec: QuickSpec {
 
                 beforeEach {
                     fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
-                    fileManagerMock.fileExists = true
                     fileURL = fileManagerMock.mockedContainerURL?
                         .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
                     FileManager.default.createSafeFile(at: fileURL)
@@ -173,7 +178,7 @@ final class PushEventHandlerSpec: QuickSpec {
                 }
 
                 describe("cachedEvents(completion:)") {
-                    context("When the cached events file container does not exist") {
+                    context("When the cached events file container URL is nil") {
                         it("should return an error") {
                             fileManagerMock.mockedContainerURL = nil
 
@@ -187,6 +192,40 @@ final class PushEventHandlerSpec: QuickSpec {
 
                             expect(error).toNotEventually(beNil())
                             expect(error).to(equal(.fileUrlIsNil))
+                        }
+                    }
+
+                    context("When the cached events file container does not exist") {
+                        it("should return an error") {
+                            fileManagerMock.fileExists = false
+
+                            var error: PushEventError?
+
+                            pushEventHandler.cachedEvents { result in
+                                if case .failure(let anError) = result {
+                                    error = anError
+                                }
+                            }
+
+                            expect(error).toNotEventually(beNil())
+                            expect(error).to(equal(.fileUrlIsNil))
+                        }
+                    }
+
+                    context("When the parsing fails") {
+                        it("should return an error") {
+                            JSONSerializationMock.error = expectedError
+
+                            var error: PushEventError?
+
+                            pushEventHandler.cachedEvents { result in
+                                if case .failure(let anError) = result {
+                                    error = anError
+                                }
+                            }
+
+                            expect(error).toNotEventually(beNil())
+                            expect(error).to(equal(PushEventError.nativeError(error: expectedError)))
                         }
                     }
 
@@ -244,7 +283,26 @@ final class PushEventHandlerSpec: QuickSpec {
                             }
 
                             context("When the cached events array is not empty") {
-                                it("should return the cached events") {
+                                it("should return an empty cached events when the cache is incorrect") {
+                                    let expectedEvents = [[String: Any]]()
+
+                                    let incorrectCache = ["item1", "item2"]
+
+                                    JSONSerializationMock.mockedJsonObject = incorrectCache
+
+                                    var cachedEvents: [[String: Any]] = [[String: Any]]()
+
+                                    pushEventHandler.cachedEvents { result in
+                                        if case .success(let events) = result {
+                                            cachedEvents = events
+                                        }
+                                    }
+
+                                    expect(cachedEvents).toNotEventually(beNil())
+                                    expect(cachedEvents as? [[String: AnyHashable]]).to(equal(expectedEvents as? [[String: AnyHashable]]))
+                                }
+
+                                it("should return the cached events when the cache is correct") {
                                     let expectedEvents = eventsToCache
 
                                     JSONSerializationMock.mockedJsonObject = expectedEvents
@@ -334,6 +392,21 @@ final class PushEventHandlerSpec: QuickSpec {
                                     })
 
                                     expect(success).toEventually(beTrue())
+                                }
+                            }
+
+                            context("When the parsing fails") {
+                                it("should not save") {
+                                    JSONSerializationMock.error = expectedError
+
+                                    var error: PushEventError?
+
+                                    pushEventHandler.save(events: eventsToCache, completion: { anError in
+                                        error = anError
+                                    })
+
+                                    expect(error).toEventuallyNot(beNil())
+                                    expect(error).to(equal(PushEventError.nativeError(error: expectedError)))
                                 }
                             }
                         }
