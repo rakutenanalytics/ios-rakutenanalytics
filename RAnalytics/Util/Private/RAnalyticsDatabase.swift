@@ -13,11 +13,6 @@ typealias SQlite3Pointer = OpaquePointer
 /// executed on the caller's operation queue.
 ///
 final class RAnalyticsDatabase {
-
-    private static let rAnalyticsDBErrorDomain = "RAnalyticsDBErrorDomain"
-    private static let rAnalyticsDBTableCreationFailureErrorCode = 1
-    private static let rAnalyticsDBAppWillTerminateErrorCode = 2
-
     private let connection: SQlite3Pointer
     private var tables = Set<String>()
     private let queue: OperationQueue = {
@@ -259,10 +254,12 @@ private extension RAnalyticsDatabase {
 
     func prepareTable(_ table: String) -> NSError? {
         guard !appWillTerminate else {
-            RLogger.error(message: "RAnalyticsDatabase - prepareTable is cancelled because the app will terminate")
-            return NSError(domain: RAnalyticsDatabase.rAnalyticsDBErrorDomain,
-                           code: RAnalyticsDatabase.rAnalyticsDBAppWillTerminateErrorCode,
-                           userInfo: [NSLocalizedDescriptionKey: "The app is terminating."])
+            let error = AnalyticsError.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                                     code: ErrorCode.databaseAppWillTerminate.rawValue,
+                                                     description: ErrorDescription.databasePrepareTableError,
+                                                     reason: ErrorReason.databaseAppIsTerminatingError)
+            ErrorRaiser.raise(error)
+            return error.nsError()
         }
 
         assert(OperationQueue.current == queue)
@@ -274,10 +271,12 @@ private extension RAnalyticsDatabase {
         guard sqlite3_exec(connection, query, nil, nil, nil) == SQLITE_OK else {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
             let message = "Failed to create table: \(errorMsg), code \(sqlite3_errcode(connection))"
-            RLogger.error(message: message)
-            return NSError(domain: RAnalyticsDatabase.rAnalyticsDBErrorDomain,
-                           code: RAnalyticsDatabase.rAnalyticsDBTableCreationFailureErrorCode,
-                           userInfo: [NSLocalizedDescriptionKey: message])
+            let error = AnalyticsError.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                                     code: ErrorCode.databaseTableCreationFailure.rawValue,
+                                                     description: ErrorDescription.databaseError,
+                                                     reason: message)
+            ErrorRaiser.raise(error)
+            return error.nsError()
         }
 
         tables.insert(table)

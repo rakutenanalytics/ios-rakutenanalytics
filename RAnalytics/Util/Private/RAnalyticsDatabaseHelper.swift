@@ -1,6 +1,5 @@
 import Foundation
 import SQLite3
-import struct RSDKUtils.RLogger
 
 internal enum RAnalyticsDatabaseHelper {
 
@@ -8,7 +7,10 @@ internal enum RAnalyticsDatabaseHelper {
     static func beginTransaction(connection: SQlite3Pointer) -> Bool {
         guard sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK else {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
-            RLogger.error(message: "begin transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                             code: ErrorCode.databaseBeginTransactionFailure.rawValue,
+                                             description: ErrorDescription.databaseError,
+                                             reason: "begin transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
 
@@ -19,7 +21,10 @@ internal enum RAnalyticsDatabaseHelper {
     static func commitTransaction(connection: SQlite3Pointer) -> Bool {
         guard sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK else {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
-            RLogger.error(message: "commit transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                             code: ErrorCode.databaseCommitTransactionFailure.rawValue,
+                                             description: ErrorDescription.databaseError,
+                                             reason: "commit transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
 
@@ -30,7 +35,10 @@ internal enum RAnalyticsDatabaseHelper {
     static func prepareStatement(_ statement: inout SQlite3Pointer?, query: String, connection: SQlite3Pointer) -> Bool {
         guard sqlite3_prepare_v2(connection, query, -1, &statement, nil) == SQLITE_OK else {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
-            RLogger.error(message: "prepare statement failed with error \(errorMsg), code \(sqlite3_errcode(connection))")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                             code: ErrorCode.databasePrepareStatementFailure.rawValue,
+                                             description: ErrorDescription.databaseError,
+                                             reason: "prepare statement failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
 
@@ -48,9 +56,11 @@ extension RAnalyticsDatabase {
         guard let databasePath = databaseFileURL,
               sqlite3_open(databasePath.path, &connection) == SQLITE_OK,
               let databaseConnection = connection else {
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                             code: ErrorCode.databaseTableCreationFailure.rawValue,
+                                             description: ErrorDescription.databaseError,
+                                             reason: "Failed to open database: \(String(describing: databaseFileURL)). Using in-memory database."))
 
-            RLogger.error(message: "Failed to open database: \(String(describing: databaseFileURL))")
-            RLogger.error(message: "Using in-memory database")
             return mkAnalyticsInMemoryDBConnection()
         }
 

@@ -57,6 +57,52 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("errorHandler") {
+                let bundleMock = BundleMock()
+                bundleMock.dictionary = [:]
+                bundleMock.dictionary = [AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey: "group.app"]
+
+                let nonFailableDependenciesContainer = SimpleContainerMock()
+                nonFailableDependenciesContainer.bundle = bundleMock
+
+                context("When an embedded error occurs") {
+                    it("should raise the expected NSError") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: nonFailableDependenciesContainer)
+
+                        var error: NSError?
+                        analyticsManager.errorHandler = { anError in
+                            error = anError
+                        }
+
+                        let raisedError = AnalyticsError.embeddedError(ErrorConstants.unknownError)
+                        ErrorRaiser.raise(raisedError)
+
+                        expect(error).toEventuallyNot(beNil())
+                        expect(error).to(equal(raisedError.nsError()))
+                    }
+                }
+
+                context("When a detailed error occurs") {
+                    it("should raise the expected NSError") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: nonFailableDependenciesContainer)
+
+                        var error: NSError?
+                        analyticsManager.errorHandler = { anError in
+                            error = anError
+                        }
+
+                        let raisedError = AnalyticsError.detailedError(domain: "domain",
+                                                                       code: 123,
+                                                                       description: "description",
+                                                                       reason: "reason")
+                        ErrorRaiser.raise(raisedError)
+
+                        expect(error).toEventuallyNot(beNil())
+                        expect(error).to(equal(raisedError.nsError()))
+                    }
+                }
+            }
+
             describe("set(endpointURL:)") {
                 it("should set the expected endpoint to the added trackers") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())

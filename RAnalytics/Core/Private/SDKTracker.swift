@@ -23,8 +23,10 @@ final class SDKTracker: NSObject, Tracker {
           batchingDelay: TimeInterval = 60.0,
           databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = bundle.endpointAddress else {
-            let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.eventsNotProcessedBySDKTracker)"
-            RLogger.error(message: message)
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.sdkTrackerErrorDomain,
+                                             code: ErrorCode.sdkTrackerCreationFailed.rawValue,
+                                             description: ErrorDescription.eventsNotProcessedBySDKTracker,
+                                             reason: ErrorReason.endpointMissing))
             return nil
         }
 

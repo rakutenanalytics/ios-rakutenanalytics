@@ -1,7 +1,6 @@
 import Foundation
 import CoreTelephony
 import CoreLocation
-import struct RSDKUtils.RLogger
 import UIKit
 
 // swiftlint:disable type_name
@@ -152,19 +151,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         let session = dependenciesContainer.session
 
         // Sender
-        if let databaseConfiguration = dependenciesContainer.databaseConfiguration,
-           let endpointURL = bundleContainer.endpointAddress {
-            self.sender = RAnalyticsSender(endpoint: endpointURL,
-                                           database: databaseConfiguration.database,
-                                           databaseTable: databaseConfiguration.tableName,
-                                           bundle: bundleContainer,
-                                           session: session)
-            self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
-
-        } else {
-            RLogger.error(message: ErrorMessage.senderCreationFailed)
-            self.sender = nil
-        }
+        self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
+                                       bundle: bundleContainer,
+                                       session: session)
+        self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         self.startTime = NSDate().toString
 
@@ -186,19 +176,15 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
                                                     callback: RAnalyticsRATTracker.reachabilityCallback)
 
         // Rp Cookie Fetcher
-        if let httpCookieStore = httpCookieStore as? HTTPCookieStorage,
-           let fetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore) {
-            self.rpCookieFetcher = fetcher
-            self.rpCookieFetcher?.getRpCookieCompletionHandler { _, error in
-                if let error = error {
-                    let errorReason = String(describing: error.localizedFailureReason)
-                    let errorMessage = "RAnalyticsRATTracker - RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"
-                    RLogger.error(message: errorMessage)
-                }
+        self.rpCookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore)
+        self.rpCookieFetcher?.getRpCookieCompletionHandler { _, error in
+            if let error = error {
+                let errorReason = String(describing: error.localizedFailureReason)
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                                 code: ErrorCode.rpCookieCantBeFetched.rawValue,
+                                                 description: ErrorDescription.rpCookieCantBeFetched,
+                                                 reason: "RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"))
             }
-        } else {
-            RLogger.error(message: ErrorMessage.rpCookieFetcherCreationFailed)
-            self.rpCookieFetcher = nil
         }
 
         // Telephony Handler
@@ -213,7 +199,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
         super.init()
 
-        logTrackingError()
+        logTrackingError(ErrorDescription.eventsNotProcessedByRATTracker)
 
         // Reallocate telephonyNetworkInfo when the app becomes active
         _ = notificationCenter.observe(forName: UIApplication.didBecomeActiveNotification,
@@ -382,25 +368,27 @@ extension RAnalyticsRATTracker {
             return true
 
         } else {
-            RLogger.error(message: "The event \(event.name) could not be processed by the RAT Tracker.")
-            logTrackingError()
+            logTrackingError("The event \(event.name) could not be processed by the RAT Tracker.")
             return false
         }
     }
 
-    private func logTrackingError() {
+    private func logTrackingError(_ errorDescription: String) {
         var message = ""
 
         if dependenciesContainer.databaseConfiguration == nil {
-            message += "\(ErrorMessage.databaseConnectionIsNil) "
+            message += "\(ErrorReason.databaseConnectionIsNil) "
         }
 
         if bundle.endpointAddress == nil {
-            message += "\(ErrorMessage.endpointMissing) "
+            message += "\(ErrorReason.endpointMissing) "
         }
 
         if !message.isEmpty {
-            RLogger.error(message: "\(message)\(ErrorMessage.eventsNotProcessedByRATTracker)")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                             code: ErrorCode.eventsNotProcessedByRATracker.rawValue,
+                                             description: errorDescription,
+                                             reason: message))
         }
     }
 

@@ -21,6 +21,10 @@ enum DatabaseConfigurationHandler {
                        databaseParentDirectory: FileManager.SearchPathDirectory) -> DatabaseConfigurable? {
         guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
                                                                           databaseParentDirectory: databaseParentDirectory) else {
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
+                                             code: ErrorCode.databaseTableCreationFailure.rawValue,
+                                             description: ErrorDescription.databaseError,
+                                             reason: "\(databaseName): \(ErrorReason.databaseConnectionIsNil)"))
             return nil
         }
         let database = RAnalyticsDatabase.database(connection: connection)

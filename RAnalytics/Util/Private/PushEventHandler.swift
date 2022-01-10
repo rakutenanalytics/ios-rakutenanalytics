@@ -1,5 +1,4 @@
 import Foundation
-import RSDKUtils
 
 // MARK: - JSONSerializable
 
@@ -86,7 +85,10 @@ internal struct PushEventHandler {
             fileManager.createSafeFile(at: fileURL)
 
         case .failure(let error):
-            RLogger.error(message: "PushEventHandler error: \(error.localizedDescription)")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.pushEventHandlerErrorDomain,
+                                             code: ErrorCode.pushEventHandlerCacheFailed.rawValue,
+                                             description: ErrorDescription.pushEventHandlerCacheFailed,
+                                             reason: "\(error.localizedDescription), appGroupId: \(appGroupId ?? "nil")"))
         }
     }
 

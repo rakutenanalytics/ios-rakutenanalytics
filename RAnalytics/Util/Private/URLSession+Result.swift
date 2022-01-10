@@ -7,13 +7,15 @@ internal extension URLSession {
 
         return dataTask(with: request) { (data, response, error) in
             if let error = error {
-                completionHandler(.failure(error))
+                completionHandler(.failure(AnalyticsError.embeddedError(error as NSError)))
                 return
             }
 
             guard let response = response else {
+                // This assertionFailure should be removed as it does not make sense to keep it.
+                // Apple should have it on their side.
                 assertionFailure()
-                completionHandler(.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown)))
+                completionHandler(.failure(AnalyticsError.embeddedError(ErrorConstants.unknownError)))
                 return
             }
 

@@ -44,7 +44,7 @@ extension Bundle: EnvironmentBundle {
               let userDefinedURL = URL(string: plistObj) else {
             #if PUBLIC_ANALYTICS_IOS_SDK
             #if DEBUG
-            assertionFailure(ErrorMessage.endpoint)
+            assertionFailure(ErrorDescription.endpoint)
             #endif
             return nil
             #else
