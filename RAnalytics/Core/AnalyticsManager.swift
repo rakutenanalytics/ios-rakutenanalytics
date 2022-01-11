@@ -124,7 +124,19 @@ protocol AnalyticsManageable: AnyObject {
     }
 
     /// Enable or disable the tracking of an event from an iOS Extension.
-    @objc public var enableExtensionEventTracking: Bool = false
+    @objc public var enableExtensionEventTracking: Bool = false {
+        didSet {
+            if enableExtensionEventTracking {
+                eventObserver.startObservation(delegate: self)
+
+                // Track cached events if there are some
+                eventObserver.trackCachedEvents()
+
+            } else {
+                eventObserver.stopObservation()
+            }
+        }
+    }
 
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
@@ -147,7 +159,7 @@ protocol AnalyticsManageable: AnyObject {
     private let userIdentifierSelector: UserIdentifierSelector
     private let externalCollector: RAnalyticsExternalCollector
     private let eventChecker: EventChecker
-    private let eventObserver: AnalyticsEventObserver?
+    private let eventObserver: AnalyticsEventObserver
 
     let launchCollector: RAnalyticsLaunchCollector
 
@@ -159,7 +171,7 @@ protocol AnalyticsManageable: AnyObject {
         let bundle = dependenciesContainer.bundle
         eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
 
-        eventObserver = enableExtensionEventTracking ? AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler) : nil
+        eventObserver = AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler)
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
@@ -204,13 +216,6 @@ extension AnalyticsManager {
     }
 
     private func configure() {
-        if enableExtensionEventTracking {
-            eventObserver?.delegate = self
-
-            // Note: track cached events when the app is launched for the first time
-            eventObserver?.trackCachedEvents()
-        }
-
         addSDKTracker()
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't

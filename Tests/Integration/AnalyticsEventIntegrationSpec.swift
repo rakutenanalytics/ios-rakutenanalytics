@@ -16,7 +16,14 @@ final class AnalyticsEventIntegrationSpec: QuickSpec {
             let analyticsManager = AnalyticsManagerMock()
 
             let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
-            observer.delegate = analyticsManager
+
+            beforeEach {
+                observer.startObservation(delegate: analyticsManager)
+            }
+
+            afterEach {
+                observer.stopObservation()
+            }
 
             it("should process the event") {
                 AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,

@@ -103,6 +103,22 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("enableExtensionEventTracking") {
+                it("should return true when it is set to true") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                    analyticsManager.enableExtensionEventTracking = true
+
+                    expect(analyticsManager.enableExtensionEventTracking).to(beTrue())
+                }
+
+                it("should return false when it is set to false") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                    analyticsManager.enableExtensionEventTracking = false
+
+                    expect(analyticsManager.enableExtensionEventTracking).to(beFalse())
+                }
+            }
+
             describe("set(endpointURL:)") {
                 it("should set the expected endpoint to the added trackers") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())

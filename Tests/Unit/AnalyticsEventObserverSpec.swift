@@ -23,8 +23,6 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                                         serializerType: JSONSerializationMock.self)
             }()
             let delegate = AnalyticsManagerMock()
-            let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
-            observer.delegate = delegate
 
             beforeEach {
                 fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
@@ -41,8 +39,18 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                 delegate.eventIsProcessed = false
             }
 
-            context("When a Darwin Notification is observed") {
-                it("should process a cached event") {
+            context("When the observation has started") {
+                let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+
+                beforeEach {
+                    observer.startObservation(delegate: delegate)
+                }
+
+                afterEach {
+                    observer.stopObservation()
+                }
+
+                it("should process a cached event when a Darwin Notification is sent") {
                     JSONSerializationMock.mockedJsonObject = eventsToCache
                     pushEventHandler.save(events: eventsToCache, completion: { _ in
                         DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
@@ -51,6 +59,116 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                     expect(delegate.eventIsProcessed).toEventually(beTrue())
                     expect(delegate.processedEvent?.name).to(equal(RAnalyticsEvent.Name.pushNotification))
                     expect(delegate.processedEvent?.parameters as? [String: AnyHashable]).to(equal(["rid": "abcd1234"]))
+                }
+            }
+
+            context("When the observation has not started") {
+                let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                observer.stopObservation()
+
+                it("should not process a cached event when a Darwin Notification is sent") {
+                    JSONSerializationMock.mockedJsonObject = eventsToCache
+                    pushEventHandler.save(events: eventsToCache, completion: { _ in
+                        DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
+                    })
+
+                    expect(delegate.eventIsProcessed).toAfterTimeout(beFalse())
+                }
+            }
+
+            describe("init") {
+                it("should set delegate to nil") {
+                    let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+
+                    expect(observer.delegate).to(beNil())
+                }
+            }
+
+            describe("startObservation") {
+                it("should return true at first call") {
+                    let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                    let result = observer.startObservation(delegate: delegate)
+
+                    expect(result).to(beTrue())
+                }
+
+                it("should return false when the observation has already started") {
+                    let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                    observer.startObservation(delegate: delegate)
+                    let result = observer.startObservation(delegate: delegate)
+
+                    expect(result).to(beFalse())
+                }
+
+                it("should set a non-nil delegate") {
+                    let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                    observer.startObservation(delegate: delegate)
+
+                    expect(observer.delegate).toNot(beNil())
+                }
+
+                context("The observation has stopped") {
+                    it("should set a non-nil expected delegate") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.startObservation(delegate: delegate)
+                        observer.stopObservation()
+                        observer.startObservation(delegate: delegate)
+
+                        expect(observer.delegate).toNot(beNil())
+                    }
+                }
+            }
+
+            describe("stopObservation") {
+                context("The observation has started") {
+                    it("should return true") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.startObservation(delegate: delegate)
+                        let result = observer.stopObservation()
+
+                        expect(result).to(beTrue())
+                    }
+
+                    it("should return false when the observation has already stopped") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.startObservation(delegate: delegate)
+                        observer.stopObservation()
+                        let result = observer.stopObservation()
+
+                        expect(result).to(beFalse())
+                    }
+
+                    it("should set delegate to nil") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.startObservation(delegate: delegate)
+                        observer.stopObservation()
+
+                        expect(observer.delegate).to(beNil())
+                    }
+                }
+
+                context("The observation has not started") {
+                    it("should return false") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        let result = observer.stopObservation()
+
+                        expect(result).to(beFalse())
+                    }
+
+                    it("should return false when the observation has already stopped") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.stopObservation()
+                        let result = observer.stopObservation()
+
+                        expect(result).to(beFalse())
+                    }
+
+                    it("should set delegate to nil") {
+                        let observer = AnalyticsEventObserver(pushEventHandler: pushEventHandler)
+                        observer.stopObservation()
+
+                        expect(observer.delegate).to(beNil())
+                    }
                 }
             }
         }

@@ -9,7 +9,9 @@ internal final class AnalyticsEventObserver {
     private let center = CFNotificationCenterGetDarwinNotifyCenter()
     private var isObserving = false
     private var analyticsEventTracker: AnalyticsEventTrackable
-    weak var delegate: AnalyticsManageable? {
+    private var notificationObserver: Any?
+
+    private(set) weak var delegate: AnalyticsManageable? {
         didSet {
             analyticsEventTracker.delegate = delegate
         }
@@ -19,27 +21,40 @@ internal final class AnalyticsEventObserver {
     ///
     /// - Parameters:
     ///    - pushEventHandler: the push event handler.
-    internal init(pushEventHandler: PushEventHandleable) {
+    init(pushEventHandler: PushEventHandleable) {
         analyticsEventTracker = AnalyticsEventTracker(pushEventHandler: pushEventHandler)
-
-        NotificationCenter.default.addObserver(forName: .didReceiveDarwinNotification, object: nil, queue: nil) { _ in
-            self.trackCachedEvents()
-        }
-
-        startObservation()
     }
 
     deinit {
         stopObservation()
     }
+}
 
-    internal func trackCachedEvents() {
+// MARK: - Tracking
+
+extension AnalyticsEventObserver {
+    func trackCachedEvents() {
         analyticsEventTracker.track()
     }
+}
 
-    private func startObservation() {
-        guard !isObserving else { return }
+// MARK: - Observation
+
+extension AnalyticsEventObserver {
+    @discardableResult
+    func startObservation(delegate: AnalyticsManageable?) -> Bool {
+        guard !isObserving else { return false }
         isObserving = true
+
+        self.delegate = delegate
+
+        // https://developer.apple.com/documentation/foundation/nsnotificationcenter/1411723-addobserverforname
+        // To avoid a retain cycle, use a weak reference to self inside the block when self contains the observer as a strong reference.
+        notificationObserver = NotificationCenter
+            .default
+            .addObserver(forName: .didReceiveDarwinNotification, object: nil, queue: nil) { [weak self] _ in
+                self?.trackCachedEvents()
+            }
 
         /// Note: A C function pointer cannot be formed from a closure that captures context.
         /// As CFNotificationCenterAddObserver is a C function and cannot capture properties.
@@ -47,11 +62,25 @@ internal final class AnalyticsEventObserver {
         CFNotificationCenterAddObserver(center, Unmanaged.passUnretained(self).toOpaque(), { (_, _, _, _, _) in
             NotificationCenter.default.post(name: .didReceiveDarwinNotification, object: nil, userInfo: nil)
         }, AnalyticsDarwinNotification.eventsTrackingRequest, nil, .deliverImmediately)
+
+        return true
     }
 
-    private func stopObservation() {
-        guard isObserving else { return }
+    @discardableResult
+    func stopObservation() -> Bool {
+        guard isObserving else { return false }
+
+        self.delegate = nil
+
+        // https://developer.apple.com/documentation/foundation/nsnotificationcenter/1411723-addobserverforname
+        // You must invoke removeObserver: or removeObserver:name:object: before the system deallocates any object that addObserverForName:object:queue:usingBlock: specifies.
+        if let notificationObserver = notificationObserver {
+            NotificationCenter.default.removeObserver(notificationObserver)
+        }
+
         CFNotificationCenterRemoveEveryObserver(center, Unmanaged.passUnretained(self).toOpaque())
         isObserving = false
+
+        return true
     }
 }
