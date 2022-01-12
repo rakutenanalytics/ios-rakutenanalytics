@@ -40,7 +40,7 @@ extension CTTelephonyNetworkInfo: TelephonyNetworkInfoHandleable {
         #if targetEnvironment(simulator)
         return nil
         #else
-        dataServiceIdentifier
+        return dataServiceIdentifier
         #endif
     }
 
