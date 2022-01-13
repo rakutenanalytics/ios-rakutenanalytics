@@ -141,7 +141,7 @@ platform :ios do
     end
   end
 
-  desc "Commit version strings in CoreHelpers.Constants.sdkVersion, _versions, .jazzy.yaml"
+  desc "Commit version bump in CoreHelpers.Constants.sdkVersion, _versions, .jazzy.yaml, Info.plist, podspec"
   lane :commit_sdk_ver_bump do |options|
     target_version = options[:version]
     UI.user_error!("version param must be passed in") unless !target_version.to_s.empty?
@@ -149,9 +149,18 @@ platform :ios do
     regex = "static let sdkVersion = .*"
     constant_file = "CoreHelpers.swift"
     sh "find .. -type f -name '#{constant_file}' -exec sed -i '' -e 's/#{regex}/#{replacing}/g' {} ';'"
-    sh "sed -i '' -e 's/module_version: .*/module_version: #{target_version}/g' ../.jazzy.yaml"
-    sh "echo #{target_version} >>../_versions 2>&1"
-    git_commit(path: ["**/#{constant_file}", ".jazzy.yaml", "_versions"], message: "chore: bump sdkVersion to #{target_version}")
+    if target_version["snapshot"]
+      UI.message "Skipping docs version bump because of snapshot version"
+    else
+      sh "sed -i '' -e 's/module_version: .*/module_version: #{target_version}/g' ../.jazzy.yaml"
+      sh "echo #{target_version} >>../_versions 2>&1"
+    end
+    increment_version_number(version_number: target_version, xcodeproj: 'RakutenAnalyticsSDK/RAnalytics.xcodeproj')
+    version_bump_podspec(path: 'RAnalytics.podspec', version_number: target_version)
+    version_bump_podspec(path: 'RakutenAnalyticsSDK/RAnalytics.podspec', version_number: target_version)
+    git_commit(
+      path: ["**/#{constant_file}", ".jazzy.yaml", "_versions", "RAnalytics.podspec", "RakutenAnalyticsSDK/RAnalytics.podspec", "**/Info.plist"],
+      message: "chore: bump sdkVersion to #{target_version}")
   end
 end
 
