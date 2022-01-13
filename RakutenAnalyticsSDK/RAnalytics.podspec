@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "RAnalytics"
-    s.version      = "9.1.1-snapshot-2"
+    s.version      = "9.1.1"
     s.authors      = "Rakuten Ecosystem Mobile"
     s.summary      = "Records user activity and automatically sends tracking events to an analytics cloud service."
     s.homepage     = "https://github.com/rakutentech"

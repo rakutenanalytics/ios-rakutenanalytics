@@ -17,8 +17,6 @@
 
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the [Rakuten Analytics Tracker](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Home) (RAT) service.
 
-⚠️ This module supports iOS 12.0 and above in line with [GMD's recommendation](http://rex.public.rakuten-it.com/design/accessibility/system-requirements/os-and-browser/) (as of Q4 2020). It has been tested with iOS 12.5 and above. 
-
 ⚠️ This module supports iOS 12.0 and above. It has been tested with iOS 12.5 and above. Our minimum supported version is updated annually based on the OS version share on [ReX](http://rex.public.rakuten-it.com/design/accessibility/system-requirements/os-and-browser/).
 
 # Getting support
