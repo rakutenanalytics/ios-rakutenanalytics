@@ -143,12 +143,12 @@ import Foundation
     ///
     /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
     @objc public convenience init(pushNotificationPayload: [String: Any]) {
-        var parameters = [String: Any]()
+        var payload = [String: Any]()
         if let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: pushNotificationPayload) {
-            parameters[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] = trackingId
+            payload[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] = trackingId
         }
 
-        self.init(name: AnalyticsManager.Event.Name.pushNotification, parameters: parameters)
+        self.init(name: AnalyticsManager.Event.Name.pushNotification, parameters: payload)
     }
 
     @objc public override var hash: Int {

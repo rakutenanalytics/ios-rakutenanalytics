@@ -2,8 +2,8 @@ import Foundation
 import UIKit
 
 enum RAnalyticsConstants {
-    static let RAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
-    static let RAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
+    static let rAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
+    static let rAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
     static let appInfoKey = "app_info"
     static let sdkDependenciesKey = "rsdks"
 }
@@ -17,7 +17,7 @@ final class CoreHelpers {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
         /// Current RAT SDK version
-        static let sdkVersion = "9.1.1"
+        static let sdkVersion = "9.2.0-snapshot"
     }
 
     static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
@@ -88,15 +88,15 @@ final class CoreHelpers {
             appInfo["deployment_target"] = minimumOSVersion
         }
 
-        dict[RAnalyticsConstants.RAnalyticsAppInfoKey] = appInfo
-        dict[RAnalyticsConstants.RAnalyticsSDKInfoKey] = sdkInfo
+        dict[RAnalyticsConstants.rAnalyticsAppInfoKey] = appInfo
+        dict[RAnalyticsConstants.rAnalyticsSDKInfoKey] = sdkInfo
 
         return dict
     }
 
     static var appInfo: String? {
         guard let collectedInfos = CoreHelpers.getCollectedInfos(),
-              let appInfo = collectedInfos[RAnalyticsConstants.RAnalyticsAppInfoKey] as? [String: Any],
+              let appInfo = collectedInfos[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any],
               !appInfo.isEmpty,
               let data = try? JSONSerialization.data(withJSONObject: appInfo, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
             return nil
@@ -106,7 +106,7 @@ final class CoreHelpers {
 
     static var sdkDependencies: [String: Any]? {
         guard let collectedInfos = CoreHelpers.getCollectedInfos(),
-              let sdkInfo = collectedInfos[RAnalyticsConstants.RAnalyticsSDKInfoKey] as? [String: Any],
+              let sdkInfo = collectedInfos[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any],
               !sdkInfo.isEmpty else {
             return nil
         }

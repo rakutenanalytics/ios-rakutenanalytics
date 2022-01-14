@@ -1,5 +1,4 @@
 import Foundation
-import RSDKUtils
 
 // MARK: - JSONSerializable
 
@@ -14,13 +13,13 @@ extension JSONSerialization: JSONSerializable {}
 
 enum PushEventHandlerKeys {
     /// The key to retrieve the sent open count event.
-    static let OpenCountSentUserDefaultKey = "com.analytics.push.sentOpenCount"
+    static let openCountSentUserDefaultKey = "com.analytics.push.sentOpenCount"
 
     /// The key to retrieve the cached open count events to track.
-    static let OpenCountCachedEventsKey = "com.analytics.push.sentOpenCount.events.list"
+    static let openCountCachedEventsKey = "com.analytics.push.sentOpenCount.events.list"
 
     /// The cached open count events file name,
-    static let OpenCountCachedEventsFileName = "analyticsEventsCache.json"
+    static let openCountCachedEventsFileName = "analyticsEventsCache.json"
 }
 
 // MARK: - PushEventError
@@ -81,23 +80,26 @@ internal struct PushEventHandler {
         self.fileManager = fileManager
         self.serializerType = serializerType
 
-        do {
-            let fileURL = try eventsCacheFileURL()
+        switch eventsCacheFileURL() {
+        case .success(let fileURL):
             fileManager.createSafeFile(at: fileURL)
 
-        } catch {
-            RLogger.error(message: "PushEventHandler error: \(error.localizedDescription)")
+        case .failure(let error):
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.pushEventHandlerErrorDomain,
+                                             code: ErrorCode.pushEventHandlerCacheFailed.rawValue,
+                                             description: ErrorDescription.pushEventHandlerCacheFailed,
+                                             reason: "\(error.localizedDescription), appGroupId: \(appGroupId ?? "nil")"))
         }
     }
 
     /// - Returns: the events cache file URL if it exists
     /// - Throws: an error otherwise.
-    private func eventsCacheFileURL() throws -> URL {
+    private func eventsCacheFileURL() -> Result<URL, PushEventError> {
         guard let appGroupId = appGroupId,
               let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
-            throw PushEventError.fileUrlIsNil
+            return .failure(.fileUrlIsNil)
         }
-        return url.appendingPathComponent(PushEventHandlerKeys.OpenCountCachedEventsFileName)
+        return .success(url.appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName))
     }
 }
 
@@ -111,7 +113,7 @@ extension PushEventHandler: PushEventHandleable {
     /// - Returns: `true` or `false` based on the existence of the push tracking identifier in the App Group User Defaults.
     internal func isEventAlreadySent(with trackingIdentifier: String?) -> Bool {
         guard let trackingIdentifier = trackingIdentifier,
-              let domain = sharedUserStorageHandler?.dictionary(forKey: PushEventHandlerKeys.OpenCountSentUserDefaultKey),
+              let domain = sharedUserStorageHandler?.dictionary(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey),
               let result = domain[trackingIdentifier] as? Bool else {
             return false
         }
@@ -130,7 +132,7 @@ extension PushEventHandler: PushEventHandleable {
         }
         var openSentMap = [String: Bool]()
         openSentMap[trackingIdentifier] = true
-        sharedUserStorageHandler.set(value: openSentMap, forKey: PushEventHandlerKeys.OpenCountSentUserDefaultKey)
+        sharedUserStorageHandler.set(value: openSentMap, forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)
         return true
     }
 
@@ -140,7 +142,7 @@ extension PushEventHandler: PushEventHandleable {
         guard let sharedUserStorageHandler = sharedUserStorageHandler else {
             return false
         }
-        sharedUserStorageHandler.removeObject(forKey: PushEventHandlerKeys.OpenCountSentUserDefaultKey)
+        sharedUserStorageHandler.removeObject(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)
         return true
     }
 
@@ -151,9 +153,8 @@ extension PushEventHandler: PushEventHandleable {
     /// - Parameters:
     ///    - completion: the completion that notifies when the cached events is retrieved or not.
     internal func cachedEvents(completion: (Result<[[String: Any]], PushEventError>) -> Void) {
-        do {
-            let url = try eventsCacheFileURL()
-
+        switch eventsCacheFileURL() {
+        case .success(let url):
             coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: nil) { url in
                 do {
                     guard fileManager.fileExists(atPath: url.path) else {
@@ -162,9 +163,9 @@ extension PushEventHandler: PushEventHandleable {
                     }
 
                     let data = try Data(contentsOf: url)
-                    let events = try serializerType.jsonObject(with: data, options: .allowFragments)
+                    let eventsObj = try serializerType.jsonObject(with: data, options: .allowFragments)
 
-                    guard let events = events as? [[String: Any]] else {
+                    guard let events = eventsObj as? [[String: Any]] else {
                         completion(.success([[String: Any]]()))
                         return
                     }
@@ -175,12 +176,8 @@ extension PushEventHandler: PushEventHandleable {
                 }
             }
 
-        } catch {
-            guard let anError = error as? PushEventError else {
-                completion(.failure(.nativeError(error: error)))
-                return
-            }
-            completion(.failure(anError))
+        case .failure(let error):
+            completion(.failure(error))
         }
     }
 
@@ -192,9 +189,8 @@ extension PushEventHandler: PushEventHandleable {
     ///    - events: the events to save.
     ///    - completion: the completion that notifies when the saving task has been completed or failed.
     internal func save(events: [[String: Any]], completion: ((PushEventError?) -> Void)) {
-        do {
-            let url = try eventsCacheFileURL()
-
+        switch eventsCacheFileURL() {
+        case .success(let url):
             coordinator.coordinate(writingItemAt: url,
                                    options: .forReplacing,
                                    error: nil) { (url) in
@@ -215,12 +211,8 @@ extension PushEventHandler: PushEventHandleable {
                 }
             }
 
-        } catch {
-            guard let anError = error as? PushEventError else {
-                completion(.nativeError(error: error))
-                return
-            }
-            completion(anError)
+        case .failure(let error):
+            completion(error)
         }
     }
 

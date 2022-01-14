@@ -5,7 +5,7 @@ import Foundation
 protocol FileManageable {
     func createSafeFile(at url: URL)
     func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL?
-    func removeItem(at URL: URL) throws
+    func removeItem(at url: URL) throws
     func fileExists(atPath path: String) -> Bool
 }
 
@@ -60,6 +60,5 @@ extension FileManager {
             createFile(atPath: url.path, contents: nil, attributes: nil)
             return
         }
-        return
     }
 }

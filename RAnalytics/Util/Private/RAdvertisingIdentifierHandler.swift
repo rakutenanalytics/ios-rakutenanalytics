@@ -13,14 +13,14 @@ final class RAdvertisingIdentifierHandler {
     /// Returned value is not nil if tracking is authorized.
     /// Note: returns nil on simulator
     var idfa: String? {
-        let idfa = advertisingIdentifierUUIDString
-        let replacedIdfa = idfa.replacingOccurrences(of: "[0\\-]",
-                                                     with: "",
-                                                     options: .regularExpression)
-        guard !idfa.isEmpty && !replacedIdfa.isEmpty else {
+        let idfaStr = advertisingIdentifierUUIDString
+        let replacedIdfa = idfaStr.replacingOccurrences(of: "[0\\-]",
+                                                        with: "",
+                                                        options: .regularExpression)
+        guard !idfaStr.isEmpty && !replacedIdfa.isEmpty else {
             return nil
         }
-        return idfa
+        return idfaStr
     }
 
     /// Wrapper to get the ADSupport framework `advertisingIdentifier` string.

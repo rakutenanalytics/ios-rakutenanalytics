@@ -153,9 +153,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                         it("should return mnetw == 4, mnetwd == 5 when the primary radio is LTE, the secondary radio is 5G") {
                             verify(dataServiceIdentifier: TelephonyNetworkInfoMock.Constants.primaryCarrierKey, primaryRadio: CTRadioAccessTechnologyLTE, secondaryRadio: CTRadioAccessTechnologyNR)
                         }
-                    }
 
-                    if #available(iOS 14.1, *) {
                         it("should return mnetw == 5, mnetwd == 3 when the primary radio is 5G, the secondary radio is Edge") {
                             verify(dataServiceIdentifier: TelephonyNetworkInfoMock.Constants.primaryCarrierKey, primaryRadio: CTRadioAccessTechnologyNR, secondaryRadio: CTRadioAccessTechnologyEdge)
                         }
@@ -222,9 +220,7 @@ final class TelephonyHandlerSpec: QuickSpec {
                         it("should return mnetw == 5, mnetwd == 4 when the primary radio is LTE, the secondary radio is 5G") {
                             verify(dataServiceIdentifier: TelephonyNetworkInfoMock.Constants.secondaryCarrierKey, primaryRadio: CTRadioAccessTechnologyLTE, secondaryRadio: CTRadioAccessTechnologyNR)
                         }
-                    }
 
-                    if #available(iOS 14.1, *) {
                         it("should return mnetw == 3, mnetwd == 5 when the primary radio is 5G, the secondary radio is Edge") {
                             verify(dataServiceIdentifier: TelephonyNetworkInfoMock.Constants.secondaryCarrierKey, primaryRadio: CTRadioAccessTechnologyNR, secondaryRadio: CTRadioAccessTechnologyEdge)
                         }

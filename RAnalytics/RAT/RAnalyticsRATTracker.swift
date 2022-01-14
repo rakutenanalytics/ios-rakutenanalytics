@@ -1,7 +1,6 @@
 import Foundation
 import CoreTelephony
 import CoreLocation
-import struct RSDKUtils.RLogger
 import UIKit
 
 // swiftlint:disable type_name
@@ -13,10 +12,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 /// the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
 @objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
     enum Constants {
-        static let RATEventPrefix      = "rat."
-        static let RATGenericEventName = "rat.generic"
-        static let RATReachabilityHost = "8.8.8.8" // Google DNS Server
-        static let RATBatchingDelay: TimeInterval = 1.0 // Batching delay is 1 second by default
+        static let ratEventPrefix      = "rat."
+        static let ratGenericEventName = "rat.generic"
+        static let ratReachabilityHost = "8.8.8.8" // Google DNS Server
+        static let ratBatchingDelay: TimeInterval = 1.0 // Batching delay is 1 second by default
     }
 
     /// The identifer of the last-tracked visited page, if any.
@@ -143,7 +142,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     init(dependenciesContainer: SimpleDependenciesContainable) {
         // Retrieve the mandatory dependencies
         self.dependenciesContainer = dependenciesContainer
-        let bundle = dependenciesContainer.bundle
+        let bundleContainer = dependenciesContainer.bundle
         let httpCookieStore = dependenciesContainer.httpCookieStore
         let notificationCenter = dependenciesContainer.notificationHandler
         let telephonyNetworkInfoHandler = dependenciesContainer.telephonyNetworkInfoHandler
@@ -152,29 +151,20 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         let session = dependenciesContainer.session
 
         // Sender
-        if let databaseConfiguration = dependenciesContainer.databaseConfiguration,
-           let endpointURL = bundle.endpointAddress {
-            self.sender = RAnalyticsSender(endpoint: endpointURL,
-                                           database: databaseConfiguration.database,
-                                           databaseTable: databaseConfiguration.tableName,
-                                           bundle: bundle,
-                                           session: session)
-            self.sender?.setBatchingDelayBlock(Constants.RATBatchingDelay)
-
-        } else {
-            RLogger.error(message: ErrorMessage.senderCreationFailed)
-            self.sender = nil
-        }
+        self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
+                                       bundle: bundleContainer,
+                                       session: session)
+        self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         self.startTime = NSDate().toString
 
         // Attempt to read the IDs from the app's plist
         // If not found, use 477/1 as default values for account/application ID.
-        self.accountIdentifier = bundle.accountIdentifier
-        self.applicationIdentifier = bundle.applicationIdentifier
+        self.accountIdentifier = bundleContainer.accountIdentifier
+        self.applicationIdentifier = bundleContainer.applicationIdentifier
 
         // Bundle
-        self.bundle = bundle
+        self.bundle = bundleContainer
         self.duplicateAccounts = Set(bundle.duplicateAccounts ?? [])
 
         // Status Bar Orientation Handler
@@ -182,23 +172,19 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         statusBarOrientationHandler = RStatusBarOrientationHandler(application: analyticsStatusBarOrientationGetter)
 
         // Reachability Notifier
-        reachabilityNotifier = ReachabilityNotifier(host: Constants.RATReachabilityHost,
+        reachabilityNotifier = ReachabilityNotifier(host: Constants.ratReachabilityHost,
                                                     callback: RAnalyticsRATTracker.reachabilityCallback)
 
         // Rp Cookie Fetcher
-        if let httpCookieStore = httpCookieStore as? HTTPCookieStorage,
-           let fetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore) {
-            self.rpCookieFetcher = fetcher
-            self.rpCookieFetcher?.getRpCookieCompletionHandler { _, error in
-                if let error = error {
-                    let errorReason = String(describing: error.localizedFailureReason)
-                    let errorMessage = "RAnalyticsRATTracker - RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"
-                    RLogger.error(message: errorMessage)
-                }
+        self.rpCookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore)
+        self.rpCookieFetcher?.getRpCookieCompletionHandler { _, error in
+            if let error = error {
+                let errorReason = String(describing: error.localizedFailureReason)
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                                 code: ErrorCode.rpCookieCantBeFetched.rawValue,
+                                                 description: ErrorDescription.rpCookieCantBeFetched,
+                                                 reason: "RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"))
             }
-        } else {
-            RLogger.error(message: ErrorMessage.rpCookieFetcherCreationFailed)
-            self.rpCookieFetcher = nil
         }
 
         // Telephony Handler
@@ -213,7 +199,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
         super.init()
 
-        logTrackingError()
+        logTrackingError(ErrorDescription.eventsNotProcessedByRATTracker)
 
         // Reallocate telephonyNetworkInfo when the app becomes active
         _ = notificationCenter.observe(forName: UIApplication.didBecomeActiveNotification,
@@ -234,20 +220,11 @@ private extension RAnalyticsRATTracker {
     ///     - state: the State.
     func addAutomaticFields(_ payload: NSMutableDictionary, state: RAnalyticsState) {
         // MARK: acc
-        if let acc = (payload[PayloadParameterKeys.acc] as? NSNumber)?.positiveIntegerNumber {
-            payload[PayloadParameterKeys.acc] = acc
-
-        } else {
-            payload[PayloadParameterKeys.acc] = NSNumber(value: self.accountIdentifier)
-        }
-
+        payload[PayloadParameterKeys.acc] =
+            (payload[PayloadParameterKeys.acc] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: accountIdentifier)
         // MARK: aid
-        if let aid = (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber {
-            payload[PayloadParameterKeys.aid] = aid
-
-        } else {
-            payload[PayloadParameterKeys.aid] = NSNumber(value: self.applicationIdentifier)
-        }
+        payload[PayloadParameterKeys.aid] =
+            (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: applicationIdentifier)
 
         if deviceHandler.batteryState != .unknown {
             // MARK: powerstatus
@@ -372,8 +349,7 @@ extension RAnalyticsRATTracker {
         if let sender = sender {
             sender.send(jsonObject: payload)
 
-            switch state.referralTracking {
-            case .referralApp(let referralAppModel):
+            if case .referralApp(let referralAppModel) = state.referralTracking {
                 let referralAppAccount = RATAccount(accountId: referralAppModel.accountIdentifier,
                                                     applicationId: referralAppModel.applicationIdentifier,
                                                     disabledEvents: nil)
@@ -385,32 +361,34 @@ extension RAnalyticsRATTracker {
 
                 duplicateEvent(named: event.name, with: payload, exclude: referralAppAccount, sender: sender)
 
-            default:
+            } else {
                 duplicateEvent(named: event.name, with: payload, sender: sender)
             }
 
             return true
 
         } else {
-            RLogger.error(message: "The event \(event.name) could not be processed by the RAT Tracker.")
-            logTrackingError()
+            logTrackingError("The event \(event.name) could not be processed by the RAT Tracker.")
             return false
         }
     }
 
-    private func logTrackingError() {
+    private func logTrackingError(_ errorDescription: String) {
         var message = ""
 
         if dependenciesContainer.databaseConfiguration == nil {
-            message += "\(ErrorMessage.databaseConnectionIsNil) "
+            message += "\(ErrorReason.databaseConnectionIsNil) "
         }
 
         if bundle.endpointAddress == nil {
-            message += "\(ErrorMessage.endpointMissing) "
+            message += "\(ErrorReason.endpointMissing) "
         }
 
         if !message.isEmpty {
-            RLogger.error(message: "\(message)\(ErrorMessage.eventsNotProcessedByRATTracker)")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                             code: ErrorCode.eventsNotProcessedByRATracker.rawValue,
+                                             description: errorDescription,
+                                             reason: message))
         }
     }
 
@@ -512,9 +490,7 @@ extension RAnalyticsRATTracker {
                 }
 
             case .referralApp(let referralAppModel):
-                updatePayloadForReferralApp(for: event,
-                                            state: state,
-                                            payload: payload,
+                updatePayloadForReferralApp(payload: payload,
                                             extra: extra,
                                             referralApp: referralAppModel)
 
@@ -565,7 +541,7 @@ extension RAnalyticsRATTracker {
             }
 
         // MARK: rat.＊
-        case let value where value.hasPrefix(Constants.RATEventPrefix):
+        case let value where value.hasPrefix(Constants.ratEventPrefix):
             if !event.parameters.isEmpty {
                 payload.addEntries(from: event.parameters)
             }
@@ -659,9 +635,7 @@ private extension RAnalyticsRATTracker {
         return true
     }
 
-    func updatePayloadForReferralApp(for pageVisitEvent: RAnalyticsEvent,
-                                     state: RAnalyticsState,
-                                     payload: NSMutableDictionary,
+    func updatePayloadForReferralApp(payload: NSMutableDictionary,
                                      extra: NSMutableDictionary,
                                      referralApp: ReferralAppModel) {
         payload[PayloadParameterKeys.ref] = referralApp.bundleIdentifier
@@ -686,8 +660,8 @@ private extension RAnalyticsEvent {
     var eType: String? {
         var etype = parameters[PayloadParameterKeys.etype] as? String
 
-        if etype.isEmpty && name != RAnalyticsRATTracker.Constants.RATGenericEventName {
-            etype = name[RAnalyticsRATTracker.Constants.RATEventPrefix.count..<name.count]
+        if etype.isEmpty && name != RAnalyticsRATTracker.Constants.ratGenericEventName {
+            etype = name[RAnalyticsRATTracker.Constants.ratEventPrefix.count..<name.count]
         }
 
         if etype.isEmpty {
@@ -730,7 +704,7 @@ extension RAnalyticsRATTracker {
     ///
     /// - Returns: the RAT event.
     @objc(eventWithEventType:parameters:) public func event(withEventType eventType: String, parameters: [String: Any]? = nil) -> RAnalyticsEvent {
-        RAnalyticsEvent(name: "\(Constants.RATEventPrefix)\(eventType)", parameters: parameters)
+        RAnalyticsEvent(name: "\(Constants.ratEventPrefix)\(eventType)", parameters: parameters)
     }
 
     /// Add another RAT account to duplicate tracked events to.

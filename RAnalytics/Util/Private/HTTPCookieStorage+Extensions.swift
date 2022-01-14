@@ -1,7 +1,7 @@
 import Foundation
 
 protocol HTTPCookieStorable {
-    func cookies(for URL: URL) -> [HTTPCookie]?
+    func cookies(for url: URL) -> [HTTPCookie]?
 }
 
 extension HTTPCookieStorage: HTTPCookieStorable {}

@@ -34,13 +34,7 @@ private class PushNotificationTriggerCoder: NSCoder {
         self.repeats = repeats
     }
     override func decodeBool(forKey key: String) -> Bool {
-        let fieldKey = FieldKey(rawValue: key)
-        switch fieldKey {
-        case .repeats:
-            return repeats
-        default:
-            return false
-        }
+        FieldKey(rawValue: key) == .repeats ? repeats : false
     }
 }
 
@@ -63,13 +57,7 @@ private class LocationNotificationTriggerCoder: NSCoder {
         }
     }
     override func decodeObject(forKey key: String) -> Any? {
-        let fieldKey = FieldKey(rawValue: key)
-        switch fieldKey {
-        case .repeats:
-            return region
-        default:
-            return nil
-        }
+        FieldKey(rawValue: key) == .repeats ? region : nil
     }
 }
 
@@ -115,13 +103,7 @@ private class NotificationCoder: NSCoder {
     }
 
     override func decodeObject(forKey key: String) -> Any? {
-        let fieldKey = FieldKey(rawValue: key)
-        switch fieldKey {
-        case .request:
-            return request
-        default:
-            return nil
-        }
+        FieldKey(rawValue: key) == .request ? request : nil
     }
 }
 
@@ -235,7 +217,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["rid": "1234abcd", "nid": "abcd1234", "aps": ["alert": "a push alert"]]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
 
                 let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
@@ -251,7 +233,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["notification_id": "abcd1234", "aps": ["alert": "a push alert"]]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
 
                 let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
@@ -267,7 +249,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["aps": ["alert": "a push alert"]]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
 
                 let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
@@ -283,7 +265,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["aps": ["alert": ["title": "a push alert title"]]]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
 
                 let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
@@ -299,7 +281,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["aps": ["alert": ["title": "a push alert title", "body": "a push alert body"]]]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
 
                 let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
@@ -315,7 +297,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 let payload: [String: Any] = ["foo": "bar"]
 
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
-                launchCollector.processPushNotificationPayload(userInfo: payload, userAction: nil, userText: nil)
+                launchCollector.processPushNotificationPayload(userInfo: payload)
                 expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).toEventually(beFalse())
                 expect(launchCollector.pushTrackingIdentifier).toEventually(beNil())
             }

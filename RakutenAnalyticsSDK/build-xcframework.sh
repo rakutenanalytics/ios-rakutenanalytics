@@ -34,7 +34,8 @@ RANALYTICS_FRAMEWORK_VERSION=$(grep "s.version      =" $PODSPEC_FILE_PATH | sed 
 sed -i '' -E "s/MARKETING_VERSION = [0-9]+.[0-9]+.[0-9]+/MARKETING_VERSION = $RANALYTICS_FRAMEWORK_VERSION/g" $RAKUTEN_ANALYTICS_SDK_PROJECT_PATH
 
 # check if the new version number is updated
-PROJECT_VERSION_NUMBER=$(xcodebuild -workspace RakutenAnalyticsSDK.xcworkspace -UseModernBuildSystem=YES -scheme RAnalytics-Framework -showBuildSettings -sdk iphonesimulator | grep -m 1 "MARKETING_VERSION" | sed 's/[ ]*MARKETING_VERSION = //')
+# see agv marketing version ref QA1827: https://developer.apple.com/library/archive/qa/qa1827/_index.html
+PROJECT_VERSION_NUMBER=$(xcrun agvtool what-marketing-version -terse1)
 
 if [ "$RANALYTICS_FRAMEWORK_VERSION" = "$PROJECT_VERSION_NUMBER" ]; then
     echo "SUCCESS: the project version number is updated to $RANALYTICS_FRAMEWORK_VERSION"

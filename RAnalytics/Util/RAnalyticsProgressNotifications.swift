@@ -10,6 +10,7 @@ public extension Notification.Name {
     ///
     /// `object` is the JSON payload that was being uploaded, in its unserialized `Array` form.
     /// `userInfo` contains a `NSError` instance under the key `NSUnderlyingErrorKey`, that uses the `NSURLErrorDomain` domain.
+    @available(*, deprecated, message: "Use AnalyticsManager.errorHandler instead.")
     static let RAnalyticsUploadFailure = Notification.Name(rawValue: "com.rakuten.esd.sdk.notifications.analytics.rat.upload_failed")
 
     /// The RAnalyticsSender instance sends this notification after an upload succeeded.

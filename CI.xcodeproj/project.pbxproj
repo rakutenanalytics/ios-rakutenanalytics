@@ -43,6 +43,7 @@
 		C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */; };
 		C9441CCE268478DC000F698A /* rat.json in Resources */ = {isa = PBXBuildFile; fileRef = C9441CCD268478DC000F698A /* rat.json */; };
 		C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */; };
+		C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */; };
 		C94F90CF26DF81450068B44E /* ReferralAppModelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90CE26DF81450068B44E /* ReferralAppModelSpec.swift */; };
 		C94F90D426DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90D326DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift */; };
 		C94F90DA26DFC8C60068B44E /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90D926DFC8C60068B44E /* Array+Extensions.swift */; };
@@ -54,6 +55,7 @@
 		C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */; };
 		C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */; };
 		C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */; };
+		C971143927885EF6003C0125 /* PushEventErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C971143827885EF6003C0125 /* PushEventErrorSpec.swift */; };
 		C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */; };
 		C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */; };
 		C985A50727833D14007EDABE /* CoreHelpersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985A50627833D14007EDABE /* CoreHelpersSpec.swift */; };
@@ -150,6 +152,7 @@
 		C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelectorSpec.swift; sourceTree = "<group>"; };
 		C9441CCD268478DC000F698A /* rat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = rat.json; sourceTree = "<group>"; };
 		C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAdvertisingIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
+		C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsErrorSpec.swift; sourceTree = "<group>"; };
 		C94F90CE26DF81450068B44E /* ReferralAppModelSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralAppModelSpec.swift; sourceTree = "<group>"; };
 		C94F90D326DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralAppTrackingIntegrationSpec.swift; sourceTree = "<group>"; };
 		C94F90D926DFC8C60068B44E /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 		C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollectorSpec.swift; sourceTree = "<group>"; };
 		C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEventSpec.swift; sourceTree = "<group>"; };
 		C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherSpec.swift; sourceTree = "<group>"; };
+		C971143827885EF6003C0125 /* PushEventErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushEventErrorSpec.swift; sourceTree = "<group>"; };
 		C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementIdentifiableSpec.swift; sourceTree = "<group>"; };
 		C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBundleSpec.swift; sourceTree = "<group>"; };
 		C985A50627833D14007EDABE /* CoreHelpersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreHelpersSpec.swift; sourceTree = "<group>"; };
@@ -227,6 +231,7 @@
 			isa = PBXGroup;
 			children = (
 				C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */,
+				C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */,
 				C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */,
 				C9B395FF276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift */,
 				C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */,
@@ -242,6 +247,7 @@
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
 				C9BFD6CB274E2A4B00CCBE8D /* ObjcInteropSpec.m */,
 				C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */,
+				C971143827885EF6003C0125 /* PushEventErrorSpec.swift */,
 				C950D8E3276261A800DF9589 /* PushEventHandlerSpec.swift */,
 				5716717924AA08900071B80B /* PushNotificationAppDelegateTests.swift */,
 				C969127925CAC5670073D804 /* RABEventBroadcasterSpec.swift */,
@@ -641,6 +647,7 @@
 				C9E4BB3E260BA2430001F0B4 /* RATEncryptSpec.swift in Sources */,
 				C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */,
 				C926164A26D562E800119292 /* RAnalyticsEndpointSettableSpec.swift in Sources */,
+				C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */,
 				5716717A24AA08900071B80B /* PushNotificationAppDelegateTests.swift in Sources */,
 				C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */,
 				C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */,
@@ -650,6 +657,7 @@
 				C969127A25CAC5670073D804 /* RABEventBroadcasterSpec.swift in Sources */,
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
 				3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */,
+				C971143927885EF6003C0125 /* PushEventErrorSpec.swift in Sources */,
 				3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */,
 				C9B395FE276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift in Sources */,
 				C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */,

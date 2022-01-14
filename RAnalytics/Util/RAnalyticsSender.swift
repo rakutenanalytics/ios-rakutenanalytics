@@ -99,7 +99,10 @@ private enum SenderConstants {
     public func send(jsonObject: Any) {
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
-            RLogger.error(message: "Sender failed to serialize event dictionary")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
+                                             code: ErrorCode.senderSendEventsHasFailed.rawValue,
+                                             description: ErrorDescription.senderSendEventsHasFailed,
+                                             reason: ErrorReason.senderSerializationFailure))
             return
         }
 
@@ -190,7 +193,10 @@ fileprivate extension RAnalyticsSender {
               !ratJsonRecords.isEmpty,
               let data = Data(ratJsonRecords: ratJsonRecords,
                               internalSerialization: enableInternalSerialization) else {
-            RLogger.error(message: "Sender error: failed to create RAT request body data")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
+                                             code: ErrorCode.senderSendEventsHasFailed.rawValue,
+                                             description: ErrorDescription.senderSendEventsHasFailed,
+                                             reason: ErrorReason.senderRequestBodyCreationFailure))
             return
         }
 
@@ -201,17 +207,16 @@ fileprivate extension RAnalyticsSender {
             case .failure(let error):
                 /// Connection failed. Request a new attempt before calling the completion.
                 self.uploadRequested = true
+                self.raise(error: error)
                 self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
 
             case .success(let responseInfo):
                 let statusCode = (responseInfo.response as? HTTPURLResponse)?.statusCode
 
                 guard statusCode == 200 else {
-                    let reason = "Expected status code 200, got \(String(describing: statusCode))"
-                    let userInfo = [NSLocalizedDescriptionKey: "invalid_response",
-                                    NSLocalizedFailureReasonErrorKey: reason]
-                    let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: userInfo)
-
+                    let nonOptionalStatusCode = statusCode ?? 0
+                    let error = ErrorConstants.statusCodeError(with: nonOptionalStatusCode)
+                    self.raise(error: error)
                     self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
                     return
                 }
@@ -225,6 +230,17 @@ fileprivate extension RAnalyticsSender {
             }
         }
         task.resume()
+    }
+
+    private func raise(error: Error) {
+        // Raise the native error
+        ErrorRaiser.raise(.embeddedError(error as NSError))
+
+        // Raise the sender error
+        ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
+                                         code: ErrorCode.senderSendEventsHasFailed.rawValue,
+                                         description: (error as NSError).localizedDescription,
+                                         reason: (error as NSError).localizedFailureReason ?? ""))
     }
 
     private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) {
@@ -300,5 +316,32 @@ extension RAnalyticsSender {
         self.init(endpoint: endpoint,
                   database: RAnalyticsDatabase.database(connection: connection),
                   databaseTable: databaseTableName)
+    }
+}
+
+// MARK: Internal API
+extension RAnalyticsSender {
+    convenience init?(databaseConfiguration: DatabaseConfigurable?,
+                      bundle: EnvironmentBundle,
+                      session: SwiftySessionable) {
+        guard let databaseConfiguration = databaseConfiguration else {
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
+                                             code: ErrorCode.senderCreationFailed.rawValue,
+                                             description: ErrorDescription.senderCreationFailed,
+                                             reason: ErrorReason.databaseConnectionIsNil))
+            return nil
+        }
+        guard let endpointURL = bundle.endpointAddress else {
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
+                                             code: ErrorCode.senderCreationFailed.rawValue,
+                                             description: ErrorDescription.senderCreationFailed,
+                                             reason: ErrorReason.endpointMissing))
+            return nil
+        }
+        self.init(endpoint: endpointURL,
+                  database: databaseConfiguration.database,
+                  databaseTable: databaseConfiguration.tableName,
+                  bundle: bundle,
+                  session: session)
     }
 }

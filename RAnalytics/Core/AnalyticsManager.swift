@@ -9,6 +9,8 @@ public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
 
 public typealias WebTrackingCookieDomainBlock = () -> String?
 
+public typealias RAnalyticsErrorBlock = (NSError) -> Void
+
 @objc public enum RAnalyticsLoggingLevel: Int {
     case verbose, debug, info, warning, error, none
 }
@@ -101,6 +103,26 @@ protocol AnalyticsManageable: AnyObject {
         }
     }
 
+    /// Handle internal errors that occur in the RAnalytics SDK
+    ///
+    /// Optional for apps to set, though recommended.
+    ///
+    /// Usage example:
+    /// ```
+    /// AnalyticsManager.shared().errorHandler = { error in
+    ///     // Report the error to your crash reporting service
+    ///     // (e.g., [Crashlytics](https://firebase.google.com/docs/crashlytics/customize-crash-reports?platform=ios#log-excepts)) as a non-fatal error
+    /// }
+    /// ```
+    public var errorHandler: RAnalyticsErrorBlock? {
+        get {
+            ErrorRaiser.errorHandler
+        }
+        set {
+            ErrorRaiser.errorHandler = newValue
+        }
+    }
+
     /// Enable or disable the tracking of an event from an iOS Extension.
     @objc public var enableExtensionEventTracking: Bool = false {
         didSet {
@@ -181,26 +203,20 @@ extension AnalyticsManager {
     /// Add the `SDKTracker` to the trackers array
     ///
     /// - Returns `true` if the `SDKTracker` is added, `false` otherwise.
-    private func addSDKTracker() -> Bool {
+    private func addSDKTracker() {
         guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: SDKTrackerConstants.databaseName,
                                                                               tableName: SDKTrackerConstants.tableName,
-                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory) else {
-            return false
-        }
-
-        guard let sdkTracker = SDKTracker(bundle: Bundle.main,
+                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory),
+              let sdkTracker = SDKTracker(bundle: Bundle.main,
                                           session: URLSession.shared,
                                           databaseConfiguration: databaseConfiguration) else {
-            return false
+            return
         }
         add(sdkTracker)
-        return true
     }
 
     private func configure() {
-        if !addSDKTracker() {
-            RLogger.error(message: "\(ErrorMessage.databaseConnectionIsNil) \(ErrorMessage.eventsNotProcessedBySDKTracker)")
-        }
+        addSDKTracker()
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
         // always rely solely on header availability so we also do a runtime check
@@ -252,16 +268,12 @@ extension AnalyticsManager {
         let status: CLAuthorizationStatus = type(of: locationManager).authorizationStatus()
 
         #if DEBUG
+        var lastStatus: CLAuthorizationStatus?
         Synchronizable.withSynchronized([authorizationStatusLockableObject]) {
-            var lastStatus: CLAuthorizationStatus?
-            var updated = false
-
-            updated = (status != lastStatus)
-            if updated {
+            let hasUpdated = status != lastStatus
+            if hasUpdated {
                 lastStatus = status
-            }
 
-            if updated {
                 var statusString = ""
                 switch status {
                 case .notDetermined:       statusString = "Not Determined"
@@ -327,7 +339,10 @@ extension AnalyticsManager: CLLocationManagerDelegate {
     }
 
     public func locationManager(_ manager: CLLocationManager, didFinishDeferredUpdatesWithError error: Error?) {
-        RLogger.error(message: "Failed to acquire device location: \(String(describing: error?.localizedDescription))")
+        ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsManagerErrorDomain,
+                                         code: ErrorCode.locationHasFailed.rawValue,
+                                         description: ErrorDescription.locationHasFailed,
+                                         reason: "\(error?.localizedDescription ?? "")"))
     }
 }
 
@@ -351,11 +366,9 @@ extension AnalyticsManager: AnalyticsManageable {
 
         let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: notOptionalDeviceIdentifier)
 
-        if shouldTrackAdvertisingIdentifier {
-            if let advertisingIdentifier = advertisingIdentifierHandler.idfa {
-                // User has not disabled tracking
-                state.advertisingIdentifier = advertisingIdentifier
-            }
+        if shouldTrackAdvertisingIdentifier, let advertisingIdentifier = advertisingIdentifierHandler.idfa {
+            // User has not disabled tracking
+            state.advertisingIdentifier = advertisingIdentifier
         }
 
         if enableAppToWebTracking {
@@ -468,7 +481,7 @@ extension AnalyticsManager {
             .get()
             .compactMap { $0 as? EndpointSettable }
             .forEach { tracker in
-                if tracker.responds(to: Selector((("setEndpointURL:")))),
+                if tracker.responds(to: #selector(set(endpointURL:))),
                    let endpointURL = endpointURL ?? Bundle.main.endpointAddress {
                     tracker.endpointURL = endpointURL
                 }

@@ -107,8 +107,7 @@ final class RAnalyticsLaunchCollector {
         // check initLaunchDate exists in keychain
         let response = keychainHandler?.item(for: Constants.initialLaunchDateKey)
 
-        switch response?.status {
-        case errSecSuccess:
+        if response?.status == errSecSuccess {
             // keychain item exists
             guard let date = keychainHandler?.creationDate(for: response?.result) else {
                 configureDefaultLaunchValues()
@@ -116,7 +115,7 @@ final class RAnalyticsLaunchCollector {
             }
             initialLaunchDate = date
             isInitialLaunch = false
-        default:
+        } else {
             // no keychain item
             configureDefaultLaunchValues()
         }
@@ -209,11 +208,9 @@ extension RAnalyticsLaunchCollector {
             return
         }
 
-        switch state {
-        case .background, .inactive:
+        if state == .background || state == .inactive {
             pushTrackingIdentifier = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: userInfo)
             pushTapTrackingDate = Date()
-        default: ()
         }
     }
 }
@@ -229,15 +226,7 @@ extension RAnalyticsLaunchCollector {
               trigger.isKind(of: UNPushNotificationTrigger.self) else {
             return .failure(.triggerTypeIsIncorrect)
         }
-
-        var userText: String?
-        if let textInputNotificationResponse = notificationResponse as? UNTextInputNotificationResponse,
-           !textInputNotificationResponse.userText.isEmpty {
-            userText = textInputNotificationResponse.userText
-        }
-        let isProcessed = processPushNotificationPayload(userInfo: notificationResponse.notification.request.content.userInfo,
-                                                         userAction: notificationResponse.actionIdentifier,
-                                                         userText: userText)
+        let isProcessed = processPushNotificationPayload(userInfo: notificationResponse.notification.request.content.userInfo)
         guard isProcessed else {
             return .failure(.trackingIsNotProcessed)
         }
@@ -247,7 +236,7 @@ extension RAnalyticsLaunchCollector {
     /// This method sends a push open notify event only if a tracking identifier can be pulled from the push payload
     /// - Returns: a boolean to know if the push notification event is tracked or not.
     @discardableResult
-    func processPushNotificationPayload(userInfo: [AnyHashable: Any], userAction: String?, userText: String?) -> Bool {
+    func processPushNotificationPayload(userInfo: [AnyHashable: Any]) -> Bool {
         var isProcessed = false
         let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: userInfo)
 

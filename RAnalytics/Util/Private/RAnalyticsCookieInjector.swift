@@ -37,7 +37,7 @@ extension RAnalyticsCookieInjector {
             return
         }
         httpCookieStore.allCookies { (cookies) in
-            self.deleteCookies(cookies, for: TrackingCookieConstants.name) {
+            self.deleteCookies(cookies) {
                 self.storeCookie(cookieToStore: trackingCookie) {
                     completionHandler?(trackingCookie)
                 }
@@ -71,7 +71,7 @@ extension RAnalyticsCookieInjector {
                                        .secure: true])
     }
 
-    private func deleteCookies(_ cookies: [HTTPCookie], for name: String, completionHandler:@escaping () -> Void) {
+    private func deleteCookies(_ cookies: [HTTPCookie], completionHandler:@escaping () -> Void) {
         let cookiesToDelete = cookies.filter { $0.name == TrackingCookieConstants.name }
         guard !cookiesToDelete.isEmpty else {
             completionHandler()

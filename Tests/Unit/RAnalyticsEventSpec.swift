@@ -6,7 +6,7 @@ import UIKit
 // MARK: - AnalyticsManager.Event
 
 private func defaultEvent() -> AnalyticsManager.Event {
-    AnalyticsManager.Event(name: RAnalyticsRATTracker.Constants.RATGenericEventName,
+    AnalyticsManager.Event(name: RAnalyticsRATTracker.Constants.ratGenericEventName,
                            parameters: [PayloadParameterKeys.etype: "value1"])
 }
 
@@ -18,7 +18,7 @@ final class RAnalyticsEventSpec: QuickSpec {
             describe("init") {
                 it("should have the correct default values") {
                     let event = defaultEvent()
-                    expect(event.name).to(equal(RAnalyticsRATTracker.Constants.RATGenericEventName))
+                    expect(event.name).to(equal(RAnalyticsRATTracker.Constants.ratGenericEventName))
                     expect(event.parameters[PayloadParameterKeys.etype] as? String).to(equal("value1"))
                 }
             }

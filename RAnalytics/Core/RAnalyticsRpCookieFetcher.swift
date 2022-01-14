@@ -84,8 +84,10 @@ import RSDKUtils
           session: Sessionable,
           maximumTimeOut: UInt) {
         guard let endpointAddress = bundle.endpointAddress else {
-            let message = "\(ErrorMessage.endpointMissing) \(ErrorMessage.rpCookieCantBeFetched)"
-            RLogger.error(message: message)
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                                             code: ErrorCode.rpCookieFetcherCreationFailed.rawValue,
+                                             description: ErrorDescription.rpCookieFetcherCreationFailed,
+                                             reason: ErrorReason.endpointMissing))
             return nil
         }
         _endpointURL = endpointAddress
@@ -119,7 +121,11 @@ extension RAnalyticsRpCookieFetcher: RAnalyticsRpCookieFetchable {
                     completionHandler(cookie, nil)
 
                 case .failure(let error):
-                    RLogger.error(message: "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
+                    let reason = "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))"
+                    ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                                                     code: ErrorCode.getRpCookieFromRATFailed.rawValue,
+                                                     description: ErrorDescription.getRpCookieFromRATFailed,
+                                                     reason: reason))
                     completionHandler(nil, error as NSError)
                 }
             }
@@ -134,7 +140,11 @@ extension RAnalyticsRpCookieFetcher: RAnalyticsRpCookieFetchable {
             return try getRpCookie(from: cookieStorage)
 
         } catch {
-            RLogger.error(message: "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))")
+            let reason = "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))"
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                                             code: ErrorCode.getRpCookieFromCookieStorageFailed.rawValue,
+                                             description: ErrorDescription.rpCookieFetcherError,
+                                             reason: reason))
             return nil
         }
     }
@@ -300,5 +310,16 @@ extension RAnalyticsRpCookieFetcher {
         } else {
             completionHandler(false)
         }
+    }
+}
+
+// MARK: - Internal API
+
+extension RAnalyticsRpCookieFetcher {
+    convenience init?(cookieStorage: HTTPCookieStorable) {
+        self.init(cookieStorage: cookieStorage,
+                  bundle: Bundle.main,
+                  session: URLSession.shared,
+                  maximumTimeOut: Constants.timeOut)
     }
 }

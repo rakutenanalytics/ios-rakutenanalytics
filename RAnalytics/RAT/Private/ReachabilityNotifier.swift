@@ -1,6 +1,5 @@
 import Foundation
 import SystemConfiguration
-import struct RSDKUtils.RLogger
 
 protocol ReachabilityNotifiable {
     init?(host: String, callback: @escaping SCNetworkReachabilityCallBack)
@@ -19,19 +18,28 @@ final class ReachabilityNotifier: ReachabilityNotifiable {
     /// - Returns: a new instance of `ReachabilityNotifier`.
     init?(host: String, callback: @escaping SCNetworkReachabilityCallBack) {
         guard let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, host) else {
-            RLogger.error(message: "SCNetworkReachabilityCreateWithName failed")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.reachabilityNotifierErrorDomain,
+                                             code: ErrorCode.scNetworkReachabilityCreateWithNameFailed.rawValue,
+                                             description: ErrorDescription.reachabilityNotifierCreationFailed,
+                                             reason: ErrorReason.networkReachabilityCreateWithNameFailure))
             return nil
         }
 
         self.reachability = reachability
 
         guard SCNetworkReachabilitySetCallback(reachability, callback, nil) else {
-            RLogger.error(message: "SCNetworkReachabilitySetCallback failed")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.reachabilityNotifierErrorDomain,
+                                             code: ErrorCode.scNetworkReachabilitySetCallback.rawValue,
+                                             description: ErrorDescription.reachabilityNotifierCreationFailed,
+                                             reason: ErrorReason.networkReachabilitySetCallbackFailure))
             return nil
         }
 
         guard SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue) else {
-            RLogger.error(message: "SCNetworkReachabilityScheduleWithRunLoop failed")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.reachabilityNotifierErrorDomain,
+                                             code: ErrorCode.scNetworkReachabilityScheduleWithRunLoop.rawValue,
+                                             description: ErrorDescription.reachabilityNotifierCreationFailed,
+                                             reason: ErrorReason.networkReachabilityScheduleWithRunLoopFailure))
             return nil
         }
 

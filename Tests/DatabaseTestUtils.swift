@@ -30,13 +30,12 @@ import SQLite3
     }
 
     @objc static func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
-        var tableCount = Int32(0)
         let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
 
         var statement: SQlite3Pointer?
         sqlite3_prepare_v2(connection, query, -1, &statement, nil)
         sqlite3_step(statement)
-        tableCount = sqlite3_column_int(statement, 0)
+        let tableCount = sqlite3_column_int(statement, 0)
         sqlite3_reset(statement)
         sqlite3_finalize(statement)
 

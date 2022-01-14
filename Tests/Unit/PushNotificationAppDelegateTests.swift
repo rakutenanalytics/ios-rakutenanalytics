@@ -43,42 +43,42 @@ class PushNotificationAppDelegateTests: XCTestCase {
 
     // MARK: - Test didReceiveRemoteNotification
 
-    func test_swizzle_didReceiveRemoteNotification_inactive() throws {
+    func testSwizzleDidReceiveRemoteNotificationInactive() throws {
 
         type(of: self).applicationState = .inactive
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let trackId = AnalyticsManager.shared().launchCollector.pushTrackingIdentifier ?? ""
 
         XCTAssert(trackId == testResult)
     }
 
-    func test_swizzle_didReceiveRemoteNotification_active() throws {
+    func testSwizzleDidReceiveRemoteNotificationActive() throws {
 
         type(of: self).applicationState = .active
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_swizzle_didReceiveRemoteNotification_background() throws {
+    func testSwizzleDidReceiveRemoteNotificationBackground() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let trackId = AnalyticsManager.shared().launchCollector.pushTrackingIdentifier ?? ""
 
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotification_background_processEvent() throws {
+    func testDidReceiveRemoteNotificationBackgroundProcessEvent() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should receive open count event")
         var processEvent = ""
@@ -100,10 +100,10 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotification_background_processEvent_notTwice() throws {
+    func testDidReceiveRemoteNotificationBackgroundProcessEventNotTwice() throws {
 
         type(of: self).applicationState = .background
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should receive open count event once")
         expecation.expectedFulfillmentCount = 1
@@ -127,11 +127,11 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotification_background_notProcessEvent_after800ms() throws {
+    func testDidReceiveRemoteNotificationBackgroundNotProcessEventAfter800ms() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should not send if greater than 0.7 seconds")
         expecation.isInverted = true
@@ -153,12 +153,12 @@ class PushNotificationAppDelegateTests: XCTestCase {
         wait(for: [expecation], timeout: 8)
     }
 
-    func test_didReceiveRemoteNotification_shouldNotProccessEvent_whenAppGroupContainsTrackingId() {
+    func testDidReceiveRemoteNotificationShouldNotProccessEventWhenAppGroupContainsTrackingID() {
         pushEventHandler.cacheEvent(for: "rid:\(testRID)")
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should not send because utility says it's in app group")
         expecation.isInverted = true
@@ -175,76 +175,76 @@ class PushNotificationAppDelegateTests: XCTestCase {
         wait(for: [expecation], timeout: 8)
     }
 
-    func test_didReceiveRemoteNotification_background_notProcessEvent_ifSilentPush() throws {
+    func testDidReceiveRemoteNotificationBackgroundNotProcessEventIfSilentPush() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
-                                                        "aps": [ "content-available": 1 ]])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
+                                                       "aps": [ "content-available": 1 ]])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_didReceiveRemoteNotification_background_processEvent_ifBackgroundPush() throws {
+    func testDidReceiveRemoteNotificationBackgroundProcessEventIfBackgroundPush() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
-                                                        "aps": [ "content-available": 1,
-                                                                 "alert": "meesage"]])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
+                                                       "aps": [ "content-available": 1,
+                                                                "alert": "meesage"]])
 
         XCTAssertNotNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_didReceiveRemoteNotification_background_shouldNotProcessEvent_ifUNUserNotificationCenterDelegateImplemented() throws {
+    func testDidReceiveRemoteNotificationBackgroundShouldNotProcessEventIfUNUserNotificationCenterDelegateImplemented() throws {
 
         type(of: self).applicationState = .background
         UNUserNotificationCenter.current().delegate = testUNNotificationDelegate
 
-        _triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
-                                                        "aps": [ "content-available": 1,
-                                                                 "alert": "meesage"]])
+        triggerDidReceiveRemoteNotification(userInfo: ["rid": testRID,
+                                                       "aps": [ "content-available": 1,
+                                                                "alert": "meesage"]])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
     // MARK: - Test didReceiveRemoteNotificationWithCompletionHandler
 
-    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_inactive() throws {
+    func testSwizzleDidReceiveRemoteNotificationWithCompletionHandlerInactive() throws {
 
         type(of: self).applicationState = .inactive
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let trackId = AnalyticsManager.shared().launchCollector.pushTrackingIdentifier ?? ""
 
         XCTAssert(trackId == testResult)
     }
 
-    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_active() throws {
+    func testSwizzleDidReceiveRemoteNotificationWithCompletionHandlerActive() throws {
 
         type(of: self).applicationState = .active
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_swizzle_didReceiveRemoteNotificationWithCompletionHandler_background() throws {
+    func testSwizzleDidReceiveRemoteNotificationWithCompletionHandlerBackground() throws {
 
         type(of: self).applicationState = .background
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let trackId = AnalyticsManager.shared().launchCollector.pushTrackingIdentifier ?? ""
 
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundProcessEvent() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should receive open count event")
         var processEvent = ""
@@ -266,10 +266,10 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent_notTwice() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundProcessEventNotTwice() throws {
 
         type(of: self).applicationState = .background
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should receive open count event once")
         expecation.expectedFulfillmentCount = 1
@@ -293,11 +293,11 @@ class PushNotificationAppDelegateTests: XCTestCase {
         XCTAssert(trackId == testResult)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_after800ms() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundNotProcessEventAfter800ms() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should not send if greater than 0.7 seconds")
         expecation.isInverted = true
@@ -319,12 +319,12 @@ class PushNotificationAppDelegateTests: XCTestCase {
         wait(for: [expecation], timeout: 8)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_shouldNotProccessEvent_whenAppGroupContainsTrackingId() {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerShouldNotProccessEventWhenAppGroupContainsTrackingID() {
         pushEventHandler.cacheEvent(for: "rid:\(testRID)")
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID])
 
         let expecation = XCTestExpectation(description: "should not send because utility says it's in app group")
         expecation.isInverted = true
@@ -341,47 +341,47 @@ class PushNotificationAppDelegateTests: XCTestCase {
         wait(for: [expecation], timeout: 8)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_notProcessEvent_ifSilentPush() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundNotProcessEventIfSilentPush() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
-                                                                             "aps": [ "content-available": 1 ]])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
+                                                                            "aps": [ "content-available": 1 ]])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_processEvent_ifBackgroundPush() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundProcessEventIfBackgroundPush() throws {
 
         type(of: self).applicationState = .background
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
-                                                                             "aps": [ "content-available": 1,
-                                                                                      "alert": "meesage"]])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
+                                                                            "aps": [ "content-available": 1,
+                                                                                     "alert": "meesage"]])
 
         XCTAssertNotNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
-    func test_didReceiveRemoteNotificationWithCompletionHandler_background_shouldNotProcessEvent_ifUNUserNotificationCenterDelegateImplemented() throws {
+    func testDidReceiveRemoteNotificationWithCompletionHandlerBackgroundShouldNotProcessEventIfUNUserNotificationCenterDelegateImplemented() throws {
 
         type(of: self).applicationState = .background
         UNUserNotificationCenter.current().delegate = testUNNotificationDelegate
 
-        _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
-                                                                             "aps": [ "content-available": 1,
-                                                                                      "alert": "meesage"]])
+        triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: ["rid": testRID,
+                                                                            "aps": [ "content-available": 1,
+                                                                                     "alert": "meesage"]])
 
         XCTAssertNil(AnalyticsManager.shared().launchCollector.pushTrackingIdentifier)
     }
 
     // MARK: - Helper
 
-    private func _triggerDidReceiveRemoteNotification(userInfo: [AnyHashable: Any]) {
+    private func triggerDidReceiveRemoteNotification(userInfo: [AnyHashable: Any]) {
         UIApplication.shared.delegate?.application?(UIApplication.shared,
                                                     didReceiveRemoteNotification: userInfo)
     }
 
-    private func _triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: [AnyHashable: Any]) {
+    private func triggerDidReceiveRemoteNotificationWithCompletionHandler(userInfo: [AnyHashable: Any]) {
         UIApplication.shared.delegate?.application?(UIApplication.shared,
                                                     didReceiveRemoteNotification: userInfo,
                                                     fetchCompletionHandler: { (_) in })
