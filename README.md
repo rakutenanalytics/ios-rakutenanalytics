@@ -159,6 +159,26 @@ The below table shows the required components of each standard event which is tr
 
 The SDK will automatically generate certain attributes about the state of the device, and pass them to every registered tracker when asked to process an event.
 
+## Tracking events in iOS Extensions
+
+### Warning
+Don't call directly the AnalyticsManager singleton to track events in your iOS Extensions as you will get:
+- missing parameters such as userid, easyid
+- incorrect endpoint URL
+
+Use the iOS Extension Event Tracking feature instead.
+
+### How to use the iOS Extension Event Tracking feature
+In order to enable the iOS Extension Event Tracking, you have to call in your **main app**:
+```swift
+AnalyticsManager.shared().enableExtensionEventTracking = true
+```
+
+Then track events in your iOS extensions like the example below:
+```swift
+AnalyticsEventPoster.post(name: "myEventName", parameters: ["key1": "value1"])
+```
+
 # Handling errors
 
 The SDK will automatically raise errors if `errorHandler` is set as below:
