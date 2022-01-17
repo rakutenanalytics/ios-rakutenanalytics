@@ -1,5 +1,10 @@
 # Changelog
 
+## 9.1.1 (2022-01-14)
+
+### Bug fixes
+* [SDKCF-4773](https://jira.rakuten-it.com/jira/browse/SDKCF-4773) / [SDKCF-4780](https://jira.rakuten-it.com/jira/browse/SDKCF-4780): Fixed issues with the extension event tracking implementation.
+
 ## 9.1.0 (2022-01-06)
 
 ### Bug fixes
