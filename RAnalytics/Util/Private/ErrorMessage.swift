@@ -103,6 +103,9 @@ enum ErrorReason {
     static let networkReachabilityCreateWithNameFailure = "SCNetworkReachabilityCreateWithName failed."
     static let networkReachabilitySetCallbackFailure = "SCNetworkReachabilitySetCallback failed"
     static let networkReachabilityScheduleWithRunLoopFailure = "SCNetworkReachabilityScheduleWithRunLoop failed"
+
+    // Connection
+    static let connectionIsOffline = "The connection is offline."
 }
 
 enum ErrorConstants {
@@ -112,5 +115,12 @@ enum ErrorConstants {
         let userInfo = [NSLocalizedDescriptionKey: ErrorDescription.statusCodeError,
                         NSLocalizedFailureReasonErrorKey: ErrorReason.statusCodeError(statusCode)]
         return NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: userInfo)
+    }
+
+    static func rpCookieCantBeFetchedError(reason: String) -> NSError {
+        NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                code: ErrorCode.rpCookieCantBeFetched.rawValue,
+                userInfo: [NSLocalizedDescriptionKey: ErrorDescription.rpCookieCantBeFetched,
+                           NSLocalizedFailureReasonErrorKey: reason])
     }
 }

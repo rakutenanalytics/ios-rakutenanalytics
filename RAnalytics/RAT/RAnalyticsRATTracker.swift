@@ -14,7 +14,6 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     enum Constants {
         static let ratEventPrefix      = "rat."
         static let ratGenericEventName = "rat.generic"
-        static let ratReachabilityHost = "8.8.8.8" // Google DNS Server
         static let ratBatchingDelay: TimeInterval = 1.0 // Batching delay is 1 second by default
     }
 
@@ -172,7 +171,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         statusBarOrientationHandler = RStatusBarOrientationHandler(application: analyticsStatusBarOrientationGetter)
 
         // Reachability Notifier
-        reachabilityNotifier = ReachabilityNotifier(host: Constants.ratReachabilityHost,
+        reachabilityNotifier = ReachabilityNotifier(host: ReachabilityConstants.host,
                                                     callback: RAnalyticsRATTracker.reachabilityCallback)
 
         // Rp Cookie Fetcher

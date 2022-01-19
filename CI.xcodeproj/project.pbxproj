@@ -44,6 +44,7 @@
 		C9441CCE268478DC000F698A /* rat.json in Resources */ = {isa = PBXBuildFile; fileRef = C9441CCD268478DC000F698A /* rat.json */; };
 		C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */; };
 		C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */; };
+		C94B9A072796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B9A062796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift */; };
 		C94F90CF26DF81450068B44E /* ReferralAppModelSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90CE26DF81450068B44E /* ReferralAppModelSpec.swift */; };
 		C94F90D426DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90D326DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift */; };
 		C94F90DA26DFC8C60068B44E /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94F90D926DFC8C60068B44E /* Array+Extensions.swift */; };
@@ -153,6 +154,7 @@
 		C9441CCD268478DC000F698A /* rat.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = rat.json; sourceTree = "<group>"; };
 		C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAdvertisingIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
 		C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsErrorSpec.swift; sourceTree = "<group>"; };
+		C94B9A062796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherIntegrationSpec.swift; sourceTree = "<group>"; };
 		C94F90CE26DF81450068B44E /* ReferralAppModelSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralAppModelSpec.swift; sourceTree = "<group>"; };
 		C94F90D326DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralAppTrackingIntegrationSpec.swift; sourceTree = "<group>"; };
 		C94F90D926DFC8C60068B44E /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -302,8 +304,9 @@
 			isa = PBXGroup;
 			children = (
 				C9B39605276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift */,
-				45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */,
 				45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */,
+				C94B9A062796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift */,
+				45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */,
 			);
 			path = Integration;
 			sourceTree = "<group>";
@@ -613,6 +616,7 @@
 				45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */,
 				C9B39606276A2CDB003F2D5D /* AnalyticsEventIntegrationSpec.swift in Sources */,
 				4597CFBB26E78E9600781E4F /* MockUtils.swift in Sources */,
+				C94B9A072796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

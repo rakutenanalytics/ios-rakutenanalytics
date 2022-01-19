@@ -33,29 +33,18 @@ import RSDKUtils
         static let rpName = "Rp"
     }
     private enum RpCookieFetcherError {
-        static let domain = "com.rakuten.esd.sdk.analytics.error.rpcookie"
         static let failureReason = "Invalid/NoCookie details available"
         static let unknown: NSError = {
             let userInfo = [NSLocalizedDescriptionKey: "Unknown Rp Cookie Error"]
-            return NSError(domain: domain, code: NSURLErrorUnknown, userInfo: userInfo)
+            return NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: NSURLErrorUnknown, userInfo: userInfo)
         }()
-        static let endpoint = NSError(domain: domain,
+        static let endpoint = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
                                       code: 0,
                                       userInfo: [NSLocalizedDescriptionKey: "The Rp Cookie Fetcher endpoint is not set."])
     }
 
-    @available(*, unavailable)
-    override init() {
-        _endpointURL = nil
-        retryInterval = 0
-        rpCookieRequestRetryCount = 0
-        rpCookieQueue = DispatchQueue(label: "")
-        cookieStorage = HTTPCookieStorage()
-        bundle = Bundle.main
-        session = URLSession.shared
-        maximumTimeOut = 0
-        super.init()
-    }
+    /// Reachability
+    private let reachability: ReachabilityType?
 
     /// Create a new Rp Cookie Fetcher object.
     ///
@@ -67,6 +56,7 @@ import RSDKUtils
         self.init(cookieStorage: cookieStorage,
                   bundle: Bundle.main,
                   session: URLSession.shared,
+                  reachability: Reachability(hostname: ReachabilityConstants.host),
                   maximumTimeOut: Constants.timeOut)
     }
 
@@ -82,6 +72,7 @@ import RSDKUtils
     init?(cookieStorage: HTTPCookieStorable,
           bundle: EnvironmentBundle,
           session: Sessionable,
+          reachability: ReachabilityType?,
           maximumTimeOut: UInt) {
         guard let endpointAddress = bundle.endpointAddress else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
@@ -98,6 +89,8 @@ import RSDKUtils
         self.cookieStorage = cookieStorage
         self.session = session
         self.maximumTimeOut = maximumTimeOut
+        self.reachability = reachability
+
         super.init()
     }
 }
@@ -170,7 +163,7 @@ extension RAnalyticsRpCookieFetcher {
               !allHeaderFields.isEmpty else {
             let userInfo = [NSLocalizedDescriptionKey: errorDescription,
                             NSLocalizedFailureReasonErrorKey: "The header fields are empty."]
-            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+            throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: userInfo)
         }
 
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: allHeaderFields, for: endpointURL)
@@ -179,7 +172,7 @@ extension RAnalyticsRpCookieFetcher {
         guard let cookie = result else {
             let userInfo = [NSLocalizedDescriptionKey: errorDescription,
                             NSLocalizedFailureReasonErrorKey: "The Rp Cookie is not in the http response header fields."]
-            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+            throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: userInfo)
         }
         return cookie
     }
@@ -207,7 +200,7 @@ extension RAnalyticsRpCookieFetcher {
             let errorDescription = "Cannot get Rp cookie from the Cookie Storage - \(endpointURL.absoluteString)"
             let userInfo = [NSLocalizedDescriptionKey: errorDescription,
                             NSLocalizedFailureReasonErrorKey: RpCookieFetcherError.failureReason]
-            throw NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)
+            throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: userInfo)
         }
         return result
     }
@@ -220,6 +213,11 @@ extension RAnalyticsRpCookieFetcher {
     ///
     /// - Parameter completionHandler: the completion handler.
     private func getRpCookieFromRAT(_ completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+        guard self.reachability?.connection != .unavailable else {
+            completionHandler(.failure(ErrorConstants.rpCookieCantBeFetchedError(reason: ErrorReason.connectionIsOffline)))
+            return
+        }
+
         guard let endpointURL = endpointURL else {
             completionHandler(.failure(RpCookieFetcherError.endpoint))
             return
@@ -241,7 +239,7 @@ extension RAnalyticsRpCookieFetcher {
                         } else if let statusCode = httpResponse?.statusCode {
                             let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(endpointURL.absoluteString)"
                             let userInfo = [NSLocalizedDescriptionKey: errorDescription]
-                            let statusCodeError = NSError(domain: RpCookieFetcherError.domain,
+                            let statusCodeError = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
                                                           code: statusCode,
                                                           userInfo: userInfo)
                             completionHandler(.failure(statusCodeError))
@@ -279,7 +277,7 @@ extension RAnalyticsRpCookieFetcher {
                     let errorDescription = "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(endpointURL.absoluteString)"
                     let userInfo = [NSLocalizedDescriptionKey: errorDescription,
                                     NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."]
-                    completionHandler(.failure(NSError(domain: RpCookieFetcherError.domain, code: 0, userInfo: userInfo)))
+                    completionHandler(.failure(NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: userInfo)))
                 }
             }
 
@@ -320,6 +318,7 @@ extension RAnalyticsRpCookieFetcher {
         self.init(cookieStorage: cookieStorage,
                   bundle: Bundle.main,
                   session: URLSession.shared,
+                  reachability: Reachability(hostname: ReachabilityConstants.host),
                   maximumTimeOut: Constants.timeOut)
     }
 }

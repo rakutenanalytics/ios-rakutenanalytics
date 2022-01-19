@@ -408,3 +408,15 @@ final class AnalyticsManagerMock: AnalyticsManageable {
         return true
     }
 }
+
+// MARK: - ReachabilityMock
+
+final class ReachabilityMock: ReachabilityType {
+    var connection: Reachability.Connection = .cellular
+
+    func addObserver(_ observer: ReachabilityObserver) {
+    }
+
+    func removeObserver(_ observer: ReachabilityObserver) {
+    }
+}
