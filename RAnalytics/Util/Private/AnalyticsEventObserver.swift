@@ -34,7 +34,14 @@ internal final class AnalyticsEventObserver {
 
 extension AnalyticsEventObserver {
     func trackCachedEvents() {
-        analyticsEventTracker.track()
+        analyticsEventTracker.track { error in
+            if let error = error {
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsEventObserverErrorDomain,
+                                                 code: ErrorCode.analyticsEventObserverCantTrackEvent.rawValue,
+                                                 description: ErrorDescription.analyticsEventObserverCantTrackEvent,
+                                                 reason: error.localizedDescription))
+            }
+        }
     }
 }
 

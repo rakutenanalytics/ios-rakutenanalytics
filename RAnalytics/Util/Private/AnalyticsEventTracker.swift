@@ -3,7 +3,7 @@ import RSDKUtils
 
 protocol AnalyticsEventTrackable {
     var delegate: AnalyticsManageable? { get set }
-    func track()
+    func track(_ completion: (Error?) -> Void)
 }
 
 /// `AnalyticsEventTracker` track an array of events stored in the app group cache.
@@ -24,7 +24,7 @@ extension AnalyticsEventTracker: AnalyticsEventTrackable {
     /// Track an array of events stored in the app group cache.
     ///
     /// - Note: the app group cache is cleared when all events are tracked.
-    internal func track() {
+    internal func track(_ completion: (Error?) -> Void) {
         pushEventHandler.cachedEvents { result in
             switch result {
             case .success(let cachedEvents):
@@ -38,10 +38,17 @@ extension AnalyticsEventTracker: AnalyticsEventTrackable {
                     RLogger.debug(message: "AnalyticsEventTracker event is tracked: \(event.name) \(event.parameters)")
                 }
 
+                pushEventHandler.clearEventsCache { error in
+                    completion(error)
+                }
+
             case .failure(let error):
-                RLogger.debug(message: "AnalyticsEventTracker error: \(error.localizedDescription)")
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsEventTrackerErrorDomain,
+                                                 code: ErrorCode.analyticsEventTrackerCantTrackEvent.rawValue,
+                                                 description: ErrorDescription.analyticsEventTrackerCantTrackEvent,
+                                                 reason: error.localizedDescription))
+                completion(error)
             }
         }
-        // Note: the cache is cleared when a new rich push is expanded.
     }
 }

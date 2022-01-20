@@ -38,17 +38,17 @@ final class AnalyticsEventTrackerSpec: QuickSpec {
                 fileManagerMock.mockedContainerURL = nil
                 JSONSerializationMock.mockedJsonObject = [[String: Any]]()
                 try? FileManager.default.removeItem(at: fileURL)
-                delegate.eventIsProcessed = false
+                delegate.processedEvents = [RAnalyticsEvent]()
             }
 
             context("When there is no event in the cache") {
                 it("should not track an event") {
                     JSONSerializationMock.mockedJsonObject = []
                     pushEventHandler.save(events: eventsToCache, completion: { _ in
-                        tracker.track()
+                        tracker.track { _ in }
                     })
 
-                    expect(delegate.eventIsProcessed).toAfterTimeout(beFalse())
+                    expect(delegate.processedEvents).toAfterTimeout(beEmpty())
                 }
             }
 
@@ -56,11 +56,12 @@ final class AnalyticsEventTrackerSpec: QuickSpec {
                 it("should track an event") {
                     JSONSerializationMock.mockedJsonObject = eventsToCache
                     pushEventHandler.save(events: eventsToCache, completion: { _ in
-                        tracker.track()
+                        tracker.track { _ in }
                     })
 
-                    expect(delegate.eventIsProcessed).toEventually(beTrue())
-                    expect(delegate.processedEvent?.parameters as? [String: AnyHashable]).to(equal(["rid": "bonjour1998"]))
+                    expect(delegate.processedEvents).toEventuallyNot(beEmpty())
+                    expect(delegate.processedEvents.count).to(equal(1))
+                    expect(delegate.processedEvents.first?.parameters as? [String: AnyHashable]).to(equal(["rid": "bonjour1998"]))
                 }
             }
         }

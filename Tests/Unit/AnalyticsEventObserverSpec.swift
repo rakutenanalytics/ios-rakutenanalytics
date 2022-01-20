@@ -36,7 +36,7 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                 fileManagerMock.mockedContainerURL = nil
                 JSONSerializationMock.mockedJsonObject = [[String: Any]]()
                 try? FileManager.default.removeItem(at: fileURL)
-                delegate.eventIsProcessed = false
+                delegate.processedEvents = [RAnalyticsEvent]()
             }
 
             context("When the observation has started") {
@@ -56,9 +56,10 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                         DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
                     })
 
-                    expect(delegate.eventIsProcessed).toEventually(beTrue())
-                    expect(delegate.processedEvent?.name).to(equal(RAnalyticsEvent.Name.pushNotification))
-                    expect(delegate.processedEvent?.parameters as? [String: AnyHashable]).to(equal(["rid": "abcd1234"]))
+                    expect(delegate.processedEvents).toEventuallyNot(beEmpty())
+                    expect(delegate.processedEvents.count).to(equal(1))
+                    expect(delegate.processedEvents.first?.name).to(equal(RAnalyticsEvent.Name.pushNotification))
+                    expect(delegate.processedEvents.first?.parameters as? [String: AnyHashable]).to(equal(["rid": "abcd1234"]))
                 }
             }
 
@@ -72,7 +73,7 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                         DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
                     })
 
-                    expect(delegate.eventIsProcessed).toAfterTimeout(beFalse())
+                    expect(delegate.processedEvents).toAfterTimeout(beEmpty())
                 }
             }
 

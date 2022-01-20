@@ -399,12 +399,10 @@ final class JSONSerializationMock: JSONSerializable {
 // MARK: - AnalyticsManagerMock
 
 final class AnalyticsManagerMock: AnalyticsManageable {
-    var eventIsProcessed = false
-    var processedEvent: RAnalyticsEvent?
+    var processedEvents = [RAnalyticsEvent]()
 
     func process(_ event: RAnalyticsEvent) -> Bool {
-        eventIsProcessed = true
-        processedEvent = event
+        processedEvents.append(event)
         return true
     }
 }

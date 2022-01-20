@@ -221,6 +221,14 @@ extension PushEventHandler: PushEventHandleable {
     /// - Parameters:
     ///    - completion: the completion that notifies when the clearing task has been completed or failed.
     internal func clearEventsCache(completion: ((PushEventError?) -> Void)) {
-        save(events: [], completion: completion)
+        save(events: []) { error in
+            if let error = error {
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.pushEventHandlerErrorDomain,
+                                                 code: ErrorCode.pushEventHandlerCacheCouldNotBeCleared.rawValue,
+                                                 description: ErrorDescription.pushEventHandlerCacheCouldNotBeCleared,
+                                                 reason: error.localizedDescription))
+            }
+            completion(error)
+        }
     }
 }

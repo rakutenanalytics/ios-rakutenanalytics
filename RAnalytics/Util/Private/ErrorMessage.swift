@@ -10,6 +10,8 @@ enum ErrorDomain {
     static let senderErrorDomain = "\(domainName).sender"
     static let pushEventHandlerErrorDomain = "\(domainName).push-event-handler"
     static let reachabilityNotifierErrorDomain = "\(domainName).reachability-notifier"
+    static let analyticsEventTrackerErrorDomain = "\(domainName).analytics-event-tracker"
+    static let analyticsEventObserverErrorDomain = "\(domainName).analytics-event-observer"
 }
 
 enum ErrorCode: Int {
@@ -46,6 +48,15 @@ enum ErrorCode: Int {
     // Sender
     case senderCreationFailed
     case senderSendEventsHasFailed
+
+    // Push Event Handler
+    case pushEventHandlerCacheCouldNotBeCleared
+
+    // Analytics Event Tracker
+    case analyticsEventTrackerCantTrackEvent
+
+    // Analytics Event Observer
+    case analyticsEventObserverCantTrackEvent
 }
 
 enum ErrorDescription {
@@ -80,6 +91,13 @@ enum ErrorDescription {
 
     // Push Event Handler
     static let pushEventHandlerCacheFailed = "PushEventHandler cache creation has failed."
+    static let pushEventHandlerCacheCouldNotBeCleared = "PushEventHandler cache could not be cleared."
+
+    // Analytics Event Tracker
+    static let analyticsEventTrackerCantTrackEvent = "AnalyticsEventTracker can't track the Extension Event."
+
+    // Analytics Event Observer
+    static let analyticsEventObserverCantTrackEvent = "AnalyticsEventObserver can't track the Extension Event."
 }
 
 enum ErrorReason {
@@ -106,6 +124,9 @@ enum ErrorReason {
 
     // Connection
     static let connectionIsOffline = "The connection is offline."
+
+    // Unknown
+    static let unknown = "Unknown error."
 }
 
 enum ErrorConstants {
