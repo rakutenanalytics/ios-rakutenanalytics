@@ -2,7 +2,7 @@
 
 1. [Introduction](#introduction)
 1. [Getting support](#getting-support)
-1. [Installing](#installing)
+1. [Source code repository](#source-code-repository)
 1. [Getting started](#getting-started)
 1. [Tracking events](#tracking-events)
 1. [Handling errors](#handling-errors)
@@ -22,14 +22,26 @@ The **analytics** module provides APIs for tracking events and automatically sen
 
 # Getting support
 
-To get support (create crash or bug reports, make feature requests, ask questions etc.) please go to our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
+To get support (create crash or bug reports, make feature requests, ask questions etc.) please create an inquiry from our [SDK Customer Support Portal](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ).
+
+To enable us to better support you, the following steps are recommended *before* creating an [SDK inquiry](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ):
+  * Give the DLM `dev-mag-mobile-sdk` access to your git source repo and include your repo URL on any inquiry ticket
+  * If you are reporting a crash, please also give the members of DLM `dev-mag-mobile-sdk` access to your crash reporting dashboard e.g. Firebase Crashlytics
 
 
 # Source code repository
 
 The Analytics SDK source is hosted on Rakuten GitPub https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse - everyone with GitPub read access can view the source.
 
-# Installing
+# Getting started
+
+## Requirements
+
+Xcode 12.5.x or Xcode 13+
+
+Note: The SDK may build on earlier Xcode versions but it is not officially supported or tested.
+
+## Installing
 
 To use the module in its default configuration your `Podfile` should contain:
 
@@ -54,14 +66,6 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 pod 'RAnalytics/Core'
 ```
-
-
-# Getting started
-
-## Pre-requisites for receiving high quality support
-* To enable us to better support you, ensure you do the following *before* creating an [inquiry](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ):
-    * Give the DLM `dev-mag-mobile-sdk` access to your git source repo and include your repo URL on any inquiry ticket
-    * Ideally, please also give the members of DLM `dev-mag-mobile-sdk` access to your crash reporting dashboard e.g. Firebase Crashlytics
 
 ## RAT credentials
 
@@ -162,19 +166,19 @@ The SDK will automatically generate certain attributes about the state of the de
 ## Tracking events in iOS Extensions
 
 ### Warning
-Don't call directly the AnalyticsManager singleton to track events in your iOS Extensions as you will get:
+Don't directly call the AnalyticsManager singleton to track events in your iOS Extensions as you will get:
 - missing parameters such as userid, easyid
 - incorrect endpoint URL
 
 Use the iOS Extension Event Tracking feature instead.
 
 ### How to use the iOS Extension Event Tracking feature
-In order to enable the iOS Extension Event Tracking, you have to call in your **main app**:
+To enable iOS Extension Event Tracking set the following property in your **main app**:
 ```swift
 AnalyticsManager.shared().enableExtensionEventTracking = true
 ```
 
-Then track events in your iOS extensions like the example below:
+Then you can track events in your iOS extensions using the following function:
 ```swift
 AnalyticsEventPoster.post(name: "myEventName", parameters: ["key1": "value1"])
 ```
