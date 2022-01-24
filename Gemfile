@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
-gem "fastlane"
+# unpin once https://github.com/fastlane/fastlane/issues/19841 is solved
+gem "fastlane", "2.200.0"
 gem "cocoapods"
 gem "cocoapods-user-defined-build-types"
 gem "xcode-install"
