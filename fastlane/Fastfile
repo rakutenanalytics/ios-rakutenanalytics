@@ -35,6 +35,30 @@ platform :ios do
     appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSample.ipa", dsym: "./artifacts/device/RAnalyticsSample.app.dSYM.zip")
   end
 
+  # Build RAnalyticsSampleSPMInternal
+  desc "Build sample with the internal RAnalytics Swift Package"
+  lane :build_sample_spm_internal do |options|
+    gym(
+      configuration: "Release",
+      output_directory: './artifacts/device',
+      project: "SamplesSPMInternal/RAnalyticsSampleSPM.xcodeproj",
+      codesigning_identity: 'iPhone Distribution',
+      export_method: 'enterprise',
+      export_team_id: ENV['REM_FL_EXPORT_TEAM_ID'],
+      export_options: {
+        uploadBitcode: false,
+        compileBitcode: false,
+      },
+      scheme: "RAnalyticsSampleSPM")
+  end
+
+  # Upload RAnalyticsSampleSPMInternal
+  desc "Upload sample built with the internal RAnalytics Swift Package"
+  lane :upload_sample_spm_internal do |options|
+    build_sample_spm_internal()
+    appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSampleSPMInternal.ipa", dsym: "./artifacts/device/RAnalyticsSampleSPMInternal.app.dSYM.zip")
+  end
+
   desc "Build and release public framework, options are 'version' (string, mandatory), 'release' (boolean, defaults false), 'skip_build' (boolean), 'skip_upload' (boolean), 'skip_pod_push' (boolean), 'target_branch'"
   lane :deploy_framework do |options|
     version = options[:version]

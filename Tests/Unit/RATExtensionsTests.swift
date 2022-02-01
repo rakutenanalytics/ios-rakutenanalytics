@@ -1,6 +1,10 @@
 import Quick
 import Nimble
+import Foundation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 final class BundleMock: NSObject, EnvironmentBundle {
     var languageCode: Any?
@@ -26,6 +30,9 @@ final class BundleMock: NSObject, EnvironmentBundle {
     var appGroupId: String? {
         object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
     }
+
+    var shortVersion: String? = "2.0"
+    var version: String? = "1"
 }
 
 final class RATUrlRequestExtensionSpec: QuickSpec {
@@ -103,9 +110,7 @@ final class RATDataExtensionSpec: QuickSpec {
     override func spec() {
         describe("init") {
             context("when the internal serializer serializes a big amount of data") {
-                let bundle = Bundle(for: type(of: self))
-                let url = bundle.url(forResource: "rat", withExtension: "json")!
-                let jsonData = try? String(contentsOf: url, encoding: .utf8).data(using: .utf8)
+                let jsonData = try? String(contentsOf: BundleHelper.ratJsonUrl!, encoding: .utf8).data(using: .utf8)
                 let input = (try? JSONSerialization.jsonObject(with: jsonData!, options: []) as? [JsonRecord])!
 
                 it("should not crash") {

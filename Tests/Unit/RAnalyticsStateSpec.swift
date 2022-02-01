@@ -3,6 +3,9 @@ import Nimble
 import CoreLocation
 import UIKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - RAnalyticsStateSpec
 
@@ -16,7 +19,7 @@ final class RAnalyticsStateSpec: QuickSpec {
             let easyIdentifier = "easyId"
             let currentVersion = "2.0"
             let lastVersion = "1.0"
-            let bundle = Bundle(for: RAnalyticsStateSpec.self)
+            let bundle = BundleMock()
             let dateComponents = DateComponents(year: 2016,
                                                 month: 6,
                                                 day: 10,
@@ -49,7 +52,7 @@ final class RAnalyticsStateSpec: QuickSpec {
             let stateForVisitedPage: AnalyticsManager.State = {
                 let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                    deviceIdentifier: deviceIdentifier,
-                                                   bundle: bundle)
+                                                   for: bundle)
                 state.advertisingIdentifier = advertisingIdentifier
                 state.lastKnownLocation = location
                 state.loginMethod = .oneTapLogin
@@ -69,7 +72,7 @@ final class RAnalyticsStateSpec: QuickSpec {
             let stateForReferralAppTracking: AnalyticsManager.State = {
                 let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                    deviceIdentifier: deviceIdentifier,
-                                                   bundle: bundle)
+                                                   for: bundle)
                 state.advertisingIdentifier = advertisingIdentifier
                 state.lastKnownLocation = location
                 state.loginMethod = .oneTapLogin
@@ -91,7 +94,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                 it("should have the correct default values") {
                     let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                        deviceIdentifier: deviceIdentifier,
-                                                       bundle: bundle)
+                                                       for: bundle)
                     expect(state.sessionIdentifier).to(equal(sessionIdentifier))
                     expect(state.deviceIdentifier).to(equal(deviceIdentifier))
                     expect(state.currentVersion).to(equal(currentVersion))

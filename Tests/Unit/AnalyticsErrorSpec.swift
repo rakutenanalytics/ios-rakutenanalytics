@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+import Foundation
 @testable import RAnalytics
 
 final class AnalyticsErrorSpec: QuickSpec {

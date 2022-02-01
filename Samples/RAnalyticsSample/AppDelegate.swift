@@ -1,12 +1,14 @@
 import UIKit
 import CoreLocation
 import RAnalytics
+import RDeviceAdvertiser
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let locationManager = CLLocationManager()
+    let deviceAdvertiser = DeviceAdvertiser(serviceType: "pusher")
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Override the build time configuration of disabled automatic events defined in `RAnalyticsInfo.plist`
@@ -32,6 +34,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 
+        UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert, .badge]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
+
         return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        deviceAdvertiser.setDeviceToken(deviceToken.hexadecimal)
+    }
+}
+
+extension Data {
+    var hexadecimal: String {
+        return map { String(format: "%02x", $0) }.joined()
     }
 }

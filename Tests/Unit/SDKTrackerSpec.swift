@@ -1,7 +1,11 @@
 import Quick
 import Nimble
 import SQLite3
+import Foundation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - SDKTrackerSpec
 

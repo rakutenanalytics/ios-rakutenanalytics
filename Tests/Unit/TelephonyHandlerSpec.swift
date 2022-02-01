@@ -4,6 +4,9 @@ import Quick
 import Nimble
 import CoreTelephony
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - TelephonyHandlerSpec
 

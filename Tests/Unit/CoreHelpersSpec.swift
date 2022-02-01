@@ -1,6 +1,10 @@
 import Quick
 import Nimble
+import Foundation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - CoreHelpersSpec
 
@@ -26,7 +30,13 @@ final class CoreHelpersSpec: QuickSpec {
                         let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
                         expect(appInfo?["xcode"]).toNot(beNil())
+
+                        #if SWIFT_PACKAGE
+                        // non-apple frameworks array is empty with SPM
+                        #else
                         expect(appInfo?["frameworks"]).toNot(beNil())
+                        #endif
+
                         expect(appInfo?["sdk"]).toNot(beNil())
                         expect(appInfo?["deployment_target"]).toNot(beNil())
                     }
@@ -84,7 +94,12 @@ final class CoreHelpersSpec: QuickSpec {
                         let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
                         expect(appInfo?["xcode"]).toNot(beNil())
+
+                        #if SWIFT_PACKAGE
+                        // non-apple frameworks array is empty with SPM
+                        #else
                         expect(appInfo?["frameworks"]).toNot(beNil())
+                        #endif
                         expect(appInfo?["sdk"]).toNot(beNil())
                         expect(appInfo?["deployment_target"]).toNot(beNil())
                     }

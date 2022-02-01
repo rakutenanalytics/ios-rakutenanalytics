@@ -1,6 +1,12 @@
 import Quick
 import Nimble
+import Foundation
+import CoreGraphics
+import UIKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - ScreenMock
 

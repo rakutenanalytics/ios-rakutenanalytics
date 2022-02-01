@@ -1,6 +1,10 @@
+import Foundation
 import Quick
 import Nimble
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 final class ExtensionEventTrackingSpec: QuickSpec {
 

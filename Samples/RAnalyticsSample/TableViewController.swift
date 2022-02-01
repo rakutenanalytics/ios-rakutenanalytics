@@ -72,6 +72,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
+        navigationItem.title = Bundle.main.infoDictionary?["CFBundleName"] as? String
     }
 
     func update(_ dict: [String: Any]) {

@@ -4,14 +4,22 @@
 
 import Quick
 import Nimble
+import Foundation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - ReferralAppModelSpec
 
 final class ReferralAppModelSpec: QuickSpec {
     override func spec() {
         describe("ReferralAppModel") {
-            let bundleIdentifier = "jp.co.rakuten.app-name"
+            #if SWIFT_PACKAGE
+            let bundleIdentifier = "com.apple.dt.xctest.tool"
+            #else
+            let bundleIdentifier = "jp.co.rakuten.Host"
+            #endif
             let encodedBundleIdentifier = bundleIdentifier.addEncodingForRFC3986UnreservedCharacters()!
             let link = "campaignCode\(CharacterSet.RFC3986ReservedCharacters)"
             let encodedLink = link.addEncodingForRFC3986UnreservedCharacters()!
@@ -385,7 +393,8 @@ final class ReferralAppModelSpec: QuickSpec {
                 it("should return expected url scheme and expected universal link with minimal non-optional parameters") {
                     let model = ReferralAppModel()
                     expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=477&ref_aid=1"))
-                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=477&ref_aid=1"))
+
+                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1"))
                 }
 
                 it("should return expected url scheme and expected universal link with all parameters") {
@@ -401,7 +410,9 @@ final class ReferralAppModelSpec: QuickSpec {
                     expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                     let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
-                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
                     expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
                     expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
                     expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
@@ -423,7 +434,7 @@ final class ReferralAppModelSpec: QuickSpec {
                     let model = ReferralAppModel(accountIdentifier: accountIdentifier,
                                                  applicationIdentifier: applicationIdentifier)
                     expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=1&ref_aid=2"))
-                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=1&ref_aid=2"))
+                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=1&ref_aid=2"))
                 }
 
                 it("should return expected url scheme and expected universal link with all parameters") {
@@ -441,7 +452,7 @@ final class ReferralAppModelSpec: QuickSpec {
                     expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                     let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
-                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.Host&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
                     expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
                     expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
                     expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
@@ -476,7 +487,7 @@ final class ReferralAppModelSpec: QuickSpec {
                 it("should return the expected URL") {
                     let universalLink = model.universalLink(domain: "rakuten.co.jp")?.absoluteString
 
-                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=jp.co.rakuten.app-name&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                     expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
                     expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())

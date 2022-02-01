@@ -3,6 +3,9 @@ import Nimble
 import UIKit
 import CoreLocation.CLRegion
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - Notification
 
@@ -122,9 +125,19 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsLaunchCollector") {
             let dependenciesFactory = SimpleContainerMock()
-            dependenciesFactory.keychainHandler = KeychainHandlerMock()
-            dependenciesFactory.userStorageHandler = UserDefaultsMock()
-            dependenciesFactory.tracker = AnalyticsTrackerMock()
+
+            beforeEach {
+                dependenciesFactory.keychainHandler = KeychainHandlerMock()
+                dependenciesFactory.userStorageHandler = UserDefaultsMock()
+                dependenciesFactory.tracker = AnalyticsTrackerMock()
+                dependenciesFactory.sharedUserStorageHandlerType = UserDefaultsMock.self
+
+                let sharedUserStorageHandler = dependenciesFactory.sharedUserStorageHandlerType.init(suiteName: dependenciesFactory.bundle.appGroupId)
+                dependenciesFactory.pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
+                                                                        appGroupId: dependenciesFactory.bundle.appGroupId,
+                                                                        fileManager: dependenciesFactory.fileManager,
+                                                                        serializerType: dependenciesFactory.serializerType)
+            }
 
             afterEach {
                 // Reset with default values

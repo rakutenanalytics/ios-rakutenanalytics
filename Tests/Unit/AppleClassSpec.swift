@@ -2,6 +2,9 @@ import Quick
 import Nimble
 import UIKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - AppleClassSpec
 

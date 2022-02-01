@@ -1,7 +1,7 @@
 included:
   - Samples/RAnalyticsSample # path when run from CI
   - RAnalyticsSample # path when run as an Xcode build phase
-  - RAnalytics
+  - Sources
   - Tests
 
 disabled_rules:

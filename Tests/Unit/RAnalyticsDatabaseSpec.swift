@@ -5,7 +5,12 @@
 import Quick
 import Nimble
 import SQLite3
+import Foundation
+import UIKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 class RAnalyticsDatabaseSpec: QuickSpec {
 

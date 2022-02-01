@@ -19,9 +19,9 @@ $SOURCEKITTEN doc --module-name RAnalytics -- clean build-for-testing -workspace
 
 echo "📄 Generating Objective-C docs"
 mkdir ./docs-tmp
-find RAnalytics \( -name "*.h" -or -name "*.m" \) -exec cp {} ./docs-tmp \;
-mv ./docs-tmp ./RAnalytics/RAnalytics
-$SOURCEKITTEN doc --objc ./RAnalytics/RAnalytics/RAnalytics.h -- -x objective-c  -isysroot "$(xcrun --show-sdk-path --sdk iphonesimulator)" -I ./RAnalytics -fmodules > objcDoc.json
+find Sources \( -name "*.h" -or -name "*.m" \) -exec cp {} ./docs-tmp \;
+mv ./docs-tmp ./Sources/RAnalytics
+$SOURCEKITTEN doc --objc ./Sources/RAnalytics/RAnalytics.h -- -x objective-c  -isysroot "$(xcrun --show-sdk-path --sdk iphonesimulator)" -I ./RAnalytics -fmodules > objcDoc.json
 
 echo "📄 Merging"
 bundle exec jazzy --sourcekitten-sourcefile swiftDoc.json,objcDoc.json --output $output_dir

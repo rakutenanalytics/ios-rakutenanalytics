@@ -4,6 +4,9 @@ import AdSupport
 import WebKit
 import CoreLocation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 final class AnalyticsManagerSpec: QuickSpec {
     override func spec() {
@@ -16,6 +19,12 @@ final class AnalyticsManagerSpec: QuickSpec {
             dependenciesContainer.tracker = AnalyticsTrackerMock()
 
             beforeEach {
+                #if SWIFT_PACKAGE
+                // SPM version: Set Bundle.module in order to get RAnalyticsConfiguration.plist from Unit module
+                dependenciesContainer.bundle = Bundle.module
+                #else
+                dependenciesContainer.bundle = Bundle.main
+                #endif
                 (dependenciesContainer.locationManager as? LocationManagerMock)?.startUpdatingLocationIsCalled = false
                 (dependenciesContainer.locationManager as? LocationManagerMock)?.stopUpdatingLocationIsCalled = false
             }
@@ -256,10 +265,13 @@ final class AnalyticsManagerSpec: QuickSpec {
                     context("build time configuration file exists") {
                         it("process event should return false if the event is disabled at build time") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionEnd, parameters: nil)
+
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = nil
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
+                            let disabledEventsAtBuildTime = dependenciesContainer.bundle.disabledEventsAtBuildTime
+
+                            expect(disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
                             expect(analyticsManager.process(event)).to(beFalse())
                         }
 
@@ -268,7 +280,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = nil
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
+                            expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
                             expect(analyticsManager.process(event)).to(beTrue())
                         }
                     }
@@ -297,7 +309,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 == RAnalyticsEvent.Name.sessionEnd }
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
+                            expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
                             expect(analyticsManager.process(event)).to(beTrue())
                         }
 
@@ -306,7 +318,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 == RAnalyticsEvent.Name.sessionStart }
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())
+                            expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())
                             expect(analyticsManager.process(event)).to(beTrue())
                         }
 
@@ -315,7 +327,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 != RAnalyticsEvent.Name.sessionEnd }
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
+                            expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
                             expect(analyticsManager.process(event)).to(beFalse())
                         }
 
@@ -324,7 +336,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                             let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 != RAnalyticsEvent.Name.sessionStart }
 
-                            expect(Bundle.main.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())
+                            expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())
                             expect(analyticsManager.process(event)).to(beFalse())
                         }
                     }

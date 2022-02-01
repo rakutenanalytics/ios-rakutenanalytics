@@ -5,6 +5,9 @@ import Nimble
 import CoreTelephony
 import SQLite3
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - RAnalyticsRATTrackerPayloadSpec
 

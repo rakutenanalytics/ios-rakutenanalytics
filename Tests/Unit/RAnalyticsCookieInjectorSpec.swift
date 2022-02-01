@@ -2,6 +2,9 @@ import Quick
 import Nimble
 import WebKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 // MARK: - RAnalyticsCookieInjectorSpec
 

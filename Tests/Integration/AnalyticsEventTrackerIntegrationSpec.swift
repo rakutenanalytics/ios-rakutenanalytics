@@ -1,6 +1,14 @@
+import Foundation
 import Quick
 import Nimble
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
+
+#if canImport(RSDKUtilsNimble)
+import RSDKUtilsNimble
+#endif
 
 final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
 

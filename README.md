@@ -43,6 +43,8 @@ Note: The SDK may build on earlier Xcode versions but it is not officially suppo
 
 ## Installing
 
+## Cocoapods
+
 To use the module in its default configuration your `Podfile` should contain:
 
 ```ruby
@@ -65,6 +67,24 @@ source 'https://cdn.cocoapods.org/'
 source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 
 pod 'RAnalytics/Core'
+```
+
+## Swift Package Manager
+
+Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
+* Repository URL: `ssh://git@gitpub.rakuten-it.com:7999/eco/core-ios-analytics.git`
+* Version settings: 9.2.0 "Up to Next Major" (9.2.0 is the first version to support SPM)
+
+Choose `RAnalytics` product for your target. If you want to link other targets (Notification Service Extension, Notification Content Extension, etc), go to Build Phases of that target, then in Link Binary With Libraries click + button and add `RAnalytics`.
+
+Please refer to `Tracking events in iOS Extensions` section if you track events in your iOS Extensions.
+
+### Troubleshooting tip
+
+If you can't checkout the RAnalytics Swift Package in Xcode, please execute these 2 command lines:
+```
+/usr/libexec/Plistbuddy -c "Add :IDEPackageSupportUseBuiltinSCM bool 1" ~/Library/Preferences/com.apple.dt.Xcode.plist
+xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuiltinSCM
 ```
 
 ## RAT credentials

@@ -1,8 +1,25 @@
 import Quick
 import Nimble
-import RSDKUtils
-
+import Foundation
+import UIKit
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
+
+#if canImport(RSDKUtils)
+import RSDKUtils
+#else // SPM version
+import RSDKUtilsMain
+#endif
+
+#if canImport(RSDKUtilsNimble)
+import RSDKUtilsNimble
+#endif
+
+#if canImport(RSDKUtilsTestHelpers)
+import RSDKUtilsTestHelpers
+#endif
 
 class SenderSpec: QuickSpec {
 

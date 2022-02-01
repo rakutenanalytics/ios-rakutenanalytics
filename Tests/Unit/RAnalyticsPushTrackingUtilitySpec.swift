@@ -1,7 +1,10 @@
 import Quick
 import Nimble
-@testable import RAnalytics
 import Foundation
+@testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
     override func spec() {

@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
 
   s.subspec 'Core' do |ss|
     ss.source_files = [
-      'RAnalytics/RAnalytics.{h,m}',
-      'RAnalytics/{Core/,Core/Private/,Util/,Util/Private/,Util/Categories/}*.{h,m,swift}'
+      'Sources/Main/RAnalytics.h',
+      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/util/Private/}*.{h,m,swift}'
     ]
-    ss.private_header_files = 'RAnalytics/{Core,Util}/Private/*.h'
-    ss.resource_bundles = { 'RAnalyticsAssets' => ['RAnalytics/Core/Assets/*'] }
+    ss.private_header_files = 'Sources/Main/Core/{Private,Util}/*.h'
+    ss.resource_bundles = { 'RAnalyticsAssets' => ['Sources/Main/Core/Assets/*'] }
     ss.weak_frameworks = [
       'Foundation',
       'UIKit',
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'RAT' do |ss|
-    ss.source_files = 'RAnalytics/RAT/**/*.{h,m,swift}'
+    ss.source_files = 'Sources/Main/RAT/**/*.{swift}'
     ss.weak_frameworks = [
       'CoreTelephony',
       'SystemConfiguration'
@@ -48,6 +48,6 @@ Pod::Spec.new do |s|
   end
 
   s.default_subspecs = 'RAT'
-  s.module_map       = 'RAnalytics/RAnalytics.modulemap'
+  s.module_map       = 'Sources/RAnalytics.modulemap'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

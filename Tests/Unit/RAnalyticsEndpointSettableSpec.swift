@@ -1,6 +1,10 @@
 import Quick
 import Nimble
+import Foundation
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 private final class RAnalyticsEndpointHandler: NSObject, EndpointSettable {
     var endpointURL: URL?

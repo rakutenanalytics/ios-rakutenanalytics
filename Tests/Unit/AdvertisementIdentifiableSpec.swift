@@ -1,7 +1,11 @@
 import Quick
 import Nimble
 import AdSupport.ASIdentifierManager
+
 @testable import RAnalytics
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 
 final class AdvertisementIdentifiableSpec: QuickSpec {
     override func spec() {
