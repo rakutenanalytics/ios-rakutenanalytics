@@ -335,12 +335,12 @@
 		693B58091B7C6159008C5E86 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				C94B70372798719000A1898A /* RAnalyticsTestHelpers */,
 				C95A91CC279E89E4003BA1DA /* CoreSubspec */,
 				16E4817620B28F08006CB857 /* Functional */,
 				45ABC4CD26DE08550030BB70 /* Integration */,
 				C95A91CF279E8A1F003BA1DA /* PushNotifications */,
 				C94B70512798CFE000A1898A /* RAnalyticsBroadcast */,
+				C94B70372798719000A1898A /* RAnalyticsTestHelpers */,
 				16E4817520B28EDB006CB857 /* Unit */,
 				C94B702A2798700300A1898A /* UnitObjc */,
 			);
@@ -394,8 +394,7 @@
 				C94B70452798736A00A1898A /* RAnalyticsRATTracker+Create.swift */,
 				C94B70472798739000A1898A /* TestUtils.swift */,
 			);
-			name = RAnalyticsTestHelpers;
-			path = ../Sources/RAnalyticsTestHelpers;
+			path = RAnalyticsTestHelpers;
 			sourceTree = "<group>";
 		};
 		C94B70512798CFE000A1898A /* RAnalyticsBroadcast */ = {

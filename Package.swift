@@ -37,15 +37,18 @@ let package = Package(
                                "Nimble",
                                .productItem(name: "RSDKUtilsNimble", package: "RSDKUtils", condition: .none),
                                .productItem(name: "RSDKUtilsTestHelpers", package: "RSDKUtils", condition: .none)],
-                path: "Sources/RAnalyticsTestHelpers",
+                path: "Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
 
         .testTarget(name: "Functional", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
 
-        .testTarget(name: "Integration", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
+        .testTarget(name: "Integration",
+                    dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],
+                    exclude: ["IntegrationTests-Info.plist"]),
 
         .testTarget(name: "Unit",
                     dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],
+                    exclude: ["Info.plist"],
                     resources: [.process("Resources")])
     ],
     swiftLanguageVersions: [.v5]
