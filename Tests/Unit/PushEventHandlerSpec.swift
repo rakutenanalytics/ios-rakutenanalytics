@@ -18,24 +18,14 @@ final class PushEventHandlerSpec: QuickSpec {
             bundleMock.dictionary?[AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey] = "group.test"
             let sharedUserDefaults = UserDefaultsMock(suiteName: "group.test")
             sharedUserDefaults?.dictionary = [:]
-            let fileManagerMock = FileManagerMock()
-            var fileURL: URL!
             let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
-            let expectedError = NSError(domain: "domain", code: 456, userInfo: nil)
-
-            afterEach {
-                JSONSerializationMock.error = nil
-                fileManagerMock.fileExists = true
-            }
 
             context("App Group User Defaults") {
                 describe("isEventAlreadySent") {
                     context("RRPushAppGroupIdentifierPlistKey is not set in the main bundle") {
                         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaultsMock(suiteName: bundleMock.appGroupId),
-                                                                appGroupId: bundleMock.appGroupId,
-                                                                fileManager: FileManager.default,
-                                                                serializerType: JSONSerialization.self)
+                                                                appGroupId: bundleMock.appGroupId)
 
                         it("should return false when trackingIdentifier is not nil") {
                             expect(pushEventHandler.isEventAlreadySent(with: sentTrackingId)).to(beFalse())
@@ -56,9 +46,7 @@ final class PushEventHandlerSpec: QuickSpec {
                         context("valid open count dictionary") {
                             let pushEventHandler: PushEventHandler = {
                                 let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaultsMock(suiteName: bundleMock.appGroupId),
-                                                                        appGroupId: bundleMock.appGroupId,
-                                                                        fileManager: FileManager.default,
-                                                                        serializerType: JSONSerialization.self)
+                                                                        appGroupId: bundleMock.appGroupId)
                                 (pushEventHandler.sharedUserStorageHandler as? UserDefaultsMock)?.dictionary = openCountDictionary
                                 return pushEventHandler
                             }()
@@ -74,9 +62,7 @@ final class PushEventHandlerSpec: QuickSpec {
 
                         context("invalid open count dictionary") {
                             let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaultsMock(suiteName: bundleMock.appGroupId),
-                                                                    appGroupId: bundleMock.appGroupId,
-                                                                    fileManager: FileManager.default,
-                                                                    serializerType: JSONSerialization.self)
+                                                                    appGroupId: bundleMock.appGroupId)
 
                             it("should return false when trackingIdentifier is not nil and open count dictionary is empty") {
                                 (pushEventHandler.sharedUserStorageHandler as? UserDefaultsMock)?.dictionary = [:]
@@ -104,9 +90,7 @@ final class PushEventHandlerSpec: QuickSpec {
                 describe("cacheEvent(for:)") {
                     context("The shared app group user defaults is nil") {
                         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: nil,
-                                                                appGroupId: nil,
-                                                                fileManager: FileManager.default,
-                                                                serializerType: JSONSerialization.self)
+                                                                appGroupId: nil)
 
                         it("should not cache the event tracking identifier") {
                             expect(pushEventHandler.cacheEvent(for: sentTrackingId)).to(beFalse())
@@ -115,9 +99,7 @@ final class PushEventHandlerSpec: QuickSpec {
 
                     context("The shared app group user defaults is not nil") {
                         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                                                appGroupId: bundleMock.appGroupId,
-                                                                fileManager: FileManager.default,
-                                                                serializerType: JSONSerialization.self)
+                                                                appGroupId: bundleMock.appGroupId)
 
                         it("should cache the event tracking identifier") {
                             expect(pushEventHandler.cacheEvent(for: sentTrackingId)).to(beTrue())
@@ -133,9 +115,7 @@ final class PushEventHandlerSpec: QuickSpec {
                 describe("clearCache()") {
                     context("The shared app group user defaults is nil") {
                         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: nil,
-                                                                appGroupId: nil,
-                                                                fileManager: FileManager.default,
-                                                                serializerType: JSONSerialization.self)
+                                                                appGroupId: nil)
 
                         it("should return false") {
                             expect(pushEventHandler.clearCache()).to(beFalse())
@@ -144,9 +124,7 @@ final class PushEventHandlerSpec: QuickSpec {
 
                     context("The shared app group user defaults is not nil") {
                         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                                                appGroupId: bundleMock.appGroupId,
-                                                                fileManager: FileManager.default,
-                                                                serializerType: JSONSerialization.self)
+                                                                appGroupId: bundleMock.appGroupId)
 
                         it("should set the cache to nil") {
                             pushEventHandler.cacheEvent(for: sentTrackingId)
@@ -162,306 +140,77 @@ final class PushEventHandlerSpec: QuickSpec {
                 }
             }
 
-            context("App Group File Cache") {
+            context("Darwin Events") {
                 let pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                                        appGroupId: bundleMock.appGroupId,
-                                                        fileManager: fileManagerMock,
-                                                        serializerType: JSONSerializationMock.self)
+                                                        appGroupId: bundleMock.appGroupId)
 
                 beforeEach {
-                    fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
-                    fileURL = fileManagerMock.mockedContainerURL?
-                        .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
-                    FileManager.default.createSafeFile(at: fileURL)
+                    sharedUserDefaults?.dictionary = [:]
                 }
 
-                afterEach {
-                    fileManagerMock.mockedContainerURL = nil
-                    JSONSerializationMock.mockedJsonObject = [[String: Any]]()
-                    try? FileManager.default.removeItem(at: fileURL)
+                describe("cachedDarwinEvents(completion:)") {
+                    context("When the cached events array is empty") {
+                        it("should return an empty cached events") {
+                            let expectedEvents = [[String: Any]]()
+
+                            sharedUserDefaults?.dictionary = [PushEventHandlerKeys.openCountCachedEventsKey: expectedEvents]
+
+                            var cachedDarwinEvents: [[String: Any]] = [[String: Any]]()
+
+                            let events = pushEventHandler.cachedDarwinEvents()
+                            cachedDarwinEvents = events
+
+                            expect(cachedDarwinEvents).toNotEventually(beNil())
+                            expect(cachedDarwinEvents.isEmpty).toEventually(beTrue())
+                        }
+                    }
+
+                    context("When the cached events array is not empty") {
+                        it("should return the cached events when the cache is correct") {
+                            let expectedEvents = eventsToCache
+
+                            sharedUserDefaults?.dictionary = [PushEventHandlerKeys.openCountCachedEventsKey: expectedEvents]
+
+                            var cachedDarwinEvents: [[String: Any]] = [[String: Any]]()
+
+                            let events = pushEventHandler.cachedDarwinEvents()
+                            cachedDarwinEvents = events
+
+                            expect(cachedDarwinEvents).toNotEventually(beNil())
+                            expect(cachedDarwinEvents as? [[String: AnyHashable]]).to(equal(expectedEvents as? [[String: AnyHashable]]))
+                        }
+                    }
                 }
 
-                describe("cachedEvents(completion:)") {
-                    context("When the cached events file container URL is nil") {
-                        it("should return an error") {
-                            fileManagerMock.mockedContainerURL = nil
+                describe("save(darwinEvents:)") {
+                    context("When the cached events file exists") {
+                        context("When the cached events array is empty") {
+                            it("should save an empty array") {
+                                pushEventHandler.save(darwinEvents: [])
 
-                            var error: PushEventError?
-
-                            pushEventHandler.cachedEvents { result in
-                                if case .failure(let anError) = result {
-                                    error = anError
-                                }
-                            }
-
-                            expect(error).toNotEventually(beNil())
-                            expect(error).to(equal(.fileUrlIsNil))
-                        }
-                    }
-
-                    context("When the cached events file container does not exist") {
-                        it("should return an error") {
-                            fileManagerMock.fileExists = false
-
-                            var error: PushEventError?
-
-                            pushEventHandler.cachedEvents { result in
-                                if case .failure(let anError) = result {
-                                    error = anError
-                                }
-                            }
-
-                            expect(error).toNotEventually(beNil())
-                            expect(error).to(equal(.fileUrlIsNil))
-                        }
-                    }
-
-                    context("When the parsing fails") {
-                        it("should return an error") {
-                            JSONSerializationMock.error = expectedError
-
-                            var error: PushEventError?
-
-                            pushEventHandler.cachedEvents { result in
-                                if case .failure(let anError) = result {
-                                    error = anError
-                                }
-                            }
-
-                            expect(error).toNotEventually(beNil())
-                            expect(error).to(equal(PushEventError.nativeError(error: expectedError)))
-                        }
-                    }
-
-                    context("When the cached events file container exists") {
-                        context("When the cached events file does not exist") {
-                            it("should return an error") {
-                                var error: Error?
-
-                                try? FileManager.default.removeItem(at: fileURL)
-
-                                pushEventHandler.cachedEvents { result in
-                                    if case .failure(let anError) = result {
-                                        switch anError {
-                                        case .nativeError(error: let nativeError):
-                                            error = nativeError
-                                        default: ()
-                                        }
-                                    }
-                                }
-
-                                expect(error).toNotEventually(beNil())
+                                expect(sharedUserDefaults?.array(forKey: PushEventHandlerKeys.openCountCachedEventsKey)).to(beEmpty())
                             }
                         }
 
-                        context("When the cached events file exists") {
-                            var fileURL: URL!
+                        context("When the cached events array is not empty") {
+                            it("should save a not empty array") {
+                                let expectedEvents = eventsToCache as? [[String: AnyHashable]]
 
-                            beforeEach {
-                                fileURL = fileManagerMock.mockedContainerURL?
-                                    .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
-                                FileManager.default.createSafeFile(at: fileURL)
-                            }
+                                pushEventHandler.save(darwinEvents: eventsToCache)
 
-                            afterEach {
-                                try? FileManager.default.removeItem(at: fileURL)
-                            }
-
-                            context("When the cached events array is empty") {
-                                it("should return an empty cached events") {
-                                    let expectedEvents = [[String: Any]]()
-
-                                    JSONSerializationMock.mockedJsonObject = expectedEvents
-
-                                    var cachedEvents: [[String: Any]] = [[String: Any]]()
-
-                                    pushEventHandler.cachedEvents { result in
-                                        if case .success(let events) = result {
-                                            cachedEvents = events
-                                        }
-                                    }
-
-                                    expect(cachedEvents).toNotEventually(beNil())
-                                    expect(cachedEvents.isEmpty).toEventually(beTrue())
-                                }
-                            }
-
-                            context("When the cached events array is not empty") {
-                                it("should return an empty cached events when the cache is incorrect") {
-                                    let expectedEvents = [[String: Any]]()
-
-                                    let incorrectCache = ["item1", "item2"]
-
-                                    JSONSerializationMock.mockedJsonObject = incorrectCache
-
-                                    var cachedEvents: [[String: Any]] = [[String: Any]]()
-
-                                    pushEventHandler.cachedEvents { result in
-                                        if case .success(let events) = result {
-                                            cachedEvents = events
-                                        }
-                                    }
-
-                                    expect(cachedEvents).toNotEventually(beNil())
-                                    expect(cachedEvents as? [[String: AnyHashable]]).to(equal(expectedEvents as? [[String: AnyHashable]]))
-                                }
-
-                                it("should return the cached events when the cache is correct") {
-                                    let expectedEvents = eventsToCache
-
-                                    JSONSerializationMock.mockedJsonObject = expectedEvents
-
-                                    var cachedEvents: [[String: Any]] = [[String: Any]]()
-
-                                    pushEventHandler.cachedEvents { result in
-                                        if case .success(let events) = result {
-                                            cachedEvents = events
-                                        }
-                                    }
-
-                                    expect(cachedEvents).toNotEventually(beNil())
-                                    expect(cachedEvents as? [[String: AnyHashable]]).to(equal(expectedEvents as? [[String: AnyHashable]]))
-                                }
+                                let savedEvents = sharedUserDefaults?.array(forKey: PushEventHandlerKeys.openCountCachedEventsKey)
+                                expect(savedEvents as? [[String: AnyHashable]]).to(equal(expectedEvents))
                             }
                         }
                     }
                 }
 
-                describe("save(events:)") {
-                    context("When the cached events file container does not exist") {
-                        it("should return an error") {
-                            fileManagerMock.mockedContainerURL = nil
+                describe("clearDarwinEventsCache()") {
+                    context("When the cached events file exists") {
+                        it("should clear the cache") {
+                            pushEventHandler.clearDarwinEventsCache()
 
-                            var error: PushEventError?
-
-                            pushEventHandler.save(events: eventsToCache, completion: { anError in
-                                error = anError
-                            })
-
-                            expect(error).toNotEventually(beNil())
-                            expect(error).to(equal(.fileUrlIsNil))
-                        }
-                    }
-
-                    context("When the cached events file container exists") {
-                        context("When the cached events file does not exist") {
-                            it("should return an error") {
-                                try? FileManager.default.removeItem(at: fileURL)
-
-                                // Note: write(to:) does not fail when the file does not exist
-                                fileManagerMock.fileExists = false
-
-                                let mockedData: Data! = try? JSONSerialization.data(withJSONObject: eventsToCache, options: .fragmentsAllowed)
-
-                                JSONSerializationMock.mockedData = mockedData
-
-                                var error: PushEventError?
-
-                                pushEventHandler.save(events: eventsToCache, completion: { anError in
-                                    error = anError
-                                })
-
-                                expect(error).toNotEventually(beNil())
-                                expect(error).to(equal(.fileDoesNotExist))
-                            }
-                        }
-
-                        context("When the cached events file exists") {
-                            context("When the cached events array is empty") {
-                                it("should save an empty array") {
-                                    let expectedEvents = [[String: Any]]()
-
-                                    JSONSerializationMock.mockedJsonObject = expectedEvents
-
-                                    var success = false
-
-                                    pushEventHandler.save(events: eventsToCache, completion: { anError in
-                                        success = anError == nil
-                                    })
-
-                                    expect(success).toEventually(beTrue())
-                                }
-                            }
-
-                            context("When the cached events array is not empty") {
-                                it("should save a not empty array") {
-                                    let expectedEvents = eventsToCache
-
-                                    JSONSerializationMock.mockedJsonObject = expectedEvents
-
-                                    var success = false
-
-                                    pushEventHandler.save(events: eventsToCache, completion: { anError in
-                                        success = anError == nil
-                                    })
-
-                                    expect(success).toEventually(beTrue())
-                                }
-                            }
-
-                            context("When the parsing fails") {
-                                it("should not save") {
-                                    JSONSerializationMock.error = expectedError
-
-                                    var error: PushEventError?
-
-                                    pushEventHandler.save(events: eventsToCache, completion: { anError in
-                                        error = anError
-                                    })
-
-                                    expect(error).toEventuallyNot(beNil())
-                                    expect(error).to(equal(PushEventError.nativeError(error: expectedError)))
-                                }
-                            }
-                        }
-                    }
-                }
-
-                describe("clearEventsCache()") {
-                    context("When the cached events file container does not exist") {
-                        it("should return an error") {
-                            fileManagerMock.mockedContainerURL = nil
-
-                            var error: PushEventError?
-
-                            pushEventHandler.clearEventsCache { anError in
-                                error = anError
-                            }
-
-                            expect(error).toNotEventually(beNil())
-                            expect(error).to(equal(.fileUrlIsNil))
-                        }
-                    }
-
-                    context("When the cached events file container exists") {
-                        context("When the cached events file does not exist") {
-                            it("should return an error") {
-                                try? FileManager.default.removeItem(at: fileURL)
-
-                                // Note: removeItem(at:) does not fail when the file does not exist
-                                fileManagerMock.fileExists = false
-
-                                var error: PushEventError?
-
-                                pushEventHandler.clearEventsCache { anError in
-                                    error = anError
-                                }
-
-                                expect(error).toNotEventually(beNil())
-                                expect(error).to(equal(.fileDoesNotExist))
-                            }
-                        }
-
-                        context("When the cached events file exists") {
-                            it("should clear the cache") {
-                                var success = false
-
-                                pushEventHandler.clearEventsCache { anError in
-                                    success = anError == nil
-                                }
-
-                                expect(success).toEventually(beTrue())
-                            }
+                            expect(sharedUserDefaults?.array(forKey: PushEventHandlerKeys.openCountCachedEventsKey)).to(beEmpty())
                         }
                     }
                 }

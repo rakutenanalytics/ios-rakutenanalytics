@@ -7,7 +7,7 @@ import RLogger
 
 protocol AnalyticsEventTrackable {
     var delegate: AnalyticsManageable? { get set }
-    func track(_ completion: (Error?) -> Void)
+    func track()
 }
 
 /// `AnalyticsEventTracker` track an array of events stored in the app group cache.
@@ -28,31 +28,22 @@ extension AnalyticsEventTracker: AnalyticsEventTrackable {
     /// Track an array of events stored in the app group cache.
     ///
     /// - Note: the app group cache is cleared when all events are tracked.
-    internal func track(_ completion: (Error?) -> Void) {
-        pushEventHandler.cachedEvents { result in
-            switch result {
-            case .success(let cachedEvents):
-                cachedEvents.forEach { eventDictionary in
-                    guard let eventName = eventDictionary[PushEventPayloadKeys.eventNameKey] as? String,
-                          let eventParameters = eventDictionary[PushEventPayloadKeys.eventParametersKey] as? [String: Any] else {
-                        return
-                    }
-                    let event = RAnalyticsEvent(name: eventName, parameters: eventParameters)
-                    _ = delegate?.process(event)
-                    RLogger.debug(message: "AnalyticsEventTracker event is tracked: \(event.name) \(event.parameters)")
-                }
+    internal func track() {
+        let cachedDarwinEvents = pushEventHandler.cachedDarwinEvents()
 
-                pushEventHandler.clearEventsCache { error in
-                    completion(error)
-                }
-
-            case .failure(let error):
-                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsEventTrackerErrorDomain,
-                                                 code: ErrorCode.analyticsEventTrackerCantTrackEvent.rawValue,
-                                                 description: ErrorDescription.analyticsEventTrackerCantTrackEvent,
-                                                 reason: error.localizedDescription))
-                completion(error)
+        cachedDarwinEvents.forEach { eventDictionary in
+            guard let eventName = eventDictionary[PushEventPayloadKeys.eventNameKey] as? String else {
+                return
             }
+            let eventParameters = eventDictionary[PushEventPayloadKeys.eventParametersKey] as? [String: Any]
+            let event = RAnalyticsEvent(name: eventName, parameters: eventParameters)
+            let isProcessed = delegate?.process(event)
+
+            let isTracked = isProcessed == true ? "tracked" : "not tracked"
+            let message = "AnalyticsEventTracker event is \(isTracked): \(event.name) \(event.parameters)"
+            RLogger.debug(message: message)
         }
+
+        pushEventHandler.clearDarwinEventsCache()
     }
 }

@@ -2,22 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>RATDisabledEventsList</key>
-    <array>
-    <string>_rem_init_launch</string>
-    <string>_rem_launch</string>
-    <string>_rem_end_session</string>
-    <string>_rem_update</string>
-    <string>_rem_login</string>
-    <string>_rem_login_failure</string>
-    <string>_rem_logout</string>
-    <string>_rem_install</string>
-    <string>_rem_visit</string>
-    <string>_rem_push_notify</string>
-    <string>_rem_sso_credential_found</string>
-    <string>_rem_login_credential_found</string>
-    <string>_rem_credential_strategies</string>
-    <string>_analytics_custom</string>
-    </array>
+	<key>RATDisabledEventsList</key>
+	<array>
+		<string>_rem_init_launch</string>
+		<string>_rem_launch</string>
+		<string>_rem_end_session</string>
+		<string>_rem_update</string>
+		<string>_rem_login</string>
+		<string>_rem_login_failure</string>
+		<string>_rem_logout</string>
+		<string>_rem_install</string>
+		<string>_rem_visit</string>
+		<string>_rem_push_received</string>
+		<string>_rem_push_notify</string>
+		<string>_rem_sso_credential_found</string>
+		<string>_rem_login_credential_found</string>
+		<string>_rem_credential_strategies</string>
+		<string>_analytics_custom</string>
+	</array>
 </dict>
 </plist>

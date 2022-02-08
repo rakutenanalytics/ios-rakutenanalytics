@@ -33,9 +33,7 @@ public enum AnalyticsEventPoster {
     ///    - parameters: the event parameters.
     public static func post(name: String, parameters: [String: Any]?) {
         let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId),
-                                                appGroupId: Bundle.main.appGroupId,
-                                                fileManager: FileManager.default,
-                                                serializerType: JSONSerialization.self)
+                                                appGroupId: Bundle.main.appGroupId)
         post(name: name,
              parameters: parameters,
              pushEventHandler: pushEventHandler)
@@ -54,34 +52,20 @@ public enum AnalyticsEventPoster {
     internal static func post(name: String,
                               parameters: [String: Any]?,
                               pushEventHandler: PushEventHandler) {
-        pushEventHandler.cachedEvents { result in
-            // Get the cached events
-            var cachedEvents: [[String: Any]]
-            switch result {
-            case .success(let events):
-                cachedEvents = events
+        var cachedDarwinEvents = pushEventHandler.cachedDarwinEvents()
 
-            case .failure:
-                cachedEvents = [[String: Any]]()
-            }
-
-            // Add the new event to track
-            var eventDictionary: [String: Any] = [PushEventPayloadKeys.eventNameKey: name]
-            if let parameters = parameters {
-                eventDictionary[PushEventPayloadKeys.eventParametersKey] = parameters
-            }
-            cachedEvents.append(eventDictionary)
-
-            // Save the new event to the cached events array
-            pushEventHandler.save(events: cachedEvents) { anError in
-                if let error = anError {
-                    RLogger.debug(message: "AnalyticsEventPoster error: \(error.localizedDescription)")
-                    return
-                }
-                // Track the new event
-                DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
-            }
+        // Add the new event to track
+        var eventDictionary: [String: Any] = [PushEventPayloadKeys.eventNameKey: name]
+        if let parameters = parameters {
+            eventDictionary[PushEventPayloadKeys.eventParametersKey] = parameters
         }
+        cachedDarwinEvents.append(eventDictionary)
+
+        // Save the new event to the cached events array
+        pushEventHandler.save(darwinEvents: cachedDarwinEvents)
+
+        // Track the new event
+        DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
     }
 }
 

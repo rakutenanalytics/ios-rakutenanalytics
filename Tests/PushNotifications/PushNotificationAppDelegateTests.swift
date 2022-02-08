@@ -18,9 +18,7 @@ class PushNotificationAppDelegateTests: XCTestCase {
     let testRID = "38493839"
     var testResult: String { "rid:\(testRID)" }
     let pushEventHandler = PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId),
-                                            appGroupId: Bundle.main.appGroupId,
-                                            fileManager: FileManager.default,
-                                            serializerType: JSONSerialization.self)
+                                            appGroupId: Bundle.main.appGroupId)
 
     override func setUp() {
         UIApplication.swizzleToggle()

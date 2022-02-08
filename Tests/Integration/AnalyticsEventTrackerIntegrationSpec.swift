@@ -16,9 +16,7 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
         describe("AnalyticsEventTrackerIntegration") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),
-                                        appGroupId: "group.test",
-                                        fileManager: FileManager.default,
-                                        serializerType: JSONSerialization.self)
+                                        appGroupId: "group.test")
             }()
 
             let analyticsManager = AnalyticsManagerMock()
@@ -37,28 +35,18 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
 
             context("Events are cached before the tracking") {
                 it("should track the events and clear the events cache") {
-                    var savingError: Error?
-
                     (0..<100).forEach { index in
                         verifyEventsToTrack((0..<index + 1).map { [PushEventPayloadKeys.eventNameKey: "myEventName\($0)",
                                                                    PushEventPayloadKeys.eventParametersKey: ["rid": "bonjour\($0)"]] })
                     }
 
                     func verifyEventsToTrack(_ events: [[String: AnyHashable]]) {
-                        pushEventHandler.save(events: events) { saveError in
-                            savingError = saveError
+                        pushEventHandler.save(darwinEvents: events)
 
-                            tracker.track { anError in
-                                trackingError = anError
+                        tracker.track()
 
-                                pushEventHandler.cachedEvents { result in
-                                    switch result {
-                                    case .success(let cache): eventsCache = cache
-                                    case .failure(_): ()
-                                    }
-                                }
-                            }
-                        }
+                        let cache = pushEventHandler.cachedDarwinEvents()
+                        eventsCache = cache
 
                         expect(analyticsManager.processedEvents).toEventuallyNot(beEmpty())
                         expect(analyticsManager.processedEvents.count).to(equal(events.count))
@@ -70,7 +58,6 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
                         expect(eventsCache).toEventuallyNot(beNil())
                         expect(eventsCache).to(beEmpty())
 
-                        expect(savingError).to(beNil())
                         expect(trackingError).to(beNil())
 
                         analyticsManager.processedEvents = [RAnalyticsEvent]()
@@ -80,20 +67,16 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
 
             context("No events are cached before the tracking") {
                 it("should not track events") {
-                    tracker.track { _ in }
+                    tracker.track()
 
                     expect(analyticsManager.processedEvents).toAfterTimeout(beEmpty())
                 }
 
                 it("should have an empty cache") {
-                    tracker.track { _ in }
+                    tracker.track()
 
-                    pushEventHandler.cachedEvents { result in
-                        switch result {
-                        case .success(let cache): eventsCache = cache
-                        case .failure(_): ()
-                        }
-                    }
+                    let cache = pushEventHandler.cachedDarwinEvents()
+                    eventsCache = cache
 
                     expect(eventsCache).toAfterTimeout(beEmpty())
                 }

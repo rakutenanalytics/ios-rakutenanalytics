@@ -10,7 +10,6 @@ final class AnalyticsEventPosterSpec: QuickSpec {
 
     override func spec() {
         describe("AnalyticsEventPoster") {
-            let fileManager = FileManager.default
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()
                 bundleMock.dictionary = [:]
@@ -19,19 +18,17 @@ final class AnalyticsEventPosterSpec: QuickSpec {
                 sharedUserDefaults?.dictionary = [:]
 
                 return PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                        appGroupId: bundleMock.appGroupId,
-                                        fileManager: fileManager,
-                                        serializerType: JSONSerialization.self)
+                                        appGroupId: bundleMock.appGroupId)
             }()
             let expectedCacheEvents: [[String: Any]] = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
                                                          PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
 
             beforeEach {
-                pushEventHandler.clearEventsCache { _ in }
+                pushEventHandler.clearDarwinEventsCache()
             }
 
             afterEach {
-                pushEventHandler.clearEventsCache { _ in }
+                pushEventHandler.clearDarwinEventsCache()
             }
 
             it("should cache the event") {
@@ -39,16 +36,18 @@ final class AnalyticsEventPosterSpec: QuickSpec {
                                           parameters: ["rid": "abcd1234"],
                                           pushEventHandler: pushEventHandler)
 
-                var cachedEvents: [[String: Any]] = [[String: Any]]()
+                var cachedDarwinEvents: [[String: Any]] = [[String: Any]]()
 
-                pushEventHandler.cachedEvents { result in
-                    if case .success(let events) = result {
-                        cachedEvents = events
-                    }
-                }
+                let events = pushEventHandler.cachedDarwinEvents()
+                cachedDarwinEvents = events
 
-                expect(cachedEvents.isEmpty).toEventually(beFalse())
-                expect(cachedEvents as? [[String: AnyHashable]]).to(equal(expectedCacheEvents as? [[String: AnyHashable]]))
+                expect(cachedDarwinEvents.isEmpty).toEventually(beFalse())
+
+                expect(cachedDarwinEvents[0][PushEventPayloadKeys.eventNameKey] as? String)
+                    .to(equal(expectedCacheEvents[0][PushEventPayloadKeys.eventNameKey] as? String))
+
+                expect(cachedDarwinEvents[0][PushEventPayloadKeys.eventParametersKey] as? [String: String])
+                    .to(equal(expectedCacheEvents[0][PushEventPayloadKeys.eventParametersKey] as? [String: String]))
             }
 
             it("should send a Darwin Notification") {

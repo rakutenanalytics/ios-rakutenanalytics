@@ -12,8 +12,6 @@ final class AnalyticsEventObserverSpec: QuickSpec {
         describe("AnalyticsEventObserver") {
             let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
-            var fileURL: URL!
-            let fileManagerMock = FileManagerMock()
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()
                 bundleMock.dictionary = [:]
@@ -22,24 +20,11 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                 sharedUserDefaults?.dictionary = [:]
 
                 return PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                        appGroupId: bundleMock.appGroupId,
-                                        fileManager: fileManagerMock,
-                                        serializerType: JSONSerializationMock.self)
+                                        appGroupId: bundleMock.appGroupId)
             }()
             let delegate = AnalyticsManagerMock()
 
-            beforeEach {
-                fileManagerMock.mockedContainerURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first
-                fileManagerMock.fileExists = true
-                fileURL = fileManagerMock.mockedContainerURL?
-                    .appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName)
-                FileManager.default.createSafeFile(at: fileURL)
-            }
-
             afterEach {
-                fileManagerMock.mockedContainerURL = nil
-                JSONSerializationMock.mockedJsonObject = [[String: Any]]()
-                try? FileManager.default.removeItem(at: fileURL)
                 delegate.processedEvents = [RAnalyticsEvent]()
             }
 
@@ -55,10 +40,8 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                 }
 
                 it("should process a cached event when a Darwin Notification is sent") {
-                    JSONSerializationMock.mockedJsonObject = eventsToCache
-                    pushEventHandler.save(events: eventsToCache, completion: { _ in
-                        DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
-                    })
+                    pushEventHandler.save(darwinEvents: eventsToCache)
+                    DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
 
                     expect(delegate.processedEvents).toEventuallyNot(beEmpty())
                     expect(delegate.processedEvents.count).to(equal(1))
@@ -72,10 +55,8 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                 observer.stopObservation()
 
                 it("should not process a cached event when a Darwin Notification is sent") {
-                    JSONSerializationMock.mockedJsonObject = eventsToCache
-                    pushEventHandler.save(events: eventsToCache, completion: { _ in
-                        DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
-                    })
+                    pushEventHandler.save(darwinEvents: eventsToCache)
+                    DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
 
                     expect(delegate.processedEvents).toAfterTimeout(beEmpty())
                 }

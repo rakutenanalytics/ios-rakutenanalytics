@@ -156,7 +156,8 @@ The SDK will automatically send events to the Rakuten Analytics Tracker for cert
 | `_rem_logout` | User logged out.     |
 | `_rem_install` | Application version is launched for the first time.     |
 | `_rem_visit` | A new page is shown. Application developers can also emit this event manually if they wish so, for instance to track pages that are not view controllers (e.g. a table cell). In that case, they should set the event's parameter `page_id` to a string that uniquely identifies the visit they want to track.     |
-| `_rem_push_notify` | A push notification has been received while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.    |
+| `_rem_push_received` | A push notification has been received while the app was in background or in foreground.    |
+| `_rem_push_notify` | A push notification has been opened while the app was active, or the app was opened from a push notification. A value that uniquely identifies the push notification is provided in the `tracking_id` parameter. See its definition below.    |
 
 
 For a full list and more details see the [SDK Standard Event Spec](https://confluence.rakuten-it.com/confluence/display/MAGS/Analytics+SDK+-+SDK+Tracking+Specification+for+RAT#AnalyticsSDKSDKTrackingSpecificationforRAT-AutomaticsEvents).

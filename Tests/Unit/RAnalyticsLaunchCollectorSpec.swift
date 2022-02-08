@@ -134,9 +134,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
 
                 let sharedUserStorageHandler = dependenciesFactory.sharedUserStorageHandlerType.init(suiteName: dependenciesFactory.bundle.appGroupId)
                 dependenciesFactory.pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
-                                                                        appGroupId: dependenciesFactory.bundle.appGroupId,
-                                                                        fileManager: dependenciesFactory.fileManager,
-                                                                        serializerType: dependenciesFactory.serializerType)
+                                                                        appGroupId: dependenciesFactory.bundle.appGroupId)
             }
 
             afterEach {

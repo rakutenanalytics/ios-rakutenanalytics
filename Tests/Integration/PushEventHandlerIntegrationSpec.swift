@@ -12,38 +12,28 @@ final class PushEventHandlerIntegrationSpec: QuickSpec {
         describe("PushEventHandlerIntegration") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),
-                                        appGroupId: "group.test",
-                                        fileManager: FileManager.default,
-                                        serializerType: JSONSerialization.self)
+                                        appGroupId: "group.test")
             }()
 
             afterEach {
-                pushEventHandler.clearEventsCache { _ in }
+                pushEventHandler.clearDarwinEventsCache()
             }
 
             it("should save the expected events in the cache") {
-                var cachedEvents: [[String: AnyHashable]]?
+                var cachedDarwinEvents: [[String: AnyHashable]]?
 
                 (0..<100).forEach { index in
                     verifySavedEvents((0..<index + 1).map { ["key\($0)": "value\($0)"] })
                 }
 
                 func verifySavedEvents(_ expectedEvents: [[String: AnyHashable]]) {
-                    pushEventHandler.save(events: expectedEvents) { _ in
-                        pushEventHandler.cachedEvents { result in
-                            switch result {
-                            case .success(let events):
-                                cachedEvents = events as? [[String: AnyHashable]]
+                    pushEventHandler.save(darwinEvents: expectedEvents)
+                    cachedDarwinEvents = pushEventHandler.cachedDarwinEvents() as? [[String: AnyHashable]]
 
-                            case .failure(_): ()
-                            }
-                        }
-                    }
+                    expect(cachedDarwinEvents).toEventually(equal(expectedEvents))
+                    expect(cachedDarwinEvents?.count).to(equal(expectedEvents.count))
 
-                    expect(cachedEvents).toEventually(equal(expectedEvents))
-                    expect(cachedEvents?.count).to(equal(expectedEvents.count))
-
-                    pushEventHandler.clearEventsCache { _ in }
+                    pushEventHandler.clearDarwinEventsCache()
                 }
             }
 
@@ -56,27 +46,15 @@ final class PushEventHandlerIntegrationSpec: QuickSpec {
                 }
 
                 func verifyCachedEvents(_ eventsToSave: [[String: AnyHashable]]) {
-                    pushEventHandler.save(events: eventsToSave) { _ in
-                        pushEventHandler.cachedEvents { result in
-                            switch result {
-                            case .success(let eventsSavedInCache):
-                                savedEventsBeforeClearingCache = eventsSavedInCache as? [[String: AnyHashable]]
+                    pushEventHandler.save(darwinEvents: eventsToSave)
+                    let eventsSavedInCache = pushEventHandler.cachedDarwinEvents()
 
-                                pushEventHandler.clearEventsCache { _ in
-                                    pushEventHandler.cachedEvents { result in
-                                        switch result {
-                                        case .success(let events):
-                                            cachedEventsAfterClearingCache = events as? [[String: AnyHashable]]
+                    savedEventsBeforeClearingCache = eventsSavedInCache as? [[String: AnyHashable]]
 
-                                        case .failure(_): ()
-                                        }
-                                    }
-                                }
+                    pushEventHandler.clearDarwinEventsCache()
+                    let events = pushEventHandler.cachedDarwinEvents()
 
-                            case .failure(_): ()
-                            }
-                        }
-                    }
+                    cachedEventsAfterClearingCache = events as? [[String: AnyHashable]]
 
                     expect(savedEventsBeforeClearingCache).toEventually(equal(eventsToSave))
                     expect(savedEventsBeforeClearingCache?.count).to(equal(eventsToSave.count))

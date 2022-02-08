@@ -64,6 +64,10 @@ import Foundation
 
         /// Event triggered when a push notification is received.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
+        public static let pushNotificationReceived = "_rem_push_received"
+
+        /// Event triggered when a push notification is opened.
+        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
         public static let pushNotification = "_rem_push_notify"
 
         /// Event triggered when an SSO credential is found.
@@ -136,19 +140,29 @@ import Foundation
         super.init()
     }
 
-    /// Convenience method for tracking a push notify event.
+    /// Convenience method for tracking a push notify event (`_rem_push_notify`).
     ///
     /// - Parameters:
     ///     - pushNotificationPayload: The entire payload of a push notification.
     ///
     /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
     @objc public convenience init(pushNotificationPayload: [String: Any]) {
+        self.init(name: AnalyticsManager.Event.Name.pushNotification, pushNotificationPayload: pushNotificationPayload)
+    }
+
+    /// Convenience method for tracking a push event.
+    ///
+    /// - Parameters:
+    ///     - pushNotificationPayload: The entire payload of a push notification.
+    ///
+    /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
+    convenience init(name: String, pushNotificationPayload: [String: Any]) {
         var payload = [String: Any]()
         if let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: pushNotificationPayload) {
             payload[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] = trackingId
         }
 
-        self.init(name: AnalyticsManager.Event.Name.pushNotification, parameters: payload)
+        self.init(name: name, parameters: payload)
     }
 
     @objc public override var hash: Int {

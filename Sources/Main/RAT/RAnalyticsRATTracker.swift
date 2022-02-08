@@ -99,6 +99,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// <string>_rem_logout</string>
     /// <string>_rem_install</string>
     /// <string>_rem_visit</string>
+    /// <string>_rem_push_received</string>
     /// <string>_rem_push_notify</string>
     /// <string>_rem_sso_credential_found</string>
     /// <string>_rem_login_credential_found</string>
@@ -497,8 +498,8 @@ extension RAnalyticsRATTracker {
                 return false
             }
 
-        // MARK: _rem_push_notify
-        case RAnalyticsEvent.Name.pushNotification:
+        // MARK: _rem_push_received, _rem_push_notify
+        case RAnalyticsEvent.Name.pushNotificationReceived, RAnalyticsEvent.Name.pushNotification:
             guard let pushParameters = event.pushParameters else {
                 return false
             }

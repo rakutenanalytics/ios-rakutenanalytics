@@ -89,6 +89,7 @@ extension UserDefaultsMock: UserStorageHandleable {
         }
         self.init()
     }
+    public func array(forKey defaultName: String) -> [Any]? { dictionary?[defaultName] as? [Any] }
     public func dictionary(forKey defaultName: String) -> [String: Any]? { dictionary?[defaultName] as? [String: Any] }
     public func set(value: Any?, forKey key: String) { dictionary?[key] = value }
     public func removeObject(forKey defaultName: String) { dictionary?[defaultName] = nil }
@@ -113,7 +114,7 @@ public final class SessionMock: Sessionable {
 
     public init() {
     }
-    
+
     public func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable {
         willComplete?()
         completionHandler(data, response, error)
@@ -251,9 +252,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
         pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
-                                            appGroupId: appGroupId,
-                                            fileManager: fileManager,
-                                            serializerType: serializerType)
+                                            appGroupId: appGroupId)
         super.init()
     }
 }

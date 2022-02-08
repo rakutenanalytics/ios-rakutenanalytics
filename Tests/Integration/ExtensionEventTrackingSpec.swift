@@ -12,9 +12,7 @@ final class ExtensionEventTrackingSpec: QuickSpec {
         describe("ExtensionEventTracking") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),
-                                        appGroupId: "group.test",
-                                        fileManager: FileManager.default,
-                                        serializerType: JSONSerialization.self)
+                                        appGroupId: "group.test")
             }()
 
             let analyticsManager = AnalyticsManagerMock()
@@ -44,98 +42,82 @@ final class ExtensionEventTrackingSpec: QuickSpec {
                                 .to(equal(["rid": "helloworld\(index)"]))
 
                             var eventsCache: [[String: Any]]?
-                            pushEventHandler.cachedEvents { result in
-                                switch result {
-                                case .success(let cache): eventsCache = cache
-                                case .failure(_): ()
-                                }
-                            }
+                            eventsCache = pushEventHandler.cachedDarwinEvents()
+
                             expect(eventsCache).toEventuallyNot(beNil())
                             expect(eventsCache).to(beEmpty())
 
                             analyticsManager.processedEvents = [RAnalyticsEvent]()
                         }
                     }
+
+                    context("No event is posted") {
+                        it("should not process any events") {
+                            expect(analyticsManager.processedEvents).to(beEmpty())
+                        }
+
+                        it("should have an empty cache") {
+                            var eventsCache: [[String: Any]]? = pushEventHandler.cachedDarwinEvents()
+                            expect(eventsCache).toEventuallyNot(beNil())
+                            expect(eventsCache).to(beEmpty())
+                        }
+                    }
                 }
 
-                context("No event is posted") {
-                    it("should not process any events") {
-                        expect(analyticsManager.processedEvents).to(beEmpty())
+                context("AnalyticsEventObserver starts the observation after any posted events") {
+                    afterEach {
+                        observer.stopObservation()
+                        analyticsManager.processedEvents = [RAnalyticsEvent]()
                     }
 
-                    it("should have an empty cache") {
-                        var eventsCache: [[String: Any]]?
-                        pushEventHandler.cachedEvents { result in
-                            switch result {
-                            case .success(let cache): eventsCache = cache
-                            case .failure(_): ()
+                    context("Many events are posted") {
+                        it("should process the event and clear the events cache") {
+                            (0..<100).forEach { index in
+                                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
+                                                          parameters: ["rid": "helloworld\(index)"],
+                                                          pushEventHandler: pushEventHandler)
                             }
-                        }
-                        expect(eventsCache).toEventuallyNot(beNil())
-                        expect(eventsCache).to(beEmpty())
-                    }
-                }
-            }
 
-            context("AnalyticsEventObserver starts the observation after any posted events") {
-                afterEach {
-                    observer.stopObservation()
-                    analyticsManager.processedEvents = [RAnalyticsEvent]()
-                }
+                            observer.startObservation(delegate: analyticsManager)
+                            observer.trackCachedEvents()
 
-                context("Many events are posted") {
-                    it("should process the event and clear the events cache") {
-                        (0..<100).forEach { index in
-                            AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
-                                                      parameters: ["rid": "helloworld\(index)"],
-                                                      pushEventHandler: pushEventHandler)
-                        }
+                            expect(analyticsManager.processedEvents).toEventuallyNot(beEmpty())
+                            expect(analyticsManager.processedEvents.count).to(equal(100))
 
-                        observer.startObservation(delegate: analyticsManager)
-                        observer.trackCachedEvents()
-
-                        expect(analyticsManager.processedEvents).toEventuallyNot(beEmpty())
-                        expect(analyticsManager.processedEvents.count).to(equal(100))
-
-                        (0..<100).forEach { index in
-                            expect(analyticsManager.processedEvents[index].name).to(equal(RAnalyticsEvent.Name.pushNotification))
-                            expect(analyticsManager.processedEvents[index].parameters as? [String: AnyHashable])
-                                .to(equal(["rid": "helloworld\(index)"]))
-                        }
-
-                        var eventsCache: [[String: Any]]?
-                        pushEventHandler.cachedEvents { result in
-                            switch result {
-                            case .success(let cache): eventsCache = cache
-                            case .failure(_): ()
+                            (0..<100).forEach { index in
+                                expect(analyticsManager.processedEvents[index].name).to(equal(RAnalyticsEvent.Name.pushNotification))
+                                expect(analyticsManager.processedEvents[index].parameters as? [String: AnyHashable])
+                                    .to(equal(["rid": "helloworld\(index)"]))
                             }
+
+                            var eventsCache: [[String: Any]]?
+                            let cache = pushEventHandler.cachedDarwinEvents()
+                            eventsCache = cache
+
+                            expect(eventsCache).toEventuallyNot(beNil())
+                            expect(eventsCache).to(beEmpty())
                         }
-                        expect(eventsCache).toEventuallyNot(beNil())
-                        expect(eventsCache).to(beEmpty())
-                    }
-                }
-
-                context("No event is posted") {
-                    it("should not process any events") {
-                        observer.startObservation(delegate: analyticsManager)
-                        observer.trackCachedEvents()
-
-                        expect(analyticsManager.processedEvents).to(beEmpty())
                     }
 
-                    it("should have an empty cache") {
-                        observer.startObservation(delegate: analyticsManager)
-                        observer.trackCachedEvents()
+                    context("No event is posted") {
+                        it("should not process any events") {
+                            observer.startObservation(delegate: analyticsManager)
+                            observer.trackCachedEvents()
 
-                        var eventsCache: [[String: Any]]?
-                        pushEventHandler.cachedEvents { result in
-                            switch result {
-                            case .success(let cache): eventsCache = cache
-                            case .failure(_): ()
-                            }
+                            expect(analyticsManager.processedEvents).to(beEmpty())
                         }
-                        expect(eventsCache).toEventuallyNot(beNil())
-                        expect(eventsCache).to(beEmpty())
+
+                        it("should have an empty cache") {
+                            observer.startObservation(delegate: analyticsManager)
+                            observer.trackCachedEvents()
+
+                            var eventsCache: [[String: Any]]?
+                            let cache = pushEventHandler.cachedDarwinEvents()
+                            eventsCache = cache
+
+                            expect(eventsCache).toEventuallyNot(beNil())
+                            expect(eventsCache).to(beEmpty())
+                        }
                     }
                 }
             }

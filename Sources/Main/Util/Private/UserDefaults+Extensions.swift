@@ -7,6 +7,7 @@ import Foundation
 /// set(value: Any?, forKey defaultName: String)
 protocol UserStorageHandleable {
     init?(suiteName suitename: String?)
+    func array(forKey defaultName: String) -> [Any]?
     func dictionary(forKey defaultName: String) -> [String: Any]?
     func object(forKey defaultName: String) -> Any?
     func bool(forKey defaultName: String) -> Bool

@@ -17,34 +17,6 @@ enum PushEventHandlerKeys {
 
     /// The key to retrieve the cached open count events to track.
     static let openCountCachedEventsKey = "com.analytics.push.sentOpenCount.events.list"
-
-    /// The cached open count events file name,
-    static let openCountCachedEventsFileName = "analyticsEventsCache.json"
-}
-
-// MARK: - PushEventError
-
-enum PushEventError: Error, Equatable {
-    case fileUrlIsNil
-    case fileDoesNotExist
-    case nativeError(error: Error)
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        if case .fileUrlIsNil = lhs,
-           case .fileUrlIsNil = rhs {
-            return true
-
-        } else if case .fileDoesNotExist = lhs,
-                  case .fileDoesNotExist = rhs {
-            return true
-
-        } else if case .nativeError(let lError) = lhs,
-                  case .nativeError(let rError) = rhs {
-            return (lError as NSError) == (rError as NSError)
-        }
-
-        return false
-    }
 }
 
 // MARK: - PushEventHandleable
@@ -53,9 +25,9 @@ protocol PushEventHandleable {
     func isEventAlreadySent(with trackingIdentifier: String?) -> Bool
     @discardableResult func cacheEvent(for trackingIdentifier: String) -> Bool
     @discardableResult func clearCache() -> Bool
-    func cachedEvents(completion: (Result<[[String: Any]], PushEventError>) -> Void)
-    func save(events: [[String: Any]], completion: ((PushEventError?) -> Void))
-    func clearEventsCache(completion: ((PushEventError?) -> Void))
+    func cachedDarwinEvents() -> [[String: Any]]
+    func save(darwinEvents: [[String: Any]])
+    func clearDarwinEventsCache()
 }
 
 // MARK: - PushEventHandler
@@ -64,42 +36,16 @@ protocol PushEventHandleable {
 internal struct PushEventHandler {
     internal let sharedUserStorageHandler: UserStorageHandleable?
     private let appGroupId: String?
-    private let fileManager: FileManageable
-    private let serializerType: JSONSerializable.Type
-    private let coordinator = NSFileCoordinator()
 
     /// Create a new instance of `PushEventHandler` with an App Group User Defaults.
     ///
-    /// - Parameter sharedUserStorageHandler: the App Group User Defaults.
+    /// - Parameters:
+    ///    - sharedUserStorageHandler: the App Group User Defaults.
+    ///    - appGroupId: the App Group identifier.
     internal init(sharedUserStorageHandler: UserStorageHandleable?,
-                  appGroupId: String?,
-                  fileManager: FileManageable,
-                  serializerType: JSONSerializable.Type) {
+                  appGroupId: String?) {
         self.sharedUserStorageHandler = sharedUserStorageHandler
         self.appGroupId = appGroupId
-        self.fileManager = fileManager
-        self.serializerType = serializerType
-
-        switch eventsCacheFileURL() {
-        case .success(let fileURL):
-            fileManager.createSafeFile(at: fileURL)
-
-        case .failure(let error):
-            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.pushEventHandlerErrorDomain,
-                                             code: ErrorCode.pushEventHandlerCacheFailed.rawValue,
-                                             description: ErrorDescription.pushEventHandlerCacheFailed,
-                                             reason: "\(error.localizedDescription), appGroupId: \(appGroupId ?? "nil")"))
-        }
-    }
-
-    /// - Returns: the events cache file URL if it exists
-    /// - Throws: an error otherwise.
-    private func eventsCacheFileURL() -> Result<URL, PushEventError> {
-        guard let appGroupId = appGroupId,
-              let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) else {
-            return .failure(.fileUrlIsNil)
-        }
-        return .success(url.appendingPathComponent(PushEventHandlerKeys.openCountCachedEventsFileName))
     }
 }
 
@@ -148,87 +94,26 @@ extension PushEventHandler: PushEventHandleable {
 
     // MARK: - App Group File Cache
 
-    /// Retrieve the cached events array from the App Group File Cache.
+    /// Retrieve the cached Darwin events array from the App Group User Defaults.
     ///
-    /// - Parameters:
-    ///    - completion: the completion that notifies when the cached events is retrieved or not.
-    internal func cachedEvents(completion: (Result<[[String: Any]], PushEventError>) -> Void) {
-        switch eventsCacheFileURL() {
-        case .success(let url):
-            coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: nil) { url in
-                do {
-                    guard fileManager.fileExists(atPath: url.path) else {
-                        completion(.failure(.fileUrlIsNil))
-                        return
-                    }
-
-                    let data = try Data(contentsOf: url)
-                    let eventsObj = try serializerType.jsonObject(with: data, options: .allowFragments)
-
-                    guard let events = eventsObj as? [[String: Any]] else {
-                        completion(.success([[String: Any]]()))
-                        return
-                    }
-                    completion(.success(events))
-
-                } catch {
-                    completion(.failure(.nativeError(error: error)))
-                }
-            }
-
-        case .failure(let error):
-            completion(.failure(error))
+    /// - Returns: the cached events.
+    internal func cachedDarwinEvents() -> [[String: Any]] {
+        guard let events = sharedUserStorageHandler?.array(forKey: PushEventHandlerKeys.openCountCachedEventsKey) as? [[String: Any]] else {
+            return [[String: Any]]()
         }
+        return events
     }
 
-    /// Save the updated events array to the App Group File Cache.
-    ///
-    /// - Warning: the existing file is replaced.
+    /// Save the updated Darwin events array to the App Group User Defaults.
     ///
     /// - Parameters:
-    ///    - events: the events to save.
-    ///    - completion: the completion that notifies when the saving task has been completed or failed.
-    internal func save(events: [[String: Any]], completion: ((PushEventError?) -> Void)) {
-        switch eventsCacheFileURL() {
-        case .success(let url):
-            coordinator.coordinate(writingItemAt: url,
-                                   options: .forReplacing,
-                                   error: nil) { (url) in
-                do {
-                    let data = try serializerType.data(withJSONObject: events, options: [])
-
-                    guard fileManager.fileExists(atPath: url.path) else {
-                        completion(.fileDoesNotExist)
-                        return
-                    }
-
-                    // Note: write(to:) does not fail when the file does not exist
-                    try data.write(to: url)
-                    completion(nil)
-
-                } catch {
-                    completion(.nativeError(error: error))
-                }
-            }
-
-        case .failure(let error):
-            completion(error)
-        }
+    ///    - darwinEvents: the events to save.
+    internal func save(darwinEvents: [[String: Any]]) {
+        sharedUserStorageHandler?.set(value: darwinEvents, forKey: PushEventHandlerKeys.openCountCachedEventsKey)
     }
 
-    /// Clear the events array in the App Group File Cache.
-    ///
-    /// - Parameters:
-    ///    - completion: the completion that notifies when the clearing task has been completed or failed.
-    internal func clearEventsCache(completion: ((PushEventError?) -> Void)) {
-        save(events: []) { error in
-            if let error = error {
-                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.pushEventHandlerErrorDomain,
-                                                 code: ErrorCode.pushEventHandlerCacheCouldNotBeCleared.rawValue,
-                                                 description: ErrorDescription.pushEventHandlerCacheCouldNotBeCleared,
-                                                 reason: error.localizedDescription))
-            }
-            completion(error)
-        }
+    /// Clear the Darwin events array in the App Group User Defaults.
+    internal func clearDarwinEventsCache() {
+        sharedUserStorageHandler?.set(value: [], forKey: PushEventHandlerKeys.openCountCachedEventsKey)
     }
 }

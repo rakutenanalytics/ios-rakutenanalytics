@@ -56,9 +56,7 @@ import Foundation
                                                    fileManager: FileManageable,
                                                    serializerType: JSONSerializable.Type) -> Bool {
         PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
-                         appGroupId: appGroupId,
-                         fileManager: fileManager,
-                         serializerType: serializerType).isEventAlreadySent(with: trackingIdentifier)
+                         appGroupId: appGroupId).isEventAlreadySent(with: trackingIdentifier)
     }
 }
 

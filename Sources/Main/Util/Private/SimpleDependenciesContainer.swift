@@ -67,8 +67,6 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
         pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
-                                            appGroupId: appGroupId,
-                                            fileManager: fileManager,
-                                            serializerType: serializerType)
+                                            appGroupId: appGroupId)
     }
 }

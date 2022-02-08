@@ -118,6 +118,7 @@ import RAnalytics
     <string>_rem_logout</string>
     <string>_rem_install</string>
     <string>_rem_visit</string>
+    <string>_rem_push_received</string>
     <string>_rem_push_notify</string>
     <string>_rem_sso_credential_found</string>
     <string>_rem_login_credential_found</string>
@@ -542,6 +543,11 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 - pv (page visit) is sent in any cases when a view controller did appear (viewDidAppear)
 
 ### APNS Remote Notifications
+
+- _rem_push_received is sent when:
+    - a push notification is received and intercepted by the Notification Service Extension
+    - this Notification Service Extension's method is called:
+        - didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void)
 
 - _rem_push_notify is sent when:
     - the application is opened from a push notification
