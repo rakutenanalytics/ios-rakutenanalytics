@@ -39,6 +39,8 @@ The Analytics SDK source is hosted on Rakuten GitPub https://gitpub.rakuten-it.c
 
 Xcode 12.5.x or Xcode 13+
 
+Swift >= 5.4 is supported.
+
 Note: The SDK may build on earlier Xcode versions but it is not officially supported or tested.
 
 ## Installing
