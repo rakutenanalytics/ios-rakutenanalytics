@@ -37,9 +37,9 @@ extension AnalyticsEventTracker: AnalyticsEventTrackable {
             }
             let eventParameters = eventDictionary[PushEventPayloadKeys.eventParametersKey] as? [String: Any]
             let event = RAnalyticsEvent(name: eventName, parameters: eventParameters)
-            let isProcessed = delegate?.process(event)
+            let isProcessed = delegate?.process(event) ?? false
 
-            let isTracked = isProcessed == true ? "tracked" : "not tracked"
+            let isTracked = isProcessed ? "tracked" : "not tracked"
             let message = "AnalyticsEventTracker event is \(isTracked): \(event.name) \(event.parameters)"
             RLogger.debug(message: message)
         }
