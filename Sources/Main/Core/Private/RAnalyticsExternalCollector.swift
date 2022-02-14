@@ -42,7 +42,9 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
         }
     }
 
-    /// The tracking identifier is being stored in shared preferences.
+    /// The RAE user identifier.
+    ///
+    /// - Note: The tracking identifier is being stored in shared preferences.
     private(set) var trackingIdentifier: String? {
         willSet(newValue) {
             guard trackingIdentifier != newValue else {
@@ -59,7 +61,10 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
         }
     }
 
-    /// The user identifier is being stored in shared preferences.
+    /// The overriden RAE user identifier.
+    ///
+    /// - Note: The user identifier is being stored in shared preferences.
+    /// - Note: `userIdentifier` is only used to override `trackingIdentifier` in the RAT payload.
     var userIdentifier: String? {
         willSet(newValue) {
             guard userIdentifier != newValue else {
@@ -76,7 +81,9 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
         }
     }
 
-    /// The easy identifier is being stored in shared preferences.
+    /// The IDSDK user identifier.
+    ///
+    /// - Note: The easy identifier is being stored in shared preferences.
     var easyIdentifier: String? {
         willSet(newValue) {
             guard easyIdentifier != newValue else {
