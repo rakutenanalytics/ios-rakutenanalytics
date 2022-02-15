@@ -86,7 +86,7 @@ final class SDKTrackerSpec: QuickSpec {
                     expect(urlSession.urlRequest?.httpBody).toNot(beNil())
 
                     let str = String(data: urlSession.urlRequest!.httpBody!, encoding: .utf8)!
-                    let jsonString = str["cpkg_none=".count..<str.count]
+                    let jsonString = str[PayloadConstants.prefix.count..<str.count]
 
                     let jsonObject = try? JSONSerialization.jsonObject(with: jsonString.data(using: .utf8)!, options: [])
                     expect(jsonObject).toNot(beNil())

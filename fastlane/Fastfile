@@ -8,8 +8,8 @@ platform :ios do
     build_sample(options)
   end
 
-  desc "Build sample"
-  lane :build_sample do |options|
+  desc "Build SDK"
+  lane :build_sdk do |options|
     podspec = "RakutenAnalyticsSDK/RAnalytics.podspec"
     version = version_get_podspec(path: podspec)
 
@@ -25,7 +25,11 @@ platform :ios do
 
     # for `pod install` cocoapods needs the podspec included in the zip 
     sh "zip -urj ../Samples/RAnalytics.zip ../#{podspec}"
+  end
 
+  desc "Build sample"
+  lane :build_sample do |options|
+    build_sdk(options)
     shared_sample(options)
   end
 
@@ -33,6 +37,32 @@ platform :ios do
   desc "Upload sample - note: build_sample must be run prior"
   lane :upload_sample do |options|
     appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSample.ipa", dsym: "./artifacts/device/RAnalyticsSample.app.dSYM.zip")
+  end
+
+  # Build RAnalyticsSampleSwiftUI
+  desc "Build SwiftUI sample with the public RAnalytics SDK"
+  lane :build_sample_swiftui do |options|
+    build_sdk(options)
+    cocoapods(podfile: "Samples/Podfile")
+    gym(
+      configuration: "Release",
+      output_directory: './artifacts/device',
+      workspace: "Samples/RAnalyticsSample.xcworkspace",
+      codesigning_identity: 'iPhone Distribution',
+      export_method: 'enterprise',
+      export_team_id: ENV['REM_FL_EXPORT_TEAM_ID'],
+      export_options: {
+        uploadBitcode: false,
+        compileBitcode: false,
+      },
+      scheme: "RAnalyticsSampleSwiftUI")
+  end
+
+  # Upload RAnalyticsSampleSwiftUI
+  desc "Upload SwiftUI sample built with the public RAnalytics SDK"
+  lane :upload_sample_swiftui do |options|
+    build_sample_swiftui()
+    appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSampleSwiftUI.ipa", dsym: "./artifacts/device/RAnalyticsSampleSwiftUI.app.dSYM.zip")
   end
 
   # Build RAnalyticsSampleSPMInternal

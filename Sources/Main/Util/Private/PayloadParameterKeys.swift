@@ -13,3 +13,7 @@ enum PayloadParameterKeys {
     static let refLink = "ref_link"
     static let refComponent = "ref_comp"
 }
+
+enum PayloadConstants {
+    static let prefix = "cpkg_none="
+}

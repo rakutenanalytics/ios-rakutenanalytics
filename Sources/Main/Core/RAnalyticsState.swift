@@ -134,8 +134,8 @@ import CoreLocation.CLLocation
     ///
     /// - Returns: A new instance of State.
     @objc public convenience init(sessionIdentifier: String,
-                      deviceIdentifier: String,
-                      bundle: Bundle) {
+                                  deviceIdentifier: String,
+                                  bundle: Bundle) {
         self.init(sessionIdentifier: sessionIdentifier,
                   deviceIdentifier: deviceIdentifier,
                   for: bundle)
@@ -157,7 +157,7 @@ import CoreLocation.CLLocation
     }
 
     init(sessionIdentifier: String,
-                      deviceIdentifier: String,
+         deviceIdentifier: String,
          for bundle: EnvironmentBundle) {
         self.sessionIdentifier = sessionIdentifier
         self.deviceIdentifier = deviceIdentifier

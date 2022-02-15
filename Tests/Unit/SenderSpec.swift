@@ -63,7 +63,7 @@ class SenderSpec: QuickSpec {
             context("JSON serialization") {
                 it("should send given payload when enableInternalSerialization is false") {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 200) {
+                    sessionMock.stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = false
@@ -73,7 +73,7 @@ class SenderSpec: QuickSpec {
 
                 it("should send given payload when enableInternalSerialization is true") {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 200) {
+                    sessionMock.stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = true
@@ -85,14 +85,14 @@ class SenderSpec: QuickSpec {
             context("when setting batching delay") {
 
                 it("should succeed with default batching delay", closure: {
-                    stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
 
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(0))
                 })
 
                 it("should succeed with custom batching delay") {
-                    stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
 
                     sender.setBatchingDelayBlock(15.0)
                     sender.send(jsonObject: payload)
@@ -104,7 +104,7 @@ class SenderSpec: QuickSpec {
 
                 it("should send given payload") {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 200) {
+                    sessionMock.stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     sender.send(jsonObject: payload)
@@ -113,7 +113,7 @@ class SenderSpec: QuickSpec {
 
                 it("should send notification when sending fails") {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 500) {
+                    sessionMock.stubRATResponse(statusCode: 500) {
                         isSendingCompleted = true
                     }
 
@@ -137,7 +137,7 @@ class SenderSpec: QuickSpec {
 
                 it("should remove DB record after event is sent", closure: {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 200) {
+                    sessionMock.stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     sender.send(jsonObject: payload)
@@ -148,7 +148,7 @@ class SenderSpec: QuickSpec {
                 })
 
                 it("should not remove DB record before event is sent", closure: {
-                    stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
                     sender.setBatchingDelayBlock(30.0)
                     sender.send(jsonObject: payload)
 
@@ -158,7 +158,7 @@ class SenderSpec: QuickSpec {
 
                 it("should not send duplicate events when app becomes active") {
                     var isSendingCompleted = false
-                    stubRATResponse(statusCode: 200) {
+                    sessionMock.stubRATResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
 
@@ -194,18 +194,6 @@ class SenderSpec: QuickSpec {
                     NotificationCenter.default.removeObserver(uploadObserver)
                     NotificationCenter.default.removeObserver(didBecomeActiveObserver)
                 }
-            }
-
-            // MARK: - Helpers
-
-            func stubRATResponse(statusCode: Int, completion: (() -> Void)?) {
-                sessionMock.httpResponse = HTTPURLResponse(url: URL(string: "empty")!,
-                                                           statusCode: statusCode,
-                                                           httpVersion: nil,
-                                                           headerFields: nil)
-                sessionMock.onCompletedTask = completion
-                sessionMock.responseData = nil
-                sessionMock.responseError = nil
             }
         }
     }

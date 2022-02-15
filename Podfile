@@ -14,6 +14,7 @@ abstract_target 'Common' do
   pod 'Kiwi', '~> 3.0'
   pod 'Quick'
   pod 'Nimble'
+  pod 'ViewInspector'
 
   target 'UnitTests' do
     pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'

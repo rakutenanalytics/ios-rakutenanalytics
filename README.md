@@ -206,6 +206,35 @@ Then you can track events in your iOS extensions using the following function:
 AnalyticsEventPoster.post(name: "myEventName", parameters: ["key1": "value1"])
 ```
 
+## Tracking events in SwiftUI views
+
+To track page visit events in your SwiftUI apps, call this function in your SwiftUI views body:
+```
+public func rviewOnAppear(pageName: String, perform action: (() -> Void)? = nil) -> some View
+```
+
+This function above calls SwiftUI's `onAppear` internally.
+https://developer.apple.com/documentation/SwiftUI/AnyView/onAppear%28perform:%29
+
+Example:
+```swift
+struct ContentView: View {
+    var body: some View {
+        NavigationView {
+            VStack {
+                NavigationLink(destination: PageView()) {
+                    Text("Page 1")
+                }
+                NavigationLink(destination: PageView()) {
+                    Text("Page 2")
+                }
+            }.rviewOnAppear(pageName: "contentView") {
+            }
+        }
+    }
+}
+```
+
 # Handling errors
 
 The SDK will automatically raise errors if `errorHandler` is set as below:

@@ -11,7 +11,7 @@ extension Data {
     init?(ratJsonRecords: [JsonRecord], internalSerialization: Bool = false) {
         self.init()
         guard !ratJsonRecords.isEmpty,
-              let initialData = "cpkg_none=".data(using: .utf8) else {
+              let initialData = PayloadConstants.prefix.data(using: .utf8) else {
             return nil
         }
 

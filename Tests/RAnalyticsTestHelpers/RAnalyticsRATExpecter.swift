@@ -16,9 +16,9 @@ public final class RAnalyticsRATExpecter {
     }
 
     public func expectEvent(_ event: RAnalyticsEvent,
-                     state: RAnalyticsState,
-                     equal eventName: String,
-                     completion: (([[String: Any]]) -> Void)? = nil) {
+                            state: RAnalyticsState,
+                            equal eventName: String,
+                            completion: (([[String: Any]]) -> Void)? = nil) {
         let session = dependenciesContainer.session as? SwityURLSessionMock
 
         session?.response = HTTPURLResponse(url: endpointURL,

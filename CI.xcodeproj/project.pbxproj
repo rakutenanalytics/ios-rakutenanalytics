@@ -44,9 +44,9 @@
 		C94B70422798725700A1898A /* RAnalyticsCookieInjector+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */; };
 		C94B70442798734600A1898A /* RAnalyticsRATExpecter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70432798734600A1898A /* RAnalyticsRATExpecter.swift */; };
 		C94B70462798736A00A1898A /* RAnalyticsRATTracker+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70452798736A00A1898A /* RAnalyticsRATTracker+Create.swift */; };
-		C94B70482798739100A1898A /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* TestUtils.swift */; };
-		C94B70492798739600A1898A /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* TestUtils.swift */; };
-		C94B704A2798739600A1898A /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* TestUtils.swift */; };
+		C94B70482798739100A1898A /* BundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* BundleHelper.swift */; };
+		C94B70492798739600A1898A /* BundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* BundleHelper.swift */; };
+		C94B704A2798739600A1898A /* BundleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70472798739000A1898A /* BundleHelper.swift */; };
 		C94B704F2798749D00A1898A /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B704C2798749A00A1898A /* Array+Extensions.swift */; };
 		C94B7050279874A100A1898A /* RAnalyticsEvent+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B704B2798749A00A1898A /* RAnalyticsEvent+Helper.swift */; };
 		C94B70532798CFE500A1898A /* RABEventBroadcasterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70522798CFE000A1898A /* RABEventBroadcasterSpec.swift */; };
@@ -62,6 +62,9 @@
 		C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */; };
 		C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */; };
 		C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */; };
+		C980DA9627BA5C300059E12D /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DA9527BA5C300059E12D /* Data+Extensions.swift */; };
+		C980DA9727BA5C300059E12D /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DA9527BA5C300059E12D /* Data+Extensions.swift */; };
+		C980DA9827BA5F6F0059E12D /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B704C2798749A00A1898A /* Array+Extensions.swift */; };
 		C985A50727833D14007EDABE /* CoreHelpersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985A50627833D14007EDABE /* CoreHelpersSpec.swift */; };
 		C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */; };
 		C98D71D725A7207300B1D048 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */; };
@@ -76,6 +79,9 @@
 		C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */; };
 		C9E4BB3E260BA2430001F0B4 /* RATEncryptSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */; };
 		C9E4BBCC260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E4BBCB260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift */; };
+		C9E7602327B11BCE006B22F5 /* SwiftUITrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */; };
+		C9E7602627B121C2006B22F5 /* URLSessionMock+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */; };
+		C9E7602727B121C3006B22F5 /* URLSessionMock+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */; };
 		C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */; };
 		C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */; };
 		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
@@ -157,7 +163,7 @@
 		C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsCookieInjector+Create.swift"; sourceTree = "<group>"; };
 		C94B70432798734600A1898A /* RAnalyticsRATExpecter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATExpecter.swift; sourceTree = "<group>"; };
 		C94B70452798736A00A1898A /* RAnalyticsRATTracker+Create.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsRATTracker+Create.swift"; sourceTree = "<group>"; };
-		C94B70472798739000A1898A /* TestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
+		C94B70472798739000A1898A /* BundleHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BundleHelper.swift; sourceTree = "<group>"; };
 		C94B704B2798749A00A1898A /* RAnalyticsEvent+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsEvent+Helper.swift"; sourceTree = "<group>"; };
 		C94B704C2798749A00A1898A /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		C94B70522798CFE000A1898A /* RABEventBroadcasterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RABEventBroadcasterSpec.swift; sourceTree = "<group>"; };
@@ -173,6 +179,7 @@
 		C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherSpec.swift; sourceTree = "<group>"; };
 		C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementIdentifiableSpec.swift; sourceTree = "<group>"; };
 		C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBundleSpec.swift; sourceTree = "<group>"; };
+		C980DA9527BA5C300059E12D /* Data+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		C985A50627833D14007EDABE /* CoreHelpersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreHelpersSpec.swift; sourceTree = "<group>"; };
 		C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckerSpec.swift; sourceTree = "<group>"; };
 		C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
@@ -187,6 +194,8 @@
 		C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStateSpec.swift; sourceTree = "<group>"; };
 		C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RATEncryptSpec.swift; sourceTree = "<group>"; };
 		C9E4BBCB260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtilitySpec.swift; sourceTree = "<group>"; };
+		C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITrackingSpec.swift; sourceTree = "<group>"; };
+		C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionMock+Stub.swift"; sourceTree = "<group>"; };
 		C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKTrackerSpec.swift; sourceTree = "<group>"; };
 		C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerSpec.swift; sourceTree = "<group>"; };
 		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
@@ -303,6 +312,7 @@
 				C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */,
 				C94B9A062796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift */,
 				45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */,
+				C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */,
 			);
 			path = Integration;
 			sourceTree = "<group>";
@@ -383,13 +393,15 @@
 			children = (
 				C9C3B8B9279ED2DD00FBA3FE /* Resources */,
 				C94B704C2798749A00A1898A /* Array+Extensions.swift */,
+				C94B70472798739000A1898A /* BundleHelper.swift */,
+				C980DA9527BA5C300059E12D /* Data+Extensions.swift */,
 				C94B70382798719000A1898A /* DatabaseTestUtils.swift */,
 				C94B703C2798721400A1898A /* MockUtils.swift */,
 				C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */,
 				C94B704B2798749A00A1898A /* RAnalyticsEvent+Helper.swift */,
 				C94B70432798734600A1898A /* RAnalyticsRATExpecter.swift */,
 				C94B70452798736A00A1898A /* RAnalyticsRATTracker+Create.swift */,
-				C94B70472798739000A1898A /* TestUtils.swift */,
+				C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */,
 			);
 			path = RAnalyticsTestHelpers;
 			sourceTree = "<group>";
@@ -648,7 +660,7 @@
 			files = (
 				C94B703B2798719500A1898A /* DatabaseTestUtils.swift in Sources */,
 				45EAE08F2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift in Sources */,
-				C94B70492798739600A1898A /* TestUtils.swift in Sources */,
+				C94B70492798739600A1898A /* BundleHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,11 +669,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */,
+				C980DA9827BA5F6F0059E12D /* Array+Extensions.swift in Sources */,
 				C9320979279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift in Sources */,
 				C94B703F2798721A00A1898A /* MockUtils.swift in Sources */,
+				C980DA9727BA5C300059E12D /* Data+Extensions.swift in Sources */,
 				C9320978279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift in Sources */,
 				C932097A279FE774009FE6EC /* ExtensionEventTrackingSpec.swift in Sources */,
 				C94B9A072796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift in Sources */,
+				C9E7602727B121C3006B22F5 /* URLSessionMock+Stub.swift in Sources */,
+				C9E7602327B11BCE006B22F5 /* SwiftUITrackingSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,12 +698,13 @@
 				C94B70342798702500A1898A /* ObjcInteropSpec.m in Sources */,
 				C94B70442798734600A1898A /* RAnalyticsRATExpecter.swift in Sources */,
 				C94B70462798736A00A1898A /* RAnalyticsRATTracker+Create.swift in Sources */,
-				C94B70482798739100A1898A /* TestUtils.swift in Sources */,
+				C94B70482798739100A1898A /* BundleHelper.swift in Sources */,
 				4BB2042E268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */,
 				C9B395FA2768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift in Sources */,
 				C9CCE45D268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift in Sources */,
 				C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */,
 				C950D8E4276261A800DF9589 /* PushEventHandlerSpec.swift in Sources */,
+				C980DA9627BA5C300059E12D /* Data+Extensions.swift in Sources */,
 				45E3BC4A2581476400319ECF /* RAnalyticsDatabaseSpec.swift in Sources */,
 				C954C667269439CE002AAFF7 /* TelephonyHandlerSpec.swift in Sources */,
 				C9E4BB3E260BA2430001F0B4 /* RATEncryptSpec.swift in Sources */,
@@ -721,6 +738,7 @@
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
 				C9B39600276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift in Sources */,
 				C94B703E2798721900A1898A /* MockUtils.swift in Sources */,
+				C9E7602627B121C2006B22F5 /* URLSessionMock+Stub.swift in Sources */,
 				C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -739,7 +757,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C95A91CE279E89F0003BA1DA /* CoreSubspecSpec.swift in Sources */,
-				C94B704A2798739600A1898A /* TestUtils.swift in Sources */,
+				C94B704A2798739600A1898A /* BundleHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

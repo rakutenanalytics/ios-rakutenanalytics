@@ -489,6 +489,14 @@ extension RAnalyticsRATTracker {
                     return false
                 }
 
+            case .swiftuiPage(let pageName):
+                if !updatePayloadForPageVisit(pageIdentifier: pageName,
+                                              state: state,
+                                              payload: payload,
+                                              extra: extra) {
+                    return false
+                }
+
             case .referralApp(let referralAppModel):
                 updatePayloadForReferralApp(payload: payload,
                                             extra: extra,
@@ -596,6 +604,20 @@ private extension RAnalyticsRATTracker {
             }
         }
 
+        return updatePayloadForPageVisit(pageIdentifier: pageIdentifier,
+                                         pageTitle: pageTitle,
+                                         pageURL: pageURL,
+                                         state: state,
+                                         payload: payload,
+                                         extra: extra)
+    }
+
+    func updatePayloadForPageVisit(pageIdentifier: String?,
+                                   pageTitle: String? = nil,
+                                   pageURL: URL? = nil,
+                                   state: RAnalyticsState,
+                                   payload: NSMutableDictionary,
+                                   extra: NSMutableDictionary) -> Bool {
         // If no page id was found, simply ignore this view controller.
         guard !pageIdentifier.isEmpty else {
             // If this originated from a push notification or an inbound URL, keep that for next call.

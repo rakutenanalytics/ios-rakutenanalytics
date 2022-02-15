@@ -206,7 +206,7 @@ final class RATDataExtensionSpec: QuickSpec {
                 }
 
                 func verifyValues(from jsonString: String?) {
-                    expect(jsonString?.hasPrefix("cpkg_none=")).to(beTrue())
+                    expect(jsonString?.hasPrefix(PayloadConstants.prefix)).to(beTrue())
                     expect(jsonString?.contains(#""key1":"value1""#)).to(beTrue())
                     expect(jsonString?.contains(#""key2":"value2""#)).to(beTrue())
                     expect(jsonString?.contains(#""key3":"value3""#)).to(beTrue())
@@ -220,7 +220,7 @@ final class RATDataExtensionSpec: QuickSpec {
 
                 func verifyStructure(internalSerialization: Bool) {
                     let str = String(data: Data(ratJsonRecords: input, internalSerialization: internalSerialization)!, encoding: .utf8)!
-                    let jsonString = str["cpkg_none=".count..<str.count]
+                    let jsonString = str[PayloadConstants.prefix.count..<str.count]
                     let jsonData = jsonString.data(using: .utf8)!
                     let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .init(rawValue: 0))
 

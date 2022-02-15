@@ -49,7 +49,8 @@ final class RAnalyticsStateSpec: QuickSpec {
                                          component: nil,
                                          customParameters: nil)
             let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
-            let stateForVisitedPage: AnalyticsManager.State = {
+
+            let defaultState: AnalyticsManager.State = {
                 let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                    deviceIdentifier: deviceIdentifier,
                                                    for: bundle)
@@ -59,7 +60,6 @@ final class RAnalyticsStateSpec: QuickSpec {
                 state.origin = .external
                 state.lastVersion = "1.0"
                 state.lastVersionLaunches = 10
-                state.referralTracking = .page(currentPage: currentPage)
                 state.sessionStartDate = sessionStartDate
                 state.initialLaunchDate = initialLaunchDate
                 state.lastLaunchDate = lastLaunchDate
@@ -69,24 +69,22 @@ final class RAnalyticsStateSpec: QuickSpec {
                 state.loggedIn = true
                 return state
             }()
+
+            let stateForVisitedUIKitPage: AnalyticsManager.State = {
+                let state: AnalyticsManager.State! = defaultState.copy() as? AnalyticsManager.State
+                state.referralTracking = .page(currentPage: currentPage)
+                return state
+            }()
+
+            let stateForVisitedSwiftUIPage: AnalyticsManager.State = {
+                let state: AnalyticsManager.State! = defaultState.copy() as? AnalyticsManager.State
+                state.referralTracking = .swiftuiPage(pageName: "MyView")
+                return state
+            }()
+
             let stateForReferralAppTracking: AnalyticsManager.State = {
-                let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
-                                                   deviceIdentifier: deviceIdentifier,
-                                                   for: bundle)
-                state.advertisingIdentifier = advertisingIdentifier
-                state.lastKnownLocation = location
-                state.loginMethod = .oneTapLogin
-                state.origin = .external
-                state.lastVersion = "1.0"
-                state.lastVersionLaunches = 10
+                let state: AnalyticsManager.State! = defaultState.copy() as? AnalyticsManager.State
                 state.referralTracking = .referralApp(model)
-                state.sessionStartDate = sessionStartDate
-                state.initialLaunchDate = initialLaunchDate
-                state.lastLaunchDate = lastLaunchDate
-                state.lastUpdateDate = lastUpdateDate
-                state.userIdentifier = userIdentifier
-                state.easyIdentifier = easyIdentifier
-                state.loggedIn = true
                 return state
             }()
 
@@ -115,11 +113,19 @@ final class RAnalyticsStateSpec: QuickSpec {
                 }
             }
             describe("setting") {
-                context("Visited page") {
+                context("Visited UIKit page") {
                     it("should have the expected values") {
-                        let state = stateForVisitedPage
+                        let state = stateForVisitedUIKitPage
                         verify(state)
                         expect(state.referralTracking).to(equal(.page(currentPage: currentPage)))
+                    }
+                }
+
+                context("Visited SwiftUI page") {
+                    it("should have the expected values") {
+                        let state = stateForVisitedSwiftUIPage
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.swiftuiPage(pageName: "MyView")))
                     }
                 }
 
@@ -152,14 +158,25 @@ final class RAnalyticsStateSpec: QuickSpec {
                 }
             }
             describe("copy") {
-                context("Visited page") {
+                context("Visited UIKit page") {
                     it("should have the expected values") {
-                        guard let state = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                        guard let state = stateForVisitedUIKitPage.copy() as? AnalyticsManager.State else {
                             assertionFailure("AnalyticsManager.State copy fails")
                             return
                         }
                         verify(state)
                         expect(state.referralTracking).to(equal(.page(currentPage: currentPage)))
+                    }
+                }
+
+                context("Visited SwiftUI page") {
+                    it("should have the expected values") {
+                        guard let state = stateForVisitedSwiftUIPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        verify(state)
+                        expect(state.referralTracking).to(equal(.swiftuiPage(pageName: "MyView")))
                     }
                 }
 
@@ -195,24 +212,46 @@ final class RAnalyticsStateSpec: QuickSpec {
                 }
             }
             describe("equal") {
-                context("Visited page") {
+                context("Visited UIKit page") {
                     it("should be true if it has the same properties of an other state") {
-                        let state = stateForVisitedPage
-                        guard let copiedState = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                        let state = stateForVisitedUIKitPage
+                        guard let copiedState = stateForVisitedUIKitPage.copy() as? AnalyticsManager.State else {
                             assertionFailure("AnalyticsManager.State copy fails")
                             return
                         }
                         expect(state).to(equal(copiedState))
                     }
                     it("should be false if it has not the same properties of an other state") {
-                        let state = stateForVisitedPage
+                        let state = stateForVisitedUIKitPage
                         let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                                 deviceIdentifier: "differentDeviceId")
                         expect(state).toNot(equal(otherState))
                     }
                     it("should be false if it doesn't match the State type") {
-                        let state = stateForVisitedPage
-                        let anObject = UIView()
+                        let state = stateForVisitedUIKitPage
+                        let anObject = NSObject()
+                        expect(state).toNot(equal(anObject))
+                    }
+                }
+
+                context("Visited SwiftUI page") {
+                    it("should be true if it has the same properties of an other state") {
+                        let state = stateForVisitedSwiftUIPage
+                        guard let copiedState = stateForVisitedSwiftUIPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state).to(equal(copiedState))
+                    }
+                    it("should be false if it has not the same properties of an other state") {
+                        let state = stateForVisitedSwiftUIPage
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state).toNot(equal(otherState))
+                    }
+                    it("should be false if it doesn't match the State type") {
+                        let state = stateForVisitedSwiftUIPage
+                        let anObject = NSObject()
                         expect(state).toNot(equal(anObject))
                     }
                 }
@@ -240,17 +279,34 @@ final class RAnalyticsStateSpec: QuickSpec {
                 }
             }
             describe("hash") {
-                context("Visited page") {
+                context("Visited UIKit page") {
                     it("should be identical if it is a copy of an other state") {
-                        let state = stateForVisitedPage
-                        guard let copiedState = stateForVisitedPage.copy() as? AnalyticsManager.State else {
+                        let state = stateForVisitedUIKitPage
+                        guard let copiedState = stateForVisitedUIKitPage.copy() as? AnalyticsManager.State else {
                             assertionFailure("AnalyticsManager.State copy fails")
                             return
                         }
                         expect(state.hash).to(equal(copiedState.hash))
                     }
                     it("should not be identical if the properties are different") {
-                        let state = stateForVisitedPage
+                        let state = stateForVisitedUIKitPage
+                        let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
+                                                                deviceIdentifier: "differentDeviceId")
+                        expect(state.hash).toNot(equal(otherState.hash))
+                    }
+                }
+
+                context("Visited SwiftUI page") {
+                    it("should be identical if it is a copy of an other state") {
+                        let state = stateForVisitedSwiftUIPage
+                        guard let copiedState = stateForVisitedSwiftUIPage.copy() as? AnalyticsManager.State else {
+                            assertionFailure("AnalyticsManager.State copy fails")
+                            return
+                        }
+                        expect(state.hash).to(equal(copiedState.hash))
+                    }
+                    it("should not be identical if the properties are different") {
+                        let state = stateForVisitedSwiftUIPage
                         let otherState = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
                                                                 deviceIdentifier: "differentDeviceId")
                         expect(state.hash).toNot(equal(otherState.hash))

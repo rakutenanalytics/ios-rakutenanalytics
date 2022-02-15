@@ -184,13 +184,20 @@ extension RAnalyticsLaunchCollector {
         guard viewController.isTrackableAsPageVisit else {
             return
         }
+        trackPageVisit(with: .page(currentPage: viewController))
+    }
+}
 
+// MARK: - Page Visit Tracking
+
+extension RAnalyticsLaunchCollector {
+    func trackPageVisit(with referralTracking: ReferralTrackingType) {
         /// Keep a strong reference to the view controller in the launch collector only for the
         /// time the event is being processed. Note that it will be carried on by the analytics
         /// manager state, too.
-        referralTracking = .page(currentPage: viewController)
+        self.referralTracking = referralTracking
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil)
-        referralTracking = .none
+        self.referralTracking = .none
 
         /// Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external
         /// call or push notification.

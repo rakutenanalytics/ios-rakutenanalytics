@@ -216,10 +216,23 @@ final class AnalyticsManagerSpec: QuickSpec {
                     expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.none))
                 }
 
-                it("should process the event with a visited page") {
+                it("should process the event with a visited UIKit page") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                     let tracker = TrackerMock()
                     let referralTrackingType = ReferralTrackingType.page(currentPage: UIViewController())
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.launchCollector.referralTracking = referralTrackingType
+                    analyticsManager.process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil))
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(referralTrackingType))
+                }
+
+                it("should process the event with a visited SwiftUI page") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+                    let referralTrackingType = ReferralTrackingType.swiftuiPage(pageName: "MyView")
 
                     analyticsManager.add(tracker)
                     analyticsManager.launchCollector.referralTracking = referralTrackingType

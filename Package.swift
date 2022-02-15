@@ -17,7 +17,9 @@ let package = Package(
 
              .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
 
-             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0"))
+             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
+
+             .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.9.1"))
         ],
     targets: [
         .target(name: "RAnalytics",
@@ -35,6 +37,7 @@ let package = Package(
                 dependencies: ["RAnalytics",
                                "Quick",
                                "Nimble",
+                               "ViewInspector",
                                .productItem(name: "RSDKUtilsNimble", package: "RSDKUtils", condition: .none),
                                .productItem(name: "RSDKUtilsTestHelpers", package: "RSDKUtils", condition: .none)],
                 path: "Tests/RAnalyticsTestHelpers",
