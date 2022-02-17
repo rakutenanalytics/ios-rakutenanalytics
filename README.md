@@ -289,6 +289,15 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 ## Migrating from previous versions to v9
 
+### iOS Extension Event Tracking
+
+The iOS Extension Event Tracking feature is disabled by default.
+
+In order to track `_rem_push_received` and `_rem_push_notify` events, you have to set the following property in your **main app**:
+```swift
+AnalyticsManager.shared().enableExtensionEventTracking = true
+```
+
 ### shouldTrackPageView
 `shouldTrackPageView` var in `AnalyticsManager` has been removed in version 9.0.0
 To disable automatic page view tracking you should add `_rem_visit` to `RATDisabledEventsList` array in your Info.plist file OR use `AnalyticsManager.shared().shouldTrackEvent` to filter out `AnalyticsManager.Event.Name.pageVisit` event:
