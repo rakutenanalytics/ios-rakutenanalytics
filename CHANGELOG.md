@@ -1,5 +1,21 @@
 # Changelog
 
+## 9.2.0 (2022-02-18)
+
+### Features
+* [SDKCF-2161](https://jira.rakuten-it.com/jira/browse/SDKCF-2161): Apps can set a handler to be notified of errors in the SDK. These errors can be logged as a non-fatal issue to a reporting backend e.g. Firebase Crashlytics. See the [error handling guide](advanced_usage.html#handling-errors).
+* [SDKCF-4796](https://jira.rakuten-it.com/jira/browse/SDKCF-4796): Added an extension helper `rviewOnAppear` for tracking SwiftUI views. See the [tracking events guide](index.html#tracking-events) "Tracking events in SwiftUI views" section.
+* [SDKCF-4870](https://jira.rakuten-it.com/jira/browse/SDKCF-4870): Added support for the new push received event which is sent when a push notification is received and intercepted by a Notification Service Extension. See the [event triggers guide](advanced_usage.html#event-triggers).
+
+### Bug fixes
+* [SDKCF-4695](https://jira.rakuten-it.com/jira/browse/SDKCF-4695): Added offline connection handling in `RAnalyticsRpCookieFetcher.getRpCookieCompletionHandler()`.
+* [SDKCF-4789](https://jira.rakuten-it.com/jira/browse/SDKCF-4789): Made return explicit to fix compatibility issue with earlier Swift version.
+* [SDKCF-4803](https://jira.rakuten-it.com/jira/browse/SDKCF-4803): Added logic to clear the events cache after extension events are processed.
+
+### Improvements
+* [SDKCF-4389](https://jira.rakuten-it.com/jira/browse/SDKCF-4389): The SDK now supports Swift Package Manager (SPM). For integration steps see [getting started](index.html#getting-started).
+* [SDKCF-4790](https://jira.rakuten-it.com/jira/browse/SDKCF-4790) / [SDKCF-4824](https://jira.rakuten-it.com/jira/browse/SDKCF-4824): Documented Xcode version support and aligned Swift version support with our other SDKs.
+
 ## 9.1.1 (2022-01-14)
 
 ### Bug fixes

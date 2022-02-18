@@ -5,7 +5,6 @@
 1. [Source code repository](#source-code-repository)
 1. [Getting started](#getting-started)
 1. [Tracking events](#tracking-events)
-1. [Handling errors](#handling-errors)
 1. [ID-SDK and OMNI compatibility](#id-sdk-and-omni-compatibility)
 1. [RAT examples](#rat-examples)
 1. [Knowledge base](#knowledge-base)
@@ -234,18 +233,6 @@ struct ContentView: View {
     }
 }
 ```
-
-# Handling errors
-
-The SDK will automatically raise errors if `errorHandler` is set as below:
-
-```swift
-AnalyticsManager.shared().errorHandler = { error in
-    // Example: Report the error to Crashlytics
-}
-```
-
-Use it to report the SDK errors to a backend such as Crashlytics as a [non-fatal error](https://firebase.google.com/docs/crashlytics/customize-crash-reports?platform=ios#log-excepts).
 
 # ID-SDK and OMNI Compatibility
 

@@ -7,6 +7,7 @@
 1. [Configure automatic tracking](#configure-automatic-tracking)
 1. [Duplicate events across multiple RAT Accounts](#duplicate-events-across-multiple-rat-accounts)
 1. [Manually set a user identifier](#manually-set-a-user-identifier)
+1. [Handling errors](#handling-errors)
 1. [Configure debug logging](#configure-debug-logging)
 1. [App to web tracking](#app-to-web-tracking)
 1. [Configure the tracker batching delay](#configure-the-tracker-batching-delay)
@@ -238,6 +239,18 @@ Use cases:
 * App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the `setUserIdentifier:` method.
 * App can do this every time the app is launched/opened, or when new a user logs in.
 * App should set the user identifier to nil when the user logs out.
+
+# Handling errors
+
+The SDK will automatically raise errors if the `errorHandler` is set as below:
+
+```swift
+AnalyticsManager.shared().errorHandler = { error in
+    // Example: Report the error to Crashlytics
+}
+```
+
+Use it to report the SDK errors to a backend such as Crashlytics as a [non-fatal error](https://firebase.google.com/docs/crashlytics/customize-crash-reports?platform=ios#log-excepts).
 
 ## Configure debug logging
 
