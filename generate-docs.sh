@@ -8,29 +8,16 @@ then
   exit 1
 fi
 
-SOURCEKITTEN="${JAZZY}/bin/sourcekitten"
 output_dir="./documentation"
+# This directory is expected by `generate_docs` lane
 
 echo "📄 Installing Pods"
-bundle install && bundle exec pod install
+bundle exec pod install --project-directory=./RakutenAnalyticsSDK
 
-echo "📄 Generating Swift docs"
-$SOURCEKITTEN doc --module-name RAnalytics -- clean build-for-testing -workspace CI.xcworkspace -scheme Tests -destination 'platform=iOS Simulator,name=iPhone 8' > swiftDoc.json
-
-echo "📄 Generating Objective-C docs"
-mkdir ./docs-tmp
-find Sources \( -name "*.h" -or -name "*.m" \) -exec cp {} ./docs-tmp \;
-mv ./docs-tmp ./Sources/RAnalytics
-$SOURCEKITTEN doc --objc ./Sources/RAnalytics/RAnalytics.h -- -x objective-c  -isysroot "$(xcrun --show-sdk-path --sdk iphonesimulator)" -I ./RAnalytics -fmodules > objcDoc.json
-
-echo "📄 Merging"
-bundle exec jazzy --sourcekitten-sourcefile swiftDoc.json,objcDoc.json --output $output_dir
+echo "📄 Generating docs"
+bundle exec jazzy --output $output_dir
 
 echo "📄 Copying images"
 cp -r ./doc "$output_dir/doc"
 
-echo "📄 Cleaning up"
-rm -rf ./RAnalytics/RAnalytics
-rm objcDoc.json
-rm swiftDoc.json
 echo "📄 Done"
