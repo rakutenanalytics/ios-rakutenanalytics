@@ -193,10 +193,8 @@ class SenderSpec: QuickSpec {
                     var didReceiveNotification = false
                     let didBecomeActiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
                                                                                          object: nil,
-                                                                                         queue: queue) { (_) in
-                        sender.setBatchingDelayBlock(0)
+                                                                                         queue: queue) { _ in
                         sender.send(jsonObject: payload)
-
                         didReceiveNotification = true
                     }
 
@@ -204,7 +202,9 @@ class SenderSpec: QuickSpec {
                     expect(didReceiveNotification).toEventually(beTrue())
                     expect(isSendingCompleted).toEventually(beTrue())
 
-                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) { errorMsg in
+                        fail(errorMsg)
+                    }}
                     expect(getDBContent()).toAfterTimeout(haveCount(0), timeout: 2.0)
 
                     expect(uploadsToRat).to(equal(1))

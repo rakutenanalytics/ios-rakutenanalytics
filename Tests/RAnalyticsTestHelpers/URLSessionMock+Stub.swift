@@ -1,9 +1,9 @@
 import Foundation
 
 #if canImport(RSDKUtils)
-@testable import RSDKUtils
+import RSDKUtils
 #else // SPM version
-@testable import RSDKUtilsTestHelpers
+import RSDKUtilsTestHelpers
 #endif
 
 extension URLSessionMock {

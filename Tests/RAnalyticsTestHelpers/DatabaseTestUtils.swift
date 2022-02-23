@@ -52,7 +52,7 @@ import SQLite3
         sqlite3_finalize(statement)
     }
 
-    @objc public static func fetchTableContents(_ table: String, connection: SQlite3Pointer) -> [Data] {
+    @objc public static func fetchTableContents(_ table: String, connection: SQlite3Pointer, errorCallback: ((String) -> Void)? = nil) -> [Data] {
         var result = [Data]()
         let query = "select * from \(table)"
 
@@ -67,9 +67,12 @@ import SQLite3
                 result.append(Data(bytes: bytes, count: Int(length)))
             }
             sqlite3_finalize(statement)
-        case SQLITE_MISUSE:
-            assertionFailure()
-        default: ()
+        default:
+            var errorMessage = "DatabaseTestUtils: fetchTableContents() error. Unexpected sqlite code \(code)"
+            if let sqliteError = sqlite3_errmsg(connection) {
+                errorMessage += " - \(String(cString: sqliteError))"
+            }
+            errorCallback?(errorMessage)
         }
 
         return result

@@ -5,9 +5,9 @@ import AdSupport
 import WebKit
 
 #if canImport(RSDKUtils)
-@testable import RSDKUtils
+import RSDKUtils
 #else // SPM version
-@testable import RSDKUtilsMain
+import RSDKUtilsMain
 #endif
 
 @testable import RAnalytics
