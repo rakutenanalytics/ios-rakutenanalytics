@@ -49,7 +49,7 @@ private enum SenderConstants {
     /// processed, though, we only invalidate that timer at the very end of the HTTP
     /// request. That's why we also need uploadRequested, set by scheduleBackgroundUpload,
     /// so that we know we have to restart our timer at that point.
-    @AtomicGetSet var uploadTimer: Timer?
+    @AtomicGetSet private(set) var uploadTimer: Timer?
     @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?

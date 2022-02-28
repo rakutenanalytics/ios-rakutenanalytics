@@ -7,6 +7,12 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
+#if canImport(RSDKUtils)
+import class RSDKUtils.URLSessionMock
+#else // SPM version
+import class RSDKUtilsMain.URLSessionMock
+#endif
+
 class StressTestsSpec: QuickSpec {
 
     override func spec() {
@@ -22,7 +28,26 @@ class StressTestsSpec: QuickSpec {
                     let iterations = 100_000
 
                     // this test targets uploadTimer property
-                    it("will not crash when calling send() from mutliple threads") {
+                    it("will not crash when calling send() from multiple threads") {
+                        stressUploadTimer()
+                    }
+
+                    it("will not crash when requests fail and calling send() from multiple threads") {
+                        let sessionMock = URLSessionMock.mock(originalInstance: .shared)
+
+                        URLSessionMock.startMockingURLSession()
+
+                        sessionMock.stubRATResponse(statusCode: 400, completion: nil)
+
+                        stressUploadTimer()
+
+                        URLSessionMock.stopMockingURLSession()
+                    }
+
+                    func stressUploadTimer() {
+                        // uploadTimer is set if the batching delay > 0
+                        publicSender?.setBatchingDelayBlock(0.1)
+
                         let dispatchGroup = DispatchGroup()
                         dispatchGroup.enter()
 

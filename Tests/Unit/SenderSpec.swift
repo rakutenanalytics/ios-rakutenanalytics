@@ -51,6 +51,8 @@ class SenderSpec: QuickSpec {
             afterEach {
                 URLSessionMock.stopMockingURLSession()
 
+                sender.setBatchingDelayBlock(0)
+
                 sender.uploadTimer?.invalidate()
 
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
@@ -111,28 +113,44 @@ class SenderSpec: QuickSpec {
                     expect(isSendingCompleted).toEventually(beTrue())
                 }
 
-                it("should send notification when sending fails") {
-                    var isSendingCompleted = false
-                    sessionMock.stubRATResponse(statusCode: 500) {
-                        isSendingCompleted = true
+                context("When sending fails") {
+                    context("When the batching delay is > 0") {
+                        it("should send RAnalyticsUploadFailure notification") {
+                            sender.setBatchingDelayBlock(0.1)
+                            verifyRAnalyticsUploadFailure()
+                        }
                     }
 
-                    var didReceiveNotification = false
-                    let queue = OperationQueue()
-                    let observer = NotificationCenter.default.addObserver(forName: Notification.Name.RAnalyticsUploadFailure,
-                                                                          object: nil,
-                                                                          queue: queue) { (notification) in
-                        let error = notification.userInfo?[NSUnderlyingErrorKey] as? Error
-                        expect(error).toNot(beNil())
-                        expect(error?.localizedDescription).to(equal("invalid_response"))
-                        didReceiveNotification = true
+                    context("When the batching delay is 0") {
+                        it("should send RAnalyticsUploadFailure notification") {
+                            sender.setBatchingDelayBlock(0)
+                            verifyRAnalyticsUploadFailure()
+                        }
                     }
 
-                    sender.send(jsonObject: payload)
-                    expect(isSendingCompleted).toEventually(beTrue())
-                    expect(didReceiveNotification).toEventually(beTrue())
+                    func verifyRAnalyticsUploadFailure() {
+                        var isSendingCompleted = false
+                        sessionMock.stubRATResponse(statusCode: 500) {
+                            isSendingCompleted = true
+                        }
 
-                    NotificationCenter.default.removeObserver(observer)
+                        var didReceiveNotification = false
+                        let queue = OperationQueue()
+                        let observer = NotificationCenter.default.addObserver(forName: Notification.Name.RAnalyticsUploadFailure,
+                                                                              object: nil,
+                                                                              queue: queue) { (notification) in
+                            let error = notification.userInfo?[NSUnderlyingErrorKey] as? Error
+                            expect(error).toNot(beNil())
+                            expect(error?.localizedDescription).to(equal("invalid_response"))
+                            didReceiveNotification = true
+                        }
+
+                        sender.send(jsonObject: payload)
+                        expect(isSendingCompleted).toEventually(beTrue())
+                        expect(didReceiveNotification).toEventually(beTrue())
+
+                        NotificationCenter.default.removeObserver(observer)
+                    }
                 }
 
                 it("should remove DB record after event is sent", closure: {
