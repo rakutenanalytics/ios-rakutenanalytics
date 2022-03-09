@@ -52,7 +52,7 @@ internal struct PushEventHandler {
 // MARK: - PushEventHandleable
 
 extension PushEventHandler: PushEventHandleable {
-    // MARK: - App Group User Defaults
+    // MARK: - Open Count Event
 
     /// - Parameter trackingIdentifier: the push tracking identifier
     ///
@@ -92,7 +92,7 @@ extension PushEventHandler: PushEventHandleable {
         return true
     }
 
-    // MARK: - App Group File Cache
+    // MARK: - Darwin Events
 
     /// Retrieve the cached Darwin events array from the App Group User Defaults.
     ///
