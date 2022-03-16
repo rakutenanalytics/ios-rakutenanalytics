@@ -4,13 +4,13 @@ import Foundation
 @testable import RAnalytics
 
 #if canImport(RAnalyticsTestHelpers)
-import RAnalyticsTestHelpers
+import class RAnalyticsTestHelpers.TrackerMock
 #endif
 
 #if canImport(RSDKUtils)
 import class RSDKUtils.URLSessionMock
 #else // SPM version
-import class RSDKUtilsMain.URLSessionMock
+import class RSDKUtilsTestHelpers.URLSessionMock
 #endif
 
 class StressTestsSpec: QuickSpec {
