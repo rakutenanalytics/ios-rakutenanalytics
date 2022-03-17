@@ -58,8 +58,8 @@ final class SwiftUITrackingSpec: QuickSpec {
                     expect(taskIsCompleted).toAfterTimeout(beTrue(), timeout: 1.0)
                     expect(sessionMock.sentRequest).toEventuallyNot(beNil())
 
-                    let jsonArray = sessionMock.sentRequest?.httpBody?.jsonArray
-                    let json = jsonArray?.pageVisitJSON
+                    let ratPayload = sessionMock.sentRequest?.httpBody?.ratPayload
+                    let json = ratPayload?.pageVisitJSON
 
                     expect(json?[PayloadParameterKeys.pgn] as? String).to(equal("MyView"))
 

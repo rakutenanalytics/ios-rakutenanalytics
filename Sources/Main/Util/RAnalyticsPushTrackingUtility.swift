@@ -1,7 +1,35 @@
 import Foundation
 
+// MARK: - PnpReservedModel
+
+private struct PnpReservedModel: Decodable {
+    // MARK: - CodingKeys
+
+    enum CodingKeys: String, CodingKey {
+        case requestIdentifier = "request_id"
+    }
+
+    let requestIdentifier: String
+}
+
+// MARK: - PushNotificationModel
+
+private struct PushNotificationModel: Decodable {
+    // MARK: - CodingKeys
+
+    enum CodingKeys: String, CodingKey {
+        case pnpReserved = "_pnp_reserved"
+    }
+
+    let pnpReserved: PnpReservedModel
+}
+
+// MARK: - RAnalyticsPushTrackingUtility
+
 /// Constructs the tracking identifier from the push payload.
 @objc public final class RAnalyticsPushTrackingUtility: NSObject {
+    private static let decoder = JSONDecoder()
+
     private enum PushKeys {
         static let aps = "aps"
         static let alert = "alert"
@@ -14,7 +42,9 @@ import Foundation
         static let msg = "msg"
     }
 
-    /// - Returns: The tracking identifier from the push payload.
+    /// - Parameter payload: The APNS payload
+    ///
+    /// - Returns: The tracking identifier from the APNS push payload.
     @objc public static func trackingIdentifier(fromPayload payload: [AnyHashable: Any]) -> String? {
         let aps = payload[PushKeys.aps] as? [AnyHashable: Any]
         let rid = payload[PushKeys.rid] as? String
@@ -57,6 +87,31 @@ import Foundation
                                                    serializerType: JSONSerializable.Type) -> Bool {
         PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
                          appGroupId: appGroupId).isEventAlreadySent(with: trackingIdentifier)
+    }
+}
+
+// MARK: - Push Conversion Tracking
+
+extension RAnalyticsPushTrackingUtility {
+    /// - Parameter payload: The APNS push payload
+    ///
+    /// - Returns: The request identifier from the APNS push payload, `nil` otherwise if the APNS payload does not contain expected entries or if the APNS payload is malformed.
+    @objc public static func pushRequestIdentifier(from payload: [AnyHashable: Any]) -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: payload, options: []),
+              let model = try? decoder.decode(PushNotificationModel.self, from: data),
+              !model.pnpReserved.requestIdentifier.isEmpty else {
+            return nil
+        }
+        return model.pnpReserved.requestIdentifier
+    }
+
+    /// Method for tracking a push conversion event (`_rem_push_cv`).
+    ///
+    /// - Parameters:
+    ///    - pushRequestIdentifier: The non-empty push request identifier.
+    ///    - pushConversionAction: The non-empty push conversion action.
+    @objc public static func trackPushConversionEvent(pushRequestIdentifier: String, pushConversionAction: String) {
+        RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier, pushConversionAction: pushConversionAction).track()
     }
 }
 

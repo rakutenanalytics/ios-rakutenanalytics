@@ -2,7 +2,7 @@ import Foundation
 @testable import RAnalytics
 
 extension Data {
-    public var jsonArray: [[String: Any]]? {
+    public var ratPayload: [[String: Any]]? {
         guard let str = String(data: self, encoding: .utf8),
               let jsonData = str[PayloadConstants.prefix.count..<str.count].data(using: .utf8) else {
             return nil

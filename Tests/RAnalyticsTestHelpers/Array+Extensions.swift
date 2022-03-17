@@ -13,4 +13,8 @@ public extension Array where Element == [String: Any] {
     var pageVisitJSON: [String: Any]? {
         first(where: { $0[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.pageVisitForRAT })
     }
+
+    var pushConversionJSON: [String: Any]? {
+        first(where: { $0[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.pushNotificationConversion })
+    }
 }

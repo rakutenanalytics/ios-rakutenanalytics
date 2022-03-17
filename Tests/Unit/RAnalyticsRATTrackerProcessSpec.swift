@@ -389,35 +389,79 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 }
 
                 context("The push notification is received") {
-                    it("should process the _rem_push_received event with a tracking identifier") {
-                        let trackingIdentifier = "trackingIdentifier"
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
-                                                    parameters: [RAnalyticsEvent.Parameter.pushTrackingIdentifier: trackingIdentifier])
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
+                    context("request identifier is nil") {
+                        it("should process the _rem_push_received event with a tracking identifier") {
+                            let trackingIdentifier = "trackingIdentifier"
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
+                                                        parameters: [RAnalyticsEvent.Parameter.pushTrackingIdentifier: trackingIdentifier])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
 
-                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
-                            payload = $0.first
-                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(cpPayload?["push_notify_value"] as? String).to(equal(trackingIdentifier))
+                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier]).to(beNil())
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(cpPayload?["push_notify_value"] as? String).to(equal(trackingIdentifier))
+
+                        it("should process the _rem_push_received event with rid") {
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
+                                                        pushNotificationPayload: ["rid": "123456"])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
+                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier]).to(beNil())
+                        }
                     }
 
-                    it("should process the _rem_push_received event with rid") {
-                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
-                                                    pushNotificationPayload: ["rid": "123456"])
-                        var payload: [String: Any]?
-                        var cpPayload: [String: Any]?
+                    context("request identifier is not nil") {
+                        it("should process the _rem_push_received event with a tracking identifier and a request identifier") {
+                            let trackingIdentifier = "trackingIdentifier"
+                            let requestIdentifier = "requestIdentifier"
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
+                                                        parameters: [RAnalyticsEvent.Parameter.pushTrackingIdentifier: trackingIdentifier,
+                                                                     RAnalyticsEvent.Parameter.pushRequestIdentifier: requestIdentifier])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
 
-                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
-                            payload = $0.first
-                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(cpPayload?["push_notify_value"] as? String).to(equal(trackingIdentifier))
+                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(cpPayload).toNot(beNil())
-                        expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
+
+                        it("should process the _rem_push_received event with rid and a request identifier") {
+                            let requestIdentifier = "requestIdentifier"
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceived,
+                                                        pushNotificationPayload: ["rid": "123456"],
+                                                        pushRequestIdentifier: requestIdentifier)
+
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationReceived) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
+                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
+                        }
                     }
                 }
 
@@ -450,6 +494,60 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).toNot(beNil())
                         expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
+                    }
+                }
+
+                context("Push conversion event") {
+                    it("should not process the _rem_push_cv event when request identifier and conversion action are empty") {
+                        let event = RAnalyticsEvent(pushRequestIdentifier: "",
+                                                    pushConversionAction: "")
+                        var payload: [String: Any]?
+
+                        expecter.processEvent(event, state: Tracking.defaultState) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toAfterTimeout(beNil())
+                    }
+
+                    it("should not process the _rem_push_cv event when request identifier is empty") {
+                        let event = RAnalyticsEvent(pushRequestIdentifier: "",
+                                                    pushConversionAction: "pushConversionAction")
+                        var payload: [String: Any]?
+
+                        expecter.processEvent(event, state: Tracking.defaultState) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toAfterTimeout(beNil())
+                    }
+
+                    it("should not process the _rem_push_cv event when conversion action is empty") {
+                        let event = RAnalyticsEvent(pushRequestIdentifier: "pushRequestIdentifier",
+                                                    pushConversionAction: "")
+                        var payload: [String: Any]?
+
+                        expecter.processEvent(event, state: Tracking.defaultState) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toAfterTimeout(beNil())
+                    }
+
+                    it("should process the _rem_push_cv event when request identifier and conversion action are not empty") {
+                        let event = RAnalyticsEvent(pushRequestIdentifier: "pushRequestIdentifier",
+                                                    pushConversionAction: "pushConversionAction")
+                        var payload: [String: Any]?
+                        var cpPayload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationConversion) {
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(cpPayload).toNot(beNil())
+                        expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal("pushRequestIdentifier"))
+                        expect(cpPayload?[PayloadParameterKeys.pushConversionAction] as? String).to(equal("pushConversionAction"))
                     }
                 }
 

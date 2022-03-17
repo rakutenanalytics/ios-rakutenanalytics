@@ -62,6 +62,14 @@ extension RAnalyticsEvent {
         return extra
     }
 
+    var pushRequestIdentifier: String? {
+        parameters[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String
+    }
+
+    var pushConversionAction: String? {
+        parameters[RAnalyticsEvent.Parameter.pushConversionAction] as? String
+    }
+
     // MARK: - Discover
 
     var discoverParameters: [String: Any] {

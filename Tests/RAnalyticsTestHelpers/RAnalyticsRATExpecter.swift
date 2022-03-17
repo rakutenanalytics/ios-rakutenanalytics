@@ -15,10 +15,7 @@ public final class RAnalyticsRATExpecter {
     public init() {
     }
 
-    public func expectEvent(_ event: RAnalyticsEvent,
-                            state: RAnalyticsState,
-                            equal eventName: String,
-                            completion: (([[String: Any]]) -> Void)? = nil) {
+    private func configureSession(completion: @escaping (() -> Void)) {
         let session = dependenciesContainer.session as? SwityURLSessionMock
 
         session?.response = HTTPURLResponse(url: endpointURL,
@@ -26,16 +23,42 @@ public final class RAnalyticsRATExpecter {
                                             httpVersion: nil,
                                             headerFields: nil)
 
+        session?.completion = completion
+    }
+
+    private func processEventWithRATTracker(_ event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        ratTracker.process(event: event, state: state)
+    }
+
+    public func expectEvent(_ event: RAnalyticsEvent,
+                            state: RAnalyticsState,
+                            equal eventName: String,
+                            completion: (([[String: Any]]) -> Void)? = nil) {
         var payloads = [[String: Any]]()
-        session?.completion = { [unowned self] in
+
+        configureSession {
             let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
             payloads = result.deserialize()
         }
 
-        let processed = ratTracker.process(event: event, state: state)
+        let processed = processEventWithRATTracker(event, state: state)
         expect(processed).to(beTrue())
         expect(payloads).toEventuallyNot(beNil())
         expect(payloads.first?[PayloadParameterKeys.etype] as? String).toEventually(equal(eventName))
         completion?(payloads)
+    }
+
+    public func processEvent(_ event: RAnalyticsEvent,
+                             state: RAnalyticsState,
+                             completion: (([[String: Any]]) -> Void)? = nil) {
+        var payloads = [[String: Any]]()
+
+        configureSession {
+            let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
+            payloads = result.deserialize()
+            completion?(payloads)
+        }
+
+        _ = processEventWithRATTracker(event, state: state)
     }
 }

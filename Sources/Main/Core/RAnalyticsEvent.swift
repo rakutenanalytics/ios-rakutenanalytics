@@ -64,7 +64,13 @@ import Foundation
 
         /// Event triggered when a push notification is received.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
+        /// This event has an optional parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
         public static let pushNotificationReceived = "_rem_push_received"
+
+        /// Event to trigger manually for conversion tracking.
+        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
+        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushNotificationConversion`.
+        public static let pushNotificationConversion = "_rem_push_cv"
 
         /// Event triggered when a push notification is opened.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
@@ -94,6 +100,12 @@ import Foundation
 
         /// Parameter for the tracking identifier sent together with a push notification event.
         public static let pushTrackingIdentifier = "tracking_id"
+
+        /// Parameter for the request identifier with a push notification event.
+        public static let pushRequestIdentifier = "push_request_id"
+
+        /// Parameter for the conversion tracking with a push notification event.
+        public static let pushConversionAction = "push_cv_action"
 
         // MARK: - Custom event parameters
 
@@ -150,16 +162,33 @@ import Foundation
         self.init(name: AnalyticsManager.Event.Name.pushNotification, pushNotificationPayload: pushNotificationPayload)
     }
 
+    /// Convenience method for tracking a push conversion event (`_rem_push_cv`).
+    ///
+    /// - Parameters:
+    ///    - pushRequestIdentifier: The push request identifier.
+    ///    - pushConversionAction: The push conversion action.
+    ///
+    /// - Returns: A newly-initialized push conversion event with the push request identifier and the push conversion action.
+    convenience init(pushRequestIdentifier: String, pushConversionAction: String) {
+        self.init(name: AnalyticsManager.Event.Name.pushNotificationConversion, parameters: nil)
+        self.parameters[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
+        self.parameters[AnalyticsManager.Event.Parameter.pushConversionAction] = pushConversionAction
+    }
+
     /// Convenience method for tracking a push event.
     ///
     /// - Parameters:
     ///     - pushNotificationPayload: The entire payload of a push notification.
     ///
-    /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
-    convenience init(name: String, pushNotificationPayload: [String: Any]) {
+    /// - Returns: A newly-initialized push event with the tracking identifier set into the parameter list.
+    convenience init(name: String, pushNotificationPayload: [String: Any], pushRequestIdentifier: String? = nil) {
         var payload = [String: Any]()
         if let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: pushNotificationPayload) {
             payload[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] = trackingId
+        }
+
+        if let pushRequestIdentifier = pushRequestIdentifier {
+            payload[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
         }
 
         self.init(name: name, parameters: payload)

@@ -85,13 +85,8 @@ final class SDKTrackerSpec: QuickSpec {
                     expect(urlSession.urlRequest).toNotEventually(beNil(), timeout: .seconds(2))
                     expect(urlSession.urlRequest?.httpBody).toNot(beNil())
 
-                    let str = String(data: urlSession.urlRequest!.httpBody!, encoding: .utf8)!
-                    let jsonString = str[PayloadConstants.prefix.count..<str.count]
+                    let jsonArray = urlSession.urlRequest?.httpBody?.ratPayload
 
-                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonString.data(using: .utf8)!, options: [])
-                    expect(jsonObject).toNot(beNil())
-
-                    let jsonArray = jsonObject as? [[String: Any]]
                     expect(jsonArray).toNot(beNil())
                     expect(jsonArray?.count).to(equal(1))
                     expect(jsonArray?[0][PayloadParameterKeys.acc] as? Int).to(equal(477))

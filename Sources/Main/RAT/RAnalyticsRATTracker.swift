@@ -506,12 +506,32 @@ extension RAnalyticsRATTracker {
                 return false
             }
 
-        // MARK: _rem_push_received, _rem_push_notify
-        case RAnalyticsEvent.Name.pushNotificationReceived, RAnalyticsEvent.Name.pushNotification:
+        // MARK: _rem_push_notify
+        case RAnalyticsEvent.Name.pushNotification:
             guard let pushParameters = event.pushParameters else {
                 return false
             }
             extra.addEntries(from: pushParameters)
+
+        // MARK: _rem_push_received
+        case RAnalyticsEvent.Name.pushNotificationReceived:
+            guard let pushParameters = event.pushParameters else {
+                return false
+            }
+            extra.addEntries(from: pushParameters)
+
+            if !event.pushRequestIdentifier.isEmpty {
+                extra[PayloadParameterKeys.pushRequestIdentifier] = event.pushRequestIdentifier
+            }
+
+        // MARK: _rem_push_cv
+        case RAnalyticsEvent.Name.pushNotificationConversion:
+            guard !event.pushRequestIdentifier.isEmpty
+                    && !event.pushConversionAction.isEmpty else {
+                return false
+            }
+            extra[PayloadParameterKeys.pushRequestIdentifier] = event.pushRequestIdentifier
+            extra[PayloadParameterKeys.pushConversionAction] = event.pushConversionAction
 
         // MARK: _rem_discover_＊
         case let value where value.hasPrefix("_rem_discover_"):

@@ -31,6 +31,7 @@
 		C9320978279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */; };
 		C9320979279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */; };
 		C932097A279FE774009FE6EC /* ExtensionEventTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320977279FE774009FE6EC /* ExtensionEventTrackingSpec.swift */; };
+		C941273127DA09B4007B650F /* RAnalyticsPushTrackingUtilityIntegSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C941273027DA09B4007B650F /* RAnalyticsPushTrackingUtilityIntegSpec.swift */; };
 		C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */; };
 		C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */; };
 		C94B70332798702500A1898A /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B702C2798700300A1898A /* ClassManipulatorUIApplicationTests.m */; };
@@ -152,6 +153,7 @@
 		C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerIntegrationSpec.swift; sourceTree = "<group>"; };
 		C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandlerIntegrationSpec.swift; sourceTree = "<group>"; };
 		C9320977279FE774009FE6EC /* ExtensionEventTrackingSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionEventTrackingSpec.swift; sourceTree = "<group>"; };
+		C941273027DA09B4007B650F /* RAnalyticsPushTrackingUtilityIntegSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtilityIntegSpec.swift; sourceTree = "<group>"; };
 		C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAdvertisingIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
 		C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsErrorSpec.swift; sourceTree = "<group>"; };
 		C94B702B2798700300A1898A /* ObjcInteropSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcInteropSpec.m; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 				C9320977279FE774009FE6EC /* ExtensionEventTrackingSpec.swift */,
 				45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */,
 				C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */,
+				C941273027DA09B4007B650F /* RAnalyticsPushTrackingUtilityIntegSpec.swift */,
 				C94B9A062796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift */,
 				45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */,
 				C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */,
@@ -678,6 +681,7 @@
 				C94B9A072796B83E00FBD012 /* RAnalyticsRpCookieFetcherIntegrationSpec.swift in Sources */,
 				C9E7602727B121C3006B22F5 /* URLSessionMock+Stub.swift in Sources */,
 				C9E7602327B11BCE006B22F5 /* SwiftUITrackingSpec.swift in Sources */,
+				C941273127DA09B4007B650F /* RAnalyticsPushTrackingUtilityIntegSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

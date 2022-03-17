@@ -12,6 +12,8 @@ enum PayloadParameterKeys {
     static let refApplicationIdentifier = "ref_aid"
     static let refLink = "ref_link"
     static let refComponent = "ref_comp"
+    static let pushRequestIdentifier = "push_request_id"
+    static let pushConversionAction = "push_cv_action"
 }
 
 enum PayloadConstants {

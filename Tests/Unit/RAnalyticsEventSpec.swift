@@ -25,6 +25,17 @@ final class RAnalyticsEventSpec: QuickSpec {
                     expect(event.parameters[PayloadParameterKeys.etype] as? String).to(equal("value1"))
                 }
             }
+
+            describe("init(pushRequestIdentifier:pushConversionAction:)") {
+                it("should create a push conversion event with the expected parameters") {
+                    let event = RAnalyticsEvent(pushRequestIdentifier: "pushRequestIdentifier",
+                                                pushConversionAction: "pushConversionAction")
+                    expect(event.name).to(equal(RAnalyticsEvent.Name.pushNotificationConversion))
+                    expect(event.parameters[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String).to(equal("pushRequestIdentifier"))
+                    expect(event.parameters[RAnalyticsEvent.Parameter.pushConversionAction] as? String).to(equal("pushConversionAction"))
+                }
+            }
+
             describe("copy") {
                 it("should have the expected values") {
                     let event = defaultEvent()
@@ -37,6 +48,7 @@ final class RAnalyticsEventSpec: QuickSpec {
                     expect(copiedEvent).to(equal(event))
                 }
             }
+
             describe("equal") {
                 it("should be true if it has the same properties") {
                     let event = defaultEvent()
@@ -59,6 +71,7 @@ final class RAnalyticsEventSpec: QuickSpec {
                     expect(event).toNot(equal(anObject))
                 }
             }
+
             describe("hash") {
                 it("should be equal if it is a copy of an other event") {
                     let event = defaultEvent()
@@ -80,6 +93,7 @@ final class RAnalyticsEventSpec: QuickSpec {
                     expect(event.hash).toNot(equal(otherEvent.hash))
                 }
             }
+
             describe("secure coding") {
                 it("should unarchive the same event with the same properties values") {
                     let event = defaultEvent()
@@ -111,6 +125,7 @@ final class RAnalyticsEventSpec: QuickSpec {
                     expect(event.parameters == decodedEvent!.parameters).to(beTrue())
                 }
             }
+
             describe("track") {
                 it("should return true when the event is processed") {
                     let event = defaultEvent()

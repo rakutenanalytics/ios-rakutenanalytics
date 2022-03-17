@@ -219,10 +219,7 @@ final class RATDataExtensionSpec: QuickSpec {
                 }
 
                 func verifyStructure(internalSerialization: Bool) {
-                    let str = String(data: Data(ratJsonRecords: input, internalSerialization: internalSerialization)!, encoding: .utf8)!
-                    let jsonString = str[PayloadConstants.prefix.count..<str.count]
-                    let jsonData = jsonString.data(using: .utf8)!
-                    let jsonObject = try? JSONSerialization.jsonObject(with: jsonData, options: .init(rawValue: 0))
+                    let jsonObject = Data(ratJsonRecords: input, internalSerialization: internalSerialization)?.ratPayload
 
                     expect(jsonObject).toNot(beNil())
                 }

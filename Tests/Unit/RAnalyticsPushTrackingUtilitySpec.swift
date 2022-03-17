@@ -9,6 +9,65 @@ import RAnalyticsTestHelpers
 final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsPushTrackingUtility") {
+            describe("pushRequestIdentifier(from:)") {
+                context("The APNS payload is empty") {
+                    it("should return a nil request id") {
+                        let payload: [AnyHashable: Any] = [:]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload)
+
+                        expect(result).to(beNil())
+                    }
+                }
+
+                context("_pnp_reserved is nil") {
+                    it("should return a nil request id") {
+                        let payload: [AnyHashable: Any?] = ["_pnp_reserved": nil]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload as [AnyHashable: Any])
+
+                        expect(result).to(beNil())
+                    }
+                }
+
+                context("_pnp_reserved is empty") {
+                    it("should return a nil request id") {
+                        let payload: [AnyHashable: Any?] = ["_pnp_reserved": [:]]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload as [AnyHashable: Any])
+
+                        expect(result).to(beNil())
+                    }
+                }
+
+                context("request_id is nil") {
+                    it("should return a nil request id") {
+                        let payload: [AnyHashable: Any] = ["_pnp_reserved":
+                                                            ["request_id": nil]]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload)
+
+                        expect(result).to(beNil())
+                    }
+                }
+
+                context("request_id is empty") {
+                    it("should return a nil request id") {
+                        let payload: [AnyHashable: Any] = ["_pnp_reserved": ["request_id": ""]]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload)
+
+                        expect(result).to(beNil())
+                    }
+                }
+
+                context("request_id is not empty") {
+                    it("should return the expected request id") {
+                        let expectedRequestId = "ichiba_iphone_long,2517554993982709815,f1f358ce-5ffb-4c01-8b59-994e72b8915b"
+                        let payload: [AnyHashable: Any] = ["_pnp_reserved":
+                                                            ["request_id": expectedRequestId]]
+                        let result = RAnalyticsPushTrackingUtility.pushRequestIdentifier(from: payload)
+
+                        expect(result).to(equal(expectedRequestId))
+                    }
+                }
+            }
+
             describe("trackingIdentifier") {
                 let rid = "123456"
                 let nid = "654321"
