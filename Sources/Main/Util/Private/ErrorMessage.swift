@@ -12,6 +12,7 @@ enum ErrorDomain {
     static let reachabilityNotifierErrorDomain = "\(domainName).reachability-notifier"
     static let analyticsEventTrackerErrorDomain = "\(domainName).analytics-event-tracker"
     static let analyticsEventObserverErrorDomain = "\(domainName).analytics-event-observer"
+    static let pushConversionTrackingErrorDomain = "\(domainName).push-conversion-tracking"
 }
 
 enum ErrorCode: Int {
@@ -57,6 +58,9 @@ enum ErrorCode: Int {
 
     // Analytics Event Observer
     case analyticsEventObserverCantTrackEvent
+
+    // Push conversion tracking
+    case pushConversionTrackingFailure
 }
 
 enum ErrorDescription {
@@ -98,6 +102,9 @@ enum ErrorDescription {
 
     // Analytics Event Observer
     static let analyticsEventObserverCantTrackEvent = "AnalyticsEventObserver can't track the Extension Event."
+
+    // Push Conversion
+    static let pushConversionTrackingFailed = "The push conversion tracking failed."
 }
 
 enum ErrorReason {
@@ -127,6 +134,9 @@ enum ErrorReason {
 
     // Unknown
     static let unknown = "Unknown error."
+
+    // Parameters
+    static let emptyParameters = "One of the parameters is empty."
 }
 
 enum ErrorConstants {
@@ -144,4 +154,11 @@ enum ErrorConstants {
                 userInfo: [NSLocalizedDescriptionKey: ErrorDescription.rpCookieCantBeFetched,
                            NSLocalizedFailureReasonErrorKey: reason])
     }
+
+    static let pushConversionError: NSError = {
+        NSError(domain: ErrorDomain.pushConversionTrackingErrorDomain,
+                code: ErrorCode.pushConversionTrackingFailure.rawValue,
+                userInfo: [NSLocalizedDescriptionKey: ErrorDescription.pushConversionTrackingFailed,
+                           NSLocalizedFailureReasonErrorKey: ErrorReason.emptyParameters])
+    }()
 }

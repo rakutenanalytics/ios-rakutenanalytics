@@ -110,8 +110,15 @@ extension RAnalyticsPushTrackingUtility {
     /// - Parameters:
     ///    - pushRequestIdentifier: The non-empty push request identifier.
     ///    - pushConversionAction: The non-empty push conversion action.
-    @objc public static func trackPushConversionEvent(pushRequestIdentifier: String, pushConversionAction: String) {
-        RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier, pushConversionAction: pushConversionAction).track()
+    ///
+    /// - Throws: an error if `pushRequestIdentifier` is empty or if `pushConversionAction` is empty.
+    @objc public static func trackPushConversionEvent(pushRequestIdentifier: String,
+                                                      pushConversionAction: String) throws {
+        guard !pushRequestIdentifier.isEmpty && !pushConversionAction.isEmpty else {
+            throw ErrorConstants.pushConversionError
+        }
+        RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier,
+                        pushConversionAction: pushConversionAction).track()
     }
 }
 

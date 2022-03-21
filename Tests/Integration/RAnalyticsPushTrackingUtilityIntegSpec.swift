@@ -36,8 +36,8 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
                         isSendingCompleted = true
                     }
 
-                    RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: expectedRequestId,
-                                                                           pushConversionAction: expectedConversionAction)
+                    try? RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: expectedRequestId,
+                                                                                pushConversionAction: expectedConversionAction)
 
                     expect(isSendingCompleted).toAfterTimeout(beTrue(), timeout: 1.0)
 

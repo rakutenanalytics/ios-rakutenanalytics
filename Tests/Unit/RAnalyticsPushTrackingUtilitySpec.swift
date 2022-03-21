@@ -68,6 +68,45 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                 }
             }
 
+            describe("trackPushConversionEvent(pushRequestIdentifier:pushConversionAction:) ") {
+                it("should throw an error if pushRequestIdentifier and pushConversionAction are empty") {
+                    expect {
+                        try RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: "",
+                                                                                   pushConversionAction: "")
+
+                    }.to(throwError())
+                }
+
+                it("should throw an error if pushRequestIdentifier is empty") {
+                    expect {
+                        try RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: "",
+                                                                                   pushConversionAction: "pushConversionAction")
+
+                    }.to(throwError())
+                }
+
+                it("should throw an error if pushConversionAction is empty") {
+                    expect {
+                        try RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: "pushRequestIdentifier",
+                                                                                   pushConversionAction: "")
+
+                    }.to(throwError())
+                }
+
+                it("should not throw an error if pushRequestIdentifier and pushConversionAction are not empty") {
+                    var thrownError: Error?
+
+                    do {
+                        try RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: "pushRequestIdentifier",
+                                                                                   pushConversionAction: "pushConversionAction")
+                    } catch {
+                        thrownError = error
+                    }
+
+                    expect(thrownError).toAfterTimeout(beNil())
+                }
+            }
+
             describe("trackingIdentifier") {
                 let rid = "123456"
                 let nid = "654321"
