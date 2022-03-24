@@ -117,6 +117,18 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
                     expect(hasCookie).toEventually(beTrue())
                 }
 
+                it("should delete cookies from WKWebsiteDataStore httpCookieStore") {
+                    var hasCookie = true
+                    cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) {_ in
+                        cookieInjector.clearCookies {
+                            cookieStore.getAllCookies { cookies in
+                                hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
+                            }
+                        }
+                    }
+                    expect(hasCookie).toEventually(beFalse())
+                }
+
                 it("should replace the existing cookie by the new one that has the same name into WKWebsiteDataStore httpCookieStore") {
                     var previousCookie: HTTPCookie?
                     var replacedCookie: HTTPCookie?

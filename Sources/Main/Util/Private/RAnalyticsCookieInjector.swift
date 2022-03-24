@@ -40,13 +40,16 @@ extension RAnalyticsCookieInjector {
             completionHandler?(nil)
             return
         }
-        httpCookieStore.allCookies { (cookies) in
-            self.deleteCookies(cookies) {
-                self.storeCookie(cookieToStore: trackingCookie) {
-                    completionHandler?(trackingCookie)
-                }
+        clearCookies {
+            self.storeCookie(cookieToStore: trackingCookie) {
+                completionHandler?(trackingCookie)
             }
         }
+    }
+
+    /// Delete all cookies in WKWebsiteDataStore
+    func clearCookies(completion: @escaping () -> Void) {
+        httpCookieStore.allCookies { self.deleteCookies($0, completionHandler: completion)}
     }
 }
 

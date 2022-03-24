@@ -69,7 +69,11 @@ protocol AnalyticsManageable: AnyObject {
     /// This feature only works on iOS 11.0 and above.
     ///
     /// This property is set to `NO` by default
-    @objc public var enableAppToWebTracking: Bool = false
+    @objc public var enableAppToWebTracking: Bool = false {
+        didSet {
+            refreshCookieStore()
+        }
+    }
 
     /// Enable or disable the tracking of an event at runtime.
     ///
@@ -253,6 +257,17 @@ extension AnalyticsManager {
                                                name: UIApplication.willResignActiveNotification,
                                                object: nil)
     }
+
+    private func refreshCookieStore() {
+        if enableAppToWebTracking {
+            analyticsCookieInjector.injectAppToWebTrackingCookie(
+                domain: cookieDomainBlock?(),
+                deviceIdentifier: UIDevice.current.identifierForVendor?.uuidString ?? Constants.defaultDeviceIdentifier,
+                completionHandler: nil)
+        } else {
+            analyticsCookieInjector.clearCookies { }
+        }
+    }
 }
 
 // MARK: - UIApplication Notifications
@@ -383,17 +398,6 @@ extension AnalyticsManager: AnalyticsManageable {
             state.advertisingIdentifier = advertisingIdentifier
         }
 
-        if enableAppToWebTracking {
-            var domain: String?
-            if cookieDomainBlock != nil {
-                domain = cookieDomainBlock?()
-            }
-
-            analyticsCookieInjector.injectAppToWebTrackingCookie(domain: domain,
-                                                                 deviceIdentifier: notOptionalDeviceIdentifier,
-                                                                 completionHandler: nil)
-        }
-
         state.lastKnownLocation = shouldTrackLastKnownLocation ? locationManager.location : nil
         state.sessionStartDate = sessionStartDate ?? nil
 
@@ -478,6 +482,7 @@ extension AnalyticsManager {
     ///     - cookieDomainBlock: The block returns the domain string to set on the cookie.
     @objc(setWebTrackingCookieDomainWithBlock:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock) {
         self.cookieDomainBlock = cookieDomainBlock
+        refreshCookieStore()
     }
 
     /// Returns the web tracking cookie domain set by `setWebTrackingCookieDomain(block:)`
