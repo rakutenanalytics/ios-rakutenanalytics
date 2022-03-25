@@ -1,5 +1,13 @@
 # Changelog
 
+## 9.3.0 (2022-03-25)
+
+### Features
+* [SDKCF-4998](https://jira.rakuten-it.com/jira/browse/SDKCF-4998): Added support for tracking conversions associated with push notification messages. See the [guide](index.html#push-conversion-tracking) for details.
+
+### Improvements
+* [SDKCF-4819](https://jira.rakuten-it.com/jira/browse/SDKCF-4819): Added [OWASP Dependency Check](https://owasp.org/www-project-dependency-check/) to CI pipeline using Fastlane [plugin](https://github.com/alteral/fastlane-plugin-dependency_check_ios_analyzer). This tool will flag usage of dependencies that have publicly disclosed vulnerabilities.
+
 ## 9.2.0 (2022-02-18)
 
 ### Features

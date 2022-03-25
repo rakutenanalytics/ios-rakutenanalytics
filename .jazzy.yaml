@@ -1,6 +1,6 @@
 author: Rakuten Group, Inc.
 module: RAnalytics
-module_version: 9.2.0
+module_version: 9.3.0
 readme: README.md
 documentation: "{CHANGELOG.md,CONTRIBUTING.md,ADVANCED_USAGE.md}"
 hide_documentation_coverage: true
