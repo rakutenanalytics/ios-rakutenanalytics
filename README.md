@@ -185,9 +185,9 @@ The below table shows the required components of each standard event which is tr
 
 The SDK will automatically generate certain attributes about the state of the device, and pass them to every registered tracker when asked to process an event.
 
-## Push conversion event
-Conversions are an important metric for marketers.
-The SDK now supports a conversion event which can be sent when a conversion occurs in your app.
+## Push conversion tracking
+Conversions are an important metric for marketers. The SDK now supports a conversion event which can be sent when a conversion occurs in your app.
+
 To use this feature you need to store the APNs push notification payload when your app is opened from a push notification.
 Then, when a conversion event occurs (you define these for your own app's specific use cases e.g. item purchase) you can track the conversion to RAT as follows:
 
