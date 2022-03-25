@@ -490,3 +490,15 @@ public final class ReachabilityMock: ReachabilityType {
     public func removeObserver(_ observer: ReachabilityObserver) {
     }
 }
+
+// MARK: - CookieStoreObserver
+
+public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObserver {
+    private var completion: () -> Void
+    public init(completion: @escaping () -> Void) {
+        self.completion = completion
+    }
+    public func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+        completion()
+    }
+}
