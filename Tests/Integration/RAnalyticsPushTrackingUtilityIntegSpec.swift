@@ -4,9 +4,9 @@ import Foundation
 @testable import RAnalytics
 
 #if canImport(RSDKUtils)
-import RSDKUtils
+import class RSDKUtils.URLSessionMock
 #else // SPM version
-import RSDKUtilsMain
+import class RSDKUtilsTestHelpers.URLSessionMock
 #endif
 
 class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
