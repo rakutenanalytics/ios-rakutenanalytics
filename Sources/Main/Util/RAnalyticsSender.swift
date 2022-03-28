@@ -299,11 +299,8 @@ extension RAnalyticsSender {
 extension RAnalyticsSender {
     func logSentRecords(_ records: [Any]) {
         #if DEBUG
-        var sentLog = "Successfully sent events to \(String(describing: self.endpointURL)) from \(self.description)."
-        for (index, value) in records.enumerated() {
-            sentLog.append("\n\(index), \(value)")
-        }
-        RLogger.debug(message: sentLog)
+        RLogger.debug(message: "Successfully sent the following \(records.count) event(s) to \(String(describing: endpointURL)) from \(description):")
+        records.enumerated().forEach { RLogger.debug(message: "Record \($0) = \($1)") }
         #endif
     }
 }
