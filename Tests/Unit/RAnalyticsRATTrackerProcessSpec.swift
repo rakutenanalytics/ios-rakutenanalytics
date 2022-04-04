@@ -634,6 +634,32 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                                     parameters: ["blah": "name", "eventData": ["foo": "bar"]])
                         expect(ratTracker.process(event: event, state: Tracking.defaultState)).to(beFalse())
                     }
+
+                    it("should process the custom event with customAccNumber") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.custom,
+                                                    parameters: ["eventName": "etypeName", "customAccNumber": 10])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "etypeName") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.acc] as? NSNumber).to(equal(NSNumber(value: 10)))
+                    }
+
+                    for accNumber in [0, -2, 6.33] {
+                        it("should process the custom event with deafult account number when customAccNumber is \(accNumber)") {
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.custom,
+                                                        parameters: ["eventName": "etypeName", "customAccNumber": accNumber])
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "etypeName") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?[PayloadParameterKeys.acc] as? NSNumber).to(equal(NSNumber(value: 777)))
+                        }
+                    }
                 }
 
                 it("should not process an unknown event") {

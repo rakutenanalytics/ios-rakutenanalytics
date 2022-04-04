@@ -117,6 +117,9 @@ import Foundation
 
         /// Parameter for the event top level object sent with a custom event.
         public static let topLevelObject = "topLevelObject"
+
+        /// Parameter for custom account number object sent with a custom event.
+        public static let customAccNumber = "customAccNumber"
     }
 
     /// Standard event parameter values

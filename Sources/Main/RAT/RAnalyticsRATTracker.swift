@@ -573,6 +573,10 @@ extension RAnalyticsRATTracker {
                 extra.addEntries(from: parameters)
             }
 
+            if let customAccNumber = event.parameters[RAnalyticsEvent.Parameter.customAccNumber] as? NSNumber {
+                payload[PayloadParameterKeys.acc] = customAccNumber.positiveIntegerNumber
+            }
+
         // MARK: rat.＊
         case let value where value.hasPrefix(Constants.ratEventPrefix):
             if !event.parameters.isEmpty {
