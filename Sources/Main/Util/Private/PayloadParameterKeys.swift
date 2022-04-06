@@ -14,6 +14,13 @@ enum PayloadParameterKeys {
     static let refComponent = "ref_comp"
     static let pushRequestIdentifier = "push_request_id"
     static let pushConversionAction = "push_cv_action"
+
+    enum Telephony {
+        static let mcn = "mcn"
+        static let mcnd = "mcnd"
+        static let mnetw = "mnetw"
+        static let mnetwd = "mnetwd"
+    }
 }
 
 enum PayloadConstants {

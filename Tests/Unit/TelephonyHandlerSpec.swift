@@ -20,47 +20,165 @@ final class TelephonyHandlerSpec: QuickSpec {
 
             telephonyHandler.reachabilityStatus = NSNumber(value: 1)
 
+            afterEach {
+                telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = nil
+            }
+
             describe("mcn, mcnd") {
                 it(#"should return mcn == "", mcnd == "" when there are no carriers"#) {
                     telephonyNetworkInfo.subscribers = nil
                     telephonyNetworkInfo.safeDataServiceIdentifier = nil
 
-                    expect(telephonyHandler.mcn).to(equal(""))
-                    expect(telephonyHandler.mcnd).to(equal(""))
+                    expect(telephonyHandler.mcn).to(beEmpty())
+                    expect(telephonyHandler.mcnd).to(beEmpty())
                 }
 
-                it(#"should return mcn == Carrier1, mcnd == "" when there is only one carrier (Physical SIM is primary)"#) {
-                    telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
-                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                context("when there is only one carrier (Physical SIM is primary)") {
+                    it(#"should return mcn == Carrier1, mcnd == "" when the Physical SIM radio is not empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
-                    expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
-                    expect(telephonyHandler.mcnd).to(equal(""))
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it(#"should return mcn == "", mcnd == "" when the Physical SIM radio is empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
                 }
 
-                it(#"should return mcn == Carrier2, mcnd == "" when there is only one carrier (eSIM is primary)"#) {
-                    telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                context("when there is only one carrier (eSIM is primary)") {
+                    it(#"should return mcn == Carrier2, mcnd == "" when the eSIM radio is not empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
 
-                    expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
-                    expect(telephonyHandler.mcnd).to(equal(""))
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                        expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it(#"should return mcn == "", mcnd == "" when the eSIM radio is empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
                 }
 
-                it("should return mcn == Carrier1, mcnd == Carrier2 when the primary carrier is Carrier1 (Physical SIM), the secondary carrier is Carrier 2 (eSIM)") {
-                    telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
-                                                        TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+                context("when the primary carrier is Carrier1 (Physical SIM), the secondary carrier is Carrier 2 (eSIM)") {
+                    it(#"should return mcn == "", mcnd == "" when the radios are empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
-                    expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
-                    expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it(#"should return mcn == Carrier1, mcnd == "" when only the Physical SIM radio is not empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it(#"should return mcn == "", mcnd == Carrier2 when only the eSIM radio is not empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
+                    }
+
+                    it("should return mcn == Carrier1, mcnd == Carrier2 when the radios are not empty") {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                        expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
+                    }
                 }
 
-                it("should return mcn == Carrier2, mcnd == Carrier1 when the primary carrier is Carrier2 (eSIM), the secondary carrier is Carrier1 (Physical SIM)") {
-                    telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
-                                                        TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-                    telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+                context("when the primary carrier is Carrier2 (eSIM), the secondary carrier is Carrier1 (Physical SIM)") {
+                    it(#"should return mcn == "", mcnd == "" when the radios are empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
 
-                    expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
-                    expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it(#"should return mcn == "", mcnd == Carrier1 when the eSIM radio is empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                        expect(telephonyHandler.mcn).to(beEmpty())
+                        expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
+                    }
+
+                    it(#"should return mcn == Carrier2, mcnd == "" when the Physical SIM radio is empty"#) {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: "",
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                        expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(beEmpty())
+                    }
+
+                    it("should return mcn == Carrier2, mcnd == Carrier1 when the radios are not empty") {
+                        telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                            TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                        telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
+
+                        telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                    TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                        expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
+                    }
                 }
             }
 

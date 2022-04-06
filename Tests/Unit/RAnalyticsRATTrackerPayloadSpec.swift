@@ -1,4 +1,5 @@
 // swiftlint:disable line_length
+// swiftlint:disable type_body_length
 
 import Quick
 import Nimble
@@ -65,73 +66,158 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                 }
 
                 context("mcn and mcnd") {
-                    it("should process an event without mcn and mcnd when there is no carrier") {
-                        var payload: [String: Any]?
+                    context("When there is no carrier") {
+                        context("And the connection is offline") {
+                            it("should process an event without mcn and mcnd ") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
 
-                        let primaryCarrier = CarrierMock()
-                        primaryCarrier.carrierName = nil
-                        primaryCarrier.mobileNetworkCode = nil
-
-                        let secondaryCarrier = CarrierMock()
-                        secondaryCarrier.carrierName = nil
-                        secondaryCarrier.mobileNetworkCode = nil
-
-                        let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
-                        telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
-                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
+                                verifyEmptyMcnAndMcnd()
+                            }
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["mcn"] as? String).to(equal(""))
-                        expect(payload?["mcnd"] as? String).to(equal(""))
+
+                        context("And the connection is WWAN") {
+                            it("should process an event without mcn and mcnd ") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+
+                                verifyEmptyMcnAndMcnd()
+                            }
+                        }
+
+                        context("And the connection is Wifi") {
+                            it("should process an event without mcn and mcnd ") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+
+                                verifyEmptyMcnAndMcnd()
+                            }
+                        }
+
+                        func verifyEmptyMcnAndMcnd() {
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = nil
+                            primaryCarrier.mobileNetworkCode = nil
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = nil
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["mcn"] as? String).to(equal(""))
+                            expect(payload?["mcnd"] as? String).to(equal(""))
+                        }
                     }
 
-                    it("should process an event with mcn and no mcnd when there is only one carrier") {
-                        var payload: [String: Any]?
+                    context("When there is only one carrier") {
+                        context("And the connection becomes offline") {
+                            it("should process an event without mcn and mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
 
-                        let primaryCarrier = CarrierMock()
-                        primaryCarrier.carrierName = "Rakuten Mobile"
-                        primaryCarrier.mobileNetworkCode = "12345"
-
-                        let secondaryCarrier = CarrierMock()
-                        secondaryCarrier.carrierName = nil
-                        secondaryCarrier.mobileNetworkCode = nil
-
-                        let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
-                        telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
-                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
+                                verifyMcn(with: "")
+                            }
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["mcn"] as? String).to(equal("Rakuten Mobile"))
-                        expect(payload?["mcnd"] as? String).to(equal(""))
+
+                        context("And the connection is WWAN") {
+                            it("should process an event with mcn and no mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+
+                                verifyMcn(with: "Rakuten Mobile")
+                            }
+                        }
+
+                        context("And the connection is Wifi") {
+                            it("should process an event with mcn and no mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+
+                                verifyMcn(with: "Rakuten Mobile")
+                            }
+                        }
+
+                        func verifyMcn(with expectedMcnValue: String) {
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileNetworkCode = "12345"
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["mcn"] as? String).to(equal(expectedMcnValue))
+                            expect(payload?["mcnd"] as? String).to(equal(""))
+                        }
                     }
 
-                    it("should process an event with mcn and mcnd when there are two carriers") {
-                        var payload: [String: Any]?
+                    context("when there are two carriers") {
+                        context("And the connection becomes offline") {
+                            it("should process an event without mcn and mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
 
-                        let primaryCarrier = CarrierMock()
-                        primaryCarrier.carrierName = "Rakuten Mobile"
-                        primaryCarrier.mobileNetworkCode = "12345"
-
-                        let secondaryCarrier = CarrierMock()
-                        secondaryCarrier.carrierName = "Ubigi"
-                        secondaryCarrier.mobileNetworkCode = "67890"
-
-                        let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
-                        telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
-                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
+                                verifyMcnAndMcnd(with: "", expectedMcndValue: "")
+                            }
                         }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["mcn"] as? String).to(equal("Rakuten Mobile"))
-                        expect(payload?["mcnd"] as? String).to(equal("Ubigi"))
+
+                        context("And the connection is WWAN") {
+                            it("should process an event with mcn and mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+
+                                verifyMcnAndMcnd(with: "Rakuten Mobile", expectedMcndValue: "Ubigi")
+                            }
+                        }
+
+                        context("And the connection is Wifi") {
+                            it("should process an event with mcn and mcnd") {
+                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+
+                                verifyMcnAndMcnd(with: "Rakuten Mobile", expectedMcndValue: "Ubigi")
+                            }
+                        }
+
+                        func verifyMcnAndMcnd(with expectedMcnValue: String, expectedMcndValue: String) {
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileNetworkCode = "12345"
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = "Ubigi"
+                            secondaryCarrier.mobileNetworkCode = "67890"
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["mcn"] as? String).to(equal(expectedMcnValue))
+                            expect(payload?["mcnd"] as? String).to(equal(expectedMcndValue))
+                        }
                     }
                 }
 

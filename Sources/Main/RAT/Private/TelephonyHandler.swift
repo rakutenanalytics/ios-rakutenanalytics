@@ -26,6 +26,13 @@ final class TelephonyHandler: TelephonyHandleable {
     private var retrievedCarrierKey: String? // used for iOS == 12.x
     var reachabilityStatus: NSNumber?
 
+    private var reachabilityStatusType: RATReachabilityStatus? {
+        guard let value = reachabilityStatus?.intValue else {
+            return nil
+        }
+        return RATReachabilityStatus(rawValue: value)
+    }
+
     /// Creates a new instance of `TelephonyHandler`.
     ///
     /// - Parameters:
@@ -84,7 +91,13 @@ extension TelephonyHandler {
 extension TelephonyHandler {
     /// - Returns: The name of the primary carrier.
     var mcn: String {
+        guard reachabilityStatusType != .offline else {
+            return ""
+        }
+
         guard let carrierKey = selectedCarrierKey,
+              let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
+              !radioName.isEmpty,
               let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
             return ""
         }
@@ -93,12 +106,18 @@ extension TelephonyHandler {
 
     /// - Returns: The name of the secondary carrier.
     var mcnd: String {
+        guard reachabilityStatusType != .offline else {
+            return ""
+        }
+
         // Note: Only one eSIM can be enabled on iOS.
         // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
         let otherKey = telephonyNetworkInfo.subscribers?.filter {
             selectedCarrierKey != $0.key
         }.keys.first
         if let key = otherKey,
+           let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[key],
+           !radioName.isEmpty,
            let carrier = telephonyNetworkInfo.subscribers?[key] {
             return carrier.displayedCarrierName ?? ""
         }
@@ -141,8 +160,7 @@ extension TelephonyHandler {
 
 private extension TelephonyHandler {
     func networkType(for radioName: String) -> NSNumber? {
-        guard let value = reachabilityStatus?.intValue,
-              let status = RATReachabilityStatus(rawValue: value) else {
+        guard let status = reachabilityStatusType else {
             return nil
         }
 

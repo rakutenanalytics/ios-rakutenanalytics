@@ -280,16 +280,16 @@ private extension RAnalyticsRATTracker {
         telephonyHandler.reachabilityStatus = reachabilityStatus
 
         // MARK: mcn
-        payload["mcn"] = telephonyHandler.mcn
+        payload[PayloadParameterKeys.Telephony.mcn] = telephonyHandler.mcn
 
         // MARK: mcnd
-        payload["mcnd"] = telephonyHandler.mcnd
+        payload[PayloadParameterKeys.Telephony.mcnd] = telephonyHandler.mcnd
 
         // MARK: mnetw
-        payload["mnetw"] = telephonyHandler.mnetw ?? ""
+        payload[PayloadParameterKeys.Telephony.mnetw] = telephonyHandler.mnetw ?? ""
 
         // MARK: mnetwd
-        payload["mnetwd"] = telephonyHandler.mnetwd ?? ""
+        payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
 
         // MARK: mori
         payload["mori"] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
