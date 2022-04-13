@@ -1,5 +1,4 @@
 // swiftlint:disable line_length
-// swiftlint:disable type_body_length
 
 import Quick
 import Nimble
@@ -117,31 +116,9 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
 
                     context("When there is only one carrier") {
-                        context("And the connection becomes offline") {
-                            it("should process an event without mcn and mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
+                        it("should process an event with mcn and no mcnd") {
+                            let expectedMcnValue = "Rakuten Mobile"
 
-                                verifyMcn(with: "")
-                            }
-                        }
-
-                        context("And the connection is WWAN") {
-                            it("should process an event with mcn and no mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
-
-                                verifyMcn(with: "Rakuten Mobile")
-                            }
-                        }
-
-                        context("And the connection is Wifi") {
-                            it("should process an event with mcn and no mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
-
-                                verifyMcn(with: "Rakuten Mobile")
-                            }
-                        }
-
-                        func verifyMcn(with expectedMcnValue: String) {
                             var payload: [String: Any]?
 
                             let primaryCarrier = CarrierMock()
@@ -169,31 +146,12 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
 
                     context("when there are two carriers") {
-                        context("And the connection becomes offline") {
-                            it("should process an event without mcn and mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
+                        it("should process an event with mcn and mcnd") {
+                            ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
 
-                                verifyMcnAndMcnd(with: "", expectedMcndValue: "")
-                            }
-                        }
+                            let expectedMcnValue = "Rakuten Mobile"
+                            let expectedMcndValue = "Ubigi"
 
-                        context("And the connection is WWAN") {
-                            it("should process an event with mcn and mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
-
-                                verifyMcnAndMcnd(with: "Rakuten Mobile", expectedMcndValue: "Ubigi")
-                            }
-                        }
-
-                        context("And the connection is Wifi") {
-                            it("should process an event with mcn and mcnd") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
-
-                                verifyMcnAndMcnd(with: "Rakuten Mobile", expectedMcndValue: "Ubigi")
-                            }
-                        }
-
-                        func verifyMcnAndMcnd(with expectedMcnValue: String, expectedMcndValue: String) {
                             var payload: [String: Any]?
 
                             let primaryCarrier = CarrierMock()

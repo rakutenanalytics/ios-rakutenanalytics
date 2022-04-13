@@ -89,12 +89,8 @@ extension TelephonyHandler {
 // MARK: - mcn and mcnd
 
 extension TelephonyHandler {
-    /// - Returns: The name of the primary carrier.
+    /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
     var mcn: String {
-        guard reachabilityStatusType != .offline else {
-            return ""
-        }
-
         guard let carrierKey = selectedCarrierKey,
               let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
               !radioName.isEmpty,
@@ -104,12 +100,8 @@ extension TelephonyHandler {
         return carrier.displayedCarrierName ?? ""
     }
 
-    /// - Returns: The name of the secondary carrier.
+    /// - Returns: The name of the secondary carrier or empty string if the secondary carrier is not registered (airplane mode or no secondary sim).
     var mcnd: String {
-        guard reachabilityStatusType != .offline else {
-            return ""
-        }
-
         // Note: Only one eSIM can be enabled on iOS.
         // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
         let otherKey = telephonyNetworkInfo.subscribers?.filter {
