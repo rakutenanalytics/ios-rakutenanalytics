@@ -42,6 +42,14 @@ Swift >= 5.4 is supported.
 
 Note: The SDK may build on earlier Xcode versions but it is not officially supported or tested.
 
+### Building app for App Store
+
+Xcode 13 introduced an option (**enabled** by default) to automatically manage app version numbering. Exporting your app with this option enabled breaks the Analytics SDK’s framework version tracking feature. 
+
+When exporting for the App Store please disable the option “Manage Version and Build Number” in the Xcode UI. See this [Discourse post](https://discourse.tech.rakuten-it.com/t/xcode-13-versioning-change-for-export-breaks-our-sdk-adoption-tracking/5610) for full details, including how to disable the option when using xcodebuild or fastlane.
+
+If you prefer to keep this option enabled, be aware that the SDK will not be able to track the versions of your embedded SDKs/frameworks. Also, please notify us by raising an [inquiry](https://confluence.rakuten-it.com/confluence/x/Aw_JqQ) so we can monitor how many apps are using this Xcode option to manage build version automatically.
+
 ## Installing
 
 ## Cocoapods
@@ -100,10 +108,10 @@ xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuilti
 ##### Plist Configuration
 
 
-| Key    | Value (Number type)     |
+| Key    | Value     |
 |  -------- | -------- |
-| `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID` |
-| `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID` |
+| `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID` (Number type) |
+| `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID` (Number type) |
 
 
 ## Using Kibana to verify successful integration
