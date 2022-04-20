@@ -55,7 +55,7 @@ final class SwiftUITrackingSpec: QuickSpec {
 
                     try view.inspect().view(RView.self).callOnAppear()
 
-                    expect(taskIsCompleted).toAfterTimeout(beTrue(), timeout: 1.0)
+                    expect(taskIsCompleted).toAfterTimeout(beTrue(), timeout: 5.0)
                     expect(sessionMock.sentRequest).toEventuallyNot(beNil())
 
                     let ratPayload = sessionMock.sentRequest?.httpBody?.ratPayload
