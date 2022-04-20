@@ -15,7 +15,7 @@ let package = Package(
                       .upToNextMajor(from: "2.1.0")
              ),
 
-             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
+             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
 
              .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
 
