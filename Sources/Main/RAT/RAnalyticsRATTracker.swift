@@ -2,6 +2,11 @@ import Foundation
 import CoreTelephony
 import CoreLocation
 import UIKit
+#if canImport(RSDKUtils)
+import RSDKUtils
+#else // SPM version
+import RSDKUtilsMain
+#endif
 
 // swiftlint:disable type_name
 public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool
