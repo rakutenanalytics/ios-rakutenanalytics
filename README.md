@@ -257,7 +257,63 @@ struct ContentView: View {
 
 # ID-SDK and OMNI Compatibility
 
-If you have integrated [ID-SDK](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/) into your app and you use OMNI for login, you should use our [RAnalytics IDToken Addon library](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) to track the user's member identifier (normally Easy ID) and login state to RAT. See the library's [repository](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) for integration and usage details.
+The IDSDK member identifier need to be set or unset manually in order to track login and logout events with the correct member identifier.
+In most cases, the value you set as member identifier should be the member's easy identifier. The easy identifier can be extracted from the IDSDK ID token.
+
+## Handle login
+
+When you successfully [acquire an ID-SDK session](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/#session-request) notify the RAnalytics SDK of the user's member identifier (Easy ID) using `setMemberIdentifier`. 
+
+To get the Easy ID from the token you can either use the [idsdk-compatibility library's](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-idsdk-compatibility/browse) `memberIdentifier` extension property on ID SDK `Session` or extract it yourself using `token[StandardClaim.subject]`.
+
+```swift
+client.session(request: sessionRequest,
+               mediationOptions: mediationOptions) { result in
+    if case let .success(session) = result {
+        self.session = session
+        if let easyID: String = session.memberIdentifier {
+            AnalyticsManager.shared().setMemberIdentifier(easyID)
+        }
+    }
+}
+```
+
+Note: By setting the member identifier, `_rem_login` is automatically tracked.
+
+## Handle login failure
+
+If user login fails, notify the RAnalytics SDK using `setMemberError` as follows:
+
+```swift
+client.session(request: sessionRequest,
+               mediationOptions: mediationOptions) { result in
+    switch result {
+    case .success(let session):
+        // handle success
+    case .failure(let error):
+        // handle failure
+        AnalyticsManager.shared().setMemberError(error)
+    }
+```
+
+Note: By setting a member error, `_rem_login_failure` is automatically tracked.
+
+## Handle logout
+
+When a user logs out, notify the RAnalytics SDK using `removeMemberIdentifier` as follows:
+
+```swift
+session.logout() { result in
+    if case .success = result {
+        // Successfully logged out.
+        AnalyticsManager.shared().removeMemberIdentifier()
+    } else if case let .failure(error) = result {
+        // Failed.
+    }
+}
+```
+
+Note: By removing the member identifier, `_rem_logout` is automatically tracked.
 
 ## Verifying successful integration
 
@@ -294,6 +350,18 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 ```
 
 # Knowledge Base
+
+## 9.4.0
+
+### IDSDK Login/Logout Tracking
+
+From 9.4.0, the [ios-analytics-idtoken](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) API has been moved to the `AnalyticsManager` class.
+
+Therefore:
+- Remove the `ios-analytics-idtoken` dependency from your Podfile or from your Swift Package Manager
+- Start using the new `AnalyticsManager`'s Member API instead
+
+Refer to [ID-SDK and OMNI compatibility](#id-sdk-and-omni-compatibility) section for more information.
 
 ## Migrating from previous versions to v9
 

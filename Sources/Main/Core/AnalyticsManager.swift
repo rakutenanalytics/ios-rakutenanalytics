@@ -173,6 +173,10 @@ protocol AnalyticsManageable: AnyObject {
 
     let launchCollector: RAnalyticsLaunchCollector
 
+    var easyIdentifier: String? {
+        externalCollector.easyIdentifier
+    }
+
     init(dependenciesContainer: SimpleDependenciesContainable) {
         externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
         launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
@@ -503,5 +507,36 @@ extension AnalyticsManager {
                     tracker.endpointURL = endpointURL
                 }
             }
+    }
+}
+
+// MARK: - Member Identifier
+
+extension AnalyticsManager {
+    /// Set the member identifier
+    ///
+    /// - Parameter memberIdentifier: The logged-in ID SDK member's tracking identfier - normally the Easy ID.
+    ///
+    /// - Note: memberIdentifier can be obtained by calling `idToken[StandardClaims.subject]` from `IDSDK`.
+    ///
+    /// - Note: By setting the member identifier, `_rem_login` is automatically tracked.
+    public func setMemberIdentifier(_ memberIdentifier: String) {
+        externalCollector.trackLogin(.easyIdentifier(memberIdentifier))
+    }
+
+    /// Raise a member identifier login failure error
+    ///
+    /// - Parameter error: the login failure Error
+    ///
+    /// - Note: By setting a member error, `_rem_login_failure` is automatically tracked.
+    public func setMemberError(_ error: Error) {
+        externalCollector.trackLoginFailure(.easyIdentifier(error: error))
+    }
+
+    /// Remove the member identifier
+    ///
+    /// - Note: By removing the member identifier, `_rem_logout` is automatically tracked.
+    public func removeMemberIdentifier() {
+        externalCollector.trackLogout()
     }
 }

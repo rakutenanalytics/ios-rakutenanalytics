@@ -1,3 +1,6 @@
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
+
 import Quick
 import Nimble
 import UIKit
@@ -18,14 +21,26 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsExternalCollector") {
             var dependenciesContainer: SimpleContainerMock!
+            let raeErrorParams = ["rae_error": "login failure",
+                                  "rae_error_message": "login fails",
+                                  "type": "login.failure"]
+            let idsdkError = NSError(domain: "com.analytics.error",
+                                     code: 0,
+                                     userInfo: [NSLocalizedDescriptionKey: "login failure", NSLocalizedFailureReasonErrorKey: "login fails"])
+            var tracker: AnalyticsTrackerMock?
+
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
                 dependenciesContainer.userStorageHandler = UserDefaultsMock([:])
                 dependenciesContainer.tracker = AnalyticsTrackerMock()
-            }
-            beforeEach {
                 (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
+                tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
             }
+
+            afterEach {
+                tracker?.reset()
+            }
+
             describe("init") {
                 it("should have the correct default values") {
                     let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
@@ -77,10 +92,163 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     expect(value).to(beNil())
                 }
             }
+
+            describe("trackLogin()") {
+                context("RAE Login succeeds") {
+                    it("should set trackingIdentifier to userIdentifier") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.userIdentifier("userIdentifier"))
+
+                        expect(externalCollector.trackingIdentifier).to(equal("userIdentifier"))
+                    }
+
+                    it("should set isLoggedIn to true") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.userIdentifier("userIdentifier"))
+
+                        expect(externalCollector.isLoggedIn).to(beTrue())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.login with no parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.userIdentifier("userIdentifier"))
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker?.params).to(beNil())
+                    }
+                }
+
+                context("IDSDK Login succeeds") {
+                    it("should set easyIdentifier to idsdkIdentifier") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
+
+                        expect(externalCollector.easyIdentifier).to(equal("idsdkIdentifier"))
+                    }
+
+                    it("should set isLoggedIn to true") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
+
+                        expect(externalCollector.isLoggedIn).to(beTrue())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.login with no parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker?.params).to(beNil())
+                    }
+                }
+            }
+
+            describe("trackLoginFailure()") {
+                context("RAE Login fails") {
+                    it("should set trackingIdentifier to nil") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
+
+                        expect(externalCollector.trackingIdentifier).to(beNil())
+                    }
+
+                    it("should set isLoggedIn to false") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
+
+                        expect(externalCollector.isLoggedIn).to(beFalse())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
+                        expect(tracker?.params?["rae_error"] as? String).to(equal(raeErrorParams["rae_error"]))
+                        expect(tracker?.params?["rae_error_message"] as? String).to(equal(raeErrorParams["rae_error_message"]))
+                        expect(tracker?.params?["type"] as? String).to(equal(raeErrorParams["type"]))
+                    }
+                }
+
+                context("IDSDK Login fails") {
+                    it("should set easyIdentifier to nil") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
+
+                        expect(externalCollector.easyIdentifier).to(beNil())
+                    }
+
+                    it("should set isLoggedIn to false") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
+
+                        expect(externalCollector.isLoggedIn).to(beFalse())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
+                        expect(tracker?.params?["idsdk_error"] as? String).to(equal(idsdkError.localizedDescription))
+                        expect(tracker?.params?["idsdk_error_message"] as? String).to(equal(idsdkError.localizedFailureReason))
+                    }
+                }
+            }
+
+            describe("trackLogout()") {
+                context("RAE Logout") {
+                    it("should set trackingIdentifier to nil") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(externalCollector.trackingIdentifier).to(beNil())
+                    }
+
+                    it("should set isLoggedIn to false") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(externalCollector.isLoggedIn).to(beFalse())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.logout with no parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
+                        expect(tracker?.params as? [String: AnyHashable]).to(equal([:]))
+                    }
+                }
+
+                context("IDSDK Logout") {
+                    it("should set easyIdentifier to nil") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(externalCollector.easyIdentifier).to(beNil())
+                    }
+
+                    it("should set isLoggedIn to false") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(externalCollector.isLoggedIn).to(beFalse())
+                    }
+
+                    it("should track AnalyticsManager.Event.Name.logout with no parameters") {
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                        externalCollector.trackLogout()
+
+                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
+                        expect(tracker?.params as? [String: AnyHashable]).to(equal([:]))
+                    }
+                }
+            }
+
             describe("receiveLoginNotification") {
                 context("login methods are password and one_tap") {
                     it("should track AnalyticsManager.Event.Name.login when a login notification is received with a trackingIdentifier") {
-                        let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                         let trackingIdentifier = "trackingIdentifier"
                         let loginMethods = ["password", "one_tap"]
 
@@ -114,7 +282,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                 }
                 context("login method is other") {
                     it("should track AnalyticsManager.Event.Name.login when a login notification is received") {
-                        let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                         let trackingIdentifier = "trackingIdentifier"
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.other")
@@ -142,7 +309,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     }
 
                     it("should track AnalyticsManager.Event.Name.login when an IDSDK login notification is received") {
-                        let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                         let easyIdentifier = "easyIdentifier"
                         let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.idtoken_memberid")
@@ -172,13 +338,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveLoginFailureNotification") {
                 it("should track AnalyticsManager.Event.Name.loginFailure when a login failure notification is received") {
-                    let params = ["rae_error": "login failure",
-                                  "rae_error_message": "login fails",
-                                  "type": "login.failure"]
-                    let idsdkError = NSError(domain: "com.analytics.error",
-                                             code: 0,
-                                             userInfo: [NSLocalizedDescriptionKey: "login failure", NSLocalizedFailureReasonErrorKey: "login fails"])
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     let notificationNames = ["\(self.notificationBaseName).login.failure",
                                              "\(self.notificationBaseName).login.failure.idtoken_memberid"]
@@ -190,7 +349,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         switch notificationName {
                         case "\(self.notificationBaseName).login.failure":
-                            NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: params)
+                            NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: raeErrorParams)
 
                         case "\(self.notificationBaseName).login.failure.idtoken_memberid":
                             NotificationCenter.default.post(name: Notification.Name(rawValue: notificationName), object: idsdkError)
@@ -204,9 +363,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         switch notificationName {
                         case "\(self.notificationBaseName).login.failure":
-                            expect(tracker?.params?["rae_error"] as? String).toEventually(equal(params["rae_error"]))
-                            expect(tracker?.params?["rae_error_message"] as? String).toEventually(equal(params["rae_error_message"]))
-                            expect(tracker?.params?["type"] as? String).toEventually(equal(params["type"]))
+                            expect(tracker?.params?["rae_error"] as? String).toEventually(equal(raeErrorParams["rae_error"]))
+                            expect(tracker?.params?["rae_error_message"] as? String).toEventually(equal(raeErrorParams["rae_error_message"]))
+                            expect(tracker?.params?["type"] as? String).toEventually(equal(raeErrorParams["type"]))
 
                         case "\(self.notificationBaseName).login.failure.idtoken_memberid":
                             expect(tracker?.params?["idsdk_error"] as? String).toEventually(equal(idsdkError.localizedDescription))
@@ -222,7 +381,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveLogoutNotification") {
                 it("should track AnalyticsManager.Event.Name.logout when a logout notification is received") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let trackingIdentifier = "trackingIdentifier"
                     let logoutMethods = ["local", "global", "idtoken_memberid"]
 
@@ -263,7 +421,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveDiscoverNotification") {
                 it("should track a discover event when a discover notification is received") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let mapping = ["visitPreview": NSNotification.discoverPreviewVisit,
                                    "tapShowMore": NSNotification.discoverPreviewShowMore,
                                    "visitPage": NSNotification.discoverPageVisit]
@@ -285,7 +442,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     }
                 }
                 it("should track a discover event with the correct identifier when a discover notification is received with an identifier") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let identifier = "12345"
                     let mapping = ["tapPreview": NSNotification.discoverPreviewTap,
                                    "tapPage": NSNotification.discoverPageTap]
@@ -307,7 +463,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     }
                 }
                 it("should track a discover event with correct parameters when a discover notification is received with an identifier and url") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let identifier = "12345"
                     let urlString = "http://www.rakuten.co.jp"
                     let mapping = ["redirectPreview": NSNotification.discoverPreviewRedirect,
@@ -333,7 +488,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveSSODialogNotification") {
                 it("should track AnalyticsManager.Event.Name.pageVisit when a ssodialog notification is received") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let uiViewControllerType = UIViewController.self
                     let ssodialogParams = ["help", "privacypolicy", "forgotpassword", "register"]
 
@@ -356,7 +510,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveCredentialsNotification") {
                 it("should track a credential event when a credential notification is received") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let mapping = ["ssocredentialfound": AnalyticsManager.Event.Name.SSOCredentialFound,
                                    "logincredentialfound": AnalyticsManager.Event.Name.loginCredentialFound]
 
@@ -379,7 +532,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveCustomEventNotification") {
                 it("should track AnalyticsManager.Event.Name.custom when a custom notification is received") {
-                    let tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                     let params: [String: Any] = ["eventName": "blah",
                                                  "eventData": ["foo": "bar"]]
                     let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)

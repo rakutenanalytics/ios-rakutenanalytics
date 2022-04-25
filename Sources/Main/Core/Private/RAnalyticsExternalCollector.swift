@@ -211,45 +211,35 @@ private extension RAnalyticsExternalCollector {
     }
 }
 
-// MARK: - Handle notifications
+// MARK: - Tracking
 
-@objc private extension RAnalyticsExternalCollector {
-    func receiveLoginNotification(_ notification: NSNotification) {
+extension RAnalyticsExternalCollector {
+    func trackLogin(_ loginType: LoginType, usedLoginMethod: String = "") {
         update()
 
-        if let anIdentifier = notification.object as? String {
-            // IDSDK Login
-            if notification.name.rawValue.hasSuffix(Constants.idTokenEvent) {
-                self.easyIdentifier = anIdentifier
-                self.trackingIdentifier = nil
+        switch loginType {
+        case .userIdentifier(let anIdentifier): // RAE Login
+            self.trackingIdentifier = anIdentifier
+            self.easyIdentifier = nil
 
-                // RAE Login
-            } else {
-                self.trackingIdentifier = anIdentifier
-                self.easyIdentifier = nil
-            }
+        case .easyIdentifier(let anIdentifier): // IDSDK Login
+            self.easyIdentifier = anIdentifier
+            self.trackingIdentifier = nil
+
+        case .unknown: ()
         }
 
         isLoggedIn = true
 
         // For login we want to provide the logged-in state with each event, and each event tracker can know how the user logged in, so the loginMethod should be persisted.
 
-        let base = "\(Constants.notificationBaseName).login."
-        switch notification.name.rawValue {
-        case "\(base)password": loginMethod = .passwordInput
-        case "\(base)one_tap": loginMethod = .oneTapLogin
-        default: loginMethod = .other
-        }
+        loginMethod = RAnalyticsLoginMethod.type(from: usedLoginMethod)
 
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.login, parameters: nil)
     }
 
-    func receiveLoginFailureNotification(_ notification: NSNotification) {
+    func trackLoginFailure(_ failureType: LoginFailureType) {
         update()
-
-        guard notification.name.rawValue.hasPrefix("\(Constants.notificationBaseName).login.failure") else {
-            return
-        }
 
         isLoggedIn = false
         trackingIdentifier = nil
@@ -257,29 +247,25 @@ private extension RAnalyticsExternalCollector {
 
         var parameters = [String: Any]()
 
-        switch notification.name.rawValue {
-        case "\(Constants.notificationBaseName).login.failure":
-            if let params = notification.object as? [String: Any] {
-                parameters[LoginFailureKey.raeError] = params[LoginFailureKey.raeError]
-                parameters[LoginFailureKey.type] = params[LoginFailureKey.type]
-                if let raeErrorMessage = params[LoginFailureKey.raeErrorMessage] {
-                    parameters[LoginFailureKey.raeErrorMessage] = raeErrorMessage
-                }
+        switch failureType {
+        case .userIdentifier(let errorParams):
+            parameters[LoginFailureKey.raeError] = errorParams[LoginFailureKey.raeError]
+            parameters[LoginFailureKey.type] = errorParams[LoginFailureKey.type]
+            if let raeErrorMessage = errorParams[LoginFailureKey.raeErrorMessage] {
+                parameters[LoginFailureKey.raeErrorMessage] = raeErrorMessage
             }
 
-        case "\(Constants.notificationBaseName).login.failure.\(Constants.idTokenEvent)":
-            if let error = notification.object as? Error {
-                parameters[LoginFailureKey.idsdkError] = error.localizedDescription
-                parameters[LoginFailureKey.idsdkErrorMessage] = (error as NSError).localizedFailureReason
-            }
+        case .easyIdentifier(let error):
+            parameters[LoginFailureKey.idsdkError] = error.localizedDescription
+            parameters[LoginFailureKey.idsdkErrorMessage] = (error as NSError).localizedFailureReason
 
-        default: ()
+        case .unknown: ()
         }
 
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.loginFailure, parameters: parameters.isEmpty ? nil : parameters)
     }
 
-    func receiveLogoutNotification(_ notification: NSNotification) {
+    func trackLogout(_ logoutMethod: String = "") {
         update()
 
         isLoggedIn = false
@@ -288,7 +274,7 @@ private extension RAnalyticsExternalCollector {
 
         var parameters = [String: Any]()
 
-        switch notification.name.rawValue {
+        switch logoutMethod {
         case "\(Constants.notificationBaseName).logout.local":
             parameters[AnalyticsManager.Event.Parameter.logoutMethod] = AnalyticsManager.Event.LogoutMethod.local
 
@@ -299,6 +285,23 @@ private extension RAnalyticsExternalCollector {
         }
 
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.logout, parameters: parameters)
+    }
+}
+
+// MARK: - Handle notifications
+
+@objc private extension RAnalyticsExternalCollector {
+    func receiveLoginNotification(_ notification: NSNotification) {
+        trackLogin(LoginType.type(from: notification.name.rawValue, with: notification.object as? String),
+                   usedLoginMethod: notification.name.rawValue)
+    }
+
+    func receiveLoginFailureNotification(_ notification: NSNotification) {
+        trackLoginFailure(LoginFailureType.type(from: notification.name.rawValue, with: notification.object))
+    }
+
+    func receiveLogoutNotification(_ notification: NSNotification) {
+        trackLogout(notification.name.rawValue)
     }
 
     func receiveDiscoverNotification(_ notification: NSNotification) {

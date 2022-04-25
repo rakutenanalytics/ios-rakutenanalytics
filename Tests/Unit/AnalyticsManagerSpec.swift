@@ -1,3 +1,6 @@
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
+
 import Quick
 import Nimble
 import AdSupport
@@ -462,6 +465,33 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                     NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil, userInfo: nil)
                     expect((dependenciesContainer.locationManager as? LocationManagerMock)?.startUpdatingLocationIsCalled).toEventually(beTrue())
+                }
+            }
+
+            describe("setMemberIdentifier()") {
+                it("should set easyIdentifier to idsdkIdentifier") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    analyticsManager.setMemberIdentifier("idsdkIdentifier")
+
+                    expect(analyticsManager.easyIdentifier).to(equal("idsdkIdentifier"))
+                }
+            }
+
+            describe("removeMemberIdentifier()") {
+                it("should set easyIdentifier to nil") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    analyticsManager.removeMemberIdentifier()
+
+                    expect(analyticsManager.easyIdentifier).to(beNil())
+                }
+            }
+
+            describe("setMemberError()") {
+                it("should set easyIdentifier to nil") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    analyticsManager.setMemberError(ErrorConstants.unknownError)
+
+                    expect(analyticsManager.easyIdentifier).to(beNil())
                 }
             }
         }
