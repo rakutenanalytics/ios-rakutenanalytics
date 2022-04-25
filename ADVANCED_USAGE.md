@@ -513,15 +513,15 @@ https://developer.apple.com/documentation/uikit/uiapplication/1622971-didfinishl
 
 When UIApplication.didFinishLaunchingNotification is received, these events are sent under certain conditions:
 
-- _rem_init_launch is sent when the app is installed for the first time
+- `_rem_init_launch` is sent when the app is installed for the first time
 
-- _rem_install is sent when the app is launched for the second time
+- `_rem_install` is sent when the app is launched for the second time
 
-- _rem_install and _rem_update are sent when the app has been updated to a new version
+- `_rem_install` and `_rem_update` are sent when the app has been updated to a new version
 
-- _rem_launch is sent in any cases
+- `_rem_launch` is sent in any cases
 
-- _rem_credential_strategies is sent in any cases with this boolean parameter:
+- `_rem_credential_strategies` is sent in any cases with this boolean parameter:
     - key: strategies.password-manager
     - value: true or false
 
@@ -530,14 +530,14 @@ When UIApplication.didFinishLaunchingNotification is received, these events are 
 A notification that posts shortly before an app leaves the background state on its way to becoming the active app.
 https://developer.apple.com/documentation/uikit/uiapplication/1622944-willenterforegroundnotification
 
-- _rem_launch is sent in any cases
+- `_rem_launch` is sent in any cases
 
 #### UIApplication.didBecomeActiveNotification
 
 A notification that posts when the app becomes active.
 https://developer.apple.com/documentation/uikit/uiapplication/1622953-didbecomeactivenotification
 
-- _rem_push_notify is sent only if:
+- `_rem_push_notify` is sent only if:
     - the app was previously opened from a push notification
     - UNUserNotificationCenter.current().delegate is set
 
@@ -546,7 +546,7 @@ https://developer.apple.com/documentation/uikit/uiapplication/1622953-didbecomea
 A notification that posts when the app enters the background.
 https://developer.apple.com/documentation/uikit/uiapplication/1623071-didenterbackgroundnotification
 
-- _rem_end_session is sent in any cases
+- `_rem_end_session` is sent in any cases
 
 ### viewDidAppear
 
@@ -557,12 +557,12 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 
 ### APNS Remote Notifications
 
-- _rem_push_received is sent when:
+- `_rem_push_received` is sent when:
     - a push notification is received and intercepted by the Notification Service Extension
     - this Notification Service Extension's method is called:
         - didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void)
 
-- _rem_push_notify is sent when:
+- `_rem_push_notify` is sent when:
     - the application is opened from a push notification
     - one of these AppDelegate's methods is called:
         - application:didReceiveRemoteNotification:
@@ -573,28 +573,28 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 
 #### RAE SDK notifications
 
-- _rem_login is sent when:
+- `_rem_login` is sent when:
     - RAE login succeeds
     - one of these NSNotifications is received:
         - com.rakuten.esd.sdk.events.login.password
         - com.rakuten.esd.sdk.events.login.one_tap
         - com.rakuten.esd.sdk.events.login.other
 
-- _rem_login_failure is sent when:
+- `_rem_login_failure` is sent when:
     - RAE login fails
     - this NSNotification is received: com.rakuten.esd.sdk.events.login.failure
 
-- _rem_logout is sent when:
+- `_rem_logout` is sent when:
     - RAE logout succeeds
     - one of these NSNotifications is received:
         - com.rakuten.esd.sdk.events.logout.local
         - com.rakuten.esd.sdk.events.logout.global
 
-- _rem_sso_credential_found is sent when:
+- `_rem_sso_credential_found` is sent when:
     - the RAE login webview page is loaded
     - this NSNotification is received: is com.rakuten.esd.sdk.events.ssocredentialfound
 
-- _rem_login_credential_found is sent when:
+- `_rem_login_credential_found` is sent when:
     - password extension button is tapped
     - this NSNotification is received: is com.rakuten.esd.sdk.events.logincredentialfound
 
@@ -604,34 +604,34 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 
 #### IDSDK notifications
 
-- _rem_login is sent when:
+- `_rem_login` is sent when:
     - IDSDK login succeeds
     - this NSNotification is received: com.rakuten.esd.sdk.events.login.idtoken_memberid
 
-- _rem_login_failure is sent when:
+- `_rem_login_failure` is sent when:
     - IDSDK login fails
     - this NSNotification is received: com.rakuten.esd.sdk.events.login.failure.idtoken_memberid
 
-- _rem_logout is sent when:
+- `_rem_logout` is sent when:
     - IDSDK logout succeeds
     - this NSNotification is received: com.rakuten.esd.sdk.events.logout.idtoken_memberid
 
 ### RDiscover SDK notifications
 
-- _rem_discover_discoverpage_visit is sent when:
+- `_rem_discover_discoverpage_visit` is sent when:
     - willMoveToWindow: is called in the Discover view (https://developer.apple.com/documentation/uikit/uiview/1622563-willmovetowindow)
     - this notification is received: com.rakuten.esd.sdk.events.discover.visitPage
 
-- _rem_discover_discoverpage_tap is sent in any cases when:
+- `_rem_discover_discoverpage_tap` is sent in any cases when:
     - collectionView:didSelectItemAtIndexPath: is called in the Discover view (https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/1618032-collectionview?language=objc)
     - this NSNotification is received: com.rakuten.esd.sdk.events.discover.tapPage
     
-- _rem_discover_discoverpage_redirect is sent when:
+- `_rem_discover_discoverpage_redirect` is sent when:
     - collectionView:didSelectItemAtIndexPath: is called in the Discover view (https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/1618032-collectionview?language=objc)
     - the landing page is opened
     - this NSNotification is received: com.rakuten.esd.sdk.events.discover.redirectPage
 
 #### Custom notification
 
-- _analytics_custom is sent when:
+- `_analytics_custom` is sent when:
     - this NSNotification is received: com.rakuten.esd.sdk.events.custom
