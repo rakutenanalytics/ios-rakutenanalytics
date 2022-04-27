@@ -115,7 +115,6 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
     /// Private
 
     private var logoutMethod: String?
-    private var cardInfoEventMapping: NSDictionary?
     private let discoverEventMapping: [String: Notification.Name] = {
         ["visitPreview": .discoverPreviewVisit,
          "tapPreview": .discoverPreviewTap,
@@ -332,21 +331,6 @@ extension RAnalyticsExternalCollector {
             tracker?.trackEvent(name: eventName, parameters: parameters.isEmpty ? nil : parameters)
         }
     }
-
-    // Note: TO BE REMOVED?
-    func receiveCardInfoNotification(_ notification: NSNotification) {
-        let eventPrefix = "\(Constants.notificationBaseName).cardinfo."
-        let eventPrefixCount = eventPrefix.count
-        guard eventPrefixCount < notification.name.rawValue.count else {
-            return
-        }
-
-        let key = notification.name.rawValue[eventPrefixCount..<notification.name.rawValue.count]
-        if let eventName = cardInfoEventMapping?[key] as? String {
-            tracker?.trackEvent(name: eventName, parameters: nil)
-        }
-    }
-
     func receiveSSODialogNotification(_ notification: NSNotification) {
         var pageIdentifier: String?
         if let aPageIdentifier = notification.object as? String {
