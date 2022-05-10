@@ -257,14 +257,14 @@ struct ContentView: View {
 
 # ID-SDK and OMNI Compatibility
 
-The IDSDK member identifier need to be set or unset manually in order to track login and logout events with the correct member identifier.
+The IDSDK member identifier needs to be set and unset manually in order to track login and logout events with the correct member identifier.
 In most cases, the value you set as member identifier should be the member's easy identifier. The easy identifier can be extracted from the IDSDK ID token.
 
 ## Handle login
 
-When you successfully [acquire an ID-SDK session](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/#session-request) notify the RAnalytics SDK of the user's member identifier (Easy ID) using `setMemberIdentifier`. 
+When you successfully [acquire an ID-SDK session](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/#session-request) you should notify the RAnalytics SDK of the user's member identifier (Easy ID) using `setMemberIdentifier`. 
 
-To get the Easy ID from the token you can either use the [idsdk-compatibility library's](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-idsdk-compatibility/browse) `memberIdentifier` extension property on ID SDK `Session` or extract it yourself using `token[StandardClaim.subject]`.
+To get the Easy ID from the token use the [idsdk-compatibility library's](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-idsdk-compatibility/browse) `memberIdentifier` extension property on the IDSDK `Session`, or extract it using `token[StandardClaim.subject]`.
 
 ```swift
 client.session(request: sessionRequest,
@@ -351,14 +351,14 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 # Knowledge Base
 
-## 9.4.0
+## Migrating to v9.4.0
 
 ### IDSDK Login/Logout Tracking
 
-From 9.4.0, the [ios-analytics-idtoken](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) API has been moved to the `AnalyticsManager` class.
+From v9.4.0 of the SDK the member tracking functionality from [ios-analytics-idtoken](https://gitpub.rakuten-it.com/projects/ECO/repos/ios-analytics-idtoken/browse) has been added to the `AnalyticsManager` class.
 
 Therefore:
-- Remove the `ios-analytics-idtoken` dependency from your Podfile or from your Swift Package Manager
+- Remove the `ios-analytics-idtoken` dependency from your Podfile or from your Swift Package Manager configuration
 - Start using the new `AnalyticsManager`'s Member API instead
 
 Refer to [ID-SDK and OMNI compatibility](#id-sdk-and-omni-compatibility) section for more information.

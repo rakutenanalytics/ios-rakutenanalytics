@@ -1,5 +1,19 @@
 # Changelog
 
+## 9.4.0 (2022-05-10)
+
+### Features
+* [SDKCF-4817](https://jira.rakuten-it.com/jira/browse/SDKCF-4817): Added public APIs to set/unset the ID SDK member identifier. Apps are no longer required to use the analytics-idtoken add-on library.
+* [SDKCF-5250](https://jira.rakuten-it.com/jira/browse/SDKCF-5250): Added ability to override the RAT account number in custom events.
+
+### Bug fixes
+* [SDKCF-4252](https://jira.rakuten-it.com/jira/browse/SDKCF-4252): Fixed issue with `ra_uid` still being shown after disabling app to web tracking.
+* [SDKCF-3951](https://jira.rakuten-it.com/jira/browse/SDKCF-3951): Debug logging of event payloads are now split to fix a truncation issue.
+
+### Improvements
+* [SDKCF-4884](https://jira.rakuten-it.com/jira/browse/SDKCF-4884): Added recommendation on how to keep the automatic version tracking feature of the SDK working properly in Xcode 13. See the [README guide](index.html#knowledge-base) for more details.
+* [SDKCF-5109](https://jira.rakuten-it.com/jira/browse/SDKCF-5109): mcn/mcnd values are now set as empty when airplane mode is active.
+
 ## 9.3.0 (2022-03-25)
 
 ### Features
