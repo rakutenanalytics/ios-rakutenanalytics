@@ -52,7 +52,7 @@ If you prefer to keep this option enabled, be aware that the SDK will not be abl
 
 ## Installing
 
-## Cocoapods
+### Cocoapods
 
 To use the module in its default configuration your `Podfile` should contain:
 
@@ -78,7 +78,7 @@ source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
 pod 'RAnalytics/Core'
 ```
 
-## Swift Package Manager
+### Swift Package Manager
 
 Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
 * Repository URL: `ssh://git@gitpub.rakuten-it.com:7999/eco/core-ios-analytics.git`
@@ -94,6 +94,18 @@ If you can't checkout the RAnalytics Swift Package in Xcode, please execute thes
 ```
 /usr/libexec/Plistbuddy -c "Add :IDEPackageSupportUseBuiltinSCM bool 1" ~/Library/Preferences/com.apple.dt.Xcode.plist
 xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuiltinSCM
+```
+
+## Importing the module to use it in your app
+
+### Swift
+```
+import RAnalytics
+```
+
+### Objective-C
+```
+@import RAnalytics;
 ```
 
 ## RAT credentials
