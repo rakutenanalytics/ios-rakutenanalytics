@@ -30,10 +30,6 @@ protocol AnalyticsManageable: AnyObject {
 
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
-    private enum Constants {
-        static let defaultDeviceIdentifier = "NO_DEVICE_ID_FOUND"
-    }
-
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
@@ -170,6 +166,7 @@ protocol AnalyticsManageable: AnyObject {
     private let externalCollector: RAnalyticsExternalCollector
     private let eventChecker: EventChecker
     private let eventObserver: AnalyticsEventObserver
+    private let deviceIdentifierHandler: DeviceIdentifierHandler
 
     let launchCollector: RAnalyticsLaunchCollector
 
@@ -200,6 +197,8 @@ protocol AnalyticsManageable: AnyObject {
         trackersLockableObject = LockableObject(trackers)
 
         authorizationStatusLockableObject = LockableObject(type(of: locationManager).authorizationStatus())
+
+        deviceIdentifierHandler = DeviceIdentifierHandler(device: dependenciesContainer.deviceCapability)
 
         super.init()
 
@@ -266,7 +265,7 @@ extension AnalyticsManager {
         if enableAppToWebTracking {
             analyticsCookieInjector.injectAppToWebTrackingCookie(
                 domain: cookieDomainBlock?(),
-                deviceIdentifier: UIDevice.current.identifierForVendor?.uuidString ?? Constants.defaultDeviceIdentifier,
+                deviceIdentifier: deviceIdentifierHandler.ckp(),
                 completionHandler: nil)
         } else {
             analyticsCookieInjector.clearCookies { }
@@ -393,9 +392,8 @@ extension AnalyticsManager: AnalyticsManageable {
             return false
         }
 
-        let notOptionalDeviceIdentifier = UIDevice.current.identifierForVendor?.uuidString ?? Constants.defaultDeviceIdentifier
-
-        let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: notOptionalDeviceIdentifier)
+        let state = RAnalyticsState(sessionIdentifier: sessionIdentifier,
+                                    deviceIdentifier: deviceIdentifierHandler.ckp())
 
         if shouldTrackAdvertisingIdentifier, let advertisingIdentifier = advertisingIdentifierHandler.idfa {
             // User has not disabled tracking

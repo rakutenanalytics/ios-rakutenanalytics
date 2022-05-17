@@ -328,6 +328,8 @@ public final class DeviceMock: NSObject, DeviceCapability {
         super.init()
     }
 
+    public var idfvUUID: String?
+
     public var batteryState: UIDevice.BatteryState {
         .unplugged
     }

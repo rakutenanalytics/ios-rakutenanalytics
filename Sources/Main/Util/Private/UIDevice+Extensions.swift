@@ -2,12 +2,17 @@ import Foundation
 import UIKit
 
 protocol DeviceCapability {
+    var idfvUUID: String? { get }
     var batteryState: UIDevice.BatteryState { get }
     var batteryLevel: Float { get }
     func setBatteryMonitoring(_ value: Bool)
 }
 
 extension UIDevice: DeviceCapability {
+    var idfvUUID: String? {
+        identifierForVendor?.uuidString
+    }
+
     /// - Note: Solve a compiler ambiguity on `setBatteryMonitoringEnabled:`.
     func setBatteryMonitoring(_ value: Bool) {
         isBatteryMonitoringEnabled = value
