@@ -49,14 +49,12 @@ final class TelephonyHandler: TelephonyHandleable {
     }
 
     private func configure() {
-        if #available(iOS 13.0, *) {
-            // Do nothing
-
-        } else {
+        guard #available(iOS 13.0, *) else {
             // Listen to changes in radio access technology, to detect LTE.
             _ = notificationCenter.observe(forName: .CTServiceRadioAccessTechnologyDidChange, object: nil, queue: nil) { notification in
                 self.retrievedCarrierKey = notification.object as? String
             }
+            return
         }
     }
 }
