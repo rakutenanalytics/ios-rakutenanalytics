@@ -105,6 +105,7 @@
 		C9E7602927B12FB5006B22F5 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602827B12FB5006B22F5 /* View+Tracking.swift */; };
 		C9EA33FC28325CE900465945 /* Data+Sha1.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33FA28325CE900465945 /* Data+Sha1.swift */; };
 		C9EA33FD28325CE900465945 /* DeviceIdentifierHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */; };
+		C9FE405E2836C975006B9E60 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FE405C2836C974006B9E60 /* LogMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -208,6 +209,7 @@
 		C9E7602827B12FB5006B22F5 /* View+Tracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
 		C9EA33FA28325CE900465945 /* Data+Sha1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Sha1.swift"; sourceTree = "<group>"; };
 		C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandler.swift; sourceTree = "<group>"; };
+		C9FE405C2836C974006B9E60 /* LogMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -345,6 +347,7 @@
 		C9320A87279FF79B009FE6EC /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				C9FE405C2836C974006B9E60 /* LogMessage.swift */,
 				C9EA33FA28325CE900465945 /* Data+Sha1.swift */,
 				C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */,
 				C9320A88279FF79B009FE6EC /* ReferralAppModel+URL.swift */,
@@ -533,6 +536,7 @@
 				C9320B30279FF79B009FE6EC /* RAnalyticsEvent+ExtraParameters.swift in Sources */,
 				C9320AF9279FF79B009FE6EC /* UIViewController+Extensions.swift in Sources */,
 				C9320B24279FF79B009FE6EC /* ErrorRaiser.swift in Sources */,
+				C9FE405E2836C975006B9E60 /* LogMessage.swift in Sources */,
 				C9320B14279FF79B009FE6EC /* UserDefaults+Extensions.swift in Sources */,
 				C9320AF8279FF79B009FE6EC /* EventChecker.swift in Sources */,
 				C9320B22279FF79B009FE6EC /* MainThreadExecutor.swift in Sources */,

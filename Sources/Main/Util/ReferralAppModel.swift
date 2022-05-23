@@ -1,5 +1,11 @@
 import Foundation
 
+#if canImport(RSDKUtils)
+import RSDKUtils
+#else // SPM version
+import RLogger
+#endif
+
 // MARK: - Bundleable
 
 enum RATConstants {
@@ -13,19 +19,66 @@ public protocol Bundleable {
     var applicationIdentifier: Int64 { get }
 }
 
-extension Bundle: Bundleable {
-    public var accountIdentifier: Int64 {
-        guard let plistObj = object(forInfoDictionaryKey: "RATAccountIdentifier") as? NSNumber else {
-            return RATConstants.defaultAccountIdentifier
+private struct IdentifierModel {
+    let key: String
+    let defaultValue: Int64
+    let configWarning: String
+    let typeWarning: String
+}
+
+private enum IdentifierResult {
+    case warning(result: Int64, warning: String)
+    case success(result: Int64)
+
+    func toInt64() -> Int64 {
+        switch self {
+        case .warning(let result, let warning):
+            RLogger.warning(message: warning)
+            return result
+
+        case .success(let result):
+            return result
         }
-        return plistObj.int64Value
+    }
+}
+
+extension Bundle: Bundleable {
+    private func identifier(from model: IdentifierModel) -> IdentifierResult {
+        guard let idNoType = object(forInfoDictionaryKey: model.key) else {
+            return .warning(result: model.defaultValue, warning: model.configWarning)
+        }
+
+        switch idNoType {
+        case let aValue as NSNumber:
+            if CFGetTypeID(aValue) == CFBooleanGetTypeID() {
+                return .warning(result: model.defaultValue, warning: model.typeWarning)
+            }
+            return .success(result: aValue.int64Value)
+
+        case let aValue as String:
+            guard let result = Int64(aValue) else {
+                return .warning(result: model.defaultValue, warning: model.configWarning)
+            }
+            return .warning(result: result, warning: model.typeWarning)
+
+        default:
+            return .warning(result: model.defaultValue, warning: model.typeWarning)
+        }
+    }
+
+    public var accountIdentifier: Int64 {
+        identifier(from: IdentifierModel(key: RATAccount.CodingKeys.accountId.rawValue,
+                                         defaultValue: RATConstants.defaultAccountIdentifier,
+                                         configWarning: LogMessage.accountIdentifierConfigWarning,
+                                         typeWarning: LogMessage.accountIdentifierTypeWarning)).toInt64()
     }
 
     public var applicationIdentifier: Int64 {
-        guard let plistObj = object(forInfoDictionaryKey: "RATAppIdentifier") as? NSNumber else {
-            return RATConstants.defaultApplicationIdentifier
-        }
-        return plistObj.int64Value
+        identifier(from: IdentifierModel(key: RATAccount.CodingKeys.applicationId.rawValue,
+                                         defaultValue: RATConstants.defaultApplicationIdentifier,
+                                         configWarning: LogMessage.applicationIdentifierConfigWarning,
+                                         typeWarning: LogMessage.applicationIdentifierTypeWarning)).toInt64()
+
     }
 }
 

@@ -14,6 +14,10 @@ private final class EnvironmentBundleMock: Bundle {
     override var infoDictionary: [String: Any]? {
         injectedDictionary
     }
+
+    override func object(forInfoDictionaryKey key: String) -> Any? {
+        injectedDictionary?[key]
+    }
 }
 
 // MARK: - EnvironmentBundleSpec
@@ -23,6 +27,164 @@ final class EnvironmentBundleSpec: QuickSpec {
     override func spec() {
         describe("EnvironmentBundle") {
             let bundleMock = EnvironmentBundleMock()
+
+            describe("accountIdentifier") {
+                context("When the account identifier is not configured") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = nil
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Number and set to 12345 in the Bundle") {
+                    it("should return 12345") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: NSNumber(value: 12345)]
+                        expect(bundleMock.accountIdentifier).to(equal(12345))
+                    }
+                }
+
+                context(#"When the account identifier is String and set to "6789" in the Bundle"#) {
+                    it("should return 6789") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: "6789"]
+                        expect(bundleMock.accountIdentifier).to(equal(6789))
+                    }
+                }
+
+                context(#"When the account identifier is String and set to "0789" in the Bundle"#) {
+                    it("should return 789") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: "0789"]
+                        expect(bundleMock.accountIdentifier).to(equal(789))
+                    }
+                }
+
+                context(#"When the account identifier is String and set to "hello world" in the Bundle"#) {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: "hello world"]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Boolean and set to false") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: false]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Boolean and set to true") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: true]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Array") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: [45, 76, 89]]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Dictionary") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: ["key1": "value1", "key2": "value2"]]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Data") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: Data()]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+
+                context("When the account identifier is Date") {
+                    it("should return 477") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.accountId.rawValue: Date()]
+                        expect(bundleMock.accountIdentifier).to(equal(477))
+                    }
+                }
+            }
+
+            describe("applicationIdentifier") {
+                context("When the application identifier is not configured") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = nil
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Number and set to 7593 in the Bundle") {
+                    it("should return 7593") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: NSNumber(value: 7593)]
+                        expect(bundleMock.applicationIdentifier).to(equal(7593))
+                    }
+                }
+
+                context(#"When the application identifier is String and set to "4938" in the Bundle"#) {
+                    it("should return 4938") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: "4938"]
+                        expect(bundleMock.applicationIdentifier).to(equal(4938))
+                    }
+                }
+
+                context(#"When the application identifier is String and set to "0938" in the Bundle"#) {
+                    it("should return 938") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: "0938"]
+                        expect(bundleMock.applicationIdentifier).to(equal(938))
+                    }
+                }
+
+                context(#"When the application identifier is String and set to "hello world" in the Bundle"#) {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: "hello world"]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Boolean and set to false") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: false]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Boolean and set to true") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: true]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Array") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: [45, 76, 89]]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Dictionary") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: ["key1": "value1", "key2": "value2"]]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Data") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: Data()]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+
+                context("When the application identifier is Date") {
+                    it("should return 1") {
+                        bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: Date()]
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
+                    }
+                }
+            }
 
             describe("endpointAddress") {
                 it("should return user-defined RAT url if user set RAT url in app info.plist") {

@@ -21,7 +21,7 @@ struct RATAccount {
 }
 
 extension RATAccount: Codable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case accountId = "RATAccountIdentifier"
         case applicationId = "RATAppIdentifier"
         case disabledEvents = "RATNonDuplicatedEventsList"
