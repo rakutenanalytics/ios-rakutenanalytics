@@ -62,10 +62,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     @objc private let sender: Sendable?
 
     /// The RAT Account Identifier
-    let accountIdentifier: Int64
+    public let accountIdentifier: Int64
 
     /// The RAT Application Identifier
-    let applicationIdentifier: Int64
+    public let applicationIdentifier: Int64
 
     /// The dependencies container
     private let dependenciesContainer: SimpleDependenciesContainable
