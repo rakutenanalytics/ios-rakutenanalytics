@@ -62,9 +62,21 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     @objc private let sender: Sendable?
 
     /// The RAT Account Identifier
+    ///
+    /// - Note: This identifier is configured in the app's `Info.plist` for the key `RATAccountIdentifier`.
+    ///
+    /// - Warning: If this identifier is not configured in the app's `Info.plist`, a default value is set: `477`.
+    ///
+    /// - Warning: The type of this identifier must be `Number` in the app's `Info.plist`.
     public let accountIdentifier: Int64
 
     /// The RAT Application Identifier
+    ///
+    /// - Note: This identifier is configured in the app's `Info.plist` for the key `RATAppIdentifier`.
+    ///
+    /// - Warning: If this identifier is not configured in the app's `Info.plist`, a default value is set: `1`.
+    ///
+    /// - Warning: The type of this identifier must be `Number` in the app's `Info.plist`.
     public let applicationIdentifier: Int64
 
     /// The dependencies container
