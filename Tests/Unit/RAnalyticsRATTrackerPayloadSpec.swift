@@ -1,4 +1,6 @@
 // swiftlint:disable line_length
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
 import Quick
 import Nimble
@@ -14,6 +16,7 @@ import RAnalyticsTestHelpers
 class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsRATTracker") {
+            let bundle = Bundle.main
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
@@ -24,8 +27,6 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                 let databaseTableName = "testTableName_RAnalyticsRATTrackerSpec"
                 databaseConnection = DatabaseTestUtils.openRegularConnection()!
                 database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
-                let bundle = BundleMock()
-                bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp/")!
                 dependenciesContainer.bundle = bundle
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
                 dependenciesContainer.session = SwityURLSessionMock()
@@ -35,6 +36,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)
+                ratTracker.reachabilityStatus = nil
 
                 expecter.dependenciesContainer = dependenciesContainer
                 expecter.endpointURL = bundle.endpointAddress
@@ -50,18 +52,362 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
             }
 
             describe("process(event:state:)") {
-                it("should process an event with battery infos") {
-                    var payload: [String: Any]?
+                context("Core parameters") {
+                    it("should set app_name to the app's bundle identifier") {
+                        var payload: [String: Any]?
 
-                    expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                        payload = $0.first
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let appName = payload?["app_name"] as? String
+                        expect(appName).to(equal("jp.co.rakuten.Host"))
                     }
-                    expect(payload).toEventuallyNot(beNil())
 
-                    let powerstatus = payload?["powerstatus"] as? NSNumber
-                    let mbat = payload?["mbat"] as? String
-                    expect(powerstatus?.intValue).to(equal(0))
-                    expect(mbat).to(equal("50"))
+                    it("should set mos to iOS {version_number}") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mos = payload?["mos"] as? String
+                        expect(mos).to(equal(UIDevice.current.systemName + " " + UIDevice.current.systemVersion))
+                    }
+
+                    it("should set ver to the SDK version") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ver = payload?["ver"] as? String
+                        expect(ver).to(equal(CoreHelpers.Constants.sdkVersion))
+                    }
+
+                    it("should set a non-nil ts1") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ts1 = payload?["ts1"] as? TimeInterval
+                        expect(ts1).toNot(beNil())
+                    }
+                }
+
+                context("Language Code") {
+                    it("should set a non-nil dln") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let dln = payload?["dln"] as? String
+                        expect(dln).to(equal(bundle.languageCode as? String))
+                    }
+                }
+
+                context("Location") {
+                    it("should set a non-empty loc dictionary") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+                        expect(loc).toNot(beNil())
+                    }
+
+                    it("should set a non-nil accu") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let accu = loc?["accu"] as? NSNumber
+                        expect(accu?.intValue).toNot(beNil())
+                    }
+
+                    it("should set a non-nil altitude") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let altitude = loc?["altitude"] as? NSNumber
+                        expect(altitude?.intValue).toNot(beNil())
+                    }
+
+                    it("should set a non-nil tms") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let tms = loc?["tms"] as? NSNumber
+                        expect(tms?.intValue).toNot(beNil())
+                    }
+
+                    it("should set a non-nil lat") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let lat = loc?["lat"] as? NSNumber
+                        expect(lat?.intValue).toNot(beNil())
+                    }
+
+                    it("should set a non-nil long") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let long = loc?["long"] as? NSNumber
+                        expect(long?.intValue).toNot(beNil())
+                    }
+
+                    it("should set a non-nil speed") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let speed = loc?["speed"] as? NSNumber
+                        expect(speed?.intValue).toNot(beNil())
+                    }
+                }
+
+                context("Network status") {
+                    context("When reachabilityStatus is not set") {
+                        it("should not set online") {
+                            var payload: [String: Any]?
+
+                            expecter.ratTracker.reachabilityStatus = nil
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let online = payload?["online"] as? NSNumber
+                            expect(online).to(beNil())
+                        }
+                    }
+
+                    context("When there is no network connection") {
+                        it("should set online to false") {
+                            var payload: [String: Any]?
+
+                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let online = payload?["online"] as? NSNumber
+                            expect(online?.boolValue).to(beFalse())
+                        }
+                    }
+
+                    context("When there is a wwan connection") {
+                        it("should set online to true") {
+                            var payload: [String: Any]?
+
+                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let online = payload?["online"] as? NSNumber
+                            expect(online?.boolValue).to(beTrue())
+                        }
+                    }
+
+                    context("When there is a wifi connection") {
+                        it("should set online to true") {
+                            var payload: [String: Any]?
+
+                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let online = payload?["online"] as? NSNumber
+                            expect(online?.boolValue).to(beTrue())
+                        }
+                    }
+                }
+
+                context("Start time") {
+                    it("should set a non-nil ltm") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ltm = payload?["ltm"] as? String
+                        expect(ltm).toNot(beNil())
+                    }
+                }
+
+                context("Time zone") {
+                    it("should set a non-nil tzo") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let tzo = payload?["tzo"] as? NSNumber
+                        expect(tzo).toNot(beNil())
+                    }
+                }
+
+                context("Session Identifier") {
+                    it("should set cks to CA7A88AB-82FE-40C9-A836-B1B3455DECAB") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let cks = payload?["cks"] as? String
+                        expect(cks).to(equal("CA7A88AB-82FE-40C9-A836-B1B3455DECAB"))
+                    }
+                }
+
+                context("Device Identifier") {
+                    it("should set ckp to deviceId") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ckp = payload?["ckp"] as? String
+                        expect(ckp).to(equal("deviceId"))
+                    }
+                }
+
+                context("IDFA") {
+                    it("should set cka to adId") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let cka = payload?["cka"] as? String
+                        expect(cka).to(equal("adId"))
+                    }
+                }
+
+                context("User Agent") {
+                    it("should set ua to jp.co.rakuten.Host/1.0") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ua = payload?["ua"] as? String
+                        expect(ua).to(equal("jp.co.rakuten.Host/1.0"))
+                    }
+                }
+
+                context("Device") {
+                    context("Model") {
+                        it("should set a non-nil model") {
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let model = payload?["model"] as? String
+                            expect(model).toNot(beNil())
+                        }
+                    }
+
+                    context("Resolution") {
+                        it("should set a non-nil res") {
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let res = payload?["res"] as? String
+                            expect(res).toNot(beNil())
+                        }
+                    }
+
+                    context("Battery infos") {
+                        it("should process an event with battery infos") {
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let powerstatus = payload?["powerstatus"] as? NSNumber
+                            let mbat = payload?["mbat"] as? String
+                            expect(powerstatus?.intValue).to(equal(0))
+                            expect(mbat).to(equal("50"))
+                        }
+                    }
                 }
 
                 context("mcn and mcnd") {
