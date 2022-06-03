@@ -6,6 +6,7 @@ import Quick
 import Nimble
 import CoreTelephony
 import SQLite3
+import UIKit.UIDevice
 @testable import RAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
@@ -62,7 +63,11 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         expect(payload).toEventuallyNot(beNil())
 
                         let appName = payload?["app_name"] as? String
+                        #if SWIFT_PACKAGE
+                        expect(appName).to(equal("com.apple.dt.xctest.tool"))
+                        #else
                         expect(appName).to(equal("jp.co.rakuten.Host"))
+                        #endif
                     }
 
                     it("should set mos to iOS {version_number}") {
@@ -360,7 +365,12 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         expect(payload).toEventuallyNot(beNil())
 
                         let ua = payload?["ua"] as? String
-                        expect(ua).to(equal("jp.co.rakuten.Host/1.0"))
+                        #if SWIFT_PACKAGE
+                        expect(ua).to(equal("com.apple.dt.xctest.tool/\(Tracking.defaultState.currentVersion)"))
+                        #else
+                        expect(ua).to(equal("jp.co.rakuten.Host/\(Tracking.defaultState.currentVersion)"))
+                        #endif
+
                     }
                 }
 
