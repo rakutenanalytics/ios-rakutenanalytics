@@ -95,6 +95,8 @@ protocol AnalyticsManageable: AnyObject {
     /// <string>_rem_visit</string>
     /// <string>_rem_push_received</string>
     /// <string>_rem_push_notify</string>
+    /// <string>_rem_push_auto_register</string>
+    /// <string>_rem_push_auto_unregister</string>
     /// <string>_rem_sso_credential_found</string>
     /// <string>_rem_login_credential_found</string>
     /// <string>_rem_credential_strategies</string>

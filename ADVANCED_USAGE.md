@@ -120,6 +120,8 @@ import RAnalytics
     <string>_rem_install</string>
     <string>_rem_visit</string>
     <string>_rem_push_received</string>
+    <string>_rem_push_auto_register</string>
+    <string>_rem_push_auto_unregister</string>
     <string>_rem_push_notify</string>
     <string>_rem_sso_credential_found</string>
     <string>_rem_login_credential_found</string>
@@ -568,6 +570,20 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
         - application:didReceiveRemoteNotification:
         - application:didReceiveRemoteNotification:fetchCompletionHandler:
         - userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler
+        
+### PNP Events
+
+- `_rem_push_auto_register` is sent from RPushPNP SDK when:
+    - the app becomes active
+    - the user is not registered to PNP
+    - the registration requests optimization is enabled
+    - the push notifications status is authorized
+
+- `_rem_push_auto_unregister` is sent from RPushPNP SDK when:
+    - the app becomes active
+    - the user is registered to PNP
+    - the registration requests optimization is enabled
+    - the push notifications status is denied
 
 ### SDKs NSNotification
 

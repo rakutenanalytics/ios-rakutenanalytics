@@ -272,6 +272,12 @@ public final class CustomPage: UIViewController {
 // MARK: - Tracking
 
 public enum Tracking {
+    // MARK: - APNS Device Token
+    public static let deviceToken = "e621e1f7c36c495a93fc0c247a3e6e5f"
+
+    // MARK: - PNP Client Identifier
+    public static let pnpClientIdentifier = "pnpClientIdentifier"
+
     // MARK: - Default Event
     public static let defaultEvent = RAnalyticsEvent(name: "rat.defaultEvent", parameters: ["param1": "value1"])
 

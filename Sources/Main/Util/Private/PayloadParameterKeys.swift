@@ -15,6 +15,11 @@ enum PayloadParameterKeys {
     static let pushRequestIdentifier = "push_request_id"
     static let pushConversionAction = "push_cv_action"
 
+    enum PNP {
+        static let deviceId = "deviceId"
+        static let pnpClientId = "pnpClientId"
+    }
+
     enum Telephony {
         static let mcn = "mcn"
         static let mcnd = "mcnd"

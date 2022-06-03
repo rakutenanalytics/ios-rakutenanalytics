@@ -551,6 +551,108 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     }
                 }
 
+                context("PNP events") {
+                    context("Push auto registration event") {
+                        verify(RAnalyticsEvent.Name.pushAutoRegistration)
+                    }
+
+                    context("Push auto unregistration event") {
+                        verify(RAnalyticsEvent.Name.pushAutoUnregistration)
+                    }
+
+                    func verify(_ eventName: String) {
+                        it("should not process the \(eventName) event when parameters is nil") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: nil)
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should not process the \(eventName) event when parameters is empty") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [:])
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should not process the \(eventName) event when pnpClientId parameter is missing") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [PayloadParameterKeys.PNP.deviceId: Tracking.deviceToken])
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should not process the \(eventName) event when deviceId parameter is missing") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [PayloadParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should not process the \(eventName) event when pnpClientId parameter is empty") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [PayloadParameterKeys.PNP.pnpClientId: ""])
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should not process the \(eventName) event when deviceId parameter is empty") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [PayloadParameterKeys.PNP.deviceId: ""])
+                            var payload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                            }
+
+                            expect(payload).toAfterTimeout(beNil())
+                        }
+
+                        it("should process the \(eventName) event when parameters is not nil") {
+                            let event = RAnalyticsEvent(name: eventName,
+                                                        parameters: [PayloadParameterKeys.PNP.deviceId: Tracking.deviceToken,
+                                                                     PayloadParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
+                            var payload: [String: Any]?
+                            var cpPayload: [String: Any]?
+
+                            expecter.processEvent(event, state: Tracking.defaultState) {
+                                payload = $0.first
+                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                            }
+
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(cpPayload).toNot(beNil())
+                            expect(cpPayload?[PayloadParameterKeys.PNP.deviceId] as? String).to(equal(Tracking.deviceToken))
+                            expect(cpPayload?[PayloadParameterKeys.PNP.pnpClientId] as? String).to(equal(Tracking.pnpClientIdentifier))
+                        }
+                    }
+                }
+
                 it("should process the discover event with an app name and a store URL") {
                     let discoverEvent = "_rem_discover_event"
                     let appName = "appName"

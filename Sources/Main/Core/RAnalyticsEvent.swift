@@ -76,6 +76,12 @@ import Foundation
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
         public static let pushNotification = "_rem_push_notify"
 
+        /// Event triggered when a PNP auto registration occurs.
+        public static let pushAutoRegistration = "_rem_push_auto_register"
+
+        /// Event triggered when a PNP auto unregistration occurs.
+        public static let pushAutoUnregistration = "_rem_push_auto_unregister"
+
         /// Event triggered when an SSO credential is found.
         public static let SSOCredentialFound = "_rem_sso_credential_found"
 
@@ -98,6 +104,8 @@ import Foundation
         /// Parameter for the logout method sent together with a logout event.
         public static let logoutMethod = "logout_method"
 
+        // MARK: - Push Notification parameters
+
         /// Parameter for the tracking identifier sent together with a push notification event.
         public static let pushTrackingIdentifier = "tracking_id"
 
@@ -106,6 +114,14 @@ import Foundation
 
         /// Parameter for the conversion tracking with a push notification event.
         public static let pushConversionAction = "push_cv_action"
+
+        // MARK: - PNP parameters
+
+        /// Parameter for the PNP Registration Requests Optimization
+        public static let deviceId = "deviceId"
+
+        /// Parameter for the PNP Registration Requests Optimization
+        public static let pnpClientId = "pnpClientId"
 
         // MARK: - Custom event parameters
 
