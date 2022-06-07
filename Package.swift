@@ -24,8 +24,8 @@ let package = Package(
     targets: [
         .target(name: "RAnalytics",
                 dependencies: ["RAnalyticsSwiftLoader",
-                               .productItem(name: "RLogger", package: "RSDKUtils", condition: .none),
-                               .productItem(name: "RSDKUtilsMain", package: "RSDKUtils", condition: .none)],
+                               .product(name: "RLogger", package: "RSDKUtils"),
+                               .product(name: "RSDKUtilsMain", package: "RSDKUtils")],
                 path: "Sources/Main",
                 exclude: ["Core/SDK_TRACKING_GUIDE.md"],
                 resources: [.process("Core/Assets")]),
@@ -38,8 +38,8 @@ let package = Package(
                                "Quick",
                                "Nimble",
                                "ViewInspector",
-                               .productItem(name: "RSDKUtilsNimble", package: "RSDKUtils", condition: .none),
-                               .productItem(name: "RSDKUtilsTestHelpers", package: "RSDKUtils", condition: .none)],
+                               .product(name: "RSDKUtilsNimble", package: "RSDKUtils"),
+                               .product(name: "RSDKUtilsTestHelpers", package: "RSDKUtils")],
                 path: "Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
 
