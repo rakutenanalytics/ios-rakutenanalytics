@@ -243,101 +243,213 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                 context("Page Visit") {
                     context("The referral tracking is a Visited Page") {
-                        it("should process the pageVisit event with an internal ref and pgn equal to the page identifier") {
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
-                            var payload: [String: Any]?
-                            var cpPayload: [String: Any]?
+                        func verifyPageTracking(origin: RAnalyticsOrigin) {
+                            context("page_id is set to TestPage") {
+                                context("The view controller contains a web view") {
+                                    it("should process the pageVisit event with an internal ref and pgn equal to the page identifier") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
+                                        var payload: [String: Any]?
+                                        var cpPayload: [String: Any]?
 
-                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
-                                payload = $0.first
-                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            payload = $0.first
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+                                        expect(payload).toEventuallyNot(beNil())
+                                        expect(cpPayload).toNot(beNil())
+                                        expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
+                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                    }
+
+                                    it("should process the pageVisit event with title and url") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+
+                                        expect(cpPayload).toEventuallyNot(beNil())
+
+                                        expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
+                                        expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
+                                    }
+                                }
+
+                                context("The view controller does not contain a web view") {
+                                    it("should process the pageVisit event with an internal ref and pgn equal to the page identifier") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
+                                        var payload: [String: Any]?
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            payload = $0.first
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+                                        expect(payload).toEventuallyNot(beNil())
+                                        expect(cpPayload).toNot(beNil())
+                                        expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
+                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                    }
+
+                                    it("should process the pageVisit event with a non-nil title and a nil url") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": "TestPage"])
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+
+                                        expect(cpPayload).toEventuallyNot(beNil())
+
+                                        expect(cpPayload?["title"] as? String).to(equal("CustomPageTitle"))
+                                        expect(cpPayload?["url"] as? String).to(beNil())
+                                    }
+                                }
                             }
-                            expect(payload).toEventuallyNot(beNil())
-                            expect(cpPayload).toNot(beNil())
-                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
-                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("internal"))
+
+                            context("page_id is nil") {
+                                context("The view controller contains a web view") {
+                                    it("should process the pageVisit event with an internal ref and pgn equal to CustomPage") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                                        var payload: [String: Any]?
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            payload = $0.first
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+                                        expect(payload).toEventuallyNot(beNil())
+                                        expect(cpPayload).toNot(beNil())
+                                        expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomWebPage.self)))
+                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                    }
+
+                                    it("should process the pageVisit event with title and url") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+
+                                        expect(cpPayload).toEventuallyNot(beNil())
+
+                                        expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
+                                        expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
+                                    }
+                                }
+
+                                context("The view controller does not contain a web view") {
+                                    it("should process the pageVisit event with an internal ref and pgn equal to CustomPage") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                                        var payload: [String: Any]?
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            payload = $0.first
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+                                        expect(payload).toEventuallyNot(beNil())
+                                        expect(cpPayload).toNot(beNil())
+                                        expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomPage.self)))
+                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                    }
+
+                                    it("should process the pageVisit event with title and url") {
+                                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                                        var cpPayload: [String: Any]?
+
+                                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                        state.origin = origin
+                                        state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                        }
+
+                                        expect(cpPayload).toEventuallyNot(beNil())
+
+                                        expect(cpPayload?["title"] as? String).to(equal("CustomPageTitle"))
+                                        expect(cpPayload?["url"] as? String).to(beNil())
+                                    }
+                                }
+                            }
                         }
 
-                        it("should process the pageVisit event with an internal ref and pgn equal to CustomPage") {
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
-                            var payload: [String: Any]?
-                            var cpPayload: [String: Any]?
-
-                            expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
-                                payload = $0.first
-                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
-                            }
-                            expect(payload).toEventuallyNot(beNil())
-                            expect(cpPayload).toNot(beNil())
-                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomPage.self)))
-                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("internal"))
+                        context("Internal origin") {
+                            verifyPageTracking(origin: .internal)
                         }
 
-                        it("should process the second pageVisit event with ref equal to the first pageVisit event's page identifier") {
-                            let firstPage = "FirstPage"
-                            let secondPage = "SecondPage"
-
-                            let firstEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": firstPage])
-                            let secondEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": secondPage])
-
-                            var payload: [String: Any]?
-
-                            ratTracker.process(event: firstEvent, state: Tracking.defaultState)
-
-                            let session = dependenciesContainer.session as? SwityURLSessionMock
-
-                            session?.completion = {
-                                let databaseConfiguration: DatabaseConfiguration! = dependenciesContainer.databaseConfiguration as? DatabaseConfiguration
-                                let data = DatabaseTestUtils.fetchTableContents(databaseConfiguration.tableName,
-                                                                                connection: databaseConnection)[1]
-                                payload = try? JSONSerialization.jsonObject(with: data,
-                                                                            options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
-                            }
-                            ratTracker.process(event: secondEvent, state: Tracking.defaultState)
-
-                            expect(payload).toEventuallyNot(beNil())
-                            expect((payload)?[PayloadParameterKeys.pgn] as? String).to(equal(secondPage))
-                            expect((payload)?[PayloadParameterKeys.ref] as? String).to(equal(firstPage))
+                        context("External origin") {
+                            verifyPageTracking(origin: .external)
                         }
 
-                        it("should process the pageVisit event with an external ref") {
-                            let pageId = "TestPage"
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
-                            var payload: [String: Any]?
-                            var cpPayload: [String: Any]?
-
-                            let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
-                            state.origin = .external
-
-                            expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
-                                payload = $0.first
-                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
-                            }
-                            expect(payload).toEventuallyNot(beNil())
-                            expect(cpPayload).toNot(beNil())
-                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(pageId))
-                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("external"))
+                        context("Push origin") {
+                            verifyPageTracking(origin: .push)
                         }
 
-                        it("should process the pageVisit event with a push ref") {
-                            let pageId = "TestPage"
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": pageId])
-                            var payload: [String: Any]?
-                            var cpPayload: [String: Any]?
+                        context("Referral tracking") {
+                            it("should process the second pageVisit event with ref equal to the first pageVisit event's page identifier") {
+                                let firstPage = "FirstPage"
+                                let secondPage = "SecondPage"
 
-                            let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
-                            state.origin = .push
+                                let firstEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": firstPage])
+                                let secondEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: ["page_id": secondPage])
 
-                            expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
-                                payload = $0.first
-                                cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                                var payload: [String: Any]?
+
+                                let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                                state.origin = .internal
+                                state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                                ratTracker.process(event: firstEvent, state: state)
+
+                                let session = dependenciesContainer.session as? SwityURLSessionMock
+
+                                session?.completion = {
+                                    let databaseConfiguration: DatabaseConfiguration! = dependenciesContainer.databaseConfiguration as? DatabaseConfiguration
+                                    let data = DatabaseTestUtils.fetchTableContents(databaseConfiguration.tableName,
+                                                                                    connection: databaseConnection)[1]
+                                    payload = try? JSONSerialization.jsonObject(with: data,
+                                                                                options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any]
+                                }
+
+                                ratTracker.process(event: secondEvent, state: state)
+
+                                expect(payload).toEventuallyNot(beNil())
+                                expect((payload)?[PayloadParameterKeys.pgn] as? String).to(equal(secondPage))
+                                expect((payload)?[PayloadParameterKeys.ref] as? String).to(equal(firstPage))
                             }
-                            expect(payload).toEventuallyNot(beNil())
-                            expect(cpPayload).toNot(beNil())
-                            expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(pageId))
-                            expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal("push"))
                         }
-
                     }
 
                     context("The referral tracking is an App") {
