@@ -54,6 +54,18 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
             describe("process(event:state:)") {
                 context("Core parameters") {
+                    it("should set a non-nil app_ver") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let ts1 = payload?["app_ver"] as? String
+                        expect(ts1).to(equal(bundle.shortVersion))
+                    }
+
                     it("should set app_name to the app's bundle identifier") {
                         var payload: [String: Any]?
 
