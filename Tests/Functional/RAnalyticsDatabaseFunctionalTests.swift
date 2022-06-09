@@ -17,6 +17,7 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
             let events = [mkEvent, mkAnotherEvent]
             var connection: SQlite3Pointer!
             var databaseURL: URL!
+            var database: RAnalyticsDatabase!
 
             beforeSuite {
                 databaseURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
@@ -27,24 +28,21 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
             beforeEach {
                 connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
                                                                         databaseParentDirectory: databaseParentDirectory)
+                database = RAnalyticsDatabase.database(connection: connection)
             }
 
             afterEach {
-                sqlite3_close(connection)
+                database.closeConnection()
                 connection = nil
 
                 try? FileManager.default.removeItem(at: databaseURL)
             }
 
-            it("should create database") {
-                RAnalyticsDatabase.database(connection: connection)
-
+            it("should create database stored in a file") {
                 expect(FileManager.default.fileExists(atPath: databaseURL.path)).to(beTrue())
             }
 
             it("should insert events to database") {
-                let database = RAnalyticsDatabase.database(connection: connection)
-
                 var eventsInDb: [Data]?
                 waitUntil { done in
                     database.insert(blobs: events, into: "events_table", limit: 2) {
@@ -57,7 +55,6 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
             }
 
             it("should fetch saved events from database") {
-                let database = RAnalyticsDatabase.database(connection: connection)
                 DatabaseTestUtils.insert(blobs: events, table: "events_table", connection: connection)
 
                 var fetchedEvents: [Data]?
@@ -75,7 +72,6 @@ class RAnalyticsDatabaseFunctionalTests: QuickSpec {
             }
 
             it("should delete saved events according to passed IDs") {
-                let database = RAnalyticsDatabase.database(connection: connection)
                 DatabaseTestUtils.insert(blobs: events, table: "events_table", connection: connection)
 
                 var eventsInDb: [Data]?

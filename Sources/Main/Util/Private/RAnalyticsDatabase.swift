@@ -225,7 +225,7 @@ final class RAnalyticsDatabase {
     /// Calling this method makes this RAnalyticsDatabase object unusable. Use for tests only.
     func closeConnection() {
         let operation = BlockOperation(block: {
-            sqlite3_close(self.connection)
+            sqlite3_close_v2(self.connection)
         })
         queue.addOperations([operation], waitUntilFinished: true)
     }

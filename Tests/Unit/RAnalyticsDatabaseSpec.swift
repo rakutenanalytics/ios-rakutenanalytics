@@ -29,8 +29,8 @@ class RAnalyticsDatabaseSpec: QuickSpec {
             afterEach {
                 DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
 
-                sqlite3_close(connection)
-                sqlite3_close(readonlyConnection)
+                sqlite3_close_v2(connection)
+                sqlite3_close_v2(readonlyConnection)
 
                 connection = nil
                 readonlyConnection = nil
