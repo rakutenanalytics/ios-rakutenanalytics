@@ -1,5 +1,12 @@
 # Changelog
 
+## 9.5.0 (2022-06-09)
+
+### Improvements
+* [SDKCF-5475](https://jira.rakuten-it.com/jira/browse/SDKCF-5475): Added new RAT events `_rem_push_auto_register` and `_rem_push_auto_unregister` to support Push Notification Platform (PNP) opt-in/opt-out tracking.
+* [SDKCF-5369](https://jira.rakuten-it.com/jira/browse/SDKCF-5369): Added convenience properties `accountIdentifier` and `applicationIdentifier` to the `RAnalyticsRATTracker` public API.
+* [SDKCF-5335](https://jira.rakuten-it.com/jira/browse/SDKCF-5335): String type is allowed again for plist values `RATAccountIdentifier` and `RATAppIdentifier` due to the Number type only requirement being too strict for app teams.
+
 ## 9.4.1 (2022-05-20)
 
 ⚠️ **Important:** RAnalytics SDK versions v9.1.0 until v9.4.0 have an issue where the device id (RAT ckp) format was changed from the <v9.1.0 format. This resulted in the wrong unique user count being calculated by RAT. To fix this issue you should update your SDK version to at least v9.4.1, where we have reverted device id to match the previous format.
