@@ -51,8 +51,8 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
 
                     expect(conversionDictionary?[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.pushNotificationConversion))
 
-                    expect(cpDictionary?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal(expectedRequestId))
-                    expect(cpDictionary?[PayloadParameterKeys.pushConversionAction] as? String).to(equal(expectedConversionAction))
+                    expect(cpDictionary?[CpParameterKeys.Push.pushRequestIdentifier] as? String).to(equal(expectedRequestId))
+                    expect(cpDictionary?[CpParameterKeys.Push.pushConversionAction] as? String).to(equal(expectedConversionAction))
                 }
             }
         }

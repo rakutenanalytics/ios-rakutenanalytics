@@ -247,15 +247,15 @@ private extension RAnalyticsRATTracker {
 
         if deviceHandler.batteryState != .unknown {
             // MARK: powerstatus
-            payload["powerstatus"] = NSNumber(value: deviceHandler.batteryState != .unplugged ? 1 : 0)
+            payload[PayloadParameterKeys.Device.powerStatus] = NSNumber(value: deviceHandler.batteryState != .unplugged ? 1 : 0)
 
             // MARK: mbat
-            payload["mbat"] = String(format: "%0.f", deviceHandler.batteryLevel * 100)
+            payload[PayloadParameterKeys.Device.mbat] = String(format: "%0.f", deviceHandler.batteryLevel * 100)
         }
 
         // MARK: dln
         if let languageCode = bundle.languageCode {
-            payload["dln"] = languageCode
+            payload[PayloadParameterKeys.Language.dln] = languageCode
         }
 
         // MARK: loc
@@ -272,28 +272,28 @@ private extension RAnalyticsRATTracker {
             let locationDic = NSMutableDictionary()
 
             // MARK: loc.accu
-            locationDic["accu"] = NSNumber(value: max(0.0, location.horizontalAccuracy))
+            locationDic[PayloadParameterKeys.Location.accu] = NSNumber(value: max(0.0, location.horizontalAccuracy))
 
             // MARK: loc.altitude
-            locationDic["altitude"] = NSNumber(value: location.altitude)
+            locationDic[PayloadParameterKeys.Location.altitude] = NSNumber(value: location.altitude)
 
             // MARK: loc.tms
-            locationDic["tms"] = NSNumber(value: max(0, round(location.timestamp.timeIntervalSince1970 * 1000.0)))
+            locationDic[PayloadParameterKeys.Location.tms] = NSNumber(value: max(0, round(location.timestamp.timeIntervalSince1970 * 1000.0)))
 
             // MARK: loc.lat
-            locationDic["lat"] = NSNumber(value: min(90.0, max(-90.0, coordinate.latitude)))
+            locationDic[PayloadParameterKeys.Location.lat] = NSNumber(value: min(90.0, max(-90.0, coordinate.latitude)))
 
             // MARK: loc.long
-            locationDic["long"] = NSNumber(value: min(180.0, max(-180.0, coordinate.longitude)))
+            locationDic[PayloadParameterKeys.Location.long] = NSNumber(value: min(180.0, max(-180.0, coordinate.longitude)))
 
             // MARK: loc.speed
-            locationDic["speed"] = NSNumber(value: max(0.0, location.speed))
+            locationDic[PayloadParameterKeys.Location.speed] = NSNumber(value: max(0.0, location.speed))
 
-            payload["loc"] = locationDic
+            payload[PayloadParameterKeys.Location.loc] = locationDic
         }
 
         // MARK: model
-        payload["model"] = UIDevice.current.modelIdentifier
+        payload[PayloadParameterKeys.Device.model] = UIDevice.current.modelIdentifier
 
         // Telephony Handler
         telephonyHandler.reachabilityStatus = reachabilityStatus
@@ -311,45 +311,45 @@ private extension RAnalyticsRATTracker {
         payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
 
         // MARK: mori
-        payload["mori"] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
+        payload[PayloadParameterKeys.Orientation.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
 
         // MARK: online
         if let reachabilityStatus = reachabilityStatus {
             let isOnline = reachabilityStatus.uintValue != RATReachabilityStatus.offline.rawValue
-            payload["online"] = NSNumber(value: isOnline)
+            payload[PayloadParameterKeys.Network.online] = NSNumber(value: isOnline)
         }
 
         // MARK: ckp
-        payload["ckp"] = state.deviceIdentifier
+        payload[PayloadParameterKeys.Identifier.ckp] = state.deviceIdentifier
 
         // MARK: ua
-        payload["ua"] = userAgentHandler.value(for: state)
+        payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
 
         // MARK: res
-        payload["res"] = deviceHandler.screenResolution
+        payload[PayloadParameterKeys.Device.res] = deviceHandler.screenResolution
 
         // MARK: ltm
-        payload["ltm"] = startTime
+        payload[PayloadParameterKeys.Time.ltm] = startTime
 
         // MARK: cks
-        payload["cks"] = state.sessionIdentifier
+        payload[PayloadParameterKeys.Identifier.cks] = state.sessionIdentifier
 
         // MARK: tzo
-        payload["tzo"] = NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)
+        payload[PayloadParameterKeys.TimeZone.tzo] = NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)
 
         // MARK: cka
         if !state.advertisingIdentifier.isEmpty {
-            payload["cka"] = state.advertisingIdentifier
+            payload[PayloadParameterKeys.Identifier.cka] = state.advertisingIdentifier
         }
 
         // MARK: userid
-        if !state.userIdentifier.isEmpty && (payload["userid"] as? String).isEmpty {
-            payload["userid"] = state.userIdentifier
+        if !state.userIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.userid] as? String).isEmpty {
+            payload[PayloadParameterKeys.Identifier.userid] = state.userIdentifier
         }
 
         // MARK: easyid
-        if !state.easyIdentifier.isEmpty && (payload["easyid"] as? String).isEmpty {
-            payload["easyid"] = state.easyIdentifier
+        if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
+            payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
         }
 
         payload.addEntries(from: CoreHelpers.sharedPayload(for: state))
@@ -540,7 +540,7 @@ extension RAnalyticsRATTracker {
             extra.addEntries(from: pushParameters)
 
             if !event.pushRequestIdentifier.isEmpty {
-                extra[PayloadParameterKeys.pushRequestIdentifier] = event.pushRequestIdentifier
+                extra[CpParameterKeys.Push.pushRequestIdentifier] = event.pushRequestIdentifier
             }
 
         // MARK: _rem_push_cv
@@ -549,15 +549,15 @@ extension RAnalyticsRATTracker {
                     && !event.pushConversionAction.isEmpty else {
                 return false
             }
-            extra[PayloadParameterKeys.pushRequestIdentifier] = event.pushRequestIdentifier
-            extra[PayloadParameterKeys.pushConversionAction] = event.pushConversionAction
+            extra[CpParameterKeys.Push.pushRequestIdentifier] = event.pushRequestIdentifier
+            extra[CpParameterKeys.Push.pushConversionAction] = event.pushConversionAction
 
         // MARK: _rem_push_auto_register, _rem_push_auto_unregister
         case RAnalyticsEvent.Name.pushAutoRegistration, RAnalyticsEvent.Name.pushAutoUnregistration:
             guard !event.parameters.isEmpty,
-                  let deviceId = event.parameters[PayloadParameterKeys.PNP.deviceId] as? String,
+                  let deviceId = event.parameters[CpParameterKeys.PNP.deviceId] as? String,
                   !deviceId.isEmpty,
-                  let pnpClientId = event.parameters[PayloadParameterKeys.PNP.pnpClientId] as? String,
+                  let pnpClientId = event.parameters[CpParameterKeys.PNP.pnpClientId] as? String,
                   !pnpClientId.isEmpty else {
                 return false
             }
@@ -698,14 +698,14 @@ private extension RAnalyticsRATTracker {
             origin = result
             self.carriedOverOrigin = nil
         }
-        extra[PayloadParameterKeys.refType] = origin.toString
+        extra[CpParameterKeys.Ref.type] = origin.toString
 
         if let pageTitle = pageTitle {
-            extra["title"] = pageTitle
+            extra[CpParameterKeys.Page.title] = pageTitle
         }
 
         if let pageURL = pageURL {
-            extra["url"] = pageURL.absoluteString
+            extra[CpParameterKeys.Page.url] = pageURL.absoluteString
         }
 
         return true
@@ -716,14 +716,14 @@ private extension RAnalyticsRATTracker {
                                      referralApp: ReferralAppModel) {
         payload[PayloadParameterKeys.ref] = referralApp.bundleIdentifier
 
-        extra[PayloadParameterKeys.refType] = RAnalyticsOrigin.external.toString
+        extra[CpParameterKeys.Ref.type] = RAnalyticsOrigin.external.toString
         if let link = referralApp.link,
            !link.isEmpty {
-            extra[PayloadParameterKeys.refLink] = link
+            extra[CpParameterKeys.Ref.link] = link
         }
         if let comp = referralApp.component,
            !comp.isEmpty {
-            extra[PayloadParameterKeys.refComponent] = comp
+            extra[CpParameterKeys.Ref.component] = comp
         }
 
         referralApp.customParameters?.forEach { extra[$0.key] = $0.value }

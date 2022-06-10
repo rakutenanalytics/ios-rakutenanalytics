@@ -27,11 +27,11 @@ final class ReferralAppModelSpec: QuickSpec {
             let encodedComponent = component.addEncodingForRFC3986UnreservedCharacters()!
             let bundleIdentifierQueryItem = "\(PayloadParameterKeys.ref)=\(encodedBundleIdentifier)"
             let accountIdentifier: Int64 = 1
-            let accountIdentifierQueryItem = "\(PayloadParameterKeys.refAccountIdentifier)=\(accountIdentifier)"
+            let accountIdentifierQueryItem = "\(CpParameterKeys.Ref.accountIdentifier)=\(accountIdentifier)"
             let applicationIdentifier: Int64 = 2
-            let applicationIdentifierQueryItem = "\(PayloadParameterKeys.refApplicationIdentifier)=\(applicationIdentifier)"
-            let linkQueryItem = "\(PayloadParameterKeys.refLink)=\(encodedLink)"
-            let componentQueryItem = "\(PayloadParameterKeys.refComponent)=\(encodedComponent)"
+            let applicationIdentifierQueryItem = "\(CpParameterKeys.Ref.applicationIdentifier)=\(applicationIdentifier)"
+            let linkQueryItem = "\(CpParameterKeys.Ref.link)=\(encodedLink)"
+            let componentQueryItem = "\(CpParameterKeys.Ref.component)=\(encodedComponent)"
             let mandatoryParametersQueryItems = "\(accountIdentifierQueryItem)&\(applicationIdentifierQueryItem)"
             let encodedStandardCharacters = "abcdefghijklmnopqrstuvwxyz".addEncodingForRFC3986UnreservedCharacters()!
             let encodedSpecialCharacters = CharacterSet.RFC3986ReservedCharacters.addEncodingForRFC3986UnreservedCharacters()!
@@ -107,13 +107,13 @@ final class ReferralAppModelSpec: QuickSpec {
                 it("should fail when mandatory parameters are unexpected") {
                     // URL Scheme
 
-                    expect(ReferralAppModel(url: URL(string: "app://\(PayloadParameterKeys.refAccountIdentifier)=\(encodedStandardCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "app://\(PayloadParameterKeys.refAccountIdentifier)=\(encodedSpecialCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "app://\(CpParameterKeys.Ref.accountIdentifier)=\(encodedStandardCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "app://\(CpParameterKeys.Ref.accountIdentifier)=\(encodedSpecialCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
 
                     // Universal Link
 
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(PayloadParameterKeys.refAccountIdentifier)=\(encodedStandardCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: nil)).to(beNil())
-                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(PayloadParameterKeys.refAccountIdentifier)=\(encodedSpecialCharacters)&\(PayloadParameterKeys.refApplicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(CpParameterKeys.Ref.accountIdentifier)=\(encodedStandardCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: nil)).to(beNil())
+                    expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(CpParameterKeys.Ref.accountIdentifier)=\(encodedSpecialCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: nil)).to(beNil())
                 }
 
                 context("Initialization with mandatory parameters") {

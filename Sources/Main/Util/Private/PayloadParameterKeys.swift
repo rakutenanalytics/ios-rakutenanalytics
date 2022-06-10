@@ -7,17 +7,62 @@ enum PayloadParameterKeys {
     static let cp = "cp"
     static let pgn = "pgn"
     static let ref = "ref"
-    static let refType = "ref_type"
-    static let refAccountIdentifier = "ref_acc"
-    static let refApplicationIdentifier = "ref_aid"
-    static let refLink = "ref_link"
-    static let refComponent = "ref_comp"
-    static let pushRequestIdentifier = "push_request_id"
-    static let pushConversionAction = "push_cv_action"
 
-    enum PNP {
-        static let deviceId = "deviceId"
-        static let pnpClientId = "pnpClientId"
+    enum Core {
+        static let appVer = "app_ver"
+        static let appName = "app_name"
+        static let mos = "mos"
+        static let ver = "ver"
+        static let ts1 = "ts1"
+    }
+
+    enum Identifier {
+        static let ckp = "ckp"
+        static let cks = "cks"
+        static let cka = "cka"
+        static let userid = "userid"
+        static let easyid = "easyid"
+    }
+
+    enum Language {
+        static let dln = "dln"
+    }
+
+    enum Device {
+        static let powerStatus = "powerstatus"
+        static let mbat = "mbat"
+        static let model = "model"
+        static let res = "res"
+    }
+
+    enum Location {
+        static let accu = "accu"
+        static let altitude = "altitude"
+        static let tms = "tms"
+        static let lat = "lat"
+        static let long = "long"
+        static let speed = "speed"
+        static let loc = "loc"
+    }
+
+    enum Orientation {
+        static let mori = "mori"
+    }
+
+    enum Network {
+        static let online = "online"
+    }
+
+    enum UserAgent {
+        static let ua = "ua"
+    }
+
+    enum Time {
+        static let ltm = "ltm"
+    }
+
+    enum TimeZone {
+        static let tzo = "tzo"
     }
 
     enum Telephony {
@@ -25,6 +70,31 @@ enum PayloadParameterKeys {
         static let mcnd = "mcnd"
         static let mnetw = "mnetw"
         static let mnetwd = "mnetwd"
+    }
+}
+
+enum CpParameterKeys {
+    enum Ref {
+        static let type = "ref_type"
+        static let accountIdentifier = "ref_acc"
+        static let applicationIdentifier = "ref_aid"
+        static let link = "ref_link"
+        static let component = "ref_comp"
+    }
+
+    enum Page {
+        static let title = "title"
+        static let url = "url"
+    }
+
+    enum Push {
+        static let pushRequestIdentifier = "push_request_id"
+        static let pushConversionAction = "push_cv_action"
+    }
+
+    enum PNP {
+        static let deviceId = "deviceId"
+        static let pnpClientId = "pnpClientId"
     }
 }
 

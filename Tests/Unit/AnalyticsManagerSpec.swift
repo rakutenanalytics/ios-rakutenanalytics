@@ -202,7 +202,7 @@ final class AnalyticsManagerSpec: QuickSpec {
 
             describe("trackReferralApp") {
                 let bundleIdentifier = "jp.co.rakuten.app"
-                let parameters = "\(PayloadParameterKeys.refAccountIdentifier)=1&\(PayloadParameterKeys.refApplicationIdentifier)=2"
+                let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=1&\(CpParameterKeys.Ref.applicationIdentifier)=2"
                 let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
                                              accountIdentifier: 1,
                                              applicationIdentifier: 2,

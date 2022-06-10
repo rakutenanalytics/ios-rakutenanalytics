@@ -262,7 +262,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(payload).toEventuallyNot(beNil())
                                         expect(cpPayload).toNot(beNil())
                                         expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
-                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                        expect(cpPayload?[CpParameterKeys.Ref.type] as? String).to(equal(origin.toString))
                                     }
 
                                     it("should process the pageVisit event with title and url") {
@@ -301,7 +301,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(payload).toEventuallyNot(beNil())
                                         expect(cpPayload).toNot(beNil())
                                         expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal("TestPage"))
-                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                        expect(cpPayload?[CpParameterKeys.Ref.type] as? String).to(equal(origin.toString))
                                     }
 
                                     it("should process the pageVisit event with a non-nil title and a nil url") {
@@ -342,7 +342,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(payload).toEventuallyNot(beNil())
                                         expect(cpPayload).toNot(beNil())
                                         expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomWebPage.self)))
-                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                        expect(cpPayload?[CpParameterKeys.Ref.type] as? String).to(equal(origin.toString))
                                     }
 
                                     it("should process the pageVisit event with title and url") {
@@ -381,7 +381,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(payload).toEventuallyNot(beNil())
                                         expect(cpPayload).toNot(beNil())
                                         expect(payload?[PayloadParameterKeys.pgn] as? String).to(equal(NSStringFromClass(CustomPage.self)))
-                                        expect(cpPayload?[PayloadParameterKeys.refType] as? String).to(equal(origin.toString))
+                                        expect(cpPayload?[CpParameterKeys.Ref.type] as? String).to(equal(origin.toString))
                                     }
 
                                     it("should process the pageVisit event with title and url") {
@@ -483,9 +483,9 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload1[PayloadParameterKeys.aid] as? Int).to(equal(888))
                             expect(payload1[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))
                             expect(cpPayload1).toNot(beNil())
-                            expect(cpPayload1?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
-                            expect(cpPayload1?[PayloadParameterKeys.refLink] as? String).to(equal("campaignCode"))
-                            expect(cpPayload1?[PayloadParameterKeys.refComponent] as? String).to(equal("news"))
+                            expect(cpPayload1?[CpParameterKeys.Ref.type] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                            expect(cpPayload1?[CpParameterKeys.Ref.link] as? String).to(equal("campaignCode"))
+                            expect(cpPayload1?[CpParameterKeys.Ref.component] as? String).to(equal("news"))
 
                             expect(payload2).toNot(beNil())
                             expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
@@ -493,9 +493,9 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(222))
                             expect(payload2[PayloadParameterKeys.ref] as? String).to(equal("jp.co.rakuten.app"))
                             expect(cpPayload2).toNot(beNil())
-                            expect(cpPayload2?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
-                            expect(cpPayload2?[PayloadParameterKeys.refLink] as? String).to(equal("campaignCode"))
-                            expect(cpPayload2?[PayloadParameterKeys.refComponent] as? String).to(equal("news"))
+                            expect(cpPayload2?[CpParameterKeys.Ref.type] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                            expect(cpPayload2?[CpParameterKeys.Ref.link] as? String).to(equal("campaignCode"))
+                            expect(cpPayload2?[CpParameterKeys.Ref.component] as? String).to(equal("news"))
                         }
                     }
                 }
@@ -516,7 +516,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload).toEventuallyNot(beNil())
                             expect(cpPayload).toNot(beNil())
                             expect(cpPayload?["push_notify_value"] as? String).to(equal(trackingIdentifier))
-                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier]).to(beNil())
+                            expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier]).to(beNil())
                         }
 
                         it("should process the _rem_push_received event with rid") {
@@ -532,7 +532,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload).toEventuallyNot(beNil())
                             expect(cpPayload).toNot(beNil())
                             expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
-                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier]).to(beNil())
+                            expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier]).to(beNil())
                         }
                     }
 
@@ -553,7 +553,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload).toEventuallyNot(beNil())
                             expect(cpPayload).toNot(beNil())
                             expect(cpPayload?["push_notify_value"] as? String).to(equal(trackingIdentifier))
-                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
+                            expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
                         }
 
                         it("should process the _rem_push_received event with rid and a request identifier") {
@@ -572,7 +572,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                             expect(payload).toEventuallyNot(beNil())
                             expect(cpPayload).toNot(beNil())
                             expect(cpPayload?["push_notify_value"] as? String).to(equal("rid:123456"))
-                            expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
+                            expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String).to(equal(requestIdentifier))
                         }
                     }
                 }
@@ -658,8 +658,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect(cpPayload).toNot(beNil())
-                        expect(cpPayload?[PayloadParameterKeys.pushRequestIdentifier] as? String).to(equal("pushRequestIdentifier"))
-                        expect(cpPayload?[PayloadParameterKeys.pushConversionAction] as? String).to(equal("pushConversionAction"))
+                        expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String).to(equal("pushRequestIdentifier"))
+                        expect(cpPayload?[CpParameterKeys.Push.pushConversionAction] as? String).to(equal("pushConversionAction"))
                     }
                 }
 
@@ -699,7 +699,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                         it("should not process the \(eventName) event when pnpClientId parameter is missing") {
                             let event = RAnalyticsEvent(name: eventName,
-                                                        parameters: [PayloadParameterKeys.PNP.deviceId: Tracking.deviceToken])
+                                                        parameters: [CpParameterKeys.PNP.deviceId: Tracking.deviceToken])
                             var payload: [String: Any]?
 
                             expecter.processEvent(event, state: Tracking.defaultState) {
@@ -711,7 +711,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                         it("should not process the \(eventName) event when deviceId parameter is missing") {
                             let event = RAnalyticsEvent(name: eventName,
-                                                        parameters: [PayloadParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
+                                                        parameters: [CpParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
                             var payload: [String: Any]?
 
                             expecter.processEvent(event, state: Tracking.defaultState) {
@@ -723,7 +723,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                         it("should not process the \(eventName) event when pnpClientId parameter is empty") {
                             let event = RAnalyticsEvent(name: eventName,
-                                                        parameters: [PayloadParameterKeys.PNP.pnpClientId: ""])
+                                                        parameters: [CpParameterKeys.PNP.pnpClientId: ""])
                             var payload: [String: Any]?
 
                             expecter.processEvent(event, state: Tracking.defaultState) {
@@ -735,7 +735,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                         it("should not process the \(eventName) event when deviceId parameter is empty") {
                             let event = RAnalyticsEvent(name: eventName,
-                                                        parameters: [PayloadParameterKeys.PNP.deviceId: ""])
+                                                        parameters: [CpParameterKeys.PNP.deviceId: ""])
                             var payload: [String: Any]?
 
                             expecter.processEvent(event, state: Tracking.defaultState) {
@@ -747,8 +747,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                         it("should process the \(eventName) event when parameters is not nil") {
                             let event = RAnalyticsEvent(name: eventName,
-                                                        parameters: [PayloadParameterKeys.PNP.deviceId: Tracking.deviceToken,
-                                                                     PayloadParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
+                                                        parameters: [CpParameterKeys.PNP.deviceId: Tracking.deviceToken,
+                                                                     CpParameterKeys.PNP.pnpClientId: Tracking.pnpClientIdentifier])
                             var payload: [String: Any]?
                             var cpPayload: [String: Any]?
 
@@ -759,8 +759,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                             expect(payload).toEventuallyNot(beNil())
                             expect(cpPayload).toNot(beNil())
-                            expect(cpPayload?[PayloadParameterKeys.PNP.deviceId] as? String).to(equal(Tracking.deviceToken))
-                            expect(cpPayload?[PayloadParameterKeys.PNP.pnpClientId] as? String).to(equal(Tracking.pnpClientIdentifier))
+                            expect(cpPayload?[CpParameterKeys.PNP.deviceId] as? String).to(equal(Tracking.deviceToken))
+                            expect(cpPayload?[CpParameterKeys.PNP.pnpClientId] as? String).to(equal(Tracking.pnpClientIdentifier))
                         }
                     }
                 }

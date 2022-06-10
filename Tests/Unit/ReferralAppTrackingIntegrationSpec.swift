@@ -27,7 +27,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
             let encodedLink = link.addEncodingForRFC3986UnreservedCharacters()!
             let component = "news\(CharacterSet.RFC3986ReservedCharacters)"
             let encodedComponent = component.addEncodingForRFC3986UnreservedCharacters()!
-            let parameters = "\(PayloadParameterKeys.refAccountIdentifier)=\(refAccountIdentifier)&\(PayloadParameterKeys.refApplicationIdentifier)=\(refApplicationIdentifier)&\(PayloadParameterKeys.refLink)=\(encodedLink)&\(PayloadParameterKeys.refComponent)=\(encodedComponent)"
+            let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=\(refAccountIdentifier)&\(CpParameterKeys.Ref.applicationIdentifier)=\(refApplicationIdentifier)&\(CpParameterKeys.Ref.link)=\(encodedLink)&\(CpParameterKeys.Ref.component)=\(encodedComponent)"
 
             beforeEach {
                 databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseTableName,
@@ -81,9 +81,9 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 expect(payload1[PayloadParameterKeys.aid] as? Int).to(equal(1))
                 expect(payload1[PayloadParameterKeys.ref] as? String).to(equal(appBundleIdentifier))
                 expect(cpPayload1).toNot(beNil())
-                expect(cpPayload1?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
-                expect(cpPayload1?[PayloadParameterKeys.refLink] as? String).to(equal(link))
-                expect(cpPayload1?[PayloadParameterKeys.refComponent] as? String).to(equal(component))
+                expect(cpPayload1?[CpParameterKeys.Ref.type] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                expect(cpPayload1?[CpParameterKeys.Ref.link] as? String).to(equal(link))
+                expect(cpPayload1?[CpParameterKeys.Ref.component] as? String).to(equal(component))
 
                 expect(payload2).toNot(beNil())
                 expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
@@ -91,9 +91,9 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(2))
                 expect(payload2[PayloadParameterKeys.ref] as? String).to(equal(appBundleIdentifier))
                 expect(cpPayload2).toNot(beNil())
-                expect(cpPayload2?[PayloadParameterKeys.refType] as? String).to(equal(RAnalyticsOrigin.external.toString))
-                expect(cpPayload2?[PayloadParameterKeys.refLink] as? String).to(equal(link))
-                expect(cpPayload2?[PayloadParameterKeys.refComponent] as? String).to(equal(component))
+                expect(cpPayload2?[CpParameterKeys.Ref.type] as? String).to(equal(RAnalyticsOrigin.external.toString))
+                expect(cpPayload2?[CpParameterKeys.Ref.link] as? String).to(equal(link))
+                expect(cpPayload2?[CpParameterKeys.Ref.component] as? String).to(equal(component))
             }
         }
     }
