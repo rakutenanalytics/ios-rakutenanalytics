@@ -39,7 +39,7 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
                     try? RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: expectedRequestId,
                                                                                 pushConversionAction: expectedConversionAction)
 
-                    expect(isSendingCompleted).toAfterTimeout(beTrue(), timeout: 1.0)
+                    expect(isSendingCompleted).toEventually(beTrue())
 
                     let ratPayload = sessionMock.sentRequest?.httpBody?.ratPayload
 

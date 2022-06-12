@@ -94,16 +94,11 @@ final class RAnalyticsPushTrackingUtilitySpec: QuickSpec {
                 }
 
                 it("should not throw an error if pushRequestIdentifier and pushConversionAction are not empty") {
-                    var thrownError: Error?
-
-                    do {
+                    expect {
                         try RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: "pushRequestIdentifier",
                                                                                    pushConversionAction: "pushConversionAction")
-                    } catch {
-                        thrownError = error
-                    }
 
-                    expect(thrownError).toAfterTimeout(beNil())
+                    }.toNot(throwError())
                 }
             }
 

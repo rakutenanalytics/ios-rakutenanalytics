@@ -275,7 +275,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                             expect(externalCollector.isLoggedIn).toEventually(beTrue())
                             expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                            expect(tracker?.params).toAfterTimeout(beNil())
+                            expect(tracker?.params).to(beNil())
                             tracker?.reset()
                         }
                     }
@@ -301,10 +301,10 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         NotificationCenter.default.post(name: notificationName, object: trackingIdentifier)
 
                         expect(externalCollector.trackingIdentifier).toEventually(equal(trackingIdentifier))
-                        expect(externalCollector.loginMethod).toAfterTimeout(equal(.other))
-                        expect(externalCollector.isLoggedIn).toEventually(beTrue())
+                        expect(externalCollector.loginMethod).to(equal(.other))
+                        expect(externalCollector.isLoggedIn).to(beTrue())
                         expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).toAfterTimeout(beNil())
+                        expect(tracker?.params).to(beNil())
                         tracker?.reset()
                     }
 
@@ -328,10 +328,10 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         NotificationCenter.default.post(name: notificationName, object: easyIdentifier)
 
                         expect(externalCollector.easyIdentifier).toEventually(equal(easyIdentifier))
-                        expect(externalCollector.loginMethod).toAfterTimeout(equal(.other))
-                        expect(externalCollector.isLoggedIn).toEventually(beTrue())
+                        expect(externalCollector.loginMethod).to(equal(.other))
+                        expect(externalCollector.isLoggedIn).to(beTrue())
                         expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).toAfterTimeout(beNil())
+                        expect(tracker?.params).to(beNil())
                         tracker?.reset()
                     }
                 }
@@ -404,8 +404,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
                         expect(externalCollector.trackingIdentifier).toAfterTimeout(beNil())
-                        expect(externalCollector.easyIdentifier).toAfterTimeout(beNil())
-                        expect(externalCollector.isLoggedIn).toAfterTimeout(beFalse())
+                        expect(externalCollector.easyIdentifier).to(beNil())
+                        expect(externalCollector.isLoggedIn).to(beFalse())
                         expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.logout))
 
                         if $0 == "local" || $0 == "global" {

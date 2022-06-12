@@ -69,7 +69,7 @@ final class AnalyticsEventPosterSpec: QuickSpec {
                                           parameters: ["rid": "abcd1234"],
                                           pushEventHandler: pushEventHandler)
 
-                expect(isReceived).toAfterTimeout(beTrue())
+                expect(isReceived).toEventually(beTrue())
             }
         }
     }
