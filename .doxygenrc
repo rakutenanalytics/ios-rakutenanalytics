@@ -1,8 +1,0 @@
-# This file will get merged with ~/Doxyfile before running Doxygen
-PROJECT_NAME     = RAnalytics
-PROJECT_BRIEF    = "Analytics module of the Rakuten Ecosystem Mobile SDK"
-INPUT           += RAnalytics
-IGNORE_PREFIX    = RAnalytics
-PREDEFINED		+= "RSDKA_SWIFT_NAME(s)="
-
-
