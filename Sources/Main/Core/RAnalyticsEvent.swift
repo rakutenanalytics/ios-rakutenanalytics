@@ -115,6 +115,10 @@ import Foundation
         /// Parameter for the conversion tracking with a push notification event.
         public static let pushConversionAction = "push_cv_action"
 
+        // MARK: - Page parameters
+
+        public static let pageId = "page_id"
+
         // MARK: - PNP parameters
 
         /// Parameter for the PNP Registration Requests Optimization

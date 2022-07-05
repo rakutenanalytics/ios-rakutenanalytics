@@ -639,7 +639,7 @@ private extension RAnalyticsRATTracker {
                                      payload: NSMutableDictionary,
                                      extra: NSMutableDictionary,
                                      currentPage: UIViewController) -> Bool {
-        var pageIdentifier = pageVisitEvent.parameters["page_id"] as? String
+        var pageIdentifier = pageVisitEvent.parameters[RAnalyticsEvent.Parameter.pageId] as? String
         var pageTitle = currentPage.navigationItem.title ?? currentPage.title
         let pageURL = currentPage.view.getWebViewURL()?.absoluteURL
 

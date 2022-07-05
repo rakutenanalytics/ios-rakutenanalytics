@@ -339,7 +339,7 @@ extension RAnalyticsExternalCollector {
         var parameters = [String: Any]()
         if let pageIdentifier = pageIdentifier,
            !pageIdentifier.isEmpty {
-            parameters["page_id"] = pageIdentifier
+            parameters[RAnalyticsEvent.Parameter.pageId] = pageIdentifier
         }
         tracker?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: parameters)
     }
