@@ -1,0 +1,152 @@
+name: Release Module
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string [major.minor.patch] (e.g. 1.6.9)'
+        required: true
+jobs:
+  Release:
+    runs-on: self-hosted
+    env:
+      REM_FL_STG_SPEC_REPO: ${{ secrets.REM_FL_STG_SPEC_REPO }}
+      REM_FL_SPEC_REPO: ${{ secrets.REM_FL_SPEC_REPO }}
+      FASTLANE_SKIP_UPDATE_CHECK: 1
+      DISCOURSE_HOSTNAME: ${{ secrets.DISCOURSE_HOSTNAME }}
+      DISCOURSE_USERNAME: ${{ secrets.DISCOURSE_USERNAME }}
+      DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
+      DISCOURSE_CATEGORY_ID: ${{ secrets.DISCOURSE_CATEGORY_ID }}
+      REM_FL_DOCS_GENERATION_COMMAND: echo Defer to fastlane deploy_ghpages
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    steps:
+      - name: Validate inputs
+        run: |
+          [[ "${{ inputs.version }}" =~ '^([0-9]+\.){0,2}(\*|[0-9]+)$' ]] || { echo "version input is invalid"; echo exit 1 }
+      - name: Post start to Slack
+        uses: slackapi/slack-github-action@v1.19.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          payload: |
+            {
+              "text": "Starting release for iOS Analytics v${{ inputs.version }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SERVICE_ACCT_PAT }}
+      - run: bundle install --path vendor/bundle
+      - name: Escape Bitbucket username
+        id: esc_username
+        run: |
+          echo "::set-output name=BITBUCKETSERVER_USERNAME::$(echo ${{ secrets.BITBUCKETSERVER_USERNAME }} | sed -r 's/[@]+/%40/g')"
+      - name: Set git config HTTP header
+        run: |
+          git config --global url."https://${{steps.esc_username.outputs.BITBUCKETSERVER_USERNAME}}:${{ secrets.BITBUCKETSERVER_PASSWORD }}@${{ secrets.BITBUCKETSERVER_BASEURL }}/".insteadOf "https://${{ secrets.BITBUCKETSERVER_BASEURL }}/"
+      - name: Commit bump version to master
+        run: |
+          bundle exec fastlane ios commit_sdk_ver_bump version:${{ inputs.version }}
+          sed -i '' -e "s/## Unreleased/## ${{ inputs.version }} ($(date +%F))/g" CHANGELOG.md
+          git add CHANGELOG.md
+          git commit --amend --no-edit
+          bundle exec fastlane run push_to_git_remote
+      - name: Publish stg podspec
+        run: |
+          CLONE_DIR=$(mktemp -d)
+          git clone --single-branch --branch master $REM_FL_STG_SPEC_REPO "$CLONE_DIR"
+          cp -R RAnalytics.podspec $CLONE_DIR
+          cd "$CLONE_DIR"
+          fastlane ios release
+      - name: Branch name
+        id: branch_name
+        run: echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+      - name: Tag, Lint Release Checks
+        run: bundle exec fastlane ios release module:${{ inputs.version }} branch:${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+      - name: Prod Podspec Publish Release
+        run: |
+          CLONE_DIR=$(mktemp -d)
+          git clone --single-branch --branch master $REM_FL_SPEC_REPO "$CLONE_DIR"
+          cp -R RAnalytics.podspec $CLONE_DIR
+          cd "$CLONE_DIR"
+          fastlane ios release
+      - name: Verify prod podspec lint
+        run: |
+          bundle exec pod repo update
+          bundle exec pod spec lint --sources=$REM_FL_SPEC_REPO,https://cdn.cocoapods.org --allow-warnings
+      - name: Publish public analytics
+        run: bundle exec deploy_framework release:true version:${{ inputs.version }} skip_build:false skip_upload:false skip_pod_push:false
+      - name: Generate GitHub Pages documentation
+        env:
+          DOCS_REPO_DEPLOY_KEY_BASE64: ${{ secrets.DOCS_REPO_DEPLOY_KEY_BASE64 }}
+          GIT_SSH_DOCS_REPO_URL: git@ghe.rakuten-it.com:mag/ios-analytics-docs.git
+        run: |
+          if ! command -v svn &> /dev/null
+          then
+              brew install svn
+          fi
+          echo $DOCS_REPO_DEPLOY_KEY_BASE64 | base64 -D > deploy_key
+          chmod 400 deploy_key
+          bundle exec fastlane ios deploy_ghpages ghpages_url:$GIT_SSH_DOCS_REPO_URL deploy_key:deploy_key
+      - name: Prepare release notes
+        id: release_notes
+        run: |
+          awk '
+            /## ${{ inputs.version }}/{flag=1;next}
+            /## [0-9]/{flag=0}
+            flag
+          ' CHANGELOG.md > _releasenotes.md
+          echo ::set-output name=RELEASE_NOTES::$(cat _releasenotes.md)
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ inputs.version }}
+          release_name: ${{ inputs.version }} Release
+          body_path: _releasenotes.md
+          draft: false
+          prerelease: false
+      - name: Bump snapshot
+        run: |
+          bundle exec fastlane ios commit_sdk_ver_bump version:${{ inputs.version }}-snapshot
+          sed -i '' -e '3i\'$'\n''## Unreleased\'$'\n''' CHANGELOG.md
+          git add CHANGELOG.md
+          git commit --amend --no-edit
+          bundle exec fastlane run push_to_git_remote
+      - name: Post completion to Slack
+        uses: slackapi/slack-github-action@v1.19.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          payload: |
+            {
+              "text": "iOS Analytics v${{ inputs.version }} released :rocket:",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+      - name: Post to Discourse
+        run: |
+          curl --location --request POST "https://$DISCOURSE_HOSTNAME/posts.json" \
+          --header "Content-Type: application/json; charset=utf-8" \
+          --header "Api-Key: $DISCOURSE_API_KEY" \
+          --header "Api-Username: $DISCOURSE_USERNAME" \
+          --data-raw "{
+            \"category\": $DISCOURSE_CATEGORY_ID,
+            \"title\": \"iOS Analytics v${{ inputs.version }} released 🚀\",
+            \"tags\": [\"ios\", \"mobile\", \"mobilesdk\", \"release\", \"mag-sdk\"]
+            \"raw\": \"We're pleased to announce that we have released iOS Analytics v${{ inputs.version }}!\n\n${{ steps.release_notes.outputs.RELEASE_NOTES }}\"
+          }"
