@@ -97,8 +97,8 @@ final class RAnalyticsEventSpec: QuickSpec {
             describe("secure coding") {
                 it("should unarchive the same event with the same properties values") {
                     let event = defaultEvent()
-                    let data = NSKeyedArchiver.archivedData(withRootObject: event)
-                    let unarchivedEvent = NSKeyedUnarchiver.unarchiveObject(with: data) as? AnalyticsManager.Event
+                    let data: Data! = try? NSKeyedArchiver.archivedData(withRootObject: event, requiringSecureCoding: true)
+                    let unarchivedEvent = try? NSKeyedUnarchiver.unarchivedObject(ofClass: AnalyticsManager.Event.self, from: data)
                     expect(event).to(equal(unarchivedEvent))
                     expect(event.name).to(equal(unarchivedEvent?.name))
                     expect(event.parameters == unarchivedEvent!.parameters).to(beTrue())
@@ -106,15 +106,14 @@ final class RAnalyticsEventSpec: QuickSpec {
                 it("should decode the same event with the same properties values") {
                     let event = defaultEvent()
 
-                    let data = NSMutableData()
-                    let secureEncoder = NSKeyedArchiver(forWritingWith: data)
-                    secureEncoder.requiresSecureCoding = true
+                    let secureEncoder = NSKeyedArchiver(requiringSecureCoding: true)
 
                     let key = "event"
                     secureEncoder.encode(event, forKey: key)
                     secureEncoder.finishEncoding()
 
-                    let secureDecoder = NSKeyedUnarchiver(forReadingWith: data as Data)
+                    let data = secureEncoder.encodedData
+                    let secureDecoder: NSKeyedUnarchiver! = try? NSKeyedUnarchiver(forReadingFrom: data as Data)
                     secureDecoder.requiresSecureCoding = true
 
                     let decodedEvent = secureDecoder.decodeObject(of: AnalyticsManager.Event.self, forKey: key)

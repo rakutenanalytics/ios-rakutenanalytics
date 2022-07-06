@@ -726,7 +726,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         let processed = ratTracker.process(event: Tracking.defaultEvent, state: Tracking.defaultState)
                         expect(processed).to(beTrue())
 
-                        let sender = ratTracker.perform(Selector(("sender")))?.takeUnretainedValue() as? RAnalyticsSender
+                        let sender = ratTracker.perform(Selector((("sender"))))?.takeUnretainedValue() as? RAnalyticsSender
 
                         var uploadTimerInterval: TimeInterval?
 

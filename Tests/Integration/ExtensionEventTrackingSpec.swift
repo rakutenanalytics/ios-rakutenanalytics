@@ -57,7 +57,7 @@ final class ExtensionEventTrackingSpec: QuickSpec {
                         }
 
                         it("should have an empty cache") {
-                            var eventsCache: [[String: Any]]? = pushEventHandler.cachedDarwinEvents()
+                            let eventsCache: [[String: Any]]? = pushEventHandler.cachedDarwinEvents()
                             expect(eventsCache).toEventuallyNot(beNil())
                             expect(eventsCache).to(beEmpty())
                         }
