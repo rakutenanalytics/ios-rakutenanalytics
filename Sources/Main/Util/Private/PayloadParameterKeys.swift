@@ -96,6 +96,10 @@ enum CpParameterKeys {
         static let deviceId = "deviceId"
         static let pnpClientId = "pnpClientId"
     }
+
+    enum Logout {
+        static let method = "logout_method"
+    }
 }
 
 enum PayloadConstants {

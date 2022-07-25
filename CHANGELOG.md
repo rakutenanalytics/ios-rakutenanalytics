@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improvements
+* [SDKCF-5635](https://jira.rakuten-it.com/jira/browse/SDKCF-5635): Create a constant for logout_method RAT extra parameter.
+
 ## 9.5.0 (2022-06-09)
 
 ### Improvements
