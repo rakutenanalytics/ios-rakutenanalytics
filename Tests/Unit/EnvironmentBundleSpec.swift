@@ -249,12 +249,10 @@ final class EnvironmentBundleSpec: QuickSpec {
                 it("should not return nil") {
                     let sdkComponentMap = Bundle.sdkComponentMap
                     expect(sdkComponentMap).toNot(beNil())
-                    expect(sdkComponentMap?["org.cocoapods.RPing"] as? String).to(equal("ping"))
                     expect(sdkComponentMap?["org.cocoapods.RAnalytics"] as? String).to(equal("analytics"))
-                    expect(sdkComponentMap?["org.cocoapods.RDiscover"] as? String).to(equal("discover"))
-                    expect(sdkComponentMap?["org.cocoapods.RFeedback"] as? String).to(equal("feedback"))
                     expect(sdkComponentMap?["org.cocoapods.RPushPNP"] as? String).to(equal("pushpnp"))
                     expect(sdkComponentMap?["org.cocoapods.RInAppMessaging"] as? String).to(equal("inappmessaging"))
+                    expect(sdkComponentMap?["org.cocoapods.RSDKUtils"] as? String).to(equal("sdkutils"))
                 }
             }
         }
