@@ -58,7 +58,7 @@ extension RAnalyticsEvent {
         }
 
         var extra = [String: Any]()
-        extra["push_notify_value"] = trackingIdentifier
+        extra[CpParameterKeys.Push.pushNotifyValue] = trackingIdentifier
         return extra
     }
 

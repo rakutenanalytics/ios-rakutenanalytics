@@ -88,6 +88,7 @@ enum CpParameterKeys {
     }
 
     enum Push {
+        static let pushNotifyValue = "push_notify_value"
         static let pushRequestIdentifier = "push_request_id"
         static let pushConversionAction = "push_cv_action"
     }
