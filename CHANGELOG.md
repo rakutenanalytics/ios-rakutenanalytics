@@ -8,6 +8,7 @@ Remove RPing, RDiscover, RFeedback SDKs
 Add RSDKUtils SDK
 * [SDKCF-5635](https://jira.rakuten-it.com/jira/browse/SDKCF-5635): Create a constant for logout_method RAT extra parameter.
 * [SDKCF-5657](https://jira.rakuten-it.com/jira/browse/SDKCF-5657): Create a constant for push_notify_value RAT extra parameter.
+* [SDKCF-5609](https://jira.rakuten-it.com/jira/browse/SDKCF-5609): Refactor UIDevice extension for Swift 5.7/Xcode 14 compatibility.
 
 ## 9.5.0 (2022-06-09)
 

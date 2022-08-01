@@ -28,7 +28,7 @@ extension UIDevice {
         var systemInfo = utsname()
         uname(&systemInfo)
         // utsname.machine is a null terminated C-string
-        // make String from a ptr to the first bit (0)
-        return String(cString: &systemInfo.machine.0)
+        // make String from a ptr to the first bit i.e. machine.0
+        return withUnsafePointer(to: &systemInfo.machine.0) { String(cString: $0) }
     }
 }
