@@ -10,6 +10,9 @@ Add RSDKUtils SDK
 * [SDKCF-5657](https://jira.rakuten-it.com/jira/browse/SDKCF-5657): Create a constant for push_notify_value RAT extra parameter.
 * [SDKCF-5609](https://jira.rakuten-it.com/jira/browse/SDKCF-5609): Refactor UIDevice extension for Swift 5.7/Xcode 14 compatibility.
 
+### Build fixes
+* [SDKCF-5816](https://jira.rakuten-it.com/jira/browse/SDKCF-5816): Update the provisioning profiles for the Sample apps.
+
 ## 9.5.0 (2022-06-09)
 
 ### Improvements
