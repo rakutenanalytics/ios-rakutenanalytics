@@ -34,7 +34,7 @@ extension RAnalyticsState {
 
         let loginMethodString = loginMethod.toString
         if !loginMethodString.isEmpty {
-            extra["login_method"] = loginMethodString
+            extra[CpParameterKeys.Login.method] = loginMethodString
         }
 
         return extra

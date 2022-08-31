@@ -103,6 +103,10 @@ enum CpParameterKeys {
         static let pnpClientId = "pnpClientId"
     }
 
+    enum Login {
+        static let method = "login_method"
+    }
+
     enum Logout {
         static let method = "logout_method"
     }

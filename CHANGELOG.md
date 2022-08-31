@@ -10,6 +10,7 @@ Add RSDKUtils SDK
 * [SDKCF-5657](https://jira.rakuten-it.com/jira/browse/SDKCF-5657): Create a constant for push_notify_value RAT extra parameter.
 * [SDKCF-5609](https://jira.rakuten-it.com/jira/browse/SDKCF-5609): Refactor UIDevice extension for Swift 5.7/Xcode 14 compatibility.
 * [SDKCF-5814](https://jira.rakuten-it.com/jira/browse/SDKCF-5814): Move rem_launch cp's keys to CpParameterKeys enum.
+* [SDKCF-5815](https://jira.rakuten-it.com/jira/browse/SDKCF-5815): Move rem_login cp's keys to CpParameterKeys enum.
 
 ### Build fixes
 * [SDKCF-5816](https://jira.rakuten-it.com/jira/browse/SDKCF-5816): Update the provisioning profiles for the Sample apps.
