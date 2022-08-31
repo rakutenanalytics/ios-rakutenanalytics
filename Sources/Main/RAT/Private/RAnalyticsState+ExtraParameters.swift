@@ -7,8 +7,8 @@ extension RAnalyticsState {
     var sessionStartParameters: [String: Any] {
         var extra = [String: Any]()
 
-        extra["days_since_first_use"] = NSNumber(value: NSDate.daysPassedSinceDate(installLaunchDate))
-        extra["days_since_last_use"] = NSNumber(value: NSDate.daysPassedSinceDate(lastLaunchDate))
+        extra[CpParameterKeys.SessionStart.daysSinceFirstUse] = NSNumber(value: NSDate.daysPassedSinceDate(installLaunchDate))
+        extra[CpParameterKeys.SessionStart.daysSinceLastUse] = NSNumber(value: NSDate.daysPassedSinceDate(lastLaunchDate))
 
         return extra
     }

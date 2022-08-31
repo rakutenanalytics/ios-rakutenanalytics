@@ -82,6 +82,11 @@ enum CpParameterKeys {
         static let component = "ref_comp"
     }
 
+    enum SessionStart {
+        static let daysSinceFirstUse = "days_since_first_use"
+        static let daysSinceLastUse = "days_since_last_use"
+    }
+
     enum Page {
         static let title = "title"
         static let url = "url"
