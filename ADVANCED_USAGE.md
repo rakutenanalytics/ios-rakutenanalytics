@@ -139,32 +139,32 @@ It's also possible to enable or disable events at runtime:
 * Enable all events at runtime 
 
 ```swift
-AnalyticsManager.shared().shouldTrackEvent = { _ in true }
+AnalyticsManager.shared().shouldTrackEventHandler = { _ in true }
 ```
 
 * Disable all events at runtime 
 
 ```swift
-AnalyticsManager.shared().shouldTrackEvent = { _ in false }
+AnalyticsManager.shared().shouldTrackEventHandler = { _ in false }
 ```
 
 * Disable a given event at runtime 
 
 ```swift
-AnalyticsManager.shared().shouldTrackEvent = { eventName in
+AnalyticsManager.shared().shouldTrackEventHandler = { eventName in
     eventName != AnalyticsManager.Event.Name.sessionStart
 }
 ```
 
 Note: The runtime configuration overrides the build time configuration. If an event is disabled in the build time configuration and enabled in the runtime configuration the event will be tracked by RAnalytics.
 
-In order to override the build time configuration at runtime set `AnalyticsManager.shared().shouldTrackEvent` in `application(_:willFinishLaunchingWithOptions:)`: 
+In order to override the build time configuration at runtime set `AnalyticsManager.shared().shouldTrackEventHandler` in `application(_:willFinishLaunchingWithOptions:)`: 
 
 ```swift
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        AnalyticsManager.shared().shouldTrackEvent = { eventName in
+        AnalyticsManager.shared().shouldTrackEventHandler = { eventName in
             ...
         }
         return true

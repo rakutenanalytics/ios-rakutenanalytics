@@ -15,6 +15,9 @@ Add RSDKUtils SDK
 ### Build fixes
 * [SDKCF-5816](https://jira.rakuten-it.com/jira/browse/SDKCF-5816): Update the provisioning profiles for the Sample apps.
 
+### Doc fixes
+* [SDKCF-5818](https://jira.rakuten-it.com/jira/browse/SDKCF-5818): Replace shouldTrackEvent by shouldTrackEventHandler in the documentation.
+
 ## 9.5.0 (2022-06-09)
 
 ### Improvements
