@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Validate inputs
         run: |
-          [[ "${{ inputs.version }}" =~ '^([0-9]+\.){0,2}(\*|[0-9]+)$' ]] || { echo "version input is invalid"; echo exit 1 }
+          [[ "${{ inputs.version }}" =~ ^([0-9]+).([0-9]+).([0-9]+)$ ]] || { echo "version input is invalid"; exit 1; }
       - name: Post start to Slack
         uses: slackapi/slack-github-action@v1.19.0
         with:
@@ -34,7 +34,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                    "text": "Starting release for iOS Analytics v${{ inputs.version }}"
                   }
                 }
               ]
@@ -42,6 +42,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SERVICE_ACCT_PAT }}
+      - run: gem install fastlane --no-document
       - run: bundle install --path vendor/bundle
       - name: Escape Bitbucket username
         id: esc_username
@@ -63,7 +64,7 @@ jobs:
           git clone --single-branch --branch master $REM_FL_STG_SPEC_REPO "$CLONE_DIR"
           cp -R RAnalytics.podspec $CLONE_DIR
           cd "$CLONE_DIR"
-          fastlane ios release
+          fastlane ios release branch:master
       - name: Branch name
         id: branch_name
         run: echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
@@ -75,7 +76,7 @@ jobs:
           git clone --single-branch --branch master $REM_FL_SPEC_REPO "$CLONE_DIR"
           cp -R RAnalytics.podspec $CLONE_DIR
           cd "$CLONE_DIR"
-          fastlane ios release
+          fastlane ios release branch:master
       - name: Verify prod podspec lint
         run: |
           bundle exec pod repo update
@@ -133,8 +134,17 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                    "text": "*iOS Analytics v${{ inputs.version }} released :rocket:*"
                   }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "${{ secrets.DISCOURSE_HOSTNAME }}/c/${{ secrets.DISCOURSE_CATEGORY_ID }}"
+                    }
+                  ]
                 }
               ]
             }
