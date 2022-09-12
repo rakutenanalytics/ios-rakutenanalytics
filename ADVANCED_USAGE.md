@@ -443,6 +443,24 @@ Note that:
 - The Analytics SDK _automatically_ tracks incoming deeplinks in the referred app as long as they are in the expected format.
 - To generate deeplinks in the referral app in the correct format you should use the `ReferralAppModel` helpers.
 
+### Warning
+
+If your app contains the `SceneDelegate` file, you have to add this line to `func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions)`:
+```
+scene.delegate = self
+```
+
+Then your code should look like this:
+```
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let scene = (scene as? UIWindowScene) else { return }
+        scene.delegate = self
+    }
+}
+```
+
 ### Create and open URL Scheme deeplink in 'referral' app
 ```swift
 guard let  url = ReferralAppModel().urlScheme(appScheme: "app"), UIApplication.shared.canOpenURL(url) else {

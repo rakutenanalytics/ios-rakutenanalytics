@@ -14,6 +14,19 @@ import RAnalyticsTestHelpers
 final class AnalyticsManagerSpec: QuickSpec {
     override func spec() {
         describe("AnalyticsManager") {
+            let bundleIdentifier = "jp.co.rakuten.app"
+            let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
+                                         accountIdentifier: 1,
+                                         applicationIdentifier: 2,
+                                         link: nil,
+                                         component: nil,
+                                         customParameters: [:])
+            let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=1&\(CpParameterKeys.Ref.applicationIdentifier)=2"
+            let appURL = URL(string: "app://?\(parameters)")!
+            let appURLWithRef = URL(string: "app://?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
+            let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
+            let universalLinkURLWithoutRef = URL(string: "https://www.rakuten.co.jp?\(parameters)")!
+
             let dependenciesContainerWithEmptyBundle = SimpleContainerMock()
             dependenciesContainerWithEmptyBundle.bundle = BundleMock()
 
@@ -201,33 +214,90 @@ final class AnalyticsManagerSpec: QuickSpec {
             }
 
             describe("trackReferralApp") {
-                let bundleIdentifier = "jp.co.rakuten.app"
-                let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=1&\(CpParameterKeys.Ref.applicationIdentifier)=2"
-                let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
-                                             accountIdentifier: 1,
-                                             applicationIdentifier: 2,
-                                             link: nil,
-                                             component: nil,
-                                             customParameters: [:])
+                it("should not track the referral app when a URL Scheme has no source application") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.trackReferralApp(url: appURL, sourceApplication: nil)
+
+                    expect(tracker.state).to(beNil())
+                }
+
+                it("should not track the referral app when a Universal Link has no ref") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.trackReferralApp(url: universalLinkURLWithoutRef, sourceApplication: nil)
+
+                    expect(tracker.state).to(beNil())
+                }
 
                 it("should track the referral app when a URL Scheme is opened") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let appURL = URL(string: "app://?\(parameters)")!
                     let tracker = TrackerMock()
 
                     analyticsManager.add(tracker)
                     analyticsManager.trackReferralApp(url: appURL, sourceApplication: bundleIdentifier)
+
                     expect(tracker.state).toNot(beNil())
                     expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
                 }
 
                 it("should track the referral app when a Universal Link is opened") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
                     let tracker = TrackerMock()
 
                     analyticsManager.add(tracker)
                     analyticsManager.trackReferralApp(url: universalLinkURL, sourceApplication: nil)
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
+                }
+            }
+
+            describe("tryToTrackReferralApp(with:)") {
+                it("should noy track the referral app when a Universal Link is nil") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.tryToTrackReferralApp(with: nil)
+
+                    expect(tracker.state).to(beNil())
+                }
+
+                it("should track the referral app when a Universal Link is opened") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.tryToTrackReferralApp(with: universalLinkURL)
+
+                    expect(tracker.state).toNot(beNil())
+                    expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
+                }
+            }
+
+            describe("tryToTrackReferralApp(with:sourceApplication:)") {
+                it("should not track the referral app when a URL Scheme is nil") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.tryToTrackReferralApp(with: nil, sourceApplication: nil)
+
+                    expect(tracker.state).to(beNil())
+                }
+
+                it("should track the referral app when a URL Scheme is opened") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let tracker = TrackerMock()
+
+                    analyticsManager.add(tracker)
+                    analyticsManager.tryToTrackReferralApp(with: appURLWithRef, sourceApplication: nil)
+
                     expect(tracker.state).toNot(beNil())
                     expect(tracker.state?.referralTracking).to(equal(ReferralTrackingType.referralApp(model)))
                 }

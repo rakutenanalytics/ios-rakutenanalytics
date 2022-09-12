@@ -21,6 +21,7 @@ abstract_target 'Common' do
   # pod 'RAnalytics', :source => 'https://github.com/rakutentech/ios-analytics-framework.git'
   
   target 'RAnalyticsSample'
+  target 'RAnalyticsSampleDest'
   target 'RAnalyticsSampleSwiftUI'
   target 'AnalyticsTodayExt'
 end

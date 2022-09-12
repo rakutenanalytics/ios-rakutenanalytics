@@ -1,4 +1,5 @@
 #import "_RAnalyticsSwiftLoader.h"
+@import Foundation;
 @import UIKit;
 @import UserNotifications;
 
@@ -14,12 +15,17 @@
 @implementation _RAnalyticsSwiftLoader
 
 + (void)load {
-    NSArray<Class> *classes = @[
+    NSMutableArray *mutableClassesArray = [NSMutableArray arrayWithArray:@[
         UIApplication.class,
         UIViewController.class,
         UNUserNotificationCenter.class
-    ];
-    for (Class loadableClass in classes) {
+    ]];
+
+    if (@available(iOS 13.0, *)) {
+        [mutableClassesArray addObject:UIWindowScene.class];
+    }
+
+    for (Class loadableClass in mutableClassesArray) {
         if ([loadableClass respondsToSelector:@selector(loadSwift)]) {
             [loadableClass performSelector:@selector(loadSwift)];
         }

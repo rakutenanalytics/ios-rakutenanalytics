@@ -18,7 +18,16 @@
 		C9320B3D27A15CF5009FE6EC /* RDeviceAdvertiser in Frameworks */ = {isa = PBXBuildFile; productRef = C9320B3C27A15CF5009FE6EC /* RDeviceAdvertiser */; };
 		C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B7229261DBA5F00CF91BA /* Assets.xcassets */; };
 		C96B722D261DBA5F00CF91BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */; };
-		C9C3B8C2279EE18000FBA3FE /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9C3B8C1279EE18000FBA3FE /* RAnalytics */; };
+		C9981C5F28CA91EA00B63A5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C5E28CA91EA00B63A5A /* AppDelegate.swift */; };
+		C9981C6128CA91EA00B63A5A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C6028CA91EA00B63A5A /* SceneDelegate.swift */; };
+		C9981C6328CA91EA00B63A5A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C6228CA91EA00B63A5A /* ViewController.swift */; };
+		C9981C6828CA91EB00B63A5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6728CA91EB00B63A5A /* Assets.xcassets */; };
+		C9981C6B28CA91EB00B63A5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */; };
+		C9981C7428CA92BA00B63A5A /* RDeviceAdvertiser in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */; };
+		C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7528CA92C100B63A5A /* RSDKUtilsMain */; };
+		C9981C7928CA932D00B63A5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C7728CA932D00B63A5A /* Main.storyboard */; };
+		C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7C28CA94FE00B63A5A /* RAnalytics */; };
+		C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7E28CA950300B63A5A /* RAnalytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +42,15 @@
 		C96B7229261DBA5F00CF91BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C96B722E261DBA5F00CF91BA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9981C5C28CA91EA00B63A5A /* RAnalyticsSampleDestSPM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RAnalyticsSampleDestSPM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9981C5E28CA91EA00B63A5A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ../../Samples/RAnalyticsSampleDest/AppDelegate.swift; sourceTree = "<group>"; };
+		C9981C6028CA91EA00B63A5A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SceneDelegate.swift; path = ../../Samples/RAnalyticsSampleDest/SceneDelegate.swift; sourceTree = "<group>"; };
+		C9981C6228CA91EA00B63A5A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = ../../Samples/RAnalyticsSampleDest/ViewController.swift; sourceTree = "<group>"; };
+		C9981C6728CA91EB00B63A5A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C9981C6A28CA91EB00B63A5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C9981C6C28CA91EB00B63A5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C9981C7828CA932D00B63A5A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = ../../Samples/RAnalyticsSampleDest/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C9981C7B28CA94E300B63A5A /* ios-analytics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "ios-analytics"; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,9 +58,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9C3B8C2279EE18000FBA3FE /* RAnalytics in Frameworks */,
 				C9320B3D27A15CF5009FE6EC /* RDeviceAdvertiser in Frameworks */,
 				456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */,
+				C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9981C5928CA91EA00B63A5A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9981C7428CA92BA00B63A5A /* RDeviceAdvertiser in Frameworks */,
+				C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */,
+				C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,8 +95,11 @@
 		C96B7219261DBA5E00CF91BA = {
 			isa = PBXGroup;
 			children = (
+				C9981C7A28CA94E300B63A5A /* Packages */,
 				C96B7224261DBA5E00CF91BA /* RAnalyticsSampleSPM */,
+				C9981C5D28CA91EA00B63A5A /* RAnalyticsSampleDest */,
 				C96B7223261DBA5E00CF91BA /* Products */,
+				C9981C7028CA92B600B63A5A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -76,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				C96B7222261DBA5E00CF91BA /* RAnalyticsSampleSPMInternal.app */,
+				C9981C5C28CA91EA00B63A5A /* RAnalyticsSampleDestSPM.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +131,35 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		C9981C5D28CA91EA00B63A5A /* RAnalyticsSampleDest */ = {
+			isa = PBXGroup;
+			children = (
+				C9981C5E28CA91EA00B63A5A /* AppDelegate.swift */,
+				C9981C6728CA91EB00B63A5A /* Assets.xcassets */,
+				C9981C6C28CA91EB00B63A5A /* Info.plist */,
+				C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */,
+				C9981C7728CA932D00B63A5A /* Main.storyboard */,
+				C9981C6028CA91EA00B63A5A /* SceneDelegate.swift */,
+				C9981C6228CA91EA00B63A5A /* ViewController.swift */,
+			);
+			path = RAnalyticsSampleDest;
+			sourceTree = "<group>";
+		};
+		C9981C7028CA92B600B63A5A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C9981C7A28CA94E300B63A5A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C9981C7B28CA94E300B63A5A /* ios-analytics */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -117,11 +178,33 @@
 			name = RAnalyticsSampleSPMInternal;
 			packageProductDependencies = (
 				456625A7271E10F60008135E /* RSDKUtilsMain */,
-				C9C3B8C1279EE18000FBA3FE /* RAnalytics */,
 				C9320B3C27A15CF5009FE6EC /* RDeviceAdvertiser */,
+				C9981C7C28CA94FE00B63A5A /* RAnalytics */,
 			);
 			productName = RAnalyticsSampleSPM;
 			productReference = C96B7222261DBA5E00CF91BA /* RAnalyticsSampleSPMInternal.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9981C5B28CA91EA00B63A5A /* RAnalyticsSampleDest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9981C6F28CA91EB00B63A5A /* Build configuration list for PBXNativeTarget "RAnalyticsSampleDest" */;
+			buildPhases = (
+				C9981C5828CA91EA00B63A5A /* Sources */,
+				C9981C5928CA91EA00B63A5A /* Frameworks */,
+				C9981C5A28CA91EA00B63A5A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RAnalyticsSampleDest;
+			packageProductDependencies = (
+				C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */,
+				C9981C7528CA92C100B63A5A /* RSDKUtilsMain */,
+				C9981C7E28CA950300B63A5A /* RAnalytics */,
+			);
+			productName = RAnalyticsSampleDest;
+			productReference = C9981C5C28CA91EA00B63A5A /* RAnalyticsSampleDestSPM.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -130,11 +213,14 @@
 		C96B721A261DBA5E00CF91BA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1240;
+				LastSwiftUpdateCheck = 1310;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					C96B7221261DBA5E00CF91BA = {
 						CreatedOnToolsVersion = 12.4;
+					};
+					C9981C5B28CA91EA00B63A5A = {
+						CreatedOnToolsVersion = 13.1;
 					};
 				};
 			};
@@ -149,7 +235,6 @@
 			mainGroup = C96B7219261DBA5E00CF91BA;
 			packageReferences = (
 				456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */,
-				C9C3B8C0279EE18000FBA3FE /* XCRemoteSwiftPackageReference "core-ios-analytics" */,
 				C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */,
 			);
 			productRefGroup = C96B7223261DBA5E00CF91BA /* Products */;
@@ -157,6 +242,7 @@
 			projectRoot = "";
 			targets = (
 				C96B7221261DBA5E00CF91BA /* RAnalyticsSampleSPMInternal */,
+				C9981C5B28CA91EA00B63A5A /* RAnalyticsSampleDest */,
 			);
 		};
 /* End PBXProject section */
@@ -170,6 +256,16 @@
 				4538B98A2620C626009952BE /* Main.storyboard in Resources */,
 				C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */,
 				4538B98C2620C626009952BE /* RAnalyticsConfiguration.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9981C5A28CA91EA00B63A5A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9981C7928CA932D00B63A5A /* Main.storyboard in Resources */,
+				C9981C6B28CA91EB00B63A5A /* LaunchScreen.storyboard in Resources */,
+				C9981C6828CA91EB00B63A5A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +284,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9981C5828CA91EA00B63A5A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9981C6328CA91EA00B63A5A /* ViewController.swift in Sources */,
+				C9981C5F28CA91EA00B63A5A /* AppDelegate.swift in Sources */,
+				C9981C6128CA91EA00B63A5A /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -195,6 +301,22 @@
 			isa = PBXVariantGroup;
 			children = (
 				4538B9802620C625009952BE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9981C6A28CA91EB00B63A5A /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		C9981C7728CA932D00B63A5A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9981C7828CA932D00B63A5A /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -366,6 +488,66 @@
 			};
 			name = Release;
 		};
+		C9981C6D28CA91EB00B63A5A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleDest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSampleDest;
+				PRODUCT_NAME = "$(TARGET_NAME)SPM";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C9981C6E28CA91EB00B63A5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleDest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSampleDest;
+				PRODUCT_NAME = "$(TARGET_NAME)SPM";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -383,6 +565,15 @@
 			buildConfigurations = (
 				C96B7232261DBA5F00CF91BA /* Debug */,
 				C96B7233261DBA5F00CF91BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9981C6F28CA91EB00B63A5A /* Build configuration list for PBXNativeTarget "RAnalyticsSampleDest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9981C6D28CA91EB00B63A5A /* Debug */,
+				C9981C6E28CA91EB00B63A5A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -406,14 +597,6 @@
 				kind = branch;
 			};
 		};
-		C9C3B8C0279EE18000FBA3FE /* XCRemoteSwiftPackageReference "core-ios-analytics" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@gitpub.rakuten-it.com:7999/eco/core-ios-analytics.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -427,9 +610,22 @@
 			package = C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */;
 			productName = RDeviceAdvertiser;
 		};
-		C9C3B8C1279EE18000FBA3FE /* RAnalytics */ = {
+		C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C9C3B8C0279EE18000FBA3FE /* XCRemoteSwiftPackageReference "core-ios-analytics" */;
+			package = C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */;
+			productName = RDeviceAdvertiser;
+		};
+		C9981C7528CA92C100B63A5A /* RSDKUtilsMain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
+			productName = RSDKUtilsMain;
+		};
+		C9981C7C28CA94FE00B63A5A /* RAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RAnalytics;
+		};
+		C9981C7E28CA950300B63A5A /* RAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = RAnalytics;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -65,6 +65,32 @@ platform :ios do
     appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSampleSwiftUI.ipa", dsym: "./artifacts/device/RAnalyticsSampleSwiftUI.app.dSYM.zip")
   end
 
+  # Build RAnalyticsSampleDest
+  desc "Build RAnalyticsSampleDest with the public RAnalytics SDK"
+  lane :build_sample_dest do |options|
+    build_sdk(options)
+    cocoapods(podfile: "Samples/Podfile")
+    gym(
+      configuration: "Release",
+      output_directory: './artifacts/device',
+      workspace: "Samples/RAnalyticsSample.xcworkspace",
+      codesigning_identity: 'iPhone Distribution',
+      export_method: 'enterprise',
+      export_team_id: ENV['REM_FL_EXPORT_TEAM_ID'],
+      export_options: {
+        uploadBitcode: false,
+        compileBitcode: false,
+      },
+      scheme: "RAnalyticsSampleDest")
+  end
+
+  # Upload RAnalyticsSampleDest
+  desc "Upload RAnalyticsSampleDest built with the public RAnalytics SDK"
+  lane :upload_sample_dest do |options|
+    build_sample_dest()
+    appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSampleDest.ipa", dsym: "./artifacts/device/RAnalyticsSampleDest.app.dSYM.zip")
+  end
+
   # Build RAnalyticsSampleSPMInternal
   desc "Build sample with the internal RAnalytics Swift Package"
   lane :build_sample_spm_internal do |options|

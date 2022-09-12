@@ -509,6 +509,12 @@ public final class AnalyticsManagerMock: AnalyticsManageable {
         processedEvents.append(event)
         return true
     }
+
+    public func tryToTrackReferralApp(with url: URL?, sourceApplication: String?) {
+    }
+
+    public func tryToTrackReferralApp(with webpageURL: URL?) {
+    }
 }
 
 // MARK: - ReachabilityMock

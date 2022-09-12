@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* [SDKCF-5829](https://jira.rakuten-it.com/jira/browse/SDKCF-5829): SceneDelegate support for App-to-App referral tracking.
+
 ### Improvements
 * [SDKCF-5306](https://jira.rakuten-it.com/jira/browse/SDKCF-5306): update RModulesList.plist:
 Remove RPing, RDiscover, RFeedback SDKs

@@ -23,6 +23,8 @@ public typealias RAnalyticsErrorBlock = (NSError) -> Void
 // MARK: - AnalyticsManageable
 
 protocol AnalyticsManageable: AnyObject {
+    func tryToTrackReferralApp(with url: URL?, sourceApplication: String?)
+    func tryToTrackReferralApp(with webpageURL: URL?)
     func process(_ event: RAnalyticsEvent) -> Bool
 }
 

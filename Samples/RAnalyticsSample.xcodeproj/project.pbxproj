@@ -19,6 +19,12 @@
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
 		6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
+		C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEC28C0DAC400596714 /* AppDelegate.swift */; };
+		C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEE28C0DAC400596714 /* SceneDelegate.swift */; };
+		C900FBF128C0DAC400596714 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBF028C0DAC400596714 /* ViewController.swift */; };
+		C900FBF428C0DAC400596714 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF228C0DAC400596714 /* Main.storyboard */; };
+		C900FBF628C0DAC600596714 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF528C0DAC600596714 /* Assets.xcassets */; };
+		C900FBF928C0DAC600596714 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */; };
 		C980DAC427BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */; };
 		C980DAC627BAA4E80059E12D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DAC527BAA4E80059E12D /* ContentView.swift */; };
 		C980DAC827BAA4EA0059E12D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C980DAC727BAA4EA0059E12D /* Assets.xcassets */; };
@@ -71,6 +77,15 @@
 		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSample.entitlements; sourceTree = "<group>"; };
+		C900FBEA28C0DAC400596714 /* RAnalyticsSampleDest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RAnalyticsSampleDest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C900FBEC28C0DAC400596714 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C900FBEE28C0DAC400596714 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		C900FBF028C0DAC400596714 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C900FBF328C0DAC400596714 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C900FBF528C0DAC600596714 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C900FBF828C0DAC600596714 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C900FBFA28C0DAC600596714 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C900FBFE28C0DF5E00596714 /* RAnalyticsSampleDest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSampleDest.entitlements; sourceTree = "<group>"; };
 		C980DAC127BAA4E80059E12D /* RAnalyticsSampleSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RAnalyticsSampleSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSampleSwiftUIApp.swift; sourceTree = "<group>"; };
 		C980DAC527BAA4E80059E12D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -92,6 +107,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5AB66CB52016CE890028CEBC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C900FBE728C0DAC400596714 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -143,6 +165,7 @@
 				5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */,
 				5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */,
 				C980DAC227BAA4E80059E12D /* RAnalyticsSampleSwiftUI */,
+				C900FBEB28C0DAC400596714 /* RAnalyticsSampleDest */,
 				697AAE18192DA4FA006EF197 /* Products */,
 				CECCB6190E493107EA41038F /* Frameworks */,
 			);
@@ -154,8 +177,24 @@
 				5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */,
 				5AB66CB82016CE890028CEBC /* RAnalyticsSample.app */,
 				C980DAC127BAA4E80059E12D /* RAnalyticsSampleSwiftUI.app */,
+				C900FBEA28C0DAC400596714 /* RAnalyticsSampleDest.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C900FBEB28C0DAC400596714 /* RAnalyticsSampleDest */ = {
+			isa = PBXGroup;
+			children = (
+				C900FBFE28C0DF5E00596714 /* RAnalyticsSampleDest.entitlements */,
+				C900FBEC28C0DAC400596714 /* AppDelegate.swift */,
+				C900FBEE28C0DAC400596714 /* SceneDelegate.swift */,
+				C900FBF028C0DAC400596714 /* ViewController.swift */,
+				C900FBF228C0DAC400596714 /* Main.storyboard */,
+				C900FBF528C0DAC600596714 /* Assets.xcassets */,
+				C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */,
+				C900FBFA28C0DAC600596714 /* Info.plist */,
+			);
+			path = RAnalyticsSampleDest;
 			sourceTree = "<group>";
 		};
 		C980DAC227BAA4E80059E12D /* RAnalyticsSampleSwiftUI */ = {
@@ -228,6 +267,23 @@
 			productReference = 5AB66CB82016CE890028CEBC /* RAnalyticsSample.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C900FBE928C0DAC400596714 /* RAnalyticsSampleDest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C900FBFD28C0DAC600596714 /* Build configuration list for PBXNativeTarget "RAnalyticsSampleDest" */;
+			buildPhases = (
+				C900FBE628C0DAC400596714 /* Sources */,
+				C900FBE728C0DAC400596714 /* Frameworks */,
+				C900FBE828C0DAC400596714 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RAnalyticsSampleDest;
+			productName = RAnalyticsSampleDest;
+			productReference = C900FBEA28C0DAC400596714 /* RAnalyticsSampleDest.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C980DAC027BAA4E80059E12D /* RAnalyticsSampleSwiftUI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C980DACE27BAA4EA0059E12D /* Build configuration list for PBXNativeTarget "RAnalyticsSampleSwiftUI" */;
@@ -271,6 +327,11 @@
 							};
 						};
 					};
+					C900FBE928C0DAC400596714 = {
+						CreatedOnToolsVersion = 13.1;
+						DevelopmentTeam = 5J4GVGN58B;
+						ProvisioningStyle = Manual;
+					};
 					C980DAC027BAA4E80059E12D = {
 						CreatedOnToolsVersion = 13.1;
 						DevelopmentTeam = 5J4GVGN58B;
@@ -295,6 +356,7 @@
 				5AB66CB72016CE890028CEBC /* RAnalyticsSample */,
 				5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */,
 				C980DAC027BAA4E80059E12D /* RAnalyticsSampleSwiftUI */,
+				C900FBE928C0DAC400596714 /* RAnalyticsSampleDest */,
 			);
 		};
 /* End PBXProject section */
@@ -316,6 +378,16 @@
 				6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */,
 				5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */,
 				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C900FBE828C0DAC400596714 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C900FBF928C0DAC600596714 /* LaunchScreen.storyboard in Resources */,
+				C900FBF628C0DAC600596714 /* Assets.xcassets in Resources */,
+				C900FBF428C0DAC400596714 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +444,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C900FBE628C0DAC400596714 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C900FBF128C0DAC400596714 /* ViewController.swift in Sources */,
+				C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */,
+				C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C980DABD27BAA4E80059E12D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -415,6 +497,22 @@
 			isa = PBXVariantGroup;
 			children = (
 				5AB66CC42016CE8A0028CEBC /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		C900FBF228C0DAC400596714 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C900FBF328C0DAC400596714 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C900FBF828C0DAC600596714 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -640,6 +738,110 @@
 			};
 			name = Release;
 		};
+		C900FBFB28C0DAC600596714 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RAnalyticsSampleDest/RAnalyticsSampleDest.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleDest/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App needs location when in use.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "RAnalyticsSample app needs IDFA to track User ID.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.sdk.ecosystemdemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse220829;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C900FBFC28C0DAC600596714 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = RAnalyticsSampleDest/RAnalyticsSampleDest.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleDest/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App needs location when in use.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "RAnalyticsSample app needs IDFA to track User ID.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.sdk.ecosystemdemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse220829;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		C980DACC27BAA4EA0059E12D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -766,6 +968,15 @@
 			buildConfigurations = (
 				697AAE4A192DA4FB006EF197 /* Debug */,
 				697AAE4B192DA4FB006EF197 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C900FBFD28C0DAC600596714 /* Build configuration list for PBXNativeTarget "RAnalyticsSampleDest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C900FBFB28C0DAC600596714 /* Debug */,
+				C900FBFC28C0DAC600596714 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
