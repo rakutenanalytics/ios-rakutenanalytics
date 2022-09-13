@@ -17,6 +17,8 @@ Add RSDKUtils SDK
 
 ### Build fixes
 * [SDKCF-5816](https://jira.rakuten-it.com/jira/browse/SDKCF-5816): Update the provisioning profiles for the Sample apps.
+* [SDKCF-5829](https://jira.rakuten-it.com/jira/browse/SDKCF-5829): Fix a Sonarqube issue for parameter naming convention:
+`Rename this variable "_analyticsManager" to match the regular expression ^[a-z][a-zA-Z0-9]*$.`
 
 ### Doc fixes
 * [SDKCF-5818](https://jira.rakuten-it.com/jira/browse/SDKCF-5818): Replace shouldTrackEvent by shouldTrackEventHandler in the documentation.
