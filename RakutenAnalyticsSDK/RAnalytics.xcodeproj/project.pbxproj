@@ -99,9 +99,12 @@
 		C9320B36279FF79B009FE6EC /* DeviceHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320ACD279FF79B009FE6EC /* DeviceHandler.swift */; };
 		C9320B37279FF79B009FE6EC /* String+LogoutMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320ACE279FF79B009FE6EC /* String+LogoutMethod.swift */; };
 		C9320B38279FF79B009FE6EC /* RAnalytics.h in Headers */ = {isa = PBXBuildFile; fileRef = C9320ACF279FF79B009FE6EC /* RAnalytics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9443EB428D50AD000DAECDA /* RAnalyticsClassManipulable+UIWindowScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9443EB328D50AD000DAECDA /* RAnalyticsClassManipulable+UIWindowScene.swift */; };
 		C9445E4928104D290007CEEA /* LoginType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4728104D280007CEEA /* LoginType.swift */; };
 		C9445E4A28104D290007CEEA /* LoginFailureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4828104D280007CEEA /* LoginFailureType.swift */; };
 		C9445E4F28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4E28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift */; };
+		C992E78E28D515AA005E32F9 /* SceneDelegateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992E78C28D515AA005E32F9 /* SceneDelegateHelper.swift */; };
+		C992E78F28D515AA005E32F9 /* UIApplicationSceneManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992E78D28D515AA005E32F9 /* UIApplicationSceneManifest.swift */; };
 		C9E7602927B12FB5006B22F5 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602827B12FB5006B22F5 /* View+Tracking.swift */; };
 		C9EA33FC28325CE900465945 /* Data+Sha1.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33FA28325CE900465945 /* Data+Sha1.swift */; };
 		C9EA33FD28325CE900465945 /* DeviceIdentifierHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */; };
@@ -203,9 +206,12 @@
 		C9320ACD279FF79B009FE6EC /* DeviceHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceHandler.swift; sourceTree = "<group>"; };
 		C9320ACE279FF79B009FE6EC /* String+LogoutMethod.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+LogoutMethod.swift"; sourceTree = "<group>"; };
 		C9320ACF279FF79B009FE6EC /* RAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAnalytics.h; sourceTree = "<group>"; };
+		C9443EB328D50AD000DAECDA /* RAnalyticsClassManipulable+UIWindowScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UIWindowScene.swift"; sourceTree = "<group>"; };
 		C9445E4728104D280007CEEA /* LoginType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginType.swift; sourceTree = "<group>"; };
 		C9445E4828104D280007CEEA /* LoginFailureType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginFailureType.swift; sourceTree = "<group>"; };
 		C9445E4E28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsLoginMethod+Type.swift"; sourceTree = "<group>"; };
+		C992E78C28D515AA005E32F9 /* SceneDelegateHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegateHelper.swift; sourceTree = "<group>"; };
+		C992E78D28D515AA005E32F9 /* UIApplicationSceneManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationSceneManifest.swift; sourceTree = "<group>"; };
 		C9E7602827B12FB5006B22F5 /* View+Tracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
 		C9EA33FA28325CE900465945 /* Data+Sha1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Sha1.swift"; sourceTree = "<group>"; };
 		C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandler.swift; sourceTree = "<group>"; };
@@ -304,6 +310,9 @@
 		C9320A72279FF79B009FE6EC /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				C992E78C28D515AA005E32F9 /* SceneDelegateHelper.swift */,
+				C992E78D28D515AA005E32F9 /* UIApplicationSceneManifest.swift */,
+				C9443EB328D50AD000DAECDA /* RAnalyticsClassManipulable+UIWindowScene.swift */,
 				C9445E4E28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift */,
 				C9445E4828104D280007CEEA /* LoginFailureType.swift */,
 				C9445E4728104D280007CEEA /* LoginType.swift */,
@@ -565,12 +574,14 @@
 				C9320B1D279FF79B009FE6EC /* AnalyticsError.swift in Sources */,
 				C9320AFC279FF79B009FE6EC /* HTTPCookieStorage+Extensions.swift in Sources */,
 				C9320B31279FF79B009FE6EC /* RAnalyticsState+ExtraParameters.swift in Sources */,
+				C992E78E28D515AA005E32F9 /* SceneDelegateHelper.swift in Sources */,
 				C9320AF0279FF79B009FE6EC /* ReferralAppModel.swift in Sources */,
 				C9320ADF279FF79B009FE6EC /* RAnalyticsRpCookieFetcher.swift in Sources */,
 				C9320B18279FF79B009FE6EC /* Synchronizable.swift in Sources */,
 				C9320AEF279FF79B009FE6EC /* AnalyticsEventPoster.swift in Sources */,
 				C9320ADA279FF79B009FE6EC /* _RAnalyticsSwiftLoader.m in Sources */,
 				C9320B27279FF79B009FE6EC /* RAnalyticsRATTracker.swift in Sources */,
+				C992E78F28D515AA005E32F9 /* UIApplicationSceneManifest.swift in Sources */,
 				C9445E4928104D290007CEEA /* LoginType.swift in Sources */,
 				C9320AE3279FF79B009FE6EC /* RAnalyticsClassManipulable+UIApplication.swift in Sources */,
 				C9320B0B279FF79B009FE6EC /* FileManager+Extensions.swift in Sources */,
@@ -586,6 +597,7 @@
 				C9320AF7279FF79B009FE6EC /* PayloadParameterKeys.swift in Sources */,
 				C9320B20279FF79B009FE6EC /* KeychainHandler.swift in Sources */,
 				C9320B2B279FF79B009FE6EC /* UserAgentHandler.swift in Sources */,
+				C9443EB428D50AD000DAECDA /* RAnalyticsClassManipulable+UIWindowScene.swift in Sources */,
 				C9320B1C279FF79B009FE6EC /* CTTelephonyNetworkInfo+Extensions.swift in Sources */,
 				C9320AFF279FF79B009FE6EC /* Array+RAT.swift in Sources */,
 				C9320AFA279FF79B009FE6EC /* RAnalyticsConfiguration.swift in Sources */,

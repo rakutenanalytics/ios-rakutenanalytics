@@ -443,22 +443,26 @@ Note that:
 - The Analytics SDK _automatically_ tracks incoming deeplinks in the referred app as long as they are in the expected format.
 - To generate deeplinks in the referral app in the correct format you should use the `ReferralAppModel` helpers.
 
-### Warning
+### SceneDelegate
 
-If your app contains the `SceneDelegate` file, you have to add this line to `func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions)`:
+If your app uses SceneDelegate, your app's `Info.plist` should contain `UISceneDelegateClassName` key in `UIApplicationSceneManifest` dictionary in order to make the `App-to-App referral tracking` working:
 ```
-scene.delegate = self
-```
-
-Then your code should look like this:
-```
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let scene = (scene as? UIWindowScene) else { return }
-        scene.delegate = self
-    }
-}
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+        <key>UISceneConfigurations</key>
+        <dict>
+            <key>UIWindowSceneSessionRoleApplication</key>
+            <array>
+                <dict>
+                    <key>UISceneDelegateClassName</key>
+                    <string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+                    ...
+                </dict>
+            </array>
+        </dict>
+    </dict>
 ```
 
 ### Create and open URL Scheme deeplink in 'referral' app

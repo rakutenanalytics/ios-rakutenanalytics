@@ -51,6 +51,20 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
 
         let recipient = type(of: unwrappedDelegate)
 
+        UIWindowScene.swizzleSceneDelegateFunctions(recipient)
+    }
+
+    /// Swizzle the UISceneDelegate functions for tracking URL Schemes and Universal Links
+    ///
+    /// - Parameter sceneDelegateClassName: the scene delegate class name
+    static func rAutotrackSceneDelegateFunctions(_ sceneDelegateClassName: String) {
+        guard let recipient = NSClassFromString(sceneDelegateClassName) as? UISceneDelegate.Type else {
+            return
+        }
+        swizzleSceneDelegateFunctions(recipient)
+    }
+
+    static func swizzleSceneDelegateFunctions(_ recipient: UISceneDelegate.Type) {
         UIWindowScene.replaceMethod(
             #selector(UISceneDelegate.scene(_:willConnectTo:options:)),
             inClass: recipient,
