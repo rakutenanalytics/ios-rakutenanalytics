@@ -16,12 +16,12 @@ jobs:
       DISCOURSE_USERNAME: ${{ secrets.DISCOURSE_USERNAME }}
       DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
       DISCOURSE_CATEGORY_ID: ${{ secrets.DISCOURSE_CATEGORY_ID }}
+      GITPUB_MIRROR_GIT: ${{ secrets.GITPUB_MIRROR_GIT }}
       REM_FL_DOCS_GENERATION_COMMAND: echo Defer to fastlane deploy_ghpages
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     steps:
       - name: Validate inputs
         run: |
-          [[ "${{ inputs.version }}" =~ ^([0-9]+).([0-9]+).([0-9]+)$ ]] || { echo "version input is invalid"; exit 1; }
+          [[ "${{ inputs.version }}" =~ ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$ ]] || { echo "version input is invalid"; exit 1; }
       - name: Post start to Slack
         uses: slackapi/slack-github-action@v1.19.0
         with:
@@ -58,6 +58,11 @@ jobs:
           git add CHANGELOG.md
           git commit --amend --no-edit
           bundle exec fastlane run push_to_git_remote
+      - name: Branch name
+        id: branch_name
+        run: echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+      - name: Tag, Lint Release Checks
+        run: bundle exec fastlane ios release module:${{ inputs.version }} branch:${{ steps.branch_name.outputs.SOURCE_BRANCH }}
       - name: Publish stg podspec
         run: |
           CLONE_DIR=$(mktemp -d)
@@ -65,18 +70,19 @@ jobs:
           cp -R RAnalytics.podspec $CLONE_DIR
           cd "$CLONE_DIR"
           fastlane ios release branch:master
-      - name: Branch name
-        id: branch_name
-        run: echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-      - name: Tag, Lint Release Checks
-        run: bundle exec fastlane ios release module:${{ inputs.version }} branch:${{ steps.branch_name.outputs.SOURCE_BRANCH }}
-      - name: Prod Podspec Publish Release
+      - name: Publish prod podspec
         run: |
           CLONE_DIR=$(mktemp -d)
           git clone --single-branch --branch master $REM_FL_SPEC_REPO "$CLONE_DIR"
           cp -R RAnalytics.podspec $CLONE_DIR
           cd "$CLONE_DIR"
           fastlane ios release branch:master
+      - name: Mirror changes to GitPub
+        run: |
+          git fetch --all --tags
+          git remote add gitpub ${{ secrets.GITPUB_MIRROR_GIT }}
+          git push gitpub "refs/remotes/origin/release/*:refs/heads/release/*"
+          git push gitpub "refs/tags/*:refs/tags/*" || true
       - name: Verify prod podspec lint
         run: |
           bundle exec pod repo update
@@ -117,13 +123,16 @@ jobs:
           prerelease: false
       - name: Bump snapshot
         run: |
-          bundle exec fastlane ios commit_sdk_ver_bump version:${{ inputs.version }}-snapshot
+          bumped_version=$(echo ${{ inputs.version }} | awk -F. '{printf("%d.%d.%d", $1, $2+1, $3)}')
+          bundle exec fastlane ios commit_sdk_ver_bump version:$bumped_version-snapshot
           sed -i '' -e '3i\'$'\n''## Unreleased\'$'\n''' CHANGELOG.md
           git add CHANGELOG.md
           git commit --amend --no-edit
           bundle exec fastlane run push_to_git_remote
       - name: Post completion to Slack
         uses: slackapi/slack-github-action@v1.19.0
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           payload: |
@@ -150,12 +159,12 @@ jobs:
             }
       - name: Post to Discourse
         run: |
-          curl --location --request POST "https://$DISCOURSE_HOSTNAME/posts.json" \
+          curl --location --request POST "https://${{ secrets.DISCOURSE_HOSTNAME }}/posts.json" \
           --header "Content-Type: application/json; charset=utf-8" \
-          --header "Api-Key: $DISCOURSE_API_KEY" \
-          --header "Api-Username: $DISCOURSE_USERNAME" \
+          --header "Api-Key: ${{ secrets.DISCOURSE_API_KEY }}" \
+          --header "Api-Username: ${{ secrets.DISCOURSE_USERNAME }}" \
           --data-raw "{
-            \"category\": $DISCOURSE_CATEGORY_ID,
+            \"category\": ${{ secrets.DISCOURSE_CATEGORY_ID }},
             \"title\": \"iOS Analytics v${{ inputs.version }} released 🚀\",
             \"tags\": [\"ios\", \"mobile\", \"mobilesdk\", \"release\", \"mag-sdk\"]
             \"raw\": \"We're pleased to announce that we have released iOS Analytics v${{ inputs.version }}!\n\n${{ steps.release_notes.outputs.RELEASE_NOTES }}\"
