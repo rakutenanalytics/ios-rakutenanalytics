@@ -99,6 +99,8 @@ done
 # check bitcode for each mobile architecture
 allArchitectures=("arm64")
 
+set +e
+
 bitcode()
 {
     otoolResult=$(otool -arch $1 -l $2 | grep __LLVM)

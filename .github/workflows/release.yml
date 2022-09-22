@@ -12,11 +12,9 @@ jobs:
       REM_FL_STG_SPEC_REPO: ${{ secrets.REM_FL_STG_SPEC_REPO }}
       REM_FL_SPEC_REPO: ${{ secrets.REM_FL_SPEC_REPO }}
       FASTLANE_SKIP_UPDATE_CHECK: 1
-      DISCOURSE_HOSTNAME: ${{ secrets.DISCOURSE_HOSTNAME }}
-      DISCOURSE_USERNAME: ${{ secrets.DISCOURSE_USERNAME }}
-      DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
-      DISCOURSE_CATEGORY_ID: ${{ secrets.DISCOURSE_CATEGORY_ID }}
       GITPUB_MIRROR_GIT: ${{ secrets.GITPUB_MIRROR_GIT }}
+      RELEASE_GHE_TOKEN: ${{ secrets.RELEASE_GHE_TOKEN }}
+      RELEASE_GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
       REM_FL_DOCS_GENERATION_COMMAND: echo Defer to fastlane deploy_ghpages
     steps:
       - name: Validate inputs
@@ -80,17 +78,20 @@ jobs:
           cd "$CLONE_DIR"
           fastlane ios release branch:master
       - name: Mirror changes to GitPub
+        env:
+          BRANCH_NAME: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
+          TAG: ${{ inputs.version }}
         run: |
-          git fetch --all --tags
+          git fetch --unshallow --all --tags
           git remote add gitpub ${{ secrets.GITPUB_MIRROR_GIT }}
-          git push gitpub "refs/remotes/origin/release/*:refs/heads/release/*"
-          git push gitpub "refs/tags/*:refs/tags/*" || true
+          git push gitpub "refs/remotes/origin/$BRANCH_NAME:refs/heads/$BRANCH_NAME"
+          git push gitpub "refs/tags/$TAG:refs/tags/$TAG"
       - name: Verify prod podspec lint
         run: |
           bundle exec pod repo update
           bundle exec pod spec lint --sources=$REM_FL_SPEC_REPO,https://cdn.cocoapods.org --allow-warnings
       - name: Publish public analytics
-        run: bundle exec deploy_framework release:true version:${{ inputs.version }} skip_build:false skip_upload:false skip_pod_push:false
+        run: bundle exec fastlane ios deploy_framework release:true version:${{ inputs.version }} skip_build:false skip_upload:false skip_pod_push:false
       - name: Generate GitHub Pages documentation
         env:
           DOCS_REPO_DEPLOY_KEY_BASE64: ${{ secrets.DOCS_REPO_DEPLOY_KEY_BASE64 }}
@@ -160,13 +161,18 @@ jobs:
               ]
             }
       - name: Post to Discourse
+        env:
+          DISCOURSE_HOSTNAME: ${{ secrets.DISCOURSE_HOSTNAME }}
+          DISCOURSE_USERNAME: ${{ secrets.DISCOURSE_USERNAME }}
+          DISCOURSE_API_KEY: ${{ secrets.DISCOURSE_API_KEY }}
+          DISCOURSE_CATEGORY_ID: ${{ secrets.DISCOURSE_CATEGORY_ID }}
         run: |
-          curl --location --request POST "https://${{ secrets.DISCOURSE_HOSTNAME }}/posts.json" \
+          curl --location --request POST "https://$DISCOURSE_HOSTNAME/posts.json" \
           --header "Content-Type: application/json; charset=utf-8" \
-          --header "Api-Key: ${{ secrets.DISCOURSE_API_KEY }}" \
-          --header "Api-Username: ${{ secrets.DISCOURSE_USERNAME }}" \
+          --header "Api-Key: $DISCOURSE_API_KEY" \
+          --header "Api-Username: $DISCOURSE_USERNAME" \
           --data-raw "{
-            \"category\": ${{ secrets.DISCOURSE_CATEGORY_ID }},
+            \"category\": $DISCOURSE_CATEGORY_ID,
             \"title\": \"iOS Analytics v${{ inputs.version }} released 🚀\",
             \"tags\": [\"ios\", \"mobile\", \"mobilesdk\", \"release\", \"mag-sdk\"]
             \"raw\": \"We're pleased to announce that we have released iOS Analytics v${{ inputs.version }}!\n\n${{ steps.release_notes.outputs.RELEASE_NOTES }}\"
