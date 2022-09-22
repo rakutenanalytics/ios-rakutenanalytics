@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 9.6.0 (2022-09-22)
 
 ### Features
 * [SDKCF-5829](https://jira.rakuten-it.com/jira/browse/SDKCF-5829): SceneDelegate support for App-to-App referral tracking.
