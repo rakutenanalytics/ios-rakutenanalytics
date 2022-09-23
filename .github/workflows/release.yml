@@ -24,6 +24,8 @@ jobs:
           [[ "${{ inputs.version }}" =~ ^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$ ]] || { echo "version input is invalid"; exit 1; }
       - name: Post start to Slack
         uses: slackapi/slack-github-action@v1.19.0
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           payload: |
