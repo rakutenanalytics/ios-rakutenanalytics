@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 9.6.0 (2022-09-22)
 
 ### Features
