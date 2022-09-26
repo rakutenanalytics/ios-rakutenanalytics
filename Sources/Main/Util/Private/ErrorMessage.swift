@@ -13,6 +13,7 @@ enum ErrorDomain {
     static let analyticsEventTrackerErrorDomain = "\(domainName).analytics-event-tracker"
     static let analyticsEventObserverErrorDomain = "\(domainName).analytics-event-observer"
     static let pushConversionTrackingErrorDomain = "\(domainName).push-conversion-tracking"
+    static let keychainHandlerErrorDomain = "\(domainName).keychain-handler"
 }
 
 enum ErrorCode: Int {
@@ -61,6 +62,9 @@ enum ErrorCode: Int {
 
     // Push conversion tracking
     case pushConversionTrackingFailure
+
+    // Keychain Handler
+    case keychainHandlerFailure
 }
 
 enum ErrorDescription {
@@ -105,6 +109,9 @@ enum ErrorDescription {
 
     // Push Conversion
     static let pushConversionTrackingFailed = "The push conversion tracking failed."
+
+    // Keychain Handler
+    static let keychainHandlerFailed = "The keychain handler failed."
 }
 
 enum ErrorReason {
@@ -137,6 +144,9 @@ enum ErrorReason {
 
     // Parameters
     static let emptyParameters = "One of the parameters is empty."
+
+    // Bundle
+    static let bundleIdentifierIsNil = "The bundle identifier is nil"
 }
 
 enum ErrorConstants {
@@ -161,4 +171,9 @@ enum ErrorConstants {
                 userInfo: [NSLocalizedDescriptionKey: ErrorDescription.pushConversionTrackingFailed,
                            NSLocalizedFailureReasonErrorKey: ErrorReason.emptyParameters])
     }()
+
+    static let keychainBundleError = AnalyticsError.detailedError(domain: ErrorDomain.keychainHandlerErrorDomain,
+                                                                  code: ErrorCode.keychainHandlerFailure.rawValue,
+                                                                  description: ErrorDescription.keychainHandlerFailed,
+                                                                  reason: ErrorReason.bundleIdentifierIsNil).nsError()
 }

@@ -70,6 +70,7 @@
 		C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */; };
 		C98D71D725A7207300B1D048 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */; };
 		C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */; };
+		C992E79128D85FDA005E32F9 /* KeychainHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992E79028D85FDA005E32F9 /* KeychainHandlerSpec.swift */; };
 		C9981C3928C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C3828C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift */; };
 		C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */; };
 		C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */; };
@@ -188,6 +189,7 @@
 		C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCheckerSpec.swift; sourceTree = "<group>"; };
 		C98D70E825A5EF8600B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
 		C98F8F3F26788F330072F080 /* DeviceHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceHandlerSpec.swift; sourceTree = "<group>"; };
+		C992E79028D85FDA005E32F9 /* KeychainHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHandlerSpec.swift; sourceTree = "<group>"; };
 		C9981C3828C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralAppTrackingSceneDelegateSpec.swift; sourceTree = "<group>"; };
 		C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSharedApplicationSpec.swift; sourceTree = "<group>"; };
 		C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleClassSpec.swift; sourceTree = "<group>"; };
@@ -263,6 +265,7 @@
 				C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
+				C992E79028D85FDA005E32F9 /* KeychainHandlerSpec.swift */,
 				C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */,
 				C950D8E3276261A800DF9589 /* PushEventHandlerSpec.swift */,
 				C9441CDB26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift */,
@@ -725,6 +728,7 @@
 				C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */,
 				C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */,
 				C9981C3928C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift in Sources */,
+				C992E79128D85FDA005E32F9 /* KeychainHandlerSpec.swift in Sources */,
 				C9010C222670BBDB00769C83 /* RAnalyticsRATTrackerInitSpec.swift in Sources */,
 				45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */,
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,

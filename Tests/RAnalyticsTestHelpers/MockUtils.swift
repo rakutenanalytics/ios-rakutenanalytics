@@ -206,6 +206,7 @@ public final class LocationManagerMock: NSObject, LocationManageable {
 public final class KeychainHandlerMock: NSObject, KeychainHandleable {
     public var status: OSStatus = errSecItemNotFound
     private var creationDate: Date?
+    private var dictionary: [String: Any] = [:]
 
     public override init() {
         super.init()
@@ -214,6 +215,14 @@ public final class KeychainHandlerMock: NSObject, KeychainHandleable {
     public func item(for label: String) -> KeychainResult { KeychainResult(result: nil, status: status) }
     public func set(creationDate: Date?, for label: String) { self.creationDate = creationDate }
     public func creationDate(for reference: CFTypeRef?) -> Date? { creationDate }
+
+    public func string(for key: String) -> String? {
+        dictionary[key] as? String
+    }
+
+    public func set(value: String?, for key: String) {
+        dictionary[key] = value
+    }
 }
 
 // MARK: - SimpleContainerMock
@@ -230,7 +239,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
     public var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     public var httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
-    public var keychainHandler: KeychainHandleable = KeychainHandler()
+    public var keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
     public var locationManager: LocationManageable = CLLocationManager()
     public var bundle: EnvironmentBundle = Bundle.main
     public var tracker: Trackable = AnalyticsTracker()

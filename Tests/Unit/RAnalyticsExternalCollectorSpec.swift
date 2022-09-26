@@ -28,6 +28,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                                      code: 0,
                                      userInfo: [NSLocalizedDescriptionKey: "login failure", NSLocalizedFailureReasonErrorKey: "login fails"])
             var tracker: AnalyticsTrackerMock?
+            var externalCollector: RAnalyticsExternalCollector!
 
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
@@ -35,6 +36,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                 dependenciesContainer.tracker = AnalyticsTrackerMock()
                 (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
                 tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
+                dependenciesContainer.keychainHandler = KeychainHandlerMock()
+
+                externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
             }
 
             afterEach {
@@ -43,74 +47,121 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
             describe("init") {
                 it("should have the correct default values") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     expect(externalCollector.isLoggedIn).to(beFalse())
                     expect(externalCollector.trackingIdentifier).to(beNil())
                     expect(externalCollector.userIdentifier).to(beNil())
                     expect(externalCollector.loginMethod).to(equal(.other))
                 }
             }
+
             describe("userIdentifier") {
                 it("should set the expected value") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     externalCollector.userIdentifier = "myUserID"
                     expect(externalCollector.userIdentifier).to(equal("myUserID"))
                 }
 
                 it("should save the user identifier in the user defaults") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     externalCollector.userIdentifier = "myUserID"
                     let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.userIdentifierKey)
                     expect(value).to(equal("myUserID"))
                 }
 
                 it("should delete the user identifier from the user defaults") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     externalCollector.userIdentifier = nil
                     let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.userIdentifierKey)
                     expect(value).to(beNil())
                 }
             }
+
             describe("easyIdentifier") {
-                it("should set the expected value") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                    externalCollector.easyIdentifier = "myEasyID"
-                    expect(externalCollector.easyIdentifier).to(equal("myEasyID"))
+                context("When the easy identifier is set to a non-nil value") {
+                    it("should have the expected value") {
+                        externalCollector.easyIdentifier = "myEasyID"
+
+                        expect(externalCollector.easyIdentifier).to(equal("myEasyID"))
+                    }
+
+                    it("should save the easy identifier in the keychain") {
+                        externalCollector.easyIdentifier = "myEasyID"
+                        let value = try? dependenciesContainer.keychainHandler.string(for: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        expect(value).to(equal("myEasyID"))
+                    }
                 }
 
-                it("should save the easy identifier in the user defaults") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                    externalCollector.easyIdentifier = "myEasyID"
-                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
-                    expect(value).to(equal("myEasyID"))
+                context("When the easy identifier is set to nil") {
+                    it("should return nil") {
+                        externalCollector.easyIdentifier = nil
+
+                        expect(externalCollector.easyIdentifier).to(beNil())
+                    }
+
+                    it("should delete the easy identifier from the keychain") {
+                        externalCollector.easyIdentifier = nil
+                        let value = try? dependenciesContainer.keychainHandler.string(for: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        expect(value).to(beNil())
+                    }
                 }
 
-                it("should delete the easy identifier from the user defaults") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
-                    externalCollector.easyIdentifier = nil
-                    let value = dependenciesContainer.userStorageHandler.string(forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
-                    expect(value).to(beNil())
+                context("When an easy identifier is already stored in the user defaults") {
+                    it("should return an expected easy identifier value") {
+                        dependenciesContainer.userStorageHandler.set(value: "myEasyID",
+                                                                     forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+
+                        expect(externalCollector.easyIdentifier).to(equal("myEasyID"))
+                    }
+
+                    it("should save the easy identifier to the keychain") {
+                        dependenciesContainer.userStorageHandler.set(value: "myEasyID",
+                                                                     forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        _ = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+
+                        let value = try? dependenciesContainer.keychainHandler.string(for: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        expect(value).to(equal("myEasyID"))
+                    }
+                }
+
+                context("When an easy identifier is not stored in the user defaults") {
+                    it("should return a nil value") {
+                        dependenciesContainer.userStorageHandler.set(value: nil, forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+
+                        expect(externalCollector.easyIdentifier).to(beNil())
+                    }
+
+                    it("should not save the easy identifier to the keychain") {
+                        dependenciesContainer.userStorageHandler.set(value: nil, forKey: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        _ = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+
+                        let value = try? dependenciesContainer.keychainHandler.string(for: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
+
+                        expect(value).to(beNil())
+                    }
                 }
             }
 
             describe("trackLogin()") {
                 context("RAE Login succeeds") {
                     it("should set trackingIdentifier to userIdentifier") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.userIdentifier("userIdentifier"))
 
                         expect(externalCollector.trackingIdentifier).to(equal("userIdentifier"))
                     }
 
                     it("should set isLoggedIn to true") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.userIdentifier("userIdentifier"))
 
                         expect(externalCollector.isLoggedIn).to(beTrue())
                     }
 
                     it("should track AnalyticsManager.Event.Name.login with no parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.userIdentifier("userIdentifier"))
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
@@ -120,21 +171,18 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                 context("IDSDK Login succeeds") {
                     it("should set easyIdentifier to idsdkIdentifier") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
 
                         expect(externalCollector.easyIdentifier).to(equal("idsdkIdentifier"))
                     }
 
                     it("should set isLoggedIn to true") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
 
                         expect(externalCollector.isLoggedIn).to(beTrue())
                     }
 
                     it("should track AnalyticsManager.Event.Name.login with no parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
@@ -146,21 +194,18 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             describe("trackLoginFailure()") {
                 context("RAE Login fails") {
                     it("should set trackingIdentifier to nil") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
 
                         expect(externalCollector.trackingIdentifier).to(beNil())
                     }
 
                     it("should set isLoggedIn to false") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
 
                         expect(externalCollector.isLoggedIn).to(beFalse())
                     }
 
                     it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
@@ -172,21 +217,18 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                 context("IDSDK Login fails") {
                     it("should set easyIdentifier to nil") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
 
                         expect(externalCollector.easyIdentifier).to(beNil())
                     }
 
                     it("should set isLoggedIn to false") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
 
                         expect(externalCollector.isLoggedIn).to(beFalse())
                     }
 
                     it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
@@ -199,21 +241,18 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             describe("trackLogout()") {
                 context("RAE Logout") {
                     it("should set trackingIdentifier to nil") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(externalCollector.trackingIdentifier).to(beNil())
                     }
 
                     it("should set isLoggedIn to false") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(externalCollector.isLoggedIn).to(beFalse())
                     }
 
                     it("should track AnalyticsManager.Event.Name.logout with no parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
@@ -223,21 +262,18 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                 context("IDSDK Logout") {
                     it("should set easyIdentifier to nil") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(externalCollector.easyIdentifier).to(beNil())
                     }
 
                     it("should set isLoggedIn to false") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(externalCollector.isLoggedIn).to(beFalse())
                     }
 
                     it("should track AnalyticsManager.Event.Name.logout with no parameters") {
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         externalCollector.trackLogout()
 
                         expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
@@ -283,7 +319,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                 context("login method is other") {
                     it("should track AnalyticsManager.Event.Name.login when a login notification is received") {
                         let trackingIdentifier = "trackingIdentifier"
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.other")
 
                         expect(externalCollector.trackingIdentifier).to(beNil())
@@ -310,7 +345,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                     it("should track AnalyticsManager.Event.Name.login when an IDSDK login notification is received") {
                         let easyIdentifier = "easyIdentifier"
-                        let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.idtoken_memberid")
 
                         expect(externalCollector.easyIdentifier).to(beNil())
@@ -338,7 +372,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveLoginFailureNotification") {
                 it("should track AnalyticsManager.Event.Name.loginFailure when a login failure notification is received") {
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     let notificationNames = ["\(self.notificationBaseName).login.failure",
                                              "\(self.notificationBaseName).login.failure.idtoken_memberid"]
 
@@ -534,7 +567,6 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                 it("should track AnalyticsManager.Event.Name.custom when a custom notification is received") {
                     let params: [String: Any] = ["eventName": "blah",
                                                  "eventData": ["foo": "bar"]]
-                    let externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
                     expect(externalCollector.isLoggedIn).to(beFalse())
 
                     let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).custom")

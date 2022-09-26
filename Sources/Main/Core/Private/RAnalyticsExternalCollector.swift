@@ -91,12 +91,21 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
             }
             if let easyIdentifier = newValue,
                !easyIdentifier.isEmpty {
-                userStorageHandler?.set(value: easyIdentifier, forKey: Constants.easyIdentifierKey)
+                do {
+                    try keychainHandler?.set(value: easyIdentifier, for: Constants.easyIdentifierKey)
+
+                } catch {
+                    RLogger.debug(message: "\(error.localizedDescription)")
+                }
 
             } else {
-                userStorageHandler?.removeObject(forKey: Constants.easyIdentifierKey)
+                do {
+                    try keychainHandler?.set(value: nil, for: Constants.easyIdentifierKey)
+
+                } catch {
+                    RLogger.debug(message: "\(error.localizedDescription)")
+                }
             }
-            userStorageHandler?.synchronize()
         }
     }
 
@@ -131,11 +140,13 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
     private let eventsRequiringOnlyIdentifier = ["tapPage", "tapPreview"]
     private let eventsRequiringIdentifierAndRedirectString = ["redirectPage", "redirectPreview"]
     private let userStorageHandler: UserStorageHandleable?
+    private let keychainHandler: KeychainHandleable?
     private let tracker: Trackable?
 
     @available(*, unavailable)
     init() {
         self.userStorageHandler = nil
+        self.keychainHandler = nil
         self.tracker = nil
     }
 
@@ -149,6 +160,7 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
     /// - Returns: An instance of RAnalyticsExternalCollector.
     init(dependenciesContainer: SimpleDependenciesContainable) {
         self.userStorageHandler = dependenciesContainer.userStorageHandler
+        self.keychainHandler = dependenciesContainer.keychainHandler
         self.tracker = dependenciesContainer.tracker
 
         addLoginObservers()
@@ -382,7 +394,21 @@ private extension RAnalyticsExternalCollector {
         }
         isLoggedIn = userStorageHandler.bool(forKey: Constants.loginStateKey)
         trackingIdentifier = userStorageHandler.string(forKey: Constants.trackingIdentifierKey)
-        easyIdentifier = userStorageHandler.string(forKey: Constants.easyIdentifierKey)
+
+        do {
+            // Handle Easy ID Storage migration (9.7.0 feature)
+            if let nonSecuredEasyIdentifier = userStorageHandler.string(forKey: Constants.easyIdentifierKey) {
+                easyIdentifier = nonSecuredEasyIdentifier
+                userStorageHandler.set(value: nil, forKey: Constants.easyIdentifierKey)
+
+            } else {
+                easyIdentifier = try keychainHandler?.string(for: Constants.easyIdentifierKey)
+            }
+
+        } catch {
+            RLogger.debug(message: "\(error.localizedDescription)")
+        }
+
         userIdentifier = userStorageHandler.string(forKey: Constants.userIdentifierKey)
 
         // Note: loginMethod is set and got as NSNumber in RAnalytics version <= 7.x - _RAnalyticsExternalCollector.m

@@ -44,10 +44,10 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
     let wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     let httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
-    let keychainHandler: KeychainHandleable = KeychainHandler()
     let analyticsTracker = AnalyticsTracker()
     let locationManager: LocationManageable = CLLocationManager()
     let bundle: EnvironmentBundle = Bundle.main
+    let keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
     let tracker: Trackable = AnalyticsTracker()
     let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
     let deviceCapability: DeviceCapability = UIDevice.current
