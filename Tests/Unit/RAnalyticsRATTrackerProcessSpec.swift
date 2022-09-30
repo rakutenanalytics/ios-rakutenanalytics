@@ -455,7 +455,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     context("The referral tracking is an App") {
                         it("should process a pageVisit event and a deeplink event") {
                             var payloads = [[String: Any]]()
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.applink, parameters: nil)
                             let state = RAnalyticsState(sessionIdentifier: "sessionIdentifier", deviceIdentifier: "deviceIdentifier")
                             let model = ReferralAppModel(bundleIdentifier: "jp.co.rakuten.app",
                                                          accountIdentifier: 111,

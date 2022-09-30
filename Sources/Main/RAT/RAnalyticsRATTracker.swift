@@ -116,6 +116,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// <string>_rem_logout</string>
     /// <string>_rem_install</string>
     /// <string>_rem_visit</string>
+    /// <string>_rem_applink</string>
     /// <string>_rem_push_received</string>
     /// <string>_rem_push_notify</string>
     /// <string>_rem_push_auto_register</string>
@@ -516,12 +517,23 @@ extension RAnalyticsRATTracker {
                     return false
                 }
 
+            default:
+                return false
+            }
+
+        // MARK: _rem_applink
+        case RAnalyticsEvent.Name.applink:
+            // Override etype
+            payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
+
+            switch state.referralTracking {
+
             case .referralApp(let referralAppModel):
                 updatePayloadForReferralApp(payload: payload,
                                             extra: extra,
                                             referralApp: referralAppModel)
 
-            case .none:
+            default:
                 return false
             }
 

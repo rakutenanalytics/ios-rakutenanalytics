@@ -6,7 +6,7 @@ extension AnalyticsManager {
             return
         }
         launchCollector.referralTracking = .referralApp(model)
-        process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil))
+        process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.applink, parameters: nil))
         launchCollector.referralTracking = .none
     }
 

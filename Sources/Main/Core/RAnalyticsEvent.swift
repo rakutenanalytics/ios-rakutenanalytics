@@ -49,9 +49,12 @@ import Foundation
         /// Event triggered on first run after app install with or without version change.
         public static let install = "_rem_install"
 
-        /// Event triggered internally and converted to `pv` event.
+        /// Event triggered internally and converted to `pv` event for the Page Visit.
         /// See `pageVisitForRAT`.
         public static let pageVisit = "_rem_visit"
+
+        /// Event triggered internally and converted to `pv` and `deeplink` events for the App-to-App referral tracking.
+        public static let applink = "_rem_applink"
 
         /// Event triggered:
         /// - when a view controller is shown.

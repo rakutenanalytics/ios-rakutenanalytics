@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* [SDKCF-5876](https://jira.rakuten-it.com/jira/browse/SDKCF-5876): Enable/Disable App-to-App referral tracking.
+
 ## 9.6.0 (2022-09-22)
 
 ### Features

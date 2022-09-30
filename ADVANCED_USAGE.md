@@ -4,6 +4,7 @@
 1. [Location tracking](#location-tracking)
 1. [IDFA tracking](#idfa-tracking)
 1. [Configure page view tracking](#configure-page-view-tracking)
+1. [Configure App-to-App referral tracking](#configure-app-to-app-referral-tracking)
 1. [Configure automatic tracking](#configure-automatic-tracking)
 1. [Duplicate events across multiple RAT Accounts](#duplicate-events-across-multiple-rat-accounts)
 1. [Manually set a user identifier](#manually-set-a-user-identifier)
@@ -77,8 +78,15 @@ ATTrackingManager.requestTrackingAuthorization { status in
 
 ## Configure page view tracking
 
-By default the SDK automatically tracks page views/visits (`pv` etype in RAT). The automatic tracking can be disabled by adding `_rem_visit` to disabled events list. More details can be found in [Configure automatic tracking](#configure-automatic-tracking) section.
+By default the SDK automatically tracks page views/visits (`pv` etype in RAT).
+The automatic tracking can be disabled by adding `_rem_visit` to disabled events list.
+More details can be found in [Configure automatic tracking](#configure-automatic-tracking) section.
 
+## Configure App-to-App referral tracking
+
+By default the SDK automatically tracks the app-to-app referral tracking: `pv` and `deeplink` events are tracked.
+The automatic tracking can be disabled by adding `_rem_applink` to disabled events list.
+More details can be found in [Configure automatic tracking](#configure-automatic-tracking) section.
 
 ## Configure automatic tracking
 
@@ -119,6 +127,7 @@ import RAnalytics
     <string>_rem_logout</string>
     <string>_rem_install</string>
     <string>_rem_visit</string>
+    <string>_rem_applink</string>
     <string>_rem_push_received</string>
     <string>_rem_push_auto_register</string>
     <string>_rem_push_auto_unregister</string>
