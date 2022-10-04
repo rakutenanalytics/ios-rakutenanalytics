@@ -22,7 +22,7 @@ public class SwiftInterop: XCTestCase {
             case AnalyticsManager.State.LoginMethod.oneTapLogin,
                  AnalyticsManager.State.LoginMethod.passwordInput,
                  AnalyticsManager.State.LoginMethod.other: ()
-            @unknown default:()
+            @unknown default: ()
             }
 
             if event.parameters["boo"] is NSNumber {

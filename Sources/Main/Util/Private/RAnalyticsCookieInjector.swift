@@ -78,7 +78,7 @@ extension RAnalyticsCookieInjector {
                                        .secure: true])
     }
 
-    private func deleteCookies(_ cookies: [HTTPCookie], completionHandler:@escaping () -> Void) {
+    private func deleteCookies(_ cookies: [HTTPCookie], completionHandler: @escaping () -> Void) {
         let cookiesToDelete = cookies.filter { $0.name == TrackingCookieConstants.name }
         guard !cookiesToDelete.isEmpty else {
             completionHandler()
@@ -99,7 +99,7 @@ extension RAnalyticsCookieInjector {
         }
     }
 
-    private func storeCookie(cookieToStore: HTTPCookie, completionHandler:@escaping () -> Void) {
+    private func storeCookie(cookieToStore: HTTPCookie, completionHandler: @escaping () -> Void) {
         httpCookieStore.set(cookie: cookieToStore) {
             RLogger.verbose(message: "Set cookie \(cookieToStore) on webview")
             completionHandler()

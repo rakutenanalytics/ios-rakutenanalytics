@@ -8,6 +8,9 @@
 ### Doc improvements
 * [SDKCF-5892](https://jira.rakuten-it.com/jira/browse/SDKCF-5892): Add the release workflow documentation.
 
+### Build fixes
+* [SDKCF-5927](https://jira.rakuten-it.com/jira/browse/SDKCF-5927): Xcode 14 CI build compatibility with Bitrise.
+
 ## 9.6.0 (2022-09-22)
 
 ### Features
