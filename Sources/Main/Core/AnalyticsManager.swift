@@ -331,7 +331,7 @@ extension AnalyticsManager {
         }
         #endif
 
-        if shouldTrackLastKnownLocation && CLLocationManager.locationServicesEnabled() &&
+        if shouldTrackLastKnownLocation &&
             (status == .authorizedAlways
                 || (status == .authorizedWhenInUse && UIApplication.RAnalyticsSharedApplication?.applicationState == .active)) {
             startMonitoringLocation()

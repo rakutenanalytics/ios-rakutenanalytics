@@ -16,6 +16,7 @@ RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` 
 
 ### Warning fixes
 * [SDKCF-5917](https://jira.rakuten-it.com/jira/browse/SDKCF-5917): Fix `_RanalyticsSwiftLoader` warning for Projects based on Cocoapods.
+* [SDKCF-5918](https://jira.rakuten-it.com/jira/browse/SDKCF-5918): Fix CLLocationManager.locationServicesEnabled() warning in Xcode 14.0 (14A309).
 
 ## 9.6.0 (2022-09-22)
 
