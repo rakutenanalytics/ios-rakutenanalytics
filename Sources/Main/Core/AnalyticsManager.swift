@@ -22,10 +22,15 @@ public typealias RAnalyticsErrorBlock = (NSError) -> Void
 
 // MARK: - AnalyticsManageable
 
-protocol AnalyticsManageable: AnyObject {
+@objc public protocol AnalyticsManageable: AnyObject {
+    func process(_ event: RAnalyticsEvent) -> Bool
+}
+
+// MARK: - ReferralAppTrackable
+
+protocol ReferralAppTrackable: AnyObject {
     func tryToTrackReferralApp(with url: URL?, sourceApplication: String?)
     func tryToTrackReferralApp(with webpageURL: URL?)
-    func process(_ event: RAnalyticsEvent) -> Bool
 }
 
 // MARK: - AnalyticsManager
@@ -206,6 +211,9 @@ protocol AnalyticsManageable: AnyObject {
         deviceIdentifierHandler = DeviceIdentifierHandler(device: dependenciesContainer.deviceCapability)
 
         super.init()
+
+        externalCollector.trackerDelegate = self
+        launchCollector.trackerDelegate = self
 
         configure()
 
@@ -463,14 +471,26 @@ extension AnalyticsManager {
 
     /// Add a tracker to tracker list.
     ///
-    /// - Parameters:
-    ///     - tracker  Any object that comforms to the @ref RAnalyticsTracker protocol.
+    /// - Parameter tracker: Any object that comforms to the RAnalyticsTracker protocol.
     @objc(addTracker:) public func add(_ tracker: Tracker) {
         trackersLockableObject.lock()
         let trackers = trackersLockableObject.get()
         if !trackers.contains(tracker) {
             trackers.add(tracker)
             RLogger.debug(message: "Added tracker \(tracker)")
+        }
+        trackersLockableObject.unlock()
+    }
+
+    /// Remove a tracker from tracker list.
+    ///
+    /// - Parameter tracker: Any object that comforms to the RAnalyticsTracker protocol.
+    func remove(_ tracker: Tracker) {
+        trackersLockableObject.lock()
+        let trackers = trackersLockableObject.get()
+        if trackers.contains(tracker) {
+            trackers.remove(tracker)
+            RLogger.debug(message: "Deleted tracker \(tracker)")
         }
         trackersLockableObject.unlock()
     }

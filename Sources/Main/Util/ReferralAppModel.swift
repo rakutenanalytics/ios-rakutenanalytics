@@ -8,11 +8,6 @@ import RLogger
 
 // MARK: - Bundleable
 
-enum RATConstants {
-    static let defaultAccountIdentifier: Int64 = 477
-    static let defaultApplicationIdentifier: Int64 = 1
-}
-
 public protocol Bundleable {
     var bundleIdentifier: String? { get }
     var accountIdentifier: Int64 { get }
@@ -53,11 +48,17 @@ extension Bundle: Bundleable {
             if CFGetTypeID(aValue) == CFBooleanGetTypeID() {
                 return .warning(result: model.defaultValue, warning: model.typeWarning)
             }
+            guard aValue.int64Value > 0 else {
+                return .success(result: 0)
+            }
             return .success(result: aValue.int64Value)
 
         case let aValue as String:
             guard let result = Int64(aValue) else {
                 return .warning(result: model.defaultValue, warning: model.configWarning)
+            }
+            guard result > 0 else {
+                return .success(result: 0)
             }
             return .warning(result: result, warning: model.typeWarning)
 
@@ -68,14 +69,14 @@ extension Bundle: Bundleable {
 
     public var accountIdentifier: Int64 {
         identifier(from: IdentifierModel(key: RATAccount.CodingKeys.accountId.rawValue,
-                                         defaultValue: RATConstants.defaultAccountIdentifier,
+                                         defaultValue: 0,
                                          configWarning: LogMessage.accountIdentifierConfigWarning,
                                          typeWarning: LogMessage.accountIdentifierTypeWarning)).toInt64()
     }
 
     public var applicationIdentifier: Int64 {
         identifier(from: IdentifierModel(key: RATAccount.CodingKeys.applicationId.rawValue,
-                                         defaultValue: RATConstants.defaultApplicationIdentifier,
+                                         defaultValue: 0,
                                          configWarning: LogMessage.applicationIdentifierConfigWarning,
                                          typeWarning: LogMessage.applicationIdentifierTypeWarning)).toInt64()
 

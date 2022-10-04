@@ -39,7 +39,7 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
             let sender = SenderSpy()
             let bundleMock: BundleMock = {
                 let bundleMock = BundleMock()
-                bundleMock.mutableEndpointAddress = URL(string: "https://endpoint.co.jp")! // req for RAT init
+                bundleMock.endpointAddress = URL(string: "https://endpoint.co.jp") // req for RAT init
                 return bundleMock
             }()
 

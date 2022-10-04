@@ -40,11 +40,12 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
             let session = SwityURLSessionMock()
             let dependenciesContainer = SimpleContainerMock()
             dependenciesContainer.session = session
+            dependenciesContainer.bundle = BundleMock.create()
             let sceneDelegate = CustomSceneDelegate()
             let window = UIWindow()
             let windowScene: UIWindowScene! = window.windowScene
             windowScene?.delegate = sceneDelegate
-            var analyticsManager: AnalyticsManageable!
+            var analyticsManager: ReferralAppTrackable!
 
             context("When the delegate is set to a non-nil value") {
                 beforeEach {

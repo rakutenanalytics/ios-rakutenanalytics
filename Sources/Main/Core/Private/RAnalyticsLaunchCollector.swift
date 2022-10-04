@@ -51,7 +51,9 @@ final class RAnalyticsLaunchCollector {
     private let userStorageHandler: UserStorageHandleable?
     private let pushEventHandler: PushEventHandleable
     private let keychainHandler: KeychainHandleable?
-    private let tracker: Trackable?
+
+    /// A delegate for tracking an event and its parameters
+    weak var trackerDelegate: Trackable?
 
     private var pushTapTrackingDate: Date?
     private let pushTapEventTimeLimit: TimeInterval = 1.5
@@ -70,7 +72,6 @@ final class RAnalyticsLaunchCollector {
         self.notificationHandler = dependenciesContainer.notificationHandler
         self.userStorageHandler = dependenciesContainer.userStorageHandler
         self.keychainHandler = dependenciesContainer.keychainHandler
-        self.tracker = dependenciesContainer.tracker
         self.referralTracking = .none
         pushEventHandler = dependenciesContainer.pushEventHandler
 
@@ -133,11 +134,11 @@ final class RAnalyticsLaunchCollector {
 @objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
         update()
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
     }
 
     func didSuspend(_ notification: NSNotification) {
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.sessionEnd, parameters: nil)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionEnd, parameters: nil)
     }
 
     func didBecomeActive(_ notification: NSNotification) {
@@ -149,29 +150,29 @@ final class RAnalyticsLaunchCollector {
 
         /// Equivalent to installation or reinstallation.
         if isInitialLaunch {
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.initialLaunch, parameters: nil)
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.initialLaunch, parameters: nil)
             isInitialLaunch = false
         }
 
         /// Triggered on first run after app install with or without version change.
         else if isInstallLaunch {
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.install, parameters: nil)
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.install, parameters: nil)
             isInstallLaunch = false
         }
 
         /// Triggered on first run after upgrade (anytime the version number changes).
         else if isUpdateLaunch {
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.install, parameters: nil)
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.applicationUpdate, parameters: nil)
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.install, parameters: nil)
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.applicationUpdate, parameters: nil)
             isUpdateLaunch = false
         }
 
         /// Trigger a session start.
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
 
         /// Track the credentials status.
         let parameters = ["strategies": ["password-manager": Bundle.isPasswordExtensionAvailable ? "true" : "false"]]
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.credentialStrategies, parameters: parameters)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.credentialStrategies, parameters: parameters)
     }
 }
 
@@ -196,7 +197,7 @@ extension RAnalyticsLaunchCollector {
         /// time the event is being processed. Note that it will be carried on by the analytics
         /// manager state, too.
         self.referralTracking = referralTracking
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: nil)
         self.referralTracking = .none
 
         /// Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external
@@ -251,7 +252,7 @@ extension RAnalyticsLaunchCollector {
            !pushEventHandler.isEventAlreadySent(with: trackingId) {
             pushTrackingIdentifier = trackingId
             let parameters = [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: trackingId]
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification, parameters: parameters)
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification, parameters: parameters)
             isProcessed = true
             pushEventHandler.cacheEvent(for: trackingId)
         }
@@ -274,8 +275,8 @@ private extension RAnalyticsLaunchCollector {
            let pushTrackingIdentifier = pushTrackingIdentifier,
            fabs(pushTapTrackingDate.timeIntervalSinceNow) < pushTapEventTimeLimit
             && !pushEventHandler.isEventAlreadySent(with: pushTrackingIdentifier) {
-            tracker?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification,
-                                parameters: [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: pushTrackingIdentifier])
+            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification,
+                                        parameters: [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: pushTrackingIdentifier])
             pushEventHandler.cacheEvent(for: pushTrackingIdentifier)
         }
 

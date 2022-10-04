@@ -1,5 +1,6 @@
 import Quick
 import Nimble
+import Foundation
 import ViewInspector
 import SwiftUI
 @testable import RAnalytics
@@ -25,7 +26,7 @@ import RSDKUtilsTestHelpers
 struct RView: View, Inspectable {
     @available(iOS 13.0.0, *)
     var body: some View {
-        rviewOnAppear(pageName: "MyView") {
+        rviewOnAppear(pageName: "MyView", with: MainDependenciesContainer.analyticsManager) {
         }
     }
 }

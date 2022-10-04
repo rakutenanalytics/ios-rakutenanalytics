@@ -9,7 +9,11 @@ extension AnalyticsManager {
         process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.applink, parameters: nil))
         launchCollector.referralTracking = .none
     }
+}
 
+// MARK: - ReferralAppTrackable
+
+extension AnalyticsManager: ReferralAppTrackable {
     func tryToTrackReferralApp(with url: URL?, sourceApplication: String?) {
         if let url = url {
             launchCollector.origin = .external

@@ -27,22 +27,21 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             let idsdkError = NSError(domain: "com.analytics.error",
                                      code: 0,
                                      userInfo: [NSLocalizedDescriptionKey: "login failure", NSLocalizedFailureReasonErrorKey: "login fails"])
-            var tracker: AnalyticsTrackerMock?
+            let tracker = AnalyticsTrackerMock()
             var externalCollector: RAnalyticsExternalCollector!
 
             beforeEach {
                 dependenciesContainer = SimpleContainerMock()
                 dependenciesContainer.userStorageHandler = UserDefaultsMock([:])
-                dependenciesContainer.tracker = AnalyticsTrackerMock()
                 (dependenciesContainer.userStorageHandler as? UserDefaultsMock)?.dictionary = [:]
-                tracker = (dependenciesContainer.tracker as? AnalyticsTrackerMock)
                 dependenciesContainer.keychainHandler = KeychainHandlerMock()
 
                 externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
+                externalCollector.trackerDelegate = tracker
             }
 
             afterEach {
-                tracker?.reset()
+                tracker.reset()
             }
 
             describe("init") {
@@ -164,8 +163,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.login with no parameters") {
                         externalCollector.trackLogin(.userIdentifier("userIdentifier"))
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker.params).to(beNil())
                     }
                 }
 
@@ -185,8 +184,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.login with no parameters") {
                         externalCollector.trackLogin(.easyIdentifier("idsdkIdentifier"))
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker.params).to(beNil())
                     }
                 }
             }
@@ -208,10 +207,10 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
                         externalCollector.trackLoginFailure(.userIdentifier(dictionary: raeErrorParams))
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
-                        expect(tracker?.params?["rae_error"] as? String).to(equal(raeErrorParams["rae_error"]))
-                        expect(tracker?.params?["rae_error_message"] as? String).to(equal(raeErrorParams["rae_error_message"]))
-                        expect(tracker?.params?["type"] as? String).to(equal(raeErrorParams["type"]))
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
+                        expect(tracker.params?["rae_error"] as? String).to(equal(raeErrorParams["rae_error"]))
+                        expect(tracker.params?["rae_error_message"] as? String).to(equal(raeErrorParams["rae_error_message"]))
+                        expect(tracker.params?["type"] as? String).to(equal(raeErrorParams["type"]))
                     }
                 }
 
@@ -231,9 +230,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.loginFailure with parameters") {
                         externalCollector.trackLoginFailure(.easyIdentifier(error: idsdkError))
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
-                        expect(tracker?.params?["idsdk_error"] as? String).to(equal(idsdkError.localizedDescription))
-                        expect(tracker?.params?["idsdk_error_message"] as? String).to(equal(idsdkError.localizedFailureReason))
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.loginFailure))
+                        expect(tracker.params?["idsdk_error"] as? String).to(equal(idsdkError.localizedDescription))
+                        expect(tracker.params?["idsdk_error_message"] as? String).to(equal(idsdkError.localizedFailureReason))
                     }
                 }
             }
@@ -255,8 +254,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.logout with no parameters") {
                         externalCollector.trackLogout()
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
-                        expect(tracker?.params as? [String: AnyHashable]).to(equal([:]))
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.logout))
+                        expect(tracker.params as? [String: AnyHashable]).to(equal([:]))
                     }
                 }
 
@@ -276,8 +275,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                     it("should track AnalyticsManager.Event.Name.logout with no parameters") {
                         externalCollector.trackLogout()
 
-                        expect(tracker?.eventName).to(equal(AnalyticsManager.Event.Name.logout))
-                        expect(tracker?.params as? [String: AnyHashable]).to(equal([:]))
+                        expect(tracker.eventName).to(equal(AnalyticsManager.Event.Name.logout))
+                        expect(tracker.params as? [String: AnyHashable]).to(equal([:]))
                     }
                 }
             }
@@ -296,8 +295,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                             expect(externalCollector.trackingIdentifier).to(beNil())
                             expect(externalCollector.loginMethod).to(equal(.other))
                             expect(externalCollector.isLoggedIn).to(beFalse())
-                            expect(tracker?.eventName).to(beNil())
-                            expect(tracker?.params).to(beNil())
+                            expect(tracker.eventName).to(beNil())
+                            expect(tracker.params).to(beNil())
 
                             NotificationCenter.default.post(name: notificationName, object: trackingIdentifier)
 
@@ -310,9 +309,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                             }
 
                             expect(externalCollector.isLoggedIn).toEventually(beTrue())
-                            expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                            expect(tracker?.params).to(beNil())
-                            tracker?.reset()
+                            expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
+                            expect(tracker.params).to(beNil())
+                            tracker.reset()
                         }
                     }
                 }
@@ -324,23 +323,23 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(externalCollector.trackingIdentifier).to(beNil())
                         expect(externalCollector.loginMethod).to(equal(.other))
                         expect(externalCollector.isLoggedIn).to(beFalse())
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         let passwordNotificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.password")
                         NotificationCenter.default.post(name: passwordNotificationName, object: trackingIdentifier)
 
                         expect(externalCollector.loginMethod).toEventually(equal(.passwordInput))
-                        tracker?.reset()
+                        tracker.reset()
 
                         NotificationCenter.default.post(name: notificationName, object: trackingIdentifier)
 
                         expect(externalCollector.trackingIdentifier).toEventually(equal(trackingIdentifier))
                         expect(externalCollector.loginMethod).to(equal(.other))
                         expect(externalCollector.isLoggedIn).to(beTrue())
-                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).to(beNil())
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker.params).to(beNil())
+                        tracker.reset()
                     }
 
                     it("should track AnalyticsManager.Event.Name.login when an IDSDK login notification is received") {
@@ -350,23 +349,23 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(externalCollector.easyIdentifier).to(beNil())
                         expect(externalCollector.loginMethod).to(equal(.other))
                         expect(externalCollector.isLoggedIn).to(beFalse())
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         let passwordNotificationName = Notification.Name(rawValue: "\(self.notificationBaseName).login.password")
                         NotificationCenter.default.post(name: passwordNotificationName, object: easyIdentifier)
 
                         expect(externalCollector.loginMethod).toEventually(equal(.passwordInput))
-                        tracker?.reset()
+                        tracker.reset()
 
                         NotificationCenter.default.post(name: notificationName, object: easyIdentifier)
 
                         expect(externalCollector.easyIdentifier).toEventually(equal(easyIdentifier))
                         expect(externalCollector.loginMethod).to(equal(.other))
                         expect(externalCollector.isLoggedIn).to(beTrue())
-                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
-                        expect(tracker?.params).to(beNil())
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.login))
+                        expect(tracker.params).to(beNil())
+                        tracker.reset()
                     }
                 }
             }
@@ -377,8 +376,8 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                     notificationNames.forEach { notificationName in
                         expect(externalCollector.isLoggedIn).to(beFalse())
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         switch notificationName {
                         case "\(self.notificationBaseName).login.failure":
@@ -392,23 +391,23 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         }
 
                         expect(externalCollector.isLoggedIn).toAfterTimeout(beFalse())
-                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.loginFailure))
+                        expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.loginFailure))
 
                         switch notificationName {
                         case "\(self.notificationBaseName).login.failure":
-                            expect(tracker?.params?["rae_error"] as? String).toEventually(equal(raeErrorParams["rae_error"]))
-                            expect(tracker?.params?["rae_error_message"] as? String).toEventually(equal(raeErrorParams["rae_error_message"]))
-                            expect(tracker?.params?["type"] as? String).toEventually(equal(raeErrorParams["type"]))
+                            expect(tracker.params?["rae_error"] as? String).toEventually(equal(raeErrorParams["rae_error"]))
+                            expect(tracker.params?["rae_error_message"] as? String).toEventually(equal(raeErrorParams["rae_error_message"]))
+                            expect(tracker.params?["type"] as? String).toEventually(equal(raeErrorParams["type"]))
 
                         case "\(self.notificationBaseName).login.failure.idtoken_memberid":
-                            expect(tracker?.params?["idsdk_error"] as? String).toEventually(equal(idsdkError.localizedDescription))
-                            expect(tracker?.params?["idsdk_error_message"] as? String).toEventually(equal(idsdkError.localizedFailureReason))
+                            expect(tracker.params?["idsdk_error"] as? String).toEventually(equal(idsdkError.localizedDescription))
+                            expect(tracker.params?["idsdk_error_message"] as? String).toEventually(equal(idsdkError.localizedFailureReason))
 
                         default:
                             assertionFailure("Unexpected login failure case.")
                         }
 
-                        tracker?.reset()
+                        tracker.reset()
                     }
                 }
             }
@@ -424,31 +423,31 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                         expect(externalCollector.trackingIdentifier).to(beNil())
                         expect(externalCollector.easyIdentifier).to(beNil())
                         expect(externalCollector.isLoggedIn).to(beFalse())
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: Notification.Name(rawValue: "\(self.notificationBaseName).login.other"),
                                                         object: trackingIdentifier)
 
                         expect(externalCollector.isLoggedIn).toEventually(beTrue())
                         expect(externalCollector.trackingIdentifier).toEventually(equal(trackingIdentifier))
-                        tracker?.reset()
+                        tracker.reset()
 
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
                         expect(externalCollector.trackingIdentifier).toAfterTimeout(beNil())
                         expect(externalCollector.easyIdentifier).to(beNil())
                         expect(externalCollector.isLoggedIn).to(beFalse())
-                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.logout))
+                        expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.logout))
 
                         if $0 == "local" || $0 == "global" {
-                            expect(tracker?.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toEventually(equal($0))
+                            expect(tracker.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toEventually(equal($0))
 
                         } else {
-                            expect(tracker?.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toAfterTimeout(beNil())
+                            expect(tracker.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toAfterTimeout(beNil())
                         }
 
-                        tracker?.reset()
+                        tracker.reset()
                     }
                 }
             }
@@ -464,14 +463,14 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
-                        expect(tracker?.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
-                        expect(tracker?.params).toEventually(beNil())
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
+                        expect(tracker.params).toEventually(beNil())
+                        tracker.reset()
                     }
                 }
                 it("should track a discover event with the correct identifier when a discover notification is received with an identifier") {
@@ -485,14 +484,14 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: notificationName, object: identifier)
 
-                        expect(tracker?.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
-                        expect(tracker?.params?["prApp"] as? String).toEventually(equal(identifier))
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
+                        expect(tracker.params?["prApp"] as? String).toEventually(equal(identifier))
+                        tracker.reset()
                     }
                 }
                 it("should track a discover event with correct parameters when a discover notification is received with an identifier and url") {
@@ -507,15 +506,15 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).discover.\($0.key)")
 
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: notificationName, object: ["identifier": identifier, "url": urlString])
 
-                        expect(tracker?.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
-                        expect(tracker?.params?["prApp"] as? String).toEventually(equal(identifier))
-                        expect(tracker?.params?["prStoreUrl"] as? String).toEventually(equal(urlString))
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(mapping[$0.key]?.rawValue))
+                        expect(tracker.params?["prApp"] as? String).toEventually(equal(identifier))
+                        expect(tracker.params?["prStoreUrl"] as? String).toEventually(equal(urlString))
+                        tracker.reset()
                     }
                 }
             }
@@ -530,14 +529,14 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).ssodialog")
 
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: notificationName, object: "\(uiViewControllerType)\($0)")
 
-                        expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.pageVisit))
-                        expect(tracker?.params?["page_id"] as? String).toEventually(equal("\(uiViewControllerType)\($0)"))
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.pageVisit))
+                        expect(tracker.params?["page_id"] as? String).toEventually(equal("\(uiViewControllerType)\($0)"))
+                        tracker.reset()
                     }
                 }
             }
@@ -552,14 +551,14 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).\($0.key)")
 
-                        expect(tracker?.eventName).to(beNil())
-                        expect(tracker?.params).to(beNil())
+                        expect(tracker.eventName).to(beNil())
+                        expect(tracker.params).to(beNil())
 
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
-                        expect(tracker?.eventName).toEventually(equal($0.value))
-                        expect(tracker?.params?.isEmpty).toEventually(beTrue())
-                        tracker?.reset()
+                        expect(tracker.eventName).toEventually(equal($0.value))
+                        expect(tracker.params?.isEmpty).toEventually(beTrue())
+                        tracker.reset()
                     }
                 }
             }
@@ -571,14 +570,14 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                     let notificationName = Notification.Name(rawValue: "\(self.notificationBaseName).custom")
 
-                    expect(tracker?.eventName).to(beNil())
-                    expect(tracker?.params).to(beNil())
+                    expect(tracker.eventName).to(beNil())
+                    expect(tracker.params).to(beNil())
 
                     NotificationCenter.default.post(name: notificationName, object: params)
 
-                    expect(tracker?.eventName).toEventually(equal(AnalyticsManager.Event.Name.custom))
-                    expect(tracker?.params?["eventName"] as? String).toEventually(equal(params["eventName"] as? String))
-                    expect(tracker?.params?["eventData"] as? [String: String]).toEventually(equal(params["eventData"] as? [String: String]))
+                    expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.custom))
+                    expect(tracker.params?["eventName"] as? String).toEventually(equal(params["eventName"] as? String))
+                    expect(tracker.params?["eventData"] as? [String: String]).toEventually(equal(params["eventData"] as? [String: String]))
                 }
             }
         }

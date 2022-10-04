@@ -6,35 +6,6 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-final class BundleMock: NSObject, EnvironmentBundle {
-    var languageCode: Any?
-    var accountIdentifier: Int64 = 1
-    var applicationIdentifier: Int64 = 1
-    var disabledEventsAtBuildTime: [String]?
-    var duplicateAccounts: [RATAccount]?
-    var bundleIdentifier: String?
-    var useDefaultSharedCookieStorage: Bool {
-        (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
-    }
-    var endpointAddress: URL? { mutableEndpointAddress }
-    var enableInternalSerialization: Bool { mutableEnableInternalSerialization }
-    static var assetsBundle: Bundle? { nil }
-    static var sdkComponentMap: NSDictionary? { nil }
-
-    var dictionary: [String: Any]?
-    var mutableEndpointAddress: URL?
-    var mutableEnableInternalSerialization: Bool = false
-
-    func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
-
-    var appGroupId: String? {
-        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
-    }
-
-    var shortVersion: String? = "2.0"
-    var version: String? = "1"
-}
-
 final class RATUrlRequestExtensionSpec: QuickSpec {
     override func spec() {
         describe("ratRequest") {

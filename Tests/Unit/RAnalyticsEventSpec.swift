@@ -128,7 +128,8 @@ final class RAnalyticsEventSpec: QuickSpec {
             describe("track") {
                 it("should return true when the event is processed") {
                     let event = defaultEvent()
-                    expect(event.track()).to(beTrue())
+                    let result = MainDependenciesContainer.analyticsManager.process(event)
+                    expect(result).to(beTrue())
                 }
             }
         }

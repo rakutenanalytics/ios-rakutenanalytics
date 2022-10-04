@@ -29,7 +29,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 let bundle = BundleMock()
                 bundle.accountIdentifier = 777
                 bundle.applicationIdentifier = 888
-                bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp/")!
+                bundle.endpointAddress = URL(string: "https://endpoint.co.jp/")!
 
                 dependenciesContainer.bundle = bundle
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
@@ -55,6 +55,40 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
             }
 
             describe("process(event:state:)") {
+                context("When the RAT identifiers are not set") {
+                    it("should return false") {
+                        let bundle = BundleMock()
+                        bundle.accountIdentifier = 0
+                        bundle.applicationIdentifier = 0
+                        bundle.endpointAddress = URL(string: "https://endpoint.co.jp")
+
+                        let dependenciesContainerWithoutRatIdsConf = SimpleContainerMock()
+                        dependenciesContainerWithoutRatIdsConf.bundle = bundle
+
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainerWithoutRatIdsConf)
+                        let result = ratTracker.process(event: Tracking.defaultEvent, state: Tracking.defaultState)
+
+                        expect(result).to(beFalse())
+                    }
+                }
+
+                context("When the RAT identifiers are set") {
+                    it("should return true") {
+                        let bundle = BundleMock()
+                        bundle.accountIdentifier = 477
+                        bundle.applicationIdentifier = 1
+                        bundle.endpointAddress = URL(string: "https://endpoint.co.jp")
+
+                        let dependenciesContainerWithRatIdsConf = SimpleContainerMock()
+                        dependenciesContainerWithRatIdsConf.bundle = bundle
+
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainerWithRatIdsConf)
+                        let result = ratTracker.process(event: Tracking.defaultEvent, state: Tracking.defaultState)
+
+                        expect(result).to(beTrue())
+                    }
+                }
+
                 it("should not process the event if the event name is unknown") {
                     let event = RAnalyticsEvent(name: "", parameters: nil)
                     let processed = ratTracker.process(event: event, state: Tracking.defaultState)

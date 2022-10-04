@@ -125,11 +125,11 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsLaunchCollector") {
             let dependenciesFactory = SimpleContainerMock()
+            let analyticsTrackerMock = AnalyticsTrackerMock()
 
             beforeEach {
                 dependenciesFactory.keychainHandler = KeychainHandlerMock()
                 dependenciesFactory.userStorageHandler = UserDefaultsMock()
-                dependenciesFactory.tracker = AnalyticsTrackerMock()
                 dependenciesFactory.sharedUserStorageHandlerType = UserDefaultsMock.self
 
                 let sharedUserStorageHandler = dependenciesFactory.sharedUserStorageHandlerType.init(suiteName: dependenciesFactory.bundle.appGroupId)
@@ -178,154 +178,165 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 expect(launchCollector.isUpdateLaunch).toEventually(beFalse())
             }
             it("should track the session start event when the app is resumed") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.sessionStart: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.sessionStart: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 expect(launchCollector).notTo(beNil())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.sessionStart]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.sessionStart]?.tracked).to(beFalse())
                 NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil, userInfo: nil)
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.sessionStart]?.tracked).toEventually(beTrue())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.sessionStart]?.tracked).toEventually(beTrue())
             }
             it("should track the session end event when the app is suspended") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.sessionEnd: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.sessionEnd: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 expect(launchCollector).notTo(beNil())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.sessionEnd]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.sessionEnd]?.tracked).to(beFalse())
                 NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil, userInfo: nil)
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.sessionEnd]?.tracked).toEventually(beTrue())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.sessionEnd]?.tracked).toEventually(beTrue())
             }
             it("should track the visit event when a presented view controller is UIViewController") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pageVisit: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pageVisit: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 expect(launchCollector).notTo(beNil())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).to(beFalse())
                 launchCollector.didPresentViewController(UIViewController())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).toEventually(beTrue())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).toEventually(beTrue())
                 expect(launchCollector.origin).toEventually(equal(.internal))
             }
             it("should not track the visit event when a presented view controller is UINavigationController") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pageVisit: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pageVisit: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let origin = launchCollector.origin
                 expect(launchCollector).notTo(beNil())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).to(beFalse())
                 launchCollector.didPresentViewController(UINavigationController())
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).toEventually(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).toEventually(beFalse())
                 expect(launchCollector.origin).toEventually(equal(origin))
             }
             it("should track the push notify event when a push notification is processed with report id") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["rid": "1234abcd", "nid": "abcd1234", "aps": ["alert": "a push alert"]]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
                         .hasPrefix("rid:1234abcd")).toEventually(beTrue())
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("rid:1234abcd")).toEventually(beTrue())
             }
             it("should track the push notify event when a push notification is processed with notification id") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["notification_id": "abcd1234", "aps": ["alert": "a push alert"]]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
                         .hasPrefix("nid:abcd1234")).toEventually(beTrue())
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("nid:abcd1234")).toEventually(beTrue())
             }
             it("should track the push notify event when a push notification is processed with string alert") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["aps": ["alert": "a push alert"]]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
                         .hasPrefix("msg:")).toEventually(beTrue())
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("msg:")).toEventually(beTrue())
             }
             it("should track the push notify event when a push notification is processed with alert that only contains a title") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["aps": ["alert": ["title": "a push alert title"]]]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
                         .hasPrefix("msg:")).toEventually(beTrue())
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("msg:")).toEventually(beTrue())
             }
             it("should track the push notify event when a push notification is processed with alert that contains a title and a body") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["aps": ["alert": ["title": "a push alert title", "body": "a push alert body"]]]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(event?.tracked).toEventually(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
                         .hasPrefix("msg:")).toEventually(beTrue())
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("msg:")).toEventually(beTrue())
             }
             it("should not track the push notify event when a push notification is processed with an unexpected alert") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let payload: [String: Any] = ["foo": "bar"]
 
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 launchCollector.processPushNotificationPayload(userInfo: payload)
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).toEventually(beFalse())
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).toEventually(beFalse())
                 expect(launchCollector.pushTrackingIdentifier).toEventually(beNil())
             }
             it("should process UNNotificationResponse when the trigger is UNPushNotificationTrigger") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let trigger = UNPushNotificationTrigger(coder: PushNotificationTriggerCoder(repeats: false))
                 let textInputNotificationResponse = UNTextInputNotificationResponse.response(trigger: trigger)!
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 let result = launchCollector.processPushNotificationResponse(textInputNotificationResponse)
                 var processedTrigger: UNNotificationTrigger?
                 if case .success(let aTrigger) = result { processedTrigger = aTrigger }
 
-                let event = analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]
+                let event = analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]
                 expect(processedTrigger).to(equal(trigger))
                 expect(event?.tracked).to(beTrue())
                 expect((event?.parameters?[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] as? String)?
@@ -333,14 +344,15 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 expect(launchCollector.pushTrackingIdentifier?.hasPrefix("rid:1234abcd")).to(beTrue())
             }
             it("should not process UNNotificationResponse when the trigger is UNLocationNotificationTrigger") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let trigger = UNLocationNotificationTrigger(coder: LocationNotificationTriggerCoder(repeats: false, region: CLRegion()))
                 let textInputNotificationResponse = UNTextInputNotificationResponse.response(trigger: trigger)!
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
-                expect(analyticsTrackerMock?.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
+                expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pushNotification]?.tracked).to(beFalse())
                 let result = launchCollector.processPushNotificationResponse(textInputNotificationResponse)
                 var error: RAnalyticsLaunchCollectorError?
                 if case .failure(let anError) = result { error = anError }
@@ -348,12 +360,13 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 expect(launchCollector.pushTrackingIdentifier).to(beNil())
             }
             it("should not process UNNotificationResponse when the trigger is nil") {
-                let analyticsTrackerMock = dependenciesFactory.tracker as? AnalyticsTrackerMock
-                analyticsTrackerMock?.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
+                analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pushNotification: TrackerResult(tracked: false, parameters: nil)]
 
                 let textInputNotificationResponse = UNTextInputNotificationResponse.response(trigger: nil)!
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
+                launchCollector.trackerDelegate = analyticsTrackerMock
+
                 let result = launchCollector.processPushNotificationResponse(textInputNotificationResponse)
                 var error: RAnalyticsLaunchCollectorError?
                 if case .failure(let anError) = result { error = anError }

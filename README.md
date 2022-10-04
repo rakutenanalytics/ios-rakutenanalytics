@@ -114,8 +114,7 @@ import RAnalytics
 
 ## Configuring RAT
 
-⚠️ Applications **MUST** configure their RAT `accountId` and `applicationId` in their info.plist as follows:
-
+⚠️ Applications **MUST** configure their RAT identifiers (`RATAccountIdentifier` and `RATAppIdentifier`) in their info.plist as follows:
 
 ##### Plist Configuration
 
@@ -125,6 +124,9 @@ import RAnalytics
 | `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID` (Number type) |
 | `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID` (Number type) |
 
+Otherwise:
+- RAnalytics SDK **THROWS AN EXCEPTION** in **DEBUG MODE** when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
+- RAnalytics SDK tracking is **DISABLED** in **RELEASE MODE** when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 
 ## Using Kibana to verify successful integration
 
@@ -365,6 +367,11 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 ```
 
 # Knowledge Base
+
+## Migrating to v9.7.0
+`RATAccountIdentifier` and `RATAppIdentifier` keys MUST be set in the app's Info.plist, otherwise:
+- RAnalytics SDK throws an exception in DEBUG MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
+- RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 
 ## Migrating to v9.4.0
 

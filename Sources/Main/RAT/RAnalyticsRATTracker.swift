@@ -6,6 +6,7 @@ import UIKit
 import RSDKUtils
 #else // SPM version
 import RSDKUtilsMain
+import RLogger
 #endif
 
 // swiftlint:disable type_name
@@ -15,6 +16,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 ///
 /// - Attention: Application developers **MUST** configure the instance by setting
 /// the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
+///
+/// - Warning: The app **CRASHES** in DEBUG mode when `RATAccountIdentifier` and `RATAppIdentifier` keys are not set in their app's Info.plist.
 @objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
     enum Constants {
         static let ratEventPrefix      = "rat."
@@ -65,7 +68,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Note: This identifier is configured in the app's `Info.plist` for the key `RATAccountIdentifier`.
     ///
-    /// - Warning: If this identifier is not configured in the app's `Info.plist`, a default value is set: `477`.
+    /// - Warning: If this identifier is not configured in the app's `Info.plist`:
+    ///
+    ///     - The RAnalytics framework crashes in Debug mode.
+    ///     - The RAT tracking is disabled in Release mode.
     ///
     /// - Warning: The type of this identifier must be `Number` in the app's `Info.plist`.
     public let accountIdentifier: Int64
@@ -74,7 +80,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Note: This identifier is configured in the app's `Info.plist` for the key `RATAppIdentifier`.
     ///
-    /// - Warning: If this identifier is not configured in the app's `Info.plist`, a default value is set: `1`.
+    /// - Warning: If this identifier is not configured in the app's `Info.plist`:
+    ///
+    ///     - The RAnalytics framework crashes in Debug mode.
+    ///     - The RAT tracking is disabled in Release mode.
     ///
     /// - Warning: The type of this identifier must be `Number` in the app's `Info.plist`.
     public let applicationIdentifier: Int64
@@ -227,6 +236,29 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
                                        queue: nil) { _ in
             self.telephonyHandler.update(telephonyNetworkInfo: CTTelephonyNetworkInfo())
         }
+
+        // 1) Debug
+        // DEBUG should not be mandatory as `assertionFailure` crashes only in DEBUG mode.
+        // But application developers could configure their apps build with DEBUG optimization by mistake, therefore their apps could crash in Production.
+        // This condition is made only to avoid crashes in Production because of unexpected build configuration.
+        //
+        // 2) Call
+        // This check is called here in order to avoid this error before the `super.init()` call:
+        // `super.init isn't called on all paths before returning from initializer`
+        guard bundleContainer.accountIdentifier != 0 && bundleContainer.applicationIdentifier != 0 else {
+            #if DEBUG
+            // Crash only when the target is not the Tests Target
+            if NSClassFromString("XCTest") == nil {
+                assertionFailure(ErrorReason.ratIdentifiersAreNotSet)
+
+            } else {
+                RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
+            }
+            #else
+            RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
+            #endif
+            return
+        }
     }
 }
 
@@ -360,8 +392,29 @@ private extension RAnalyticsRATTracker {
 // MARK: - Process an event
 
 extension RAnalyticsRATTracker {
+    /// Process an event and send it to the RAT Backend.
+    ///
+    /// - Parameters:
+    ///    - event: the event to process
+    ///    - state: the state associated to the event
+    ///
+    /// - Returns:
+    ///    - `false` when `RATAccountIdentifier` or `RATApplicationIdentifier` is not set in the app's Info.plist
+    ///    - `false` when the payload build fails
+    ///    - `false` when the sender is nil (`RATEndpoint` is not set in the app's Info.plist)
+    ///    - `true` otherwise
     @discardableResult
     @objc(processEvent:state:) public func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        guard accountIdentifier != 0 && applicationIdentifier != 0 else {
+            RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
+
+            ErrorRaiser.raise(AnalyticsError.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                                           code: ErrorCode.eventsNotProcessedByRATracker.rawValue,
+                                                           description: ErrorDescription.eventsNotProcessedByRATTracker,
+                                                           reason: ErrorReason.ratIdentifiersAreNotSet))
+            return false
+        }
+
         guard let payload = buildPayload(for: event, state: state) else {
             return false
         }

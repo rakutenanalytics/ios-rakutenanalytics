@@ -11,11 +11,11 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
     ///
     /// - Note: stored properties are not allowed in Swift extensions.
     private enum Holder {
-        static var analyticsManager: AnalyticsManageable = AnalyticsManager.shared()
+        static var analyticsManager: ReferralAppTrackable = AnalyticsManager.shared()
     }
 
     /// Inject the AnalyticsManager.
-    var analyticsManager: AnalyticsManageable {
+    var analyticsManager: ReferralAppTrackable {
         get {
             return Holder.analyticsManager
         }

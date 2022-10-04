@@ -7,6 +7,7 @@ import Foundation
 import class RSDKUtils.URLSessionMock
 #else // SPM version
 import class RSDKUtilsTestHelpers.URLSessionMock
+import RAnalyticsTestHelpers
 #endif
 
 class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
@@ -18,12 +19,12 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
 
                 beforeEach {
                     batchingDelay = RAnalyticsRATTracker.shared().batchingDelay()
-                    RAnalyticsRATTracker.shared().set(batchingDelay: 0.0)
+                    MainDependenciesContainer.ratTracker.set(batchingDelay: 0.0)
                     URLSessionMock.startMockingURLSession()
                 }
 
                 afterEach {
-                    RAnalyticsRATTracker.shared().set(batchingDelay: batchingDelay)
+                    MainDependenciesContainer.ratTracker.set(batchingDelay: batchingDelay)
                     URLSessionMock.stopMockingURLSession()
                 }
 
@@ -37,7 +38,8 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
                     }
 
                     try? RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: expectedRequestId,
-                                                                                pushConversionAction: expectedConversionAction)
+                                                                                pushConversionAction: expectedConversionAction,
+                                                                                with: MainDependenciesContainer.analyticsManager)
 
                     expect(isSendingCompleted).toEventually(beTrue())
 

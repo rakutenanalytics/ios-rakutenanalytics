@@ -1,11 +1,12 @@
 import Foundation
 
-protocol Trackable {
+protocol Trackable: AnyObject {
     func trackEvent(name: String, parameters: [String: Any]?)
 }
 
-final class AnalyticsTracker: Trackable {
+extension AnalyticsManager: Trackable {
     func trackEvent(name: String, parameters: [String: Any]?) {
-        AnalyticsManager.Event(name: name, parameters: parameters).track()
+        let event = AnalyticsManager.Event(name: name, parameters: parameters)
+        process(event)
     }
 }

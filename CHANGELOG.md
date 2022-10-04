@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Features
+* [SDKCF-5839](https://jira.rakuten-it.com/jira/browse/SDKCF-5839): Implement the easy RAT integration verification method.
+RAnalytics SDK throws an exception in DEBUG MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
+RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 * [SDKCF-5876](https://jira.rakuten-it.com/jira/browse/SDKCF-5876): Enable/Disable App-to-App referral tracking.
 
 ### Doc improvements

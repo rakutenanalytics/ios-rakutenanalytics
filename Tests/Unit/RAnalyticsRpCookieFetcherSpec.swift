@@ -39,7 +39,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
 
             describe("init") {
                 it("should return nil when endpointAddress is nil") {
-                    bundleMock.mutableEndpointAddress = nil
+                    bundleMock.endpointAddress = nil
                     let cookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: cookieStorageMock,
                                                                   bundle: bundleMock,
                                                                   session: sessionMock,
@@ -49,7 +49,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                 }
 
                 it("should return not nil when endpointAddress is not nil") {
-                    bundleMock.mutableEndpointAddress = URL(string: urlString)
+                    bundleMock.endpointAddress = URL(string: urlString)
                     let cookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: cookieStorageMock,
                                                                   bundle: bundleMock,
                                                                   session: sessionMock,
@@ -67,7 +67,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                     sessionMock.error = nil
                     sessionMock.willComplete = nil
                     cookieStorageMock.cookiesArray = nil
-                    bundleMock.mutableEndpointAddress = URL(string: urlString)
+                    bundleMock.endpointAddress = URL(string: urlString)
                     cookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: cookieStorageMock,
                                                               bundle: bundleMock,
                                                               session: sessionMock,
@@ -284,7 +284,7 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                 var cookieFetcher: RAnalyticsRpCookieFetcher?
 
                 beforeEach {
-                    bundleMock.mutableEndpointAddress = URL(string: urlString)
+                    bundleMock.endpointAddress = URL(string: urlString)
                     cookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: cookieStorageMock,
                                                               bundle: bundleMock,
                                                               session: sessionMock,

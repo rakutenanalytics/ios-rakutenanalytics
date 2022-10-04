@@ -17,7 +17,11 @@ import RAnalyticsTestHelpers
 class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsRATTracker") {
-            let bundle = Bundle.main
+            let bundle = BundleMock.create()
+            bundle.languageCode = Bundle.main.languageCode
+            bundle.shortVersion = Bundle.main.shortVersion
+            bundle.version = Bundle.main.version
+            bundle.bundleIdentifier = Bundle.main.bundleIdentifier
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!

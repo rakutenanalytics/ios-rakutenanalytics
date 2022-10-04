@@ -30,17 +30,22 @@ final class AnalyticsManagerSpec: QuickSpec {
             let dependenciesContainerWithEmptyBundle = SimpleContainerMock()
             dependenciesContainerWithEmptyBundle.bundle = BundleMock()
 
+            let dependenciesContainerWithRatIds = SimpleContainerMock()
+            dependenciesContainerWithRatIds.bundle = BundleMock.create()
+
             let dependenciesContainer = SimpleContainerMock()
             dependenciesContainer.locationManager = LocationManagerMock()
-            dependenciesContainer.tracker = AnalyticsTrackerMock()
+
+            let bundle = BundleMock.create()
+            #if SWIFT_PACKAGE
+            // SPM version: Set Bundle.module in order to get RAnalyticsConfiguration.plist from Unit module
+            bundle.disabledEventsAtBuildTime = Bundle.module.disabledEventsAtBuildTime
+            #else
+            bundle.disabledEventsAtBuildTime = Bundle.main.disabledEventsAtBuildTime
+            #endif
+            dependenciesContainer.bundle = bundle
 
             beforeEach {
-                #if SWIFT_PACKAGE
-                // SPM version: Set Bundle.module in order to get RAnalyticsConfiguration.plist from Unit module
-                dependenciesContainer.bundle = Bundle.module
-                #else
-                dependenciesContainer.bundle = Bundle.main
-                #endif
                 (dependenciesContainer.locationManager as? LocationManagerMock)?.startUpdatingLocationIsCalled = false
                 (dependenciesContainer.locationManager as? LocationManagerMock)?.stopUpdatingLocationIsCalled = false
             }
@@ -315,6 +320,8 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                 it("should process the event if its prefix is known") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    analyticsManager.remove(RAnalyticsRATTracker.shared())
+                    analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer))
                     let result = analyticsManager.process(RAnalyticsEvent(name: "rat.foo", parameters: nil))
                     expect(result).to(beTrue())
                 }
@@ -382,20 +389,43 @@ final class AnalyticsManagerSpec: QuickSpec {
             describe("shouldTrackEventHandler") {
                 context("shouldTrackEventHandler is nil") {
                     context("build time configuration file is missing") {
-                        it("process event should return true") {
-                            let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithEmptyBundle)
-                            analyticsManager.shouldTrackEventHandler = nil
+                        context("The RAT identifiers are not set") {
+                            it("process event should return false") {
+                                let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
+                                let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithEmptyBundle)
+                                analyticsManager.remove(RAnalyticsRATTracker.shared())
+                                analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainerWithEmptyBundle))
+                                analyticsManager.shouldTrackEventHandler = nil
 
-                            expect(analyticsManager.process(event)).to(beTrue())
+                                expect(analyticsManager.process(event)).to(beFalse())
+                            }
+                        }
+
+                        context("The RAT identifiers are set") {
+                            it("process event should return true") {
+                                let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
+                                let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithRatIds)
+                                analyticsManager.remove(RAnalyticsRATTracker.shared())
+                                analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainerWithRatIds))
+                                analyticsManager.shouldTrackEventHandler = nil
+
+                                expect(analyticsManager.process(event)).to(beTrue())
+                            }
                         }
                     }
 
                     context("build time configuration file exists") {
+                        var analyticsManager: AnalyticsManager!
+
+                        beforeEach {
+                            analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                            analyticsManager.remove(RAnalyticsRATTracker.shared())
+                            analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer))
+                        }
+
                         it("process event should return false if the event is disabled at build time") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionEnd, parameters: nil)
 
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = nil
 
                             let disabledEventsAtBuildTime = dependenciesContainer.bundle.disabledEventsAtBuildTime
@@ -406,7 +436,6 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                         it("process event should return true if the event is not disabled at build time") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = nil
 
                             expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
@@ -417,25 +446,38 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                 context("shouldTrackEventHandler is not nil") {
                     context("build time configuration file is missing") {
+                        var analyticsManager: AnalyticsManager!
+
+                        beforeEach {
+                            analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithRatIds)
+                            analyticsManager.remove(RAnalyticsRATTracker.shared())
+                            analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainerWithRatIds))
+                        }
+
                         it("process event should return false if the event is disabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithEmptyBundle)
                             analyticsManager.shouldTrackEventHandler = { $0 != RAnalyticsEvent.Name.sessionStart }
                             expect(analyticsManager.process(event)).to(beFalse())
                         }
 
                         it("process event should return true if the event is enabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainerWithEmptyBundle)
                             analyticsManager.shouldTrackEventHandler = { $0 == RAnalyticsEvent.Name.sessionStart }
                             expect(analyticsManager.process(event)).to(beTrue())
                         }
                     }
 
                     context("build time configuration file exists") {
+                        var analyticsManager: AnalyticsManager!
+
+                        beforeEach {
+                            analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                            analyticsManager.remove(RAnalyticsRATTracker.shared())
+                            analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer))
+                        }
+
                         it("process event should return true if the event is disabled at build time and enabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionEnd, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 == RAnalyticsEvent.Name.sessionEnd }
 
                             expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
@@ -444,7 +486,6 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                         it("process event should return true if the event is not disabled at build time and enabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 == RAnalyticsEvent.Name.sessionStart }
 
                             expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())
@@ -453,7 +494,6 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                         it("process event should return false if the event is disabled at build time and disabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionEnd, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 != RAnalyticsEvent.Name.sessionEnd }
 
                             expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionEnd)).to(beTrue())
@@ -462,7 +502,6 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                         it("process event should return false if the event is not disabled at build time and disabled at runtime") {
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
-                            let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
                             analyticsManager.shouldTrackEventHandler = { $0 != RAnalyticsEvent.Name.sessionStart }
 
                             expect(dependenciesContainer.bundle.disabledEventsAtBuildTime?.contains(RAnalyticsEvent.Name.sessionStart)).to(beFalse())

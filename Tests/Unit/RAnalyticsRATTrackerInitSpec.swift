@@ -13,7 +13,7 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
         describe("RAnalyticsRATTracker") {
             let dependenciesContainer = SimpleContainerMock()
             let bundle = BundleMock()
-            bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp/")!
+            bundle.endpointAddress = URL(string: "https://endpoint.co.jp/")!
             dependenciesContainer.bundle = bundle
 
             describe("init") {
@@ -41,8 +41,8 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
                     expect(ratTracker.accountIdentifier).to(equal(10))
                 }
 
-                it("should equal to the default account identifier when the plist key is not set") {
-                    expect(RAnalyticsRATTracker.shared().accountIdentifier).to(equal(477))
+                it("should equal to 0 when the plist key is not set") {
+                    expect(RAnalyticsRATTracker.shared().accountIdentifier).to(equal(0))
                 }
             }
 
@@ -54,8 +54,8 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
                     expect(ratTracker.applicationIdentifier).to(equal(10))
                 }
 
-                it("should equal to the default application identifier when the plist key is not set") {
-                    expect(RAnalyticsRATTracker.shared().applicationIdentifier).to(equal(1))
+                it("should equal to 0 when the plist key is not set") {
+                    expect(RAnalyticsRATTracker.shared().applicationIdentifier).to(equal(0))
                 }
             }
 

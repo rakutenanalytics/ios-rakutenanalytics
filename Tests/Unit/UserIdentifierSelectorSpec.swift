@@ -16,7 +16,6 @@ final class UserIdentifierSelectorSpec: QuickSpec {
 
             beforeEach {
                 dependenciesContainer.userStorageHandler = UserDefaultsMock()
-                dependenciesContainer.tracker = AnalyticsTrackerMock()
             }
 
             describe("selectedTrackingIdentifier") {

@@ -383,40 +383,100 @@ final class ReferralAppModelSpec: QuickSpec {
             }
 
             describe("init(link:component:customParameters:)") {
-                it("should return nil when bundleIdentifier is nil") {
-                    let bundle = BundleMock()
-                    bundle.bundleIdentifier = nil
-                    let model = ReferralAppModel(bundle: bundle)
-                    expect(model).to(beNil())
+                let bundle = BundleMock.create()
+                bundle.bundleIdentifier = bundleIdentifier
+
+                context("When bundleIdentifier is nil") {
+                    it("should return nil") {
+                        let bundle = BundleMock()
+                        bundle.bundleIdentifier = nil
+                        let model = ReferralAppModel(bundle: bundle)
+                        expect(model).to(beNil())
+                    }
                 }
 
-                it("should return expected url scheme and expected universal link with minimal non-optional parameters") {
-                    let model = ReferralAppModel()
-                    expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=477&ref_aid=1"))
+                context("When bundleIdentifier is not nil") {
+                    context("When RAT identifiers are configured") {
+                        it("should return expected url scheme with minimal non-optional parameters") {
+                            let model = ReferralAppModel(bundle: bundle)
 
-                    expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1"))
+                            expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=477&ref_aid=1"))
+                        }
+
+                        it("should return expected universal link with minimal non-optional parameters") {
+                            let model = ReferralAppModel(bundle: bundle)
+
+                            expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1"))
+                        }
+                    }
+
+                    context("When RAT identifiers are not configured") {
+                        it("should return expected url scheme with RAT identifiers set to 0 and minimal non-optional parameters") {
+                            let model = ReferralAppModel()
+
+                            expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=0&ref_aid=0"))
+                        }
+
+                        it("should return expected universal link with RAT identifiers set to 0 and minimal non-optional parameters") {
+                            let model = ReferralAppModel()
+
+                            expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0"))
+                        }
+                    }
                 }
 
-                it("should return expected url scheme and expected universal link with all parameters") {
+                context("When RAT identifiers are configured") {
+                    let model = ReferralAppModel(link: link,
+                                                 component: component,
+                                                 customParameters: customParameters,
+                                                 bundle: bundle)
+
+                    it("should return expected url scheme with all expected parameters") {
+                        let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
+                        expect(urlScheme?.starts(with: "app://?ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
+                        expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
+                        expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    }
+
+                    it("should return expected universal link with all expected parameters") {
+                        let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
+
+                        expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                        expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
+                        expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
+                        expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    }
+                }
+
+                context("When RAT identifiers are not configured") {
                     let model = ReferralAppModel(link: link,
                                                  component: component,
                                                  customParameters: customParameters,
                                                  bundle: Bundle.main)
-                    let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
-                    expect(urlScheme?.starts(with: "app://?ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
-                    expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
-                    expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
-                    expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
-                    expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
-                    let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
+                    it("should return expected url scheme with RAT identifiers set to 0 and all expected parameters") {
+                        let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
+                        expect(urlScheme?.starts(with: "app://?ref_acc=0&ref_aid=0&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
+                        expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
+                        expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    }
 
-                    expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    it("should return expected universal link with RAT identifiers set to 0 and all expected parameters") {
+                        let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
 
-                    expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
-                    expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
-                    expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
-                    expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+
+                        expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
+                        expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
+                        expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(universalLink?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                    }
                 }
             }
 

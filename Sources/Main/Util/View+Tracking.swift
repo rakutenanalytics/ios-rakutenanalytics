@@ -31,9 +31,11 @@ extension View {
     ///            }
     ///        }
     ///    }
-    public func rviewOnAppear(pageName: String, perform action: (() -> Void)? = nil) -> some View {
+    public func rviewOnAppear(pageName: String,
+                              with manager: AnalyticsManager = AnalyticsManager.shared(),
+                              perform action: (() -> Void)? = nil) -> some View {
         onAppear {
-            AnalyticsManager.shared().launchCollector.trackPageVisit(with: .swiftuiPage(pageName: pageName))
+            manager.launchCollector.trackPageVisit(with: .swiftuiPage(pageName: pageName))
             action?()
         }
     }

@@ -141,13 +141,15 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
     private let eventsRequiringIdentifierAndRedirectString = ["redirectPage", "redirectPreview"]
     private let userStorageHandler: UserStorageHandleable?
     private let keychainHandler: KeychainHandleable?
-    private let tracker: Trackable?
+
+    /// A delegate for tracking an event and its parameters
+    weak var trackerDelegate: Trackable?
 
     @available(*, unavailable)
     init() {
         self.userStorageHandler = nil
         self.keychainHandler = nil
-        self.tracker = nil
+        self.trackerDelegate = nil
     }
 
     /// Creates an external collector
@@ -161,7 +163,6 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
     init(dependenciesContainer: SimpleDependenciesContainable) {
         self.userStorageHandler = dependenciesContainer.userStorageHandler
         self.keychainHandler = dependenciesContainer.keychainHandler
-        self.tracker = dependenciesContainer.tracker
 
         addLoginObservers()
         addLoginFailureObservers()
@@ -246,7 +247,7 @@ extension RAnalyticsExternalCollector {
 
         loginMethod = RAnalyticsLoginMethod.type(from: usedLoginMethod)
 
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.login, parameters: nil)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.login, parameters: nil)
     }
 
     func trackLoginFailure(_ failureType: LoginFailureType) {
@@ -273,7 +274,7 @@ extension RAnalyticsExternalCollector {
         case .unknown: ()
         }
 
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.loginFailure, parameters: parameters.isEmpty ? nil : parameters)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.loginFailure, parameters: parameters.isEmpty ? nil : parameters)
     }
 
     func trackLogout(_ logoutMethod: String = "") {
@@ -295,7 +296,7 @@ extension RAnalyticsExternalCollector {
         default: ()
         }
 
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.logout, parameters: parameters)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.logout, parameters: parameters)
     }
 }
 
@@ -340,7 +341,7 @@ extension RAnalyticsExternalCollector {
         }
 
         if let eventName = discoverEventMapping[eventSuffix]?.rawValue {
-            tracker?.trackEvent(name: eventName, parameters: parameters.isEmpty ? nil : parameters)
+            trackerDelegate?.trackEvent(name: eventName, parameters: parameters.isEmpty ? nil : parameters)
         }
     }
     func receiveSSODialogNotification(_ notification: NSNotification) {
@@ -353,7 +354,7 @@ extension RAnalyticsExternalCollector {
            !pageIdentifier.isEmpty {
             parameters[RAnalyticsEvent.Parameter.pageId] = pageIdentifier
         }
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: parameters)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pageVisit, parameters: parameters)
     }
 
     func receiveCredentialsNotification(_ notification: NSNotification) {
@@ -372,7 +373,7 @@ extension RAnalyticsExternalCollector {
         }
 
         if let eventName = eventName {
-            tracker?.trackEvent(name: eventName, parameters: parameters)
+            trackerDelegate?.trackEvent(name: eventName, parameters: parameters)
         }
     }
 
@@ -380,7 +381,7 @@ extension RAnalyticsExternalCollector {
         guard let parameters = notification.object as? [String: Any] else {
             return
         }
-        tracker?.trackEvent(name: AnalyticsManager.Event.Name.custom, parameters: parameters)
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.custom, parameters: parameters)
     }
 }
 

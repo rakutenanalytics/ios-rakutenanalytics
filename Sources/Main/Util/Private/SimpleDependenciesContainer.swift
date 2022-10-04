@@ -20,7 +20,6 @@ protocol SimpleDependenciesContainable {
     var keychainHandler: KeychainHandleable { get }
     var locationManager: LocationManageable { get }
     var bundle: EnvironmentBundle { get }
-    var tracker: Trackable { get }
     var telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable { get }
     var deviceCapability: DeviceCapability { get }
     var screenHandler: Screenable { get }
@@ -44,11 +43,9 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
     let wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     let httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
-    let analyticsTracker = AnalyticsTracker()
     let locationManager: LocationManageable = CLLocationManager()
     let bundle: EnvironmentBundle = Bundle.main
     let keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
-    let tracker: Trackable = AnalyticsTracker()
     let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
     let deviceCapability: DeviceCapability = UIDevice.current
     let screenHandler: Screenable = UIScreen.main

@@ -67,6 +67,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 database = RAnalyticsDatabase.database(connection: databaseConnection)
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
                 dependenciesContainer.session = session
+                dependenciesContainer.bundle = BundleMock.create()
             }
 
             afterEach {
@@ -94,6 +95,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 }
 
                 ratTracker.set(batchingDelay: 0)
+                analyticsManager.remove(RAnalyticsRATTracker.shared())
                 analyticsManager.add(ratTracker)
                 analyticsManager.trackReferralApp(url: url, sourceApplication: bundleIdentifier)
 

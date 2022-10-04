@@ -242,7 +242,6 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
     public var locationManager: LocationManageable = CLLocationManager()
     public var bundle: EnvironmentBundle = Bundle.main
-    public var tracker: Trackable = AnalyticsTracker()
     public var telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
     public var deviceCapability: DeviceCapability = UIDevice.current
     public var screenHandler: Screenable = UIScreen.main
@@ -551,4 +550,62 @@ public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObserver {
     public func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
         completion()
     }
+}
+
+// MARK: - BundleMock
+
+public final class BundleMock: NSObject, EnvironmentBundle {
+    public var languageCode: Any?
+    public var accountIdentifier: Int64 = 1
+    public var applicationIdentifier: Int64 = 1
+    public var disabledEventsAtBuildTime: [String]?
+    public var duplicateAccounts: [RATAccount]?
+    public var bundleIdentifier: String?
+    public var useDefaultSharedCookieStorage: Bool {
+        (dictionary?["RATDisableSharedCookieStorage"] as? Bool) ?? false
+    }
+    public var endpointAddress: URL?
+    public var enableInternalSerialization: Bool { mutableEnableInternalSerialization }
+    public static var assetsBundle: Bundle? { nil }
+    public static var sdkComponentMap: NSDictionary? { nil }
+
+    public var dictionary: [String: Any]?
+    public var mutableEnableInternalSerialization: Bool = false
+
+    public func object(forInfoDictionaryKey key: String) -> Any? { dictionary?[key] }
+
+    public var appGroupId: String? {
+        object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
+    }
+
+    public var shortVersion: String? = "2.0"
+    public var version: String? = "1"
+
+    /// Factory function for creating a mocked bundle
+    public static func create() -> BundleMock {
+        let bundle = BundleMock()
+        bundle.accountIdentifier = 477
+        bundle.applicationIdentifier = 1
+        bundle.endpointAddress = URL(string: "https://endpoint.co.jp")
+        return bundle
+    }
+}
+
+// MARK: - MainDependenciesContainer
+
+public enum MainDependenciesContainer {
+    static let dependenciesContainer: SimpleContainerMock = {
+        let dependenciesContainer = SimpleContainerMock()
+        dependenciesContainer.bundle = BundleMock.create()
+        return dependenciesContainer
+    }()
+
+    public static let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+
+    public static let analyticsManager: AnalyticsManager = {
+        let manager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+        manager.remove(RAnalyticsRATTracker.shared())
+        manager.add(ratTracker)
+        return manager
+    }()
 }

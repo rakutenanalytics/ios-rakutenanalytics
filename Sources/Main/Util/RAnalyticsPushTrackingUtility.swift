@@ -113,12 +113,14 @@ extension RAnalyticsPushTrackingUtility {
     ///
     /// - Throws: an error if `pushRequestIdentifier` is empty or if `pushConversionAction` is empty.
     @objc public static func trackPushConversionEvent(pushRequestIdentifier: String,
-                                                      pushConversionAction: String) throws {
+                                                      pushConversionAction: String,
+                                                      with manager: AnalyticsManageable = AnalyticsManager.shared()) throws {
         guard !pushRequestIdentifier.isEmpty && !pushConversionAction.isEmpty else {
             throw ErrorConstants.pushConversionError
         }
-        RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier,
-                        pushConversionAction: pushConversionAction).track()
+        let event = RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier,
+                                    pushConversionAction: pushConversionAction)
+        manager.process(event)
     }
 }
 

@@ -38,7 +38,7 @@ final class SDKTrackerSpec: QuickSpec {
 
             describe("init") {
                 it("should return nil when the bundle does not define the endpoint URL") {
-                    bundle.mutableEndpointAddress = nil
+                    bundle.endpointAddress = nil
 
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
@@ -47,7 +47,7 @@ final class SDKTrackerSpec: QuickSpec {
                 }
 
                 it("should return a new instance of SDKTracker when the bundle define the endpoint URL") {
-                    bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp")!
+                    bundle.endpointAddress = URL(string: "https://endpoint.co.jp")!
 
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
@@ -64,7 +64,7 @@ final class SDKTrackerSpec: QuickSpec {
                 let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB", deviceIdentifier: "deviceId")
 
                 it("should not process the event when the event is not _rem_install") {
-                    bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp")!
+                    bundle.endpointAddress = URL(string: "https://endpoint.co.jp")!
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
                                                 batchingDelay: 1,
@@ -74,7 +74,7 @@ final class SDKTrackerSpec: QuickSpec {
                 }
 
                 it("should process the event when the event is _rem_install") {
-                    bundle.mutableEndpointAddress = URL(string: "https://endpoint.co.jp")!
+                    bundle.endpointAddress = URL(string: "https://endpoint.co.jp")!
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
                                                 batchingDelay: 1,
