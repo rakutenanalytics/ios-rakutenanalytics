@@ -1,7 +1,16 @@
-#import "_RAnalyticsSwiftLoader.h"
 @import Foundation;
 @import UIKit;
 @import UserNotifications;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface _RAnalyticsSwiftLoader : NSObject
+
+- (instancetype)init NS_UNAVAILABLE;
+
+@end
+
+NS_ASSUME_NONNULL_END
 
 // Used if RAnalytics is built as a framework, use_frameworks! is used in Podfile
 #if __has_include(<RAnalytics/RAnalytics-Swift.h>)
