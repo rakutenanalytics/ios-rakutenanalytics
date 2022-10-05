@@ -119,7 +119,7 @@ https://ghe.rakuten-it.com/mag/ios-analytics-private-artifacts
 
 ## Private snapshots repository of the RAnalytics Xcode Framework
 
-This repository is only used fot testing the RAnalytics Xcode Framework in internal apps by QA:<br>
+This repository is only used for testing the RAnalytics Xcode Framework in internal apps by QA:<br>
 https://github.com/rakutentech/ios-analytics-framework-snapshots
 
 ## Documentation repository
