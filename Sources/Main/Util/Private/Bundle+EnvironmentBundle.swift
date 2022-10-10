@@ -20,9 +20,16 @@ protocol EnvironmentBundle: Bundleable {
     var appGroupId: String? { get }
     var shortVersion: String? { get }
     var version: String? { get }
+    var applicationSceneManifest: ApplicationSceneManifest? { get }
 }
 
 extension Bundle: EnvironmentBundle {
+    private static let decoder = JSONDecoder()
+
+    private enum Keys {
+        static let applicationSceneManifestKey = "UIApplicationSceneManifest"
+    }
+
     var languageCode: Any? {
         if let preferredLocaleLanguage = NSLocale.preferredLanguages.first,
            let preferredLocalizationLanguage = preferredLocalizations.first {
@@ -141,6 +148,14 @@ extension Bundle: EnvironmentBundle {
 
     var appGroupId: String? {
         object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
+    }
+
+    var applicationSceneManifest: ApplicationSceneManifest? {
+        guard let dict = object(forInfoDictionaryKey: Keys.applicationSceneManifestKey) as? [String: Any],
+              let data = try? JSONSerialization.data(withJSONObject: dict, options: []) else {
+            return nil
+        }
+        return try? Bundle.decoder.decode(ApplicationSceneManifest.self, from: data)
     }
 }
 

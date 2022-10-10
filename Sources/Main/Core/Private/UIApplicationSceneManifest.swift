@@ -11,6 +11,12 @@ struct ApplicationSceneManifest: Decodable {
     var sceneConfigurations: SceneConfigurations?
 }
 
+extension ApplicationSceneManifest {
+    var firstSceneDelegateClassName: String? {
+        sceneConfigurations?.windowSceneSessionRoleApplication?.first?.sceneDelegateClassName
+    }
+}
+
 /// Scene Configurations Model
 struct SceneConfigurations: Decodable {
     enum CodingKeys: String, CodingKey {

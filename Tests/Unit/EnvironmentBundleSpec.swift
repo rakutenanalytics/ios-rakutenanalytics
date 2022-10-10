@@ -283,6 +283,84 @@ final class EnvironmentBundleSpec: QuickSpec {
                     expect(sdkComponentMap?["org.cocoapods.RSDKUtils"] as? String).to(equal("sdkutils"))
                 }
             }
+
+            describe("applicationSceneManifest") {
+                context("When the bundle dictionary is nil") {
+                    it("should return nil") {
+                        bundleMock.injectedDictionary = nil
+
+                        expect(bundleMock.applicationSceneManifest).to(beNil())
+                    }
+                }
+
+                context("When the bundle dictionary is empty") {
+                    it("should return nil") {
+                        bundleMock.injectedDictionary = [:]
+
+                        expect(bundleMock.applicationSceneManifest).to(beNil())
+                    }
+                }
+
+                context("When the bundle dictionary contains a nil SceneDelegate class name") {
+                    let dictionary = ["UIApplicationSceneManifest":
+                                        ["UIApplicationSupportsMultipleScenes": false,
+                                         "UISceneConfigurations":
+                                            ["UIWindowSceneSessionRoleApplication":
+                                                [["UISceneDelegateClassName": nil]]]]]
+
+                    beforeEach {
+                        bundleMock.injectedDictionary = dictionary
+                    }
+
+                    it("should not return nil") {
+                        expect(bundleMock.applicationSceneManifest).toNot(beNil())
+                    }
+
+                    it("should return a nil SceneDelegate class name") {
+                        expect(bundleMock.applicationSceneManifest?.firstSceneDelegateClassName).to(beNil())
+                    }
+                }
+
+                context("When the bundle dictionary contains an empty SceneDelegate class name") {
+                    let dictionary = ["UIApplicationSceneManifest":
+                                        ["UIApplicationSupportsMultipleScenes": false,
+                                         "UISceneConfigurations":
+                                            ["UIWindowSceneSessionRoleApplication":
+                                                [["UISceneDelegateClassName": ""]]]]]
+
+                    beforeEach {
+                        bundleMock.injectedDictionary = dictionary
+                    }
+
+                    it("should not return nil") {
+                        expect(bundleMock.applicationSceneManifest).toNot(beNil())
+                    }
+
+                    it("should return an empty SceneDelegate class name") {
+                        expect(bundleMock.applicationSceneManifest?.firstSceneDelegateClassName).to(beEmpty())
+                    }
+                }
+
+                context("When the bundle dictionary contains a non-nil SceneDelegate class name") {
+                    let dictionary = ["UIApplicationSceneManifest":
+                                        ["UIApplicationSupportsMultipleScenes": false,
+                                         "UISceneConfigurations":
+                                            ["UIWindowSceneSessionRoleApplication":
+                                                [["UISceneDelegateClassName": "SceneDelegate"]]]]]
+
+                    beforeEach {
+                        bundleMock.injectedDictionary = dictionary
+                    }
+
+                    it("should not return nil") {
+                        expect(bundleMock.applicationSceneManifest).toNot(beNil())
+                    }
+
+                    it("should return a non-nil SceneDelegate class name") {
+                        expect(bundleMock.applicationSceneManifest?.firstSceneDelegateClassName).to(equal("SceneDelegate"))
+                    }
+                }
+            }
         }
     }
 }
