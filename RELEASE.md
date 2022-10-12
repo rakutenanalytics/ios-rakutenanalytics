@@ -124,8 +124,11 @@ https://github.com/rakutentech/ios-analytics-framework-snapshots
 
 ## Documentation repository
 
-This is the repository containing the documentation of RAnalytics for each released version:<br>
-https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/9.6.0/index.html
+- This is the repository containing the documentation of RAnalytics for each released version:
+    - https://ghe.rakuten-it.com/mag/ios-analytics-docs
+
+- The documentation is published here:
+    - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/index.html
 
 ## Codelab repository
 
