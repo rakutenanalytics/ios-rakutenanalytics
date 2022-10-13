@@ -8,6 +8,9 @@ RAnalytics SDK throws an exception in DEBUG MODE when `RATAccountIdentifier` and
 RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 * [SDKCF-5876](https://jira.rakuten-it.com/jira/browse/SDKCF-5876): Enable/Disable App-to-App referral tracking.
 
+### Improvements
+* [SDKCF-5880](https://jira.rakuten-it.com/jira/browse/SDKCF-5880): Secure the Easy ID storage and handle the Easy ID migration from the user defaults to the keychain.
+
 ### Doc improvements
 * [SDKCF-5892](https://jira.rakuten-it.com/jira/browse/SDKCF-5892): Add the release workflow documentation.
 
@@ -37,7 +40,6 @@ Add RSDKUtils SDK
 * [SDKCF-5609](https://jira.rakuten-it.com/jira/browse/SDKCF-5609): Refactor UIDevice extension for Swift 5.7/Xcode 14 compatibility.
 * [SDKCF-5814](https://jira.rakuten-it.com/jira/browse/SDKCF-5814): Move rem_launch cp's keys to CpParameterKeys enum.
 * [SDKCF-5815](https://jira.rakuten-it.com/jira/browse/SDKCF-5815): Move rem_login cp's keys to CpParameterKeys enum.
-* [SDKCF-5880](https://jira.rakuten-it.com/jira/browse/SDKCF-5880): Secure the Easy ID storage and handle the Easy ID migration from the user defaults to the keychain.
 
 ### Build fixes
 * [SDKCF-5816](https://jira.rakuten-it.com/jira/browse/SDKCF-5816): Update the provisioning profiles for the Sample apps.
