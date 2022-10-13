@@ -276,6 +276,12 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 }
 
                 context("Page Visit") {
+                    var customWebPage: CustomWebPage!
+
+                    beforeEach {
+                        customWebPage = CustomWebPage(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
+                    }
+                    
                     context("The referral tracking is a Visited Page") {
                         func verifyPageTracking(origin: RAnalyticsOrigin) {
                             context("page_id is set to TestPage") {
@@ -287,7 +293,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                                         state.origin = origin
-                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+                                        state.referralTracking = .page(currentPage: customWebPage)
 
                                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                             payload = $0.first
@@ -305,7 +311,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                                         state.origin = origin
-                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+                                        state.referralTracking = .page(currentPage: customWebPage)
 
                                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                             cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
@@ -315,8 +321,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
 
-                                        // This test must be fixed in https://jira.rakuten-it.com/jira/browse/SDKCF-5738
-                                        // expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
+                                        expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
                                     }
                                 }
 
@@ -369,7 +374,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                                         state.origin = origin
-                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+                                        state.referralTracking = .page(currentPage: customWebPage)
 
                                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                             payload = $0.first
@@ -387,7 +392,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
                                         state.origin = origin
-                                        state.referralTracking = .page(currentPage: Tracking.customWebPage)
+                                        state.referralTracking = .page(currentPage: customWebPage)
 
                                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
                                             cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
@@ -396,9 +401,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(cpPayload).toEventuallyNot(beNil())
 
                                         expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
-
-                                        // This test must be fixed in https://jira.rakuten-it.com/jira/browse/SDKCF-5738
-                                        // expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
+                                        expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
                                     }
                                 }
 

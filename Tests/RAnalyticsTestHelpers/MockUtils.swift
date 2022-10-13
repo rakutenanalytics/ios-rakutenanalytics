@@ -312,11 +312,7 @@ public enum Tracking {
     public static let customPage: CustomPage = {
         CustomPage(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
     }()
-
-    public static let customWebPage: CustomWebPage = {
-        CustomWebPage(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
-    }()
-
+    
     // MARK: - Default Event
     public static let defaultEvent = RAnalyticsEvent(name: "rat.defaultEvent", parameters: ["param1": "value1"])
 
