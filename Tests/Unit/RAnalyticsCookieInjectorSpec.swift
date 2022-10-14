@@ -16,14 +16,11 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
 
             let containerMock = SimpleContainerMock()
             containerMock.adIdentifierManager = ASIdentifierManagerMock()
+            containerMock.wkHttpCookieStore = WKHTTPCookieStorageMock()
 
-            let cookieStore: WKHTTPCookieStore! = containerMock.wkHttpCookieStore as? WKHTTPCookieStore
             let adIdentifierManager: ASIdentifierManagerMock! = containerMock.adIdentifierManager as? ASIdentifierManagerMock
             let cookieInjector = RAnalyticsCookieInjector(dependenciesContainer: containerMock)
             let analyticsCookieName = "ra_uid"
-
-            // Temporarity fix for the tests
-            cookieStore.getAllCookies { _ in }
 
             describe("injectAppToWebTrackingCookie") {
                 it("should set expected cookie value using device identifier and idfa") {
@@ -97,33 +94,31 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
                     expect(cookie).toAfterTimeout(beNil())
                 }
 
-                // This test must be fixed in https://jira.rakuten-it.com/jira/browse/SDKCF-5738
-                //                it("should inject cookie into WKWebsiteDataStore httpCookieStore") {
-                //                    var hasCookie = false
-                //                    cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) { _ in
-                //                        cookieStore.getAllCookies { cookies in
-                //                            hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
-                //                        }
-                //                    }
-                //                    expect(hasCookie).toEventually(beTrue())
-                //                }
+                it("should inject cookie into WKWebsiteDataStore httpCookieStore") {
+                    var hasCookie = false
+                    cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) { _ in
+                        containerMock.wkHttpCookieStore.allCookies { cookies in
+                            hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
+                        }
+                    }
+                    expect(hasCookie).toEventually(beTrue())
+                }
 
-                // This test must be fixed in https://jira.rakuten-it.com/jira/browse/SDKCF-5738
-                //                it("should inject cookie into WKWebsiteDataStore httpCookieStore") {
-                //                    var hasCookie = false
-                //                    cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) { _ in
-                //                        cookieStore.getAllCookies { cookies in
-                //                            hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
-                //                        }
-                //                    }
-                //                    expect(hasCookie).toEventually(beTrue())
-                //                }
+                it("should inject cookie into WKWebsiteDataStore httpCookieStore") {
+                    var hasCookie = false
+                    cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) { _ in
+                        containerMock.wkHttpCookieStore.allCookies { cookies in
+                            hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
+                        }
+                    }
+                    expect(hasCookie).toEventually(beTrue())
+                }
 
                 it("should delete cookies from WKWebsiteDataStore httpCookieStore") {
                     var hasCookie = true
                     cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: deviceID) {_ in
                         cookieInjector.clearCookies {
-                            cookieStore.getAllCookies { cookies in
+                            containerMock.wkHttpCookieStore.allCookies { cookies in
                                 hasCookie = !cookies.filter { $0.name == analyticsCookieName }.isEmpty
                             }
                         }
@@ -131,30 +126,29 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
                     expect(hasCookie).toEventually(beFalse())
                 }
 
-                // This test must be fixed in https://jira.rakuten-it.com/jira/browse/SDKCF-5738
-                //                it("should replace the existing cookie by the new one that has the same name into WKWebsiteDataStore httpCookieStore") {
-                //                    var previousCookie: HTTPCookie?
-                //                    var replacedCookie: HTTPCookie?
-                //                    var ratCookies: [HTTPCookie]?
-                //
-                //                    cookieInjector.injectAppToWebTrackingCookie(domain: "https://domain1.com", deviceIdentifier: deviceID) {
-                //                        previousCookie = $0
-                //
-                //                        cookieInjector.injectAppToWebTrackingCookie(domain: "https://domain2.com", deviceIdentifier: deviceID) {
-                //                            replacedCookie = $0
-                //
-                //                            cookieStore.getAllCookies { cookies in
-                //                                ratCookies = cookies.filter { $0.name == analyticsCookieName }
-                //                            }
-                //                        }
-                //                    }
-                //
-                //                    expect(ratCookies?.count).toEventually(equal(1))
-                //                    expect(previousCookie?.domain).to(equal("https://domain1.com"))
-                //                    expect(replacedCookie?.domain).to(equal("https://domain2.com"))
-                //                    expect(ratCookies?.first?.name).to(equal(analyticsCookieName))
-                //                    expect(ratCookies?.first?.domain).to(equal("https://domain2.com"))
-                //                }
+                it("should replace the existing cookie by the new one that has the same name into WKWebsiteDataStore httpCookieStore") {
+                    var previousCookie: HTTPCookie?
+                    var replacedCookie: HTTPCookie?
+                    var ratCookies: [HTTPCookie]?
+
+                    cookieInjector.injectAppToWebTrackingCookie(domain: "https://domain1.com", deviceIdentifier: deviceID) {
+                        previousCookie = $0
+
+                        cookieInjector.injectAppToWebTrackingCookie(domain: "https://domain2.com", deviceIdentifier: deviceID) {
+                            replacedCookie = $0
+
+                            containerMock.wkHttpCookieStore.allCookies { cookies in
+                                ratCookies = cookies.filter { $0.name == analyticsCookieName }
+                            }
+                        }
+                    }
+
+                    expect(ratCookies?.count).toEventually(equal(1))
+                    expect(previousCookie?.domain).to(equal("https://domain1.com"))
+                    expect(replacedCookie?.domain).to(equal("https://domain2.com"))
+                    expect(ratCookies?.first?.name).to(equal(analyticsCookieName))
+                    expect(ratCookies?.first?.domain).to(equal("https://domain2.com"))
+                }
             }
         }
     }

@@ -58,17 +58,25 @@ public final class ASIdentifierManagerMock: NSObject, AdvertisementIdentifiable 
 
 // MARK: - WKHTTP Cookie Storage
 
-final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
-    func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
-        // no-op
+public final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
+    private var cookiesArray: [HTTPCookie]
+
+    public init() {
+        cookiesArray = [HTTPCookie]()
     }
 
-    func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
-        // no-op
+    public func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
+        completionHandler(cookiesArray)
     }
 
-    func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
-        // no-op
+    public func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+        cookiesArray.append(cookie)
+        completionHandler?()
+    }
+
+    public func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+        cookiesArray.removeAll { $0 == cookie }
+        completionHandler?()
     }
 }
 
