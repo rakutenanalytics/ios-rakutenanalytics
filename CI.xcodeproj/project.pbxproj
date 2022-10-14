@@ -26,6 +26,7 @@
 		C9010C442670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */; };
 		C9010C6D2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */; };
 		C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */; };
+		C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */; };
 		C926164A26D562E800119292 /* RAnalyticsEndpointSettableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C926164926D562E800119292 /* RAnalyticsEndpointSettableSpec.swift */; };
 		C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */; };
 		C9320978279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */; };
@@ -151,6 +152,7 @@
 		C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerProcessSpec.swift; sourceTree = "<group>"; };
 		C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerPayloadSpec.swift; sourceTree = "<group>"; };
 		C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositiveIntegerNumberSpec.swift; sourceTree = "<group>"; };
+		C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetWebViewURLSpec.swift; sourceTree = "<group>"; };
 		C926164926D562E800119292 /* RAnalyticsEndpointSettableSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEndpointSettableSpec.swift; sourceTree = "<group>"; };
 		C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelectorSpec.swift; sourceTree = "<group>"; };
 		C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerIntegrationSpec.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */,
 				C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
+				C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
 				C992E79028D85FDA005E32F9 /* KeychainHandlerSpec.swift */,
 				C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */,
@@ -752,6 +755,7 @@
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
 				C94B704F2798749D00A1898A /* Array+Extensions.swift in Sources */,
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
+				C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */,
 				C9B39600276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift in Sources */,
 				C94B703E2798721900A1898A /* MockUtils.swift in Sources */,
 				C9E7602627B121C2006B22F5 /* URLSessionMock+Stub.swift in Sources */,

@@ -24,6 +24,7 @@ RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` 
 ### Unit tests
 * [SDKCF-5936](https://jira.rakuten-it.com/jira/browse/SDKCF-5936): Add BDD Tests to ApplicationSceneManifest.
 * [SDKCF-5953](https://jira.rakuten-it.com/jira/browse/SDKCF-5953): Fix the Page Visit failing tests in RAnalyticsRATTrackerProcessSpec.
+* [SDKCF-5954](https://jira.rakuten-it.com/jira/browse/SDKCF-5954): Create BDD Tests for getWebViewURL function.
 
 ## 9.6.0 (2022-09-22)
 
