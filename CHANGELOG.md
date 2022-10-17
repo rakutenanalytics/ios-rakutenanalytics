@@ -26,6 +26,7 @@ RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` 
 * [SDKCF-5953](https://jira.rakuten-it.com/jira/browse/SDKCF-5953): Fix the Page Visit failing tests in RAnalyticsRATTrackerProcessSpec.
 * [SDKCF-5954](https://jira.rakuten-it.com/jira/browse/SDKCF-5954): Create BDD Tests for getWebViewURL function.
 * [SDKCF-5955](https://jira.rakuten-it.com/jira/browse/SDKCF-5955): Fix RAnalyticsCookieInjectorSpec failing tests by using a mock of WKHTTPCookieStore.
+* [SDKCF-5956](https://jira.rakuten-it.com/jira/browse/SDKCF-5956): Migrate RpCookieTests to BDD Tests.
 
 ## 9.6.0 (2022-09-22)
 

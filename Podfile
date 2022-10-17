@@ -10,7 +10,8 @@ abstract_target 'Common' do
   pod 'RSDKUtils', :testspecs => ['Nimble', 'TestHelpers']
   pod 'RSDKUtils/RLogger'
   pod 'OCMock'
-  pod 'OHHTTPStubs', '~> 8.0'
+  pod 'OHHTTPStubs', '~> 9.1'
+  pod 'OHHTTPStubs/Swift', '~> 9.1'
   pod 'Kiwi', '~> 3.0'
   pod 'Quick', '~> 5.0'
   pod 'Nimble'
