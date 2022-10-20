@@ -1,0 +1,172 @@
+format_version: "8"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+workflows:
+  release:
+    steps:
+    - script@1:
+        title: Validate inputs
+        inputs:
+        - content: "#!/usr/bin/env bash\nset -e\n\nif [[ -n $RELEASE_VERSION ]]; then \n    [[ \"$RELEASE_VERSION\" =~ ^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$ ]] || { echo \"version input is invalid\"; exit 1; }\nelse\n    echo \"RELEASE_VERSION build parameter is missing\"; exit 1;\nfi"
+    - slack@3:
+        title: Post start to Slack
+        is_always_run: false
+        inputs:
+        - channel: $SLACK_CHANNEL_ID
+        - title: Starting release for iOS Analytics v$RELEASE_VERSION
+        - text: Starting release for iOS Analytics v$RELEASE_VERSION
+        - api_token: $SLACK_BOT_TOKEN
+    - git-clone@6: {}
+    - bundler@0: {}
+    - script@1:
+        title: Set git config HTTP header
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -ex
+
+            # Escape Bitbucket username
+            escaped_username=$(echo $BITBUCKETSERVER_USERNAME | sed -r 's/[@]+/%40/g')
+
+            git config --global url."https://${escaped_username}:${BITBUCKETSERVER_PASSWORD}@${BITBUCKETSERVER_BASEURL}/".insteadOf "https://${BITBUCKETSERVER_BASEURL}/"
+    - script@1:
+        title: Commit bump version to master
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -ex
+
+            bundle exec fastlane ios commit_sdk_ver_bump version:$RELEASE_VERSION
+            sed -i '' -e "s/## Unreleased/## $RELEASE_VERSION ($(date +%F))/g" CHANGELOG.md
+            git add CHANGELOG.md
+            git commit --amend --no-edit
+            bundle exec fastlane run push_to_git_remote
+    - fastlane@3:
+        title: Tag, Lint Release Checks
+        inputs:
+        - lane: ios release module:$RELEASE_VERSION branch:$BITRISE_GIT_BRANCH
+    - script@1:
+        title: Publish STG Podspec
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            CLONE_DIR=$(mktemp -d)
+            git clone --single-branch --branch master $REM_FL_STG_SPEC_REPO "$CLONE_DIR"
+            cp -R RAnalytics.podspec $CLONE_DIR
+            cd "$CLONE_DIR"
+            fastlane ios release branch:master
+    - script@1:
+        title: Publish PROD Podspec
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            CLONE_DIR=$(mktemp -d)
+            git clone --single-branch --branch master $REM_FL_SPEC_REPO "$CLONE_DIR"
+            cp -R RAnalytics.podspec $CLONE_DIR
+            cd "$CLONE_DIR"
+            fastlane ios release branch:master
+    - script@1:
+        title: Mirror changes to GitPub
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            git fetch --unshallow --all --tags
+            git remote add gitpub $GITPUB_MIRROR_GIT
+            git push gitpub "refs/remotes/origin/$BITRISE_GIT_BRANCH:refs/heads/$BITRISE_GIT_BRANCH"
+            git push gitpub "refs/tags/$RELEASE_VERSION:refs/tags/$RELEASE_VERSION"
+    - script@1:
+        title: Verify prod podspec lint
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            bundle exec pod repo update
+            bundle exec pod spec lint --sources=$REM_FL_SPEC_REPO,https://cdn.cocoapods.org --allow-warnings
+    - fastlane@3:
+        title: Publish public analytics
+        inputs:
+        - lane: ios deploy_framework release:true version:$RELEASE_VERSION skip_build:false skip_upload:false skip_pod_push:false skip_private_repo_upload:true
+    - script@1:
+        title: Move artifacts
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+
+            mkdir "RakutenAnalyticsSDK/artifacts"
+            mv "RakutenAnalyticsSDK/RAnalyticsRelease-v${RELEASE_VERSION}.zip" "RakutenAnalyticsSDK/artifacts/"
+            mv "RakutenAnalyticsSDK/RAnalyticsDebug-v${RELEASE_VERSION}.zip" "RakutenAnalyticsSDK/artifacts/"
+            mv "RakutenAnalyticsSDK/RAnalyticsDebug_dSYM-v${RELEASE_VERSION}.zip" "RakutenAnalyticsSDK/artifacts/"
+            mv "RakutenAnalyticsSDK/RAnalyticsRelease_dSYM-v${RELEASE_VERSION}.zip" "RakutenAnalyticsSDK/artifacts/"
+    - deploy-to-bitrise-io@2:
+        title: Deploy artifacts to Bitrise.io
+        inputs:
+        - is_compress: "true"
+        - deploy_path: RakutenAnalyticsSDK/artifacts
+    - script@1:
+        title: Prepare release notes
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -ex
+
+            awk '
+              /## ${{ inputs.version }}/{flag=1;next}
+              /## [0-9]/{flag=0}
+              flag
+            ' CHANGELOG.md > _releasenotes.md
+
+            envman add --key RELEASE_NOTES --valuefile _releasenotes.md
+    - script@1:
+        title: Get release commit sha
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            envman add --key GIT_RELEASE_COMMIT --value $(git rev-parse HEAD)
+    - github-release@0:
+        inputs:
+        - username: $RELEASE_GITHUB_USERNAME
+        - tag: $RELEASE_VERSION
+        - name: $RELEASE_VERSION Release
+        - body: $RELEASE_NOTES
+        - draft: "no"
+        - commit: $GIT_RELEASE_COMMIT
+        - api_token: $RELEASE_GITHUB_TOKEN
+    - script@1:
+        title: Bump snapshot
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -ex
+
+            bumped_version=$(echo $RELEASE_VERSION | awk -F. '{printf("%d.%d.%d", $1, $2+1, $3)}')
+            bundle exec fastlane ios commit_sdk_ver_bump version:$bumped_version-snapshot
+            sed -i '' -e '3i\'$'\n''## Unreleased\'$'\n''' CHANGELOG.md
+            git add CHANGELOG.md
+            git commit --amend --no-edit
+            bundle exec fastlane run push_to_git_remote
+    - slack@3:
+        title: Post completion to Slack
+        is_always_run: false
+        inputs:
+        - channel: $SLACK_CHANNEL_ID
+        - title: '*iOS Analytics v$RELEASE_VERSION released :rocket:*'
+        - text: |
+            *iOS Analytics v$RELEASE_VERSION released :rocket:*
+            <br>
+            ${DISCOURSE_HOSTNAME}/c/${DISCOURSE_CATEGORY_ID}
+        - api_token: $SLACK_BOT_TOKEN
+    - script@1:
+        title: Post to Discourse
+        inputs:
+        - content: "#!/usr/bin/env bash\nset -e\n\ncurl --location --request POST \"https://$DISCOURSE_HOSTNAME/posts.json\" \\\n--header \"Content-Type: application/json; charset=utf-8\" \\\n--header \"Api-Key: $DISCOURSE_API_KEY\" \\\n--header \"Api-Username: $DISCOURSE_USERNAME\" \\\n--data-raw \"{\n  \\\"category\\\": $DISCOURSE_CATEGORY_ID,\n  \\\"title\\\": \\\"iOS Analytics v${RELEASE_VERSION} released \U0001F680\\\",\n  \\\"tags\\\": [\\\"ios\\\", \\\"mobile\\\", \\\"mobilesdk\\\", \\\"release\\\", \\\"mag-sdk\\\"]\n  \\\"raw\\\": \\\"We're pleased to announce that we have released iOS Analytics v${RELEASE_VERSION}!\\n\\n${RELEASE_NOTES}\\\"\n}\""

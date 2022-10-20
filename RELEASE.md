@@ -7,12 +7,8 @@
 
 ## Description
 
-The release workflow of the RAnalytics SDK is defined by `release.yml` here:<br>
-https://github.com/rakuten-mag/ios-analytics/blob/master/.github/workflows/release.yml
-
-## How to create self-hosted runner
-
-https://github.com/rakuten-mag/ios-analytics/settings/actions/runners/new
+The release workflow of the RAnalytics SDK is defined in `bitrise.yml`:<br>
+https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
 
 ## Pre-requisites
 
@@ -28,17 +24,20 @@ https://github.com/rakuten-mag/ios-analytics/settings/actions/runners/new
 ## Operations
 
 - Open this URL in a browser:
-    - https://github.com/rakuten-mag/ios-analytics
-- Click on the Actions tab
-- Click on Release Module
-- Click on Run workflow
+    - https://app.bitrise.io/app/4b13c693939a9575
+- Click on Start/schedule build
+- Open Advanced tab
 - Select the release branch (example: release/9.6.0)
-- Enter the corresponding version number (example: 9.6.0)
+- Select 'release' workflow
+- In the 'Custom Environment Variables' section add a new variable:
+    - Key: `RELEASE_VERSION`
+    - Value: Release version number (example: 9.6.0)
+- Click on 'Start build'
 
 ## Post Operations
 
 - Confirm that the Release workflow passed:
-    - https://github.com/rakuten-mag/ios-analytics/actions/workflows/release.yml
+    - https://app.bitrise.io/app/4b13c693939a9575
 
 - Public release-mode framework zip is uploaded to public repo as release:
     - https://github.com/rakutentech/ios-analytics-framework
@@ -52,7 +51,15 @@ https://github.com/rakuten-mag/ios-analytics/settings/actions/runners/new
 - Release tag was created on correct commit in public repo:
     - https://github.com/rakutentech/ios-analytics-framework/commits/{tag}
 
-- Private artifacts (release & debug framework zips, release & debug dSYM zips) are uploaded to GHE internal repo as release:
+- Upload private artifacts:
+    1. Open release build page on Bitrise.io
+    1. Go to 'Artifacts' tab and download the archive
+    1. Extract the archive and move `RAnalyticsRelease-v#{version}.zip"`, `RAnalyticsDebug-v#{version}.zip"`, `"RAnalyticsDebug_dSYM-v#{version}.zip"`, `"RAnalyticsRelease_dSYM-v#{version}.zip"` files to `RakutenAnalyticsSDK` folder in your local RAnalytics repository.
+    1. Checkout the release/ branch used in the release process.
+    1. Set `RELEASE_GHE_TOKEN` env var (can be put temporarily in `fastlane/.env`). The value can be found [here](https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics)
+    1. run `bundle exec upload_private_assets version:<same-value-as-RELEASE_VERSION>`
+
+- Confirm that private artifacts (release & debug framework zips, release & debug dSYM zips) are uploaded to GHE internal repo as release:
     - https://ghe.rakuten-it.com/mag/ios-analytics-private-artifacts/releases/tag/{tag}
 
 - Release tag is created on correct commit in private repo
@@ -65,6 +72,14 @@ https://github.com/rakuten-mag/ios-analytics/settings/actions/runners/new
     - Production:
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/browse/Specs/RAnalytics/{tag}/RAnalytics.podspec
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/commits
+
+- Run following script to upload documentation
+```bash
+echo $DOCS_REPO_DEPLOY_KEY_BASE64 | base64 -D > deploy_key
+chmod 400 deploy_key
+bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/ios-analytics-docs.git" deploy_key:deploy_key
+```
+(Deploy key can be found here: https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics)
 
 - Confirm docs for this version have been published to:
     - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs

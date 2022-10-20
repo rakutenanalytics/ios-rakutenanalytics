@@ -115,7 +115,7 @@ platform :ios do
     appcenter_upload(app_name: "RSDKAnalyticsSample", notify_testers: true, ipa: "./artifacts/device/RAnalyticsSampleSPMInternal.ipa", dsym: "./artifacts/device/RAnalyticsSampleSPMInternal.app.dSYM.zip")
   end
 
-  desc "Build and release public framework, options are 'version' (string, mandatory), 'release' (boolean, defaults false), 'skip_build' (boolean), 'skip_upload' (boolean), 'skip_pod_push' (boolean), 'target_branch'"
+  desc "Build and release public framework, options are 'version' (string, mandatory), 'release' (boolean, defaults false), 'skip_build' (boolean), 'skip_upload' (boolean), 'skip_pod_push' (boolean), 'target_branch' (defaults to master), 'skip_private_repo_upload' (boolean, defaults false)"
   lane :deploy_framework do |options|
     version = options[:version]
     podspecPath = "RakutenAnalyticsSDK/RAnalytics.podspec"
@@ -131,8 +131,10 @@ platform :ios do
 
     skip_upload = options[:skip_upload] || false
     skip_pod_push = options[:skip_pod_push] || false
+    skip_private_repo_upload = options[:skip_private_repo_upload] || false
     
-    release_description = "\n\n#{commit_message}\n" + File.read("changelog") rescue commit_message
+    changes = sh("awk '/#{version}/{flag=1;next}/^## /{flag=0}flag' ../CHANGELOG.md") rescue commit_message
+    release_description = "\n\n#{commit_message}\n" + changes
     target_branch = options[:target_branch] || "master"
     private_assets = [
       "RakutenAnalyticsSDK/RAnalyticsRelease-v#{version}.zip", 
@@ -167,20 +169,22 @@ platform :ios do
       UI.success "Successfully released snapshot v#{version}"
     else
       # release mode i.e. snapshot=false
-      private_repo = "mag/ios-analytics-private-artifacts"
-      UI.message "Upload PRIVATE artifacts to on-prem GHE repo: #{private_repo}, branch: #{target_branch}, description: #{release_description}"
+      unless skip_private_repo_upload
+        private_repo = "mag/ios-analytics-private-artifacts"
+        UI.message "Upload PRIVATE artifacts to on-prem GHE repo: #{private_repo}, branch: #{target_branch}, description: #{release_description}"
 
-      # upload all artifacts to private repo on GHE
-      github_release = set_github_release(
-        server_url: "https://ghe.rakuten-it.com/api/v3",
-        repository_name: private_repo,
-        api_token: ENV["RELEASE_GHE_TOKEN"],
-        name: release_name,
-        tag_name: version,
-        description: release_description,
-        commitish: target_branch,
-        upload_assets: private_assets
-      ) unless skip_upload
+        # upload all artifacts to private repo on GHE
+        github_release = set_github_release(
+          server_url: "https://ghe.rakuten-it.com/api/v3",
+          repository_name: private_repo,
+          api_token: ENV["RELEASE_GHE_TOKEN"],
+          name: release_name,
+          tag_name: version,
+          description: release_description,
+          commitish: target_branch,
+          upload_assets: private_assets
+        ) unless skip_upload
+      end
 
       public_repo = "rakutentech/ios-analytics-framework"
       UI.message "Upload PUBLIC artifacts to GitHub repo: #{public_repo}, branch #{target_branch}, description: #{release_description}"
@@ -202,6 +206,41 @@ platform :ios do
 
       UI.success "Successfully released v#{version}"
     end
+  end
+
+  desc "Release public framework to the private repo, options are 'version' (string, mandatory), 'target_branch' (defaults to master)"
+  lane :upload_private_assets do |options|
+    version = options[:version]
+    UI.user_error!("Missing version parameter") unless version != nil
+    
+    release_name = "Public Analytics SDK Release v#{version}"
+    changes = sh("awk '/#{version}/{flag=1;next}/^## /{flag=0}flag' ../CHANGELOG.md")
+    
+    release_description = changes
+    target_branch = options[:target_branch] || "master"
+    private_assets = [
+      "RakutenAnalyticsSDK/RAnalyticsRelease-v#{version}.zip", 
+      "RakutenAnalyticsSDK/RAnalyticsDebug-v#{version}.zip",
+      "RakutenAnalyticsSDK/RAnalyticsDebug_dSYM-v#{version}.zip",
+      "RakutenAnalyticsSDK/RAnalyticsRelease_dSYM-v#{version}.zip",
+    ]
+
+    private_repo = "mag/ios-analytics-private-artifacts"
+    UI.message "Upload PRIVATE artifacts to on-prem GHE repo: #{private_repo}, branch: #{target_branch}, description: #{release_description}"
+
+    # upload all artifacts to private repo on GHE
+    github_release = set_github_release(
+      server_url: "https://ghe.rakuten-it.com/api/v3",
+      repository_name: private_repo,
+      api_token: ENV["RELEASE_GHE_TOKEN"],
+      name: release_name,
+      tag_name: version,
+      description: release_description,
+      commitish: target_branch,
+      upload_assets: private_assets
+    )
+
+    UI.success "Successfully uploaded v#{version} artifacts"
   end
 
   desc "Push podspec to repository"
