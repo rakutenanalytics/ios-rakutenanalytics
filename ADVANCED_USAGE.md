@@ -21,7 +21,7 @@
 
 ## Configure a custom endpoint
 
-To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to `[https://stg.rat.rakuten.co.jp/](https://stg.rat.rakuten.co.jp/)`.
+To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to [https://stg.rat.rakuten.co.jp/](https://stg.rat.rakuten.co.jp/).
 
 A custom endpoint can also be configured at runtime as below:
 
