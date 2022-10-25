@@ -16,6 +16,7 @@ RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` 
 
 ### Build fixes
 * [SDKCF-5927](https://jira.rakuten-it.com/jira/browse/SDKCF-5927): Xcode 14 CI build compatibility with Bitrise.
+* [SDKCF-5928](https://jira.rakuten-it.com/jira/browse/SDKCF-5928): Fixed SPM Sample build lanes signing error on Xcode 14.
 
 ### Warning fixes
 * [SDKCF-5917](https://jira.rakuten-it.com/jira/browse/SDKCF-5917): Fix `_RanalyticsSwiftLoader` warning for Projects based on Cocoapods.

@@ -55,6 +55,7 @@ platform :ios do
         uploadBitcode: false,
         compileBitcode: false,
       },
+      xcargs: ENV['REM_FL_SAMPLE_XCARGS'],
       scheme: "RAnalyticsSampleSwiftUI")
   end
 
@@ -81,6 +82,7 @@ platform :ios do
         uploadBitcode: false,
         compileBitcode: false,
       },
+      xcargs: ENV['REM_FL_SAMPLE_XCARGS'],
       scheme: "RAnalyticsSampleDest")
   end
 
@@ -105,6 +107,7 @@ platform :ios do
         uploadBitcode: false,
         compileBitcode: false,
       },
+      xcargs: ENV['REM_FL_SAMPLE_XCARGS'],
       scheme: "RAnalyticsSampleSPM")
   end
 
