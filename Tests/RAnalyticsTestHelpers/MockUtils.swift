@@ -56,13 +56,27 @@ public final class ASIdentifierManagerMock: NSObject, AdvertisementIdentifiable 
     }
 }
 
+// MARK: - WKHTTPCookieStoreObservable
+
+public protocol WKHTTPCookieStoreObservable: AnyObject {
+    func cookiesDidChange(in cookieStore: WKHTTPCookieStorable)
+}
+
 // MARK: - WKHTTP Cookie Storage
 
 public final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
     private var cookiesArray: [HTTPCookie]
+    private var observers: [WKHTTPCookieStoreObservable]
 
     public init() {
         cookiesArray = [HTTPCookie]()
+        observers = [WKHTTPCookieStoreObservable]()
+    }
+
+    private func updateObservers() {
+        observers.forEach { observer in
+            observer.cookiesDidChange(in: self)
+        }
     }
 
     public func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
@@ -72,11 +86,17 @@ public final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
     public func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
         cookiesArray.append(cookie)
         completionHandler?()
+        updateObservers()
     }
 
     public func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
         cookiesArray.removeAll { $0 == cookie }
         completionHandler?()
+        updateObservers()
+    }
+
+    public func add(_ observer: WKHTTPCookieStoreObservable) {
+        observers.append(observer)
     }
 }
 
@@ -546,12 +566,13 @@ public final class ReachabilityMock: ReachabilityType {
 
 // MARK: - CookieStoreObserver
 
-public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObserver {
+public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObservable {
     private var completion: () -> Void
     public init(completion: @escaping () -> Void) {
         self.completion = completion
     }
-    public func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+
+    public func cookiesDidChange(in cookieStore: WKHTTPCookieStorable) {
         completion()
     }
 }
