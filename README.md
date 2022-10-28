@@ -159,9 +159,10 @@ RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["pgn": "coup
 ```
 
 > You can override the `acc` and `aid` default values by including those keys in the `parameters` dictionary when you create an event.
+> **Note:** `acc` and `aid` **MUST** be integers.
 
 ```swift
-RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123]).track()
+RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123, "aid": 456]).track()
 ```
 
 ## Standard events
