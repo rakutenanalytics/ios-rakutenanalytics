@@ -65,6 +65,64 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("deviceIdentifier") {
+                context("When idfvUUID is nil") {
+                    it("should return a non-empty string value") {
+                        let deviceMock = DeviceMock()
+                        deviceMock.idfvUUID = nil
+
+                        let dependenciesContainer = SimpleContainerMock()
+                        dependenciesContainer.deviceCapability = deviceMock
+
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+
+                        expect(analyticsManager.deviceIdentifier).toNot(beEmpty())
+                    }
+                }
+
+                context("When idfvUUID is an empty String") {
+                    it("should return a non-empty string value") {
+                        let deviceMock = DeviceMock()
+                        deviceMock.idfvUUID = ""
+                        
+                        let dependenciesContainer = SimpleContainerMock()
+                        dependenciesContainer.deviceCapability = deviceMock
+                        
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                        
+                        expect(analyticsManager.deviceIdentifier).toNot(beEmpty())
+                    }
+                }
+
+                context("When idfvUUID equals 00000000-0000-0000-0000-000000000000") {
+                    it("should return a non-empty string value") {
+                        let deviceMock = DeviceMock()
+                        deviceMock.idfvUUID = "00000000-0000-0000-0000-000000000000"
+                        
+                        let dependenciesContainer = SimpleContainerMock()
+                        dependenciesContainer.deviceCapability = deviceMock
+                        
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                        
+                        expect(analyticsManager.deviceIdentifier).toNot(beEmpty())
+                    }
+                }
+
+                context("When idfvUUID equals 123e4567-e89b-12d3-a456-426652340000") {
+                    it("should return 428529fb27609e73dce768588ba6f1a1c1647451") {
+                        let deviceMock = DeviceMock()
+                        deviceMock.idfvUUID = "123e4567-e89b-12d3-a456-426652340000"
+                        
+                        let dependenciesContainer = SimpleContainerMock()
+                        dependenciesContainer.deviceCapability = deviceMock
+                        
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                        
+                        expect(analyticsManager.deviceIdentifier).to(equal("428529fb27609e73dce768588ba6f1a1c1647451"))
+                    }
+                }
+            }
+
             describe("appToWebTracking") {
                 let analyticsCookieName = "ra_uid"
 

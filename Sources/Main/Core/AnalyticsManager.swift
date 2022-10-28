@@ -154,6 +154,11 @@ protocol ReferralAppTrackable: AnyObject {
         }
     }
 
+    /// The device identifier used to set `ckp` in the RAT payload.
+    public var deviceIdentifier: String {
+        deviceIdentifierHandler.ckp()
+    }
+
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
     private(set) var locationManagerIsUpdating: Bool = false

@@ -7,6 +7,7 @@
 RAnalytics SDK throws an exception in DEBUG MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
 * [SDKCF-5876](https://jira.rakuten-it.com/jira/browse/SDKCF-5876): Enable/Disable App-to-App referral tracking.
+* [SDKCF-6001](https://jira.rakuten-it.com/jira/browse/SDKCF-6001): Add a public API in Analytics SDK to retrieve Device ID (ckp value).
 
 ### Improvements
 * [SDKCF-5880](https://jira.rakuten-it.com/jira/browse/SDKCF-5880): Secure the Easy ID storage and handle the Easy ID migration from the user defaults to the keychain.
