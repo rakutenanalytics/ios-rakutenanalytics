@@ -844,6 +844,11 @@ extension RAnalyticsRATTracker {
     ///     - parameters: the Optional RAT parameters.
     ///
     /// - Returns: the RAT event.
+    ///
+    /// For example, to create and track a RAT event `click` with `acc` and `aid`:
+    /// Note: `acc` and `aid` must be integers.
+    ///
+    /// RAnalyticsRATTracker.shared().event(eventType: "click", parameters:["acc": 123, "aid": 456]).track()
     @objc(eventWithEventType:parameters:) public func event(withEventType eventType: String, parameters: [String: Any]? = nil) -> RAnalyticsEvent {
         RAnalyticsEvent(name: "\(Constants.ratEventPrefix)\(eventType)", parameters: parameters)
     }
