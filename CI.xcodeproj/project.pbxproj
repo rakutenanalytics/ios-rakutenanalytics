@@ -88,6 +88,7 @@
 		C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */; };
 		C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */; };
 		C9EA33EF28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */; };
+		C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */; };
 		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
 /* End PBXBuildFile section */
 
@@ -206,6 +207,7 @@
 		C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKTrackerSpec.swift; sourceTree = "<group>"; };
 		C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerSpec.swift; sourceTree = "<group>"; };
 		C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
+		C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestSpec.swift; sourceTree = "<group>"; };
 		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -296,6 +298,7 @@
 				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
 				C954C666269439CE002AAFF7 /* TelephonyHandlerSpec.swift */,
 				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
+				C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */,
 				C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */,
 			);
 			path = Unit;
@@ -741,6 +744,7 @@
 				C9E4BBCC260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift in Sources */,
 				C94B7050279874A100A1898A /* RAnalyticsEvent+Helper.swift in Sources */,
 				C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */,
+				C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */,
 				C95A91D1279E8A29003BA1DA /* PushNotificationAppDelegateTests.swift in Sources */,
 				C94F90CF26DF81450068B44E /* ReferralAppModelSpec.swift in Sources */,
 				C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */,

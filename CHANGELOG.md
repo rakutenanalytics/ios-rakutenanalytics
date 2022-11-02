@@ -11,6 +11,7 @@ RAnalytics SDK tracking is disabled in RELEASE MODE when `RATAccountIdentifier` 
 
 ### Improvements
 * [SDKCF-5880](https://jira.rakuten-it.com/jira/browse/SDKCF-5880): Secure the Easy ID storage and handle the Easy ID migration from the user defaults to the keychain.
+* [SDKCF-6008](https://jira.rakuten-it.com/jira/browse/SDKCF-6008): Use init instead of ratRequest in order to improve the internal API of RAnalytics.
 
 ### Doc improvements
 * [SDKCF-5892](https://jira.rakuten-it.com/jira/browse/SDKCF-5892): Add the release workflow documentation.

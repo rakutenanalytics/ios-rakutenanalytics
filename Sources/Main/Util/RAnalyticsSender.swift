@@ -205,7 +205,7 @@ fileprivate extension RAnalyticsSender {
             return
         }
 
-        let request = URLRequest.ratRequest(url: endpointURL, body: data)
+        let request = URLRequest(url: endpointURL, body: data)
 
         let task = session.dataTask(with: request) { result in
             switch result {
