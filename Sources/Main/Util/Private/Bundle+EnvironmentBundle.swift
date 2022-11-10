@@ -24,7 +24,7 @@ protocol EnvironmentBundle: Bundleable {
 }
 
 extension Bundle: EnvironmentBundle {
-    private static let decoder = JSONDecoder()
+    private static let jsonDecoder = JSONDecoder()
 
     private enum Keys {
         static let applicationSceneManifestKey = "UIApplicationSceneManifest"
@@ -155,7 +155,7 @@ extension Bundle: EnvironmentBundle {
               let data = try? JSONSerialization.data(withJSONObject: dict, options: []) else {
             return nil
         }
-        return try? Bundle.decoder.decode(ApplicationSceneManifest.self, from: data)
+        return try? Bundle.jsonDecoder.decode(ApplicationSceneManifest.self, from: data)
     }
 }
 
