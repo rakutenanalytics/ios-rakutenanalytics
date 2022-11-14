@@ -8,10 +8,15 @@ import RAnalyticsTestHelpers
 
 final class URLRequestSpec: QuickSpec {
     override func spec() {
-        describe("ratRequest") {
+        describe("URLRequest") {
+            var request: URLRequest!
             let urlString = "https://www.example.com"
+            let url: URL! = URL(string: urlString)
             let data = "foo".data(using: .utf8)!
-            let request = URLRequest(url: URL(string: urlString)!, body: data)
+
+            beforeEach {
+                request = URLRequest(url: url, body: data)
+            }
 
             it("should return a request with passed-in url set") {
                 expect(request.url?.absoluteString).to(equal(urlString))
@@ -41,10 +46,26 @@ final class URLRequestSpec: QuickSpec {
                 expect(request.allHTTPHeaderFields?["Content-Length"]).to(equal("\(data.count)"))
             }
 
+            it("should return a request with date header set to the expected timestamp") {
+                let expectedTimestamp = DateFormatter.rfc1123DateFormatter.string(from: Date())
+
+                expect(request.allHTTPHeaderFields?["Date"]).to(equal(expectedTimestamp))
+            }
+
+            context("When timestamp is Wed, 09 Nov 2022 22:39:34 GMT") {
+                it("should set the request date header to Wed, 09 Nov 2022 22:39:34 GMT") {
+                    let date: Date! = DateFormatter.rfc1123DateFormatter.date(from: "Wed, 09 Nov 2022 22:39:34 GMT")
+
+                    let urlRequest = URLRequest(url: url, body: data, at: date)
+
+                    expect(urlRequest.allHTTPHeaderFields?["Date"]).to(equal("Wed, 09 Nov 2022 22:39:34 GMT"))
+                }
+            }
+
             it("should return a request with httpShouldHandleCookies set false") {
                 let bundleMock = BundleMock()
                 bundleMock.dictionary?["RATDisableSharedCookieStorage"] = false
-                let httpRequest = URLRequest(url: URL(string: urlString)!, body: data, environmentBundle: bundleMock)
+                let httpRequest = URLRequest(url: url, body: data, environmentBundle: bundleMock)
 
                 expect(httpRequest.httpShouldHandleCookies).to(equal(false))
             }

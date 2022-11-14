@@ -103,6 +103,7 @@
 		C9445E4928104D290007CEEA /* LoginType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4728104D280007CEEA /* LoginType.swift */; };
 		C9445E4A28104D290007CEEA /* LoginFailureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4828104D280007CEEA /* LoginFailureType.swift */; };
 		C9445E4F28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9445E4E28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift */; };
+		C98A6DEE291E3B0500E3274C /* DateFormatter+RFC1123.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A6DED291E3B0500E3274C /* DateFormatter+RFC1123.swift */; };
 		C992E78E28D515AA005E32F9 /* SceneDelegateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992E78C28D515AA005E32F9 /* SceneDelegateHelper.swift */; };
 		C992E78F28D515AA005E32F9 /* UIApplicationSceneManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C992E78D28D515AA005E32F9 /* UIApplicationSceneManifest.swift */; };
 		C9E7602927B12FB5006B22F5 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602827B12FB5006B22F5 /* View+Tracking.swift */; };
@@ -210,6 +211,7 @@
 		C9445E4728104D280007CEEA /* LoginType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginType.swift; sourceTree = "<group>"; };
 		C9445E4828104D280007CEEA /* LoginFailureType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginFailureType.swift; sourceTree = "<group>"; };
 		C9445E4E28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsLoginMethod+Type.swift"; sourceTree = "<group>"; };
+		C98A6DED291E3B0500E3274C /* DateFormatter+RFC1123.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DateFormatter+RFC1123.swift"; sourceTree = "<group>"; };
 		C992E78C28D515AA005E32F9 /* SceneDelegateHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegateHelper.swift; sourceTree = "<group>"; };
 		C992E78D28D515AA005E32F9 /* UIApplicationSceneManifest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationSceneManifest.swift; sourceTree = "<group>"; };
 		C9E7602827B12FB5006B22F5 /* View+Tracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 		C9320A87279FF79B009FE6EC /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				C98A6DED291E3B0500E3274C /* DateFormatter+RFC1123.swift */,
 				C9FE405C2836C974006B9E60 /* LogMessage.swift */,
 				C9EA33FA28325CE900465945 /* Data+Sha1.swift */,
 				C9EA33FB28325CE900465945 /* DeviceIdentifierHandler.swift */,
@@ -536,6 +539,7 @@
 				C9320B1E279FF79B009FE6EC /* Bundle+Extensions.swift in Sources */,
 				C9320B15279FF79B009FE6EC /* UserIdentifierSelector.swift in Sources */,
 				C9320B12279FF79B009FE6EC /* RAnalyticsCookieInjector.swift in Sources */,
+				C98A6DEE291E3B0500E3274C /* DateFormatter+RFC1123.swift in Sources */,
 				C9320B0D279FF79B009FE6EC /* WKHTTPCookieStore+Extensions.swift in Sources */,
 				C9320B2A279FF79B009FE6EC /* SCNetworkReachabilityFlags+Extensions.swift in Sources */,
 				C9320AE2279FF79B009FE6EC /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */,
