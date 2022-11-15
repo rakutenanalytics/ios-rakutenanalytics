@@ -7,7 +7,11 @@ workflows:
     - script@1:
         title: Validate inputs
         inputs:
-        - content: "#!/usr/bin/env bash\nset -e\n\nif [[ -n $RELEASE_VERSION ]]; then \n    [[ \"$RELEASE_VERSION\" =~ ^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$ ]] || { echo \"version input is invalid\"; exit 1; }\nelse\n    echo \"RELEASE_VERSION build parameter is missing\"; exit 1;\nfi"
+        - content: |-
+            #!/usr/bin/env
+            set -e
+            curl https://raw.githubusercontent.com/rakutentech/ios-buildconfig/master/scripts/version-validation.sh -o version-validation.sh
+            sh version-validation.sh $RELEASE_VERSION
     - slack@3:
         title: Post start to Slack
         is_always_run: false
@@ -17,7 +21,14 @@ workflows:
         - text: Starting release for iOS Analytics v$RELEASE_VERSION
         - api_token: $SLACK_BOT_TOKEN
     - git-clone@6: {}
-    - bundler@0: {}
+    - script@1:
+        title: Bundle install
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            set -e
+
+            bundle install
     - script@1:
         title: Set git config HTTP header
         inputs:
@@ -76,9 +87,9 @@ workflows:
             #!/usr/bin/env bash
             set -e
 
-            git fetch --unshallow --all --tags
+            git fetch --all --tags
             git remote add gitpub $GITPUB_MIRROR_GIT
-            git push gitpub "refs/remotes/origin/$BITRISE_GIT_BRANCH:refs/heads/$BITRISE_GIT_BRANCH"
+            git push gitpub "refs/remotes/origin/$BITRISE_GIT_BRANCH:refs/heads/$BITRISE_GIT_BRANCH" --force
             git push gitpub "refs/tags/$RELEASE_VERSION:refs/tags/$RELEASE_VERSION"
     - script@1:
         title: Verify prod podspec lint
@@ -118,11 +129,11 @@ workflows:
             #!/usr/bin/env bash
             set -ex
 
-            awk '
-              /## ${{ inputs.version }}/{flag=1;next}
+            awk "
+              /## $RELEASE_VERSION/{flag=1;next}
               /## [0-9]/{flag=0}
               flag
-            ' CHANGELOG.md > _releasenotes.md
+            " CHANGELOG.md > _releasenotes.md
 
             envman add --key RELEASE_NOTES --valuefile _releasenotes.md
     - script@1:
@@ -169,4 +180,8 @@ workflows:
     - script@1:
         title: Post to Discourse
         inputs:
-        - content: "#!/usr/bin/env bash\nset -e\n\ncurl --location --request POST \"https://$DISCOURSE_HOSTNAME/posts.json\" \\\n--header \"Content-Type: application/json; charset=utf-8\" \\\n--header \"Api-Key: $DISCOURSE_API_KEY\" \\\n--header \"Api-Username: $DISCOURSE_USERNAME\" \\\n--data-raw \"{\n  \\\"category\\\": $DISCOURSE_CATEGORY_ID,\n  \\\"title\\\": \\\"iOS Analytics v${RELEASE_VERSION} released \U0001F680\\\",\n  \\\"tags\\\": [\\\"ios\\\", \\\"mobile\\\", \\\"mobilesdk\\\", \\\"release\\\", \\\"mag-sdk\\\"]\n  \\\"raw\\\": \\\"We're pleased to announce that we have released iOS Analytics v${RELEASE_VERSION}!\\n\\n${RELEASE_NOTES}\\\"\n}\""
+        - content: |-
+             #!/usr/bin/env
+             set -e
+             git archive --format=tar --remote=ssh://git@gitpub.rakuten-it.com:7999/eco/ci-bitrise-config.git master -- post-to-discourse.sh | tar -xf -
+             sh post-to-discourse.sh $RELEASE_VERSION
