@@ -95,6 +95,7 @@
 		C980DAD127BAAA130059E12D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C98A4AE627C3FF54006A76AA /* SheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
+		C9D1FB6F29261C3C0043C520 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -200,6 +201,7 @@
 		C980DAC227BAA4E80059E12D /* RAnalyticsSampleSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				C9D1FB6F29261C3C0043C520 /* Info.plist */,
 				C980DAC727BAA4EA0059E12D /* Assets.xcassets */,
 				C980DAC527BAA4E80059E12D /* ContentView.swift */,
 				C980DACF27BAA9F00059E12D /* LoginView.swift */,
@@ -871,6 +873,7 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleSwiftUI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -922,6 +925,7 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RAnalyticsSampleSwiftUI/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
