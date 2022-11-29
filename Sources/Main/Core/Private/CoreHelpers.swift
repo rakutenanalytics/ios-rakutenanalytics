@@ -17,7 +17,7 @@ final class CoreHelpers {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
         /// Current RAT SDK version
-        static let sdkVersion = "9.7.0"
+        static let sdkVersion = "9.8.0-snapshot"
     }
 
     static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
