@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 9.7.0 (2022-11-29)
+
 ### Features
 * [SDKCF-5839](https://jira.rakuten-it.com/jira/browse/SDKCF-5839): Implement the easy RAT integration verification method.
 RAnalytics SDK throws an exception in DEBUG MODE when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's Info.plist
