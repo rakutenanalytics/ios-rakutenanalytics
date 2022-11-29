@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 9.7.0 (2022-11-29)
 
 ### Features
 * [SDKCF-5839](https://jira.rakuten-it.com/jira/browse/SDKCF-5839): Implement the easy RAT integration verification method.
