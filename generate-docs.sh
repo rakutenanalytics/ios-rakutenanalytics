@@ -15,7 +15,7 @@ fi
 module_name=$1
 module_version=$2
 
-output_dir="./documentation"
+output_dir="./artifacts/docs"
 # This directory is expected by `generate_docs` lane
 
 echo "📄 Installing Pods"
