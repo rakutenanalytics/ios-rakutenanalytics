@@ -73,13 +73,35 @@ https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/browse/Specs/RAnalytics/{tag}/RAnalytics.podspec
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/commits
 
-- Run following script to upload documentation
+- Clone the repository:
+```bash
+git clone git@github.com:rakuten-mag/ios-analytics.git
+```
+
+- Checkout the tag release version:
+```bash
+git checkout x.y.z
+```
+
+- Create a deploy key for the online documentation
+    - Download `id_ghe_deploy_analytics` from:
+        - https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics
+
+- Execute in a terminal:
+```bash
+export DOCS_REPO_DEPLOY_KEY_BASE64=$( cat id_ghe_deploy_analytics )
+```
+
+- Then run:
 ```bash
 echo $DOCS_REPO_DEPLOY_KEY_BASE64 | base64 -D > deploy_key
 chmod 400 deploy_key
+```
+
+- Run following command line to upload documentation:
+```
 bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/ios-analytics-docs.git" deploy_key:deploy_key
 ```
-(Deploy key can be found here: https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics)
 
 - Confirm docs for this version have been published to:
     - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs
