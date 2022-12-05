@@ -6,30 +6,37 @@ import RSDKUtils
 import RSDKUtilsMain
 #endif
 
+/// CKP generator.
 struct DeviceIdentifierHandler {
     private let defaultDeviceIdentifier = "NO_DEVICE_ID_FOUND"
     private let zeroesAndHyphens = CharacterSet(charactersIn: "0-")
     private let device: DeviceCapability
+    private let hasher: SecureHashable
 
-    init(device: DeviceCapability) {
+    /// Creates an instance of `DeviceIdentifierHandler`.
+    ///
+    /// - Parameters:
+    ///    - device: an instance conforming to `DeviceCapability` protocol
+    ///    - hasher: an instance conforming to `SecureHashable` protocol
+    init(device: DeviceCapability, hasher: SecureHashable) {
         self.device = device
+        self.hasher = hasher
     }
 
     /// - Returns: The Identifier for vendor's UUID value formatted for `ckp`.
     ///
     /// - Note: If the ckp formatting fails, `NO_DEVICE_ID_FOUND` is returned.
     func ckp() -> String {
-        var idfvUUID = device.idfvUUID
+        var idfvUUID: String = device.idfvUUID ?? ""
 
-        let result = idfvUUID?.trimmingCharacters(in: zeroesAndHyphens)
-        if result.isEmpty {
-            // Filter out nil, empty, or zeroed strings (e.g. "00000000-0000-0000-0000-000000000000")
-            // We don't have many options here, beside generating an id.
+        if idfvUUID.isEmpty || idfvUUID.trimmingCharacters(in: zeroesAndHyphens).isEmpty {
             idfvUUID = UUID().uuidString
         }
 
-        let idfvUUIDSha1 = idfvUUID?.data(using: .utf8)?.sha1
+        guard let idfvUUIDSha1 = hasher.sha1(value: idfvUUID) else {
+            return defaultDeviceIdentifier
+        }
 
-        return idfvUUIDSha1?.hexString ?? defaultDeviceIdentifier
+        return idfvUUIDSha1.hexString
     }
 }

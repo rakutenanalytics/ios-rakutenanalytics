@@ -1,6 +1,20 @@
 import Foundation
 import CommonCrypto.CommonDigest
 
+protocol SecureHashable {
+    func sha1(value: String) -> Data?
+}
+
+struct SecureHasher: SecureHashable {
+    func sha1(value: String) -> Data? {
+        guard let data = value.data(using: .utf8),
+              let notOptionalSha1 = data.sha1 else {
+            return nil
+        }
+        return notOptionalSha1
+    }
+}
+
 extension Data {
     var sha1: Data? {
         guard !isEmpty else {

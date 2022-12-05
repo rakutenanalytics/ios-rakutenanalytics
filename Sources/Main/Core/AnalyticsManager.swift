@@ -213,7 +213,8 @@ protocol ReferralAppTrackable: AnyObject {
 
         authorizationStatusLockableObject = LockableObject(type(of: locationManager).authorizationStatus())
 
-        deviceIdentifierHandler = DeviceIdentifierHandler(device: dependenciesContainer.deviceCapability)
+        deviceIdentifierHandler = DeviceIdentifierHandler(device: dependenciesContainer.deviceCapability,
+                                                          hasher: SecureHasher())
 
         super.init()
 
