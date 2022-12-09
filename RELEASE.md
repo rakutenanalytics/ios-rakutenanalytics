@@ -57,7 +57,7 @@ https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
     1. Extract the archive and move `RAnalyticsRelease-v#{version}.zip"`, `RAnalyticsDebug-v#{version}.zip"`, `"RAnalyticsDebug_dSYM-v#{version}.zip"`, `"RAnalyticsRelease_dSYM-v#{version}.zip"` files to `RakutenAnalyticsSDK` folder in your local RAnalytics repository.
     1. Checkout the release/ branch used in the release process.
     1. Set `RELEASE_GHE_TOKEN` env var (can be put temporarily in `fastlane/.env`). The value can be found [here](https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics)
-    1. run `bundle exec upload_private_assets version:<same-value-as-RELEASE_VERSION>`
+    1. run `bundle exec fastlane upload_private_assets version:<same-value-as-RELEASE_VERSION>`
 
 - Confirm that private artifacts (release & debug framework zips, release & debug dSYM zips) are uploaded to GHE internal repo as release:
     - https://ghe.rakuten-it.com/mag/ios-analytics-private-artifacts/releases/tag/{tag}
