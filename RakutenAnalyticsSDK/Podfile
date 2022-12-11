@@ -14,8 +14,8 @@ inhibit_all_warnings!
 workspace 'RakutenAnalyticsSDK'
 
 target 'RAnalytics' do
-  pod 'RSDKUtils', :build_type => :static_framework, :git => 'https://github.com/rakutentech/ios-sdkutils'
-  pod 'RSDKUtils/RLogger', :build_type => :static_framework, :git => 'https://github.com/rakutentech/ios-sdkutils'
+  pod 'RSDKUtils', '~> 4.0', :build_type => :static_framework
+  pod 'RSDKUtils/RLogger', '~> 4.0', :build_type => :static_framework
 end
 
 post_install do |installer|

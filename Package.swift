@@ -12,7 +12,7 @@ let package = Package(
     dependencies: [
              .package(name: "RSDKUtils",
                       url: "https://github.com/rakutentech/ios-sdkutils.git",
-                      .upToNextMinor(from: "3.0.0")
+                      .upToNextMajor(from: "4.0.0")
              ),
 
              .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
