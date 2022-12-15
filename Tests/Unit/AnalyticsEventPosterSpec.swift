@@ -20,7 +20,7 @@ final class AnalyticsEventPosterSpec: QuickSpec {
                 return PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
                                         appGroupId: bundleMock.appGroupId)
             }()
-            let expectedCacheEvents: [[String: Any]] = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
+            let expectedCacheEvents: [[String: Any]] = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotificationExternal,
                                                          PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
 
             beforeEach {
@@ -32,7 +32,7 @@ final class AnalyticsEventPosterSpec: QuickSpec {
             }
 
             it("should cache the event") {
-                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
+                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotificationExternal,
                                           parameters: ["rid": "abcd1234"],
                                           pushEventHandler: pushEventHandler)
 
@@ -65,7 +65,7 @@ final class AnalyticsEventPosterSpec: QuickSpec {
                                                     NotificationCenter.default.post(name: .didReceiveDarwinNotification, object: nil, userInfo: nil)
                                                 }, AnalyticsDarwinNotification.eventsTrackingRequest, nil, .deliverImmediately)
 
-                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
+                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotificationExternal,
                                           parameters: ["rid": "abcd1234"],
                                           pushEventHandler: pushEventHandler)
 

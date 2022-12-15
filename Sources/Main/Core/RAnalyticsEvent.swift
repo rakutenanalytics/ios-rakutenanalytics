@@ -65,25 +65,78 @@ import Foundation
         /// - Note: this event is sent to the referral app (source app).
         public static let deeplink = "deeplink"
 
+        /// Event triggered when a push notification is opened.
+        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
+        /// - Note: The parameters are checked internally before sending the event to RAT.
+        /// - Note: The event parameter `RAnalyticsEvent.Parameter.pushTrackingIdentifier` is internally replaced by `push_notify_value`.
+        /// - Warning: This property is used by RPushPNP <= 10.0.0
+        @available(*, deprecated, message: "Use pushNotificationExternal instead")
+        public static let pushNotification = pushNotificationOpenedForRAT
+
+        /// Event triggered when a push notification is opened.
+        /// This event has a parameter named `push_notify_value`.
+        /// - Note: This event is renamed to `_rem_push_notify` on RAT backend.
+        public static let pushNotificationExternal = "_rem_push_notify_external"
+
+        /// Event sent to RAT when a push notification is opened.
+        static let pushNotificationOpenedForRAT = "_rem_push_notify"
+
         /// Event triggered when a push notification is received.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
         /// This event has an optional parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
-        public static let pushNotificationReceived = "_rem_push_received"
+        /// - Note: The parameters are checked internally before sending the event to RAT.
+        /// - Note: The event parameter `RAnalyticsEvent.Parameter.pushTrackingIdentifier` is internally replaced by `push_notify_value`.
+        /// - Warning: This property is used by RPushPNP <= 10.0.0 
+        @available(*, deprecated, message: "Use pushNotificationReceivedExternal instead")
+        public static let pushNotificationReceived = pushNotificationReceivedForRAT
+
+        /// Event triggered when a push notification is received.
+        /// This event has a parameter named `push_notify_value`.
+        /// This event has an optional parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
+        /// - Note: This event is renamed to `_rem_push_received` on RAT backend.
+        public static let pushNotificationReceivedExternal = "_rem_push_received_external"
+
+        /// Event sent to RAT when a push notification is received.
+        static let pushNotificationReceivedForRAT = "_rem_push_received"
 
         /// Event to trigger manually for conversion tracking.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushNotificationConversion`.
         public static let pushNotificationConversion = "_rem_push_cv"
 
-        /// Event triggered when a push notification is opened.
-        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
-        public static let pushNotification = "_rem_push_notify"
+        /// Event triggered when a PNP auto registration occurs.
+        /// This event has a non-empty parameter named `deviceId`.
+        /// This event has a non-empty parameter named `pnpClientId`.
+        /// - Note: The parameters are checked internally before sending the event to RAT.
+        /// - Warning: This property is used by RPushPNP <= 10.0.0
+        @available(*, deprecated, message: "Use pushAutoRegistrationExternal instead")
+        public static let pushAutoRegistration = pushAutoRegistrationForRAT
 
         /// Event triggered when a PNP auto registration occurs.
-        public static let pushAutoRegistration = "_rem_push_auto_register"
+        /// This event has a non-empty parameter named `deviceId`.
+        /// This event has a non-empty parameter named `pnpClientId`.
+        /// - Note: This event is renamed to `_rem_push_auto_register` on RAT backend.
+        public static let pushAutoRegistrationExternal = "_rem_push_auto_register_external"
+
+        /// Event sent to RAT when a PNP auto registration occurs.
+        static let pushAutoRegistrationForRAT = "_rem_push_auto_register"
 
         /// Event triggered when a PNP auto unregistration occurs.
-        public static let pushAutoUnregistration = "_rem_push_auto_unregister"
+        /// This event has a non-empty parameter named `deviceId`.
+        /// This event has a non-empty parameter named `pnpClientId`.
+        /// - Note: The parameters are checked internally before sending the event to RAT.
+        /// - Warning: This property is used by RPushPNP <= 10.0.0
+        @available(*, deprecated, message: "Use pushAutoUnregistrationExternal instead")
+        public static let pushAutoUnregistration = pushAutoUnregistrationForRAT
+
+        /// Event triggered when a PNP auto unregistration occurs.
+        /// This event has a non-empty parameter named `deviceId`.
+        /// This event has a non-empty parameter named `pnpClientId`.  
+        /// - Note: This event is renamed to `_rem_push_auto_unregister` on RAT backend.
+        public static let pushAutoUnregistrationExternal = "_rem_push_auto_unregister_external"
+
+        /// Event sent to RAT when a PNP auto unregistration occurs.
+        static let pushAutoUnregistrationForRAT = "_rem_push_auto_unregister"
 
         /// Event triggered when an SSO credential is found.
         public static let SSOCredentialFound = "_rem_sso_credential_found"
@@ -184,6 +237,7 @@ import Foundation
     ///     - pushNotificationPayload: The entire payload of a push notification.
     ///
     /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     @objc public convenience init(pushNotificationPayload: [String: Any]) {
         self.init(name: AnalyticsManager.Event.Name.pushNotification, pushNotificationPayload: pushNotificationPayload)
     }
@@ -195,6 +249,7 @@ import Foundation
     ///    - pushConversionAction: The push conversion action.
     ///
     /// - Returns: A newly-initialized push conversion event with the push request identifier and the push conversion action.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     convenience init(pushRequestIdentifier: String, pushConversionAction: String) {
         self.init(name: AnalyticsManager.Event.Name.pushNotificationConversion, parameters: nil)
         self.parameters[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
@@ -207,6 +262,7 @@ import Foundation
     ///     - pushNotificationPayload: The entire payload of a push notification.
     ///
     /// - Returns: A newly-initialized push event with the tracking identifier set into the parameter list.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     convenience init(name: String, pushNotificationPayload: [String: Any], pushRequestIdentifier: String? = nil) {
         var payload = [String: Any]()
         if let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: pushNotificationPayload) {

@@ -8,6 +8,9 @@
 ### Improvements
 * [SDKCF-6047](https://jira.rakuten-it.com/jira/browse/SDKCF-6047): Improve CKP code coverage to 100%.
 
+### Changes
+* [SDKCF-6109](https://jira.rakuten-it.com/jira/browse/SDKCF-6109): Remove Push events tracking logic from RAnalytics.
+
 ## 9.7.0 (2022-11-29)
 
 ### Features

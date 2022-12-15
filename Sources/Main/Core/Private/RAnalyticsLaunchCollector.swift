@@ -43,10 +43,6 @@ final class RAnalyticsLaunchCollector {
     /// The referral tracking type.
     internal var referralTracking: ReferralTrackingType
 
-    /// The identifier is computed from push payload.
-    /// It is used for tracking push notification. It is also sent together with a push notification event.
-    private(set) var pushTrackingIdentifier: String?
-
     private let notificationHandler: NotificationObservable?
     private let userStorageHandler: UserStorageHandleable?
     private let pushEventHandler: PushEventHandleable
@@ -54,9 +50,6 @@ final class RAnalyticsLaunchCollector {
 
     /// A delegate for tracking an event and its parameters
     weak var trackerDelegate: Trackable?
-
-    private var pushTapTrackingDate: Date?
-    private let pushTapEventTimeLimit: TimeInterval = 1.5
 
     private(set) var isInitialLaunch: Bool = false
     private(set) var isInstallLaunch: Bool = false
@@ -91,11 +84,6 @@ final class RAnalyticsLaunchCollector {
         notificationHandler?.addObserver(self,
                                          selector: #selector(didSuspend(_:)),
                                          name: UIApplication.didEnterBackgroundNotification,
-                                         object: nil)
-
-        notificationHandler?.addObserver(self,
-                                         selector: #selector(didBecomeActive(_:)),
-                                         name: UIApplication.didBecomeActiveNotification,
                                          object: nil)
 
         notificationHandler?.addObserver(self,
@@ -139,10 +127,6 @@ final class RAnalyticsLaunchCollector {
 
     func didSuspend(_ notification: NSNotification) {
         trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionEnd, parameters: nil)
-    }
-
-    func didBecomeActive(_ notification: NSNotification) {
-        sendTapNonUNUserNotification()
     }
 
     func didLaunch(_ notification: NSNotification) {
@@ -206,85 +190,6 @@ extension RAnalyticsLaunchCollector {
     }
 }
 
-// MARK: - Push Notification
-
-extension RAnalyticsLaunchCollector {
-    /// For implementations that do NOT use the UNUserNotification Framework,  We need to distinguish between a tap of notification alert and
-    /// receiving a push notification.  This can be done by measuring the time since when this function was called and the next app life cycle "App did become active" event occuring.
-    func handleTapNonUNUserNotification(_ userInfo: [AnyHashable: Any], appState state: UIApplication.State) {
-        guard !UNUserNotificationCenter.notificationsAreHandledByUNDelegate else {
-            return
-        }
-
-        if state == .background || state == .inactive {
-            pushTrackingIdentifier = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: userInfo)
-            pushTapTrackingDate = Date()
-        }
-    }
-}
-
-extension RAnalyticsLaunchCollector {
-    /// This method sends a push open notify event only if a tracking identifier can be pulled from the UNNotificationResponse
-    /// - Returns:
-    ///     - success if the trigger is kind of UNPushNotificationTrigger and if the tracking is processed. The associated value is the trigger.
-    ///     - or a failure if the trigger is not kind of UNPushNotificationTrigger or if the tracking is not processed.
-    @discardableResult
-    func processPushNotificationResponse(_ notificationResponse: UNNotificationResponse) -> Result<UNNotificationTrigger, RAnalyticsLaunchCollectorError> {
-        guard let trigger = notificationResponse.notification.request.trigger,
-              trigger.isKind(of: UNPushNotificationTrigger.self) else {
-            return .failure(.triggerTypeIsIncorrect)
-        }
-        let isProcessed = processPushNotificationPayload(userInfo: notificationResponse.notification.request.content.userInfo)
-        guard isProcessed else {
-            return .failure(.trackingIsNotProcessed)
-        }
-        return .success(trigger)
-    }
-
-    /// This method sends a push open notify event only if a tracking identifier can be pulled from the push payload
-    /// - Returns: a boolean to know if the push notification event is tracked or not.
-    @discardableResult
-    func processPushNotificationPayload(userInfo: [AnyHashable: Any]) -> Bool {
-        var isProcessed = false
-        let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: userInfo)
-
-        if let trackingId = trackingId,
-           !pushEventHandler.isEventAlreadySent(with: trackingId) {
-            pushTrackingIdentifier = trackingId
-            let parameters = [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: trackingId]
-            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification, parameters: parameters)
-            isProcessed = true
-            pushEventHandler.cacheEvent(for: trackingId)
-        }
-
-        if UIApplication.RAnalyticsSharedApplication?.applicationState != .active {
-            /// set the origin to push type for the next _rem_visit event
-            origin = .push
-        }
-        return isProcessed
-    }
-}
-
-private extension RAnalyticsLaunchCollector {
-    func sendTapNonUNUserNotification() {
-        guard !UNUserNotificationCenter.notificationsAreHandledByUNDelegate else {
-            return
-        }
-
-        if let pushTapTrackingDate = pushTapTrackingDate,
-           let pushTrackingIdentifier = pushTrackingIdentifier,
-           fabs(pushTapTrackingDate.timeIntervalSinceNow) < pushTapEventTimeLimit
-            && !pushEventHandler.isEventAlreadySent(with: pushTrackingIdentifier) {
-            trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.pushNotification,
-                                        parameters: [AnalyticsManager.Event.Parameter.pushTrackingIdentifier: pushTrackingIdentifier])
-            pushEventHandler.cacheEvent(for: pushTrackingIdentifier)
-        }
-
-        pushTrackingIdentifier = nil
-        pushTapTrackingDate = nil
-    }
-}
-
 // MARK: - Utils
 
 extension RAnalyticsLaunchCollector {
@@ -294,10 +199,6 @@ extension RAnalyticsLaunchCollector {
         lastLaunchDate = userStorageHandler?.object(forKey: Constants.lastLaunchDateKey) as? Date
         lastVersion = userStorageHandler?.string(forKey: Constants.lastVersionKey)
         lastVersionLaunches = (userStorageHandler?.object(forKey: Constants.lastVersionLaunchesKey) as? NSNumber)?.uintValue ?? 0
-    }
-
-    func resetPushTrackingIdentifier() {
-        pushTrackingIdentifier = nil
     }
 }
 

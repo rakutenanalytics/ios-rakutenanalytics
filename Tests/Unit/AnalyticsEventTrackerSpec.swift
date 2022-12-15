@@ -10,7 +10,7 @@ final class AnalyticsEventTrackerSpec: QuickSpec {
 
     override func spec() {
         describe("AnalyticsEventTracker") {
-            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
+            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotificationExternal,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "bonjour1998"]]]
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()

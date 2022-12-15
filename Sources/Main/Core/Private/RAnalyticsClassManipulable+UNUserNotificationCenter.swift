@@ -5,6 +5,8 @@ import struct RSDKUtils.RLogger
 import RLogger
 #endif
 
+import UIKit
+
 #if canImport(UserNotifications)
 let rSDKABuildUserNotificationSupport = true
 #else
@@ -30,8 +32,11 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void) {
+        if UIApplication.RAnalyticsSharedApplication?.applicationState != .active {
+            // set the origin to push type for the next _rem_visit event
+            AnalyticsManager.shared().launchCollector.origin = .push
+        }
 
-        AnalyticsManager.shared().launchCollector.processPushNotificationResponse(response)
         if responds(to: #selector(rAutotrackUserNotificationCenter(_:didReceive:withCompletionHandler:))) {
             rAutotrackUserNotificationCenter(center,
                                              didReceive: response,
@@ -40,7 +45,6 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
     }
 
     @objc func rAutotrackSetUserNotificationCenterDelegate(_ delegate: UNUserNotificationCenterDelegate?) {
-
         RLogger.verbose(message: "User notification center delegate is being set to %@ \(String(describing: delegate))")
         let swizzleSelector = #selector(rAutotrackUserNotificationCenter(_:didReceive:withCompletionHandler:))
         let delegateSelector = #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:))

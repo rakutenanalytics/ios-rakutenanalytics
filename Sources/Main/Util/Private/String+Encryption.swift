@@ -7,6 +7,7 @@ import RLogger
 #endif
 
 extension String {
+    @available(*, deprecated, message: "This property will be removed in the next major version.")
     var ratEncrypt: String? {
         guard let ratData = data(using: .utf8) else { return nil }
         return ratData.digest.hexString
@@ -14,6 +15,7 @@ extension String {
 }
 
 private extension Data {
+    @available(*, deprecated, message: "This property will be removed in the next major version.")
     var digest: Data {
         let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
         var hash = [UInt8](repeating: 0, count: digestLength)

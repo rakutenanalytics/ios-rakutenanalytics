@@ -284,8 +284,6 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                             databaseParentDirectory: .documentDirectory)
     }()
     public var pushEventHandler: PushEventHandleable
-    public var fileManager: FileManageable = FileManager.default
-    public var serializerType: JSONSerializable.Type = JSONSerialization.self
 
     public override init() {
         let appGroupId = bundle.appGroupId
@@ -482,53 +480,6 @@ public final class ApplicationMock: NSObject, StatusBarOrientationGettable {
 
     public var analyticsStatusBarOrientation: UIInterfaceOrientation {
         injectedValue
-    }
-}
-
-// MARK: - FileManagerMock
-
-public final class FileManagerMock: FileManageable {
-    public var mockedContainerURL: URL?
-    public var fileExists = true
-
-    public init() {
-    }
-
-    public func createSafeFile(at url: URL) {
-    }
-
-    public func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL? {
-        mockedContainerURL
-    }
-
-    public func fileExists(atPath path: String) -> Bool {
-        fileExists
-    }
-
-    public func removeItem(at url: URL) throws {
-        // no-op
-    }
-}
-
-// MARK: - JSONSerializationMock
-
-public final class JSONSerializationMock: JSONSerializable {
-    public static var mockedData: Data?
-    public static var mockedJsonObject: Any = [[String: Any]]()
-    public static var error: Error?
-
-    public static func data(withJSONObject obj: Any, options opt: JSONSerialization.WritingOptions) throws -> Data {
-        if let error = error {
-            throw error
-        }
-        return mockedData ?? Data()
-    }
-
-    public static func jsonObject(with data: Data, options opt: JSONSerialization.ReadingOptions) throws -> Any {
-        if let error = error {
-            throw error
-        }
-        return mockedJsonObject
     }
 }
 

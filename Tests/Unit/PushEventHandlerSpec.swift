@@ -18,7 +18,7 @@ final class PushEventHandlerSpec: QuickSpec {
             bundleMock.dictionary?[AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey] = "group.test"
             let sharedUserDefaults = UserDefaultsMock(suiteName: "group.test")
             sharedUserDefaults?.dictionary = [:]
-            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
+            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotificationExternal,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
 
             context("App Group User Defaults") {
@@ -83,58 +83,6 @@ final class PushEventHandlerSpec: QuickSpec {
                                 (pushEventHandler.sharedUserStorageHandler as? UserDefaultsMock)?.dictionary = nil
                                 expect(pushEventHandler.isEventAlreadySent(with: nil)).to(beFalse())
                             }
-                        }
-                    }
-                }
-
-                describe("cacheEvent(for:)") {
-                    context("The shared app group user defaults is nil") {
-                        let pushEventHandler = PushEventHandler(sharedUserStorageHandler: nil,
-                                                                appGroupId: nil)
-
-                        it("should not cache the event tracking identifier") {
-                            expect(pushEventHandler.cacheEvent(for: sentTrackingId)).to(beFalse())
-                        }
-                    }
-
-                    context("The shared app group user defaults is not nil") {
-                        let pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                                                appGroupId: bundleMock.appGroupId)
-
-                        it("should cache the event tracking identifier") {
-                            expect(pushEventHandler.cacheEvent(for: sentTrackingId)).to(beTrue())
-                        }
-
-                        it("should set the tracking identifier caching status to true") {
-                            let openSentMap = sharedUserDefaults?.object(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey) as? [String: Bool]
-                            expect(openSentMap?[sentTrackingId]).to(beTrue())
-                        }
-                    }
-                }
-
-                describe("clearCache()") {
-                    context("The shared app group user defaults is nil") {
-                        let pushEventHandler = PushEventHandler(sharedUserStorageHandler: nil,
-                                                                appGroupId: nil)
-
-                        it("should return false") {
-                            expect(pushEventHandler.clearCache()).to(beFalse())
-                        }
-                    }
-
-                    context("The shared app group user defaults is not nil") {
-                        let pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserDefaults,
-                                                                appGroupId: bundleMock.appGroupId)
-
-                        it("should set the cache to nil") {
-                            pushEventHandler.cacheEvent(for: sentTrackingId)
-                            pushEventHandler.clearCache()
-
-                            expect(sharedUserDefaults?.object(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)).to(beNil())
-                        }
-
-                        it("should return true") {
-                            expect(pushEventHandler.clearCache()).to(beTrue())
                         }
                     }
                 }

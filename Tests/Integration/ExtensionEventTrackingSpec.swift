@@ -31,13 +31,13 @@ final class ExtensionEventTrackingSpec: QuickSpec {
                 context("An event is posted") {
                     it("should process the event and clear the events cache") {
                         (0..<100).forEach { index in
-                            AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
+                            AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotificationExternal,
                                                       parameters: ["rid": "helloworld\(index)"],
                                                       pushEventHandler: pushEventHandler)
 
                             expect(analyticsManager.processedEvents).toEventuallyNot(beEmpty())
                             expect(analyticsManager.processedEvents.count).to(equal(1))
-                            expect(analyticsManager.processedEvents.first?.name).to(equal(RAnalyticsEvent.Name.pushNotification))
+                            expect(analyticsManager.processedEvents.first?.name).to(equal(RAnalyticsEvent.Name.pushNotificationExternal))
                             expect(analyticsManager.processedEvents.first?.parameters as? [String: AnyHashable])
                                 .to(equal(["rid": "helloworld\(index)"]))
 
@@ -73,7 +73,7 @@ final class ExtensionEventTrackingSpec: QuickSpec {
                     context("Many events are posted") {
                         it("should process the event and clear the events cache") {
                             (0..<100).forEach { index in
-                                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotification,
+                                AnalyticsEventPoster.post(name: RAnalyticsEvent.Name.pushNotificationExternal,
                                                           parameters: ["rid": "helloworld\(index)"],
                                                           pushEventHandler: pushEventHandler)
                             }
@@ -85,7 +85,7 @@ final class ExtensionEventTrackingSpec: QuickSpec {
                             expect(analyticsManager.processedEvents.count).to(equal(100))
 
                             (0..<100).forEach { index in
-                                expect(analyticsManager.processedEvents[index].name).to(equal(RAnalyticsEvent.Name.pushNotification))
+                                expect(analyticsManager.processedEvents[index].name).to(equal(RAnalyticsEvent.Name.pushNotificationExternal))
                                 expect(analyticsManager.processedEvents[index].parameters as? [String: AnyHashable])
                                     .to(equal(["rid": "helloworld\(index)"]))
                             }

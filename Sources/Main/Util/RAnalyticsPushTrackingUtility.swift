@@ -27,6 +27,7 @@ private struct PushNotificationModel: Decodable {
 // MARK: - RAnalyticsPushTrackingUtility
 
 /// Constructs the tracking identifier from the push payload.
+@available(*, deprecated, message: "This class will be removed in the next major version.")
 @objc public final class RAnalyticsPushTrackingUtility: NSObject {
     private static let decoder = JSONDecoder()
 
@@ -45,6 +46,7 @@ private struct PushNotificationModel: Decodable {
     /// - Parameter payload: The APNS payload
     ///
     /// - Returns: The tracking identifier from the APNS push payload.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     @objc public static func trackingIdentifier(fromPayload payload: [AnyHashable: Any]) -> String? {
         let aps = payload[PushKeys.aps] as? [AnyHashable: Any]
         let rid = payload[PushKeys.rid] as? String
@@ -72,6 +74,7 @@ private struct PushNotificationModel: Decodable {
     }
 
     /// - Returns: `true` or `false` based on the existence of the tracking identifier in the App Group User Defaults.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     @objc public static func analyticsEventHasBeenSent(with trackingIdentifier: String?) -> Bool {
         analyticsEventHasBeenSent(with: trackingIdentifier,
                                   sharedUserStorageHandler: UserDefaults(suiteName: Bundle.main.appGroupId),
@@ -80,6 +83,7 @@ private struct PushNotificationModel: Decodable {
                                   serializerType: JSONSerialization.self)
     }
 
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     internal static func analyticsEventHasBeenSent(with trackingIdentifier: String?,
                                                    sharedUserStorageHandler: UserStorageHandleable?,
                                                    appGroupId: String?,
@@ -96,6 +100,7 @@ extension RAnalyticsPushTrackingUtility {
     /// - Parameter payload: The APNS push payload
     ///
     /// - Returns: The request identifier from the APNS push payload, `nil` otherwise if the APNS payload does not contain expected entries or if the APNS payload is malformed.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     @objc public static func pushRequestIdentifier(from payload: [AnyHashable: Any]) -> String? {
         guard let data = try? JSONSerialization.data(withJSONObject: payload, options: []),
               let model = try? decoder.decode(PushNotificationModel.self, from: data),
@@ -112,21 +117,29 @@ extension RAnalyticsPushTrackingUtility {
     ///    - pushConversionAction: The non-empty push conversion action.
     ///
     /// - Throws: an error if `pushRequestIdentifier` is empty or if `pushConversionAction` is empty.
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     @objc public static func trackPushConversionEvent(pushRequestIdentifier: String,
                                                       pushConversionAction: String,
                                                       with manager: AnalyticsManageable = AnalyticsManager.shared()) throws {
         guard !pushRequestIdentifier.isEmpty && !pushConversionAction.isEmpty else {
             throw ErrorConstants.pushConversionError
         }
-        let event = RAnalyticsEvent(pushRequestIdentifier: pushRequestIdentifier,
-                                    pushConversionAction: pushConversionAction)
-        manager.process(event)
+
+        var parameters = [String: Any]()
+        parameters[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
+        parameters[AnalyticsManager.Event.Parameter.pushConversionAction] = pushConversionAction
+
+        let event = RAnalyticsEvent(name: AnalyticsManager.Event.Name.pushNotificationConversion,
+                                    parameters: parameters)
+
+        _ = manager.process(event)
     }
 }
 
 // MARK: - Utils
 
 private extension RAnalyticsPushTrackingUtility {
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     static func isSilentPushNotification(apsPayload: [AnyHashable: Any]) -> Bool {
         // A push notification is a silent push notification if content available is true and
         // the alert part is not in the payload
@@ -137,6 +150,7 @@ private extension RAnalyticsPushTrackingUtility {
         return false
     }
 
+    @available(*, deprecated, message: "This function will be removed in the next major version.")
     static func getQualifyingEncryptedMessage(aps: [AnyHashable: Any]) -> String? {
         // Otherwise, fallback to .aps.alert if that's a string, or, if that's
         // a dictionary, for either .aps.alert.body or .aps.alert.title

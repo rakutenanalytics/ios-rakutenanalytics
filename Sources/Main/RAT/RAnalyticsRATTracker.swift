@@ -608,15 +608,6 @@ extension RAnalyticsRATTracker {
                 extra[CpParameterKeys.Push.pushRequestIdentifier] = event.pushRequestIdentifier
             }
 
-        // MARK: _rem_push_cv
-        case RAnalyticsEvent.Name.pushNotificationConversion:
-            guard !event.pushRequestIdentifier.isEmpty
-                    && !event.pushConversionAction.isEmpty else {
-                return false
-            }
-            extra[CpParameterKeys.Push.pushRequestIdentifier] = event.pushRequestIdentifier
-            extra[CpParameterKeys.Push.pushConversionAction] = event.pushConversionAction
-
         // MARK: _rem_push_auto_register, _rem_push_auto_unregister
         case RAnalyticsEvent.Name.pushAutoRegistration, RAnalyticsEvent.Name.pushAutoUnregistration:
             guard !event.parameters.isEmpty,
@@ -626,6 +617,21 @@ extension RAnalyticsRATTracker {
                   !pnpClientId.isEmpty else {
                 return false
             }
+            extra.addEntries(from: event.parameters)
+
+        // MARK: _rem_push_notify_external, _rem_push_received_external
+        // MARK: _rem_push_auto_register_external, _rem_push_auto_unregister_external
+        case RAnalyticsEvent.Name.pushNotificationExternal,
+            RAnalyticsEvent.Name.pushNotificationReceivedExternal,
+            RAnalyticsEvent.Name.pushAutoRegistrationExternal,
+            RAnalyticsEvent.Name.pushAutoUnregistrationExternal:
+            if let etype = payload[PayloadParameterKeys.etype] as? String {
+                payload[PayloadParameterKeys.etype] = etype.remove(suffix: "_external")
+            }
+            extra.addEntries(from: event.parameters)
+
+        // MARK: _rem_push_cv
+        case RAnalyticsEvent.Name.pushNotificationConversion:
             extra.addEntries(from: event.parameters)
 
         // MARK: _rem_discover_＊

@@ -10,7 +10,7 @@ final class AnalyticsEventObserverSpec: QuickSpec {
 
     override func spec() {
         describe("AnalyticsEventObserver") {
-            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotification,
+            let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotificationExternal,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
             let pushEventHandler: PushEventHandler = {
                 let bundleMock = BundleMock()
@@ -45,7 +45,7 @@ final class AnalyticsEventObserverSpec: QuickSpec {
 
                     expect(delegate.processedEvents).toEventuallyNot(beEmpty())
                     expect(delegate.processedEvents.count).to(equal(1))
-                    expect(delegate.processedEvents.first?.name).to(equal(RAnalyticsEvent.Name.pushNotification))
+                    expect(delegate.processedEvents.first?.name).to(equal(RAnalyticsEvent.Name.pushNotificationExternal))
                     expect(delegate.processedEvents.first?.parameters as? [String: AnyHashable]).to(equal(["rid": "abcd1234"]))
                 }
             }

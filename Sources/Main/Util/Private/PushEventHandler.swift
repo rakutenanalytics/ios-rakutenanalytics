@@ -23,8 +23,6 @@ enum PushEventHandlerKeys {
 
 protocol PushEventHandleable {
     func isEventAlreadySent(with trackingIdentifier: String?) -> Bool
-    @discardableResult func cacheEvent(for trackingIdentifier: String) -> Bool
-    @discardableResult func clearCache() -> Bool
     func cachedDarwinEvents() -> [[String: Any]]
     func save(darwinEvents: [[String: Any]])
     func clearDarwinEventsCache()
@@ -64,32 +62,6 @@ extension PushEventHandler: PushEventHandleable {
             return false
         }
         return result
-    }
-
-    /// Cache only one trackingIdentifier in the App Group User Defaults.
-    ///
-    /// - Parameter trackingIdentifier: the push tracking identifier
-    ///
-    /// - Returns: `true` if the tracking identifier is cached, `false` otherwise.
-    @discardableResult
-    internal func cacheEvent(for trackingIdentifier: String) -> Bool {
-        guard let sharedUserStorageHandler = sharedUserStorageHandler else {
-            return false
-        }
-        var openSentMap = [String: Bool]()
-        openSentMap[trackingIdentifier] = true
-        sharedUserStorageHandler.set(value: openSentMap, forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)
-        return true
-    }
-
-    /// Clear the push cache in the App Group User Defaults.
-    @discardableResult
-    internal func clearCache() -> Bool {
-        guard let sharedUserStorageHandler = sharedUserStorageHandler else {
-            return false
-        }
-        sharedUserStorageHandler.removeObject(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)
-        return true
     }
 
     // MARK: - Darwin Events

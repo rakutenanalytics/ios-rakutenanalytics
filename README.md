@@ -211,7 +211,7 @@ The below table shows the required components of each standard event which is tr
 
 The SDK will automatically generate certain attributes about the state of the device, and pass them to every registered tracker when asked to process an event.
 
-## Push conversion tracking
+## Push conversion tracking (deprecated, moved to RPushPNP SDK 10.1.0)
 Conversions are an important metric for marketers. The SDK now supports a conversion event which can be sent when a conversion occurs in your app.
 
 To use this feature you need to store the APNs push notification payload when your app is opened from a push notification.
@@ -221,8 +221,9 @@ Then, when a conversion event occurs (you define these for your own app's specif
 let pushRequestIdentifier = RAnalyticsPushTrackingUtility.requestIdentifier(from: apnsPayload)
 
 RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: pushRequestIdentifier, pushConversionAction: "{client_defined_conversion_action_name}")
-
 ```
+
+Note: The RAT event name is `_rem_push_cv`.
 
 ## Tracking events in iOS Extensions
 
@@ -368,6 +369,12 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 ```
 
 # Knowledge Base
+
+## Migrating to v9.8.0
+`_rem_push_notify` event is no longer tracked when a regular push notification is opened.
+
+Please add RPushPNP version >= 10.1.0 to your iOS app in order to track automatically `_rem_push_notify` event when a regular push notification is opened:
+https://gitpub.rakuten-it.com/scm/eco/core-ios-push.git
 
 ## Migrating to v9.7.0
 `RATAccountIdentifier` and `RATAppIdentifier` keys MUST be set in the app's Info.plist, otherwise:
