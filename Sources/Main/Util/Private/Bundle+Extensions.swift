@@ -4,13 +4,6 @@ import UIKit
 // MARK: - Version
 
 extension Bundle {
-    /// Retrieve and return the short version string.
-    ///
-    /// - Returns: The short version string or nil.
-    var shortVersion: String? {
-        infoDictionary?["CFBundleShortVersionString"] as? String
-    }
-
     /// Retrieve and return the version.
     ///
     /// - Returns: The version or nil.

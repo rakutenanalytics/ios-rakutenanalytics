@@ -23,6 +23,7 @@ public typealias RAnalyticsErrorBlock = (NSError) -> Void
 // MARK: - AnalyticsManageable
 
 @objc public protocol AnalyticsManageable: AnyObject {
+    var defaultWebViewUserAgent: String? { get }
     func process(_ event: RAnalyticsEvent) -> Bool
 }
 
@@ -182,6 +183,22 @@ protocol ReferralAppTrackable: AnyObject {
     private let eventChecker: EventChecker
     private let eventObserver: AnalyticsEventObserver
     private let deviceIdentifierHandler: DeviceIdentifierHandler
+    private let bundle: EnvironmentBundle
+    private let userStorageHandler: UserStorageHandleable
+
+    /// The default `WKWebView` user agent
+    public private(set) var defaultWebViewUserAgent: String?
+
+    /// Returns the value of `RATSetWebViewUserAgentEnabled` in the app's `Info.plist`.
+    ///
+    /// `RATSetWebViewUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
+    ///
+    /// - returns: `true` if `RATSetWebViewUserAgentEnabled` is set to true or not set, `false` otherwise.
+    ///
+    /// - Note: If `RATSetWebViewUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
+    public var isWebViewUserAgentEnabledAtBuildtime: Bool {
+        bundle.isWebViewUserAgentEnabledAtBuildtime
+    }
 
     let launchCollector: RAnalyticsLaunchCollector
 
@@ -194,8 +211,10 @@ protocol ReferralAppTrackable: AnyObject {
         launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
         self.locationManager = dependenciesContainer.locationManager
 
-        let bundle = dependenciesContainer.bundle
+        bundle = dependenciesContainer.bundle
         eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
+
+        userStorageHandler = dependenciesContainer.userStorageHandler
 
         eventObserver = AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler)
 
@@ -253,7 +272,34 @@ extension AnalyticsManager {
         add(sdkTracker)
     }
 
+    /// Set the WKWebView's user agent value at buildtime only if Bundle's `isWebViewUserAgentEnabledAtBuildtime` is set to true.
+    ///
+    /// - Warning: If the `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
+    private func configureWebViewUserAgent() {
+        guard bundle.isWebViewUserAgentEnabledAtBuildtime else {
+            // WKWebView can only be instantiated on the main thread.
+            MainThreadExecutor.run {
+                self.defaultWebViewUserAgent = WKWebView().rCurrentUserAgent
+            }
+            return
+        }
+
+        // WKWebView can only be instantiated on the main thread.
+        MainThreadExecutor.run {
+            let webView = WKWebView()
+            self.defaultWebViewUserAgent = webView.rCurrentUserAgent
+
+            if let userAgent = self.defaultWebViewUserAgent,
+               let customUserAgent = webView.webViewUserAgent(defaultWebViewUserAgent: userAgent,
+                                                              for: self.bundle) {
+                self.userStorageHandler.register(defaults: [UserDefaultsKeys.userAgentKey: customUserAgent])
+            }
+        }
+    }
+
     private func configure() {
+        configureWebViewUserAgent()
+
         addSDKTracker()
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't

@@ -18,9 +18,9 @@ protocol EnvironmentBundle: Bundleable {
     static var sdkComponentMap: NSDictionary? { get }
     func object(forInfoDictionaryKey key: String) -> Any?
     var appGroupId: String? { get }
-    var shortVersion: String? { get }
     var version: String? { get }
     var applicationSceneManifest: ApplicationSceneManifest? { get }
+    var isWebViewUserAgentEnabledAtBuildtime: Bool { get }
 }
 
 extension Bundle: EnvironmentBundle {
@@ -28,6 +28,7 @@ extension Bundle: EnvironmentBundle {
 
     private enum Keys {
         static let applicationSceneManifestKey = "UIApplicationSceneManifest"
+        static let setWebViewUserAgentEnabled = "RATSetWebViewUserAgentEnabled"
     }
 
     var languageCode: Any? {
@@ -69,6 +70,20 @@ extension Bundle: EnvironmentBundle {
             return false
         }
         return internalSerializationIsEnabled
+    }
+
+    /// Returns the value of `RATSetWebViewUserAgentEnabled` in the app's `Info.plist`.
+    ///
+    /// `RATSetWebViewUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
+    ///
+    /// - returns: `true` if `RATSetWebViewUserAgentEnabled` is set to true or not set, `false` otherwise.
+    ///
+    /// - Note: If `RATSetWebViewUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
+    var isWebViewUserAgentEnabledAtBuildtime: Bool {
+        guard let value = object(forInfoDictionaryKey: Keys.setWebViewUserAgentEnabled) as? Bool else {
+            return true
+        }
+        return value
     }
 
     static let assetsBundle: Bundle? = {

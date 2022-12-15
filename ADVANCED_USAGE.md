@@ -17,6 +17,7 @@
 1. [Fetching a RP Cookie](#fetching-a-rp-cookie)
 1. [App-to-App referral tracking](#app-to-app-referral-tracking)
 1. [How to configure the database directory path](#how-to-configure-the-database-directory-path)
+1. [How to set the app user agent in WKWebView](#how-to-set-the-app-user-agent-in-wkwebview)
 1. [Event triggers](#event-triggers)
 
 ## Configure a custom endpoint
@@ -534,6 +535,54 @@ By default the database directory path is `Documents`. It is possible to store t
 ```
 
 ⚠️ Note that **database migration is not supported** therefore if you use this setting in a pre-existing app you will lose any previously saved RAT events.
+
+## How to set the app user agent in WKWebView
+
+This feature allows to append the app user agent to the default WKWebView's user agent with this format:
+{webview-user-agent} {app-bundle-identifier}/{CFBundleShortVersionString}
+
+### At buildtime
+
+- Enable the app user agent setting in WKWebView by configuring the app's Info.plist':
+```xml
+<key>RATSetWebViewUserAgentEnabled</key>
+<true/>
+```
+
+- Disable the app user agent setting in WKWebView by configuring the app's Info.plist':
+```xml
+<key>RATSetWebViewUserAgentEnabled</key>
+<false/>
+```
+
+#### Notes
+
+If `RATSetWebViewUserAgentEnabled` is not set in the app's Info.plist, its value is set to true by default.
+
+#### Warning
+
+If `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
+Therefore, `WKWebView` should not be instantiated at launch in this specific case.
+
+### At runtime
+
+- Enable the app user agent setting in WKWebView:
+```swift
+let webView = WKWebView()
+webView.enableAppUserAgent(true)
+```
+
+- Enable the app user agent setting in WKWebView with a custom value:
+```swift
+let webView = WKWebView()
+webView.enableAppUserAgent(true, with: "custom-app-user-agent-value")
+```
+
+- Disable the app user agent setting in WKWebView:
+```swift
+let webView = WKWebView()
+webView.enableAppUserAgent(false)
+```
 
 ## Event triggers
 

@@ -1,11 +1,12 @@
 # Changelog
 
-## Unreleased Next (temporary)
+## Unreleased
+
+### Features
+* [SDKCF-6124](https://jira.rakuten-it.com/jira/browse/SDKCF-6124): Override User Agent value in WKWebView.
 
 ### Improvements
 * [SDKCF-6047](https://jira.rakuten-it.com/jira/browse/SDKCF-6047): Improve CKP code coverage to 100%.
-
-## Unreleased
 
 ## 9.7.0 (2022-11-29)
 

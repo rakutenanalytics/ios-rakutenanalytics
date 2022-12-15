@@ -1,5 +1,9 @@
 import Foundation
 
+enum UserDefaultsKeys {
+    static let userAgentKey = "UserAgent"
+}
+
 /// Note:
 /// a compiler error occurs if this method is present in the protocol and if UserDefaults conforms to this protocol:
 /// func set(_ value: Any?, forKey defaultName: String)
@@ -14,6 +18,7 @@ protocol UserStorageHandleable {
     func string(forKey defaultName: String) -> String?
     func set(value: Any?, forKey defaultName: String)
     func removeObject(forKey defaultName: String)
+    func register(defaults registrationDictionary: [String: Any])
     @discardableResult func synchronize() -> Bool
 }
 

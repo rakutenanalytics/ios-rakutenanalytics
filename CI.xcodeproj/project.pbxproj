@@ -90,6 +90,8 @@
 		C9EA33EF28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */; };
 		C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */; };
 		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
+		C9F1376129438BD7005A0DBF /* AnalyticsManagerUASpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */; };
+		C9F1376429438C56005A0DBF /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -209,6 +211,8 @@
 		C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
 		C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestSpec.swift; sourceTree = "<group>"; };
 		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
+		C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerUASpec.swift; sourceTree = "<group>"; };
+		C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +263,7 @@
 				C9B395FF276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift */,
 				C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */,
 				C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */,
+				C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */,
 				C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */,
 				C985A50627833D14007EDABE /* CoreHelpersSpec.swift */,
 				C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */,
@@ -417,6 +422,7 @@
 				C94B704B2798749A00A1898A /* RAnalyticsEvent+Helper.swift */,
 				C94B70432798734600A1898A /* RAnalyticsRATExpecter.swift */,
 				C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */,
+				C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */,
 			);
 			path = RAnalyticsTestHelpers;
 			sourceTree = "<group>";
@@ -732,6 +738,7 @@
 				C9981C3928C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift in Sources */,
 				C992E79128D85FDA005E32F9 /* KeychainHandlerSpec.swift in Sources */,
 				C9010C222670BBDB00769C83 /* RAnalyticsRATTrackerInitSpec.swift in Sources */,
+				C9F1376129438BD7005A0DBF /* AnalyticsManagerUASpec.swift in Sources */,
 				45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */,
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
@@ -742,6 +749,7 @@
 				C98D70CC25A5D7F800B1D048 /* EventCheckerSpec.swift in Sources */,
 				C94B703A2798719400A1898A /* DatabaseTestUtils.swift in Sources */,
 				C9E4BBCC260BAB7A0001F0B4 /* RAnalyticsPushTrackingUtilitySpec.swift in Sources */,
+				C9F1376429438C56005A0DBF /* UserDefaults+Extensions.swift in Sources */,
 				C94B7050279874A100A1898A /* RAnalyticsEvent+Helper.swift in Sources */,
 				C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */,
 				C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */,

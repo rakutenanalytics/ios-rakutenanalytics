@@ -14,18 +14,20 @@ enum GlobalConstants {
     static let kRATAppID = "RAT_App_ID"
     static let kRATUrlScheme = "Open URL Scheme"
     static let kRATUniversalLink = "Open Universal Link"
+    static let enableAppUserAgent = "Enable App user agent"
+    static let showWebViewUserAgent = "Show WKWebView's user agent"
 }
 
 enum TableViewCellType: Int, CaseIterable {
-    case location, idfa, accountID, appID, urlScheme, universalLink
+    case location, idfa, accountID, appID, urlScheme, universalLink, enableAppUserAgent, showWebViewUserAgent
 
     var cellIdentifier: String {
         switch self {
-        case .location, .idfa:
+        case .location, .idfa, .enableAppUserAgent:
             return "SwitchTableViewCell"
         case .accountID, .appID:
             return "TextFieldTableViewCell"
-        case .urlScheme, .universalLink:
+        case .urlScheme, .universalLink, .showWebViewUserAgent:
             return "BaseTableViewCell"
         }
     }
@@ -44,6 +46,10 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.kRATUrlScheme
         case .universalLink:
             return GlobalConstants.kRATUniversalLink
+        case .enableAppUserAgent:
+            return GlobalConstants.enableAppUserAgent
+        case .showWebViewUserAgent:
+            return GlobalConstants.showWebViewUserAgent
         }
     }
 }
@@ -62,6 +68,8 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         customParameters["ref_custom_param2"] = "rome"
         return customParameters
     }()
+    private let webViewURL: URL! = URL(string: "https://www.rakuten.co.jp")
+    private var webView: WKWebView!
 
     enum Constants {
         static let domain = "check.rat.rakuten.co.jp"
@@ -72,6 +80,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
+        webView = WKWebView(frame: view.bounds)
         navigationItem.title = Bundle.main.infoDictionary?["CFBundleName"] as? String
     }
 
@@ -84,6 +93,11 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         if let value = dict[GlobalConstants.kIDFATracking],
            let flag = value as? Bool {
             AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = flag
+        }
+
+        if let value = dict[GlobalConstants.enableAppUserAgent],
+           let enabled = value as? Bool {
+            webView.enableAppUserAgent(enabled)
         }
 
         if let accountIdString = dict[GlobalConstants.kRATAccountID] as? String {
@@ -126,6 +140,10 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             return UITableViewCell()
         }
 
+        if cell is SwitchTableViewCell && cellType == .enableAppUserAgent {
+            (cell as? SwitchTableViewCell)?.usingSwitch.isOn = AnalyticsManager.shared().isWebViewUserAgentEnabledAtBuildtime
+        }
+
         cell.delegate = self
         cell.title = cellType.title
         return cell
@@ -162,6 +180,22 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                 return
             }
             UIApplication.shared.open(url, options: [:])
+
+        case .showWebViewUserAgent:
+            guard let userAgent = webView.rCurrentUserAgent else {
+                return
+            }
+
+            webView.load(URLRequest(url: webViewURL))
+
+            let alertController = UIAlertController(title: "User Agent",
+                                                    message: userAgent,
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Close", style: .cancel))
+            alertController.addAction(UIAlertAction(title: "Copy", style: .default, handler: { _ in
+                UIPasteboard.general.string = userAgent
+            }))
+            present(alertController, animated: true)
 
         default: ()
         }

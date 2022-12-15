@@ -10,6 +10,7 @@ import RLogger
 
 public protocol Bundleable {
     var bundleIdentifier: String? { get }
+    var shortVersion: String? { get }
     var accountIdentifier: Int64 { get }
     var applicationIdentifier: Int64 { get }
 }
@@ -38,6 +39,13 @@ private enum IdentifierResult {
 }
 
 extension Bundle: Bundleable {
+    /// Retrieve and return the short version string.
+    ///
+    /// - Returns: The short version string or nil.
+    public var shortVersion: String? {
+        infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+
     private func identifier(from model: IdentifierModel) -> IdentifierResult {
         guard let idNoType = object(forInfoDictionaryKey: model.key) else {
             return .warning(result: model.defaultValue, warning: model.configWarning)

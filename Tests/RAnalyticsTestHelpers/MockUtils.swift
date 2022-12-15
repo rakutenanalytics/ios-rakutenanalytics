@@ -129,6 +129,9 @@ extension UserDefaultsMock: UserStorageHandleable {
         }
         return result
     }
+
+    public func register(defaults registrationDictionary: [String: Any]) {
+    }
     public func synchronize() -> Bool { true }
 }
 
@@ -532,6 +535,8 @@ public final class JSONSerializationMock: JSONSerializable {
 // MARK: - AnalyticsManagerMock
 
 public final class AnalyticsManagerMock: AnalyticsManageable {
+    public var defaultWebViewUserAgent: String?
+
     public var processedEvents = [RAnalyticsEvent]()
 
     public init() {
@@ -606,6 +611,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var shortVersion: String? = "2.0"
     public var version: String? = "1"
     public var applicationSceneManifest: RAnalytics.ApplicationSceneManifest?
+    public var isWebViewUserAgentEnabledAtBuildtime: Bool = true
 
     /// Factory function for creating a mocked bundle
     public static func create() -> BundleMock {
