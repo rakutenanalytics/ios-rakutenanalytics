@@ -39,7 +39,7 @@ final class SwiftUITrackingSpec: QuickSpec {
         describe("SwiftUITracking") {
             beforeEach {
                 URLSessionMock.startMockingURLSession()
-                sessionMock.stubRATResponse(statusCode: 200, completion: nil)
+                sessionMock.stubResponse(statusCode: 200)
             }
 
             afterEach {

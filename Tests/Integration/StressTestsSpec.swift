@@ -37,7 +37,7 @@ class StressTestsSpec: QuickSpec {
 
                         URLSessionMock.startMockingURLSession()
 
-                        sessionMock.stubRATResponse(statusCode: 400, completion: nil)
+                        sessionMock.stubResponse(statusCode: 400)
 
                         stressUploadTimer()
 

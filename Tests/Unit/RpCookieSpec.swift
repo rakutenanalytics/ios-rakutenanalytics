@@ -6,25 +6,11 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-#if SWIFT_PACKAGE
-import OHHTTPStubsSwift
-import OHHTTPStubs
+#if canImport(RSDKUtilsTestHelpers)
+import RSDKUtilsTestHelpers
 #else
-import OHHTTPStubs
+import RSDKUtils
 #endif
-
-private func stubRequestForSuccess(cookieName: String, cookieValue: String, expiryDate: String) {
-    stub(condition: isHost("rat.rakuten.co.jp")) { _ in
-        let cookie = "\(cookieName)=\(cookieValue); path=/; expires=\(expiryDate); session-only=false; domain=.rakuten.co.jp"
-        return OHHTTPStubs.HTTPStubsResponse(data: Data(), statusCode: 200, headers: ["Set-Cookie": cookie])
-    }
-}
-
-private func stubRequestForError() {
-    stub(condition: isHost("rat.rakuten.co.jp")) { _ in
-        OHHTTPStubs.HTTPStubsResponse(data: Data(), statusCode: 500, headers: nil)
-    }
-}
 
 final class RpCookieSpec: QuickSpec {
     override func spec() {
@@ -45,17 +31,21 @@ final class RpCookieSpec: QuickSpec {
                 (dependenciesContainer.httpCookieStore as? HTTPCookieStorage)?.cookies?.forEach({ cookie in
                     (dependenciesContainer.httpCookieStore as? HTTPCookieStorage)?.deleteCookie(cookie)
                 })
+
+                URLSessionMock.startMockingURLSession()
             }
 
             afterEach {
-                HTTPStubs.removeAllStubs()
+                URLSessionMock.stopMockingURLSession()
             }
 
             context("When the RAT Tracker is initialized") {
                 it("should return non-nil cookie") {
-                    stubRequestForSuccess(cookieName: "TestCookieName",
-                                          cookieValue: "TestCookieValue",
-                                          expiryDate: "Fri, 16-Nov-50 16:59:07 GMT")
+                    let sessionMock = URLSessionMock.mock(originalInstance: .shared)
+                    
+                    sessionMock.stubRATSuccessResponse(cookieName: "TestCookieName",
+                                                       cookieValue: "TestCookieValue",
+                                                       expiryDate: "Fri, 16-Nov-50 16:59:07 GMT")
 
                     ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker?.endpointURL).toNot(beNil())
@@ -71,9 +61,11 @@ final class RpCookieSpec: QuickSpec {
 
             context("When fetched cookie is valid") {
                 it("should return non-nil cookie") {
-                    stubRequestForSuccess(cookieName: "Rp",
-                                          cookieValue: "CookieValue",
-                                          expiryDate: "Fri, 16-Nov-50 16:59:07 GMT")
+                    let sessionMock = URLSessionMock.mock(originalInstance: .shared)
+
+                    sessionMock.stubRATSuccessResponse(cookieName: "Rp",
+                                                       cookieValue: "CookieValue",
+                                                       expiryDate: "Fri, 16-Nov-50 16:59:07 GMT")
 
                     ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker?.endpointURL).toNot(beNil())
@@ -89,9 +81,11 @@ final class RpCookieSpec: QuickSpec {
 
             context("When fetched cookie is expired") {
                 it("should return nil cookie") {
-                    stubRequestForSuccess(cookieName: "Rp",
-                                          cookieValue: "CookieValue",
-                                          expiryDate: "Fri, 16-Nov-16 16:59:07 GMT")
+                    let sessionMock = URLSessionMock.mock(originalInstance: .shared)
+
+                    sessionMock.stubRATSuccessResponse(cookieName: "Rp",
+                                                       cookieValue: "CookieValue",
+                                                       expiryDate: "Fri, 16-Nov-16 16:59:07 GMT")
 
                     ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker?.endpointURL).toNot(beNil())
@@ -106,7 +100,9 @@ final class RpCookieSpec: QuickSpec {
 
             context("When a server error occurs") {
                 it("should return nil cookie") {
-                    stubRequestForError()
+                    let sessionMock = URLSessionMock.mock(originalInstance: .shared)
+
+                    sessionMock.stubRATServerErrorResponse()
 
                     ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     expect(ratTracker?.endpointURL).toNot(beNil())

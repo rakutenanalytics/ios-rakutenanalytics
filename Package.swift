@@ -20,8 +20,6 @@ let package = Package(
              .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
 
              .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.9.1")),
-
-             .package(url: "https://github.com/AliSoftware/OHHTTPStubs.git", .upToNextMajor(from: "9.1.0"))
         ],
     targets: [
         .target(name: "RAnalytics",
@@ -40,8 +38,6 @@ let package = Package(
                                "Quick",
                                "Nimble",
                                "ViewInspector",
-                               "OHHTTPStubs",
-                               .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                                .product(name: "RSDKUtilsNimble", package: "RSDKUtils"),
                                .product(name: "RSDKUtilsTestHelpers", package: "RSDKUtils")],
                 path: "Tests/RAnalyticsTestHelpers",

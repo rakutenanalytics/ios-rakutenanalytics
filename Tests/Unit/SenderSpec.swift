@@ -65,7 +65,7 @@ class SenderSpec: QuickSpec {
             context("JSON serialization") {
                 it("should send given payload when enableInternalSerialization is false") {
                     var isSendingCompleted = false
-                    sessionMock.stubRATResponse(statusCode: 200) {
+                    sessionMock.stubResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = false
@@ -75,7 +75,7 @@ class SenderSpec: QuickSpec {
 
                 it("should send given payload when enableInternalSerialization is true") {
                     var isSendingCompleted = false
-                    sessionMock.stubRATResponse(statusCode: 200) {
+                    sessionMock.stubResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     bundle.mutableEnableInternalSerialization = true
@@ -87,14 +87,14 @@ class SenderSpec: QuickSpec {
             context("when setting batching delay") {
 
                 it("should succeed with default batching delay", closure: {
-                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubResponse(statusCode: 200)
 
                     sender.send(jsonObject: payload)
                     expect(sender.uploadTimerInterval).toEventually(equal(0))
                 })
 
                 it("should succeed with custom batching delay") {
-                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubResponse(statusCode: 200)
 
                     sender.setBatchingDelayBlock(15.0)
                     sender.send(jsonObject: payload)
@@ -106,7 +106,7 @@ class SenderSpec: QuickSpec {
 
                 it("should send given payload") {
                     var isSendingCompleted = false
-                    sessionMock.stubRATResponse(statusCode: 200) {
+                    sessionMock.stubResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     sender.send(jsonObject: payload)
@@ -130,7 +130,7 @@ class SenderSpec: QuickSpec {
 
                     func verifyRAnalyticsUploadFailure() {
                         var isSendingCompleted = false
-                        sessionMock.stubRATResponse(statusCode: 500) {
+                        sessionMock.stubResponse(statusCode: 500) {
                             isSendingCompleted = true
                         }
 
@@ -155,7 +155,7 @@ class SenderSpec: QuickSpec {
 
                 it("should remove DB record after event is sent", closure: {
                     var isSendingCompleted = false
-                    sessionMock.stubRATResponse(statusCode: 200) {
+                    sessionMock.stubResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
                     sender.send(jsonObject: payload)
@@ -166,7 +166,7 @@ class SenderSpec: QuickSpec {
                 })
 
                 it("should not remove DB record before event is sent", closure: {
-                    sessionMock.stubRATResponse(statusCode: 200, completion: nil)
+                    sessionMock.stubResponse(statusCode: 200)
                     sender.setBatchingDelayBlock(30.0)
                     sender.send(jsonObject: payload)
 
@@ -179,7 +179,7 @@ class SenderSpec: QuickSpec {
                 // https://jira.rakuten-it.com/jira/browse/SDKCF-5304
                 //                it("should not send duplicate events when app becomes active") {
                 //                    var isSendingCompleted = false
-                //                    sessionMock.stubRATResponse(statusCode: 200) {
+                //                    sessionMock.stubResponse(statusCode: 200) {
                 //                        isSendingCompleted = true
                 //                    }
                 //

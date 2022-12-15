@@ -33,7 +33,7 @@ class RAnalyticsPushTrackingUtilityIntegSpec: QuickSpec {
                     let expectedConversionAction = "ichiba_iphone_conversion_action"
                     var isSendingCompleted = false
 
-                    sessionMock.stubRATResponse(statusCode: 200) {
+                    sessionMock.stubResponse(statusCode: 200) {
                         isSendingCompleted = true
                     }
 
