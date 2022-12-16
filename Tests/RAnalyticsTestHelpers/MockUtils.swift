@@ -562,7 +562,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var shortVersion: String? = "2.0"
     public var version: String? = "1"
     public var applicationSceneManifest: RAnalytics.ApplicationSceneManifest?
-    public var isWebViewUserAgentEnabledAtBuildtime: Bool = true
+    public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
 
     /// Factory function for creating a mocked bundle
     public static func create() -> BundleMock {

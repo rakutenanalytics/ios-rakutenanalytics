@@ -20,7 +20,7 @@ protocol EnvironmentBundle: Bundleable {
     var appGroupId: String? { get }
     var version: String? { get }
     var applicationSceneManifest: ApplicationSceneManifest? { get }
-    var isWebViewUserAgentEnabledAtBuildtime: Bool { get }
+    var isWebViewAppUserAgentEnabledAtBuildtime: Bool { get }
 }
 
 extension Bundle: EnvironmentBundle {
@@ -28,7 +28,7 @@ extension Bundle: EnvironmentBundle {
 
     private enum Keys {
         static let applicationSceneManifestKey = "UIApplicationSceneManifest"
-        static let setWebViewUserAgentEnabled = "RATSetWebViewUserAgentEnabled"
+        static let setWebViewAppUserAgentEnabled = "RATSetWebViewAppUserAgentEnabled"
     }
 
     var languageCode: Any? {
@@ -72,15 +72,15 @@ extension Bundle: EnvironmentBundle {
         return internalSerializationIsEnabled
     }
 
-    /// Returns the value of `RATSetWebViewUserAgentEnabled` in the app's `Info.plist`.
+    /// Returns the value of `RATSetWebViewAppUserAgentEnabled` in the app's `Info.plist`.
     ///
-    /// `RATSetWebViewUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
+    /// `RATSetWebViewAppUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
     ///
-    /// - returns: `true` if `RATSetWebViewUserAgentEnabled` is set to true or not set, `false` otherwise.
+    /// - returns: `true` if `RATSetWebViewAppUserAgentEnabled` is set to true or not set, `false` otherwise.
     ///
-    /// - Note: If `RATSetWebViewUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
-    var isWebViewUserAgentEnabledAtBuildtime: Bool {
-        guard let value = object(forInfoDictionaryKey: Keys.setWebViewUserAgentEnabled) as? Bool else {
+    /// - Note: If `RATSetWebViewAppUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
+    var isWebViewAppUserAgentEnabledAtBuildtime: Bool {
+        guard let value = object(forInfoDictionaryKey: Keys.setWebViewAppUserAgentEnabled) as? Bool else {
             return true
         }
         return value

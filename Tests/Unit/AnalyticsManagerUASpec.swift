@@ -30,7 +30,7 @@ final class AnalyticsManagerUASpec: QuickSpec {
                     it("should add the app user agent suffix to the WKWebView's user agent") {
                         var userAgent: String?
 
-                        bundle.isWebViewUserAgentEnabledAtBuildtime = true
+                        bundle.isWebViewAppUserAgentEnabledAtBuildtime = true
 
                         _ = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
@@ -46,7 +46,7 @@ final class AnalyticsManagerUASpec: QuickSpec {
                             var webView: WKWebView?
                             var userAgent: String?
 
-                            bundle.isWebViewUserAgentEnabledAtBuildtime = true
+                            bundle.isWebViewAppUserAgentEnabledAtBuildtime = true
 
                             let manager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
@@ -68,7 +68,7 @@ final class AnalyticsManagerUASpec: QuickSpec {
                     it("should not add the app user agent suffix to the WKWebView's user agent") {
                         var userAgent: String?
 
-                        bundle.isWebViewUserAgentEnabledAtBuildtime = false
+                        bundle.isWebViewAppUserAgentEnabledAtBuildtime = false
 
                         _ = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
@@ -85,7 +85,7 @@ final class AnalyticsManagerUASpec: QuickSpec {
                             var webView: WKWebView?
                             var userAgent: String?
 
-                            bundle.isWebViewUserAgentEnabledAtBuildtime = false
+                            bundle.isWebViewAppUserAgentEnabledAtBuildtime = false
 
                             let manager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 

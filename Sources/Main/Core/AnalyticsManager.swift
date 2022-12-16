@@ -189,15 +189,15 @@ protocol ReferralAppTrackable: AnyObject {
     /// The default `WKWebView` user agent
     public private(set) var defaultWebViewUserAgent: String?
 
-    /// Returns the value of `RATSetWebViewUserAgentEnabled` in the app's `Info.plist`.
+    /// Returns the value of `RATSetWebViewAppUserAgentEnabled` in the app's `Info.plist`.
     ///
-    /// `RATSetWebViewUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
+    /// `RATSetWebViewAppUserAgentEnabled` allows to append the app user agent to the default WKWebView's user agent.
     ///
-    /// - returns: `true` if `RATSetWebViewUserAgentEnabled` is set to true or not set, `false` otherwise.
+    /// - returns: `true` if `RATSetWebViewAppUserAgentEnabled` is set to true or not set, `false` otherwise.
     ///
-    /// - Note: If `RATSetWebViewUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
-    public var isWebViewUserAgentEnabledAtBuildtime: Bool {
-        bundle.isWebViewUserAgentEnabledAtBuildtime
+    /// - Note: If `RATSetWebViewAppUserAgentEnabled` is not set the app's Info.plist, `true` is returned.
+    public var isWebViewAppUserAgentEnabledAtBuildtime: Bool {
+        bundle.isWebViewAppUserAgentEnabledAtBuildtime
     }
 
     let launchCollector: RAnalyticsLaunchCollector
@@ -272,11 +272,11 @@ extension AnalyticsManager {
         add(sdkTracker)
     }
 
-    /// Set the WKWebView's user agent value at buildtime only if Bundle's `isWebViewUserAgentEnabledAtBuildtime` is set to true.
+    /// Set the WKWebView's user agent value at buildtime only if Bundle's `isWebViewAppUserAgentEnabledAtBuildtime` is set to true.
     ///
     /// - Warning: If the `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
     private func configureWebViewUserAgent() {
-        guard bundle.isWebViewUserAgentEnabledAtBuildtime else {
+        guard bundle.isWebViewAppUserAgentEnabledAtBuildtime else {
             // WKWebView can only be instantiated on the main thread.
             MainThreadExecutor.run {
                 self.defaultWebViewUserAgent = WKWebView().rCurrentUserAgent

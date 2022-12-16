@@ -141,7 +141,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         }
 
         if cell is SwitchTableViewCell && cellType == .enableAppUserAgent {
-            (cell as? SwitchTableViewCell)?.usingSwitch.isOn = AnalyticsManager.shared().isWebViewUserAgentEnabledAtBuildtime
+            (cell as? SwitchTableViewCell)?.usingSwitch.isOn = AnalyticsManager.shared().isWebViewAppUserAgentEnabledAtBuildtime
         }
 
         cell.delegate = self

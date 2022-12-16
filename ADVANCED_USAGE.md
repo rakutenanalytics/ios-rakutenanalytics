@@ -545,19 +545,19 @@ This feature allows to append the app user agent to the default WKWebView's user
 
 - Enable the app user agent setting in WKWebView by configuring the app's Info.plist':
 ```xml
-<key>RATSetWebViewUserAgentEnabled</key>
+<key>RATSetWebViewAppUserAgentEnabled</key>
 <true/>
 ```
 
 - Disable the app user agent setting in WKWebView by configuring the app's Info.plist':
 ```xml
-<key>RATSetWebViewUserAgentEnabled</key>
+<key>RATSetWebViewAppUserAgentEnabled</key>
 <false/>
 ```
 
 #### Notes
 
-If `RATSetWebViewUserAgentEnabled` is not set in the app's Info.plist, its value is set to true by default.
+If `RATSetWebViewAppUserAgentEnabled` is not set in the app's Info.plist, its value is set to true by default.
 
 #### Warning
 
