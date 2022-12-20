@@ -37,14 +37,14 @@ AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.j
 
 ## Location tracking
 
-> **Warning:** The SDK does not _actively_ track the device's location even if the user has granted access to the app and the RAnalyticsManager::shouldTrackLastKnownLocation property is set to `true`. Instead, it passively monitors location updates captured by your application. 
+> **Warning:** The SDK does not _actively_ track the device's location even if the user has granted access to the app and the `shouldTrackLastKnownLocation` property is set to `true`. Instead, it passively monitors location updates captured by your application. 
 
 > Your app must first request permission to use location services for a valid reason, as shown in Apple's [CoreLocation documentation](https://developer.apple.com/documentation/corelocation?language=objc). **Monitoring the device location for no other purpose than tracking will get your app rejected by Apple.**
 
 > See the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for more information on how to request location updates.
 
 
-Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set RAnalyticsManager::shouldTrackLastKnownLocation to `false`:
+Location tracking is enabled by default. If you want to prevent our SDK from tracking the last known location, you can set `shouldTrackLastKnownLocation` to `false`:
 
 ```swift
 AnalyticsManager.shared().shouldTrackLastKnownLocation = false
@@ -52,7 +52,7 @@ AnalyticsManager.shared().shouldTrackLastKnownLocation = false
 
 ## IDFA tracking
 
-The SDK automatically tracks the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) by default but you can still disable it by setting RAnalyticsManager::shouldTrackAdvertisingIdentifier to `false`:
+The SDK automatically tracks the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) by default but you can still disable it by setting `shouldTrackAdvertisingIdentifier` to `false`:
 
 ```swift
 AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
@@ -286,13 +286,13 @@ AnalyticsManager.shared().set(loggingLevel: .none)
 
 ## App to web tracking
 
-You can configure the SDK to inject a special tracking cookie which allows RAT to track events between the app and in-app webviews. The cookie is only injected on iOS 11.0 and later versions. This feaure is OFF by default. It can be enabled by setting RAnalyticsManager::enableAppToWebTracking to true.
+You can configure the SDK to inject a special tracking cookie which allows RAT to track events between the app and in-app webviews. The cookie is only injected on iOS 11.0 and later versions. This feaure is OFF by default. It can be enabled by setting `enableAppToWebTracking` to true.
 
 ```swift
 AnalyticsManager.shared().enableAppToWebTracking = true
 ```
 
-By default the cookie's domain will be set to the top-level Rakuten domain. Optionally, you can set a custom domain on the tracking cookie with RAnalyticsManager::setWebTrackingCookieDomainWithBlock:
+By default the cookie's domain will be set to the top-level Rakuten domain. Optionally, you can set a custom domain on the tracking cookie with `setWebTrackingCookieDomainWithBlock`:
 
 ```swift
 AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
