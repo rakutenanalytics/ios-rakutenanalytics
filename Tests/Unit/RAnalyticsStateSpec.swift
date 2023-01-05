@@ -1,6 +1,3 @@
-// swiftlint:disable function_body_length
-// swiftlint:disable type_body_length
-
 import Quick
 import Nimble
 import CoreLocation
@@ -91,6 +88,26 @@ final class RAnalyticsStateSpec: QuickSpec {
                 return state
             }()
 
+            func verify(_ state: AnalyticsManager.State) {
+                expect(state.sessionIdentifier).to(equal(sessionIdentifier))
+                expect(state.deviceIdentifier).to(equal(deviceIdentifier))
+                expect(state.currentVersion).to(equal(currentVersion))
+                expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
+                expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
+                expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
+                expect(state.sessionStartDate).to(equal(sessionStartDate))
+                expect(state.isLoggedIn).to(beTrue())
+                expect(state.userIdentifier).to(equal(userIdentifier))
+                expect(state.easyIdentifier).to(equal(easyIdentifier))
+                expect(state.lastVersion).to(equal(lastVersion))
+                expect(state.initialLaunchDate).to(equal(initialLaunchDate))
+                expect(state.lastLaunchDate).to(equal(lastLaunchDate))
+                expect(state.lastUpdateDate).to(equal(lastUpdateDate))
+                expect(state.lastVersionLaunches).to(equal(10))
+                expect(state.loginMethod).to(equal(.oneTapLogin))
+                expect(state.origin).to(equal(.external))
+            }
+
             describe("init") {
                 it("should have the correct default values") {
                     let state = AnalyticsManager.State(sessionIdentifier: sessionIdentifier,
@@ -139,26 +156,6 @@ final class RAnalyticsStateSpec: QuickSpec {
                         expect(state.referralTracking).to(equal(.referralApp(model)))
                     }
                 }
-
-                func verify(_ state: AnalyticsManager.State) {
-                    expect(state.sessionIdentifier).to(equal(sessionIdentifier))
-                    expect(state.deviceIdentifier).to(equal(deviceIdentifier))
-                    expect(state.currentVersion).to(equal(currentVersion))
-                    expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
-                    expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
-                    expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
-                    expect(state.sessionStartDate).to(equal(sessionStartDate))
-                    expect(state.isLoggedIn).to(beTrue())
-                    expect(state.userIdentifier).to(equal(userIdentifier))
-                    expect(state.easyIdentifier).to(equal(easyIdentifier))
-                    expect(state.lastVersion).to(equal(lastVersion))
-                    expect(state.initialLaunchDate).to(equal(initialLaunchDate))
-                    expect(state.lastLaunchDate).to(equal(lastLaunchDate))
-                    expect(state.lastUpdateDate).to(equal(lastUpdateDate))
-                    expect(state.lastVersionLaunches).to(equal(10))
-                    expect(state.loginMethod).to(equal(.oneTapLogin))
-                    expect(state.origin).to(equal(.external))
-                }
             }
             describe("copy") {
                 context("Visited UIKit page") {
@@ -192,26 +189,6 @@ final class RAnalyticsStateSpec: QuickSpec {
                         verify(state)
                         expect(state.referralTracking).to(equal(.referralApp(model)))
                     }
-                }
-
-                func verify(_ state: AnalyticsManager.State) {
-                    expect(state.sessionIdentifier).to(equal(sessionIdentifier))
-                    expect(state.deviceIdentifier).to(equal(deviceIdentifier))
-                    expect(state.currentVersion).to(equal(currentVersion))
-                    expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
-                    expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
-                    expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
-                    expect(state.sessionStartDate).to(equal(sessionStartDate))
-                    expect(state.isLoggedIn).to(beTrue())
-                    expect(state.userIdentifier).to(equal(userIdentifier))
-                    expect(state.easyIdentifier).to(equal(easyIdentifier))
-                    expect(state.lastVersion).to(equal(lastVersion))
-                    expect(state.initialLaunchDate).to(equal(initialLaunchDate))
-                    expect(state.lastLaunchDate).to(equal(lastLaunchDate))
-                    expect(state.lastUpdateDate).to(equal(lastUpdateDate))
-                    expect(state.lastVersionLaunches).to(equal(10))
-                    expect(state.loginMethod).to(equal(.oneTapLogin))
-                    expect(state.origin).to(equal(.external))
                 }
             }
             describe("equal") {
