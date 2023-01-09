@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "1.1.0"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "Analytics broadcast module of the Rakuten Ecosystem Mobile SDK"
-  s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
+  s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => 'broadcast-'+s.version.to_s }
   s.ios.deployment_target = '7.0'
