@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "9.8.0-snapshot"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
-  s.homepage     = "https://documents.developers.rakuten.com/ios-sdk/"
+  s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
   s.platform     = :ios, "12.0"
