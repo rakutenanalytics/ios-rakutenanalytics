@@ -7,6 +7,7 @@
 
 ### Improvements
 * [SDKCF-6047](https://jira.rakuten-it.com/jira/browse/SDKCF-6047): Improve CKP code coverage to 100%.
+* [SDKCF-6197](https://jira.rakuten-it.com/jira/browse/SDKCF-6197): Add description to each RAT key in PayloadParameterKeys.
 
 ### Changes
 * [SDKCF-6109](https://jira.rakuten-it.com/jira/browse/SDKCF-6109): Remove Push events tracking logic from RAnalytics.
