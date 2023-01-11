@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		C91AA26229474CB4005D134C /* WKWebView+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */; };
-		C9320AD9279FF79B009FE6EC /* _RAnalyticsSwiftLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = C9320A68279FF79B009FE6EC /* _RAnalyticsSwiftLoader.h */; };
 		C9320ADA279FF79B009FE6EC /* _RAnalyticsSwiftLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9320A69279FF79B009FE6EC /* _RAnalyticsSwiftLoader.m */; };
 		C9320ADB279FF79B009FE6EC /* RAnalyticsEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A6C279FF79B009FE6EC /* RAnalyticsEvent.swift */; };
 		C9320ADD279FF79B009FE6EC /* RAnalyticsEndpointSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A6E279FF79B009FE6EC /* RAnalyticsEndpointSettable.swift */; };
@@ -117,7 +116,6 @@
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+UserAgent.swift"; sourceTree = "<group>"; };
-		C9320A68279FF79B009FE6EC /* _RAnalyticsSwiftLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _RAnalyticsSwiftLoader.h; sourceTree = "<group>"; };
 		C9320A69279FF79B009FE6EC /* _RAnalyticsSwiftLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _RAnalyticsSwiftLoader.m; sourceTree = "<group>"; };
 		C9320A6C279FF79B009FE6EC /* RAnalyticsEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEvent.swift; sourceTree = "<group>"; };
 		C9320A6E279FF79B009FE6EC /* RAnalyticsEndpointSettable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEndpointSettable.swift; sourceTree = "<group>"; };
@@ -279,7 +277,6 @@
 		C9320A67279FF79B009FE6EC /* RAnalyticsSwiftLoader */ = {
 			isa = PBXGroup;
 			children = (
-				C9320A68279FF79B009FE6EC /* _RAnalyticsSwiftLoader.h */,
 				C9320A69279FF79B009FE6EC /* _RAnalyticsSwiftLoader.m */,
 			);
 			path = RAnalyticsSwiftLoader;
@@ -458,7 +455,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9320B38279FF79B009FE6EC /* RAnalytics.h in Headers */,
-				C9320AD9279FF79B009FE6EC /* _RAnalyticsSwiftLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
