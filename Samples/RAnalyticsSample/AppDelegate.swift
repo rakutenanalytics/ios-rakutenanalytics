@@ -1,15 +1,13 @@
 import UIKit
 import CoreLocation
 import RAnalytics
-import RDeviceAdvertiser
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let locationManager = CLLocationManager()
-    let deviceAdvertiser = DeviceAdvertiser(serviceType: "pusher")
-
+    
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Override the build time configuration of disabled automatic events defined in `RAnalyticsInfo.plist`
         AnalyticsManager.shared().shouldTrackEventHandler = { _ in
@@ -43,10 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
-    }
-
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        deviceAdvertiser.setDeviceToken(deviceToken.hexadecimal)
     }
 }
 

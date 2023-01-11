@@ -12,6 +12,9 @@
 ### Changes
 * [SDKCF-6109](https://jira.rakuten-it.com/jira/browse/SDKCF-6109): Remove Push events tracking logic from RAnalytics.
 
+### Build fixes
+* [SDKCF-6198](https://jira.rakuten-it.com/jira/browse/SDKCF-6198): Fix the sample app build.
+
 ## 9.7.0 (2022-11-29)
 
 ### Features

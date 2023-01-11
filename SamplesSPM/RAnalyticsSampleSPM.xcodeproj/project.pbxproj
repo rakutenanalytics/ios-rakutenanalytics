@@ -398,8 +398,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rakutentech/ios-sdkutils.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 3.0.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
 			};
 		};
 		C9320B4127A160BB009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */ = {

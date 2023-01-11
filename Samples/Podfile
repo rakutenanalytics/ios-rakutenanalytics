@@ -12,7 +12,6 @@ framework_zip = 'file:' + __dir__ + '/' + framework_name
 abstract_target 'Common' do
   # Binary framework pod of ../RakutenAnalyticsSDK
   pod 'RAnalytics', :http => framework_zip
-  pod 'RDeviceAdvertiser'
 
   # Source-based pod of ../RAnalytics for local development
   # pod 'RAnalytics', :path => '../RAnalytics.podspec'

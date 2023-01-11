@@ -15,7 +15,6 @@
 		4538B98E2620C626009952BE /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9842620C625009952BE /* TextFieldTableViewCell.swift */; };
 		4538B9902620C626009952BE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9862620C626009952BE /* SwitchTableViewCell.swift */; };
 		456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = 456625A7271E10F60008135E /* RSDKUtilsMain */; };
-		C9320B3D27A15CF5009FE6EC /* RDeviceAdvertiser in Frameworks */ = {isa = PBXBuildFile; productRef = C9320B3C27A15CF5009FE6EC /* RDeviceAdvertiser */; };
 		C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B7229261DBA5F00CF91BA /* Assets.xcassets */; };
 		C96B722D261DBA5F00CF91BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */; };
 		C9981C5F28CA91EA00B63A5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C5E28CA91EA00B63A5A /* AppDelegate.swift */; };
@@ -23,7 +22,6 @@
 		C9981C6328CA91EA00B63A5A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C6228CA91EA00B63A5A /* ViewController.swift */; };
 		C9981C6828CA91EB00B63A5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6728CA91EB00B63A5A /* Assets.xcassets */; };
 		C9981C6B28CA91EB00B63A5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */; };
-		C9981C7428CA92BA00B63A5A /* RDeviceAdvertiser in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */; };
 		C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7528CA92C100B63A5A /* RSDKUtilsMain */; };
 		C9981C7928CA932D00B63A5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C7728CA932D00B63A5A /* Main.storyboard */; };
 		C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7C28CA94FE00B63A5A /* RAnalytics */; };
@@ -58,7 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9320B3D27A15CF5009FE6EC /* RDeviceAdvertiser in Frameworks */,
 				456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */,
 				C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */,
 			);
@@ -68,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9981C7428CA92BA00B63A5A /* RDeviceAdvertiser in Frameworks */,
 				C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */,
 				C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */,
 			);
@@ -178,7 +174,6 @@
 			name = RAnalyticsSampleSPMInternal;
 			packageProductDependencies = (
 				456625A7271E10F60008135E /* RSDKUtilsMain */,
-				C9320B3C27A15CF5009FE6EC /* RDeviceAdvertiser */,
 				C9981C7C28CA94FE00B63A5A /* RAnalytics */,
 			);
 			productName = RAnalyticsSampleSPM;
@@ -199,7 +194,6 @@
 			);
 			name = RAnalyticsSampleDest;
 			packageProductDependencies = (
-				C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */,
 				C9981C7528CA92C100B63A5A /* RSDKUtilsMain */,
 				C9981C7E28CA950300B63A5A /* RAnalytics */,
 			);
@@ -235,7 +229,6 @@
 			mainGroup = C96B7219261DBA5E00CF91BA;
 			packageReferences = (
 				456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */,
-				C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */,
 			);
 			productRefGroup = C96B7223261DBA5E00CF91BA /* Products */;
 			projectDirPath = "";
@@ -585,16 +578,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rakutentech/ios-sdkutils.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-		C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "ssh://git@gitpub.rakuten-it.com:7999/eco/ios-device-advertiser.git";
-			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -604,16 +589,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
 			productName = RSDKUtilsMain;
-		};
-		C9320B3C27A15CF5009FE6EC /* RDeviceAdvertiser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */;
-			productName = RDeviceAdvertiser;
-		};
-		C9981C7328CA92BA00B63A5A /* RDeviceAdvertiser */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C9320B3B27A15CF5009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */;
-			productName = RDeviceAdvertiser;
 		};
 		C9981C7528CA92C100B63A5A /* RSDKUtilsMain */ = {
 			isa = XCSwiftPackageProductDependency;
