@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 9.8.0 (2023-01-30)
+
 ### Features
 * [SDKCF-6124](https://jira.rakuten-it.com/jira/browse/SDKCF-6124): Override User Agent value in WKWebView.
 
