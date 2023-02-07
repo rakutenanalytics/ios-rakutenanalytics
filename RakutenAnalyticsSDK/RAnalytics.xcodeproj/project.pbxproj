@@ -46,7 +46,6 @@
 		C9320B01279FF79B009FE6EC /* ASIdentifierManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A96279FF79B009FE6EC /* ASIdentifierManager+Extensions.swift */; };
 		C9320B02279FF79B009FE6EC /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A97279FF79B009FE6EC /* UIDevice+Extensions.swift */; };
 		C9320B03279FF79B009FE6EC /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A98279FF79B009FE6EC /* UIApplication+Extensions.swift */; };
-		C9320B04279FF79B009FE6EC /* URLSession+Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A99279FF79B009FE6EC /* URLSession+Result.swift */; };
 		C9320B05279FF79B009FE6EC /* UIScreen+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A9A279FF79B009FE6EC /* UIScreen+Extensions.swift */; };
 		C9320B06279FF79B009FE6EC /* AnalyticsEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A9B279FF79B009FE6EC /* AnalyticsEventObserver.swift */; };
 		C9320B07279FF79B009FE6EC /* PushEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A9C279FF79B009FE6EC /* PushEventHandler.swift */; };
@@ -154,7 +153,6 @@
 		C9320A96279FF79B009FE6EC /* ASIdentifierManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ASIdentifierManager+Extensions.swift"; sourceTree = "<group>"; };
 		C9320A97279FF79B009FE6EC /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		C9320A98279FF79B009FE6EC /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
-		C9320A99279FF79B009FE6EC /* URLSession+Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+Result.swift"; sourceTree = "<group>"; };
 		C9320A9A279FF79B009FE6EC /* UIScreen+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+Extensions.swift"; sourceTree = "<group>"; };
 		C9320A9B279FF79B009FE6EC /* AnalyticsEventObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventObserver.swift; sourceTree = "<group>"; };
 		C9320A9C279FF79B009FE6EC /* PushEventHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandler.swift; sourceTree = "<group>"; };
@@ -377,7 +375,6 @@
 				C9320A96279FF79B009FE6EC /* ASIdentifierManager+Extensions.swift */,
 				C9320A97279FF79B009FE6EC /* UIDevice+Extensions.swift */,
 				C9320A98279FF79B009FE6EC /* UIApplication+Extensions.swift */,
-				C9320A99279FF79B009FE6EC /* URLSession+Result.swift */,
 				C9320A9A279FF79B009FE6EC /* UIScreen+Extensions.swift */,
 				C9320A9B279FF79B009FE6EC /* AnalyticsEventObserver.swift */,
 				C9320A9C279FF79B009FE6EC /* PushEventHandler.swift */,
@@ -611,7 +608,6 @@
 				C9EA33FD28325CE900465945 /* DeviceIdentifierHandler.swift in Sources */,
 				C9320B05279FF79B009FE6EC /* UIScreen+Extensions.swift in Sources */,
 				C9320AF3279FF79B009FE6EC /* ReferralAppModel+URL.swift in Sources */,
-				C9320B04279FF79B009FE6EC /* URLSession+Result.swift in Sources */,
 				C9320B03279FF79B009FE6EC /* UIApplication+Extensions.swift in Sources */,
 				C9320B0F279FF79B009FE6EC /* AnalyticsManager+ReferralAppTracking.swift in Sources */,
 				C9320AE0279FF79B009FE6EC /* RAnalyticsTracker.swift in Sources */,

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improvements
+* [CONRAT-27844](https://jira.rakuten-it.com/jira/browse/CONRAT-27844): Remove unused extension - URLSession+Result.
+
 ## 9.8.0 (2023-01-30)
 
 ### Features
