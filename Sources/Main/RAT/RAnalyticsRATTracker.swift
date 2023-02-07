@@ -385,7 +385,7 @@ private extension RAnalyticsRATTracker {
             payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
         }
 
-        payload.addEntries(from: CoreHelpers.sharedPayload(for: state))
+        payload.addEntries(from: state.corePayload)
     }
 }
 

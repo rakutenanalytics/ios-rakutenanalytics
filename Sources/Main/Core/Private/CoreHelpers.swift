@@ -20,18 +20,6 @@ final class CoreHelpers {
         static let sdkVersion = "9.9.0-snapshot"
     }
 
-    static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
-        var dict = [String: Any]()
-        if let state = state {
-            dict[PayloadParameterKeys.Core.appVer] = state.currentVersion
-        }
-        dict[PayloadParameterKeys.Core.appName] = Constants.applicationName
-        dict[PayloadParameterKeys.Core.mos] = Constants.osVersion
-        dict[PayloadParameterKeys.Core.ver] = Constants.sdkVersion
-        dict[PayloadParameterKeys.Core.ts1] = Swift.max(0, round(NSDate().timeIntervalSince1970))
-        return dict
-    }
-
     static func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap) -> [String: Any]? {
         var dict = [String: Any]()
 

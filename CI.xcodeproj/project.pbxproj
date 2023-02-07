@@ -31,6 +31,7 @@
 		C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */; };
 		C926164A26D562E800119292 /* RAnalyticsEndpointSettableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C926164926D562E800119292 /* RAnalyticsEndpointSettableSpec.swift */; };
 		C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */; };
+		C92CDD8D296DABC100FA7A06 /* RAnalyticsStatePayloadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92CDD8C296DABC100FA7A06 /* RAnalyticsStatePayloadSpec.swift */; };
 		C9320978279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */; };
 		C9320979279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */; };
 		C932097A279FE774009FE6EC /* ExtensionEventTrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320977279FE774009FE6EC /* ExtensionEventTrackingSpec.swift */; };
@@ -158,6 +159,7 @@
 		C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RpCookieSpec.swift; sourceTree = "<group>"; };
 		C926164926D562E800119292 /* RAnalyticsEndpointSettableSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsEndpointSettableSpec.swift; sourceTree = "<group>"; };
 		C92829B025D162C500A31375 /* UserIdentifierSelectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIdentifierSelectorSpec.swift; sourceTree = "<group>"; };
+		C92CDD8C296DABC100FA7A06 /* RAnalyticsStatePayloadSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStatePayloadSpec.swift; sourceTree = "<group>"; };
 		C9320975279FE774009FE6EC /* AnalyticsEventTrackerIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventTrackerIntegrationSpec.swift; sourceTree = "<group>"; };
 		C9320976279FE774009FE6EC /* PushEventHandlerIntegrationSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushEventHandlerIntegrationSpec.swift; sourceTree = "<group>"; };
 		C9320977279FE774009FE6EC /* ExtensionEventTrackingSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionEventTrackingSpec.swift; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 				C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */,
 				C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */,
 				C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */,
+				C92CDD8C296DABC100FA7A06 /* RAnalyticsStatePayloadSpec.swift */,
 				C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */,
 				C9E4BB3D260BA2430001F0B4 /* RATEncryptSpec.swift */,
 				6D0AD19B2582383500206848 /* RATExtensionsTests.swift */,
@@ -724,6 +727,7 @@
 				C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */,
 				C98F8F4026788F330072F080 /* DeviceHandlerSpec.swift in Sources */,
 				C9441CDC26847945000F698A /* RAdvertisingIdentifierHandlerSpec.swift in Sources */,
+				C92CDD8D296DABC100FA7A06 /* RAnalyticsStatePayloadSpec.swift in Sources */,
 				C9981C3928C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift in Sources */,
 				C992E79128D85FDA005E32F9 /* KeychainHandlerSpec.swift in Sources */,
 				C9010C222670BBDB00769C83 /* RAnalyticsRATTrackerInitSpec.swift in Sources */,

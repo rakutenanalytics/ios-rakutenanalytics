@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Improvements
+* [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.
 * [CONRAT-27844](https://jira.rakuten-it.com/jira/browse/CONRAT-27844): Remove unused extension - URLSession+Result.
 
 ## 9.8.0 (2023-01-30)
