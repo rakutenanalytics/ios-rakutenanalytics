@@ -23,7 +23,6 @@
 		C9320AE6279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A78279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift */; };
 		C9320AE7279FF79B009FE6EC /* CoreHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A79279FF79B009FE6EC /* CoreHelpers.swift */; };
 		C9320AE8279FF79B009FE6EC /* RuntimeLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A7A279FF79B009FE6EC /* RuntimeLoadable.swift */; };
-		C9320AE9279FF79B009FE6EC /* AnyDependenciesContainer+DependencyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A7B279FF79B009FE6EC /* AnyDependenciesContainer+DependencyFactory.swift */; };
 		C9320AEA279FF79B009FE6EC /* RAnalyticsExternalCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A7C279FF79B009FE6EC /* RAnalyticsExternalCollector.swift */; };
 		C9320AEB279FF79B009FE6EC /* RAnalyticsLaunchCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A7D279FF79B009FE6EC /* RAnalyticsLaunchCollector.swift */; };
 		C9320AEC279FF79B009FE6EC /* RModulesList.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9320A7F279FF79B009FE6EC /* RModulesList.plist */; };
@@ -131,7 +130,6 @@
 		C9320A78279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsClassManipulable+UIViewController.swift"; sourceTree = "<group>"; };
 		C9320A79279FF79B009FE6EC /* CoreHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreHelpers.swift; sourceTree = "<group>"; };
 		C9320A7A279FF79B009FE6EC /* RuntimeLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RuntimeLoadable.swift; sourceTree = "<group>"; };
-		C9320A7B279FF79B009FE6EC /* AnyDependenciesContainer+DependencyFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AnyDependenciesContainer+DependencyFactory.swift"; sourceTree = "<group>"; };
 		C9320A7C279FF79B009FE6EC /* RAnalyticsExternalCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollector.swift; sourceTree = "<group>"; };
 		C9320A7D279FF79B009FE6EC /* RAnalyticsLaunchCollector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollector.swift; sourceTree = "<group>"; };
 		C9320A7F279FF79B009FE6EC /* RModulesList.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RModulesList.plist; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 				C9320A78279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift */,
 				C9320A79279FF79B009FE6EC /* CoreHelpers.swift */,
 				C9320A7A279FF79B009FE6EC /* RuntimeLoadable.swift */,
-				C9320A7B279FF79B009FE6EC /* AnyDependenciesContainer+DependencyFactory.swift */,
 				C9320A7C279FF79B009FE6EC /* RAnalyticsExternalCollector.swift */,
 				C9320A7D279FF79B009FE6EC /* RAnalyticsLaunchCollector.swift */,
 			);
@@ -564,7 +561,6 @@
 				C9320B0E279FF79B009FE6EC /* DeviceHandleable.swift in Sources */,
 				C9320AE6279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift in Sources */,
 				C9320B2D279FF79B009FE6EC /* ReachabilityNotifier.swift in Sources */,
-				C9320AE9279FF79B009FE6EC /* AnyDependenciesContainer+DependencyFactory.swift in Sources */,
 				C9320B0C279FF79B009FE6EC /* ReferralTrackingType.swift in Sources */,
 				C9320AF2279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift in Sources */,
 				C91AA26229474CB4005D134C /* WKWebView+UserAgent.swift in Sources */,
