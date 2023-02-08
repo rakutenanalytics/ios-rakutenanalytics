@@ -1,8 +1,4 @@
-#if canImport(RSDKUtils)
-import protocol RSDKUtils.LockableResource
-#else // SPM version
-import protocol RSDKUtilsMain.LockableResource
-#endif
+import Foundation
 
 internal enum Synchronizable {
 

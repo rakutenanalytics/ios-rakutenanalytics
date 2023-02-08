@@ -4,12 +4,6 @@ import CoreTelephony
 import AdSupport
 import WebKit
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
-
 @testable import RAnalytics
 
 // MARK: - Tracker

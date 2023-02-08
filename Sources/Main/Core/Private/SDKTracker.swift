@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
 
 enum SDKTrackerConstants {
     static let tableName = "RAKUTEN_ANALYTICS_SDK_TABLE"

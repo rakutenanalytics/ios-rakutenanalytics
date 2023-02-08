@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 enum LoginFailureKey {
     static let type = "type"

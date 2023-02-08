@@ -14,7 +14,6 @@
 		4538B98D2620C626009952BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9832620C625009952BE /* AppDelegate.swift */; };
 		4538B98E2620C626009952BE /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9842620C625009952BE /* TextFieldTableViewCell.swift */; };
 		4538B9902620C626009952BE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9862620C626009952BE /* SwitchTableViewCell.swift */; };
-		456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = 456625A7271E10F60008135E /* RSDKUtilsMain */; };
 		C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B7229261DBA5F00CF91BA /* Assets.xcassets */; };
 		C96B722D261DBA5F00CF91BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */; };
 		C9981C5F28CA91EA00B63A5A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C5E28CA91EA00B63A5A /* AppDelegate.swift */; };
@@ -22,7 +21,6 @@
 		C9981C6328CA91EA00B63A5A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C6228CA91EA00B63A5A /* ViewController.swift */; };
 		C9981C6828CA91EB00B63A5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6728CA91EB00B63A5A /* Assets.xcassets */; };
 		C9981C6B28CA91EB00B63A5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */; };
-		C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7528CA92C100B63A5A /* RSDKUtilsMain */; };
 		C9981C7928CA932D00B63A5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C7728CA932D00B63A5A /* Main.storyboard */; };
 		C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7C28CA94FE00B63A5A /* RAnalytics */; };
 		C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7E28CA950300B63A5A /* RAnalytics */; };
@@ -56,7 +54,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */,
 				C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,7 +62,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9981C7628CA92C100B63A5A /* RSDKUtilsMain in Frameworks */,
 				C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -173,7 +169,6 @@
 			);
 			name = RAnalyticsSampleSPMInternal;
 			packageProductDependencies = (
-				456625A7271E10F60008135E /* RSDKUtilsMain */,
 				C9981C7C28CA94FE00B63A5A /* RAnalytics */,
 			);
 			productName = RAnalyticsSampleSPM;
@@ -194,7 +189,6 @@
 			);
 			name = RAnalyticsSampleDest;
 			packageProductDependencies = (
-				C9981C7528CA92C100B63A5A /* RSDKUtilsMain */,
 				C9981C7E28CA950300B63A5A /* RAnalytics */,
 			);
 			productName = RAnalyticsSampleDest;
@@ -228,7 +222,6 @@
 			);
 			mainGroup = C96B7219261DBA5E00CF91BA;
 			packageReferences = (
-				456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */,
 			);
 			productRefGroup = C96B7223261DBA5E00CF91BA /* Products */;
 			projectDirPath = "";
@@ -573,28 +566,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rakutentech/ios-sdkutils.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		456625A7271E10F60008135E /* RSDKUtilsMain */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
-			productName = RSDKUtilsMain;
-		};
-		C9981C7528CA92C100B63A5A /* RSDKUtilsMain */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
-			productName = RSDKUtilsMain;
-		};
 		C9981C7C28CA94FE00B63A5A /* RAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RAnalytics;

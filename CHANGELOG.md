@@ -7,6 +7,9 @@
 * [SDKCF-6210](https://jira.rakuten-it.com/jira/browse/SDKCF-6210): Remove unused DependenciesFactory protocol.
 * [CONRAT-27844](https://jira.rakuten-it.com/jira/browse/CONRAT-27844): Remove unused extension - URLSession+Result.
 
+### Changes
+* [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
+
 ## 9.8.0 (2023-01-30)
 
 ### Features

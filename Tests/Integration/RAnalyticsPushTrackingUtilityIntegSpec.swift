@@ -3,10 +3,7 @@ import Nimble
 import Foundation
 @testable import RAnalytics
 
-#if canImport(RSDKUtils)
-import class RSDKUtils.URLSessionMock
-#else // SPM version
-import class RSDKUtilsTestHelpers.URLSessionMock
+#if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
 

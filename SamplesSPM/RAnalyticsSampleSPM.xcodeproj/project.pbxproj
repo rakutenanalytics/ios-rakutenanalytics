@@ -15,7 +15,6 @@
 		4538B98D2620C626009952BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9832620C625009952BE /* AppDelegate.swift */; };
 		4538B98E2620C626009952BE /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9842620C625009952BE /* TextFieldTableViewCell.swift */; };
 		4538B9902620C626009952BE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4538B9862620C626009952BE /* SwitchTableViewCell.swift */; };
-		456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */ = {isa = PBXBuildFile; productRef = 456625A7271E10F60008135E /* RSDKUtilsMain */; };
 		C9320B4327A160BB009FE6EC /* RDeviceAdvertiser in Frameworks */ = {isa = PBXBuildFile; productRef = C9320B4227A160BB009FE6EC /* RDeviceAdvertiser */; };
 		C96B722A261DBA5F00CF91BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B7229261DBA5F00CF91BA /* Assets.xcassets */; };
 		C96B722D261DBA5F00CF91BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C96B722C261DBA5F00CF91BA /* Preview Assets.xcassets */; };
@@ -42,7 +41,6 @@
 			files = (
 				4538B9772620C5DD009952BE /* RAnalytics in Frameworks */,
 				C9320B4327A160BB009FE6EC /* RDeviceAdvertiser in Frameworks */,
-				456625A8271E10F60008135E /* RSDKUtilsMain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +115,6 @@
 			name = RAnalyticsSampleSPM;
 			packageProductDependencies = (
 				4538B9762620C5DD009952BE /* RAnalytics */,
-				456625A7271E10F60008135E /* RSDKUtilsMain */,
 				C9320B4227A160BB009FE6EC /* RDeviceAdvertiser */,
 			);
 			productName = RAnalyticsSampleSPM;
@@ -149,7 +146,6 @@
 			mainGroup = C96B7219261DBA5E00CF91BA;
 			packageReferences = (
 				4538B9752620C5DD009952BE /* XCRemoteSwiftPackageReference "ios-analytics-framework-snapshots" */,
-				456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */,
 				C9320B4127A160BB009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */,
 			);
 			productRefGroup = C96B7223261DBA5E00CF91BA /* Products */;
@@ -394,14 +390,6 @@
 				kind = branch;
 			};
 		};
-		456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/rakutentech/ios-sdkutils.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
-			};
-		};
 		C9320B4127A160BB009FE6EC /* XCRemoteSwiftPackageReference "ios-device-advertiser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "ssh://git@gitpub.rakuten-it.com:7999/eco/ios-device-advertiser.git";
@@ -417,11 +405,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4538B9752620C5DD009952BE /* XCRemoteSwiftPackageReference "ios-analytics-framework-snapshots" */;
 			productName = RAnalytics;
-		};
-		456625A7271E10F60008135E /* RSDKUtilsMain */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 456625A6271E10F60008135E /* XCRemoteSwiftPackageReference "ios-sdkutils" */;
-			productName = RSDKUtilsMain;
 		};
 		C9320B4227A160BB009FE6EC /* RDeviceAdvertiser */ = {
 			isa = XCSwiftPackageProductDependency;

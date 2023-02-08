@@ -3,12 +3,6 @@ import CoreLocation
 import WebKit
 import AdSupport
 import CoreTelephony
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-import RSDKUtilsMain
-#endif
 
 protocol SimpleDependenciesContainable {
     var notificationHandler: NotificationObservable { get }

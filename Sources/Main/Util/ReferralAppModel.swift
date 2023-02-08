@@ -1,11 +1,5 @@
 import Foundation
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-#endif
-
 // MARK: - Bundleable
 
 public protocol Bundleable {

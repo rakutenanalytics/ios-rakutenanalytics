@@ -1,9 +1,4 @@
 import UIKit
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 @available(iOS 13.0, *)
 extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {

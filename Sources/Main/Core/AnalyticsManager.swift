@@ -2,12 +2,6 @@ import Foundation
 import CoreLocation
 import AdSupport
 import WebKit
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-import class RSDKUtilsMain.LockableObject
-#endif
 
 // swiftlint:disable type_name
 public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool

@@ -1,10 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-import RSDKUtilsMain
-#endif
 import UIKit
 
 private enum SenderConstants {

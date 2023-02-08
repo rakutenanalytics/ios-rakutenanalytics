@@ -1,10 +1,5 @@
 import Foundation
 import CommonCrypto.CommonDigest
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 extension String {
     @available(*, deprecated, message: "This property will be removed in the next major version.")

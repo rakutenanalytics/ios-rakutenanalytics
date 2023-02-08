@@ -6,10 +6,6 @@ import Nimble
 import RAnalyticsTestHelpers
 #endif
 
-#if canImport(RSDKUtilsNimble)
-import RSDKUtilsNimble
-#endif
-
 final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
 
     override func spec() {

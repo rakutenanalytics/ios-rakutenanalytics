@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 /// This class checks if an event should be processed.
 final class EventChecker {
