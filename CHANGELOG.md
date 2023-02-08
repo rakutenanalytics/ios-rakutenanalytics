@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* [CONRAT-27822](https://jira.rakuten-it.com/jira/browse/CONRAT-27822): Update rsdks parameter format.
+
 ### Improvements
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.
 * [SDKCF-6210](https://jira.rakuten-it.com/jira/browse/SDKCF-6210): Remove unused DependenciesFactory protocol.

@@ -76,9 +76,11 @@ private extension SDKTracker {
             extra += cpDictionary
         }
 
-        payload[PayloadParameterKeys.cp] = extra
+        if let sdkDependencies = CoreHelpers.sdkDependencies {
+            extra += sdkDependencies
+        }
 
-        payload[RAnalyticsConstants.sdkDependenciesKey] = CoreHelpers.sdkDependencies
+        payload[PayloadParameterKeys.cp] = extra
 
         payload += state.corePayload
 

@@ -41,20 +41,21 @@ final class CoreHelpersSpec: QuickSpec {
                         expect(appInfo?["deployment_target"]).toNot(beNil())
                     }
 
-                    context("sdkComponentMap contains analytics entry") {
-                        let sdkComponentMap: NSDictionary = ["org.cocoapods.RAnalytics": RModulesListKeys.analyticsValue]
+                    context("sdkComponentMap having app info with parameter frameworks") {
+                        let sdkComponentMap: NSDictionary = [:]
 
-                        it("should return a dictionary with sdk info entry") {
+                        it("should return a dictionary not containing RAnalyticsFrameworkIdentifiers") {
                             let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
+                            let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
-                            expect(dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]).toNot(beNil())
-                        }
-
-                        it("should return a dictionary with sdk info's analytics entry") {
-                            let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
-
-                            expect((dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any])?[RModulesListKeys.analyticsValue])
-                                .toNot(beNil())
+                            expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.appleIdentifier])
+                                .to(beNil())
+                            expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.analyticsIdentifier])
+                                .to(beNil())
+                            expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.analyticsPublicFrameworkIdentifier])
+                                .to(beNil())
+                            expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.sdkUtilsIdentifier])
+                                .to(beNil())
                         }
                     }
 
@@ -67,11 +68,11 @@ final class CoreHelpersSpec: QuickSpec {
                             expect(dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]).toNot(beNil())
                         }
 
-                        it("should return a dictionary with sdk info's analytics entry") {
+                        it("should return a dictionary with sdk info's not containing analytics entry") {
                             let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
 
                             expect((dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any])?[RModulesListKeys.analyticsValue])
-                                .toNot(beNil())
+                                .to(beNil())
                         }
                     }
                 }
@@ -110,11 +111,11 @@ final class CoreHelpersSpec: QuickSpec {
                         expect(dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]).toNot(beNil())
                     }
 
-                    it("should return a dictionary with sdk info's analytics entry") {
+                    it("should return a dictionary with sdk info's not containing analytics entry") {
                         let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
 
                         expect((dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any])?[RModulesListKeys.analyticsValue])
-                            .toNot(beNil())
+                            .to(beNil())
                     }
                 }
             }

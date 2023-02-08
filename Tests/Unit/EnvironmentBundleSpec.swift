@@ -280,7 +280,6 @@ final class EnvironmentBundleSpec: QuickSpec {
                     expect(sdkComponentMap?["org.cocoapods.RAnalytics"] as? String).to(equal("analytics"))
                     expect(sdkComponentMap?["org.cocoapods.RPushPNP"] as? String).to(equal("pushpnp"))
                     expect(sdkComponentMap?["org.cocoapods.RInAppMessaging"] as? String).to(equal("inappmessaging"))
-                    expect(sdkComponentMap?["org.cocoapods.RSDKUtils"] as? String).to(equal("sdkutils"))
                 }
             }
 

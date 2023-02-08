@@ -5,7 +5,14 @@ enum RAnalyticsConstants {
     static let rAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
     static let rAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
     static let appInfoKey = "app_info"
-    static let sdkDependenciesKey = "rsdks"
+    static let sdkDependenciesPrefixKey = "rsdks"
+}
+
+enum RAnalyticsFrameworkIdentifiers {
+    static let appleIdentifier = "com.apple"
+    static let analyticsIdentifier = "org.cocoapods.RAnalytics"
+    static let analyticsPublicFrameworkIdentifier = "com.rakuten.RAnalytics"
+    static let sdkUtilsIdentifier = "org.cocoapods.RSDKUtils"
 }
 
 enum RModulesListKeys {
@@ -45,20 +52,19 @@ final class CoreHelpers {
         var otherFrameworks = [String: Any]()
         Bundle.allFrameworks.forEach {
             guard let identifier = $0.bundleIdentifier,
-                  !identifier.hasPrefix("com.apple.") else {
+                  !identifier.hasPrefix(RAnalyticsFrameworkIdentifiers.appleIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.analyticsIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.analyticsPublicFrameworkIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.sdkUtilsIdentifier) else {
                 return
             }
             let version = $0.object(forInfoDictionaryKey: "CFBundleShortVersionString")
             if let sdkComponentMapIdentifier = sdkComponentMap?.object(forKey: identifier) as? String {
-                sdkInfo[sdkComponentMapIdentifier] = version
+                let sdkDependencyComponentIdentifier = "\(RAnalyticsConstants.sdkDependenciesPrefixKey)_\(sdkComponentMapIdentifier)"
+                sdkInfo[sdkDependencyComponentIdentifier] = version
             } else {
                 otherFrameworks[identifier] = version
             }
-        }
-
-        // SDKCF-4765: This part of code fixes the missing analytics entry in rsdks for the public RAnalytics SDK
-        if (sdkInfo[RModulesListKeys.analyticsValue] as? String).isEmpty {
-            sdkInfo[RModulesListKeys.analyticsValue] = Constants.sdkVersion
         }
 
         // App Info

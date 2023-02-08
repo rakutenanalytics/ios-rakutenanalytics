@@ -107,20 +107,18 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 it("should process the install event") {
                     let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.install, parameters: nil)
                     var appInfoPayload: String?
-                    var sdkInfoPayload: [String: Any]?
+                    var sdkDependencies: [Dictionary<String, Any>.Keys.Element]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
                         let cp = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         appInfoPayload = cp?[RAnalyticsConstants.appInfoKey] as? String
-
-                        sdkInfoPayload = $0.first?[RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
+                        sdkDependencies = cp?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
                     }
                     expect(appInfoPayload).toEventuallyNot(beNil())
                     expect(appInfoPayload?.contains("xcode")).to(beTrue())
                     expect(appInfoPayload?.contains("iphonesimulator")).to(beTrue())
 
-                    expect(sdkInfoPayload).toNot(beNil())
-                    expect(sdkInfoPayload?["analytics"] as? String).toNot(beNil())
+                    expect(sdkDependencies?.isEmpty).to(beTrue())
                 }
 
                 it("should process the sessionStart event") {
@@ -146,13 +144,17 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 it("should process the applicationUpdate event") {
                     let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.applicationUpdate, parameters: nil)
                     var cpPayload: [String: Any]?
+                    var sdkDependencies: [Dictionary<String, Any>.Keys.Element]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.applicationUpdate) {
                         cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        sdkDependencies = cpPayload?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
                     }
                     expect(cpPayload).toEventuallyNot(beNil())
                     expect(cpPayload?["launches_since_last_upgrade"] as? Int).to(beGreaterThan(0))
                     expect(cpPayload?["days_since_last_upgrade"] as? Int).to(beGreaterThan(0))
+
+                    expect(sdkDependencies?.isEmpty).to(beTrue())
                 }
 
                 context("Login") {

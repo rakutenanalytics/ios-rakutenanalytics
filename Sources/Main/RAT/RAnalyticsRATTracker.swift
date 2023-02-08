@@ -512,7 +512,9 @@ extension RAnalyticsRATTracker {
 
         // MARK: _rem_install
         case RAnalyticsEvent.Name.install:
-            payload[RAnalyticsConstants.sdkDependenciesKey] = CoreHelpers.sdkDependencies
+            if let sdkDependencies = CoreHelpers.sdkDependencies {
+                payload[PayloadParameterKeys.cp] = sdkDependencies
+            }
             extra.addEntries(from: event.installParameters)
 
         // MARK: _rem_launch
@@ -524,6 +526,9 @@ extension RAnalyticsRATTracker {
 
         // MARK: _rem_update
         case RAnalyticsEvent.Name.applicationUpdate:
+            if let sdkDependencies = CoreHelpers.sdkDependencies {
+                payload[PayloadParameterKeys.cp] = sdkDependencies
+            }
             extra.addEntries(from: state.applicationUpdateParameters)
 
         // MARK: _rem_login

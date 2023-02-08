@@ -99,9 +99,8 @@ final class SDKTrackerSpec: QuickSpec {
                     expect(appInfo?.contains("xcode")).to(beTrue())
                     expect(appInfo?.contains("iphonesimulator")).to(beTrue())
 
-                    let sdkInfo = jsonArray?[0][RAnalyticsConstants.sdkDependenciesKey] as? [String: Any]
-                    expect(sdkInfo).toNot(beNil())
-                    expect(sdkInfo?["analytics"] as? String).toNot(beNil())
+                    let sdkDependencies = cpDictionary?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
+                    expect(sdkDependencies?.isEmpty).to(beTrue())
                 }
             }
         }

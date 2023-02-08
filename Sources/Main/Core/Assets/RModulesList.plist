@@ -8,7 +8,5 @@
 	<string>pushpnp</string>
 	<key>org.cocoapods.RInAppMessaging</key>
 	<string>inappmessaging</string>
-	<key>org.cocoapods.RSDKUtils</key>
-	<string>sdkutils</string>
 </dict>
 </plist>
