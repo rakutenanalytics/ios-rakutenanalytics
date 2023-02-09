@@ -27,7 +27,20 @@ final class CoreHelpers {
         static let sdkVersion = "9.9.0-snapshot"
     }
 
-    static func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap) -> [String: Any]? {
+    /// Collects application and SDKs information.
+    ///
+    /// - Parameters:
+    ///    - sdkComponentMap: a dictionary of SDKs (defined in `RModulesList.plist`).
+    ///    Example:
+    ///    ["org.cocoapods.RInAppMessaging": "inappmessaging", "org.cocoapods.RPushPNP": "pushpnp"]
+    ///
+    ///    - allFrameworks: an array of `Bundle` where each instance defines a framework.
+    ///
+    /// - returns: a dictionary of collected informations containing:
+    ///     - a dictionary of app informations entries (`xcode`, `sdk`, `frameworks`, `deployment_target`) set for the key `_RAnalyticsAppInfoKey`
+    ///     - a dictionary of loaded frameworks defined in `RModulesList.plist` set for the key `_RAnalyticsSDKInfoKey`
+    static func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap,
+                                  allFrameworks: [EnvironmentBundle] = Bundle.allFrameworks) -> [String: Any]? {
         var dict = [String: Any]()
 
         // Collect build environment (Xcode version and build SDK)
@@ -50,7 +63,7 @@ final class CoreHelpers {
         // Collect information on frameworks shipping with the app
         var sdkInfo = [String: Any]()
         var otherFrameworks = [String: Any]()
-        Bundle.allFrameworks.forEach {
+        allFrameworks.forEach {
             guard let identifier = $0.bundleIdentifier,
                   !identifier.hasPrefix(RAnalyticsFrameworkIdentifiers.appleIdentifier),
                   !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.analyticsIdentifier),

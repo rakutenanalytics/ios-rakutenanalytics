@@ -9,6 +9,7 @@
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.
 * [SDKCF-6210](https://jira.rakuten-it.com/jira/browse/SDKCF-6210): Remove unused DependenciesFactory protocol.
 * [CONRAT-27844](https://jira.rakuten-it.com/jira/browse/CONRAT-27844): Remove unused extension - URLSession+Result.
+* [CONRAT-27882](https://jira.rakuten-it.com/jira/browse/CONRAT-27882): Improve rsdks tests in CoreHelpersSpec by injecting Bundle.allFrameworks in CoreHelpers.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.

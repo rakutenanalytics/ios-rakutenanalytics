@@ -553,10 +553,29 @@ public final class BundleMock: NSObject, EnvironmentBundle {
         object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
     }
 
-    public var shortVersion: String? = "2.0"
+    public var shortVersion: String? {
+        get {
+            dictionary?["CFBundleShortVersionString"] as? String
+        }
+
+        set(newValue) {
+            dictionary?["CFBundleShortVersionString"] = newValue
+        }
+    }
+
     public var version: String? = "1"
     public var applicationSceneManifest: RAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
+
+    public override init() {
+        self.dictionary = [String: Any]()
+    }
+
+    public init(bundleIdentifier: String, shortVersion: String) {
+        self.bundleIdentifier = bundleIdentifier
+        self.dictionary = [String: Any]()
+        dictionary?["CFBundleShortVersionString"] = shortVersion
+    }
 
     /// Factory function for creating a mocked bundle
     public static func create() -> BundleMock {

@@ -41,7 +41,102 @@ final class CoreHelpersSpec: QuickSpec {
                         expect(appInfo?["deployment_target"]).toNot(beNil())
                     }
 
-                    context("sdkComponentMap having app info with parameter frameworks") {
+                    context("sdkComponentMap contains analytics entries") {
+                        let sdkComponentMap: NSDictionary = ["org.cocoapods.RAnalytics": "analytics"]
+
+                        // Note: this case should not happen as CoreHelpers is called from RAnalytics framework.
+                        context("The app is built without SDKs") {
+                            let allFrameworks: [EnvironmentBundle] = []
+
+                            it("should return a dictionary with an empty sdk info") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(beEmpty())
+                            }
+                        }
+
+                        context("The app is built with RAnalytics") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RAnalytics",
+                                                                                 shortVersion: "9.8.0")]
+
+                            it("should return a dictionary with empty sdk info") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(beEmpty())
+                            }
+                        }
+                    }
+
+                    context("sdkComponentMap contains inappmessaging and pushpnp entries") {
+                        let sdkComponentMap: NSDictionary = ["org.cocoapods.RInAppMessaging": "inappmessaging",
+                                                             "org.cocoapods.RPushPNP": "pushpnp"]
+
+                        // Note: this case should not happen as CoreHelpers is called from RAnalytics framework.
+                        context("The app is built without SDKs") {
+                            let allFrameworks: [EnvironmentBundle] = []
+
+                            it("should return a dictionary with an empty sdk info") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(beEmpty())
+                            }
+                        }
+
+                        context("The app is built with RInAppMessaging") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RInAppMessaging",
+                                                                                 shortVersion: "7.2.0")]
+
+                            it("should return a dictionary with sdk info containing rsdks_inappmessaging entry") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(equal(["rsdks_inappmessaging": "7.2.0"]))
+                            }
+                        }
+
+                        context("The app is built with RPushPNP") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RPushPNP", shortVersion: "10.0.0")]
+
+                            it("should return a dictionary with sdk info containing rsdks_pushpnp entry") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(equal(["rsdks_pushpnp": "10.0.0"]))
+                            }
+                        }
+
+                        context("The app is built with RInAppMessaging and RPushPNP") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RInAppMessaging",
+                                                                                 shortVersion: "7.2.0"),
+                                                                      BundleMock(bundleIdentifier: "org.cocoapods.RPushPNP",
+                                                                                 shortVersion: "10.0.0")]
+
+                            it("should return a dictionary with sdk info containing rsdks_inappmessaging and rsdks_pushpnp entries") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(equal(["rsdks_inappmessaging": "7.2.0",
+                                                                            "rsdks_pushpnp": "10.0.0"]))
+                            }
+                        }
+                    }
+
+                    context("sdkComponentMap is empty") {
                         let sdkComponentMap: NSDictionary = [:]
 
                         it("should return a dictionary not containing RAnalyticsFrameworkIdentifiers") {
@@ -57,15 +152,12 @@ final class CoreHelpersSpec: QuickSpec {
                             expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.sdkUtilsIdentifier])
                                 .to(beNil())
                         }
-                    }
 
-                    context("sdkComponentMap does not contain analytics entry") {
-                        let sdkComponentMap: NSDictionary = [:]
-
-                        it("should return a dictionary with sdk info entry") {
+                        it("should return a dictionary with an empty sdk info entry") {
                             let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
+                            let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: String]
 
-                            expect(dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]).toNot(beNil())
+                            expect(sdks).to(beEmpty())
                         }
 
                         it("should return a dictionary with sdk info's not containing analytics entry") {
