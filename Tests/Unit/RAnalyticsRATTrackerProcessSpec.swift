@@ -144,15 +144,21 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 it("should process the applicationUpdate event") {
                     let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.applicationUpdate, parameters: nil)
                     var cpPayload: [String: Any]?
+                    var appInfoPayload: String?
                     var sdkDependencies: [Dictionary<String, Any>.Keys.Element]?
 
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.applicationUpdate) {
                         cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        appInfoPayload = cpPayload?[RAnalyticsConstants.appInfoKey] as? String
                         sdkDependencies = cpPayload?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
                     }
                     expect(cpPayload).toEventuallyNot(beNil())
                     expect(cpPayload?["launches_since_last_upgrade"] as? Int).to(beGreaterThan(0))
                     expect(cpPayload?["days_since_last_upgrade"] as? Int).to(beGreaterThan(0))
+
+                    expect(appInfoPayload).toEventuallyNot(beNil())
+                    expect(appInfoPayload?.contains("xcode")).to(beTrue())
+                    expect(appInfoPayload?.contains("iphonesimulator")).to(beTrue())
 
                     expect(sdkDependencies?.isEmpty).to(beTrue())
                 }

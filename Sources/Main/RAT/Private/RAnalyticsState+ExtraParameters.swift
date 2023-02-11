@@ -18,6 +18,9 @@ extension RAnalyticsState {
     var applicationUpdateParameters: [String: Any] {
         var extra = [String: Any]()
 
+        if let appInfo = CoreHelpers.appInfo {
+            extra[RAnalyticsConstants.appInfoKey] = appInfo
+        }
         if !lastVersion.isEmpty {
             extra["previous_version"] = lastVersion
         }
