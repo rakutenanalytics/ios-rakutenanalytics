@@ -75,7 +75,9 @@ final class CoreHelpersSpec: QuickSpec {
 
                     context("sdkComponentMap contains inappmessaging and pushpnp entries") {
                         let sdkComponentMap: NSDictionary = ["org.cocoapods.RInAppMessaging": "inappmessaging",
-                                                             "org.cocoapods.RPushPNP": "pushpnp"]
+                                                             "org.cocoapods.RPushPNP": "pushpnp",
+                                                             "org.cocoapods.GeoSDK": "geo",
+                                                             "org.cocoapods.Pitari": "pitari"]
 
                         // Note: this case should not happen as CoreHelpers is called from RAnalytics framework.
                         context("The app is built without SDKs") {
@@ -118,20 +120,53 @@ final class CoreHelpersSpec: QuickSpec {
                             }
                         }
 
-                        context("The app is built with RInAppMessaging and RPushPNP") {
+                        context("The app is built with GeoSDK") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.GeoSDK", shortVersion: "2.2.0")]
+
+                            it("should return a dictionary with sdk info containing rsdks_geo entry") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(equal(["rsdks_geo": "2.2.0"]))
+                            }
+                        }
+
+                        context("The app is built with Pitari") {
+                            let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.Pitari", shortVersion: "3.0.0")]
+
+                            it("should return a dictionary with sdk info containing rsdks_pitari entry") {
+                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                               allFrameworks: allFrameworks)
+
+                                let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
+
+                                expect(sdks as? [String: String]).to(equal(["rsdks_pitari": "3.0.0"]))
+                            }
+                        }
+
+                        context("The app is built with RInAppMessaging RPushPNP, GeoSDK and Pitari") {
                             let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RInAppMessaging",
                                                                                  shortVersion: "7.2.0"),
                                                                       BundleMock(bundleIdentifier: "org.cocoapods.RPushPNP",
-                                                                                 shortVersion: "10.0.0")]
+                                                                                 shortVersion: "10.0.0"),
+                                                                      BundleMock(bundleIdentifier: "org.cocoapods.GeoSDK",
+                                                                                                                    shortVersion: "2.2.0"),
+                                                                      BundleMock(bundleIdentifier: "org.cocoapods.Pitari",
+                                                                                 shortVersion: "3.0.0")]
 
-                            it("should return a dictionary with sdk info containing rsdks_inappmessaging and rsdks_pushpnp entries") {
+                            // swiftlint:disable:next line_length
+                            it("should return a dictionary with sdk info containing rsdks_inappmessaging rsdks_pushpnp, rsdks_geo and rsdks_pitari entries") {
                                 let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
                                                                                allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
                                 expect(sdks as? [String: String]).to(equal(["rsdks_inappmessaging": "7.2.0",
-                                                                            "rsdks_pushpnp": "10.0.0"]))
+                                                                            "rsdks_pushpnp": "10.0.0",
+                                                                            "rsdks_geo": "2.2.0",
+                                                                            "rsdks_pitari": "3.0.0"]))
                             }
                         }
                     }

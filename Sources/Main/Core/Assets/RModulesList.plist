@@ -6,5 +6,9 @@
 	<string>pushpnp</string>
 	<key>org.cocoapods.RInAppMessaging</key>
 	<string>inappmessaging</string>
+	<key>org.cocoapods.GeoSDK</key>
+	<string>geo</string>
+	<key>org.cocoapods.Pitari</key>
+	<string>pitari</string>
 </dict>
 </plist>
