@@ -584,6 +584,15 @@ let webView = WKWebView()
 webView.enableAppUserAgent(false)
 ```
 
+## Internal JSON serialization
+
+As there is a bug in the native JSON serialization for floating numbers on iOS, the internal JSON serialization should be used if your iOS app tracks events containing floating numbers in the events parameters.
+In this specific case, your app's `Info.plist` should contain the key `RATEnableInternalSerialization` set to `true`:
+```
+<key>RATEnableInternalSerialization</key>
+<true/>
+```
+
 ## Event triggers
 
 ### UIApplication NSNotification

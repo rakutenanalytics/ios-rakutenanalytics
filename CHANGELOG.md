@@ -15,6 +15,7 @@
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
+* [CONRAT-27901](https://jira.rakuten-it.com/jira/browse/CONRAT-27901): Create a documentation for Internal JSON Serialization in ADVANCED_USAGE.md
 
 ## 9.8.0 (2023-01-30)
 
