@@ -19,7 +19,30 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
             let dependenciesContainer = SimpleContainerMock()
+            let appInfoMock = "{\"xcode\":\"1410.14B47a\",\"sdk\":\"iphonesimulator16.1.internal\",\"deployment_target\":\"11.0\"}"
+            let sdkDependenciesMock = ["rsdks_inappmessaging": "7.2.0",
+                                       "rsdks_pushpnp": "10.0.0",
+                                       "rsdks_geo": "2.2.0",
+                                       "rsdks_pitari": "3.0.0"]
+            let coreInfosCollectorMock = CoreInfosCollectorMock(appInfo: appInfoMock, sdkDependencies: sdkDependenciesMock)
             var ratTracker: RAnalyticsRATTracker!
+
+            func verifyCoreInfos(for eventName: String) {
+                let event = RAnalyticsEvent(name: eventName, parameters: nil)
+                var appInfoPayload: String?
+                var sdkDependencies: [String: String]?
+
+                expecter.expectEvent(event, state: Tracking.defaultState, equal: eventName) {
+                    let cp = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                    appInfoPayload = cp?.appInfo
+                    sdkDependencies = cp?.sdkDependencies
+                }
+
+                expect(appInfoPayload).toEventuallyNot(beNil())
+                expect(appInfoPayload).to(equal(appInfoMock))
+
+                expect(sdkDependencies).to(equal(sdkDependenciesMock))
+            }
 
             beforeEach {
                 let databaseTableName = "testTableName_RAnalyticsRATTrackerSpec"
@@ -37,6 +60,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 dependenciesContainer.deviceCapability = DeviceMock()
                 dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
                 dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
+                dependenciesContainer.coreInfosCollector = coreInfosCollectorMock
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)
@@ -104,21 +128,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.initialLaunch)
                 }
 
-                it("should process the install event") {
-                    let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.install, parameters: nil)
-                    var appInfoPayload: String?
-                    var sdkDependencies: [Dictionary<String, Any>.Keys.Element]?
-
-                    expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
-                        let cp = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
-                        appInfoPayload = cp?[RAnalyticsConstants.appInfoKey] as? String
-                        sdkDependencies = cp?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
-                    }
-                    expect(appInfoPayload).toEventuallyNot(beNil())
-                    expect(appInfoPayload?.contains("xcode")).to(beTrue())
-                    expect(appInfoPayload?.contains("iphonesimulator")).to(beTrue())
-
-                    expect(sdkDependencies?.isEmpty).to(beTrue())
+                it("should process the install event with Core Infos") {
+                    verifyCoreInfos(for: RAnalyticsEvent.Name.install)
                 }
 
                 it("should process the sessionStart event") {
@@ -141,26 +152,23 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.sessionEnd)
                 }
 
-                it("should process the applicationUpdate event") {
-                    let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.applicationUpdate, parameters: nil)
-                    var cpPayload: [String: Any]?
-                    var appInfoPayload: String?
-                    var sdkDependencies: [Dictionary<String, Any>.Keys.Element]?
-
-                    expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.applicationUpdate) {
-                        cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
-                        appInfoPayload = cpPayload?[RAnalyticsConstants.appInfoKey] as? String
-                        sdkDependencies = cpPayload?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
+                context("applicationUpdate event") {
+                    it("should process the applicationUpdate event with Core Infos") {
+                        verifyCoreInfos(for: RAnalyticsEvent.Name.applicationUpdate)
                     }
-                    expect(cpPayload).toEventuallyNot(beNil())
-                    expect(cpPayload?["launches_since_last_upgrade"] as? Int).to(beGreaterThan(0))
-                    expect(cpPayload?["days_since_last_upgrade"] as? Int).to(beGreaterThan(0))
 
-                    expect(appInfoPayload).toEventuallyNot(beNil())
-                    expect(appInfoPayload?.contains("xcode")).to(beTrue())
-                    expect(appInfoPayload?.contains("iphonesimulator")).to(beTrue())
+                    it("should process the applicationUpdate event with launches_since_last_upgrade and days_since_last_upgrade") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.applicationUpdate, parameters: nil)
+                        var cpPayload: [String: Any]?
 
-                    expect(sdkDependencies?.isEmpty).to(beTrue())
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.applicationUpdate) {
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        }
+
+                        expect(cpPayload).toEventuallyNot(beNil())
+                        expect(cpPayload?["launches_since_last_upgrade"] as? Int).to(beGreaterThan(0))
+                        expect(cpPayload?["days_since_last_upgrade"] as? Int).to(beGreaterThan(0))
+                    }
                 }
 
                 context("Login") {

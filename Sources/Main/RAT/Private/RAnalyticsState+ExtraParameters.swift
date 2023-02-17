@@ -15,11 +15,11 @@ extension RAnalyticsState {
 
     // MARK: - Application Update
 
-    var applicationUpdateParameters: [String: Any] {
+    func applicationUpdateParameters(with appInfo: String?) -> [String: Any] {
         var extra = [String: Any]()
 
-        if let appInfo = CoreHelpers.appInfo {
-            extra[RAnalyticsConstants.appInfoKey] = appInfo
+        if let appInfoNotOptional = appInfo {
+            extra[RAnalyticsConstants.appInfoKey] = appInfoNotOptional
         }
         if !lastVersion.isEmpty {
             extra["previous_version"] = lastVersion

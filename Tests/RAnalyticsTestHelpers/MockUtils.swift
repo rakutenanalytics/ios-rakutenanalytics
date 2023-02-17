@@ -278,6 +278,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                             databaseParentDirectory: .documentDirectory)
     }()
     public var pushEventHandler: PushEventHandleable
+    public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
 
     public override init() {
         let appGroupId = bundle.appGroupId
@@ -604,4 +605,20 @@ public enum MainDependenciesContainer {
         manager.add(ratTracker)
         return manager
     }()
+}
+
+// MARK: - CoreInfosCollectorMock
+
+public struct CoreInfosCollectorMock: CoreInfosCollectable {
+    public let appInfo: String?
+    public let sdkDependencies: [String: Any]?
+
+    public init(appInfo: String?, sdkDependencies: [String: Any]?) {
+        self.appInfo = appInfo
+        self.sdkDependencies = sdkDependencies
+    }
+
+    public func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [RAnalytics.EnvironmentBundle]) -> [String: Any]? {
+        nil
+    }
 }

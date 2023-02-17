@@ -7,6 +7,7 @@ enum SDKTrackerConstants {
 
 final class SDKTracker: NSObject, Tracker {
     private var sender: RAnalyticsSender
+    private let coreInfosCollector: CoreInfosCollectable
 
     var endpointURL: URL? {
         get {
@@ -20,7 +21,8 @@ final class SDKTracker: NSObject, Tracker {
     init?(bundle: EnvironmentBundle,
           session: SwiftySessionable,
           batchingDelay: TimeInterval = 60.0,
-          databaseConfiguration: DatabaseConfigurable) {
+          databaseConfiguration: DatabaseConfigurable,
+          coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()) {
         guard let endpointURL = bundle.endpointAddress else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.sdkTrackerErrorDomain,
                                              code: ErrorCode.sdkTrackerCreationFailed.rawValue,
@@ -35,6 +37,8 @@ final class SDKTracker: NSObject, Tracker {
                                   bundle: bundle,
                                   session: session)
         sender.setBatchingDelayBlock(batchingDelay) // default is 1 minute.
+
+        self.coreInfosCollector = coreInfosCollector
 
         super.init()
 
@@ -62,7 +66,7 @@ private extension SDKTracker {
         let eventName = event.name
 
         var payload: [String: Any] = [:]
-        var extra: [String: Any] = event.installParameters
+        var extra: [String: Any] = event.installParameters(with: coreInfosCollector.appInfo)
 
         payload[PayloadParameterKeys.acc] = 477
         payload[PayloadParameterKeys.aid] = 1
@@ -76,7 +80,7 @@ private extension SDKTracker {
             extra += cpDictionary
         }
 
-        if let sdkDependencies = CoreHelpers.sdkDependencies {
+        if let sdkDependencies = coreInfosCollector.sdkDependencies {
             extra += sdkDependencies
         }
 

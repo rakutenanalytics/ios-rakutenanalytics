@@ -20,6 +20,12 @@ final class SDKTrackerSpec: QuickSpec {
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
             var databaseConfiguration: DatabaseConfiguration!
+            let appInfoMock = "{\"xcode\":\"1410.14B47b\",\"sdk\":\"iphonesimulator14.0.internal\",\"deployment_target\":\"14.0\"}"
+            let sdkDependenciesMock = ["rsdks_inappmessaging": "6.0.0",
+                                       "rsdks_pushpnp": "8.0.0",
+                                       "rsdks_geo": "1.1.0",
+                                       "rsdks_pitari": "1.0.0"]
+            let coreInfosCollectorMock = CoreInfosCollectorMock(appInfo: appInfoMock, sdkDependencies: sdkDependenciesMock)
 
             beforeEach {
                 urlSession.urlRequest = nil
@@ -63,7 +69,7 @@ final class SDKTrackerSpec: QuickSpec {
                 let pageVisitEvent = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
                 let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB", deviceIdentifier: "deviceId")
 
-                it("should not process the event when the event is not _rem_install") {
+                it("should not track _rem_internal_install when the processed event is not _rem_install") {
                     bundle.endpointAddress = URL(string: "https://endpoint.co.jp")!
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
@@ -73,12 +79,13 @@ final class SDKTrackerSpec: QuickSpec {
                     expect(urlSession.urlRequest?.httpBody).to(beNil())
                 }
 
-                it("should process the event when the event is _rem_install") {
+                it("should track _rem_internal_install when the processed event is _rem_install") {
                     bundle.endpointAddress = URL(string: "https://endpoint.co.jp")!
                     let sdkTracker = SDKTracker(bundle: bundle,
                                                 session: urlSession,
                                                 batchingDelay: 1,
-                                                databaseConfiguration: databaseConfiguration)
+                                                databaseConfiguration: databaseConfiguration,
+                                                coreInfosCollector: coreInfosCollectorMock)
 
                     expect(sdkTracker?.process(event: installEvent, state: state)).to(beTrue())
 
@@ -92,15 +99,14 @@ final class SDKTrackerSpec: QuickSpec {
                     expect(jsonArray?[0][PayloadParameterKeys.acc] as? Int).to(equal(477))
                     expect(jsonArray?[0][PayloadParameterKeys.aid] as? Int).to(equal(1))
 
+                    expect(jsonArray?[0][PayloadParameterKeys.etype] as? String).to(equal("_rem_internal_install"))
+
                     let cpDictionary = jsonArray?[0][PayloadParameterKeys.cp] as? [String: Any]
                     expect(cpDictionary).toNot(beNil())
 
-                    let appInfo = cpDictionary?[RAnalyticsConstants.appInfoKey] as? String
-                    expect(appInfo?.contains("xcode")).to(beTrue())
-                    expect(appInfo?.contains("iphonesimulator")).to(beTrue())
+                    expect(cpDictionary?.appInfo).to(equal(appInfoMock))
 
-                    let sdkDependencies = cpDictionary?.keys.filter({ $0.hasPrefix(RAnalyticsConstants.sdkDependenciesPrefixKey)})
-                    expect(sdkDependencies?.isEmpty).to(beTrue())
+                    expect(cpDictionary?.sdkDependencies).to(equal(sdkDependenciesMock))
                 }
             }
         }

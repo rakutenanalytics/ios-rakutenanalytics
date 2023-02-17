@@ -19,6 +19,7 @@ enum RModulesListKeys {
     static let analyticsValue = "analytics"
 }
 
+/// - Note: `sdkVersion`'s value is updated by `bundle exec fastlane ios commit_sdk_ver_bump version:...`
 final class CoreHelpers {
     enum Constants {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
@@ -26,7 +27,15 @@ final class CoreHelpers {
         /// Current RAT SDK version
         static let sdkVersion = "9.9.0-snapshot"
     }
+}
 
+protocol CoreInfosCollectable {
+    func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [EnvironmentBundle]) -> [String: Any]?
+    var appInfo: String? { get }
+    var sdkDependencies: [String: Any]? { get }
+}
+
+struct CoreInfosCollector: CoreInfosCollectable {
     /// Collects application and SDKs information.
     ///
     /// - Parameters:
@@ -39,8 +48,8 @@ final class CoreHelpers {
     /// - returns: a dictionary of collected informations containing:
     ///     - a dictionary of app informations entries (`xcode`, `sdk`, `frameworks`, `deployment_target`) set for the key `_RAnalyticsAppInfoKey`
     ///     - a dictionary of loaded frameworks defined in `RModulesList.plist` set for the key `_RAnalyticsSDKInfoKey`
-    static func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap,
-                                  allFrameworks: [EnvironmentBundle] = Bundle.allFrameworks) -> [String: Any]? {
+    func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap,
+                           allFrameworks: [EnvironmentBundle] = Bundle.allFrameworks) -> [String: Any]? {
         var dict = [String: Any]()
 
         // Collect build environment (Xcode version and build SDK)
@@ -101,8 +110,8 @@ final class CoreHelpers {
         return dict
     }
 
-    static var appInfo: String? {
-        guard let collectedInfos = CoreHelpers.getCollectedInfos(),
+    var appInfo: String? {
+        guard let collectedInfos = getCollectedInfos(),
               let appInfo = collectedInfos[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any],
               !appInfo.isEmpty,
               let data = try? JSONSerialization.data(withJSONObject: appInfo, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
@@ -111,8 +120,8 @@ final class CoreHelpers {
         return String(data: data, encoding: .utf8)
     }
 
-    static var sdkDependencies: [String: Any]? {
-        guard let collectedInfos = CoreHelpers.getCollectedInfos(),
+    var sdkDependencies: [String: Any]? {
+        guard let collectedInfos = getCollectedInfos(),
               let sdkInfo = collectedInfos[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any],
               !sdkInfo.isEmpty else {
             return nil

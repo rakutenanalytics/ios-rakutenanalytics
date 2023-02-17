@@ -6,27 +6,29 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-// MARK: - CoreHelpersSpec
+// MARK: - CoreInfosCollectorSpec
 
-final class CoreHelpersSpec: QuickSpec {
+final class CoreInfosCollectorSpec: QuickSpec {
     override func spec() {
-        describe("CoreHelpers") {
+        describe("CoreInfosCollector") {
+            let collector = CoreInfosCollector()
+
             describe("getCollectedInfos()") {
                 context("sdkComponentMap is not nil") {
                     it("should return a non-nil dictionary") {
-                        let dictionary = CoreHelpers.getCollectedInfos()
+                        let dictionary = collector.getCollectedInfos()
 
                         expect(dictionary).toNot(beNil())
                     }
 
                     it("should return a dictionary with app info entry") {
-                        let dictionary = CoreHelpers.getCollectedInfos()
+                        let dictionary = collector.getCollectedInfos()
 
                         expect(dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey]).toNot(beNil())
                     }
 
                     it("should return a dictionary with app info's parameters entries") {
-                        let dictionary = CoreHelpers.getCollectedInfos()
+                        let dictionary = collector.getCollectedInfos()
                         let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
                         expect(appInfo?["xcode"]).toNot(beNil())
@@ -49,8 +51,8 @@ final class CoreHelpersSpec: QuickSpec {
                             let allFrameworks: [EnvironmentBundle] = []
 
                             it("should return a dictionary with an empty sdk info") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -63,8 +65,8 @@ final class CoreHelpersSpec: QuickSpec {
                                                                                  shortVersion: "9.8.0")]
 
                             it("should return a dictionary with empty sdk info") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -84,8 +86,8 @@ final class CoreHelpersSpec: QuickSpec {
                             let allFrameworks: [EnvironmentBundle] = []
 
                             it("should return a dictionary with an empty sdk info") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -98,8 +100,8 @@ final class CoreHelpersSpec: QuickSpec {
                                                                                  shortVersion: "7.2.0")]
 
                             it("should return a dictionary with sdk info containing rsdks_inappmessaging entry") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -111,8 +113,8 @@ final class CoreHelpersSpec: QuickSpec {
                             let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.RPushPNP", shortVersion: "10.0.0")]
 
                             it("should return a dictionary with sdk info containing rsdks_pushpnp entry") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -124,8 +126,8 @@ final class CoreHelpersSpec: QuickSpec {
                             let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.GeoSDK", shortVersion: "2.2.0")]
 
                             it("should return a dictionary with sdk info containing rsdks_geo entry") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -137,8 +139,8 @@ final class CoreHelpersSpec: QuickSpec {
                             let allFrameworks: [EnvironmentBundle] = [BundleMock(bundleIdentifier: "org.cocoapods.Pitari", shortVersion: "3.0.0")]
 
                             it("should return a dictionary with sdk info containing rsdks_pitari entry") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -158,8 +160,8 @@ final class CoreHelpersSpec: QuickSpec {
 
                             // swiftlint:disable:next line_length
                             it("should return a dictionary with sdk info containing rsdks_inappmessaging rsdks_pushpnp, rsdks_geo and rsdks_pitari entries") {
-                                let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap,
-                                                                               allFrameworks: allFrameworks)
+                                let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap,
+                                                                             allFrameworks: allFrameworks)
 
                                 let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]
 
@@ -175,7 +177,7 @@ final class CoreHelpersSpec: QuickSpec {
                         let sdkComponentMap: NSDictionary = [:]
 
                         it("should return a dictionary not containing RAnalyticsFrameworkIdentifiers") {
-                            let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
+                            let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap)
                             let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
                             expect((appInfo?["frameworks"] as? [String: Any])?[RAnalyticsFrameworkIdentifiers.appleIdentifier])
@@ -189,14 +191,14 @@ final class CoreHelpersSpec: QuickSpec {
                         }
 
                         it("should return a dictionary with an empty sdk info entry") {
-                            let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
+                            let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap)
                             let sdks = dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: String]
 
                             expect(sdks).to(beEmpty())
                         }
 
                         it("should return a dictionary with sdk info's not containing analytics entry") {
-                            let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: sdkComponentMap)
+                            let dictionary = collector.getCollectedInfos(sdkComponentMap: sdkComponentMap)
 
                             expect((dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any])?[RModulesListKeys.analyticsValue])
                                 .to(beNil())
@@ -206,19 +208,19 @@ final class CoreHelpersSpec: QuickSpec {
 
                 context("sdkComponentMap is nil") {
                     it("should return a non-nil dictionary") {
-                        let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
+                        let dictionary = collector.getCollectedInfos(sdkComponentMap: nil)
 
                         expect(dictionary).toNot(beNil())
                     }
 
                     it("should return a dictionary with app info entry") {
-                        let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
+                        let dictionary = collector.getCollectedInfos(sdkComponentMap: nil)
 
                         expect(dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey]).toNot(beNil())
                     }
 
                     it("should return a dictionary with app info's parameters entries") {
-                        let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
+                        let dictionary = collector.getCollectedInfos(sdkComponentMap: nil)
                         let appInfo = dictionary?[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any]
 
                         expect(appInfo?["xcode"]).toNot(beNil())
@@ -233,13 +235,13 @@ final class CoreHelpersSpec: QuickSpec {
                     }
 
                     it("should return a dictionary with sdk info entry") {
-                        let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
+                        let dictionary = collector.getCollectedInfos(sdkComponentMap: nil)
 
                         expect(dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey]).toNot(beNil())
                     }
 
                     it("should return a dictionary with sdk info's not containing analytics entry") {
-                        let dictionary = CoreHelpers.getCollectedInfos(sdkComponentMap: nil)
+                        let dictionary = collector.getCollectedInfos(sdkComponentMap: nil)
 
                         expect((dictionary?[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any])?[RModulesListKeys.analyticsValue])
                             .to(beNil())

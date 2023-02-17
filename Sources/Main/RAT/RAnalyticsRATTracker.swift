@@ -40,6 +40,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// Reachability Notifier
     private let reachabilityNotifier: ReachabilityNotifiable?
 
+    private let coreInfosCollector: CoreInfosCollectable
+
     /// Reachability Status
     var reachabilityStatus: NSNumber?
 
@@ -219,6 +221,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
         // User Agent
         self.userAgentHandler = UserAgentHandler(bundle: bundle)
+
+        self.coreInfosCollector = dependenciesContainer.coreInfosCollector
 
         super.init()
 
@@ -512,10 +516,10 @@ extension RAnalyticsRATTracker {
 
         // MARK: _rem_install
         case RAnalyticsEvent.Name.install:
-            if let sdkDependencies = CoreHelpers.sdkDependencies {
+            if let sdkDependencies = coreInfosCollector.sdkDependencies {
                 payload[PayloadParameterKeys.cp] = sdkDependencies
             }
-            extra.addEntries(from: event.installParameters)
+            extra.addEntries(from: event.installParameters(with: coreInfosCollector.appInfo))
 
         // MARK: _rem_launch
         case RAnalyticsEvent.Name.sessionStart:
@@ -526,10 +530,10 @@ extension RAnalyticsRATTracker {
 
         // MARK: _rem_update
         case RAnalyticsEvent.Name.applicationUpdate:
-            if let sdkDependencies = CoreHelpers.sdkDependencies {
+            if let sdkDependencies = coreInfosCollector.sdkDependencies {
                 payload[PayloadParameterKeys.cp] = sdkDependencies
             }
-            extra.addEntries(from: state.applicationUpdateParameters)
+            extra.addEntries(from: state.applicationUpdateParameters(with: coreInfosCollector.appInfo))
 
         // MARK: _rem_login
         case RAnalyticsEvent.Name.login:
