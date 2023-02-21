@@ -253,16 +253,16 @@ extension SCNetworkReachabilityFlags {
     }
 
     var description: String {
-        let W = isOnWWANFlagSet ? "W" : "-"
-        let R = isReachableFlagSet ? "R" : "-"
-        let c = isConnectionRequiredFlagSet ? "c" : "-"
-        let t = isTransientConnectionFlagSet ? "t" : "-"
-        let i = isInterventionRequiredFlagSet ? "i" : "-"
-        let C = isConnectionOnTrafficFlagSet ? "C" : "-"
-        let D = isConnectionOnDemandFlagSet ? "D" : "-"
-        let l = isLocalAddressFlagSet ? "l" : "-"
-        let d = isDirectFlagSet ? "d" : "-"
+        let wwan = isOnWWANFlagSet ? "W" : "-"
+        let reachable = isReachableFlagSet ? "R" : "-"
+        let connectionRequired = isConnectionRequiredFlagSet ? "c" : "-"
+        let transientConnection = isTransientConnectionFlagSet ? "t" : "-"
+        let intervention = isInterventionRequiredFlagSet ? "i" : "-"
+        let traffic = isConnectionOnTrafficFlagSet ? "C" : "-"
+        let demand = isConnectionOnDemandFlagSet ? "D" : "-"
+        let localAddress = isLocalAddressFlagSet ? "l" : "-"
+        let directFlag = isDirectFlagSet ? "d" : "-"
 
-        return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)"
+        return "\(wwan)\(reachable) \(connectionRequired)\(transientConnection)\(intervention)\(traffic)\(demand)\(localAddress)\(directFlag)"
     }
 }
