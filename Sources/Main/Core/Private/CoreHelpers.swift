@@ -90,21 +90,21 @@ struct CoreInfosCollector: CoreInfosCollectable {
         }
 
         // App Info
-        var appInfo = [String: Any]()
+        var appInfoPayload = [String: Any]()
         if let xcodeVersion = xcodeVersion, !xcodeVersion.isEmpty {
-            appInfo["xcode"] = xcodeVersion
+            appInfoPayload["xcode"] = xcodeVersion
         }
         if let buildSDK = buildSDK, !buildSDK.isEmpty {
-            appInfo["sdk"] = buildSDK
+            appInfoPayload["sdk"] = buildSDK
         }
         if !otherFrameworks.isEmpty {
-            appInfo["frameworks"] = otherFrameworks
+            appInfoPayload["frameworks"] = otherFrameworks
         }
         if let minimumOSVersion = info?["MinimumOSVersion"] {
-            appInfo["deployment_target"] = minimumOSVersion
+            appInfoPayload["deployment_target"] = minimumOSVersion
         }
 
-        dict[RAnalyticsConstants.rAnalyticsAppInfoKey] = appInfo
+        dict[RAnalyticsConstants.rAnalyticsAppInfoKey] = appInfoPayload
         dict[RAnalyticsConstants.rAnalyticsSDKInfoKey] = sdkInfo
 
         return dict
