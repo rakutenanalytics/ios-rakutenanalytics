@@ -4,10 +4,10 @@ import Foundation
 
 extension CharacterSet {
     /// See https://www.ietf.org/rfc/rfc3986.txt section 2.2 and 3.4
-    static let RFC3986ReservedCharacters = ":#[]@!$&'()*+,;="
-    static let RFC3986UnreservedCharacters: CharacterSet = {
+    static let rfc3986ReservedCharacters = ":#[]@!$&'()*+,;="
+    static let rfc3986UnreservedCharacters: CharacterSet = {
         var allowed = CharacterSet.urlQueryAllowed
-        allowed.remove(charactersIn: RFC3986ReservedCharacters)
+        allowed.remove(charactersIn: rfc3986ReservedCharacters)
         return allowed
     }()
 }
@@ -17,7 +17,7 @@ extension String {
     ///
     /// - Returns: the RFC3986 encoded string.
     func addEncodingForRFC3986UnreservedCharacters() -> String? {
-        addingPercentEncoding(withAllowedCharacters: CharacterSet.RFC3986UnreservedCharacters)
+        addingPercentEncoding(withAllowedCharacters: CharacterSet.rfc3986UnreservedCharacters)
     }
 }
 

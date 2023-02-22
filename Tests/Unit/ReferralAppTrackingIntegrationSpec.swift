@@ -13,8 +13,8 @@ enum Payloads {
     static let encodedAppBundleIdentifier = Payloads.appBundleIdentifier.addEncodingForRFC3986UnreservedCharacters()!
     static let refAccountIdentifier = 1
     static let refApplicationIdentifier = 2
-    static let link = "campaignCode\(CharacterSet.RFC3986ReservedCharacters)"
-    static let component = "news\(CharacterSet.RFC3986ReservedCharacters)"
+    static let link = "campaignCode\(CharacterSet.rfc3986ReservedCharacters)"
+    static let component = "news\(CharacterSet.rfc3986ReservedCharacters)"
     static let encodedLink = Payloads.link.addEncodingForRFC3986UnreservedCharacters()!
     static let encodedComponent = Payloads.component.addEncodingForRFC3986UnreservedCharacters()!
     static let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=\(Payloads.refAccountIdentifier)&\(CpParameterKeys.Ref.applicationIdentifier)=\(Payloads.refApplicationIdentifier)&\(CpParameterKeys.Ref.link)=\(encodedLink)&\(CpParameterKeys.Ref.component)=\(encodedComponent)"
