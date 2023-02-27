@@ -593,35 +593,6 @@ extension RAnalyticsRATTracker {
                 return false
             }
 
-        // MARK: _rem_push_notify
-        case RAnalyticsEvent.Name.pushNotification:
-            guard let pushParameters = event.pushParameters else {
-                return false
-            }
-            extra.addEntries(from: pushParameters)
-
-        // MARK: _rem_push_received
-        case RAnalyticsEvent.Name.pushNotificationReceived:
-            guard let pushParameters = event.pushParameters else {
-                return false
-            }
-            extra.addEntries(from: pushParameters)
-
-            if !event.pushRequestIdentifier.isEmpty {
-                extra[CpParameterKeys.Push.pushRequestIdentifier] = event.pushRequestIdentifier
-            }
-
-        // MARK: _rem_push_auto_register, _rem_push_auto_unregister
-        case RAnalyticsEvent.Name.pushAutoRegistration, RAnalyticsEvent.Name.pushAutoUnregistration:
-            guard !event.parameters.isEmpty,
-                  let deviceId = event.parameters[CpParameterKeys.PNP.deviceId] as? String,
-                  !deviceId.isEmpty,
-                  let pnpClientId = event.parameters[CpParameterKeys.PNP.pnpClientId] as? String,
-                  !pnpClientId.isEmpty else {
-                return false
-            }
-            extra.addEntries(from: event.parameters)
-
         // MARK: _rem_push_notify_external, _rem_push_received_external
         // MARK: _rem_push_auto_register_external, _rem_push_auto_unregister_external
         case RAnalyticsEvent.Name.pushNotificationExternal,

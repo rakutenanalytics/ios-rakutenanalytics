@@ -26,16 +26,6 @@ final class RAnalyticsEventSpec: QuickSpec {
                 }
             }
 
-            describe("init(pushRequestIdentifier:pushConversionAction:)") {
-                it("should create a push conversion event with the expected parameters") {
-                    let event = RAnalyticsEvent(pushRequestIdentifier: "pushRequestIdentifier",
-                                                pushConversionAction: "pushConversionAction")
-                    expect(event.name).to(equal(RAnalyticsEvent.Name.pushNotificationConversion))
-                    expect(event.parameters[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String).to(equal("pushRequestIdentifier"))
-                    expect(event.parameters[RAnalyticsEvent.Parameter.pushConversionAction] as? String).to(equal("pushConversionAction"))
-                }
-            }
-
             describe("copy") {
                 it("should have the expected values") {
                     let event = defaultEvent()

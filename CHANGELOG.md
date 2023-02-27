@@ -12,6 +12,7 @@
 * [CONRAT-27882](https://jira.rakuten-it.com/jira/browse/CONRAT-27882): Improve rsdks tests in CoreHelpersSpec by injecting Bundle.allFrameworks in CoreHelpers.
 * [CONRAT-27917](https://jira.rakuten-it.com/jira/browse/CONRAT-27917): Add app_info parameter for update event.
 * [CONRAT-27898](https://jira.rakuten-it.com/jira/browse/CONRAT-27898): Add pitari and geo cocoapods dependencies to RModulesList.plist file.
+* [CONRAT-28085](https://jira.rakuten-it.com/jira/browse/CONRAT-28085): Remove all deprecated public APIs.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.

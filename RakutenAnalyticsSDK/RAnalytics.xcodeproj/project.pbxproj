@@ -30,7 +30,6 @@
 		C9320AEE279FF79B009FE6EC /* RAnalyticsSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A82279FF79B009FE6EC /* RAnalyticsSender.swift */; };
 		C9320AEF279FF79B009FE6EC /* AnalyticsEventPoster.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A83279FF79B009FE6EC /* AnalyticsEventPoster.swift */; };
 		C9320AF0279FF79B009FE6EC /* ReferralAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A84279FF79B009FE6EC /* ReferralAppModel.swift */; };
-		C9320AF1279FF79B009FE6EC /* RAnalyticsPushTrackingUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A85279FF79B009FE6EC /* RAnalyticsPushTrackingUtility.swift */; };
 		C9320AF2279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A86279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift */; };
 		C9320AF3279FF79B009FE6EC /* ReferralAppModel+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A88279FF79B009FE6EC /* ReferralAppModel+URL.swift */; };
 		C9320AF4279FF79B009FE6EC /* Data+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320A89279FF79B009FE6EC /* Data+RAT.swift */; };
@@ -76,7 +75,6 @@
 		C9320B20279FF79B009FE6EC /* KeychainHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320AB5279FF79B009FE6EC /* KeychainHandler.swift */; };
 		C9320B21279FF79B009FE6EC /* CLLocationManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320AB6279FF79B009FE6EC /* CLLocationManager+Extensions.swift */; };
 		C9320B22279FF79B009FE6EC /* MainThreadExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320AB7279FF79B009FE6EC /* MainThreadExecutor.swift */; };
-		C9320B23279FF79B009FE6EC /* String+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320AB8279FF79B009FE6EC /* String+Encryption.swift */; };
 		C9320B24279FF79B009FE6EC /* ErrorRaiser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320AB9279FF79B009FE6EC /* ErrorRaiser.swift */; };
 		C9320B26279FF79B009FE6EC /* DatabaseConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320ABB279FF79B009FE6EC /* DatabaseConfiguration.swift */; };
 		C9320B27279FF79B009FE6EC /* RAnalyticsRATTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9320ABD279FF79B009FE6EC /* RAnalyticsRATTracker.swift */; };
@@ -151,7 +149,6 @@
 		C9320A82279FF79B009FE6EC /* RAnalyticsSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsSender.swift; sourceTree = "<group>"; };
 		C9320A83279FF79B009FE6EC /* AnalyticsEventPoster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsEventPoster.swift; sourceTree = "<group>"; };
 		C9320A84279FF79B009FE6EC /* ReferralAppModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralAppModel.swift; sourceTree = "<group>"; };
-		C9320A85279FF79B009FE6EC /* RAnalyticsPushTrackingUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsPushTrackingUtility.swift; sourceTree = "<group>"; };
 		C9320A86279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsProgressNotifications.swift; sourceTree = "<group>"; };
 		C9320A88279FF79B009FE6EC /* ReferralAppModel+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ReferralAppModel+URL.swift"; sourceTree = "<group>"; };
 		C9320A89279FF79B009FE6EC /* Data+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+RAT.swift"; sourceTree = "<group>"; };
@@ -197,7 +194,6 @@
 		C9320AB5279FF79B009FE6EC /* KeychainHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainHandler.swift; sourceTree = "<group>"; };
 		C9320AB6279FF79B009FE6EC /* CLLocationManager+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManager+Extensions.swift"; sourceTree = "<group>"; };
 		C9320AB7279FF79B009FE6EC /* MainThreadExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainThreadExecutor.swift; sourceTree = "<group>"; };
-		C9320AB8279FF79B009FE6EC /* String+Encryption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Encryption.swift"; sourceTree = "<group>"; };
 		C9320AB9279FF79B009FE6EC /* ErrorRaiser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorRaiser.swift; sourceTree = "<group>"; };
 		C9320ABB279FF79B009FE6EC /* DatabaseConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseConfiguration.swift; sourceTree = "<group>"; };
 		C9320ABD279FF79B009FE6EC /* RAnalyticsRATTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTracker.swift; sourceTree = "<group>"; };
@@ -378,7 +374,6 @@
 				C944CE07299260FD0074319F /* Wrapper */,
 				C9320A83279FF79B009FE6EC /* AnalyticsEventPoster.swift */,
 				C9320A86279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift */,
-				C9320A85279FF79B009FE6EC /* RAnalyticsPushTrackingUtility.swift */,
 				C9320A82279FF79B009FE6EC /* RAnalyticsSender.swift */,
 				C9320A84279FF79B009FE6EC /* ReferralAppModel.swift */,
 				C9E7602827B12FB5006B22F5 /* View+Tracking.swift */,
@@ -440,7 +435,6 @@
 				C9320AB5279FF79B009FE6EC /* KeychainHandler.swift */,
 				C9320AB6279FF79B009FE6EC /* CLLocationManager+Extensions.swift */,
 				C9320AB7279FF79B009FE6EC /* MainThreadExecutor.swift */,
-				C9320AB8279FF79B009FE6EC /* String+Encryption.swift */,
 				C9320AB9279FF79B009FE6EC /* ErrorRaiser.swift */,
 				C9320ABB279FF79B009FE6EC /* DatabaseConfiguration.swift */,
 			);
@@ -625,7 +619,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9320AEA279FF79B009FE6EC /* RAnalyticsExternalCollector.swift in Sources */,
-				C9320AF1279FF79B009FE6EC /* RAnalyticsPushTrackingUtility.swift in Sources */,
 				C9320B08279FF79B009FE6EC /* AnalyticsTracker.swift in Sources */,
 				C9320ADB279FF79B009FE6EC /* RAnalyticsEvent.swift in Sources */,
 				C9320B1F279FF79B009FE6EC /* URLRequest+RAT.swift in Sources */,
@@ -643,7 +636,6 @@
 				C9320AE2279FF79B009FE6EC /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */,
 				C9320B09279FF79B009FE6EC /* RAnalyticsEvent+Install.swift in Sources */,
 				C9320B28279FF79B009FE6EC /* NSDate+Extensions.swift in Sources */,
-				C9320B23279FF79B009FE6EC /* String+Encryption.swift in Sources */,
 				C92CDD8B296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift in Sources */,
 				C944CE1E299298440074319F /* Optional+String.swift in Sources */,
 				C9320B30279FF79B009FE6EC /* RAnalyticsEvent+ExtraParameters.swift in Sources */,
