@@ -25,6 +25,7 @@
 
 ### Unit tests
 * [CONRAT-27983](https://jira.rakuten-it.com/jira/browse/CONRAT-27983): Improve the RAT Tracking tests with CoreHelpers injection.
+* [CONRAT-28146](https://jira.rakuten-it.com/jira/browse/CONRAT-28146): Fix RP Cookie Fetcher Integration Spec failing test.
 
 ## 9.8.0 (2023-01-30)
 
