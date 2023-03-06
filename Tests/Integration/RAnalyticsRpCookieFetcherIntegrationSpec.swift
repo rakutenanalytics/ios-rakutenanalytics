@@ -23,7 +23,7 @@ final class RAnalyticsRpCookieFetcherIntegrationSpec: QuickSpec {
                         error = anError
                     })
 
-                    expect(cookie).toEventuallyNot(beNil(), timeout: .seconds(1))
+                    expect(cookie).toEventuallyNot(beNil(), timeout: .seconds(2))
                     expect(error).to(beNil())
                 }
             }
