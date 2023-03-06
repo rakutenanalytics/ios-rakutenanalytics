@@ -88,6 +88,7 @@
 		C9981C3928C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9981C3828C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift */; };
 		C9AC4739299B96280045C21A /* CoreInfosCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AC4738299B96280045C21A /* CoreInfosCollectorSpec.swift */; };
 		C9AC473C299C060D0045C21A /* Dictionary+RAT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AC473A299C05FA0045C21A /* Dictionary+RAT.swift */; };
+		C9AC4F5A29B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9AC4F5929B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift */; };
 		C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */; };
 		C9B2806826A6B0BF00A410D5 /* AppleClassSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */; };
 		C9B395FA2768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */; };
@@ -222,6 +223,7 @@
 		C9981C3828C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReferralAppTrackingSceneDelegateSpec.swift; sourceTree = "<group>"; };
 		C9AC4738299B96280045C21A /* CoreInfosCollectorSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreInfosCollectorSpec.swift; sourceTree = "<group>"; };
 		C9AC473A299C05FA0045C21A /* Dictionary+RAT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+RAT.swift"; sourceTree = "<group>"; };
+		C9AC4F5929B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtensionsSpec.swift; sourceTree = "<group>"; };
 		C9B2806526A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSharedApplicationSpec.swift; sourceTree = "<group>"; };
 		C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleClassSpec.swift; sourceTree = "<group>"; };
 		C9B395F92768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEventObserverSpec.swift; sourceTree = "<group>"; };
@@ -327,6 +329,7 @@
 				45B5732725AE2C2E005A80F7 /* SenderSpec.swift */,
 				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
 				C954C666269439CE002AAFF7 /* TelephonyHandlerSpec.swift */,
+				C9AC4F5929B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift */,
 				5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */,
 				C91AA26529487672005D134C /* UNUserNotificationCenterDelegateSpec.swift */,
 				C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */,
@@ -810,6 +813,7 @@
 				C94B70422798725700A1898A /* RAnalyticsCookieInjector+Create.swift in Sources */,
 				C944CDF2299125520074319F /* StringExtensionsSpec.swift in Sources */,
 				C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */,
+				C9AC4F5A29B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift in Sources */,
 				C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */,
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
 				C94B704F2798749D00A1898A /* Array+Extensions.swift in Sources */,
