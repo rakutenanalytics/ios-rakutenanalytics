@@ -1,7 +1,7 @@
 import Foundation
 
 extension RAnalyticsState {
-    /// - Returns: the core payload for RAT and SDK trackers.
+    /// - Returns: the core payload for RAT trackers.
     ///
     /// - Note: this payload contains `app_ver`, `app_name`, `mos`, `ver` and `ts1`.
     var corePayload: [String: Any] {

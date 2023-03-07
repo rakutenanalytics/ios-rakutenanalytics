@@ -59,9 +59,9 @@ final class AnalyticsManagerSpec: QuickSpec {
             describe("add") {
                 it("should add the trackers as expected") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
-                    expect(analyticsManager.trackersLockableObject.get().count).to(equal(2))
+                    expect(analyticsManager.trackersLockableObject.get().count).to(equal(1))
                     analyticsManager.add(TrackerMock())
-                    expect(analyticsManager.trackersLockableObject.get().count).to(equal(3))
+                    expect(analyticsManager.trackersLockableObject.get().count).to(equal(2))
                 }
             }
 
@@ -208,7 +208,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                         let raisedError = AnalyticsError.embeddedError(ErrorConstants.unknownError)
                         ErrorRaiser.raise(raisedError)
 
-                        expect(error).toEventuallyNot(beNil())
+                        expect(error).toEventuallyNot(beNil(), timeout: .seconds(1))
                         expect(error).to(equal(raisedError.nsError()))
                     }
                 }

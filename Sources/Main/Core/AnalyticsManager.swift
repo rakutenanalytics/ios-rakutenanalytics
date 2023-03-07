@@ -251,21 +251,6 @@ protocol ReferralAppTrackable: AnyObject {
 // MARK: - Configuration
 
 extension AnalyticsManager {
-    /// Add the `SDKTracker` to the trackers array
-    ///
-    /// - Returns `true` if the `SDKTracker` is added, `false` otherwise.
-    private func addSDKTracker() {
-        guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: SDKTrackerConstants.databaseName,
-                                                                              tableName: SDKTrackerConstants.tableName,
-                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory),
-              let sdkTracker = SDKTracker(bundle: Bundle.main,
-                                          session: URLSession.shared,
-                                          databaseConfiguration: databaseConfiguration) else {
-            return
-        }
-        add(sdkTracker)
-    }
-
     /// Set the WKWebView's user agent value at buildtime only if Bundle's `isWebViewAppUserAgentEnabledAtBuildtime` is set to true.
     ///
     /// - Warning: If the `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
@@ -293,8 +278,6 @@ extension AnalyticsManager {
 
     private func configure() {
         configureWebViewUserAgent()
-
-        addSDKTracker()
 
         // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
         // always rely solely on header availability so we also do a runtime check

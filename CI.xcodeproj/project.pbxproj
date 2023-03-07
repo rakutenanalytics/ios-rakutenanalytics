@@ -100,7 +100,6 @@
 		C9E7602327B11BCE006B22F5 /* SwiftUITrackingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */; };
 		C9E7602627B121C2006B22F5 /* URLSessionMock+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */; };
 		C9E7602727B121C3006B22F5 /* URLSessionMock+Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */; };
-		C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */; };
 		C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */; };
 		C9EA33EF28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */; };
 		C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */; };
@@ -234,7 +233,6 @@
 		C9D2E7A825DCFA60009CBBAF /* RAnalyticsStateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsStateSpec.swift; sourceTree = "<group>"; };
 		C9E7602127B11905006B22F5 /* SwiftUITrackingSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITrackingSpec.swift; sourceTree = "<group>"; };
 		C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionMock+Stub.swift"; sourceTree = "<group>"; };
-		C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKTrackerSpec.swift; sourceTree = "<group>"; };
 		C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerSpec.swift; sourceTree = "<group>"; };
 		C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
 		C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestSpec.swift; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 				C9981C3828C9DB5300B63A5A /* ReferralAppTrackingSceneDelegateSpec.swift */,
 				C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */,
 				3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */,
-				C9E958FE2641B1340077881B /* SDKTrackerSpec.swift */,
 				45B5732725AE2C2E005A80F7 /* SenderSpec.swift */,
 				5A895AE920F724D500D2E771 /* SwiftInterop.swift */,
 				C954C666269439CE002AAFF7 /* TelephonyHandlerSpec.swift */,
@@ -814,7 +811,6 @@
 				C944CDF2299125520074319F /* StringExtensionsSpec.swift in Sources */,
 				C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */,
 				C9AC4F5A29B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift in Sources */,
-				C9E958FF2641B1340077881B /* SDKTrackerSpec.swift in Sources */,
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
 				C94B704F2798749D00A1898A /* Array+Extensions.swift in Sources */,
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
