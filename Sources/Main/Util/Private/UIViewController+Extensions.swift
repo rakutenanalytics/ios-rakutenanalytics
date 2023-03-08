@@ -24,7 +24,7 @@ extension UIViewController {
         // Note: Won't catch private class not adhering to the _ prefix standard.
         guard !isApplePrivateClass()
                 && !view.isApplePrivateClass()
-                && !view.window.isApplePrivateClass() else {
+                && !view.safeWindow.isApplePrivateClass() else {
             return false
         }
 
@@ -32,10 +32,19 @@ extension UIViewController {
         // (so that view controllers presented in e.g. UITextEffectWindow are not
         // counting as pages).
         // This catches most keyboard windows.
-        guard view.window.isMember(of: UIWindow.self)
-                || !view.window.isAppleClass() else {
+        guard view.safeWindow.isMember(of: UIWindow.self)
+                || !view.safeWindow.isAppleClass() else {
             return false
         }
         return true
+    }
+}
+
+private extension Optional where Wrapped: UIView {
+    var safeWindow: UIWindow? {
+        guard let notOptionalView = self else {
+            return nil
+        }
+        return notOptionalView.window
     }
 }

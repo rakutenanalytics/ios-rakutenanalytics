@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Crash fixes
+* [SDKCF-28236](https://jira.rakuten-it.com/jira/browse/SDKCF-28236): Fix a crash that occurs when a view controller's view is nil.
+
 ## 9.8.0 (2023-01-30)
 
 ### Features
