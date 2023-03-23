@@ -30,6 +30,11 @@
 * [CONRAT-28146](https://jira.rakuten-it.com/jira/browse/CONRAT-28146): Fix RP Cookie Fetcher Integration Spec failing test.
 * [CONRAT-28195](https://jira.rakuten-it.com/jira/browse/CONRAT-28195): Create BDD tests for isTrackableAsPageVisit.
 
+## 9.8.1 (2023-03-23)
+
+### Crash fixes
+* [SDKCF-28236](https://jira.rakuten-it.com/jira/browse/SDKCF-28236): Fix a crash that occurs when a view controller's view is nil.
+
 ## 9.8.0 (2023-01-30)
 
 ### Features

@@ -686,7 +686,7 @@ private extension RAnalyticsRATTracker {
                                      currentPage: UIViewController) -> Bool {
         var pageIdentifier = pageVisitEvent.parameters[RAnalyticsEvent.Parameter.pageId] as? String
         var pageTitle = currentPage.navigationItem.title ?? currentPage.title
-        let pageURL = currentPage.view.getWebViewURL()?.absoluteURL
+        let pageURL = currentPage.view?.getWebViewURL()?.absoluteURL
 
         pageIdentifier = !pageIdentifier.isEmpty ? pageIdentifier : nil
         pageTitle = !pageTitle.isEmpty ? pageTitle : nil
