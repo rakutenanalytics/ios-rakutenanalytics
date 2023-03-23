@@ -1,10 +1,5 @@
 import Foundation
 import UIKit
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
 
 /// CKP generator.
 struct DeviceIdentifierHandler {

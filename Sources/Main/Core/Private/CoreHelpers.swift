@@ -5,34 +5,51 @@ enum RAnalyticsConstants {
     static let rAnalyticsAppInfoKey = "_RAnalyticsAppInfoKey"
     static let rAnalyticsSDKInfoKey = "_RAnalyticsSDKInfoKey"
     static let appInfoKey = "app_info"
-    static let sdkDependenciesKey = "rsdks"
+    static let sdkDependenciesPrefixKey = "rsdks"
+}
+
+enum RAnalyticsFrameworkIdentifiers {
+    static let appleIdentifier = "com.apple"
+    static let analyticsIdentifier = "org.cocoapods.RAnalytics"
+    static let analyticsPublicFrameworkIdentifier = "com.rakuten.RAnalytics"
+    static let sdkUtilsIdentifier = "org.cocoapods.RSDKUtils"
 }
 
 enum RModulesListKeys {
     static let analyticsValue = "analytics"
 }
 
+/// - Note: `sdkVersion`'s value is updated by `bundle exec fastlane ios commit_sdk_ver_bump version:...`
 final class CoreHelpers {
     enum Constants {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
         /// Current RAT SDK version
-        static let sdkVersion = "9.8.1"
+        static let sdkVersion = "9.9.0-snapshot"
     }
+}
 
-    static func sharedPayload(for state: AnalyticsManager.State?) -> [String: Any] {
-        var dict = [String: Any]()
-        if let state = state {
-            dict[PayloadParameterKeys.Core.appVer] = state.currentVersion
-        }
-        dict[PayloadParameterKeys.Core.appName] = Constants.applicationName
-        dict[PayloadParameterKeys.Core.mos] = Constants.osVersion
-        dict[PayloadParameterKeys.Core.ver] = Constants.sdkVersion
-        dict[PayloadParameterKeys.Core.ts1] = Swift.max(0, round(NSDate().timeIntervalSince1970))
-        return dict
-    }
+protocol CoreInfosCollectable {
+    func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [EnvironmentBundle]) -> [String: Any]?
+    var appInfo: String? { get }
+    var sdkDependencies: [String: Any]? { get }
+}
 
-    static func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap) -> [String: Any]? {
+struct CoreInfosCollector: CoreInfosCollectable {
+    /// Collects application and SDKs information.
+    ///
+    /// - Parameters:
+    ///    - sdkComponentMap: a dictionary of SDKs (defined in `RModulesList.plist`).
+    ///    Example:
+    ///    ["org.cocoapods.RInAppMessaging": "inappmessaging", "org.cocoapods.RPushPNP": "pushpnp"]
+    ///
+    ///    - allFrameworks: an array of `Bundle` where each instance defines a framework.
+    ///
+    /// - returns: a dictionary of collected informations containing:
+    ///     - a dictionary of app informations entries (`xcode`, `sdk`, `frameworks`, `deployment_target`) set for the key `_RAnalyticsAppInfoKey`
+    ///     - a dictionary of loaded frameworks defined in `RModulesList.plist` set for the key `_RAnalyticsSDKInfoKey`
+    func getCollectedInfos(sdkComponentMap: NSDictionary? = Bundle.sdkComponentMap,
+                           allFrameworks: [EnvironmentBundle] = Bundle.allFrameworks) -> [String: Any]? {
         var dict = [String: Any]()
 
         // Collect build environment (Xcode version and build SDK)
@@ -55,47 +72,46 @@ final class CoreHelpers {
         // Collect information on frameworks shipping with the app
         var sdkInfo = [String: Any]()
         var otherFrameworks = [String: Any]()
-        Bundle.allFrameworks.forEach {
+        allFrameworks.forEach {
             guard let identifier = $0.bundleIdentifier,
-                  !identifier.hasPrefix("com.apple.") else {
+                  !identifier.hasPrefix(RAnalyticsFrameworkIdentifiers.appleIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.analyticsIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.analyticsPublicFrameworkIdentifier),
+                  !identifier.hasSuffix(RAnalyticsFrameworkIdentifiers.sdkUtilsIdentifier) else {
                 return
             }
             let version = $0.object(forInfoDictionaryKey: "CFBundleShortVersionString")
             if let sdkComponentMapIdentifier = sdkComponentMap?.object(forKey: identifier) as? String {
-                sdkInfo[sdkComponentMapIdentifier] = version
+                let sdkDependencyComponentIdentifier = "\(RAnalyticsConstants.sdkDependenciesPrefixKey)_\(sdkComponentMapIdentifier)"
+                sdkInfo[sdkDependencyComponentIdentifier] = version
             } else {
                 otherFrameworks[identifier] = version
             }
         }
 
-        // SDKCF-4765: This part of code fixes the missing analytics entry in rsdks for the public RAnalytics SDK
-        if (sdkInfo[RModulesListKeys.analyticsValue] as? String).isEmpty {
-            sdkInfo[RModulesListKeys.analyticsValue] = Constants.sdkVersion
-        }
-
         // App Info
-        var appInfo = [String: Any]()
+        var appInfoPayload = [String: Any]()
         if let xcodeVersion = xcodeVersion, !xcodeVersion.isEmpty {
-            appInfo["xcode"] = xcodeVersion
+            appInfoPayload["xcode"] = xcodeVersion
         }
         if let buildSDK = buildSDK, !buildSDK.isEmpty {
-            appInfo["sdk"] = buildSDK
+            appInfoPayload["sdk"] = buildSDK
         }
         if !otherFrameworks.isEmpty {
-            appInfo["frameworks"] = otherFrameworks
+            appInfoPayload["frameworks"] = otherFrameworks
         }
         if let minimumOSVersion = info?["MinimumOSVersion"] {
-            appInfo["deployment_target"] = minimumOSVersion
+            appInfoPayload["deployment_target"] = minimumOSVersion
         }
 
-        dict[RAnalyticsConstants.rAnalyticsAppInfoKey] = appInfo
+        dict[RAnalyticsConstants.rAnalyticsAppInfoKey] = appInfoPayload
         dict[RAnalyticsConstants.rAnalyticsSDKInfoKey] = sdkInfo
 
         return dict
     }
 
-    static var appInfo: String? {
-        guard let collectedInfos = CoreHelpers.getCollectedInfos(),
+    var appInfo: String? {
+        guard let collectedInfos = getCollectedInfos(),
               let appInfo = collectedInfos[RAnalyticsConstants.rAnalyticsAppInfoKey] as? [String: Any],
               !appInfo.isEmpty,
               let data = try? JSONSerialization.data(withJSONObject: appInfo, options: JSONSerialization.WritingOptions(rawValue: 0)) else {
@@ -104,8 +120,8 @@ final class CoreHelpers {
         return String(data: data, encoding: .utf8)
     }
 
-    static var sdkDependencies: [String: Any]? {
-        guard let collectedInfos = CoreHelpers.getCollectedInfos(),
+    var sdkDependencies: [String: Any]? {
+        guard let collectedInfos = getCollectedInfos(),
               let sdkInfo = collectedInfos[RAnalyticsConstants.rAnalyticsSDKInfoKey] as? [String: Any],
               !sdkInfo.isEmpty else {
             return nil

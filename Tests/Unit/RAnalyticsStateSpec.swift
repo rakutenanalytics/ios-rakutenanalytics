@@ -20,6 +20,7 @@ final class RAnalyticsStateSpec: QuickSpec {
             let currentVersion = "2.0"
             let lastVersion = "1.0"
             let bundle = BundleMock()
+            bundle.shortVersion = currentVersion
             let dateComponents = DateComponents(year: 2016,
                                                 month: 6,
                                                 day: 10,

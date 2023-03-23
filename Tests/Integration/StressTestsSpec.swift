@@ -5,12 +5,7 @@ import Foundation
 
 #if canImport(RAnalyticsTestHelpers)
 import class RAnalyticsTestHelpers.TrackerMock
-#endif
-
-#if canImport(RSDKUtils)
-import class RSDKUtils.URLSessionMock
-#else // SPM version
-import class RSDKUtilsTestHelpers.URLSessionMock
+import class RAnalyticsTestHelpers.URLSessionMock
 #endif
 
 class StressTestsSpec: QuickSpec {

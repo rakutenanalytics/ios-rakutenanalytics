@@ -4,7 +4,6 @@ enum ErrorDomain {
     private static let domainName = "com.rakuten.esd.sdk.analytics.error.domain"
     static let analyticsManagerErrorDomain = "\(domainName).analytics-manager"
     static let ratTrackerErrorDomain = "\(domainName).rat-tracker"
-    static let sdkTrackerErrorDomain = "\(domainName).sdk-tracker"
     static let rpCookieFetcherErrorDomain = "\(domainName).rp-cookie-fetcher"
     static let databaseErrorDomain = "\(domainName).database"
     static let senderErrorDomain = "\(domainName).sender"
@@ -29,9 +28,6 @@ enum ErrorCode: Int {
     case getRpCookieFromCookieStorageFailed
     case rpCookieCantBeFetched
     case getRpCookieFromRATFailed
-
-    // SDK Tracker
-    case sdkTrackerCreationFailed
 
     // Reachability Notifier
     case scNetworkReachabilityCreateWithNameFailed
@@ -70,9 +66,6 @@ enum ErrorCode: Int {
 enum ErrorDescription {
     // Status Code
     static let statusCodeError = "invalid_response"
-
-    // SDK Tracker
-    static let eventsNotProcessedBySDKTracker = "The events cannot be processed by the SDK Tracker."
 
     // RAT Tracker
     static let eventsNotProcessedByRATTracker = "The events cannot be processed by the RAT Tracker."

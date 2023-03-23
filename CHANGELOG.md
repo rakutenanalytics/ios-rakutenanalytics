@@ -1,5 +1,35 @@
 # Changelog
 
+## Unreleased
+
+### Features
+* [CONRAT-27822](https://jira.rakuten-it.com/jira/browse/CONRAT-27822): Update rsdks parameter format.
+* [CONRAT-28242](https://jira.rakuten-it.com/jira/browse/CONRAT-28242): Expose public methods of GeoManager in Geo module.
+
+### Improvements
+* [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.
+* [SDKCF-6210](https://jira.rakuten-it.com/jira/browse/SDKCF-6210): Remove unused DependenciesFactory protocol.
+* [CONRAT-27844](https://jira.rakuten-it.com/jira/browse/CONRAT-27844): Remove unused extension - URLSession+Result.
+* [CONRAT-27882](https://jira.rakuten-it.com/jira/browse/CONRAT-27882): Improve rsdks tests in CoreHelpersSpec by injecting Bundle.allFrameworks in CoreHelpers.
+* [CONRAT-27917](https://jira.rakuten-it.com/jira/browse/CONRAT-27917): Add app_info parameter for update event.
+* [CONRAT-27898](https://jira.rakuten-it.com/jira/browse/CONRAT-27898): Add pitari and geo cocoapods dependencies to RModulesList.plist file.
+* [CONRAT-28085](https://jira.rakuten-it.com/jira/browse/CONRAT-28085): Remove all deprecated public APIs.
+* [CONRAT-28071](https://jira.rakuten-it.com/jira/browse/CONRAT-28071): Remove SDKTracker.
+
+### Changes
+* [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
+* [CONRAT-27901](https://jira.rakuten-it.com/jira/browse/CONRAT-27901): Create a documentation for Internal JSON Serialization in ADVANCED_USAGE.md
+
+### Sonarqube fixes
+* [CONRAT-28044](https://jira.rakuten-it.com/jira/browse/CONRAT-28044): Fix Reachability.swift SonarQube issues.
+* [CONRAT-28054](https://jira.rakuten-it.com/jira/browse/CONRAT-28054): Fix CoreInfosCollector SonarQube issue.
+* [CONRAT-28056](https://jira.rakuten-it.com/jira/browse/CONRAT-28056): Fix String+Extensions.swift SonarQube issues.
+
+### Unit tests
+* [CONRAT-27983](https://jira.rakuten-it.com/jira/browse/CONRAT-27983): Improve the RAT Tracking tests with CoreHelpers injection.
+* [CONRAT-28146](https://jira.rakuten-it.com/jira/browse/CONRAT-28146): Fix RP Cookie Fetcher Integration Spec failing test.
+* [CONRAT-28195](https://jira.rakuten-it.com/jira/browse/CONRAT-28195): Create BDD tests for isTrackableAsPageVisit.
+
 ## 9.8.1 (2023-03-23)
 
 ### Crash fixes

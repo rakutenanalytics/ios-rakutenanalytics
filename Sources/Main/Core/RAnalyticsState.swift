@@ -1,11 +1,6 @@
 import Foundation
 import UIKit.UIViewController
 import CoreLocation.CLLocation
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
 
 /// Known login methods.
 ///

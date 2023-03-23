@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 protocol AnalyticsEventTrackable {
     var delegate: AnalyticsManageable? { get set }

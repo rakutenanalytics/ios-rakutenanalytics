@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
 
 @objc public protocol RAnalyticsRpCookieFetchable {
     var endpointURL: URL? { get set }

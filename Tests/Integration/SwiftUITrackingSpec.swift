@@ -9,20 +9,6 @@ import SwiftUI
 import RAnalyticsTestHelpers
 #endif
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
-
-#if canImport(RSDKUtilsNimble)
-import RSDKUtilsNimble
-#endif
-
-#if canImport(RSDKUtilsTestHelpers)
-import RSDKUtilsTestHelpers
-#endif
-
 struct RView: View, Inspectable {
     @available(iOS 13.0.0, *)
     var body: some View {

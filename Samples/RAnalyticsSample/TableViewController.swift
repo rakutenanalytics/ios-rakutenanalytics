@@ -1,11 +1,6 @@
 import UIKit
 import RAnalytics
 import WebKit
-#if canImport(RSDKUtilsMain)
-import RSDKUtilsMain // for RAnalyticsSampleSPM
-#else
-import RSDKUtils
-#endif
 
 enum GlobalConstants {
     static let kLocationTracking = "Location_Tracking"

@@ -1,9 +1,4 @@
 import Foundation
-#if canImport(RSDKUtils)
-import struct RSDKUtils.RLogger
-#else // SPM version
-import RLogger
-#endif
 
 /// A class that injects a cookie in the HTTP Cookie Store
 final class RAnalyticsCookieInjector {

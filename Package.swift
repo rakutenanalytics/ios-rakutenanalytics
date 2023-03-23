@@ -10,11 +10,6 @@ let package = Package(
         .library(name: "RAnalytics", targets: ["RAnalytics"])
     ],
     dependencies: [
-             .package(name: "RSDKUtils",
-                      url: "https://github.com/rakutentech/ios-sdkutils.git",
-                      .upToNextMajor(from: "4.0.0")
-             ),
-
              .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
 
              .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
@@ -23,9 +18,7 @@ let package = Package(
         ],
     targets: [
         .target(name: "RAnalytics",
-                dependencies: ["RAnalyticsSwiftLoader",
-                               .product(name: "RLogger", package: "RSDKUtils"),
-                               .product(name: "RSDKUtilsMain", package: "RSDKUtils")],
+                dependencies: ["RAnalyticsSwiftLoader"],
                 path: "Sources/Main",
                 exclude: ["Core/SDK_TRACKING_GUIDE.md"],
                 resources: [.process("Core/Assets")]),
@@ -37,13 +30,13 @@ let package = Package(
                 dependencies: ["RAnalytics",
                                "Quick",
                                "Nimble",
-                               "ViewInspector",
-                               .product(name: "RSDKUtilsNimble", package: "RSDKUtils"),
-                               .product(name: "RSDKUtilsTestHelpers", package: "RSDKUtils")],
+                               "ViewInspector"],
                 path: "Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
 
         .testTarget(name: "Functional", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
+
+        .testTarget(name: "UtilsSpec", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
 
         .testTarget(name: "Integration",
                     dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],

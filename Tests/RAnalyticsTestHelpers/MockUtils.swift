@@ -4,12 +4,6 @@ import CoreTelephony
 import AdSupport
 import WebKit
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-#endif
-
 @testable import RAnalytics
 
 // MARK: - Tracker
@@ -284,6 +278,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                             databaseParentDirectory: .documentDirectory)
     }()
     public var pushEventHandler: PushEventHandleable
+    public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
 
     public override init() {
         let appGroupId = bundle.appGroupId
@@ -559,10 +554,29 @@ public final class BundleMock: NSObject, EnvironmentBundle {
         object(forInfoDictionaryKey: AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey) as? String
     }
 
-    public var shortVersion: String? = "2.0"
+    public var shortVersion: String? {
+        get {
+            dictionary?["CFBundleShortVersionString"] as? String
+        }
+
+        set(newValue) {
+            dictionary?["CFBundleShortVersionString"] = newValue
+        }
+    }
+
     public var version: String? = "1"
     public var applicationSceneManifest: RAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
+
+    public override init() {
+        self.dictionary = [String: Any]()
+    }
+
+    public init(bundleIdentifier: String, shortVersion: String) {
+        self.bundleIdentifier = bundleIdentifier
+        self.dictionary = [String: Any]()
+        dictionary?["CFBundleShortVersionString"] = shortVersion
+    }
 
     /// Factory function for creating a mocked bundle
     public static func create() -> BundleMock {
@@ -591,4 +605,20 @@ public enum MainDependenciesContainer {
         manager.add(ratTracker)
         return manager
     }()
+}
+
+// MARK: - CoreInfosCollectorMock
+
+public struct CoreInfosCollectorMock: CoreInfosCollectable {
+    public let appInfo: String?
+    public let sdkDependencies: [String: Any]?
+
+    public init(appInfo: String?, sdkDependencies: [String: Any]?) {
+        self.appInfo = appInfo
+        self.sdkDependencies = sdkDependencies
+    }
+
+    public func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [RAnalytics.EnvironmentBundle]) -> [String: Any]? {
+        nil
+    }
 }

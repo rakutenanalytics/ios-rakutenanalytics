@@ -3,12 +3,6 @@ import CoreLocation
 import WebKit
 import AdSupport
 import CoreTelephony
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-import RSDKUtilsMain
-#endif
 
 protocol SimpleDependenciesContainable {
     var notificationHandler: NotificationObservable { get }
@@ -27,6 +21,7 @@ protocol SimpleDependenciesContainable {
     var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? { get }
     var databaseConfiguration: DatabaseConfigurable? { get }
     var pushEventHandler: PushEventHandleable { get }
+    var coreInfosCollector: CoreInfosCollectable { get }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -55,6 +50,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
                                             databaseParentDirectory: Bundle.main.databaseParentDirectory)
     }()
     let pushEventHandler: PushEventHandleable
+    let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
 
     init() {
         let appGroupId = bundle.appGroupId

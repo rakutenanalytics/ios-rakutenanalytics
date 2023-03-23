@@ -1,11 +1,5 @@
 import Foundation
 import SQLite3
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsMain
-import RLogger
-#endif
 import UIKit
 
 typealias SQlite3Pointer = OpaquePointer

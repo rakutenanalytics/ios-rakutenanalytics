@@ -21,9 +21,9 @@ final class ReferralAppModelSpec: QuickSpec {
             let bundleIdentifier = "jp.co.rakuten.Host"
             #endif
             let encodedBundleIdentifier = bundleIdentifier.addEncodingForRFC3986UnreservedCharacters()!
-            let link = "campaignCode\(CharacterSet.RFC3986ReservedCharacters)"
+            let link = "campaignCode\(CharacterSet.rfc3986ReservedCharacters)"
             let encodedLink = link.addEncodingForRFC3986UnreservedCharacters()!
-            let component = "news\(CharacterSet.RFC3986ReservedCharacters)"
+            let component = "news\(CharacterSet.rfc3986ReservedCharacters)"
             let encodedComponent = component.addEncodingForRFC3986UnreservedCharacters()!
             let bundleIdentifierQueryItem = "\(PayloadParameterKeys.ref)=\(encodedBundleIdentifier)"
             let accountIdentifier: Int64 = 1
@@ -34,13 +34,13 @@ final class ReferralAppModelSpec: QuickSpec {
             let componentQueryItem = "\(CpParameterKeys.Ref.component)=\(encodedComponent)"
             let mandatoryParametersQueryItems = "\(accountIdentifierQueryItem)&\(applicationIdentifierQueryItem)"
             let encodedStandardCharacters = "abcdefghijklmnopqrstuvwxyz".addEncodingForRFC3986UnreservedCharacters()!
-            let encodedSpecialCharacters = CharacterSet.RFC3986ReservedCharacters.addEncodingForRFC3986UnreservedCharacters()!
+            let encodedSpecialCharacters = CharacterSet.rfc3986ReservedCharacters.addEncodingForRFC3986UnreservedCharacters()!
             let customParameters: [String: String] = {
                 var customParameters = [String: String]()
                 customParameters["custom_param1"] = "japan"
                 customParameters["custom_param2"] = "tokyo"
-                customParameters["ref_custom_param1\(CharacterSet.RFC3986ReservedCharacters)"] = "italy\(CharacterSet.RFC3986ReservedCharacters)"
-                customParameters["ref_custom_param2\(CharacterSet.RFC3986ReservedCharacters)"] = "rome\(CharacterSet.RFC3986ReservedCharacters)"
+                customParameters["ref_custom_param1\(CharacterSet.rfc3986ReservedCharacters)"] = "italy\(CharacterSet.rfc3986ReservedCharacters)"
+                customParameters["ref_custom_param2\(CharacterSet.rfc3986ReservedCharacters)"] = "rome\(CharacterSet.rfc3986ReservedCharacters)"
                 return customParameters
             }()
             let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,
@@ -192,9 +192,9 @@ final class ReferralAppModelSpec: QuickSpec {
                     context("Only custom parameters are provided") {
                         it("should be initialized with expected values") {
                             (0...5).forEach { index in
-                                let key = "key\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let key = "key\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
-                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let value = "value\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
                                 customParameters[key] = value
@@ -258,9 +258,9 @@ final class ReferralAppModelSpec: QuickSpec {
 
                         func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let key = "\(key)\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
-                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let value = "value\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
                                 customParameters[key] = value
@@ -303,9 +303,9 @@ final class ReferralAppModelSpec: QuickSpec {
 
                         func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let key = "\(key)\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
-                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let value = "value\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
                                 customParameters[key] = value
@@ -349,9 +349,9 @@ final class ReferralAppModelSpec: QuickSpec {
 
                         func verifyCustomParams(key: String) {
                             (0...5).forEach { index in
-                                let key = "\(key)\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let key = "\(key)\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedKey = key.addEncodingForRFC3986UnreservedCharacters()!
-                                let value = "value\(CharacterSet.RFC3986ReservedCharacters)\(index)"
+                                let value = "value\(CharacterSet.rfc3986ReservedCharacters)\(index)"
                                 let encodedValue = value.addEncodingForRFC3986UnreservedCharacters()!
 
                                 customParameters[key] = value

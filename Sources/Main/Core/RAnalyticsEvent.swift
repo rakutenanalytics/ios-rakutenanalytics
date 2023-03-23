@@ -66,29 +66,12 @@ import Foundation
         public static let deeplink = "deeplink"
 
         /// Event triggered when a push notification is opened.
-        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
-        /// - Note: The parameters are checked internally before sending the event to RAT.
-        /// - Note: The event parameter `RAnalyticsEvent.Parameter.pushTrackingIdentifier` is internally replaced by `push_notify_value`.
-        /// - Warning: This property is used by RPushPNP <= 10.0.0
-        @available(*, deprecated, message: "Use pushNotificationExternal instead")
-        public static let pushNotification = pushNotificationOpenedForRAT
-
-        /// Event triggered when a push notification is opened.
         /// This event has a parameter named `push_notify_value`.
         /// - Note: This event is renamed to `_rem_push_notify` on RAT backend.
         public static let pushNotificationExternal = "_rem_push_notify_external"
 
         /// Event sent to RAT when a push notification is opened.
         static let pushNotificationOpenedForRAT = "_rem_push_notify"
-
-        /// Event triggered when a push notification is received.
-        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushTrackingIdentifier`.
-        /// This event has an optional parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
-        /// - Note: The parameters are checked internally before sending the event to RAT.
-        /// - Note: The event parameter `RAnalyticsEvent.Parameter.pushTrackingIdentifier` is internally replaced by `push_notify_value`.
-        /// - Warning: This property is used by RPushPNP <= 10.0.0 
-        @available(*, deprecated, message: "Use pushNotificationReceivedExternal instead")
-        public static let pushNotificationReceived = pushNotificationReceivedForRAT
 
         /// Event triggered when a push notification is received.
         /// This event has a parameter named `push_notify_value`.
@@ -107,27 +90,11 @@ import Foundation
         /// Event triggered when a PNP auto registration occurs.
         /// This event has a non-empty parameter named `deviceId`.
         /// This event has a non-empty parameter named `pnpClientId`.
-        /// - Note: The parameters are checked internally before sending the event to RAT.
-        /// - Warning: This property is used by RPushPNP <= 10.0.0
-        @available(*, deprecated, message: "Use pushAutoRegistrationExternal instead")
-        public static let pushAutoRegistration = pushAutoRegistrationForRAT
-
-        /// Event triggered when a PNP auto registration occurs.
-        /// This event has a non-empty parameter named `deviceId`.
-        /// This event has a non-empty parameter named `pnpClientId`.
         /// - Note: This event is renamed to `_rem_push_auto_register` on RAT backend.
         public static let pushAutoRegistrationExternal = "_rem_push_auto_register_external"
 
         /// Event sent to RAT when a PNP auto registration occurs.
         static let pushAutoRegistrationForRAT = "_rem_push_auto_register"
-
-        /// Event triggered when a PNP auto unregistration occurs.
-        /// This event has a non-empty parameter named `deviceId`.
-        /// This event has a non-empty parameter named `pnpClientId`.
-        /// - Note: The parameters are checked internally before sending the event to RAT.
-        /// - Warning: This property is used by RPushPNP <= 10.0.0
-        @available(*, deprecated, message: "Use pushAutoUnregistrationExternal instead")
-        public static let pushAutoUnregistration = pushAutoUnregistrationForRAT
 
         /// Event triggered when a PNP auto unregistration occurs.
         /// This event has a non-empty parameter named `deviceId`.
@@ -229,51 +196,6 @@ import Foundation
         self.name = name
         self.parameters = parameters ?? [:]
         super.init()
-    }
-
-    /// Convenience method for tracking a push notify event (`_rem_push_notify`).
-    ///
-    /// - Parameters:
-    ///     - pushNotificationPayload: The entire payload of a push notification.
-    ///
-    /// - Returns: A newly-initialized push notify event with the tracking identifier set into the parameter list.
-    @available(*, deprecated, message: "This function will be removed in the next major version.")
-    @objc public convenience init(pushNotificationPayload: [String: Any]) {
-        self.init(name: AnalyticsManager.Event.Name.pushNotification, pushNotificationPayload: pushNotificationPayload)
-    }
-
-    /// Convenience method for tracking a push conversion event (`_rem_push_cv`).
-    ///
-    /// - Parameters:
-    ///    - pushRequestIdentifier: The push request identifier.
-    ///    - pushConversionAction: The push conversion action.
-    ///
-    /// - Returns: A newly-initialized push conversion event with the push request identifier and the push conversion action.
-    @available(*, deprecated, message: "This function will be removed in the next major version.")
-    convenience init(pushRequestIdentifier: String, pushConversionAction: String) {
-        self.init(name: AnalyticsManager.Event.Name.pushNotificationConversion, parameters: nil)
-        self.parameters[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
-        self.parameters[AnalyticsManager.Event.Parameter.pushConversionAction] = pushConversionAction
-    }
-
-    /// Convenience method for tracking a push event.
-    ///
-    /// - Parameters:
-    ///     - pushNotificationPayload: The entire payload of a push notification.
-    ///
-    /// - Returns: A newly-initialized push event with the tracking identifier set into the parameter list.
-    @available(*, deprecated, message: "This function will be removed in the next major version.")
-    convenience init(name: String, pushNotificationPayload: [String: Any], pushRequestIdentifier: String? = nil) {
-        var payload = [String: Any]()
-        if let trackingId = RAnalyticsPushTrackingUtility.trackingIdentifier(fromPayload: pushNotificationPayload) {
-            payload[AnalyticsManager.Event.Parameter.pushTrackingIdentifier] = trackingId
-        }
-
-        if let pushRequestIdentifier = pushRequestIdentifier {
-            payload[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = pushRequestIdentifier
-        }
-
-        self.init(name: name, parameters: payload)
     }
 
     @objc public override var hash: Int {

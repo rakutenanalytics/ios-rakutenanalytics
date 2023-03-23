@@ -370,6 +370,9 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 # Knowledge Base
 
+## Migrating to v10.0.0
+`_rem_internal_install` event is no longer tracked to account id 477 and application id 1  due to removal of SDK Tracker function for sending events.
+
 ## Migrating to v9.8.0
 `_rem_push_notify` event is no longer tracked when a regular push notification is opened.
 

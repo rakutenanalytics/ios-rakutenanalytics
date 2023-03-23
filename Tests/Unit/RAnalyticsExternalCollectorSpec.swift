@@ -9,10 +9,6 @@ import UIKit
 import RAnalyticsTestHelpers
 #endif
 
-#if canImport(RSDKUtilsNimble)
-import RSDKUtilsNimble
-#endif
-
 // MARK: - RAnalyticsExternalCollectorSpec
 
 final class RAnalyticsExternalCollectorSpec: QuickSpec {

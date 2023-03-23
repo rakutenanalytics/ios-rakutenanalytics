@@ -6,12 +6,6 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-#if canImport(RSDKUtilsTestHelpers)
-import RSDKUtilsTestHelpers
-#else
-import RSDKUtils
-#endif
-
 final class RpCookieSpec: QuickSpec {
     override func spec() {
         describe("RpCookie") {

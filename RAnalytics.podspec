@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RAnalytics"
-  s.version      = "9.8.1"
+  s.version      = "9.9.0-snapshot"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
   s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ss|
     ss.source_files = [
       'Sources/Main/RAnalytics.h',
-      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/util/Private/}*.{m,swift}'
+      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
     ]
     ss.private_header_files = 'Sources/Main/Core/{Private,Util}/*.h'
     ss.resource_bundles = { 'RAnalyticsAssets' => ['Sources/Main/Core/Assets/*'] }
@@ -33,9 +33,17 @@ Pod::Spec.new do |s|
       'CoreLocation',
       'AdSupport'
     ]
-    ss.dependency 'RSDKUtils', '~> 4.0'
-    ss.dependency 'RSDKUtils/RLogger', '~> 4.0'
     ss.libraries = 'sqlite3', 'z'
+  end
+
+  s.subspec 'Geo' do |ss|
+    ss.source_files = 'Sources/Main/Geo/**/*.swift'
+    ss.resource_bundles = { 'GeoAssets' => ['Sources/Main/Geo/Assets/*'] }
+    ss.weak_frameworks = [
+      'Foundation',
+      'CoreLocation'
+    ]
+    ss.dependency 'RAnalytics/Core'
   end
 
   s.subspec 'RAT' do |ss|
@@ -47,7 +55,7 @@ Pod::Spec.new do |s|
     ss.dependency 'RAnalytics/Core'
   end
 
-  s.default_subspecs = 'RAT'
+  s.default_subspecs = ['Geo', 'RAT']
   s.module_map       = 'Sources/RAnalytics.modulemap'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:

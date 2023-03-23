@@ -1,12 +1,6 @@
 import Foundation
 import UIKit
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RLogger
-#endif
-
 @available(iOS 13.0, *)
 enum SceneDelegateHelper {
 

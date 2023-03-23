@@ -3,10 +3,10 @@ import Foundation
 extension RAnalyticsEvent {
     // MARK: - Install
 
-    var installParameters: [String: Any] {
+    func installParameters(with appInfo: String?) -> [String: Any] {
         var extra = [String: Any]()
-        if let appInfo = CoreHelpers.appInfo {
-            extra[RAnalyticsConstants.appInfoKey] = appInfo
+        if let appInfoNotOptional = appInfo {
+            extra[RAnalyticsConstants.appInfoKey] = appInfoNotOptional
         }
         return extra
     }

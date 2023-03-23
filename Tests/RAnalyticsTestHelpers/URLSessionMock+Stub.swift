@@ -1,11 +1,5 @@
 import Foundation
 
-#if canImport(RSDKUtils)
-import RSDKUtils
-#else // SPM version
-import RSDKUtilsTestHelpers
-#endif
-
 // MARK: - Stub Response
 
 extension URLSessionMock {
