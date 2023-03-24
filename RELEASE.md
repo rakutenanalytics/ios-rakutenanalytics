@@ -106,6 +106,12 @@ bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/
 - Confirm docs for this version have been published to:
     - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs
 
+- Add new version in docs portal (https://pages.ghe.rakuten-it.com/mag/mag-sdk-docs/): 
+    - Please see readme (https://ghe.rakuten-it.com/mag/mag-sdk-docs#adding-new-sdk-version) for details.
+    - Execute this command line in a terminal: ./add_new_version.sh ios analytics {version-number}
+    - Wait for GH pages to be published.
+    - Check if the new version {version-number} is published here: https://pages.ghe.rakuten-it.com/mag/mag-sdk-docs/
+
 - If release branch was used, merge to master - use merge-commit (do not squash) and **DO NOT DELETE THE RELEASE BRANCH**
 
 - Confirm tag/branch mirrored back to gitpub:
