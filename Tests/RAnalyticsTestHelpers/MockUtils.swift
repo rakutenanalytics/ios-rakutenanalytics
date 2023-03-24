@@ -3,6 +3,7 @@ import CoreLocation
 import CoreTelephony
 import AdSupport
 import WebKit
+import SystemConfiguration
 
 @testable import RAnalytics
 
@@ -279,12 +280,20 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     }()
     public var pushEventHandler: PushEventHandleable
     public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
+    public var automaticFieldsBuilder: AutomaticFieldsBuildable
 
     public override init() {
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
         pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
                                             appGroupId: appGroupId)
+        automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                        deviceCapability: deviceCapability,
+                                                        screenHandler: screenHandler,
+                                                        telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
+                                                        notificationHandler: notificationHandler,
+                                                        analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
+                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
         super.init()
     }
 }
@@ -503,6 +512,8 @@ public final class AnalyticsManagerMock: AnalyticsManageable {
 // MARK: - ReachabilityMock
 
 public final class ReachabilityMock: ReachabilityType {
+    public var flags: SCNetworkReachabilityFlags?
+
     public var connection: Reachability.Connection = .cellular
 
     public init() {
@@ -620,5 +631,19 @@ public struct CoreInfosCollectorMock: CoreInfosCollectable {
 
     public func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [RAnalytics.EnvironmentBundle]) -> [String: Any]? {
         nil
+    }
+}
+
+// MARK: - ScreenMock
+
+public final class ScreenMock: Screenable {
+    private let screenBounds: CGRect
+
+    public init(bounds: CGRect) {
+        self.screenBounds = bounds
+    }
+
+    public var bounds: CGRect {
+        screenBounds
     }
 }

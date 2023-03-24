@@ -67,7 +67,15 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 database = RAnalyticsDatabase.database(connection: databaseConnection)
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
                 dependenciesContainer.session = session
-                dependenciesContainer.bundle = BundleMock.create()
+                let bundle = BundleMock.create()
+                dependenciesContainer.bundle = bundle
+                dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                                                      deviceCapability: dependenciesContainer.deviceCapability,
+                                                                                      screenHandler: dependenciesContainer.screenHandler,
+                                                                                      telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
+                                                                                      notificationHandler: dependenciesContainer.notificationHandler,
+                                                                                      analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
+                                                                                      reachability: Reachability(hostname: ReachabilityConstants.host))
             }
 
             afterEach {

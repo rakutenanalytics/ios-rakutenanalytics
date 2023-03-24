@@ -319,7 +319,7 @@ extension AnalyticsManager {
 
 extension AnalyticsManager {
     @objc private func startNewSession() {
-        sessionCookie = NSUUID().uuidString
+        sessionCookie = Session.cks()
         sessionStartDate = Date()
 
         // Resume location updates if needed.

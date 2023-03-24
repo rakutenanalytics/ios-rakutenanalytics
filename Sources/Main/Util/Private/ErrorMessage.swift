@@ -4,6 +4,7 @@ enum ErrorDomain {
     private static let domainName = "com.rakuten.esd.sdk.analytics.error.domain"
     static let analyticsManagerErrorDomain = "\(domainName).analytics-manager"
     static let ratTrackerErrorDomain = "\(domainName).rat-tracker"
+    static let geoTrackerErrorDomain = "\(domainName).geo-tracker"
     static let rpCookieFetcherErrorDomain = "\(domainName).rp-cookie-fetcher"
     static let databaseErrorDomain = "\(domainName).database"
     static let senderErrorDomain = "\(domainName).sender"
@@ -61,6 +62,9 @@ enum ErrorCode: Int {
 
     // Keychain Handler
     case keychainHandlerFailure
+
+    // Geo Tracker
+    case geoTrackerCreationFailed
 }
 
 enum ErrorDescription {
@@ -69,6 +73,9 @@ enum ErrorDescription {
 
     // RAT Tracker
     static let eventsNotProcessedByRATTracker = "The events cannot be processed by the RAT Tracker."
+
+    // Geo Tracker
+    static let eventsNotProcessedByGeoTracker = "The events cannot be processed by the Geo Tracker."
 
     // Rp Cookie Fetcher
     static let rpCookieFetcherCreationFailed = "RAnalyticsRpCookieFetcher could not be created."

@@ -8,20 +8,6 @@ import UIKit
 import RAnalyticsTestHelpers
 #endif
 
-// MARK: - ScreenMock
-
-private final class ScreenMock: Screenable {
-    private let screenBounds: CGRect
-
-    init(bounds: CGRect) {
-        self.screenBounds = bounds
-    }
-
-    var bounds: CGRect {
-        screenBounds
-    }
-}
-
 // MARK: - DeviceHandlerSpec
 
 final class DeviceHandlerSpec: QuickSpec {

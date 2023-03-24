@@ -113,6 +113,12 @@ import CoreLocation.CLLocation
     /// Referral tracking type
     internal var referralTracking: ReferralTrackingType
 
+    /// The GeoTracker action flag.
+    var isAction: Bool = false
+
+    /// The GeoTracker action parameters model.
+    var actionParameters: ActionParameters?
+
     private let bundle: EnvironmentBundle
 
     @available(*, unavailable)

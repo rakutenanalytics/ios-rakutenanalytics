@@ -16,6 +16,13 @@ final class DatabaseConfiguration: DatabaseConfigurable {
 }
 
 enum DatabaseConfigurationHandler {
+    /// Creates a database.
+    ///
+    /// - Parameter databaseName: The SQLite database name.
+    /// - Parameter tableName: The SQLite table name.
+    /// - Parameter databaseParentDirectory: The directory location of the SQLite database.
+    ///
+    /// - Returns: a new instance of `DatabaseConfiguration` or nil if the SQLite connection failed.
     static func create(databaseName: String,
                        tableName: String,
                        databaseParentDirectory: FileManager.SearchPathDirectory) -> DatabaseConfigurable? {

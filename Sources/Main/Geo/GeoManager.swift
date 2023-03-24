@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import UIKit.UIDevice
 
 /// Completion block for request location.
 ///
@@ -43,17 +44,71 @@ protocol GeoTrackable {
 // MARK: - GeoManager
 /// The object that you use to start, stop and request the delivery of location-related events to your app.
 public final class GeoManager {
+    /// The Geo Tracker.
+    ///
+    /// - Note: The Geo Tracker instantiation returns nil when the endpoint URL is not configured (`RATEndpoint`).
+    private let geoTracker: Tracker?
+
+    /// The device identifier handler.
+    private let deviceIdentifierHandler: DeviceIdentifierHandler
+
+    /// The current location of the user.
+    private var location: CLLocation?
 
     /// - Returns: The shared instance of `GeoManager` object.
-    public static let shared: GeoManager = GeoManager()
+    public static let shared: GeoManager = {
+        let device = UIDevice.current
+
+        guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: GeoTrackerConstants.databaseName,
+                                                                              tableName: GeoTrackerConstants.tableName,
+                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory) else {
+            RLogger.error(message: "The GeoTracker could not be created because the SQLite connection failed.")
+            return GeoManager(geoTracker: nil, device: device)
+        }
+
+        let geoTracker = GeoTracker(dependenciesContainer: SimpleDependenciesContainer(),
+                                    databaseConfiguration: databaseConfiguration)
+        return GeoManager(geoTracker: geoTracker, device: device)
+    }()
+
+    /// Creates a new instance of GeoManager.
+    ///
+    /// - Parameter geoTracker: The GeoTracker instance or nil when the SQLite connection fails to create the GeoTracker Database.
+    /// If the GeoTracker could not be created, the other features of GeoManager are still running.
+    ///
+    /// - Parameter device: The device capability used to calculate the `ckp`.
+    init(geoTracker: Tracker?,
+         device: DeviceCapability) {
+        self.geoTracker = geoTracker
+
+        self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device,
+                                                               hasher: SecureHasher())
+    }
 }
 
 // MARK: - GeoManager conformance to GeoTrackable
 extension GeoManager: GeoTrackable {
 
     public func startLocationCollection() {
+        // Note: GeoManager has to calculate the location.
+        guard let location = location else {
+            return
+        }
+
+        // Note: GeoManager has to fill these values:
+        // - isAction
+        // - actionParameters
+        let state = RAnalyticsState(sessionIdentifier: Session.cks(),
+                                    deviceIdentifier: deviceIdentifierHandler.ckp())
+        state.lastKnownLocation = location
+        state.isAction = false
+        state.actionParameters = nil
+
+        _ = geoTracker?.process(event: RAnalyticsEvent(name: RAnalyticsEvent.Name.geoLocation,
+                                                       parameters: nil),
+                                state: state)
     }
-    
+
     public func stopLocationCollection() {
     }
 

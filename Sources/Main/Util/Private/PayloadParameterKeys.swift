@@ -90,39 +90,96 @@ enum PayloadParameterKeys {
         static let res = "res"
     }
 
+    /// Location
     enum Location {
-        /// The radius of uncertainty for the location, measured in meters.
-        /// - Note: returned by `CLLocation.horizontalAccuracy`
+        /// The location dictionary containing `lat`, `long`, `accu`, `tms`, `speed`, `speed_accuracy`, `alt`, `vertical_accuracy`, `bearing`, `bearing_accuracy`, `isaction`, `action_params`
+        static let loc = "loc"
+
+        /// Latitude of collected location in degrees
+        /// ex: 12.01245 or -39.01245
+        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
+        static let lat = "lat"
+
+        /// Longitude of collected location in degrees
+        /// ex: 136.02391 or  -130.1245
+        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
+        static let long = "long"
+
+        /// Horizontal accuracy of this location Value is 0.0 or greater
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// ex: 5.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423599-horizontalaccuracy
         static let accu = "accu"
 
-        /// The altitude above mean sea level associated with a location, measured in meters.
-        /// - Note: returned by `CLLocation.altitude`
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
-        static let altitude = "altitude"
-
         /// The time at which this location was determined.
-        /// - Note: returned by `CLLocation.timestamp.timeIntervalSince1970`
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423589-timestamp
+        /// Timestamp in ms (Unix epoch time)
+        /// ex: 1525648664398
         static let tms = "tms"
 
-        /// The latitude in degrees.
-        /// - Note: returned by `CLLocation.coordinate.latitude`
-        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d/1423513-latitude
-        static let lat = "lat"
-
-        /// The longitude in degrees.
-        /// - Note: returned by `CLLocation.coordinate.longitude`
-        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d/1423552-longitude
-        static let long = "long"
-
-        /// The instantaneous speed of the device, measured in meters per second.
-        /// - Note: returned by `CLLocation.speed`
+        /// Speed at the time of this location Value is 0.0 or greater
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// ex: 5.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423798-speed
         static let speed = "speed"
 
-        /// The location dictionary containing `accu`, `altitude`, `tms`, `lat`, `long`, `speed` key-value pairs.
-        static let loc = "loc"
+        /// The accuracy of the speed value, measured in meters per second.
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// ex: 9.8
+        /// https://developer.apple.com/documentation/corelocation/cllocation/3524340-speedaccuracy
+        static let speedAccuracy = "speed_accuracy"
+
+        /// The altitude above mean sea level associated with a location, measured in meters
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
+        static let altitude = "altitude"
+
+        /// Vertical accuracy of this location Value is 0.0 or greater
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// https://developer.apple.com/documentation/corelocation/cllocation/1423550-verticalaccuracy
+        static let verticalAccuracy = "vertical_accuracy"
+
+        /// Bearing at the time of this location Value is between 0.0 and 360.0 inclusive
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// https://developer.apple.com/documentation/corelocation/cllocation/1423832-course
+        static let bearing = "bearing"
+
+        /// Bearing accuracy in degrees of this location Value is 0.0 or greater
+        /// If there is a negative value it should contain default value
+        /// Default value: 0.0
+        /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
+        static let bearingAccuracy = "bearing_accuracy"
+
+        /// isAction = false → The Location collection in regular interval/distance.
+        /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
+        /// Default value: `false`
+        static let isAction = "isaction"
+
+        /// Optional ObjectModel which application can send along with requestLocation() method of public API.
+        /// - Note: Present only when `isaction` = true.
+        static let actionParameters = "action_params"
+
+        enum ActionParameters {
+            /// Type of action performed in requesting location
+            static let type = "type"
+
+            /// Logs related to performed action
+            static let log = "log"
+
+            /// Identifier associated with the action
+            static let identifier = "id"
+
+            /// Duration of action
+            static let duration = "duration"
+
+            /// Additional Information related to performed action
+            static let addLog = "add_log"
+        }
     }
 
     enum Orientation {

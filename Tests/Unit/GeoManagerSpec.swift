@@ -1,6 +1,7 @@
 import Quick
 import Nimble
 import CoreLocation
+import UIKit.UIDevice
 @testable import RAnalytics
 
 final class GeoManagerSpec: QuickSpec {
@@ -13,7 +14,7 @@ final class GeoManagerSpec: QuickSpec {
                 }
 
                 it("should not be nil on creating a new instance") {
-                    let manager = GeoManager()
+                    let manager = GeoManager(geoTracker: nil, device: UIDevice.current)
                     expect(manager).toNot(beNil())
                 }
             }

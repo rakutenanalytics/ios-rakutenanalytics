@@ -61,6 +61,13 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
                 dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
                 dependenciesContainer.coreInfosCollector = coreInfosCollectorMock
+                dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                                                      deviceCapability: dependenciesContainer.deviceCapability,
+                                                                                      screenHandler: dependenciesContainer.screenHandler,
+                                                                                      telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
+                                                                                      notificationHandler: dependenciesContainer.notificationHandler,
+                                                                                      analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
+                                                                                      reachability: Reachability(hostname: ReachabilityConstants.host))
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)

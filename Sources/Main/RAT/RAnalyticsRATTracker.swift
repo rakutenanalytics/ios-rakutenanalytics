@@ -1,6 +1,4 @@
 import Foundation
-import CoreTelephony
-import CoreLocation
 import UIKit
 
 // swiftlint:disable type_name
@@ -25,31 +23,10 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
     private var carriedOverOrigin: NSNumber?
 
-    /// The start time of RAnalyticsRATTracker creation
-    private let startTime: String
-
-    /// Telephony Handler
-    private var telephonyHandler: TelephonyHandleable
-
-    /// Device Handler
-    private let deviceHandler: DeviceHandleable
-
-    /// User Agent Handler
-    private let userAgentHandler: UserAgentHandleable
-
-    /// Reachability Notifier
-    private let reachabilityNotifier: ReachabilityNotifiable?
-
     private let coreInfosCollector: CoreInfosCollectable
-
-    /// Reachability Status
-    var reachabilityStatus: NSNumber?
 
     /// Bundle
     private let bundle: EnvironmentBundle
-
-    /// Status Bar Orientation Handler
-    private let statusBarOrientationHandler: MoriGettable
 
     /// RPCookie fetcher is used to retrieve the cookie details on initialize
     /// - Note: marked as `@objc` for `RAnalyticsRATTrackerInitSpec`.
@@ -59,6 +36,9 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// - Note: marked as `@objc` for this deprecated method:
     /// `@objc public static func endpointAddress() -> URL?`
     @objc private let sender: Sendable?
+
+    /// The RAT Automatic Fields Setter
+    private let automaticFieldsBuilder: AutomaticFieldsBuildable
 
     /// The RAT Account Identifier
     ///
@@ -169,19 +149,12 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         self.dependenciesContainer = dependenciesContainer
         let bundleContainer = dependenciesContainer.bundle
         let httpCookieStore = dependenciesContainer.httpCookieStore
-        let notificationCenter = dependenciesContainer.notificationHandler
-        let telephonyNetworkInfoHandler = dependenciesContainer.telephonyNetworkInfoHandler
-        let device = dependenciesContainer.deviceCapability
-        let screen = dependenciesContainer.screenHandler
-        let session = dependenciesContainer.session
 
         // Sender
         self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
                                        bundle: bundleContainer,
-                                       session: session)
+                                       session: dependenciesContainer.session)
         self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
-
-        self.startTime = NSDate().toString
 
         // Attempt to read the IDs from the app's plist
         // If not found, use 477/1 as default values for account/application ID.
@@ -191,14 +164,6 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         // Bundle
         self.bundle = bundleContainer
         self.duplicateAccounts = Set(bundle.duplicateAccounts ?? [])
-
-        // Status Bar Orientation Handler
-        let analyticsStatusBarOrientationGetter = dependenciesContainer.analyticsStatusBarOrientationGetter
-        statusBarOrientationHandler = RStatusBarOrientationHandler(application: analyticsStatusBarOrientationGetter)
-
-        // Reachability Notifier
-        reachabilityNotifier = ReachabilityNotifier(host: ReachabilityConstants.host,
-                                                    callback: RAnalyticsRATTracker.reachabilityCallback)
 
         // Rp Cookie Fetcher
         self.rpCookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore)
@@ -212,28 +177,13 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             }
         }
 
-        // Telephony Handler
-        self.telephonyHandler = TelephonyHandler(telephonyNetworkInfo: telephonyNetworkInfoHandler,
-                                                 notificationCenter: notificationCenter)
-
-        // Device Handler
-        self.deviceHandler = DeviceHandler(device: device, screen: screen)
-
-        // User Agent
-        self.userAgentHandler = UserAgentHandler(bundle: bundle)
-
         self.coreInfosCollector = dependenciesContainer.coreInfosCollector
+
+        self.automaticFieldsBuilder = dependenciesContainer.automaticFieldsBuilder
 
         super.init()
 
         logTrackingError(ErrorDescription.eventsNotProcessedByRATTracker)
-
-        // Reallocate telephonyNetworkInfo when the app becomes active
-        _ = notificationCenter.observe(forName: UIApplication.didBecomeActiveNotification,
-                                       object: nil,
-                                       queue: nil) { _ in
-            self.telephonyHandler.update(telephonyNetworkInfo: CTTelephonyNetworkInfo())
-        }
 
         // 1) Debug
         // DEBUG should not be mandatory as `assertionFailure` crashes only in DEBUG mode.
@@ -257,133 +207,6 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             #endif
             return
         }
-    }
-}
-
-// MARK: - Automatic Fields
-
-private extension RAnalyticsRATTracker {
-    /// Add the automatic fields to the RAT Payload.
-    ///
-    /// - Parameters:
-    ///     - payload: the Payload to update.
-    ///     - state: the State.
-    func addAutomaticFields(_ payload: NSMutableDictionary, state: RAnalyticsState) {
-        // MARK: acc
-        payload[PayloadParameterKeys.acc] =
-            (payload[PayloadParameterKeys.acc] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: accountIdentifier)
-        // MARK: aid
-        payload[PayloadParameterKeys.aid] =
-            (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: applicationIdentifier)
-
-        if deviceHandler.batteryState != .unknown {
-            // MARK: powerstatus
-            payload[PayloadParameterKeys.Device.powerStatus] = NSNumber(value: deviceHandler.batteryState != .unplugged ? 1 : 0)
-
-            // MARK: mbat
-            payload[PayloadParameterKeys.Device.mbat] = String(format: "%0.f", deviceHandler.batteryLevel * 100)
-        }
-
-        // MARK: dln
-        if let languageCode = bundle.languageCode {
-            payload[PayloadParameterKeys.Language.dln] = languageCode
-        }
-
-        // MARK: loc
-        var coordinate = kCLLocationCoordinate2DInvalid
-
-        let location = state.lastKnownLocation
-
-        if let location = location {
-            coordinate = location.coordinate
-        }
-
-        if CLLocationCoordinate2DIsValid(coordinate),
-           let location = location {
-            let locationDic = NSMutableDictionary()
-
-            // MARK: loc.accu
-            locationDic[PayloadParameterKeys.Location.accu] = NSNumber(value: max(0.0, location.horizontalAccuracy))
-
-            // MARK: loc.altitude
-            locationDic[PayloadParameterKeys.Location.altitude] = NSNumber(value: location.altitude)
-
-            // MARK: loc.tms
-            locationDic[PayloadParameterKeys.Location.tms] = NSNumber(value: max(0, round(location.timestamp.timeIntervalSince1970 * 1000.0)))
-
-            // MARK: loc.lat
-            locationDic[PayloadParameterKeys.Location.lat] = NSNumber(value: min(90.0, max(-90.0, coordinate.latitude)))
-
-            // MARK: loc.long
-            locationDic[PayloadParameterKeys.Location.long] = NSNumber(value: min(180.0, max(-180.0, coordinate.longitude)))
-
-            // MARK: loc.speed
-            locationDic[PayloadParameterKeys.Location.speed] = NSNumber(value: max(0.0, location.speed))
-
-            payload[PayloadParameterKeys.Location.loc] = locationDic
-        }
-
-        // MARK: model
-        payload[PayloadParameterKeys.Device.model] = UIDevice.current.modelIdentifier
-
-        // Telephony Handler
-        telephonyHandler.reachabilityStatus = reachabilityStatus
-
-        // MARK: mcn
-        payload[PayloadParameterKeys.Telephony.mcn] = telephonyHandler.mcn
-
-        // MARK: mcnd
-        payload[PayloadParameterKeys.Telephony.mcnd] = telephonyHandler.mcnd
-
-        // MARK: mnetw
-        payload[PayloadParameterKeys.Telephony.mnetw] = telephonyHandler.mnetw ?? ""
-
-        // MARK: mnetwd
-        payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
-
-        // MARK: mori
-        payload[PayloadParameterKeys.Orientation.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
-
-        // MARK: online
-        if let reachabilityStatus = reachabilityStatus {
-            let isOnline = reachabilityStatus.uintValue != RATReachabilityStatus.offline.rawValue
-            payload[PayloadParameterKeys.Network.online] = NSNumber(value: isOnline)
-        }
-
-        // MARK: ckp
-        payload[PayloadParameterKeys.Identifier.ckp] = state.deviceIdentifier
-
-        // MARK: ua
-        payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
-
-        // MARK: res
-        payload[PayloadParameterKeys.Device.res] = deviceHandler.screenResolution
-
-        // MARK: ltm
-        payload[PayloadParameterKeys.Time.ltm] = startTime
-
-        // MARK: cks
-        payload[PayloadParameterKeys.Identifier.cks] = state.sessionIdentifier
-
-        // MARK: tzo
-        payload[PayloadParameterKeys.TimeZone.tzo] = NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)
-
-        // MARK: cka
-        if !state.advertisingIdentifier.isEmpty {
-            payload[PayloadParameterKeys.Identifier.cka] = state.advertisingIdentifier
-        }
-
-        // MARK: userid
-        if !state.userIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.userid] as? String).isEmpty {
-            payload[PayloadParameterKeys.Identifier.userid] = state.userIdentifier
-        }
-
-        // MARK: easyid
-        if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
-            payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
-        }
-
-        payload.addEntries(from: state.corePayload)
     }
 }
 
@@ -491,7 +314,10 @@ extension RAnalyticsRATTracker {
             payload[PayloadParameterKeys.cp] = extra
         }
 
-        addAutomaticFields(payload, state: state)
+        automaticFieldsBuilder.addCommonParameters(payload, state: state)
+        automaticFieldsBuilder.addLocation(payload,
+                                           state: state,
+                                           addActionParameters: false)
 
         return payload
     }

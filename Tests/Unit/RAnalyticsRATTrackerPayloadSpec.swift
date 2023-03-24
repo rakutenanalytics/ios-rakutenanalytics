@@ -1,12 +1,14 @@
 // swiftlint:disable line_length
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
+// swiftlint:disable control_statement
 
 import Quick
 import Nimble
 import CoreTelephony
 import SQLite3
 import UIKit.UIDevice
+import SystemConfiguration
 @testable import RAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
@@ -27,6 +29,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
             var database: RAnalyticsDatabase!
             let dependenciesContainer = SimpleContainerMock()
             var ratTracker: RAnalyticsRATTracker!
+            let reachabilityMock = ReachabilityMock()
 
             beforeEach {
                 let databaseTableName = "testTableName_RAnalyticsRATTrackerSpec"
@@ -38,10 +41,17 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                 dependenciesContainer.deviceCapability = DeviceMock()
                 dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
                 dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
+                dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                                                      deviceCapability: dependenciesContainer.deviceCapability,
+                                                                                      screenHandler: dependenciesContainer.screenHandler,
+                                                                                      telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
+                                                                                      notificationHandler: dependenciesContainer.notificationHandler,
+                                                                                      analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
+                                                                                      reachability: reachabilityMock)
+                reachabilityMock.flags = nil
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)
-                ratTracker.reachabilityStatus = nil
 
                 expecter.dependenciesContainer = dependenciesContainer
                 expecter.endpointURL = bundle.endpointAddress
@@ -240,7 +250,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         it("should not set online") {
                             var payload: [String: Any]?
 
-                            expecter.ratTracker.reachabilityStatus = nil
+                            reachabilityMock.flags = nil
 
                             expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
                                 payload = $0.first
@@ -256,7 +266,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         it("should set online to false") {
                             var payload: [String: Any]?
 
-                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
+                            reachabilityMock.flags = .connectionRequired
 
                             expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
                                 payload = $0.first
@@ -272,7 +282,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         it("should set online to true") {
                             var payload: [String: Any]?
 
-                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+                            reachabilityMock.flags = [.isWWAN, .reachable]
 
                             expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
                                 payload = $0.first
@@ -288,7 +298,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         it("should set online to true") {
                             var payload: [String: Any]?
 
-                            expecter.ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+                            reachabilityMock.flags = [.isDirect, .reachable]
 
                             expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
                                 payload = $0.first
@@ -440,7 +450,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     context("When there is no carrier") {
                         context("And the connection is offline") {
                             it("should process an event without mcn and mcnd ") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.offline.rawValue)
+                                reachabilityMock.flags = .connectionRequired
 
                                 verifyEmptyMcnAndMcnd()
                             }
@@ -448,7 +458,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
                         context("And the connection is WWAN") {
                             it("should process an event without mcn and mcnd ") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wwan.rawValue)
+                                reachabilityMock.flags = [.isWWAN, .reachable]
 
                                 verifyEmptyMcnAndMcnd()
                             }
@@ -456,7 +466,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
                         context("And the connection is Wifi") {
                             it("should process an event without mcn and mcnd ") {
-                                ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+                                reachabilityMock.flags = [.isDirect, .reachable]
 
                                 verifyEmptyMcnAndMcnd()
                             }
@@ -519,7 +529,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
 
                     context("when there are two carriers") {
                         it("should process an event with mcn and mcnd") {
-                            ratTracker.reachabilityStatus = NSNumber(value: RATReachabilityStatus.wifi.rawValue)
+                            reachabilityMock.flags = [.isDirect, .reachable]
 
                             let expectedMcnValue = "Rakuten Mobile"
                             let expectedMcndValue = "Ubigi"
@@ -681,7 +691,14 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     func verify(primaryRadio: String, secondaryRadio: String, reachabilityStatus: RATReachabilityStatus) {
                         var payload: [String: Any]?
 
-                        ratTracker.reachabilityStatus = NSNumber(value: reachabilityStatus.rawValue)
+                        switch(reachabilityStatus) {
+                        case .wifi:
+                            reachabilityMock.flags = [.isDirect, .reachable]
+                        case .wwan:
+                            reachabilityMock.flags = [.isWWAN, .reachable]
+                        case .offline:
+                            reachabilityMock.flags = [.connectionRequired]
+                        }
 
                         let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
                         telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryRadio,

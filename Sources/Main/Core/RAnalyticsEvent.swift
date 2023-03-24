@@ -118,6 +118,9 @@ import Foundation
         /// Event used to package an event name and its data.
         /// This event has parameters `RAnalyticsEvent.Parameter.eventName` and `RAnalyticsEvent.Parameter.eventData`.
         public static let custom = "_analytics_custom"
+
+        /// Event triggered when the geolocation is updated.
+        public static let geoLocation = "loc"
     }
 
     /// Event parameters

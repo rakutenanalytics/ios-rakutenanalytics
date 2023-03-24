@@ -22,6 +22,7 @@ protocol SimpleDependenciesContainable {
     var databaseConfiguration: DatabaseConfigurable? { get }
     var pushEventHandler: PushEventHandleable { get }
     var coreInfosCollector: CoreInfosCollectable { get }
+    var automaticFieldsBuilder: AutomaticFieldsBuildable { get }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -51,11 +52,20 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     }()
     let pushEventHandler: PushEventHandleable
     let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
+    let automaticFieldsBuilder: AutomaticFieldsBuildable
 
     init() {
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
         pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
                                             appGroupId: appGroupId)
+
+        automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                        deviceCapability: deviceCapability,
+                                                        screenHandler: screenHandler,
+                                                        telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
+                                                        notificationHandler: notificationHandler,
+                                                        analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
+                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
     }
 }

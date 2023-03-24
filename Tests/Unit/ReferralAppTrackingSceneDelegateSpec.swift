@@ -1,3 +1,5 @@
+// swiftlint:disable line_length
+
 import Quick
 import Nimble
 import Foundation
@@ -55,6 +57,15 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
                     dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database,
                                                                                         tableName: databaseTableName)
                     dependenciesContainer.session = session
+
+                    let bundle = BundleMock.create()
+                    dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                                                          deviceCapability: dependenciesContainer.deviceCapability,
+                                                                                          screenHandler: dependenciesContainer.screenHandler,
+                                                                                          telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
+                                                                                          notificationHandler: dependenciesContainer.notificationHandler,
+                                                                                          analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
+                                                                                          reachability: Reachability(hostname: ReachabilityConstants.host))
 
                     analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 

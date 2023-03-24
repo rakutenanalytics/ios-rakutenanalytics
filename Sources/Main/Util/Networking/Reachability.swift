@@ -4,6 +4,8 @@ import Foundation
 protocol ReachabilityType {
     var connection: Reachability.Connection { get }
 
+    var flags: SCNetworkReachabilityFlags? { get }
+
     func addObserver(_ observer: ReachabilityObserver)
     func removeObserver(_ observer: ReachabilityObserver)
 }

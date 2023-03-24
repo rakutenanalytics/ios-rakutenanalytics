@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ss|
     ss.source_files = [
       'Sources/Main/RAnalytics.h',
-      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
+      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Model/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
     ]
     ss.private_header_files = 'Sources/Main/Core/{Private,Util}/*.h'
     ss.resource_bundles = { 'RAnalyticsAssets' => ['Sources/Main/Core/Assets/*'] }
