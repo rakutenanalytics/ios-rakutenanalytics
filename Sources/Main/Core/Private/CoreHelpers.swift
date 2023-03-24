@@ -25,7 +25,7 @@ final class CoreHelpers {
         static let osVersion = String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)
         static let applicationName = Bundle.main.bundleIdentifier
         /// Current RAT SDK version
-        static let sdkVersion = "9.9.0-snapshot"
+        static let sdkVersion = "10.0.0-snapshot"
     }
 }
 
