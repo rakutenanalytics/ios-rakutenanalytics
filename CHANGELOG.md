@@ -16,6 +16,7 @@
 * [CONRAT-27898](https://jira.rakuten-it.com/jira/browse/CONRAT-27898): Add pitari and geo cocoapods dependencies to RModulesList.plist file.
 * [CONRAT-28085](https://jira.rakuten-it.com/jira/browse/CONRAT-28085): Remove all deprecated public APIs.
 * [CONRAT-28071](https://jira.rakuten-it.com/jira/browse/CONRAT-28071): Remove SDKTracker.
+* [CONRAT-28459](https://jira.rakuten-it.com/jira/browse/CONRAT-28459): Move Geo Classes to Core.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.

@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ss|
     ss.source_files = [
       'Sources/Main/RAnalytics.h',
-      'Sources/{Main/Core/,Main/Core/Private/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Model/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
+      'Sources/{Main/Core/,Main/Core/Private/,Main/Core/Geo/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Model/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
     ]
     ss.private_header_files = 'Sources/Main/Core/{Private,Util}/*.h'
     ss.resource_bundles = { 'RAnalyticsAssets' => ['Sources/Main/Core/Assets/*'] }
@@ -36,16 +36,6 @@ Pod::Spec.new do |s|
     ss.libraries = 'sqlite3', 'z'
   end
 
-  s.subspec 'Geo' do |ss|
-    ss.source_files = 'Sources/Main/Geo/**/*.swift'
-    ss.resource_bundles = { 'GeoAssets' => ['Sources/Main/Geo/Assets/*'] }
-    ss.weak_frameworks = [
-      'Foundation',
-      'CoreLocation'
-    ]
-    ss.dependency 'RAnalytics/Core'
-  end
-
   s.subspec 'RAT' do |ss|
     ss.source_files = 'Sources/Main/RAT/**/*.{swift}'
     ss.weak_frameworks = [
@@ -55,7 +45,7 @@ Pod::Spec.new do |s|
     ss.dependency 'RAnalytics/Core'
   end
 
-  s.default_subspecs = ['Geo', 'RAT']
+  s.default_subspecs = ['RAT']
   s.module_map       = 'Sources/RAnalytics.modulemap'
 end
 # vim:syntax=ruby:et:sts=2:sw=2:ts=2:ff=unix:
