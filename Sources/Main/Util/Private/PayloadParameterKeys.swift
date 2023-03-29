@@ -105,9 +105,7 @@ enum PayloadParameterKeys {
         /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
         static let long = "long"
 
-        /// Horizontal accuracy of this location Value is 0.0 or greater
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
+        /// Horizontal accuracy of this location
         /// ex: 5.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423599-horizontalaccuracy
         static let accu = "accu"
@@ -117,41 +115,29 @@ enum PayloadParameterKeys {
         /// ex: 1525648664398
         static let tms = "tms"
 
-        /// Speed at the time of this location Value is 0.0 or greater
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
+        /// Speed at the time of this location
         /// ex: 5.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423798-speed
         static let speed = "speed"
 
         /// The accuracy of the speed value, measured in meters per second.
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
         /// ex: 9.8
         /// https://developer.apple.com/documentation/corelocation/cllocation/3524340-speedaccuracy
         static let speedAccuracy = "speed_accuracy"
 
         /// The altitude above mean sea level associated with a location, measured in meters
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
         static let altitude = "altitude"
 
-        /// Vertical accuracy of this location Value is 0.0 or greater
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
+        /// Vertical accuracy of this location
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423550-verticalaccuracy
         static let verticalAccuracy = "vertical_accuracy"
 
         /// Bearing at the time of this location Value is between 0.0 and 360.0 inclusive
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
         /// https://developer.apple.com/documentation/corelocation/cllocation/1423832-course
         static let bearing = "bearing"
 
-        /// Bearing accuracy in degrees of this location Value is 0.0 or greater
-        /// If there is a negative value it should contain default value
-        /// Default value: 0.0
+        /// Bearing accuracy in degrees of this location
         /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
         static let bearingAccuracy = "bearing_accuracy"
 

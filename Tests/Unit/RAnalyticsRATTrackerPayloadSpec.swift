@@ -9,10 +9,41 @@ import CoreTelephony
 import SQLite3
 import UIKit.UIDevice
 import SystemConfiguration
+import CoreLocation
 @testable import RAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
+
+// MARK: - LocationModel Factory
+
+extension LocationModel {
+    static func create(latitude: CLLocationDegrees = -56.6462520,
+                       longitude: CLLocationDegrees = -36.6462520,
+                       horizontalAccuracy: CLLocationAccuracy = 10,
+                       speed: CLLocationSpeed = 5,
+                       speedAccuracy: CLLocationSpeedAccuracy = 10,
+                       verticalAccuracy: CLLocationAccuracy = 9,
+                       altitude: CLLocationDistance = 150,
+                       course: CLLocationDirection = 5,
+                       courseAccuracy: CLLocationDirectionAccuracy = 1,
+                       timestamp: Date = Date(timeIntervalSince1970: 1679054447.532),
+                       isAction: Bool = false,
+                       actionParameters: ActionParameters? = nil) -> LocationModel {
+        LocationModel(latitude: latitude,
+                      longitude: longitude,
+                      horizontalAccuracy: horizontalAccuracy,
+                      speed: speed,
+                      speedAccuracy: speedAccuracy,
+                      verticalAccuracy: verticalAccuracy,
+                      altitude: altitude,
+                      course: course,
+                      courseAccuracy: courseAccuracy,
+                      timestamp: timestamp,
+                      isAction: isAction,
+                      actionParameters: actionParameters)
+    }
+}
 
 // MARK: - RAnalyticsRATTrackerPayloadSpec
 
@@ -160,24 +191,30 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         expect(loc).toNot(beNil())
                     }
 
-                    it("should set a non-nil accu") {
+                    func verifyNilVerticalAccuracy(for locationModel: LocationModel) {
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
 
                         let loc = payload?["loc"] as? [String: Any]
 
-                        let accu = loc?["accu"] as? NSNumber
-                        expect(accu?.intValue).toNot(beNil())
+                        let verticalAccuracy = loc?["vertical_accuracy"] as? NSNumber
+                        expect(verticalAccuracy?.doubleValue).to(beNil())
                     }
 
-                    it("should set a non-nil altitude") {
+                    func verifyNilAltitude(for locationModel: LocationModel) {
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
@@ -185,13 +222,81 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         let loc = payload?["loc"] as? [String: Any]
 
                         let altitude = loc?["altitude"] as? NSNumber
-                        expect(altitude?.intValue).toNot(beNil())
+                        expect(altitude?.doubleValue).to(beNil())
+                    }
+
+                    context("When vertical accuracy < 0") {
+                        let locationModel = LocationModel.create(verticalAccuracy: -1)
+
+                        it("should not set vertical accuracy") {
+                            verifyNilVerticalAccuracy(for: locationModel)
+                        }
+
+                        it("should not set altitude") {
+                            verifyNilAltitude(for: locationModel)
+                        }
+                    }
+
+                    context("When vertical accuracy == 0") {
+                        let locationModel = LocationModel.create(verticalAccuracy: 0)
+
+                        it("should not set vertical accuracy") {
+                            verifyNilVerticalAccuracy(for: locationModel)
+                        }
+
+                        it("should not set altitude") {
+                            verifyNilAltitude(for: locationModel)
+                        }
+                    }
+
+                    context("When vertical accuracy > 0") {
+                        let locationModel = LocationModel.create(verticalAccuracy: 10, altitude: 153)
+                        var state: RAnalyticsState!
+
+                        beforeEach {
+                            state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+                        }
+
+                        it("should set vertical accuracy") {
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let verticalAccuracy = loc?["vertical_accuracy"] as? NSNumber
+                            expect(verticalAccuracy?.doubleValue).to(equal(10))
+                        }
+
+                        it("should set altitude") {
+                            var payload: [String: Any]?
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let altitude = loc?["altitude"] as? NSNumber
+                            expect(altitude?.doubleValue).to(equal(153))
+                        }
                     }
 
                     it("should set a non-nil tms") {
+                        let timestamp: TimeInterval = 1679991767.626
+                        let locationModel = LocationModel.create(timestamp: Date(timeIntervalSince1970: timestamp))
+
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
@@ -199,41 +304,249 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         let loc = payload?["loc"] as? [String: Any]
 
                         let tms = loc?["tms"] as? NSNumber
-                        expect(tms?.intValue).toNot(beNil())
+                        expect(tms?.doubleValue).to(equal(timestamp * 1000.0))
                     }
 
-                    it("should set a non-nil lat") {
+                    func verifyHorizontalAccuracy(for locationModel: LocationModel, expectedHorizontalAccuracy: CLLocationAccuracy) {
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
 
                         let loc = payload?["loc"] as? [String: Any]
 
-                        let lat = loc?["lat"] as? NSNumber
-                        expect(lat?.intValue).toNot(beNil())
+                        let accu = loc?["accu"] as? NSNumber
+                        expect(accu?.doubleValue).to(equal(expectedHorizontalAccuracy))
                     }
 
-                    it("should set a non-nil long") {
+                    func verifyNilCoordinates(for locationModel: LocationModel) {
+                        it("should not set accu") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let accu = loc?["accu"] as? NSNumber
+                            expect(accu?.doubleValue).to(beNil())
+                        }
+
+                        it("should not set lat") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let lat = loc?["lat"] as? NSNumber
+                            expect(lat?.doubleValue).to(beNil())
+                        }
+
+                        it("should not set long") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let long = loc?["long"] as? NSNumber
+                            expect(long?.doubleValue).to(beNil())
+                        }
+                    }
+
+                    context("When horizontal accuracy < 0") {
+                        verifyNilCoordinates(for: LocationModel.create(horizontalAccuracy: -9))
+                    }
+
+                    context("When latitude has an unexpected value") {
+                        verifyNilCoordinates(for: LocationModel.create(latitude: 5600))
+                    }
+
+                    context("When longitude has an unexpected value") {
+                        verifyNilCoordinates(for: LocationModel.create(latitude: -432))
+                    }
+
+                    context("When horizontal accuracy < 0 and latitude & longitude have unexpected values") {
+                        verifyNilCoordinates(for: LocationModel.create(latitude: 5600,
+                                                                       longitude: -432,
+                                                                       horizontalAccuracy: -9))
+                    }
+
+                    func verifyCoordinates(for locationModel: LocationModel,
+                                           expectedLatitude: CLLocationDegrees,
+                                           expectedLongitude: CLLocationDegrees) {
+                        it("should set a non-nil lat") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let lat = loc?["lat"] as? NSNumber
+                            expect(lat?.doubleValue).to(equal(expectedLatitude))
+                        }
+
+                        it("should set a non-nil long") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let long = loc?["long"] as? NSNumber
+                            expect(long?.doubleValue).to(equal(expectedLongitude))
+                        }
+                    }
+
+                    context("When horizontal accuracy == 0") {
+                        let locationModel = LocationModel.create(latitude: -56.6462520,
+                                                                 longitude: -36.6462520,
+                                                                 horizontalAccuracy: 0)
+
+                        it("should set accu to an expected value") {
+                            verifyHorizontalAccuracy(for: locationModel, expectedHorizontalAccuracy: 0)
+                        }
+
+                        verifyCoordinates(for: locationModel,
+                                          expectedLatitude: -56.6462520,
+                                          expectedLongitude: -36.6462520)
+                    }
+
+                    context("When horizontal accuracy > 0") {
+                        let locationModel = LocationModel.create(latitude: -56.6462520,
+                                                                 longitude: -36.6462520,
+                                                                 horizontalAccuracy: 10)
+
+                        it("should set accu to an expected value") {
+                            verifyHorizontalAccuracy(for: locationModel, expectedHorizontalAccuracy: 10)
+                        }
+
+                        verifyCoordinates(for: locationModel,
+                                          expectedLatitude: -56.6462520,
+                                          expectedLongitude: -36.6462520)
+                    }
+
+                    func verifyNilSpeedParameters(for locationModel: LocationModel) {
+                        it("should not set speed accuracy") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let speedAccuracy = loc?["speed_accuracy"] as? NSNumber
+                            expect(speedAccuracy?.doubleValue).to(beNil())
+                        }
+
+                        it("should not set speed") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let speed = loc?["speed"] as? NSNumber
+                            expect(speed?.doubleValue).to(beNil())
+                        }
+                    }
+
+                    context("When speed accuracy < 0") {
+                        context("When speed > 0") {
+                            verifyNilSpeedParameters(for: LocationModel.create(speed: 180, speedAccuracy: -7))
+                        }
+
+                        context("When speed == 0") {
+                            verifyNilSpeedParameters(for: LocationModel.create(speed: 0, speedAccuracy: -7))
+                        }
+                    }
+
+                    context("When speed < 0") {
+                        context("When speed accuracy > 0") {
+                            verifyNilSpeedParameters(for: LocationModel.create(speed: -180, speedAccuracy: 7))
+                        }
+
+                        context("When speed accuracy == 0") {
+                            verifyNilSpeedParameters(for: LocationModel.create(speed: -180, speedAccuracy: 0))
+                        }
+                    }
+
+                    context("When speed accuracy < 0 and speed < 0") {
+                        context("When speed accuracy < 0") {
+                            verifyNilSpeedParameters(for: LocationModel.create(speed: -180, speedAccuracy: -7))
+                        }
+                    }
+
+                    func verifySpeedAccuracy(for locationModel: LocationModel, expectedSpeedAccuracy: CLLocationSpeedAccuracy) {
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
 
                         let loc = payload?["loc"] as? [String: Any]
 
-                        let long = loc?["long"] as? NSNumber
-                        expect(long?.intValue).toNot(beNil())
+                        let speedAccuracy = loc?["speed_accuracy"] as? NSNumber
+                        expect(speedAccuracy?.doubleValue).to(equal(expectedSpeedAccuracy))
                     }
 
-                    it("should set a non-nil speed") {
+                    func verifySpeed(for locationModel: LocationModel, expectedSpeed: CLLocationSpeed) {
                         var payload: [String: Any]?
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
                             payload = $0.first
                         }
                         expect(payload).toEventuallyNot(beNil())
@@ -241,7 +554,152 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         let loc = payload?["loc"] as? [String: Any]
 
                         let speed = loc?["speed"] as? NSNumber
-                        expect(speed?.intValue).toNot(beNil())
+                        expect(speed?.doubleValue).to(equal(expectedSpeed))
+                    }
+
+                    context("When speed accuracy == 0") {
+                        let locationModel = LocationModel.create(speed: 54,
+                                                                 speedAccuracy: 0)
+                        it("should set speed accuracy") {
+                            verifySpeedAccuracy(for: locationModel, expectedSpeedAccuracy: 0)
+                        }
+
+                        it("should set speed to an expected value") {
+                            verifySpeed(for: locationModel, expectedSpeed: 54)
+                        }
+                    }
+
+                    context("When speed accuracy > 0") {
+                        let locationModel = LocationModel.create(speed: 180,
+                                                                 speedAccuracy: 7)
+
+                        it("should set speed accuracy") {
+                            verifySpeedAccuracy(for: locationModel, expectedSpeedAccuracy: 7)
+                        }
+
+                        it("should set speed to an expected value") {
+                            verifySpeed(for: locationModel, expectedSpeed: 180)
+                        }
+                    }
+
+                    func verifyNilBearingParameters(for locationModel: LocationModel) {
+                        it("should not set bearing accuracy") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let bearing = loc?["bearing_accuracy"] as? NSNumber
+                            expect(bearing?.doubleValue).to(beNil())
+                        }
+
+                        it("should not set bearing") {
+                            var payload: [String: Any]?
+
+                            let state = Tracking.defaultState
+                            state.lastKnownLocation = locationModel
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let loc = payload?["loc"] as? [String: Any]
+
+                            let bearing = loc?["bearing"] as? NSNumber
+                            expect(bearing?.doubleValue).to(beNil())
+                        }
+                    }
+
+                    context("When course accuracy < 0") {
+                        context("When course > 0") {
+                            verifyNilBearingParameters(for: LocationModel.create(course: 2, courseAccuracy: -1))
+                        }
+
+                        context("When course == 0") {
+                            verifyNilBearingParameters(for: LocationModel.create(course: 0, courseAccuracy: -1))
+                        }
+                    }
+
+                    context("When course < 0") {
+                        context("When course accuracy > 0") {
+                            verifyNilBearingParameters(for: LocationModel.create(course: -2, courseAccuracy: 1))
+                        }
+
+                        context("When course accuracy == 0") {
+                            verifyNilBearingParameters(for: LocationModel.create(course: -2, courseAccuracy: 0))
+                        }
+                    }
+
+                    context("When course < 0 and course accuracy < 0") {
+                        verifyNilBearingParameters(for: LocationModel.create(course: -2, courseAccuracy: -1))
+                    }
+
+                    func verifyBearingAccuracy(for locationModel: LocationModel, expectedBearingAccuracy: CLLocationDirectionAccuracy) {
+                        var payload: [String: Any]?
+
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let bearingAccuracy = loc?["bearing_accuracy"] as? NSNumber
+                        expect(bearingAccuracy?.doubleValue).to(equal(expectedBearingAccuracy))
+                    }
+
+                    func verifyBearing(for locationModel: LocationModel, expectedBearing: CLLocationDirection) {
+                        var payload: [String: Any]?
+
+                        let state = Tracking.defaultState
+                        state.lastKnownLocation = locationModel
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let loc = payload?["loc"] as? [String: Any]
+
+                        let bearing = loc?["bearing"] as? NSNumber
+                        expect(bearing?.doubleValue).to(equal(expectedBearing))
+                    }
+
+                    context("When course accuracy == 0") {
+                        let locationModel = LocationModel.create(course: 2,
+                                                                 courseAccuracy: 0)
+
+                        it("should set bearing accuracy") {
+                            verifyBearingAccuracy(for: locationModel, expectedBearingAccuracy: 0)
+                        }
+
+                        it("should set bearing") {
+                            verifyBearing(for: locationModel, expectedBearing: 2)
+                        }
+                    }
+
+                    context("When course accuracy > 0") {
+                        let locationModel = LocationModel.create(course: 2,
+                                                                 courseAccuracy: 19)
+
+                        it("should set bearing accuracy") {
+                            verifyBearingAccuracy(for: locationModel, expectedBearingAccuracy: 19)
+                        }
+
+                        it("should set bearing") {
+                            verifyBearing(for: locationModel, expectedBearing: 2)
+                        }
                     }
                 }
 

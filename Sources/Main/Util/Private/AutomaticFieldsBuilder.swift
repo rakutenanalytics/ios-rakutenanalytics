@@ -202,27 +202,26 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
                      state: RAnalyticsState,
                      addActionParameters: Bool) {
         // MARK: loc
-        var coordinate = kCLLocationCoordinate2DInvalid
 
-        let location = state.lastKnownLocation
-
-        if let location = location {
-            coordinate = location.coordinate
+        guard let locationModel = state.lastKnownLocation else {
+            RLogger.debug(message: "Location can't be tracked because lastKnownLocation is nil.")
+            return
         }
 
-        if CLLocationCoordinate2DIsValid(coordinate),
-           let location = location {
-            let locationModel = LocationModel(location: location,
-                                              isAction: state.isAction,
-                                              actionParameters: state.actionParameters)
+        let coordinate = CLLocationCoordinate2D(latitude: locationModel.latitude,
+                                                longitude: locationModel.longitude)
 
-            var locationPayload = locationModel.toDictionary
-
-            if addActionParameters {
-                locationPayload = locationModel.addAction(to: locationPayload)
-            }
-
-            payload[PayloadParameterKeys.Location.loc] = locationPayload
+        guard CLLocationCoordinate2DIsValid(coordinate) else {
+            RLogger.debug(message: "Location can't be tracked because coordinates are invalid.")
+            return
         }
+
+        var locationPayload = locationModel.toDictionary
+
+        if addActionParameters {
+            locationPayload = locationModel.addAction(to: locationPayload)
+        }
+
+        payload[PayloadParameterKeys.Location.loc] = locationPayload
     }
 }

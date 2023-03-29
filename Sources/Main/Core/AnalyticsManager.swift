@@ -442,7 +442,14 @@ extension AnalyticsManager: AnalyticsManageable {
             state.advertisingIdentifier = advertisingIdentifier
         }
 
-        state.lastKnownLocation = shouldTrackLastKnownLocation ? locationManager.location : nil
+        if shouldTrackLastKnownLocation,
+            let location = locationManager.location {
+            state.lastKnownLocation = LocationModel(location: location)
+
+        } else {
+            state.lastKnownLocation = nil
+        }
+
         state.sessionStartDate = sessionStartDate ?? nil
 
         // Update state with data from external collector

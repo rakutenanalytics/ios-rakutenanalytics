@@ -12,7 +12,7 @@ extension CLLocation {
 }
 
 /// `ActionParameters` does not default to any values and are optional. It is upto the app to set them, if necessary.
-public struct ActionParameters {
+public struct ActionParameters: Hashable {
     /// Specify the type of action performed in requesting location.
     let actionType: String?
 
@@ -30,9 +30,45 @@ public struct ActionParameters {
 }
 
 /// Location used by the Geo Tracker.
-struct LocationModel {
-    /// The user location.
-    let location: CLLocation
+public struct LocationModel {
+    /// Latitude of collected location in degrees
+    /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
+    let latitude: CLLocationDegrees
+
+    /// Longitude of collected location in degrees
+    /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
+    let longitude: CLLocationDegrees
+
+    /// Horizontal accuracy of this location
+    /// https://developer.apple.com/documentation/corelocation/cllocation/1423599-horizontalaccuracy
+    let horizontalAccuracy: CLLocationAccuracy
+
+    /// Speed at the time of this location
+    /// https://developer.apple.com/documentation/corelocation/cllocation/1423798-speed
+    let speed: CLLocationSpeed
+
+    /// The accuracy of the speed value, measured in meters per second.
+    /// https://developer.apple.com/documentation/corelocation/cllocation/3524340-speedaccuracy
+    let speedAccuracy: CLLocationSpeedAccuracy
+
+    /// Vertical accuracy of this location
+    /// https://developer.apple.com/documentation/corelocation/cllocation/1423550-verticalaccuracy
+    let verticalAccuracy: CLLocationAccuracy
+
+    /// The altitude above mean sea level associated with a location, measured in meters
+    /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
+    let altitude: CLLocationDistance
+
+    /// Course at the time of this location Value is between 0.0 and 360.0 inclusive
+    /// https://developer.apple.com/documentation/corelocation/cllocation/1423832-course
+    let course: CLLocationDirection
+
+    /// Course accuracy in degrees of this location
+    /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
+    let courseAccuracy: CLLocationDirectionAccuracy
+
+    /// The time at which this location was determined.
+    let timestamp: Date
 
     /// isAction = false → The Location collection in regular interval/distance.
     /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
@@ -42,24 +78,125 @@ struct LocationModel {
     /// Optional ObjectModel which application can send along with requestLocation() method of public API.
     /// - Note: Present only when `isaction` = true.
     let actionParameters: ActionParameters?
+
+    /// Creates a new instance of `LocationModel`.
+    /// - Parameter location: the user location.
+    /// - Parameter isAction: the action boolean indicating that `actionParameters` can be added or not to the payload.
+    /// - Parameter actionParameters: the action parameters.
+    public init(location: CLLocation,
+                isAction: Bool = false,
+                actionParameters: ActionParameters? = nil) {
+        latitude = location.coordinate.latitude
+        longitude = location.coordinate.longitude
+        horizontalAccuracy = location.horizontalAccuracy
+        speed = location.speed
+        speedAccuracy = location.speedAccuracy
+        verticalAccuracy = location.verticalAccuracy
+        altitude = location.altitude
+        course = location.course
+        courseAccuracy = location.safeCourseAccuracy
+        timestamp = location.timestamp
+        self.isAction = isAction
+        self.actionParameters = actionParameters
+    }
+
+    /// Creates a new instance of `LocationModel`.
+    init(latitude: CLLocationDegrees,
+         longitude: CLLocationDegrees,
+         horizontalAccuracy: CLLocationAccuracy,
+         speed: CLLocationSpeed,
+         speedAccuracy: CLLocationSpeedAccuracy,
+         verticalAccuracy: CLLocationAccuracy,
+         altitude: CLLocationDistance,
+         course: CLLocationDirection,
+         courseAccuracy: CLLocationDirectionAccuracy,
+         timestamp: Date,
+         isAction: Bool = false,
+         actionParameters: ActionParameters? = nil) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.horizontalAccuracy = horizontalAccuracy
+        self.speed = speed
+        self.speedAccuracy = speedAccuracy
+        self.verticalAccuracy = verticalAccuracy
+        self.altitude = altitude
+        self.course = course
+        self.courseAccuracy = courseAccuracy
+        self.timestamp = timestamp
+        self.isAction = isAction
+        self.actionParameters = actionParameters
+    }
+}
+
+// MARK: - Hashable
+
+extension LocationModel: Hashable {
+    public static func == (lhs: LocationModel, rhs: LocationModel) -> Bool {
+        lhs.latitude == rhs.latitude
+        && lhs.longitude == rhs.longitude
+        && lhs.horizontalAccuracy == rhs.horizontalAccuracy
+        && lhs.speed == rhs.speed
+        && lhs.speedAccuracy == rhs.speedAccuracy
+        && lhs.verticalAccuracy == rhs.verticalAccuracy
+        && lhs.altitude == rhs.altitude
+        && lhs.course == rhs.course
+        && lhs.courseAccuracy == rhs.courseAccuracy
+        && lhs.timestamp == rhs.timestamp
+        && lhs.isAction == rhs.isAction
+        && lhs.actionParameters == rhs.actionParameters
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(latitude)
+        hasher.combine(longitude)
+        hasher.combine(horizontalAccuracy)
+        hasher.combine(speed)
+        hasher.combine(speedAccuracy)
+        hasher.combine(verticalAccuracy)
+        hasher.combine(altitude)
+        hasher.combine(course)
+        hasher.combine(courseAccuracy)
+        hasher.combine(timestamp)
+        hasher.combine(isAction)
+        hasher.combine(actionParameters)
+    }
 }
 
 // MARK: - Serialization
 
 extension LocationModel {
+    /// Convert LocationModel to a RAT location payload.
+    ///
+    /// - Spec: https://confluence.rakuten-it.com/confluence/display/RAT/analytics+sdk%3A+Implement+GeoTracker
     var toDictionary: [String: Any] {
-        [
-            PayloadParameterKeys.Location.lat: NSNumber(value: min(90.0, max(-90.0, location.coordinate.latitude))),
-            PayloadParameterKeys.Location.long: NSNumber(value: min(180.0, max(-180.0, location.coordinate.longitude))),
-            PayloadParameterKeys.Location.accu: NSNumber(value: max(0.0, location.horizontalAccuracy)),
-            PayloadParameterKeys.Location.tms: NSNumber(value: location.ratTimestamp),
-            PayloadParameterKeys.Location.speed: NSNumber(value: max(0.0, location.speed)),
-            PayloadParameterKeys.Location.speedAccuracy: NSNumber(value: max(0.0, location.speedAccuracy)),
-            PayloadParameterKeys.Location.altitude: NSNumber(value: location.altitude),
-            PayloadParameterKeys.Location.verticalAccuracy: NSNumber(value: max(0.0, location.verticalAccuracy)),
-            PayloadParameterKeys.Location.bearing: NSNumber(value: max(0.0, location.course)),
-            PayloadParameterKeys.Location.bearingAccuracy: NSNumber(value: max(0.0, location.safeCourseAccuracy))
-        ]
+        var payload = [String: Any]()
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+        if horizontalAccuracy >= 0
+            && CLLocationCoordinate2DIsValid(coordinate) {
+            payload[PayloadParameterKeys.Location.accu] = NSNumber(value: horizontalAccuracy)
+            payload[PayloadParameterKeys.Location.lat] = NSNumber(value: min(90.0, max(-90.0, latitude)))
+            payload[PayloadParameterKeys.Location.long] = NSNumber(value: min(180.0, max(-180.0, longitude)))
+        }
+
+        payload[PayloadParameterKeys.Location.tms] = NSNumber(value: timestamp.toRatTimestamp)
+
+        if speedAccuracy >= 0 && speed >= 0 {
+            payload[PayloadParameterKeys.Location.speedAccuracy] = NSNumber(value: speedAccuracy)
+            payload[PayloadParameterKeys.Location.speed] = NSNumber(value: speed)
+        }
+
+        if verticalAccuracy > 0 {
+            payload[PayloadParameterKeys.Location.verticalAccuracy] = NSNumber(value: verticalAccuracy)
+            payload[PayloadParameterKeys.Location.altitude] = NSNumber(value: altitude)
+        }
+
+        if courseAccuracy >= 0 && course >= 0 {
+            payload[PayloadParameterKeys.Location.bearingAccuracy] = NSNumber(value: courseAccuracy)
+            payload[PayloadParameterKeys.Location.bearing] = NSNumber(value: course)
+        }
+
+        return payload
     }
 
     func addAction(to payload: [String: Any]) -> [String: Any] {
@@ -96,5 +233,15 @@ extension LocationModel {
         }
 
         return location
+    }
+}
+
+extension Optional where Wrapped == LocationModel {
+    /// Retrieve the hash value of a `LocationModel`.
+    ///
+    /// - Returns: The hash value or `0`.
+    var safeHashValue: Int {
+        guard let str = self else { return 0 }
+        return str.hashValue
     }
 }

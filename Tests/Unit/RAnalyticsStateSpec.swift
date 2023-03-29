@@ -56,7 +56,9 @@ final class RAnalyticsStateSpec: QuickSpec {
                                                    deviceIdentifier: deviceIdentifier,
                                                    for: bundle)
                 state.advertisingIdentifier = advertisingIdentifier
-                state.lastKnownLocation = location
+                state.lastKnownLocation = LocationModel(location: location,
+                                                        isAction: false,
+                                                        actionParameters: nil)
                 state.loginMethod = .oneTapLogin
                 state.origin = .external
                 state.lastVersion = "1.0"
@@ -94,8 +96,8 @@ final class RAnalyticsStateSpec: QuickSpec {
                 expect(state.deviceIdentifier).to(equal(deviceIdentifier))
                 expect(state.currentVersion).to(equal(currentVersion))
                 expect(state.advertisingIdentifier).to(equal(advertisingIdentifier))
-                expect(state.lastKnownLocation?.coordinate.latitude).to(equal(location.coordinate.latitude))
-                expect(state.lastKnownLocation?.coordinate.longitude).to(equal(location.coordinate.longitude))
+                expect(state.lastKnownLocation?.latitude).to(equal(location.coordinate.latitude))
+                expect(state.lastKnownLocation?.longitude).to(equal(location.coordinate.longitude))
                 expect(state.sessionStartDate).to(equal(sessionStartDate))
                 expect(state.isLoggedIn).to(beTrue())
                 expect(state.userIdentifier).to(equal(userIdentifier))

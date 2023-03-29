@@ -95,11 +95,14 @@ final class GeoTrackerSpec: QuickSpec {
                 let expectedActionParamDuration = "1 Second"
                 let expectedActionParamAddLog = "Event on the Super Sale Campaign"
 
-                func createLocation() -> CLLocation {
+                func createLocation(isAction: Bool = false,
+                                    actionParameters: ActionParameters? = nil) -> LocationModel {
+                    var location: CLLocation
+
                     let coordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: expectedLongitude)
 
                     if #available(iOS 13.4, *) {
-                        return CLLocation(coordinate: coordinate,
+                        location = CLLocation(coordinate: coordinate,
                                           altitude: expectedAltitude,
                                           horizontalAccuracy: expectedAccuracy,
                                           verticalAccuracy: expectedVerticalAccuracy,
@@ -109,15 +112,18 @@ final class GeoTrackerSpec: QuickSpec {
                                           speedAccuracy: expectedSpeedAccuracy,
                                           timestamp: Date(timeIntervalSince1970: expectedTms))
                     } else {
-                        let location = CLLocation(coordinate: coordinate,
+                        location = CLLocation(coordinate: coordinate,
                                                   altitude: expectedAltitude,
                                                   horizontalAccuracy: expectedAccuracy,
                                                   verticalAccuracy: expectedVerticalAccuracy,
                                                   course: expectedBearing,
                                                   speed: expectedSpeed,
                                                   timestamp: Date(timeIntervalSince1970: expectedTms))
-                        return location
                     }
+
+                    return LocationModel(location: location,
+                                         isAction: isAction,
+                                         actionParameters: actionParameters)
                 }
 
                 let nonEmptyActionParameters = ActionParameters(actionType: expectedActionParamType,
@@ -192,8 +198,6 @@ final class GeoTrackerSpec: QuickSpec {
 
                     it("should process the event") {
                         state.lastKnownLocation = createLocation()
-                        state.isAction = false
-                        state.actionParameters = nil
 
                         expect(geoTracker?.process(event: createLocEvent(), state: state)).to(beTrue())
                         expect(urlSession.urlRequest).toNotEventually(beNil(), timeout: .seconds(2))
@@ -201,8 +205,6 @@ final class GeoTrackerSpec: QuickSpec {
 
                     it("should set a non-nil httpBody to the URL request") {
                         state.lastKnownLocation = createLocation()
-                        state.isAction = false
-                        state.actionParameters = nil
 
                         _ = geoTracker?.process(event: createLocEvent(), state: state)
                         expect(urlSession.urlRequest).toNotEventually(beNil(), timeout: .seconds(2))
@@ -212,8 +214,6 @@ final class GeoTrackerSpec: QuickSpec {
 
                     it("should send only one event") {
                         state.lastKnownLocation = createLocation()
-                        state.isAction = false
-                        state.actionParameters = nil
 
                         _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -344,8 +344,6 @@ final class GeoTrackerSpec: QuickSpec {
                         context("When isAction is false") {
                             it("should send the expected RAT payload with nil action parameters model") {
                                 state.lastKnownLocation = createLocation()
-                                state.isAction = false
-                                state.actionParameters = nil
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -365,9 +363,8 @@ final class GeoTrackerSpec: QuickSpec {
 
                         context("When isAction is true") {
                             it("should send the expected RAT payload without nil action parameters properties") {
-                                state.lastKnownLocation = createLocation()
-                                state.isAction = true
-                                state.actionParameters = nilActionParameters
+                                state.lastKnownLocation = createLocation(isAction: true,
+                                                                         actionParameters: nilActionParameters)
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -389,9 +386,8 @@ final class GeoTrackerSpec: QuickSpec {
                     context("When loc event is sent with nil action parameters model") {
                         context("When isAction is false") {
                             it("should send the expected RAT payload with nil action parameters model") {
-                                state.lastKnownLocation = createLocation()
-                                state.isAction = false
-                                state.actionParameters = nilActionParameters
+                                state.lastKnownLocation = createLocation(isAction: false,
+                                                                         actionParameters: nilActionParameters)
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -411,9 +407,8 @@ final class GeoTrackerSpec: QuickSpec {
 
                         context("When isAction is true") {
                             it("should send the expected RAT payload with nil action parameters properties") {
-                                state.lastKnownLocation = createLocation()
-                                state.isAction = true
-                                state.actionParameters = nilActionParameters
+                                state.lastKnownLocation = createLocation(isAction: true,
+                                                                         actionParameters: nilActionParameters)
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -435,9 +430,8 @@ final class GeoTrackerSpec: QuickSpec {
                     context("When loc event is sent with action parameters") {
                         context("When isAction is false") {
                             it("should send the expected RAT payload with nil action parameters model") {
-                                state.lastKnownLocation = createLocation()
-                                state.isAction = false
-                                state.actionParameters = nonEmptyActionParameters
+                                state.lastKnownLocation = createLocation(isAction: false,
+                                                                         actionParameters: nonEmptyActionParameters)
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -458,9 +452,8 @@ final class GeoTrackerSpec: QuickSpec {
                         context("When isAction is true") {
                             context("When all action parameters are present") {
                                 it("should send the expected RAT payload with expected ation parameters") {
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = nonEmptyActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: nonEmptyActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -486,9 +479,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                 actionDuration: nil,
                                                                                 additionalLog: nil)
 
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = sentActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: sentActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -520,9 +512,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                 actionDuration: nil,
                                                                                 additionalLog: nil)
 
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = sentActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: sentActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -554,9 +545,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                 actionDuration: nil,
                                                                                 additionalLog: nil)
 
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = sentActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: sentActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -588,9 +578,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                 actionDuration: expectedActionParamDuration,
                                                                                 additionalLog: nil)
 
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = sentActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: sentActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -622,9 +611,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                 actionDuration: nil,
                                                                                 additionalLog: expectedActionParamAddLog)
 
-                                    state.lastKnownLocation = createLocation()
-                                    state.isAction = true
-                                    state.actionParameters = sentActionParameters
+                                    state.lastKnownLocation = createLocation(isAction: true,
+                                                                             actionParameters: sentActionParameters)
 
                                     _ = geoTracker?.process(event: createLocEvent(), state: state)
 

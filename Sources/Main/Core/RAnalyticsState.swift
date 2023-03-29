@@ -59,9 +59,9 @@ import CoreLocation.CLLocation
     /// Current app version.
     @objc public let currentVersion: String
 
-    /// `CLLocation` object representing the last known location of the device.
+    /// `LocationModel` object representing the last known location of the device.
     /// Only set if that information is available and AnalyticsManager.shouldTrackLastKnownLocation is `true`.
-    @objc public internal(set) var lastKnownLocation: CLLocation?
+    public internal(set) var lastKnownLocation: LocationModel?
 
     /// IDFA.
     /// Only set if AnalyticsManager.shouldTrackAdvertisingId is `true`.
@@ -112,12 +112,6 @@ import CoreLocation.CLLocation
 
     /// Referral tracking type
     internal var referralTracking: ReferralTrackingType
-
-    /// The GeoTracker action flag.
-    var isAction: Bool = false
-
-    /// The GeoTracker action parameters model.
-    var actionParameters: ActionParameters?
 
     private let bundle: EnvironmentBundle
 
@@ -178,8 +172,6 @@ import CoreLocation.CLLocation
             ^ deviceIdentifier.hashValue
             ^ currentVersion.hashValue
             ^ advertisingIdentifier.safeHashValue
-            // CLLocation's hash method gives different hash values for objects with identical properties so use a
-            // hash of its string description instead
             ^ lastKnownLocation.safeHashValue
             ^ sessionStartDate.hashValue
             ^ isLoggedIn.hashValue
@@ -204,7 +196,7 @@ import CoreLocation.CLLocation
             && sessionIdentifier == object.sessionIdentifier
             && deviceIdentifier == object.deviceIdentifier
             && currentVersion == object.currentVersion
-            && CLLocation.equalLocation(lhs: lastKnownLocation, rhs: object.lastKnownLocation)
+            && lastKnownLocation == object.lastKnownLocation
             && sessionStartDate == object.sessionStartDate
             && isLoggedIn == object.isLoggedIn
             && userIdentifier == object.userIdentifier

@@ -374,7 +374,9 @@ public enum Tracking {
         let lastUpdateDate = dateComponents.date
 
         defaultState.advertisingIdentifier = "adId"
-        defaultState.lastKnownLocation     = CLLocation(latitude: -56.6462520, longitude: -56.6462520)
+        defaultState.lastKnownLocation     = LocationModel(location: CLLocation(latitude: -56.6462520, longitude: -56.6462520),
+                                                           isAction: false,
+                                                           actionParameters: nil)
         defaultState.sessionStartDate      = sessionStartDate
         defaultState.userIdentifier        = "userId"
         defaultState.easyIdentifier        = "easyId"

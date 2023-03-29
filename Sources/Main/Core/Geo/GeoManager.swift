@@ -100,9 +100,9 @@ extension GeoManager: GeoTrackable {
         // - actionParameters
         let state = RAnalyticsState(sessionIdentifier: Session.cks(),
                                     deviceIdentifier: deviceIdentifierHandler.ckp())
-        state.lastKnownLocation = location
-        state.isAction = false
-        state.actionParameters = nil
+        state.lastKnownLocation = LocationModel(location: location,
+                                                isAction: false,
+                                                actionParameters: nil)
 
         _ = geoTracker?.process(event: RAnalyticsEvent(name: RAnalyticsEvent.Name.geoLocation,
                                                        parameters: nil),

@@ -17,6 +17,7 @@
 * [CONRAT-28085](https://jira.rakuten-it.com/jira/browse/CONRAT-28085): Remove all deprecated public APIs.
 * [CONRAT-28071](https://jira.rakuten-it.com/jira/browse/CONRAT-28071): Remove SDKTracker.
 * [CONRAT-28459](https://jira.rakuten-it.com/jira/browse/CONRAT-28459): Move Geo Classes to Core.
+* [CONRAT-28481](https://jira.rakuten-it.com/jira/browse/CONRAT-28481): Refactor GeoTracker to handle negative values.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
