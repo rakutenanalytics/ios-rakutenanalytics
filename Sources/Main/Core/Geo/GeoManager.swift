@@ -14,7 +14,9 @@ protocol GeoTrackable {
     /// This method starts the location collection.
     ///
     /// Call this method to start the location collection.
-    func startLocationCollection()
+    /// 
+    /// - Parameter configuration: The location collection configuration. If nil, the default configuration is used.
+    func startLocationCollection(configuration: Configuration?)
     /// This method stops the location collection.
     ///
     /// Call this method to any ongoing location collection.
@@ -27,18 +29,10 @@ protocol GeoTrackable {
     ///     - completionHandler: Executes a block called `GeoRequestLocationBlock`.
     func requestLocation(actionParameters: GeoActionParameters?,
                          completionHandler: @escaping GeoRequestLocationBlock)
-    /// This method sets the configuration for the GeoTracker.
+    /// Get the location collection configuration.
     ///
-    /// Call this method to configure the GeoTracker.
-    /// - parameters:
-    ///     - accuracy: The accuracy of a geographical coordinate.
-    ///     - distanceInterval: The minimum distance in meters the device must move horizontally to obtain a location update event.
-    ///     - timeInterval: The minimum time in seconds the device must wait to obtain a location update event.
-    ///     - collectionTimeRange: The time range in milli seconds for location collection.
-    func configureGeoTracker(accuracy: GeoAccuracy?,
-                             distanceInterval: CLLocationDistance?,
-                             timeInterval: TimeInterval?,
-                             collectionTimeRange: (start: Int, end: Int)?)
+    /// - Returns: the location collection configuration.
+    func getConfiguration() -> Configuration
 }
 
 // MARK: - GeoManager
@@ -54,6 +48,9 @@ public final class GeoManager {
 
     /// The current location of the user.
     private var location: CLLocation?
+
+    /// The location collection configuration.
+    private var configuration: Configuration?
 
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
@@ -89,7 +86,9 @@ public final class GeoManager {
 // MARK: - GeoManager conformance to GeoTrackable
 extension GeoManager: GeoTrackable {
 
-    public func startLocationCollection() {
+    public func startLocationCollection(configuration: Configuration?) {
+        self.configuration = configuration
+
         // Note: GeoManager has to calculate the location.
         guard let location = location else {
             return
@@ -116,9 +115,10 @@ extension GeoManager: GeoTrackable {
                                 completionHandler: @escaping GeoRequestLocationBlock) {
     }
 
-    public func configureGeoTracker(accuracy: GeoAccuracy?,
-                                    distanceInterval: CLLocationDistance?,
-                                    timeInterval: TimeInterval?,
-                                    collectionTimeRange: (start: Int, end: Int)?) {
+    public func getConfiguration() -> Configuration {
+        guard let configuration = configuration else {
+            return ConfigurationFactory.defaultConfiguration
+        }
+        return configuration
     }
 }
