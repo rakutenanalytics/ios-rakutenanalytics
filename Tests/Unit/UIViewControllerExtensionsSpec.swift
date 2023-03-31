@@ -77,8 +77,15 @@ final class UIViewControllerExtensionsSpec: QuickSpec {
                     }
 
                     context("When view is nil") {
-                        it("should return true") {
-                            viewController.view = nil
+                        afterEach {
+                            UIViewController.swizzleToggle()
+                        }
+
+                        it("should return true (and should not crash)") {
+                            // Even if UIViewController's view is set to nil, the view value remains to be a UIView instance.
+                            // Swizzling here helps to (force) set the view to nil and test this behaviour as expected.
+                            UIViewController.swizzleToggle()
+                            expect(viewController.view).to(beNil())
                             expect(viewController.isTrackableAsPageVisit).to(beTrue())
                         }
                     }
@@ -93,5 +100,21 @@ final class UIViewControllerExtensionsSpec: QuickSpec {
                 }
             }
         }
+    }
+}
+
+private extension UIViewController {
+    @objc var swizzledView: UIView! {
+        nil
+    }
+
+    static func swizzleToggle() {
+        guard let originalMethod = class_getInstanceMethod(Self.self,
+                                                           #selector(getter: view)),
+              let swizzledMethod = class_getInstanceMethod(Self.self,
+                                                           #selector(getter: swizzledView)) else {
+            return
+        }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 }

@@ -34,6 +34,7 @@
 * [CONRAT-27983](https://jira.rakuten-it.com/jira/browse/CONRAT-27983): Improve the RAT Tracking tests with CoreHelpers injection.
 * [CONRAT-28146](https://jira.rakuten-it.com/jira/browse/CONRAT-28146): Fix RP Cookie Fetcher Integration Spec failing test.
 * [CONRAT-28195](https://jira.rakuten-it.com/jira/browse/CONRAT-28195): Create BDD tests for isTrackableAsPageVisit.
+* [CONRAT-28528](https://jira.rakuten-it.com/jira/browse/CONRAT-28528): Improve UIViewControllerExtensionsSpec BDD Tests in oder to test the fix made in CONRAT-28236.
 
 ## 9.8.1 (2023-03-23)
 
