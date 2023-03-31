@@ -6,6 +6,7 @@
 * [CONRAT-27822](https://jira.rakuten-it.com/jira/browse/CONRAT-27822): Update rsdks parameter format.
 * [CONRAT-28242](https://jira.rakuten-it.com/jira/browse/CONRAT-28242): Expose public methods of GeoManager in Geo module.
 * [CONRAT-28248](https://jira.rakuten-it.com/jira/browse/CONRAT-28248): Add GeoTracker to Geo Module.
+* [CONRAT-28353](https://jira.rakuten-it.com/jira/browse/CONRAT-28353): Save Configuration from application for GeoManager
 
 ### Improvements
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.

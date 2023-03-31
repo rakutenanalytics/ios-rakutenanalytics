@@ -4,7 +4,7 @@ import CoreLocation
 /// `GeoAccuracy` consists of accuracies for the location data that your app wants to receive.
 ///
 /// Accuracy values are the number of meters from the original geographic coordinate that could yield the user’s actual location.
-public enum GeoAccuracy: UInt {
+public enum GeoAccuracy: UInt, Codable {
     /// The best level of accuracy available.
     ///
     /// Specify this constant when you want very high accuracy but don’t need the same level of accuracy required for navigation apps. This level of accurate is available only if isAuthorizedForPreciseLocation is true.
