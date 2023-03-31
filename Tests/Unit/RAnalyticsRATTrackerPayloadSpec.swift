@@ -29,7 +29,7 @@ extension LocationModel {
                        courseAccuracy: CLLocationDirectionAccuracy = 1,
                        timestamp: Date = Date(timeIntervalSince1970: 1679054447.532),
                        isAction: Bool = false,
-                       actionParameters: ActionParameters? = nil) -> LocationModel {
+                       actionParameters: GeoActionParameters? = nil) -> LocationModel {
         LocationModel(latitude: latitude,
                       longitude: longitude,
                       horizontalAccuracy: horizontalAccuracy,

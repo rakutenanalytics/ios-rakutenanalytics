@@ -11,24 +11,6 @@ extension CLLocation {
     }
 }
 
-/// `ActionParameters` does not default to any values and are optional. It is upto the app to set them, if necessary.
-public struct ActionParameters: Hashable {
-    /// Specify the type of action performed in requesting location.
-    let actionType: String?
-
-    /// Logs related to the action.
-    let actionLog: String?
-
-    /// Id associated with the action.
-    let actionId: String?
-
-    /// Duration of action.
-    let actionDuration: String?
-
-    /// Additional information related to the action.
-    let additionalLog: String?
-}
-
 /// Location used by the Geo Tracker.
 public struct LocationModel {
     /// Latitude of collected location in degrees
@@ -77,7 +59,7 @@ public struct LocationModel {
 
     /// Optional ObjectModel which application can send along with requestLocation() method of public API.
     /// - Note: Present only when `isaction` = true.
-    let actionParameters: ActionParameters?
+    let actionParameters: GeoActionParameters?
 
     /// Creates a new instance of `LocationModel`.
     /// - Parameter location: the user location.
@@ -85,7 +67,7 @@ public struct LocationModel {
     /// - Parameter actionParameters: the action parameters.
     public init(location: CLLocation,
                 isAction: Bool = false,
-                actionParameters: ActionParameters? = nil) {
+                actionParameters: GeoActionParameters? = nil) {
         latitude = location.coordinate.latitude
         longitude = location.coordinate.longitude
         horizontalAccuracy = location.horizontalAccuracy
@@ -112,7 +94,7 @@ public struct LocationModel {
          courseAccuracy: CLLocationDirectionAccuracy,
          timestamp: Date,
          isAction: Bool = false,
-         actionParameters: ActionParameters? = nil) {
+         actionParameters: GeoActionParameters? = nil) {
         self.latitude = latitude
         self.longitude = longitude
         self.horizontalAccuracy = horizontalAccuracy

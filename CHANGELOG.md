@@ -19,6 +19,7 @@
 * [CONRAT-28459](https://jira.rakuten-it.com/jira/browse/CONRAT-28459): Move Geo Classes to Core.
 * [CONRAT-28481](https://jira.rakuten-it.com/jira/browse/CONRAT-28481): Refactor GeoTracker to handle negative values.
 * [CONRAT-28496](https://jira.rakuten-it.com/jira/browse/CONRAT-28496): Refactor Public Methods Exposed in GeoManager.
+* [CONRAT-28527](https://jira.rakuten-it.com/jira/browse/CONRAT-28527): Replace ActionParameters by GeoActionParameters.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.

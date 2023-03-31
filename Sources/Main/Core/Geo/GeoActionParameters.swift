@@ -3,7 +3,7 @@ import Foundation
 /// `GeoActionParameters` capture a set of optional parameters to be collected as stored properties on requesting location.
 ///
 /// `GeoActionParameters` does not default to any values and are optional. It is upto the app to set them, if necessary.
-public struct GeoActionParameters {
+public struct GeoActionParameters: Hashable {
     /// Specify the type of action performed in requesting location.
     let actionType: String?
     /// Logs related to the action.

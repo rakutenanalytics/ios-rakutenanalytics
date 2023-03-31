@@ -96,7 +96,7 @@ final class GeoTrackerSpec: QuickSpec {
                 let expectedActionParamAddLog = "Event on the Super Sale Campaign"
 
                 func createLocation(isAction: Bool = false,
-                                    actionParameters: ActionParameters? = nil) -> LocationModel {
+                                    actionParameters: GeoActionParameters? = nil) -> LocationModel {
                     var location: CLLocation
 
                     let coordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: expectedLongitude)
@@ -126,17 +126,17 @@ final class GeoTrackerSpec: QuickSpec {
                                          actionParameters: actionParameters)
                 }
 
-                let nonEmptyActionParameters = ActionParameters(actionType: expectedActionParamType,
-                                                                actionLog: expectedActionParamLog,
-                                                                actionId: expectedActionParamId,
-                                                                actionDuration: expectedActionParamDuration,
-                                                                additionalLog: expectedActionParamAddLog)
+                let nonEmptyActionParameters = GeoActionParameters(actionType: expectedActionParamType,
+                                                                   actionLog: expectedActionParamLog,
+                                                                   actionId: expectedActionParamId,
+                                                                   actionDuration: expectedActionParamDuration,
+                                                                   additionalLog: expectedActionParamAddLog)
 
-                let nilActionParameters = ActionParameters(actionType: nil,
-                                                           actionLog: nil,
-                                                           actionId: nil,
-                                                           actionDuration: nil,
-                                                           additionalLog: nil)
+                let nilActionParameters = GeoActionParameters(actionType: nil,
+                                                              actionLog: nil,
+                                                              actionId: nil,
+                                                              actionDuration: nil,
+                                                              additionalLog: nil)
 
                 func createLocEvent() -> RAnalyticsEvent {
                     RAnalyticsEvent(name: RAnalyticsEvent.Name.geoLocation, parameters: nil)
@@ -473,11 +473,11 @@ final class GeoTrackerSpec: QuickSpec {
 
                             context("When only action type is present") {
                                 it("should send the expected RAT payload with only action type") {
-                                    let sentActionParameters = ActionParameters(actionType: expectedActionParamType,
-                                                                                actionLog: nil,
-                                                                                actionId: nil,
-                                                                                actionDuration: nil,
-                                                                                additionalLog: nil)
+                                    let sentActionParameters = GeoActionParameters(actionType: expectedActionParamType,
+                                                                                   actionLog: nil,
+                                                                                   actionId: nil,
+                                                                                   actionDuration: nil,
+                                                                                   additionalLog: nil)
 
                                     state.lastKnownLocation = createLocation(isAction: true,
                                                                              actionParameters: sentActionParameters)
@@ -506,11 +506,11 @@ final class GeoTrackerSpec: QuickSpec {
 
                             context("When only action log is present") {
                                 it("should send the expected RAT payload with only action log") {
-                                    let sentActionParameters = ActionParameters(actionType: nil,
-                                                                                actionLog: expectedActionParamLog,
-                                                                                actionId: nil,
-                                                                                actionDuration: nil,
-                                                                                additionalLog: nil)
+                                    let sentActionParameters = GeoActionParameters(actionType: nil,
+                                                                                   actionLog: expectedActionParamLog,
+                                                                                   actionId: nil,
+                                                                                   actionDuration: nil,
+                                                                                   additionalLog: nil)
 
                                     state.lastKnownLocation = createLocation(isAction: true,
                                                                              actionParameters: sentActionParameters)
@@ -539,11 +539,11 @@ final class GeoTrackerSpec: QuickSpec {
 
                             context("When only action id is present") {
                                 it("should send the expected RAT payload with only action id") {
-                                    let sentActionParameters = ActionParameters(actionType: nil,
-                                                                                actionLog: nil,
-                                                                                actionId: expectedActionParamId,
-                                                                                actionDuration: nil,
-                                                                                additionalLog: nil)
+                                    let sentActionParameters = GeoActionParameters(actionType: nil,
+                                                                                   actionLog: nil,
+                                                                                   actionId: expectedActionParamId,
+                                                                                   actionDuration: nil,
+                                                                                   additionalLog: nil)
 
                                     state.lastKnownLocation = createLocation(isAction: true,
                                                                              actionParameters: sentActionParameters)
@@ -572,11 +572,11 @@ final class GeoTrackerSpec: QuickSpec {
 
                             context("When only action duration is present") {
                                 it("should send the expected RAT payload with only action duration") {
-                                    let sentActionParameters = ActionParameters(actionType: nil,
-                                                                                actionLog: nil,
-                                                                                actionId: nil,
-                                                                                actionDuration: expectedActionParamDuration,
-                                                                                additionalLog: nil)
+                                    let sentActionParameters = GeoActionParameters(actionType: nil,
+                                                                                   actionLog: nil,
+                                                                                   actionId: nil,
+                                                                                   actionDuration: expectedActionParamDuration,
+                                                                                   additionalLog: nil)
 
                                     state.lastKnownLocation = createLocation(isAction: true,
                                                                              actionParameters: sentActionParameters)
@@ -605,11 +605,11 @@ final class GeoTrackerSpec: QuickSpec {
 
                             context("When only action add log is present") {
                                 it("should send the expected RAT payload with only action add log") {
-                                    let sentActionParameters = ActionParameters(actionType: nil,
-                                                                                actionLog: nil,
-                                                                                actionId: nil,
-                                                                                actionDuration: nil,
-                                                                                additionalLog: expectedActionParamAddLog)
+                                    let sentActionParameters = GeoActionParameters(actionType: nil,
+                                                                                   actionLog: nil,
+                                                                                   actionId: nil,
+                                                                                   actionDuration: nil,
+                                                                                   additionalLog: expectedActionParamAddLog)
 
                                     state.lastKnownLocation = createLocation(isAction: true,
                                                                              actionParameters: sentActionParameters)
