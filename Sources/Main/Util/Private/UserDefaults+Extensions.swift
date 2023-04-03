@@ -14,6 +14,7 @@ protocol UserStorageHandleable {
     func array(forKey defaultName: String) -> [Any]?
     func dictionary(forKey defaultName: String) -> [String: Any]?
     func object(forKey defaultName: String) -> Any?
+    func data(forKey defaultName: String) -> Data?
     func bool(forKey defaultName: String) -> Bool
     func string(forKey defaultName: String) -> String?
     func set(value: Any?, forKey defaultName: String)

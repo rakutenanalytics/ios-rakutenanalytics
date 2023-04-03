@@ -1,12 +1,12 @@
 import Foundation
 
 /// The default location collection configuration constants.
-internal enum ConfigurationConstants {
-    static let distanceInterval: UInt = 300
-    static let timeInterval: UInt = 300
-    static let accuracy: GeoAccuracy = .best
-    static let startTime: GeoTime = GeoTime(hours: 0, minutes: 0)
-    static let endTime: GeoTime = GeoTime(hours: 23, minutes: 59)
+public enum ConfigurationConstants {
+    public static let distanceInterval: UInt = 300
+    public static let timeInterval: UInt = 300
+    public static let accuracy: GeoAccuracy = .best
+    public static let startTime: GeoTime = GeoTime(hours: 0, minutes: 0)
+    public static let endTime: GeoTime = GeoTime(hours: 23, minutes: 59)
 }
 
 /// Configures the location collection.
@@ -25,11 +25,11 @@ public struct Configuration: Equatable {
     /// The local time to end location collection
     var endTime: GeoTime?
     
-    init(distanceInterval: UInt? = ConfigurationConstants.distanceInterval,
-         timeInterval: UInt? = ConfigurationConstants.timeInterval,
-         accuracy: GeoAccuracy? = .best,
-         startTime: GeoTime? = ConfigurationConstants.startTime,
-         endTime: GeoTime? = ConfigurationConstants.endTime) {
+    public init(distanceInterval: UInt? = ConfigurationConstants.distanceInterval,
+                timeInterval: UInt? = ConfigurationConstants.timeInterval,
+                accuracy: GeoAccuracy? = .best,
+                startTime: GeoTime? = ConfigurationConstants.startTime,
+                endTime: GeoTime? = ConfigurationConstants.endTime) {
         self.distanceInterval = distanceInterval
         self.timeInterval = timeInterval
         self.accuracy = accuracy
@@ -53,7 +53,7 @@ public struct GeoTime: Equatable {
     let hours: UInt
     let minutes: UInt
     
-    init(hours: UInt, minutes: UInt) {
+    public init(hours: UInt, minutes: UInt) {
         self.hours = hours
         self.minutes = minutes
     }

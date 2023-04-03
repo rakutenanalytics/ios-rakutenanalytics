@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C83B76D229DA8C34006C3C3D /* GeoActionParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76CC29DA8C34006C3C3D /* GeoActionParameters.swift */; };
+		C83B76D329DA8C34006C3C3D /* GeoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76CD29DA8C34006C3C3D /* GeoManager.swift */; };
+		C83B76D429DA8C34006C3C3D /* ConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76CE29DA8C34006C3C3D /* ConfigurationHelper.swift */; };
+		C83B76D529DA8C34006C3C3D /* GeoAccuracy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76CF29DA8C34006C3C3D /* GeoAccuracy.swift */; };
+		C83B76D629DA8C34006C3C3D /* GeoTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76D029DA8C34006C3C3D /* GeoTracker.swift */; };
+		C83B76D729DA8C34006C3C3D /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B76D129DA8C34006C3C3D /* Configuration.swift */; };
 		C901832629C4C253004D3084 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = C901832529C4C252004D3084 /* Session.swift */; };
 		C91AA26229474CB4005D134C /* WKWebView+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */; };
 		C92CDD8B296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92CDD8A296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift */; };
@@ -131,6 +137,12 @@
 /* Begin PBXFileReference section */
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C83B76CC29DA8C34006C3C3D /* GeoActionParameters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoActionParameters.swift; sourceTree = "<group>"; };
+		C83B76CD29DA8C34006C3C3D /* GeoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoManager.swift; sourceTree = "<group>"; };
+		C83B76CE29DA8C34006C3C3D /* ConfigurationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationHelper.swift; sourceTree = "<group>"; };
+		C83B76CF29DA8C34006C3C3D /* GeoAccuracy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoAccuracy.swift; sourceTree = "<group>"; };
+		C83B76D029DA8C34006C3C3D /* GeoTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoTracker.swift; sourceTree = "<group>"; };
+		C83B76D129DA8C34006C3C3D /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		C901832529C4C252004D3084 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+UserAgent.swift"; sourceTree = "<group>"; };
 		C92CDD8A296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsState+Payload.swift"; sourceTree = "<group>"; };
@@ -294,6 +306,19 @@
 			children = (
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C83B76CB29DA8C34006C3C3D /* Geo */ = {
+			isa = PBXGroup;
+			children = (
+				C83B76CC29DA8C34006C3C3D /* GeoActionParameters.swift */,
+				C83B76CD29DA8C34006C3C3D /* GeoManager.swift */,
+				C83B76CE29DA8C34006C3C3D /* ConfigurationHelper.swift */,
+				C83B76CF29DA8C34006C3C3D /* GeoAccuracy.swift */,
+				C83B76D029DA8C34006C3C3D /* GeoTracker.swift */,
+				C83B76D129DA8C34006C3C3D /* Configuration.swift */,
+			);
+			path = Geo;
 			sourceTree = "<group>";
 		};
 		C9320A5A279FF79B009FE6EC /* Sources */ = {
@@ -655,6 +680,8 @@
 				C9320ADB279FF79B009FE6EC /* RAnalyticsEvent.swift in Sources */,
 				C9320B1F279FF79B009FE6EC /* URLRequest+RAT.swift in Sources */,
 				C9FD322B29C8AF2300A98ECF /* AutomaticFieldsBuilder.swift in Sources */,
+				C83B76D329DA8C34006C3C3D /* GeoManager.swift in Sources */,
+				C83B76D729DA8C34006C3C3D /* Configuration.swift in Sources */,
 				C944CE14299260FD0074319F /* EnvironmentInformation.swift in Sources */,
 				C9320B11279FF79B009FE6EC /* NSObject+Extensions.swift in Sources */,
 				C9320B1E279FF79B009FE6EC /* Bundle+Extensions.swift in Sources */,
@@ -667,6 +694,7 @@
 				C9320B0D279FF79B009FE6EC /* WKHTTPCookieStore+Extensions.swift in Sources */,
 				C9320AE2279FF79B009FE6EC /* RAnalyticsClassManipulable+UNUserNotificationCenter.swift in Sources */,
 				C9320B09279FF79B009FE6EC /* RAnalyticsEvent+Install.swift in Sources */,
+				C83B76D529DA8C34006C3C3D /* GeoAccuracy.swift in Sources */,
 				C92CDD8B296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift in Sources */,
 				C944CE1E299298440074319F /* Optional+String.swift in Sources */,
 				C9320B30279FF79B009FE6EC /* RAnalyticsEvent+ExtraParameters.swift in Sources */,
@@ -724,6 +752,7 @@
 				C9445E4928104D290007CEEA /* LoginType.swift in Sources */,
 				C9320AE3279FF79B009FE6EC /* RAnalyticsClassManipulable+UIApplication.swift in Sources */,
 				C9320B0B279FF79B009FE6EC /* FileManager+Extensions.swift in Sources */,
+				C83B76D629DA8C34006C3C3D /* GeoTracker.swift in Sources */,
 				C9320AED279FF79B009FE6EC /* AnalyticsManager.swift in Sources */,
 				C9320B06279FF79B009FE6EC /* AnalyticsEventObserver.swift in Sources */,
 				C9320AE5279FF79B009FE6EC /* RAnalyticsClassManipulable.swift in Sources */,
@@ -745,6 +774,7 @@
 				C9320B26279FF79B009FE6EC /* DatabaseConfiguration.swift in Sources */,
 				C9EA33FD28325CE900465945 /* DeviceIdentifierHandler.swift in Sources */,
 				C9320B05279FF79B009FE6EC /* UIScreen+Extensions.swift in Sources */,
+				C83B76D229DA8C34006C3C3D /* GeoActionParameters.swift in Sources */,
 				C9320AF3279FF79B009FE6EC /* ReferralAppModel+URL.swift in Sources */,
 				C9320B03279FF79B009FE6EC /* UIApplication+Extensions.swift in Sources */,
 				C9320B0F279FF79B009FE6EC /* AnalyticsManager+ReferralAppTracking.swift in Sources */,
@@ -757,6 +787,7 @@
 				C9320B10279FF79B009FE6EC /* RAnalyticsDatabase.swift in Sources */,
 				C9320B01279FF79B009FE6EC /* ASIdentifierManager+Extensions.swift in Sources */,
 				C9320B37279FF79B009FE6EC /* String+LogoutMethod.swift in Sources */,
+				C83B76D429DA8C34006C3C3D /* ConfigurationHelper.swift in Sources */,
 				C9320AE1279FF79B009FE6EC /* NSNotification+Extensions.swift in Sources */,
 				C9445E4F28104E050007CEEA /* RAnalyticsLoginMethod+Type.swift in Sources */,
 				C9320B1B279FF79B009FE6EC /* NotificationCenter+Extensions.swift in Sources */,

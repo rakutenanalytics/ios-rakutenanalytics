@@ -124,6 +124,9 @@ extension UserDefaultsMock: UserStorageHandleable {
         }
         return result
     }
+    public func data(forKey defaultName: String) -> Data? {
+        dictionary?[defaultName] as? Data
+    }
 
     public func register(defaults registrationDictionary: [String: Any]) {
     }

@@ -46,9 +46,6 @@ public final class GeoManager {
     /// The device identifier handler.
     private let deviceIdentifierHandler: DeviceIdentifierHandler
     
-    // The user storage handler
-    private let userStorageHandler: UserStorageHandleable?
-    
     private let geoSharedPreferenceHelper: GeoConfigurationHelper
 
     /// The current location of the user.
@@ -89,12 +86,10 @@ public final class GeoManager {
          userStorageHandler: UserStorageHandleable) {
         
         self.geoTracker = geoTracker
-        
-        self.userStorageHandler = userStorageHandler
 
         self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device,
                                                                hasher: SecureHasher())
-        self.geoSharedPreferenceHelper = GeoConfigurationHelper()
+        self.geoSharedPreferenceHelper = GeoConfigurationHelper(userStorageHandler: userStorageHandler)
     }
 }
 
