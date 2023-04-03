@@ -31,8 +31,8 @@ protocol GeoTrackable {
                          completionHandler: @escaping GeoRequestLocationBlock)
     /// Get the location collection configuration.
     ///
-    /// - Returns: the location collection configuration.
-    func getConfiguration() -> Configuration
+    /// - Returns: the location collection configuration which is passed during startLocationCollection. if not passsed, nil is returned
+    func getConfiguration() -> Configuration?
 }
 
 // MARK: - GeoManager
@@ -99,7 +99,7 @@ extension GeoManager: GeoTrackable {
     public func startLocationCollection(configuration: Configuration? = nil) {
         
         if let geoConfiguration = configuration {
-            geoSharedPreferenceHelper.storeGeoConfiguration(configuration: geoConfiguration)
+            geoSharedPreferenceHelper.store(configuration: geoConfiguration)
         }
         
         self.configuration = configuration
@@ -130,14 +130,7 @@ extension GeoManager: GeoTrackable {
                                 completionHandler: @escaping GeoRequestLocationBlock) {
     }
 
-    public func getConfiguration() -> Configuration {
-        
-        if let configuration = geoSharedPreferenceHelper.retrieveGeoConfigurationFromStorage() {
-            // Configurations are from shared preference
-            return configuration
-        }
-        // No configuration has been set / stored
-        // return the default configuration
-        return Configuration()
+    public func getConfiguration() -> Configuration? {
+        return geoSharedPreferenceHelper.retrieveGeoConfigurationFromStorage()
     }
 }

@@ -18,7 +18,7 @@ enum ConfigurationFactory {
 }
 
 protocol GeoConfigurationStorage {
-    func storeGeoConfiguration(configuration: Configuration) -> Bool
+    func store(configuration: Configuration) -> Bool
     func retrieveGeoConfigurationFromStorage() -> Configuration?
 }
 
@@ -35,7 +35,7 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
     }
     
     @discardableResult
-    func storeGeoConfiguration(configuration: Configuration) -> Bool {
+    func store(configuration: Configuration) -> Bool {
         
         var geoConfiguration = configuration
         // Range check for startTime and endTime
