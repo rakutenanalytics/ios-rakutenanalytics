@@ -15,7 +15,7 @@ protocol GeoTrackable {
     ///
     /// Call this method to start the location collection.
     /// 
-    /// - Parameter configuration: The location collection configuration. If nil, the default configuration is used.
+    /// - Parameter configuration: The location collection configuration. if not passed, the default configuration is used
     func startLocationCollection(configuration: Configuration?)
     /// This method stops the location collection.
     ///
@@ -31,8 +31,8 @@ protocol GeoTrackable {
                          completionHandler: @escaping GeoRequestLocationBlock)
     /// Get the location collection configuration.
     ///
-    /// - Returns: the location collection configuration.
-    func getConfiguration() -> Configuration
+    /// - Returns: the location collection configuration which is passed during startLocationCollection. if not passsed, nil is returned
+    func getConfiguration() -> Configuration?
 }
 
 // MARK: - GeoManager
@@ -45,6 +45,8 @@ public final class GeoManager {
 
     /// The device identifier handler.
     private let deviceIdentifierHandler: DeviceIdentifierHandler
+    
+    private let geoSharedPreferenceHelper: GeoConfigurationHelper
 
     /// The current location of the user.
     private var location: CLLocation?
@@ -55,17 +57,21 @@ public final class GeoManager {
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
         let device = UIDevice.current
-
+        let dependenciesContainer = SimpleDependenciesContainer()
+        
         guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: GeoTrackerConstants.databaseName,
                                                                               tableName: GeoTrackerConstants.tableName,
                                                                               databaseParentDirectory: Bundle.main.databaseParentDirectory) else {
             RLogger.error(message: "The GeoTracker could not be created because the SQLite connection failed.")
-            return GeoManager(geoTracker: nil, device: device)
+            return GeoManager(geoTracker: nil,
+                              device: device,
+                              userStorageHandler: dependenciesContainer.userStorageHandler)
         }
-
-        let geoTracker = GeoTracker(dependenciesContainer: SimpleDependenciesContainer(),
+        let geoTracker = GeoTracker(dependenciesContainer: dependenciesContainer,
                                     databaseConfiguration: databaseConfiguration)
-        return GeoManager(geoTracker: geoTracker, device: device)
+        return GeoManager(geoTracker: geoTracker,
+                          device: device,
+                          userStorageHandler: dependenciesContainer.userStorageHandler)
     }()
 
     /// Creates a new instance of GeoManager.
@@ -74,19 +80,28 @@ public final class GeoManager {
     /// If the GeoTracker could not be created, the other features of GeoManager are still running.
     ///
     /// - Parameter device: The device capability used to calculate the `ckp`.
+    ///
     init(geoTracker: Tracker?,
-         device: DeviceCapability) {
+         device: DeviceCapability,
+         userStorageHandler: UserStorageHandleable) {
+        
         self.geoTracker = geoTracker
 
         self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device,
                                                                hasher: SecureHasher())
+        self.geoSharedPreferenceHelper = GeoConfigurationHelper(userStorageHandler: userStorageHandler)
     }
 }
 
 // MARK: - GeoManager conformance to GeoTrackable
 extension GeoManager: GeoTrackable {
 
-    public func startLocationCollection(configuration: Configuration?) {
+    public func startLocationCollection(configuration: Configuration? = nil) {
+        
+        if let geoConfiguration = configuration {
+            geoSharedPreferenceHelper.store(configuration: geoConfiguration)
+        }
+        
         self.configuration = configuration
 
         // Note: GeoManager has to calculate the location.
@@ -115,10 +130,7 @@ extension GeoManager: GeoTrackable {
                                 completionHandler: @escaping GeoRequestLocationBlock) {
     }
 
-    public func getConfiguration() -> Configuration {
-        guard let configuration = configuration else {
-            return ConfigurationFactory.defaultConfiguration
-        }
-        return configuration
+    public func getConfiguration() -> Configuration? {
+        return geoSharedPreferenceHelper.retrieveGeoConfigurationFromStorage()
     }
 }

@@ -1,45 +1,50 @@
 import Foundation
-import CoreLocation
 
-/// The time used to collect the location.
-public struct GeoTime: Equatable {
-    let hour: UInt
-    let minute: UInt
+/// The default location collection configuration constants.
+public enum ConfigurationConstants {
+    public static let distanceInterval: UInt = 300
+    public static let timeInterval: UInt = 300
+    public static let accuracy: GeoAccuracy = .best
+    public static let startTime: GeoTime = GeoTime(hours: 0, minutes: 0)
+    public static let endTime: GeoTime = GeoTime(hours: 23, minutes: 59)
 }
 
 /// Configures the location collection.
-public struct Configuration: Equatable {
+public struct Configuration: Codable, Equatable {
     /// The distance interval (meters)
-    let distanceInterval: UInt?
+    var distanceInterval: UInt?
 
     /// The time interval (seconds)
-    let timeInterval: UInt?
+    var timeInterval: UInt?
 
     let accuracy: GeoAccuracy?
 
     /// The local time to start location collection
-    let startTime: GeoTime?
+    var startTime: GeoTime?
 
     /// The local time to end location collection
-    let endTime: GeoTime?
+    var endTime: GeoTime?
+    
+    public init(distanceInterval: UInt? = ConfigurationConstants.distanceInterval,
+                timeInterval: UInt? = ConfigurationConstants.timeInterval,
+                accuracy: GeoAccuracy? = .best,
+                startTime: GeoTime? = ConfigurationConstants.startTime,
+                endTime: GeoTime? = ConfigurationConstants.endTime) {
+        self.distanceInterval = distanceInterval
+        self.timeInterval = timeInterval
+        self.accuracy = accuracy
+        self.startTime = startTime
+        self.endTime = endTime
+    }
 }
 
-/// The default location collection configuration constants.
-private enum ConfigurationConstants {
-    static let distanceInterval: UInt = 300
-    static let timeInterval: UInt = 300
-    static let accuracy: GeoAccuracy = .best
-    static let startTime: GeoTime = GeoTime(hour: 0, minute: 0)
-    static let endTime: GeoTime = GeoTime(hour: 23, minute: 59)
-}
-
-enum ConfigurationFactory {
-    /// - Returns: the default location collection configuration.
-    static var defaultConfiguration: Configuration {
-        Configuration(distanceInterval: ConfigurationConstants.distanceInterval,
-                      timeInterval: ConfigurationConstants.timeInterval,
-                      accuracy: ConfigurationConstants.accuracy,
-                      startTime: ConfigurationConstants.startTime,
-                      endTime: ConfigurationConstants.endTime)
+/// The time used to collect the location.
+public struct GeoTime: Codable, Equatable {
+    public let hours: UInt
+    public let minutes: UInt
+    
+    public init(hours: UInt, minutes: UInt) {
+        self.hours = hours
+        self.minutes = minutes
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C83B771E29DAC977006C3C3D /* ConfigurationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C83B771D29DAC977006C3C3D /* ConfigurationHelper.swift */; };
 		C901832629C4C253004D3084 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = C901832529C4C252004D3084 /* Session.swift */; };
 		C91AA26229474CB4005D134C /* WKWebView+UserAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */; };
 		C92CDD8B296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92CDD8A296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift */; };
@@ -131,6 +132,7 @@
 /* Begin PBXFileReference section */
 		3AA58EF024CB107D00CE703C /* RAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AA58EF424CB107D00CE703C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C83B771D29DAC977006C3C3D /* ConfigurationHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationHelper.swift; sourceTree = "<group>"; };
 		C901832529C4C252004D3084 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		C91AA26129474CB4005D134C /* WKWebView+UserAgent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+UserAgent.swift"; sourceTree = "<group>"; };
 		C92CDD8A296DA5EF00FA7A06 /* RAnalyticsState+Payload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsState+Payload.swift"; sourceTree = "<group>"; };
@@ -553,6 +555,7 @@
 				C9ACB5E429D6B90200D45C8D /* Configuration.swift */,
 				C9B2F33829D44109002702A2 /* GeoAccuracy.swift */,
 				C9B2F33629D44109002702A2 /* GeoActionParameters.swift */,
+				C83B771D29DAC977006C3C3D /* ConfigurationHelper.swift */,
 				C9B2F33729D44109002702A2 /* GeoManager.swift */,
 				C9B2F33929D44109002702A2 /* GeoTracker.swift */,
 			);
@@ -691,6 +694,7 @@
 				C9320B0E279FF79B009FE6EC /* DeviceHandleable.swift in Sources */,
 				C9320AE6279FF79B009FE6EC /* RAnalyticsClassManipulable+UIViewController.swift in Sources */,
 				C944CE10299260FD0074319F /* String+Extensions.swift in Sources */,
+				C83B771E29DAC977006C3C3D /* ConfigurationHelper.swift in Sources */,
 				C9320B0C279FF79B009FE6EC /* ReferralTrackingType.swift in Sources */,
 				C9320AF2279FF79B009FE6EC /* RAnalyticsProgressNotifications.swift in Sources */,
 				C91AA26229474CB4005D134C /* WKWebView+UserAgent.swift in Sources */,
