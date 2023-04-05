@@ -10,7 +10,7 @@ public enum ConfigurationConstants {
 }
 
 /// Configures the location collection.
-public struct Configuration: Equatable {
+public struct Configuration: Codable, Equatable {
     /// The distance interval (meters)
     var distanceInterval: UInt?
 
@@ -38,30 +38,13 @@ public struct Configuration: Equatable {
     }
 }
 
-extension Configuration: Codable {
-    enum CodingKeys: String, CodingKey {
-        case distanceInterval = "GeoDistanceInterval"
-        case timeInterval = "GeoTimeInterval"
-        case accuracy = "GeoAccuracy"
-        case startTime = "GeoStartTime"
-        case endTime = "GeoEndTime"
-    }
-}
-
 /// The time used to collect the location.
-public struct GeoTime: Equatable {
-    let hours: UInt
-    let minutes: UInt
+public struct GeoTime: Codable, Equatable {
+    public let hours: UInt
+    public let minutes: UInt
     
     public init(hours: UInt, minutes: UInt) {
         self.hours = hours
         self.minutes = minutes
-    }
-}
-
-extension GeoTime: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case hours
-        case minutes
     }
 }

@@ -30,6 +30,7 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
     private enum Constants {
         static let GeoConfigurationKey = "GeoConfiguration"
     }
+    
     init(userStorageHandler: UserStorageHandleable) {
         self.userStorageHandler = userStorageHandler
     }
@@ -94,24 +95,26 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
         // Check startTime range
         var startHours = startTime.hours
         var startMinutes = startTime.minutes
-        if startHours > ConfigurationFactory.endHours || startMinutes > ConfigurationFactory.endMinutes {
+        if startHours > ConfigurationFactory.endHours {
             startHours = ConfigurationFactory.startHours
             startMinutes = ConfigurationFactory.startMinutes
-        } else if startHours <= 23 && startMinutes > 59 {
-            startMinutes = 0
+        } else if startHours <= ConfigurationFactory.endHours &&
+                    startMinutes > ConfigurationFactory.endMinutes {
+            startMinutes = ConfigurationFactory.startMinutes
         }
         
         // Check endTime range
         var endHours = endTime.hours
         var endMinutes = endTime.minutes
-        if endHours > ConfigurationFactory.endHours || endMinutes > ConfigurationFactory.endMinutes {
+        if endHours > ConfigurationFactory.endHours {
             endHours = ConfigurationFactory.endHours
             endMinutes = ConfigurationFactory.endMinutes
-        } else if endHours <= ConfigurationFactory.endHours && endMinutes > ConfigurationFactory.endMinutes {
+        } else if endHours <= ConfigurationFactory.endHours &&
+                    endMinutes > ConfigurationFactory.endMinutes {
             endMinutes = ConfigurationFactory.endMinutes
         }
         
-        // Check additional conditions if endTime > startTime then store the default time of start and end
+        // Check additional conditions if startTime > endTime then store the default time of startTime and endTime
         if endHours < startHours || (endHours == startHours && endMinutes <= startMinutes) {
             startHours = ConfigurationFactory.startHours
             startMinutes = ConfigurationFactory.startMinutes

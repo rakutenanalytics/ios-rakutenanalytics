@@ -27,25 +27,29 @@ final class GeoManagerSpec: QuickSpec {
                 let geoManager = GeoManager(geoTracker: nil, device: UIDevice.current, userStorageHandler: dependenciesFactory.userStorageHandler)
                 context("on startLocationCollection not called before getConfiguration()") {
                     
+                    beforeEach {
+                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                    }
+                    
                     let configuration = geoManager.getConfiguration()
                     
                     it("should set distanceInterval to be nil") {
                         expect(configuration?.distanceInterval).to(beNil())
                     }
 
-                    it("should set timeInterval to 300") {
+                    it("should set timeInterval to be nil") {
                         expect(configuration?.timeInterval).to(beNil())
                     }
 
-                    it("should set accuracy to best") {
+                    it("should set accuracy to be nil") {
                         expect(configuration?.accuracy).to(beNil())
                     }
 
-                    it("should set startTime to 00:00") {
+                    it("should set startTime to be nil") {
                         expect(configuration?.startTime).to(beNil())
                     }
 
-                    it("should set endTime to 23:59") {
+                    it("should set endTime to be nil") {
                         expect(configuration?.endTime).to(beNil())
                     }
                 }
@@ -228,7 +232,7 @@ final class GeoManagerSpec: QuickSpec {
                         geoManager.startLocationCollection(configuration: configuration)
                         let geoConfiguration = geoManager.getConfiguration()
                         
-                        it("should set start minutes as per defaults 59") {
+                        it("should set start minutes as per defaults 0") {
                             expect(geoConfiguration?.startTime?.minutes).to(equal(ConfigurationConstants.startTime.minutes))
                         }
                         
@@ -244,8 +248,8 @@ final class GeoManagerSpec: QuickSpec {
                                                           startTime: GeoTime(hours: 15, minutes: 40),
                                                           endTime: GeoTime(hours: 10, minutes: 30))
                         
-                        let geoConfiguration = geoManager.getConfiguration()
                         geoManager.startLocationCollection(configuration: configuration)
+                        let geoConfiguration = geoManager.getConfiguration()
                         
                         it("should set startTime as per the default startTime(00:00)") {
                             expect(geoConfiguration?.startTime).to(equal(ConfigurationConstants.startTime))
@@ -255,6 +259,26 @@ final class GeoManagerSpec: QuickSpec {
                             expect(geoConfiguration?.endTime).to(equal(ConfigurationConstants.endTime))
                         }
                     }
+                    
+                    context("on startTime is greater than endTime with startTime and endTime are out of range") {
+                        let configuration = Configuration(distanceInterval: 200,
+                                                          timeInterval: 900,
+                                                          accuracy: .nearest,
+                                                          startTime: GeoTime(hours: 50, minutes: 60),
+                                                          endTime: GeoTime(hours: 25, minutes: 80))
+                        geoManager.startLocationCollection(configuration: configuration)
+                        let geoConfiguration = geoManager.getConfiguration()
+                        
+                        it("should set startTime as per the default startTime(00:00)") {
+                            expect(geoConfiguration?.startTime).to(equal(ConfigurationConstants.startTime))
+                        }
+                        
+                        it("should set endTime as per the default endTime(23:59)") {
+                            expect(geoConfiguration?.endTime).to(equal(ConfigurationConstants.endTime))
+                        }
+                        
+                    }
+                    
                     afterEach {
                         dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
