@@ -8,7 +8,7 @@ final class GeoManagerSpec: QuickSpec {
 
     override func spec() {
         
-        let dependenciesFactory = SimpleDependenciesContainer()
+        let dependenciesContainer = SimpleDependenciesContainer()
         
         describe("GeoManager") {
             
@@ -18,17 +18,17 @@ final class GeoManagerSpec: QuickSpec {
                 }
 
                 it("should not be nil on creating a new instance") {
-                    let manager = GeoManager(geoTracker: nil, device: UIDevice.current, userStorageHandler: dependenciesFactory.userStorageHandler)
+                    let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
                     expect(manager).toNot(beNil())
                 }
             }
 
             describe("getConfiguration()") {
-                let geoManager = GeoManager(geoTracker: nil, device: UIDevice.current, userStorageHandler: dependenciesFactory.userStorageHandler)
+                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
                 context("on startLocationCollection not called before getConfiguration()") {
                     
                     beforeEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                     
                     let configuration = geoManager.getConfiguration()
@@ -72,13 +72,13 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoConfiguration?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }
             }
 
             describe("startLocationCollection(configuration:)") {
-                let geoManager = GeoManager(geoTracker: nil, device: UIDevice.current, userStorageHandler: dependenciesFactory.userStorageHandler)
+                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
 
                 context("When passed configuration is nil") {
                     beforeEach {
@@ -90,7 +90,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }                
 
@@ -117,7 +117,7 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoManager.getConfiguration()?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }
                 
@@ -151,7 +151,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }
                 
@@ -184,7 +184,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }
                 
@@ -280,7 +280,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesFactory.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
                     }
                 }
             }
