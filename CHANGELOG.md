@@ -22,6 +22,7 @@
 * [CONRAT-28496](https://jira.rakuten-it.com/jira/browse/CONRAT-28496): Refactor Public Methods Exposed in GeoManager.
 * [CONRAT-28527](https://jira.rakuten-it.com/jira/browse/CONRAT-28527): Replace ActionParameters by GeoActionParameters.
 * [CONRAT-28251](https://jira.rakuten-it.com/jira/browse/CONRAT-28251): Move GeoTracker from GeoManager to AnalyticsManager.
+* [CONRAT-28597](https://jira.rakuten-it.com/jira/browse/CONRAT-28597): Refactor GeoConfiguration.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.

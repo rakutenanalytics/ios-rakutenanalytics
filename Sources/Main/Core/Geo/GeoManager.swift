@@ -14,8 +14,9 @@ protocol GeoTrackable {
     ///
     /// Call this method to start the location collection.
     /// 
-    /// - Parameter configuration: The location collection configuration. if not passed, the default configuration is used
-    func startLocationCollection(configuration: Configuration?)
+    /// - Parameter configuration: Configuration used for location collection.
+    /// - NOTE: On calling this method if a value is not passed in configuration, the default configuration value will be used.
+    func startLocationCollection(configuration: GeoConfiguration?)
     /// This method stops the location collection.
     ///
     /// Call this method to any ongoing location collection.
@@ -28,17 +29,21 @@ protocol GeoTrackable {
     ///     - completionHandler: Executes a block called `GeoRequestLocationBlock`.
     func requestLocation(actionParameters: GeoActionParameters?,
                          completionHandler: @escaping GeoRequestLocationBlock)
-    /// Get the location collection configuration.
+    /// Get configuration used for location collection.
     ///
-    /// - Returns: the location collection configuration which is passed during startLocationCollection. if not passsed, nil is returned
-    func getConfiguration() -> Configuration?
+    /// - Returns: Configuration set calling `startLocationCollection(configuration:)`.
+    /// - NOTE: This method returns nil if no configuration was set.
+    func getConfiguration() -> GeoConfiguration?
 }
 
 // MARK: - GeoManager
 /// The object that you use to start, stop and request the delivery of location-related events to your app.
 public final class GeoManager {
-    /// The location collection configuration.
-    private var configuration: Configuration?
+    /// Configuration for location collection.
+    internal var configuration: GeoConfiguration {
+        getConfiguration() ?? GeoConfigurationFactory.defaultConfiguration
+    }
+
     private let geoSharedPreferenceHelper: GeoConfigurationHelper
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
@@ -57,13 +62,11 @@ public final class GeoManager {
 // MARK: - GeoManager conformance to GeoTrackable
 extension GeoManager: GeoTrackable {
 
-    public func startLocationCollection(configuration: Configuration? = nil) {
-        
-        if let geoConfiguration = configuration {
-            geoSharedPreferenceHelper.store(configuration: geoConfiguration)
+    public func startLocationCollection(configuration: GeoConfiguration? = nil) {
+        if let safeConfiguration = configuration,
+               safeConfiguration != getConfiguration() {
+            geoSharedPreferenceHelper.store(configuration: safeConfiguration)
         }
-        
-        self.configuration = configuration
     }
 
     public func stopLocationCollection() {
@@ -73,7 +76,7 @@ extension GeoManager: GeoTrackable {
                                 completionHandler: @escaping GeoRequestLocationBlock) {
     }
 
-    public func getConfiguration() -> Configuration? {
+    public func getConfiguration() -> GeoConfiguration? {
         return geoSharedPreferenceHelper.retrieveGeoConfigurationFromStorage()
     }
 }
