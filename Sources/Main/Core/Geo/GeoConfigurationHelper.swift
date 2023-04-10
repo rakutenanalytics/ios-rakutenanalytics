@@ -28,7 +28,7 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
     private let userStorageHandler: UserStorageHandleable?
     
     private enum Constants {
-        static let GeoConfigurationKey = "GeoConfiguration"
+        static let geoConfigurationKey = "GeoConfiguration"
     }
     
     init(userStorageHandler: UserStorageHandleable) {
@@ -62,7 +62,7 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
         
         do {
             let geoConfigurationData = try JSONEncoder().encode(geoConfiguration)
-            userStorageHandler?.set(value: geoConfigurationData, forKey: Constants.GeoConfigurationKey)
+            userStorageHandler?.set(value: geoConfigurationData, forKey: Constants.geoConfigurationKey)
             RLogger.debug(message: "GeoConfiguration stored into shared preference")
             return true
         } catch {
@@ -74,7 +74,7 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
     // Retrieve configuration from storage if present, else return nil
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration? {
         do {
-            if let configurationData = userStorageHandler?.data(forKey: Constants.GeoConfigurationKey) {
+            if let configurationData = userStorageHandler?.data(forKey: Constants.geoConfigurationKey) {
                 let configuration = try JSONDecoder().decode(GeoConfiguration.self, from: configurationData)
                 RLogger.debug(message: "GeoConfiguration retrieved from shared preference")
                 return configuration
