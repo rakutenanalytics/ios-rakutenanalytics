@@ -2,6 +2,7 @@ import Foundation
 
 enum UserDefaultsKeys {
     static let userAgentKey = "UserAgent"
+    static let geoConfigurationKey = "RATGeoConfiguration"
 }
 
 /// Note:

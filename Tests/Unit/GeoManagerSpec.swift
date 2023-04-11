@@ -27,7 +27,7 @@ final class GeoManagerSpec: QuickSpec {
                 let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
                 context("getter") {
                     beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
 
                     context("when no configuration is set on startLocationCollection(configuration:)") {
@@ -58,7 +58,7 @@ final class GeoManagerSpec: QuickSpec {
                 context("on startLocationCollection not called before getConfiguration()") {
                     
                     beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                     
                     let configuration = geoManager.getConfiguration()
@@ -102,7 +102,7 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoConfiguration?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                 }
             }
@@ -148,7 +148,7 @@ final class GeoManagerSpec: QuickSpec {
                 let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
                 context("When passed configuration is nil") {
                     beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
 
                     it("should return configuration as nil from getConfiguration") {
@@ -180,7 +180,7 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoManager.getConfiguration()?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                 }
                 
@@ -214,7 +214,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                 }
                 
@@ -247,7 +247,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                 }
                 
@@ -343,7 +343,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: "GeoConfiguration")
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
                     }
                 }
             }
