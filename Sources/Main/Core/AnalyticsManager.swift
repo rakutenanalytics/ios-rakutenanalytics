@@ -154,19 +154,6 @@ protocol ReferralAppTrackable: AnyObject {
         deviceIdentifierHandler.ckp()
     }
 
-    /// The Geo Tracker.
-    ///
-    /// - Note: The Geo Tracker instantiation returns nil when the endpoint URL is not configured (`RATEndpoint`).
-    private lazy var geoTracker: GeoTracker? = {
-        guard let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: GeoTrackerConstants.databaseName,
-                                                                              tableName: GeoTrackerConstants.tableName,
-                                                                              databaseParentDirectory: Bundle.main.databaseParentDirectory) else {
-            RLogger.error(message: "The GeoTracker could not be created because the SQLite connection failed.")
-            return nil
-        }
-        return GeoTracker(dependenciesContainer: SimpleDependenciesContainer(), databaseConfiguration: databaseConfiguration)
-    }()
-
     private let locationManager: LocationManageable
     private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
     private(set) var locationManagerIsUpdating: Bool = false

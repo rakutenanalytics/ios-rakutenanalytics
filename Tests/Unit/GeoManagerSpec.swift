@@ -1,16 +1,23 @@
+// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
+
 import Quick
 import Nimble
 import CoreLocation
 import UIKit.UIDevice
 @testable import RAnalytics
 
-final class GeoManagerSpec: QuickSpec {
+#if SWIFT_PACKAGE
+import RAnalyticsTestHelpers
+#endif
 
+final class GeoManagerSpec: QuickSpec {
     override func spec() {
-        
         let dependenciesContainer = SimpleDependenciesContainer()
         
         describe("GeoManager") {
+            let geoLocationManager = GeoLocationManager(configuration: GeoConfiguration(),
+                                                        coreLocationManager: LocationManagerMock())
             
             context("singleton plus") {
                 it("should not be nil on accessing shared instance") {
@@ -18,13 +25,19 @@ final class GeoManagerSpec: QuickSpec {
                 }
 
                 it("should not be nil on creating a new instance") {
-                    let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
+                    let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                             geoLocationManager: geoLocationManager,
+                                             device: UIDevice.current,
+                                             tracker: TrackerMock())
                     expect(manager).toNot(beNil())
                 }
             }
 
             describe("configuration get-only property") {
-                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
+                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                         geoLocationManager: geoLocationManager,
+                                         device: UIDevice.current,
+                                         tracker: TrackerMock())
                 context("getter") {
                     beforeEach {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
@@ -53,8 +66,130 @@ final class GeoManagerSpec: QuickSpec {
                 }
             }
 
+            describe("requestLocation()") {
+                it("should call locationManager's requestLocation()") {
+                    let locationManagerMock = GeoLocationManagerMock()
+                    let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                                geoLocationManager: locationManagerMock,
+                                                device: UIDevice.current,
+                                                tracker: TrackerMock())
+
+                    geoManager.requestLocation { _ in }
+
+                    expect(locationManagerMock.requestLocationIsCalled).toEventually(beTrue())
+                }
+
+                context("When requestLocation(actionParameters:) is called") {
+                    let coreLocationManager = CLLocationManager()
+                    let expectedError = NSError(domain: "", code: 0, userInfo: nil)
+                    var returnedError: NSError!
+                    var returnedLocationModel: LocationModel!
+                    var result: GeoRequestLocationResult!
+                    let configuration = GeoConfiguration()
+                    let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
+                    let expectedLocationModel = LocationModel(location: location,
+                                                              isAction: false,
+                                                              actionParameters: nil)
+                    var trackerMock: TrackerMock!
+                    var coreLocationManagerMock: LocationManagerMock!
+                    var geoLocationManager: GeoLocationManager!
+                    var geoManager: GeoManager!
+
+                    beforeEach {
+                        trackerMock = TrackerMock()
+
+                        coreLocationManagerMock = LocationManagerMock()
+
+                        geoLocationManager = GeoLocationManager(configuration: configuration,
+                                                                coreLocationManager: coreLocationManagerMock)
+
+                        geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                                geoLocationManager: geoLocationManager,
+                                                device: UIDevice.current,
+                                                tracker: trackerMock)
+                    }
+
+                    it("should call CLLocationManager's requestLocation()") {
+                        geoManager.requestLocation { _ in }
+
+                        expect(coreLocationManagerMock.requestLocationIsCalled).toEventually(beTrue())
+                    }
+
+                    context("When core location manager returns a location") {
+                        beforeEach {
+                            geoManager.requestLocation { aResult in
+                                result = aResult
+                            }
+
+                            coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didUpdateLocations: [location])
+                        }
+
+                        it("should return an expected location") {
+                            expect(result).toEventuallyNot(beNil())
+                            
+                            if case .success(let locationModel) = result {
+                                returnedLocationModel = locationModel
+                            }
+                            
+                            expect(returnedLocationModel).to(equal(expectedLocationModel))
+                        }
+
+                        it("should process the location event with an expected name") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.event?.name).to(equal(RAnalyticsEvent.Name.geoLocation))
+                        }
+
+                        it("should process the location event with empty parameters") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.event?.parameters).to(beEmpty())
+                        }
+
+                        it("should process the location event with an expected state") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.lastKnownLocation).to(equal(expectedLocationModel))
+                        }
+
+                        it("should process the location event with a non-empty cks") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.sessionIdentifier).toNot(beEmpty())
+                        }
+
+                        it("should process the location event with a non-empty ckp") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.deviceIdentifier).toNot(beEmpty())
+                        }
+                    }
+
+                    context("When core location manager returns an error") {
+                        it("should return an error") {
+                            geoManager.requestLocation { aResult in
+                                result = aResult
+                            }
+
+                            coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didFailWithError: expectedError)
+
+                            expect(result).toEventuallyNot(beNil())
+                            
+                            if case .failure(let error) = result {
+                                returnedError = error as NSError
+                            }
+
+                            expect(returnedError).to(equal(expectedError))
+                        }
+
+                        it("should not process the location event") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.event).to(beNil())
+                        }
+                    }
+                }
+            }
+
             describe("getConfiguration()") {
-                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
+                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                            geoLocationManager: geoLocationManager,
+                                            device: UIDevice.current,
+                                            tracker: TrackerMock())
                 context("on startLocationCollection not called before getConfiguration()") {
                     
                     beforeEach {
@@ -108,7 +243,10 @@ final class GeoManagerSpec: QuickSpec {
             }
 
             describe("on startLocationCollection(configuration:)") {
-                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
+                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                         geoLocationManager: geoLocationManager,
+                                         device: UIDevice.current,
+                                         tracker: TrackerMock())
                 context("when a configuration already exists") {
                     beforeEach {
                         // swiftlint:disable:next line_length
@@ -145,7 +283,10 @@ final class GeoManagerSpec: QuickSpec {
             }
             
             describe("startLocationCollection(configuration:)") {
-                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler)
+                let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                            geoLocationManager: geoLocationManager,
+                                            device: UIDevice.current,
+                                            tracker: TrackerMock())
                 context("When passed configuration is nil") {
                     beforeEach {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)

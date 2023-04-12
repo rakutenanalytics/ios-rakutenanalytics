@@ -8,6 +8,7 @@ protocol LocationManageable: AnyObject {
     static func authorizationStatus() -> CLAuthorizationStatus
     func startUpdatingLocation()
     func stopUpdatingLocation()
+    func requestLocation()
 }
 
 extension CLLocationManager: LocationManageable {}

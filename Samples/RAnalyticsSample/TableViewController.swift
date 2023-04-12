@@ -1,6 +1,7 @@
 import UIKit
 import RAnalytics
 import WebKit
+import CoreLocation.CLLocationManager
 
 enum GlobalConstants {
     static let kLocationTracking = "Location_Tracking"
@@ -11,10 +12,19 @@ enum GlobalConstants {
     static let kRATUniversalLink = "Open Universal Link"
     static let enableAppUserAgent = "Enable App user agent"
     static let showWebViewUserAgent = "Show WKWebView's user agent"
+    static let requestGeoLocation = "Request Geo Location"
 }
 
 enum TableViewCellType: Int, CaseIterable {
-    case location, idfa, accountID, appID, urlScheme, universalLink, enableAppUserAgent, showWebViewUserAgent
+    case location,
+         idfa,
+         accountID,
+         appID,
+         urlScheme,
+         universalLink,
+         enableAppUserAgent,
+         showWebViewUserAgent,
+         requestGeoLocation
 
     var cellIdentifier: String {
         switch self {
@@ -22,7 +32,7 @@ enum TableViewCellType: Int, CaseIterable {
             return "SwitchTableViewCell"
         case .accountID, .appID:
             return "TextFieldTableViewCell"
-        case .urlScheme, .universalLink, .showWebViewUserAgent:
+        case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation:
             return "BaseTableViewCell"
         }
     }
@@ -45,6 +55,8 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.enableAppUserAgent
         case .showWebViewUserAgent:
             return GlobalConstants.showWebViewUserAgent
+        case .requestGeoLocation:
+            return GlobalConstants.requestGeoLocation
         }
     }
 }
@@ -65,6 +77,9 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     }()
     private let webViewURL: URL! = URL(string: "https://www.rakuten.co.jp")
     private var webView: WKWebView!
+    private let locationManager = CLLocationManager()
+    private let successTitle = "Success"
+    private let errorTitle = "Error"
 
     enum Constants {
         static let domain = "check.rat.rakuten.co.jp"
@@ -77,6 +92,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         tableView.tableFooterView = UIView()
         webView = WKWebView(frame: view.bounds)
         navigationItem.title = Bundle.main.infoDictionary?["CFBundleName"] as? String
+        locationManager.requestAlwaysAuthorization()
     }
 
     func update(_ dict: [String: Any]) {
@@ -163,7 +179,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         case .urlScheme:
             guard let url = model.urlScheme(appScheme: "demoapp"),
                   UIApplication.shared.canOpenURL(url) else {
-                UIAlertController.showError("Could not open URL Scheme", from: self)
+                UIAlertController.show(errorTitle, message: "Could not open URL Scheme", from: self)
                 return
             }
             UIApplication.shared.open(url, options: [:])
@@ -171,7 +187,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         case .universalLink:
             guard let url = model.universalLink(domain: Constants.domain),
                   UIApplication.shared.canOpenURL(url) else {
-                UIAlertController.showError("Could not open Universal Link", from: self)
+                UIAlertController.show(errorTitle, message: "Could not open Universal Link", from: self)
                 return
             }
             UIApplication.shared.open(url, options: [:])
@@ -192,6 +208,21 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             }))
             present(alertController, animated: true)
 
+        case .requestGeoLocation:
+            GeoManager.shared.requestLocation { result in
+                switch result {
+                case .success(let location):
+                    UIAlertController.show(self.successTitle,
+                                           message: "A geo location was returned: \(location.latitude), \(location.longitude)",
+                                           from: self)
+
+                case .failure(let error):
+                    UIAlertController.show(self.errorTitle,
+                                           message: "An error occured while requesting the geo location: \(error.localizedDescription)",
+                                           from: self)
+                }
+            }
+
         default: ()
         }
     }
@@ -200,8 +231,8 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 // MARK: - Alert
 
 private extension UIAlertController {
-    static func showError(_ message: String, from viewController: UIViewController) {
-        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+    static func show(_ title: String, message: String, from viewController: UIViewController) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Close", style: .default, handler: nil))
         viewController.present(alertController, animated: true)
     }

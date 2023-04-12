@@ -20,8 +20,6 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App needs location when in use.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>RAnalyticsSampleSPM app needs IDFA to track User ID.</string>
 	<key>RATAccountIdentifier</key>
@@ -51,5 +49,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>[AlwaysAndWhenInUse] Location services are required</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>[Always] Location services are required</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Enable location tracking</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App needs location when in use.</string>
 </dict>
 </plist>

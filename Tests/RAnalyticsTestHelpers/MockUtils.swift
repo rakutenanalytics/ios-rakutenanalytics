@@ -192,6 +192,7 @@ public final class HTTPCookieStorageMock: HTTPCookieStorable {
 // MARK: - Tracker
 
 public final class TrackerMock: NSObject, Tracker {
+    public var event: RAnalyticsEvent?
     public var state: RAnalyticsState?
     public var endpointURL: URL? = URL(string: "https://endpoint.co.jp")
 
@@ -200,6 +201,7 @@ public final class TrackerMock: NSObject, Tracker {
     }
 
     public func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        self.event = event
         self.state = state
         return true
     }
@@ -208,17 +210,19 @@ public final class TrackerMock: NSObject, Tracker {
 // MARK: - Location Manager
 
 public final class LocationManagerMock: NSObject, LocationManageable {
-    public static func authorizationStatus() -> CLAuthorizationStatus {
-        .authorizedAlways
-    }
     public var desiredAccuracy: CLLocationAccuracy = 0.0
     public weak var delegate: CLLocationManagerDelegate?
     public var location: CLLocation?
     public var startUpdatingLocationIsCalled = false
     public var stopUpdatingLocationIsCalled = false
+    public var requestLocationIsCalled = false
 
     public override init() {
         super.init()
+    }
+
+    public static func authorizationStatus() -> CLAuthorizationStatus {
+        .authorizedAlways
     }
 
     public func startUpdatingLocation() {
@@ -227,6 +231,10 @@ public final class LocationManagerMock: NSObject, LocationManageable {
 
     public func stopUpdatingLocation() {
         stopUpdatingLocationIsCalled = true
+    }
+
+    public func requestLocation() {
+        requestLocationIsCalled = true
     }
 }
 
@@ -650,5 +658,18 @@ public final class ScreenMock: Screenable {
 
     public var bounds: CGRect {
         screenBounds
+    }
+}
+
+// MARK: - GeoLocationManagerMock
+
+public final class GeoLocationManagerMock: GeoLocationManageable {
+    public var requestLocationIsCalled = false
+
+    public init() {
+    }
+
+    public func requestLocation(actionParameters: RAnalytics.GeoActionParameters?, completionHandler: @escaping (Result<RAnalytics.LocationModel, Error>) -> Void) {
+        requestLocationIsCalled = true
     }
 }

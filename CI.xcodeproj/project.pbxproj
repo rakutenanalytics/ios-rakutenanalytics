@@ -26,6 +26,7 @@
 		C9010C442670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */; };
 		C9010C6D2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */; };
 		C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */; };
+		C906219729E08E180055AE03 /* GeoLocationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */; };
 		C91AA26629487672005D134C /* UNUserNotificationCenterDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AA26529487672005D134C /* UNUserNotificationCenterDelegateSpec.swift */; };
 		C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */; };
 		C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */; };
@@ -172,6 +173,7 @@
 		C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerProcessSpec.swift; sourceTree = "<group>"; };
 		C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerPayloadSpec.swift; sourceTree = "<group>"; };
 		C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositiveIntegerNumberSpec.swift; sourceTree = "<group>"; };
+		C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoLocationManagerSpec.swift; sourceTree = "<group>"; };
 		C91AA26529487672005D134C /* UNUserNotificationCenterDelegateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenterDelegateSpec.swift; sourceTree = "<group>"; };
 		C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetWebViewURLSpec.swift; sourceTree = "<group>"; };
 		C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RpCookieSpec.swift; sourceTree = "<group>"; };
@@ -307,6 +309,7 @@
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
 				F921521929B9EA480025DE26 /* GeoAccuracySpec.swift */,
 				F921521729B9EA000025DE26 /* GeoActionParametersSpec.swift */,
+				C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */,
 				F945101929B8EEA30086385F /* GeoManagerSpec.swift */,
 				C9FD321C29C85D1600A98ECF /* GeoTrackerSpec.swift */,
 				C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */,
@@ -788,6 +791,7 @@
 				C950D8E4276261A800DF9589 /* PushEventHandlerSpec.swift in Sources */,
 				C980DA9627BA5C300059E12D /* Data+Extensions.swift in Sources */,
 				45E3BC4A2581476400319ECF /* RAnalyticsDatabaseSpec.swift in Sources */,
+				C906219729E08E180055AE03 /* GeoLocationManagerSpec.swift in Sources */,
 				C954C667269439CE002AAFF7 /* TelephonyHandlerSpec.swift in Sources */,
 				F921521829B9EA000025DE26 /* GeoActionParametersSpec.swift in Sources */,
 				C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */,

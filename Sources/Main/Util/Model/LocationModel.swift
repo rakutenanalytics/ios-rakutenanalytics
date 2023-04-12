@@ -15,51 +15,51 @@ extension CLLocation {
 public struct LocationModel {
     /// Latitude of collected location in degrees
     /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
-    let latitude: CLLocationDegrees
+    public let latitude: CLLocationDegrees
 
     /// Longitude of collected location in degrees
     /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
-    let longitude: CLLocationDegrees
+    public let longitude: CLLocationDegrees
 
     /// Horizontal accuracy of this location
     /// https://developer.apple.com/documentation/corelocation/cllocation/1423599-horizontalaccuracy
-    let horizontalAccuracy: CLLocationAccuracy
+    public let horizontalAccuracy: CLLocationAccuracy
 
     /// Speed at the time of this location
     /// https://developer.apple.com/documentation/corelocation/cllocation/1423798-speed
-    let speed: CLLocationSpeed
+    public let speed: CLLocationSpeed
 
     /// The accuracy of the speed value, measured in meters per second.
     /// https://developer.apple.com/documentation/corelocation/cllocation/3524340-speedaccuracy
-    let speedAccuracy: CLLocationSpeedAccuracy
+    public let speedAccuracy: CLLocationSpeedAccuracy
 
     /// Vertical accuracy of this location
     /// https://developer.apple.com/documentation/corelocation/cllocation/1423550-verticalaccuracy
-    let verticalAccuracy: CLLocationAccuracy
+    public let verticalAccuracy: CLLocationAccuracy
 
     /// The altitude above mean sea level associated with a location, measured in meters
     /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
-    let altitude: CLLocationDistance
+    public let altitude: CLLocationDistance
 
     /// Course at the time of this location Value is between 0.0 and 360.0 inclusive
     /// https://developer.apple.com/documentation/corelocation/cllocation/1423832-course
-    let course: CLLocationDirection
+    public let course: CLLocationDirection
 
     /// Course accuracy in degrees of this location
     /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
-    let courseAccuracy: CLLocationDirectionAccuracy
+    public let courseAccuracy: CLLocationDirectionAccuracy
 
     /// The time at which this location was determined.
-    let timestamp: Date
+    public let timestamp: Date
 
     /// isAction = false → The Location collection in regular interval/distance.
     /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
     /// Default value: `false`
-    let isAction: Bool
+    public let isAction: Bool
 
     /// Optional ObjectModel which application can send along with requestLocation() method of public API.
     /// - Note: Present only when `isaction` = true.
-    let actionParameters: GeoActionParameters?
+    public let actionParameters: GeoActionParameters?
 
     /// Creates a new instance of `LocationModel`.
     /// - Parameter location: the user location.
