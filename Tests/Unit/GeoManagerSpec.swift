@@ -88,7 +88,7 @@ final class GeoManagerSpec: QuickSpec {
                     let configuration = GeoConfiguration()
                     let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
                     let expectedLocationModel = LocationModel(location: location,
-                                                              isAction: false,
+                                                              isAction: true,
                                                               actionParameters: nil)
                     var trackerMock: TrackerMock!
                     var coreLocationManagerMock: LocationManagerMock!

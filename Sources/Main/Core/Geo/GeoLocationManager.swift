@@ -65,9 +65,10 @@ extension GeoLocationManager: CLLocationManagerDelegate {
               let userActionLocationCallback = userActionLocationCallback else {
             return
         }
-        isUserActionBasedLocationRequest = false
         userActionLocationCallback(.success(LocationModel(location: mostRecentLocation,
+                                                          isAction: isUserActionBasedLocationRequest,
                                                           actionParameters: userActionParameters)))
+        isUserActionBasedLocationRequest = false
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -75,7 +76,7 @@ extension GeoLocationManager: CLLocationManagerDelegate {
               let userActionLocationCallback = userActionLocationCallback else {
             return
         }
-        isUserActionBasedLocationRequest = false
         userActionLocationCallback(.failure(error))
+        isUserActionBasedLocationRequest = false
     }
 }
