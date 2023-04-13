@@ -5,13 +5,25 @@ import Foundation
 /// `GeoActionParameters` does not default to any values and are optional. It is upto the app to set them, if necessary.
 public struct GeoActionParameters: Hashable {
     /// Specify the type of action performed in requesting location.
-    let actionType: String?
+    public let actionType: String?
     /// Logs related to the action.
-    let actionLog: String?
+    public let actionLog: String?
     /// Id associated with the action.
-    let actionId: String?
+    public let actionId: String?
     /// Duration of action.
-    let actionDuration: String?
+    public let actionDuration: String?
     /// Additional information related to the action.
-    let additionalLog: String?
+    public let additionalLog: String?
+
+    public init(actionType: String? = nil,
+                actionLog: String? = nil,
+                actionId: String? = nil,
+                actionDuration: String? = nil,
+                additionalLog: String? = nil) {
+        self.actionType = actionType
+        self.actionLog = actionLog
+        self.actionId = actionId
+        self.actionDuration = actionDuration
+        self.additionalLog = additionalLog
+    }
 }
