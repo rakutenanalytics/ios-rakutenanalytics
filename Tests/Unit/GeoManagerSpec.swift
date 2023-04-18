@@ -13,12 +13,14 @@ import RAnalyticsTestHelpers
 
 final class GeoManagerSpec: QuickSpec {
     override func spec() {
+
         let dependenciesContainer = SimpleDependenciesContainer()
+        let preferences = GeoSharedPreferences(userStorageHandler: dependenciesContainer.userStorageHandler)
         
         describe("GeoManager") {
-            let geoLocationManager = GeoLocationManager(configuration: GeoConfiguration(),
-                                                        coreLocationManager: LocationManagerMock())
-            
+            let geoLocationManager = GeoLocationManager(coreLocationManager: LocationManagerMock(),
+                                                        configurationStore: GeoConfigurationStore(preferences: preferences))
+
             context("singleton plus") {
                 it("should not be nil on accessing shared instance") {
                     expect(GeoManager.shared).toNot(beNil())
@@ -30,39 +32,6 @@ final class GeoManagerSpec: QuickSpec {
                                              device: UIDevice.current,
                                              tracker: TrackerMock())
                     expect(manager).toNot(beNil())
-                }
-            }
-
-            describe("configuration get-only property") {
-                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
-                                         geoLocationManager: geoLocationManager,
-                                         device: UIDevice.current,
-                                         tracker: TrackerMock())
-                context("getter") {
-                    beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
-                    }
-
-                    context("when no configuration is set on startLocationCollection(configuration:)") {
-                        it("should not be nil") {
-                            expect(manager.configuration).toNot(beNil())
-                        }
-
-                        it("should contain default configuration") {
-                            expect(manager.configuration).to(equal(GeoConfigurationFactory.defaultConfiguration))
-                        }
-                    }
-
-                    context("when configuration is set on startLocationCollection(configuration:)") {
-                        it("should not be nil") {
-                            expect(manager.configuration).toNot(beNil())
-                        }
-
-                        it("should contain configuration that was set") {
-                            manager.startLocationCollection(configuration: GeoConfiguration(distanceInterval: 350))
-                            expect(manager.configuration.distanceInterval).to(equal(350))
-                        }
-                    }
                 }
             }
 
@@ -85,7 +54,6 @@ final class GeoManagerSpec: QuickSpec {
                     var returnedError: NSError!
                     var returnedLocationModel: LocationModel!
                     var result: GeoRequestLocationResult!
-                    let configuration = GeoConfiguration()
                     let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
                     let expectedLocationModel = LocationModel(location: location,
                                                               isAction: true,
@@ -100,8 +68,8 @@ final class GeoManagerSpec: QuickSpec {
 
                         coreLocationManagerMock = LocationManagerMock()
 
-                        geoLocationManager = GeoLocationManager(configuration: configuration,
-                                                                coreLocationManager: coreLocationManagerMock)
+                        geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                                                                configurationStore: GeoConfigurationStore(preferences: preferences))
 
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: geoLocationManager,
@@ -193,7 +161,7 @@ final class GeoManagerSpec: QuickSpec {
                 context("on startLocationCollection not called before getConfiguration()") {
                     
                     beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                     
                     let configuration = geoManager.getConfiguration()
@@ -237,7 +205,7 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoConfiguration?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                 }
             }
@@ -247,6 +215,30 @@ final class GeoManagerSpec: QuickSpec {
                                          geoLocationManager: geoLocationManager,
                                          device: UIDevice.current,
                                          tracker: TrackerMock())
+
+                context("preferences") {
+                    beforeEach {
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
+                    }
+
+                    context("before calling startLocationCollection(configuration:)") {
+                        it("should return bool for locationCollectionKey as false") {
+                            expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).to(beFalse())
+                        }
+                    }
+
+                    context("after calling startLocationCollection(configuration:)") {
+                        it("should return bool for locationCollectionKey as true") {
+                            manager.startLocationCollection()
+                            expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).to(beTrue())
+                        }
+                    }
+
+                    afterEach {
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
+                    }
+                }
+
                 context("when a configuration already exists") {
                     beforeEach {
                         // swiftlint:disable:next line_length
@@ -287,9 +279,10 @@ final class GeoManagerSpec: QuickSpec {
                                             geoLocationManager: geoLocationManager,
                                             device: UIDevice.current,
                                             tracker: TrackerMock())
+
                 context("When passed configuration is nil") {
                     beforeEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
 
                     it("should return configuration as nil from getConfiguration") {
@@ -321,7 +314,7 @@ final class GeoManagerSpec: QuickSpec {
                         expect(geoManager.getConfiguration()?.endTime).to(equal(GeoTime(hours: 19, minutes: 30)))
                     }
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                 }
                 
@@ -355,7 +348,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                 }
                 
@@ -388,7 +381,7 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                 }
                 
@@ -466,10 +459,10 @@ final class GeoManagerSpec: QuickSpec {
                     
                     context("on startTime is greater than endTime with startTime and endTime are out of range") {
                         let configuration = GeoConfiguration(distanceInterval: 200,
-                                                          timeInterval: 900,
-                                                          accuracy: .nearest,
-                                                          startTime: GeoTime(hours: 50, minutes: 60),
-                                                          endTime: GeoTime(hours: 25, minutes: 80))
+                                                             timeInterval: 900,
+                                                             accuracy: .nearest,
+                                                             startTime: GeoTime(hours: 50, minutes: 60),
+                                                             endTime: GeoTime(hours: 25, minutes: 80))
                         geoManager.startLocationCollection(configuration: configuration)
                         let geoConfiguration = geoManager.getConfiguration()
                         
@@ -484,7 +477,123 @@ final class GeoManagerSpec: QuickSpec {
                     }
                     
                     afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.geoConfigurationKey)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+                    }
+                }
+            }
+
+            describe("configurePoller()") {
+                var geoLocationManagerMock: GeoLocationManagerMock!
+                var geoManager: GeoManager!
+                var configuration: GeoConfiguration!
+                var configurationData: Data!
+
+                context("when lastCollectedLocationTms is nil") {
+                    beforeEach {
+                        geoLocationManagerMock = GeoLocationManagerMock()
+                        geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                                geoLocationManager: geoLocationManagerMock,
+                                                device: UIDevice.current,
+                                                tracker: TrackerMock())
+                        configuration = GeoConfiguration(distanceInterval: 100,
+                                                         timeInterval: 3,
+                                                         accuracy: .best,
+                                                         startTime: GeoTime(hours: 0, minutes: 0),
+                                                         endTime: GeoTime(hours: 23, minutes: 59))
+                        configurationData = try? JSONEncoder().encode(configuration)
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationTimestampKey)
+                        dependenciesContainer.userStorageHandler.set(value: configurationData, forKey: UserDefaultsKeys.configurationKey)
+                    }
+
+                    it("should start poller and call attemptToRequestLocation() with specified timeinterval as delay") {
+                        geoManager.configurePoller()
+                        expect(geoLocationManagerMock.attemptToRequestLocationUpdatesIsCalled).toEventually(beTrue(), timeout: .seconds(4))
+                    }
+
+                    it("should set lastCollectedLocationTms on success") {
+                        geoManager.configurePoller()
+                        // swiftlint:disable:next line_length
+                        expect(dependenciesContainer.userStorageHandler.object(forKey: UserDefaultsKeys.locationTimestampKey)).toEventuallyNot(beNil(), timeout: .seconds(4))
+                    }
+
+                    it("should not set lastCollectedLocationTms on failure") {
+                        geoLocationManagerMock.completionFailed = true
+                        geoManager.configurePoller()
+                        // swiftlint:disable:next line_length
+                        expect(dependenciesContainer.userStorageHandler.object(forKey: UserDefaultsKeys.locationTimestampKey)).toEventually(beNil(), timeout: .seconds(4))
+                    }
+                }
+
+                context("when lastCollectedLocationTms is non-nil and lapsed") {
+                    beforeEach {
+                        geoLocationManagerMock = GeoLocationManagerMock()
+                        geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                                geoLocationManager: geoLocationManagerMock,
+                                                device: UIDevice.current,
+                                                tracker: TrackerMock())
+                        configuration = GeoConfiguration(distanceInterval: 100,
+                                                         timeInterval: 3,
+                                                         accuracy: .best,
+                                                         startTime: GeoTime(hours: 0, minutes: 0),
+                                                         endTime: GeoTime(hours: 23, minutes: 59))
+                        configurationData = try? JSONEncoder().encode(configuration)
+                        // swiftlint:disable:next line_length
+                        dependenciesContainer.userStorageHandler.set(value: Date().addingTimeInterval(-4), forKey: UserDefaultsKeys.locationTimestampKey)
+                        dependenciesContainer.userStorageHandler.set(value: configurationData, forKey: UserDefaultsKeys.configurationKey)
+                    }
+
+                    it("should start poller and call attemptToRequestLocation() with no delay") {
+                        geoManager.configurePoller()
+                        expect(geoLocationManagerMock.attemptToRequestLocationUpdatesIsCalled).toEventually(beTrue())
+                    }
+                }
+
+                context("when lastCollectedLocationTms is non-nil and not lapsed") {
+                    beforeEach {
+                        geoLocationManagerMock = GeoLocationManagerMock()
+                        geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                                geoLocationManager: geoLocationManagerMock,
+                                                device: UIDevice.current,
+                                                tracker: TrackerMock())
+                        configuration = GeoConfiguration(distanceInterval: 100,
+                                                         timeInterval: 5,
+                                                         accuracy: .best,
+                                                         startTime: GeoTime(hours: 0, minutes: 0),
+                                                         endTime: GeoTime(hours: 23, minutes: 59))
+                        configurationData = try? JSONEncoder().encode(configuration)
+                        // swiftlint:disable:next line_length
+                        dependenciesContainer.userStorageHandler.set(value: Date().addingTimeInterval(-2), forKey: UserDefaultsKeys.locationTimestampKey)
+                        dependenciesContainer.userStorageHandler.set(value: configurationData, forKey: UserDefaultsKeys.configurationKey)
+                    }
+
+                    it("should start poller and call attemptToRequestLocation() with remaining elapsed delay") {
+                        geoManager.configurePoller()
+                        expect(geoLocationManagerMock.attemptToRequestLocationUpdatesIsCalled).toEventually(beTrue(), timeout: .seconds(4))
+                    }
+                }
+
+                afterEach {
+                    dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationTimestampKey)
+                    dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+                }
+            }
+
+            describe("stopLocationCollection()") {
+                let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                         geoLocationManager: geoLocationManager,
+                                         device: UIDevice.current,
+                                         tracker: TrackerMock())
+                context("preferences") {
+                    context("on calling stopLocationCollection()") {
+                        it("should return bool for locationCollectionKey as false") {
+                            manager.stopLocationCollection()
+                            // swiftlint:disable:next line_length
+                            expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).toEventually(beFalse(), timeout: .seconds(2))
+                        }
+                    }
+
+                    afterEach {
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
                     }
                 }
             }

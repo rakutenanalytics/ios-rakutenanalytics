@@ -42,29 +42,33 @@ protocol GeoTrackable {
 // MARK: - GeoManager
 /// The object that you use to start, stop and request the delivery of location-related events to your app.
 public final class GeoManager {
-    /// GeoConfiguration for location collection.
-    internal var configuration: GeoConfiguration {
-        getConfiguration() ?? GeoConfigurationFactory.defaultConfiguration
-    }
 
-    private let geoSharedPreferenceHelper: GeoConfigurationHelper
-
-    /// The GeoLocation manager.
+    /// Instance of type `GeoLocationManageable`.
     private let geoLocationManager: GeoLocationManageable
 
-    /// The device identifier handler.
+    /// Instance of type `DeviceIdentifierHandler`.
     private let deviceIdentifierHandler: DeviceIdentifierHandler
 
-    /// The Geo Tracker.
+    /// `GeoTracker`.
     ///
     /// - Note: The Geo Tracker instantiation returns nil when the endpoint URL is not configured (`RATEndpoint`).
     private let geoTracker: Tracker?
 
+    /// Instance of type `Poller`.
+    private let poller: GeoPoller
+
+    /// Instance of type `GeoSharedPreferences`.
+    internal let preferences: GeoSharedPreferences
+
+    /// Instance of type `GeoConfigurationStorable`.
+    private let configurationStore: GeoConfigurationStorable
+
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
         let dependenciesContainer = SimpleDependenciesContainer()
-        let defaultGeoConfiguration = GeoConfiguration()
         let coreLocationManager = dependenciesContainer.locationManager
+        let userStorageHandler = dependenciesContainer.userStorageHandler
+
         var geoTracker: GeoTracker?
         if let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: GeoTrackerConstants.databaseName,
                                                                            tableName: GeoTrackerConstants.tableName,
@@ -72,9 +76,12 @@ public final class GeoManager {
             geoTracker = GeoTracker(dependenciesContainer: dependenciesContainer,
                                     databaseConfiguration: databaseConfiguration)
         }
-        return GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
-                          geoLocationManager: GeoLocationManager(configuration: defaultGeoConfiguration,
-                                                                 coreLocationManager: coreLocationManager),
+
+        let preferences = GeoSharedPreferences(userStorageHandler: userStorageHandler)
+
+        return GeoManager(userStorageHandler: userStorageHandler,
+                          geoLocationManager: GeoLocationManager(coreLocationManager: coreLocationManager,
+                                                                 configurationStore: GeoConfigurationStore(preferences: preferences)),
                           device: dependenciesContainer.deviceCapability,
                           tracker: geoTracker)
     }()
@@ -88,30 +95,38 @@ public final class GeoManager {
          geoLocationManager: GeoLocationManageable,
          device: DeviceCapability,
          tracker: Tracker?) {
-        self.geoSharedPreferenceHelper = GeoConfigurationHelper(userStorageHandler: userStorageHandler)
+
+        self.poller = GeoPoller()
+
+        self.preferences = GeoSharedPreferences(userStorageHandler: userStorageHandler)
+
+        self.configurationStore = GeoConfigurationStore(preferences: preferences)
+
         self.geoLocationManager = geoLocationManager
+
         self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device, hasher: SecureHasher())
+
         self.geoTracker = tracker
     }
 }
 
 // MARK: - GeoManager conformance to GeoTrackable
+
 extension GeoManager: GeoTrackable {
 
     public func startLocationCollection(configuration: GeoConfiguration? = nil) {
         if let safeConfiguration = configuration,
                safeConfiguration != getConfiguration() {
-            geoSharedPreferenceHelper.store(configuration: safeConfiguration)
+            configurationStore.store(configuration: safeConfiguration)
         }
+        preferences.setLocationCollectionStatus(true)
+        manageStartLocationCollection()
     }
 
     public func stopLocationCollection() {
+        manageStopLocationCollection()
     }
 
-    /// Requests a location.
-    ///
-    /// - Parameter actionParameters: The action parameters.
-    /// - Parameter completionHandler: The completion handler containing a location or an error.
     public func requestLocation(actionParameters: GeoActionParameters? = nil,
                                 completionHandler: @escaping GeoRequestLocationBlock) {
         geoLocationManager.requestLocation(actionParameters: actionParameters) { result in
@@ -127,11 +142,74 @@ extension GeoManager: GeoTrackable {
     }
 
     public func getConfiguration() -> GeoConfiguration? {
-        return geoSharedPreferenceHelper.retrieveGeoConfigurationFromStorage()
+        return configurationStore.retrieveGeoConfigurationFromStorage()
     }
 }
 
-// MARK: - Private API
+// MARK: - Start Location Collection Helper
+
+extension GeoManager {
+
+    private func manageStartLocationCollection() {
+        requestLocationUpdate()
+        configurePoller()
+    }
+
+    private func requestLocationUpdate() {
+        geoLocationManager.attemptToRequestLocation { result in
+            switch result {
+            case .success(let location):
+                self.preferences.setLastCollectedLocationTimeStamp(location.timestamp)
+                self.trackLocEvent(location)
+            case .failure(let error):
+                RLogger.debug(message: error.localizedDescription)
+            }
+        }
+    }
+
+    func configurePoller() {
+        guard let lastCollectedLocationTms = preferences.getLastCollectedLocationTimeStamp else {
+            startPoller(interval: configurationStore.configuration.timeInterval, delay: 0, repeats: true)
+            return
+        }
+        let elapsedTimeInterval = Date.timeIntervalBetween(current: Date(), previous: lastCollectedLocationTms)
+        // swiftlint:disable:next line_length
+        let delay = elapsedTimeInterval < configurationStore.configuration.timeInterval ? (configurationStore.configuration.timeInterval-elapsedTimeInterval) : 0
+        startPoller(interval: configurationStore.configuration.timeInterval, delay: delay, repeats: false)
+    }
+
+    private func startPoller(interval: UInt, delay: UInt, repeats: Bool) {
+        poller.pollLocationCollection(delay: repeats ? TimeInterval(interval) : TimeInterval(delay), repeats: repeats) { [weak self] in
+            guard let self = self else { return }
+            self.performLocationCollectionTasks()
+            if !repeats {
+                self.poller.invalidateLocationCollectionPoller()
+                self.startPoller(interval: interval, delay: delay, repeats: true)
+            }
+        }
+    }
+
+    private func performLocationCollectionTasks() {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            guard let strongSelf = self,
+                    strongSelf.preferences.isLocationCollection else { return }
+            strongSelf.requestLocationUpdate()
+        }
+    }
+}
+
+// MARK: - Stop Location Collection Helper
+
+extension GeoManager {
+
+    private func manageStopLocationCollection() {
+        preferences.setLocationCollectionStatus(false)
+        geoLocationManager.stopLocationUpdates()
+        poller.invalidateLocationCollectionPoller()
+    }
+}
+
+// MARK: - Private extension
 
 private extension GeoManager {
     /// Tracks the loc event.

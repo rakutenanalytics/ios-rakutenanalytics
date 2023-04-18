@@ -12,6 +12,7 @@ enum GlobalConstants {
     static let kRATUniversalLink = "Open Universal Link"
     static let enableAppUserAgent = "Enable App user agent"
     static let showWebViewUserAgent = "Show WKWebView's user agent"
+    static let startLocationCollection = "Start Location Collection"
     static let requestGeoLocation = "Request Geo Location"
 }
 
@@ -24,11 +25,12 @@ enum TableViewCellType: Int, CaseIterable {
          universalLink,
          enableAppUserAgent,
          showWebViewUserAgent,
-         requestGeoLocation
+         requestGeoLocation,
+         startLocationCollection
 
     var cellIdentifier: String {
         switch self {
-        case .location, .idfa, .enableAppUserAgent:
+        case .location, .idfa, .enableAppUserAgent, .startLocationCollection:
             return "SwitchTableViewCell"
         case .accountID, .appID:
             return "TextFieldTableViewCell"
@@ -57,6 +59,8 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.showWebViewUserAgent
         case .requestGeoLocation:
             return GlobalConstants.requestGeoLocation
+        case .startLocationCollection:
+            return GlobalConstants.startLocationCollection
         }
     }
 }
@@ -80,6 +84,10 @@ class TableViewController: UITableViewController, BaseCellDelegate {
     private let locationManager = CLLocationManager()
     private let successTitle = "Success"
     private let errorTitle = "Error"
+
+    enum UserDefaultsKeys {
+        static let locationCollectionKey = "GeoLocationCollection"
+    }
 
     enum Constants {
         static let domain = "check.rat.rakuten.co.jp"
@@ -118,6 +126,17 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         if let appIdString = dict[GlobalConstants.kRATAppID] as? String {
             self.applicationId = appIdString
         }
+
+        if let value = dict[GlobalConstants.startLocationCollection],
+           let flag = value as? Bool {
+            if flag {
+                UserDefaults.standard.set(flag, forKey: UserDefaultsKeys.locationCollectionKey)
+                GeoManager.shared.startLocationCollection()
+            } else {
+                UserDefaults.standard.set(flag, forKey: UserDefaultsKeys.locationCollectionKey)
+                GeoManager.shared.stopLocationCollection()
+            }
+        }
     }
 
     @IBAction func spool(_ sender: Any) {
@@ -153,6 +172,11 @@ class TableViewController: UITableViewController, BaseCellDelegate {
 
         if cell is SwitchTableViewCell && cellType == .enableAppUserAgent {
             (cell as? SwitchTableViewCell)?.usingSwitch.isOn = AnalyticsManager.shared().isWebViewAppUserAgentEnabledAtBuildtime
+        }
+
+        if cell is SwitchTableViewCell && cellType == .startLocationCollection {
+            let value = UserDefaults.standard.bool(forKey: UserDefaultsKeys.locationCollectionKey)
+            (cell as? SwitchTableViewCell)?.usingSwitch.isOn = value
         }
 
         cell.delegate = self

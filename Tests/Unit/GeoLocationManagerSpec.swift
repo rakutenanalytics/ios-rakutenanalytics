@@ -9,6 +9,8 @@ import RAnalyticsTestHelpers
 
 final class GeoLocationManagerSpec: QuickSpec {
     override func spec() {
+        let dependenciesContainer = SimpleDependenciesContainer()
+        let preferences = GeoSharedPreferences(userStorageHandler: dependenciesContainer.userStorageHandler)
         describe("GeoLocationManager") {
             let coreLocationManager = CLLocationManager()
             let expectedError = NSError(domain: "", code: 0, userInfo: nil)
@@ -19,14 +21,13 @@ final class GeoLocationManagerSpec: QuickSpec {
             let expectedLocationModel = LocationModel(location: location,
                                                       isAction: true,
                                                       actionParameters: nil)
-            let configuration = GeoConfiguration()
             var coreLocationManagerMock: LocationManagerMock!
             var geoLocationManager: GeoLocationManager!
 
             beforeEach {
                 coreLocationManagerMock = LocationManagerMock()
-                geoLocationManager = GeoLocationManager(configuration: configuration,
-                                                        coreLocationManager: coreLocationManagerMock)
+                geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                                                        configurationStore: GeoConfigurationStore(preferences: preferences))
             }
 
             it("should set a non-nil core location manager delegate") {
@@ -34,7 +35,13 @@ final class GeoLocationManagerSpec: QuickSpec {
             }
 
             it("should set desiredAccuracy to configured value") {
-                expect(coreLocationManager.desiredAccuracy).to(equal(configuration.accuracy.desiredAccuracy))
+                expect(coreLocationManager.desiredAccuracy).to(equal(kCLLocationAccuracyBest))
+            }
+
+            context("on instantiation") {
+                it("should not be nil") {
+                    expect(geoLocationManager).toNot(beNil())
+                }
             }
 
             context("When requestLocation(actionParameters:) is called") {

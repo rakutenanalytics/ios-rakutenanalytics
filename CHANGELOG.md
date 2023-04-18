@@ -7,6 +7,7 @@
 * [CONRAT-28242](https://jira.rakuten-it.com/jira/browse/CONRAT-28242): Expose public methods of GeoManager in Geo module.
 * [CONRAT-28248](https://jira.rakuten-it.com/jira/browse/CONRAT-28248): Add GeoTracker to Geo Module.
 * [CONRAT-28353](https://jira.rakuten-it.com/jira/browse/CONRAT-28353): Save Configuration from application for GeoManager.
+* [CONRAT-28669](https://jira.rakuten-it.com/jira/browse/CONRAT-28669): Implement timer based location collection.
 
 ### Improvements
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.

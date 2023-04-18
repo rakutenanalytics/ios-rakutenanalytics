@@ -17,18 +17,22 @@ enum GeoConfigurationFactory {
     static var endMinutes: UInt = 59
 }
 
-protocol GeoConfigurationStorage {
-    func store(configuration: GeoConfiguration) -> Bool
+protocol GeoConfigurationStorable {
+    var configuration: GeoConfiguration { get }
+    @discardableResult func store(configuration: GeoConfiguration) -> Bool
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration?
 }
 
-struct GeoConfigurationHelper: GeoConfigurationStorage {
-    
-    // The user storage handler
-    private let userStorageHandler: UserStorageHandleable?
-    
-    init(userStorageHandler: UserStorageHandleable) {
-        self.userStorageHandler = userStorageHandler
+struct GeoConfigurationStore: GeoConfigurationStorable {
+
+    private let preferences: GeoSharedPreferences
+
+    var configuration: GeoConfiguration {
+        retrieveGeoConfigurationFromStorage() ?? GeoConfigurationFactory.defaultConfiguration
+    }
+
+    init(preferences: GeoSharedPreferences) {
+        self.preferences = preferences
     }
     
     @discardableResult
@@ -57,8 +61,8 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
         }
         
         do {
-            let geoConfigurationData = try JSONEncoder().encode(geoConfiguration)
-            userStorageHandler?.set(value: geoConfigurationData, forKey: UserDefaultsKeys.geoConfigurationKey)
+            let data = try JSONEncoder().encode(geoConfiguration)
+            preferences.setGeoConfiguration(data)
             RLogger.debug(message: "GeoConfiguration stored into shared preference")
             return true
         } catch {
@@ -70,8 +74,8 @@ struct GeoConfigurationHelper: GeoConfigurationStorage {
     // Retrieve configuration from storage if present, else return nil
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration? {
         do {
-            if let configurationData = userStorageHandler?.data(forKey: UserDefaultsKeys.geoConfigurationKey) {
-                let configuration = try JSONDecoder().decode(GeoConfiguration.self, from: configurationData)
+            if let data = preferences.getGeoConfiguration {
+                let configuration = try JSONDecoder().decode(GeoConfiguration.self, from: data)
                 RLogger.debug(message: "GeoConfiguration retrieved from shared preference")
                 return configuration
             }

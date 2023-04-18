@@ -39,6 +39,10 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().launchCollector.origin = .internal
 
+        if GeoManager.shared.preferences.isLocationCollection {
+            GeoManager.shared.configurePoller()
+        }
+
         // Delegates may not implement the original method
         if responds(to: #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) {
             return rAutotrackApplication(application,

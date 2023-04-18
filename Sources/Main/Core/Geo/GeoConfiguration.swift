@@ -48,4 +48,8 @@ public struct GeoTime: Codable, Equatable {
         self.hours = hours
         self.minutes = minutes
     }
+
+    var toSeconds: UInt {
+        ((hours * 60) + minutes) * 60
+    }
 }

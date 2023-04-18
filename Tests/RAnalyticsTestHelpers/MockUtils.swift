@@ -664,12 +664,42 @@ public final class ScreenMock: Screenable {
 // MARK: - GeoLocationManagerMock
 
 public final class GeoLocationManagerMock: GeoLocationManageable {
+
+    public var completionFailed = false
     public var requestLocationIsCalled = false
+    public var attemptToRequestLocationUpdatesIsCalled = false
+    public var stopLocationUpdatesCalled = false
 
     public init() {
     }
 
+    public func attemptToRequestLocation(completionHandler: @escaping (RAnalytics.GeoRequestLocationResult) -> Void) {
+        attemptToRequestLocationUpdatesIsCalled = true
+        guard completionFailed else {
+            completionHandler(.success(LocationModel(location: CLLocation())))
+            return
+        }
+        completionHandler(.failure(NSError(domain: "", code: 0, userInfo: nil)))
+    }
+
+    public func stopLocationUpdates() {
+        stopLocationUpdatesCalled = true
+    }
     public func requestLocation(actionParameters: RAnalytics.GeoActionParameters?, completionHandler: @escaping (Result<RAnalytics.LocationModel, Error>) -> Void) {
         requestLocationIsCalled = true
+    }
+}
+
+// MARK: - MockRunLoop
+
+class MockRunLoop: PollerRunLoopProtocol {
+    var addedTimer: Timer?
+
+    func add(timer: Timer) {
+        self.addedTimer = timer
+    }
+
+    func invalidate(timer: Timer) {
+        timer.invalidate()
     }
 }

@@ -2,7 +2,9 @@ import Foundation
 
 enum UserDefaultsKeys {
     static let userAgentKey = "UserAgent"
-    static let geoConfigurationKey = "RATGeoConfiguration"
+    static let locationCollectionKey = "RATGeoLocationCollection"
+    static let locationTimestampKey = "RATGeoLocationTimestamp"
+    static let configurationKey = "RATGeoCongiuration"
 }
 
 /// Note:
