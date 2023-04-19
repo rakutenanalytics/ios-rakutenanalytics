@@ -692,14 +692,17 @@ public final class GeoLocationManagerMock: GeoLocationManageable {
 
 // MARK: - MockRunLoop
 
-class MockRunLoop: PollerRunLoopProtocol {
-    var addedTimer: Timer?
+public class MockRunLoop: PollerRunLoopProtocol {
+    public var addedTimer: Timer?
 
-    func add(timer: Timer) {
+    public init() {
+    }
+
+    public func add(timer: Timer) {
         self.addedTimer = timer
     }
 
-    func invalidate(timer: Timer) {
+    public func invalidate(timer: Timer) {
         timer.invalidate()
     }
 }
