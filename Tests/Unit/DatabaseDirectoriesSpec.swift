@@ -40,3 +40,5 @@ final class DatabaseDirectoriesSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable line_length

@@ -913,3 +913,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable line_length
+// swiftlint:enable type_body_length
+// swiftlint:enable function_body_length

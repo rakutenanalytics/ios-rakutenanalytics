@@ -5,10 +5,16 @@ import WebKit
 
 // swiftlint:disable type_name
 public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
+// swiftlint:enable type_name
 
 public typealias WebTrackingCookieDomainBlock = () -> String?
 
 public typealias RAnalyticsErrorBlock = (NSError) -> Void
+
+enum CoreOrigin {
+    case analytics
+    case geo(LocationModel)
+}
 
 @objc public enum RAnalyticsLoggingLevel: Int {
     case verbose, debug, info, warning, error, none
@@ -429,6 +435,11 @@ extension AnalyticsManager: AnalyticsManageable {
     /// - Returns: A boolean value indicating if the event has been processed.
     @discardableResult
     @objc dynamic public func process(_ event: RAnalyticsEvent) -> Bool {
+        process(event, coreOrigin: .analytics)
+    }
+
+    @discardableResult
+    func process(_ event: RAnalyticsEvent, coreOrigin: CoreOrigin) -> Bool {
         guard eventChecker.shouldProcess(event.name),
               let sessionIdentifier = sessionCookie else {
             return false
@@ -442,12 +453,18 @@ extension AnalyticsManager: AnalyticsManageable {
             state.advertisingIdentifier = advertisingIdentifier
         }
 
-        if shouldTrackLastKnownLocation,
-            let location = locationManager.location {
-            state.lastKnownLocation = LocationModel(location: location)
+        switch coreOrigin {
+        case .analytics:
+            if shouldTrackLastKnownLocation,
+                let location = locationManager.location {
+                state.lastKnownLocation = LocationModel(location: location)
 
-        } else {
-            state.lastKnownLocation = nil
+            } else {
+                state.lastKnownLocation = nil
+            }
+
+        case .geo(let locationModel):
+            state.lastKnownLocation = locationModel
         }
 
         state.sessionStartDate = sessionStartDate ?? nil

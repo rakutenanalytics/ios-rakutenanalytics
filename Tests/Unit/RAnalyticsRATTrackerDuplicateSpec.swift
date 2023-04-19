@@ -151,3 +151,5 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable line_length

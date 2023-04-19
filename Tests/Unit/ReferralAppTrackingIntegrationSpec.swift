@@ -117,3 +117,4 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
         }
     }
 }
+// swiftlint:enable line_length

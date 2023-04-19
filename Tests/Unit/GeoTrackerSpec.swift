@@ -89,11 +89,14 @@ final class GeoTrackerSpec: QuickSpec {
                 let expectedResolution = "375x812"
                 let expectedSessionIdentifier = "CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
                 let expectedCkp = "bd7ac43958a9e7fa0f097c0a0ba5c2979299e69e"
+                let expectedCka = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
                 let expectedActionParamType = "ButtonClick"
                 let expectedActionParamLog = "In the Check screen"
                 let expectedActionParamId = "abc123"
                 let expectedActionParamDuration = "1 Second"
                 let expectedActionParamAddLog = "Event on the Super Sale Campaign"
+                let expectedUserIdentifier = "flo_test"
+                let expectedEasyIdentifier = "123456"
 
                 func createLocation(isAction: Bool = false,
                                     actionParameters: GeoActionParameters? = nil) -> LocationModel {
@@ -146,6 +149,9 @@ final class GeoTrackerSpec: QuickSpec {
                                                      parameters: nil)
                 let state = RAnalyticsState(sessionIdentifier: expectedSessionIdentifier,
                                             deviceIdentifier: expectedCkp)
+                state.advertisingIdentifier = expectedCka
+                state.userIdentifier = expectedUserIdentifier
+                state.easyIdentifier = expectedEasyIdentifier
 
                 beforeEach {
                     bundle.endpointAddress = URL(string: "https://endpoint.co.jp")
@@ -277,7 +283,13 @@ final class GeoTrackerSpec: QuickSpec {
 
                         expect(json[PayloadParameterKeys.Identifier.ckp] as? String).to(equal(expectedCkp))
 
+                        expect(json[PayloadParameterKeys.Identifier.cka] as? String).to(equal(expectedCka))
+
                         expect(json[PayloadParameterKeys.Identifier.cks] as? String).to(equal(expectedSessionIdentifier))
+
+                        expect(json[PayloadParameterKeys.Identifier.userid] as? String).to(equal(expectedUserIdentifier))
+
+                        expect(json[PayloadParameterKeys.Identifier.easyid] as? String).to(equal(expectedEasyIdentifier))
                     }
 
                     func verifyLocation(json: [String: Any]) {
@@ -642,3 +654,7 @@ final class GeoTrackerSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable type_body_length
+// swiftlint:enable function_body_length
+// swiftlint:enable line_length

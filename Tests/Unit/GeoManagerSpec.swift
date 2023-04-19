@@ -13,8 +13,7 @@ import RAnalyticsTestHelpers
 
 final class GeoManagerSpec: QuickSpec {
     override func spec() {
-
-        let dependenciesContainer = SimpleDependenciesContainer()
+        let dependenciesContainer = SimpleContainerMock()
         let preferences = GeoSharedPreferences(userStorageHandler: dependenciesContainer.userStorageHandler)
         
         describe("GeoManager") {
@@ -30,7 +29,8 @@ final class GeoManagerSpec: QuickSpec {
                     let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                              geoLocationManager: geoLocationManager,
                                              device: UIDevice.current,
-                                             tracker: TrackerMock())
+                                             tracker: TrackerMock(),
+                                             analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                     expect(manager).toNot(beNil())
                 }
             }
@@ -41,7 +41,8 @@ final class GeoManagerSpec: QuickSpec {
                     let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: locationManagerMock,
                                                 device: UIDevice.current,
-                                                tracker: TrackerMock())
+                                                tracker: TrackerMock(),
+                                                analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
 
                     geoManager.requestLocation { _ in }
 
@@ -49,6 +50,8 @@ final class GeoManagerSpec: QuickSpec {
                 }
 
                 context("When requestLocation(actionParameters:) is called") {
+                    let analyticsDependenciesContainer = SimpleContainerMock()
+                    let dependenciesContainer = SimpleContainerMock()
                     let coreLocationManager = CLLocationManager()
                     let expectedError = NSError(domain: "", code: 0, userInfo: nil)
                     var returnedError: NSError!
@@ -62,6 +65,12 @@ final class GeoManagerSpec: QuickSpec {
                     var coreLocationManagerMock: LocationManagerMock!
                     var geoLocationManager: GeoLocationManager!
                     var geoManager: GeoManager!
+                    let asIdentifierManagerMock = ASIdentifierManagerMock()
+                    asIdentifierManagerMock.advertisingIdentifierUUIDString = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+                    let userDefaultsMock = UserDefaultsMock([:])
+                    userDefaultsMock.set(value: "flo_test", forKey: RAnalyticsExternalCollector.Constants.trackingIdentifierKey)
+                    let keychainHandlerMock = KeychainHandlerMock()
+                    keychainHandlerMock.set(value: "123456", for: RAnalyticsExternalCollector.Constants.easyIdentifierKey)
 
                     beforeEach {
                         trackerMock = TrackerMock()
@@ -71,10 +80,15 @@ final class GeoManagerSpec: QuickSpec {
                         geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
                                                                 configurationStore: GeoConfigurationStore(preferences: preferences))
 
+                        analyticsDependenciesContainer.adIdentifierManager = asIdentifierManagerMock
+                        analyticsDependenciesContainer.userStorageHandler = userDefaultsMock
+                        analyticsDependenciesContainer.keychainHandler = keychainHandlerMock
+
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: geoLocationManager,
                                                 device: UIDevice.current,
-                                                tracker: trackerMock)
+                                                tracker: trackerMock,
+                                                analyticsManager: AnalyticsManager(dependenciesContainer: analyticsDependenciesContainer))
                     }
 
                     it("should call CLLocationManager's requestLocation()") {
@@ -126,6 +140,21 @@ final class GeoManagerSpec: QuickSpec {
                             expect(result).toEventuallyNot(beNil())
                             expect(trackerMock.state?.deviceIdentifier).toNot(beEmpty())
                         }
+
+                        it("should process the location event with a non-empty userid") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.userIdentifier).to(equal("flo_test"))
+                        }
+
+                        it("should process the location event with a non-empty easyid") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.easyIdentifier).to(equal("123456"))
+                        }
+
+                        it("should process the location event with a non-empty cka") {
+                            expect(result).toEventuallyNot(beNil())
+                            expect(trackerMock.state?.advertisingIdentifier).to(equal("E621E1F8-C36C-495A-93FC-0C247A3E6E5F"))
+                        }
                     }
 
                     context("When core location manager returns an error") {
@@ -157,7 +186,8 @@ final class GeoManagerSpec: QuickSpec {
                 let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                             geoLocationManager: geoLocationManager,
                                             device: UIDevice.current,
-                                            tracker: TrackerMock())
+                                            tracker: TrackerMock(),
+                                            analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                 context("on startLocationCollection not called before getConfiguration()") {
                     
                     beforeEach {
@@ -214,7 +244,8 @@ final class GeoManagerSpec: QuickSpec {
                 let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                          geoLocationManager: geoLocationManager,
                                          device: UIDevice.current,
-                                         tracker: TrackerMock())
+                                         tracker: TrackerMock(),
+                                         analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
 
                 context("preferences") {
                     beforeEach {
@@ -278,8 +309,8 @@ final class GeoManagerSpec: QuickSpec {
                 let geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                             geoLocationManager: geoLocationManager,
                                             device: UIDevice.current,
-                                            tracker: TrackerMock())
-
+                                            tracker: TrackerMock(),
+                                            analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                 context("When passed configuration is nil") {
                     beforeEach {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
@@ -494,7 +525,8 @@ final class GeoManagerSpec: QuickSpec {
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: geoLocationManagerMock,
                                                 device: UIDevice.current,
-                                                tracker: TrackerMock())
+                                                tracker: TrackerMock(),
+                                                analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                         configuration = GeoConfiguration(distanceInterval: 100,
                                                          timeInterval: 3,
                                                          accuracy: .best,
@@ -530,7 +562,8 @@ final class GeoManagerSpec: QuickSpec {
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: geoLocationManagerMock,
                                                 device: UIDevice.current,
-                                                tracker: TrackerMock())
+                                                tracker: TrackerMock(),
+                                                analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                         configuration = GeoConfiguration(distanceInterval: 100,
                                                          timeInterval: 3,
                                                          accuracy: .best,
@@ -554,7 +587,8 @@ final class GeoManagerSpec: QuickSpec {
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                                 geoLocationManager: geoLocationManagerMock,
                                                 device: UIDevice.current,
-                                                tracker: TrackerMock())
+                                                tracker: TrackerMock(),
+                                                analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                         configuration = GeoConfiguration(distanceInterval: 100,
                                                          timeInterval: 5,
                                                          accuracy: .best,
@@ -582,7 +616,8 @@ final class GeoManagerSpec: QuickSpec {
                 let manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
                                          geoLocationManager: geoLocationManager,
                                          device: UIDevice.current,
-                                         tracker: TrackerMock())
+                                         tracker: TrackerMock(),
+                                         analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                 context("preferences") {
                     context("on calling stopLocationCollection()") {
                         it("should return bool for locationCollectionKey as false") {
@@ -600,3 +635,6 @@ final class GeoManagerSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable type_body_length
+// swiftlint:enable function_body_length

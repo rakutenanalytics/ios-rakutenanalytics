@@ -380,3 +380,5 @@ final class TelephonyHandlerSpec: QuickSpec {
         }
     }
 }
+
+// swiftlint:enable line_length

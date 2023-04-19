@@ -3,6 +3,7 @@ import UIKit
 
 // swiftlint:disable type_name
 public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool
+// swiftlint:enable type_name
 
 /// Concrete implementation of @ref RAnalyticsTracker that sends events to RAT.
 ///

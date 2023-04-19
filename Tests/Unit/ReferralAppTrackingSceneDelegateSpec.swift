@@ -133,3 +133,5 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
     }
 }
 #endif
+
+// swiftlint:enable line_length

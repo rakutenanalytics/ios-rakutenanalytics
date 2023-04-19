@@ -49,10 +49,8 @@ public final class GeoManager {
     /// Instance of type `DeviceIdentifierHandler`.
     private let deviceIdentifierHandler: DeviceIdentifierHandler
 
-    /// `GeoTracker`.
-    ///
-    /// - Note: The Geo Tracker instantiation returns nil when the endpoint URL is not configured (`RATEndpoint`).
-    private let geoTracker: Tracker?
+    /// The Analytics Manager processing events.
+    private let analyticsManager: AnalyticsManager
 
     /// Instance of type `Poller`.
     private let poller: GeoPoller
@@ -83,7 +81,8 @@ public final class GeoManager {
                           geoLocationManager: GeoLocationManager(coreLocationManager: coreLocationManager,
                                                                  configurationStore: GeoConfigurationStore(preferences: preferences)),
                           device: dependenciesContainer.deviceCapability,
-                          tracker: geoTracker)
+                          tracker: geoTracker,
+                          analyticsManager: AnalyticsManager.shared())
     }()
 
     /// Creates a new instance of GeoManager.
@@ -91,11 +90,13 @@ public final class GeoManager {
     /// - Parameter userStorageHandler: Parameter of type `UserStorageHandleable` provides an interface to the user’s defaults database, where you store key-value pairs persistently across launches of your app.
     /// - Parameter geoLocationManager: The geolocation manager.
     /// - Parameter device: The device capability.
+    /// - Parameter tracker: The geo tracker.
+    /// - Parameter analyticsManager: The analytics manager processing events.
     init(userStorageHandler: UserStorageHandleable,
          geoLocationManager: GeoLocationManageable,
          device: DeviceCapability,
-         tracker: Tracker?) {
-
+         tracker: Tracker?,
+         analyticsManager: AnalyticsManager) {
         self.poller = GeoPoller()
 
         self.preferences = GeoSharedPreferences(userStorageHandler: userStorageHandler)
@@ -106,7 +107,11 @@ public final class GeoManager {
 
         self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device, hasher: SecureHasher())
 
-        self.geoTracker = tracker
+        self.analyticsManager = analyticsManager
+
+        if let tracker = tracker {
+            self.analyticsManager.add(tracker)
+        }
     }
 }
 
@@ -218,10 +223,6 @@ private extension GeoManager {
     func trackLocEvent(_ location: LocationModel) {
         let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.geoLocation,
                                     parameters: nil)
-        let state = RAnalyticsState(sessionIdentifier: Session.cks(),
-                                    deviceIdentifier: deviceIdentifierHandler.ckp())
-        state.lastKnownLocation = location
-
-        _ = geoTracker?.process(event: event, state: state)
+        analyticsManager.process(event, coreOrigin: .geo(location))
     }
 }
