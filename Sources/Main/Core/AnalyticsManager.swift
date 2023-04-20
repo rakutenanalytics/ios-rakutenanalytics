@@ -202,6 +202,10 @@ protocol ReferralAppTrackable: AnyObject {
 
     let launchCollector: RAnalyticsLaunchCollector
 
+    var isTrackingGeoLocation: Bool {
+        userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)
+    }
+
     var easyIdentifier: String? {
         externalCollector.easyIdentifier
     }

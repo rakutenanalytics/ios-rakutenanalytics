@@ -13,12 +13,13 @@ import RAnalyticsTestHelpers
 
 final class GeoManagerSpec: QuickSpec {
     override func spec() {
-        let dependenciesContainer = SimpleContainerMock()
-        let preferences = GeoSharedPreferences(userStorageHandler: dependenciesContainer.userStorageHandler)
-        
+
+        let dependenciesContainer = SimpleDependenciesContainer()
+        let configurationStore = GeoConfigurationStore(userStorageHandler: dependenciesContainer.userStorageHandler)
+
         describe("GeoManager") {
             let geoLocationManager = GeoLocationManager(coreLocationManager: LocationManagerMock(),
-                                                        configurationStore: GeoConfigurationStore(preferences: preferences))
+                                                        configurationStore: configurationStore)
 
             context("singleton plus") {
                 it("should not be nil on accessing shared instance") {
@@ -76,9 +77,8 @@ final class GeoManagerSpec: QuickSpec {
                         trackerMock = TrackerMock()
 
                         coreLocationManagerMock = LocationManagerMock()
-
                         geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
-                                                                configurationStore: GeoConfigurationStore(preferences: preferences))
+                                                                configurationStore: configurationStore)
 
                         analyticsDependenciesContainer.adIdentifierManager = asIdentifierManagerMock
                         analyticsDependenciesContainer.userStorageHandler = userDefaultsMock
@@ -272,8 +272,11 @@ final class GeoManagerSpec: QuickSpec {
 
                 context("when a configuration already exists") {
                     beforeEach {
-                        // swiftlint:disable:next line_length
-                        let setConfiguration = GeoConfiguration(distanceInterval: 400, timeInterval: 450, accuracy: .kilometer, startTime: GeoTime(hours: 7, minutes: 10), endTime: GeoTime(hours: 15, minutes: 10))
+                        let setConfiguration = GeoConfiguration(distanceInterval: 400,
+                                                                timeInterval: 450,
+                                                                accuracy: .kilometer,
+                                                                startTime: GeoTime(hours: 7, minutes: 10),
+                                                                endTime: GeoTime(hours: 15, minutes: 10))
                         manager.startLocationCollection(configuration: setConfiguration)
                     }
 
@@ -626,7 +629,6 @@ final class GeoManagerSpec: QuickSpec {
                             expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).toEventually(beFalse(), timeout: .seconds(2))
                         }
                     }
-
                     afterEach {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
                     }

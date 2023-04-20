@@ -39,7 +39,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         AnalyticsManager.shared().launchCollector.origin = .internal
 
-        if GeoManager.shared.preferences.isLocationCollection {
+        if AnalyticsManager.shared().isTrackingGeoLocation {
             GeoManager.shared.configurePoller()
         }
 

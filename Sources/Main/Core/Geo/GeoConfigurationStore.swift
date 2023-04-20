@@ -25,14 +25,14 @@ protocol GeoConfigurationStorable {
 
 struct GeoConfigurationStore: GeoConfigurationStorable {
 
-    private let preferences: GeoSharedPreferences
+    private let userStorageHandler: UserStorageHandleable
 
     var configuration: GeoConfiguration {
         retrieveGeoConfigurationFromStorage() ?? GeoConfigurationFactory.defaultConfiguration
     }
 
-    init(preferences: GeoSharedPreferences) {
-        self.preferences = preferences
+    init(userStorageHandler: UserStorageHandleable) {
+        self.userStorageHandler = userStorageHandler
     }
     
     @discardableResult
@@ -62,7 +62,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
         
         do {
             let data = try JSONEncoder().encode(geoConfiguration)
-            preferences.setGeoConfiguration(data)
+            userStorageHandler.set(value: data, forKey: UserDefaultsKeys.configurationKey)
             RLogger.debug(message: "GeoConfiguration stored into shared preference")
             return true
         } catch {
@@ -74,7 +74,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
     // Retrieve configuration from storage if present, else return nil
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration? {
         do {
-            if let data = preferences.getGeoConfiguration {
+            if let data = userStorageHandler.data(forKey: UserDefaultsKeys.configurationKey) {
                 let configuration = try JSONDecoder().decode(GeoConfiguration.self, from: data)
                 RLogger.debug(message: "GeoConfiguration retrieved from shared preference")
                 return configuration

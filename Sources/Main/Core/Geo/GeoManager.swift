@@ -55,8 +55,8 @@ public final class GeoManager {
     /// Instance of type `Poller`.
     private let poller: GeoPoller
 
-    /// Instance of type `GeoSharedPreferences`.
-    internal let preferences: GeoSharedPreferences
+    /// Instance of type `UserStorageHandleable`.
+    private let userStorageHandler: UserStorageHandleable
 
     /// Instance of type `GeoConfigurationStorable`.
     private let configurationStore: GeoConfigurationStorable
@@ -74,12 +74,10 @@ public final class GeoManager {
             geoTracker = GeoTracker(dependenciesContainer: dependenciesContainer,
                                     databaseConfiguration: databaseConfiguration)
         }
-
-        let preferences = GeoSharedPreferences(userStorageHandler: userStorageHandler)
-
+        
         return GeoManager(userStorageHandler: userStorageHandler,
                           geoLocationManager: GeoLocationManager(coreLocationManager: coreLocationManager,
-                                                                 configurationStore: GeoConfigurationStore(preferences: preferences)),
+                                                                 configurationStore: GeoConfigurationStore(userStorageHandler: userStorageHandler)),
                           device: dependenciesContainer.deviceCapability,
                           tracker: geoTracker,
                           analyticsManager: AnalyticsManager.shared())
@@ -99,9 +97,9 @@ public final class GeoManager {
          analyticsManager: AnalyticsManager) {
         self.poller = GeoPoller()
 
-        self.preferences = GeoSharedPreferences(userStorageHandler: userStorageHandler)
+        self.userStorageHandler = userStorageHandler
 
-        self.configurationStore = GeoConfigurationStore(preferences: preferences)
+        self.configurationStore = GeoConfigurationStore(userStorageHandler: userStorageHandler)
 
         self.geoLocationManager = geoLocationManager
 
@@ -124,7 +122,7 @@ extension GeoManager: GeoTrackable {
                safeConfiguration != getConfiguration() {
             configurationStore.store(configuration: safeConfiguration)
         }
-        preferences.setLocationCollectionStatus(true)
+        userStorageHandler.set(value: true, forKey: UserDefaultsKeys.locationCollectionKey)
         manageStartLocationCollection()
     }
 
@@ -164,7 +162,7 @@ extension GeoManager {
         geoLocationManager.attemptToRequestLocation { result in
             switch result {
             case .success(let location):
-                self.preferences.setLastCollectedLocationTimeStamp(location.timestamp)
+                self.userStorageHandler.set(value: location.timestamp, forKey: UserDefaultsKeys.locationTimestampKey)
                 self.trackLocEvent(location)
             case .failure(let error):
                 RLogger.debug(message: error.localizedDescription)
@@ -173,13 +171,13 @@ extension GeoManager {
     }
 
     func configurePoller() {
-        guard let lastCollectedLocationTms = preferences.getLastCollectedLocationTimeStamp else {
+        guard let lastCollectedLocationTms = userStorageHandler.object(forKey: UserDefaultsKeys.locationTimestampKey) as? Date else {
             startPoller(interval: configurationStore.configuration.timeInterval, delay: 0, repeats: true)
             return
         }
         let elapsedTimeInterval = Date.timeIntervalBetween(current: Date(), previous: lastCollectedLocationTms)
-        // swiftlint:disable:next line_length
-        let delay = elapsedTimeInterval < configurationStore.configuration.timeInterval ? (configurationStore.configuration.timeInterval-elapsedTimeInterval) : 0
+        let timeInterval = configurationStore.configuration.timeInterval
+        let delay = elapsedTimeInterval < timeInterval ? (timeInterval - elapsedTimeInterval) : 0
         startPoller(interval: configurationStore.configuration.timeInterval, delay: delay, repeats: false)
     }
 
@@ -197,7 +195,7 @@ extension GeoManager {
     private func performLocationCollectionTasks() {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let strongSelf = self,
-                    strongSelf.preferences.isLocationCollection else { return }
+                  strongSelf.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey) else { return }
             strongSelf.requestLocationUpdate()
         }
     }
@@ -208,7 +206,7 @@ extension GeoManager {
 extension GeoManager {
 
     private func manageStopLocationCollection() {
-        preferences.setLocationCollectionStatus(false)
+        userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
         geoLocationManager.stopLocationUpdates()
         poller.invalidateLocationCollectionPoller()
     }

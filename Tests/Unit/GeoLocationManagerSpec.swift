@@ -10,7 +10,6 @@ import RAnalyticsTestHelpers
 final class GeoLocationManagerSpec: QuickSpec {
     override func spec() {
         let dependenciesContainer = SimpleDependenciesContainer()
-        let preferences = GeoSharedPreferences(userStorageHandler: dependenciesContainer.userStorageHandler)
         describe("GeoLocationManager") {
             let coreLocationManager = CLLocationManager()
             let expectedError = NSError(domain: "", code: 0, userInfo: nil)
@@ -23,11 +22,12 @@ final class GeoLocationManagerSpec: QuickSpec {
                                                       actionParameters: nil)
             var coreLocationManagerMock: LocationManagerMock!
             var geoLocationManager: GeoLocationManager!
-
+            let configurationStore = GeoConfigurationStore(userStorageHandler: dependenciesContainer.userStorageHandler)
+            
             beforeEach {
                 coreLocationManagerMock = LocationManagerMock()
                 geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
-                                                        configurationStore: GeoConfigurationStore(preferences: preferences))
+                                                        configurationStore: configurationStore)
             }
 
             it("should set a non-nil core location manager delegate") {

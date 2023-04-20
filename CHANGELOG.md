@@ -25,6 +25,7 @@
 * [CONRAT-28251](https://jira.rakuten-it.com/jira/browse/CONRAT-28251): Move GeoTracker from GeoManager to AnalyticsManager.
 * [CONRAT-28597](https://jira.rakuten-it.com/jira/browse/CONRAT-28597): Refactor GeoConfiguration.
 * [CONRAT-28751](https://jira.rakuten-it.com/jira/browse/CONRAT-28751): Process loc event with AnalyticsManager in order to add additional state parameters.
+* [CONRAT-28813](https://jira.rakuten-it.com/jira/browse/CONRAT-28813): Remove GeoSharedPreferences.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
