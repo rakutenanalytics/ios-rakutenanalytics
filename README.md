@@ -374,6 +374,7 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 ### Xcode and Swift versions
 Xcode >= 14.1 and Swift >= 5.7.1 are required to build RAnalytics version 10.0.0.
+https://developer.apple.com/news/?id=jd9wcyov
 
 ### SDKTracker
 `_rem_internal_install` event is no longer tracked to account id 477 and application id 1  due to removal of SDK Tracker function for sending events.
