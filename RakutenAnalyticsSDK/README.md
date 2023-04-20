@@ -2,9 +2,9 @@
 Records user activity and automatically sends tracking events to an analytics cloud service.
 
 ## Requirements
-Xcode 12.5.x or Xcode 13+
+Xcode >= 14.1 is supported.
 
-Swift >= 5.4 is supported.
+Swift >= 5.7.1 is supported.
 
 Note: The SDK may build on earlier Xcode versions but it is not officially supported or tested.
 

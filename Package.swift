@@ -1,4 +1,4 @@
-// swift-tools-version:5.4
+// swift-tools-version:5.7.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -24,7 +24,10 @@ let package = Package(
                 resources: [.process("Core/Assets")]),
 
         .target(name: "RAnalyticsSwiftLoader",
-                path: "Sources/RAnalyticsSwiftLoader"),
+                path: "Sources/RAnalyticsSwiftLoader",
+                // publicHeadersPath is mandatory for Swift >= 5.5
+                // Note: This path is relative to the target.
+                publicHeadersPath: ""),
 
         .target(name: "RAnalyticsTestHelpers",
                 dependencies: ["RAnalytics",

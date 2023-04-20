@@ -36,9 +36,9 @@ The Analytics SDK source is hosted on Rakuten GitPub https://gitpub.rakuten-it.c
 
 ## Requirements
 
-Xcode 12.5.x or Xcode 13+
+Xcode >= 14.1 is supported.
 
-Swift >= 5.4 is supported.
+Swift >= 5.7.1 is supported.
 
 Note: The SDK may build on earlier Xcode versions but it is not officially supported or tested.
 
@@ -371,6 +371,9 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 # Knowledge Base
 
 ## Migrating to v10.0.0
+
+### Xcode and Swift versions
+Xcode >= 14.1 and Swift >= 5.7.1 are required to build RAnalytics version 10.0.0.
 
 ### SDKTracker
 `_rem_internal_install` event is no longer tracked to account id 477 and application id 1  due to removal of SDK Tracker function for sending events.
