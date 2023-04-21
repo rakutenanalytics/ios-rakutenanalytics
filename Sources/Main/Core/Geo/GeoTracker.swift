@@ -61,11 +61,13 @@ final class GeoTracker: NSObject {
 
         self.automaticFieldsBuilder = dependenciesContainer.automaticFieldsBuilder
 
+        // maxUploadInterval equals to batchingDelay in order to send events every 900 seconds
         sender = RAnalyticsSender(endpoint: endpointURL,
                                   database: databaseConfiguration.database,
                                   databaseTable: databaseConfiguration.tableName,
                                   bundle: dependenciesContainer.bundle,
-                                  session: dependenciesContainer.session)
+                                  session: dependenciesContainer.session,
+                                  maxUploadInterval: batchingDelay)
         sender.setBatchingDelayBlock(batchingDelay)
 
         super.init()

@@ -6,7 +6,6 @@ private enum SenderConstants {
     static let ratBatchSize = UInt(16)
     static let defaultUploadInterval = TimeInterval(0.0)
     static let minUploadInterval = TimeInterval(0.0)
-    static let maxUploadInterval = TimeInterval(60.0)
     static let retryInterval = TimeInterval(10.0)
 }
 
@@ -35,6 +34,9 @@ private enum SenderConstants {
     private let database: RAnalyticsDatabase
     private let databaseTableName: String
     private let session: SwiftySessionable
+
+    /// The maximum upload time interval
+    private let maxUploadInterval: TimeInterval
 
     /// uploadTimer is used to throttle uploads. A call to scheduleBackgroundUpload
     /// will do nothing if uploadTimer is not nil.
@@ -72,17 +74,22 @@ private enum SenderConstants {
     ///   - databaseTable: name of database
     ///   - bundle: the bundle
     ///   - session: the URL session
+    ///   - maxUploadInterval: the maximum time interval. The default value is 60 seconds.
+    ///
+    ///   - Note: if the batching delay is greater than `maxUploadInterval`, then `maxUploadInterval` is taken as the default batching delay.
     init(endpoint: URL,
          database: RAnalyticsDatabase,
          databaseTable: String,
          bundle: EnvironmentBundle,
-         session: SwiftySessionable) {
+         session: SwiftySessionable,
+         maxUploadInterval: TimeInterval = TimeInterval(60.0)) {
         self._endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
         self.batchingDelayClosure = { return SenderConstants.defaultUploadInterval }
         self.enableInternalSerialization = bundle.enableInternalSerialization
         self.session = session
+        self.maxUploadInterval = maxUploadInterval
         super.init()
 
         configureNotifications()
@@ -129,7 +136,7 @@ private enum SenderConstants {
 fileprivate extension RAnalyticsSender {
     func scheduleUploadOrPerformImmediately() {
         if let delay = batchingDelayClosure?() {
-            uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay), SenderConstants.maxUploadInterval)
+            uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay), maxUploadInterval)
         }
 
         /// Upload immediately if batching delay is 0 and a request isn't in progress.

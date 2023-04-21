@@ -27,6 +27,9 @@
 * [CONRAT-28751](https://jira.rakuten-it.com/jira/browse/CONRAT-28751): Process loc event with AnalyticsManager in order to add additional state parameters.
 * [CONRAT-28813](https://jira.rakuten-it.com/jira/browse/CONRAT-28813): Remove GeoSharedPreferences.
 
+### Bug fixes
+* [CONRAT-28848](https://jira.rakuten-it.com/jira/browse/CONRAT-28848): Make the maximum upload time interval configurable in RAnalyticsSender for GeoTracker.
+
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
 * [CONRAT-27901](https://jira.rakuten-it.com/jira/browse/CONRAT-27901): Create a documentation for Internal JSON Serialization in ADVANCED_USAGE.md
