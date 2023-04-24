@@ -189,29 +189,26 @@ extension LocationModel {
         // Add action parameters only when isAction is true and only when parameters are not empty
         if isAction == true,
            let actionParameters = actionParameters {
-            var dictionary = [String: Any]()
 
             if let actionType = actionParameters.actionType, !actionType.isEmpty {
-                dictionary[PayloadParameterKeys.Location.ActionParameters.type] = actionType
+                location[PayloadParameterKeys.Location.ActionParameters.type] = actionType
             }
 
             if let actionLog = actionParameters.actionLog, !actionLog.isEmpty {
-                dictionary[PayloadParameterKeys.Location.ActionParameters.log] = actionLog
+                location[PayloadParameterKeys.Location.ActionParameters.log] = actionLog
             }
 
             if let actionId = actionParameters.actionId, !actionId.isEmpty {
-                dictionary[PayloadParameterKeys.Location.ActionParameters.identifier] = actionId
+                location[PayloadParameterKeys.Location.ActionParameters.identifier] = actionId
             }
 
             if let actionDuration = actionParameters.actionDuration, !actionDuration.isEmpty {
-                dictionary[PayloadParameterKeys.Location.ActionParameters.duration] = actionDuration
+                location[PayloadParameterKeys.Location.ActionParameters.duration] = actionDuration
             }
 
             if let additionalLog = actionParameters.additionalLog, !additionalLog.isEmpty {
-                dictionary[PayloadParameterKeys.Location.ActionParameters.addLog] = additionalLog
+                location[PayloadParameterKeys.Location.ActionParameters.addLog] = additionalLog
             }
-
-            location[PayloadParameterKeys.Location.actionParameters] = dictionary
         }
 
         return location

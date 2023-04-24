@@ -146,25 +146,23 @@ enum PayloadParameterKeys {
         /// Default value: `false`
         static let isAction = "isaction"
 
-        /// Optional ObjectModel which application can send along with requestLocation() method of public API.
+        /// Optional Values which application can send along with requestLocation() method of public API.
         /// - Note: Present only when `isaction` = true.
-        static let actionParameters = "action_params"
-
         enum ActionParameters {
             /// Type of action performed in requesting location
-            static let type = "type"
+            static let type = "action_type"
 
             /// Logs related to performed action
-            static let log = "log"
+            static let log = "action_log"
 
             /// Identifier associated with the action
-            static let identifier = "id"
+            static let identifier = "action_id"
 
             /// Duration of action
-            static let duration = "duration"
+            static let duration = "action_duration"
 
             /// Additional Information related to performed action
-            static let addLog = "add_log"
+            static let addLog = "action_add_log"
         }
     }
 
