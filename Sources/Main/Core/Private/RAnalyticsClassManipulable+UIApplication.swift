@@ -40,6 +40,9 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         AnalyticsManager.shared().launchCollector.origin = .internal
 
         if AnalyticsManager.shared().isTrackingGeoLocation {
+            if let isLocationLaunch = launchOptions?[UIApplication.LaunchOptionsKey.location] as? Bool, isLocationLaunch {
+                GeoManager.shared.requestLocationUpdate(for: .continual)
+            }
             GeoManager.shared.configurePoller()
         }
 

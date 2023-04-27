@@ -65,6 +65,22 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
 
+            describe("isTrackingGeoLocation") {
+                it("should return true when userStorageHandler has locationCollectionStatus as true") {
+                    dependenciesContainer.userStorageHandler.set(value: true, forKey: UserDefaultsKeys.locationCollectionKey)
+                    expect(AnalyticsManager.shared().isTrackingGeoLocation).to(beTrue())
+                }
+
+                it("should return false when userStorageHandler has locationCollectionStatus as false") {
+                    dependenciesContainer.userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
+                    expect(AnalyticsManager.shared().isTrackingGeoLocation).to(beFalse())
+                }
+
+                afterEach {
+                    dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
+                }
+            }
+
             describe("deviceIdentifier") {
                 context("When idfvUUID is nil") {
                     it("should return a non-empty string value") {

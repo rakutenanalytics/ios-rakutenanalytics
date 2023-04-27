@@ -1,6 +1,10 @@
 import Foundation
 import CoreLocation.CLLocationManager
 
+enum GeoRequestLocationType {
+    case continual, userAction
+}
+
 /// The geo location result type.
 public typealias GeoRequestLocationResult = Result<LocationModel, Error>
 
@@ -61,6 +65,12 @@ public final class GeoManager {
     /// Instance of type `GeoConfigurationStorable`.
     private let configurationStore: GeoConfigurationStorable
 
+    /// Callback to provide user action based location or error
+    private var userActionLocationCallback: ((GeoRequestLocationResult) -> Void)?
+
+    /// user action info
+    private var userActionParameters: GeoActionParameters?
+
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
         let dependenciesContainer = SimpleDependenciesContainer()
@@ -110,6 +120,8 @@ public final class GeoManager {
         if let tracker = tracker {
             self.analyticsManager.add(tracker)
         }
+
+        self.geoLocationManager.delegate = self
     }
 }
 
@@ -127,21 +139,14 @@ extension GeoManager: GeoTrackable {
     }
 
     public func stopLocationCollection() {
+        userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
         manageStopLocationCollection()
     }
 
     public func requestLocation(actionParameters: GeoActionParameters? = nil,
                                 completionHandler: @escaping GeoRequestLocationBlock) {
-        geoLocationManager.requestLocation(actionParameters: actionParameters) { result in
-            switch result {
-            case .success(let location):
-                self.trackLocEvent(location)
-                completionHandler(.success(location))
-
-            case .failure(let error):
-                completionHandler(.failure(error))
-            }
-        }
+        self.userActionLocationCallback = completionHandler
+        requestLocationUpdate(for: .userAction)
     }
 
     public func getConfiguration() -> GeoConfiguration? {
@@ -154,20 +159,9 @@ extension GeoManager: GeoTrackable {
 extension GeoManager {
 
     private func manageStartLocationCollection() {
-        requestLocationUpdate()
+        geoLocationManager.startMonitoringSignificantLocationChanges()
+        requestLocationUpdate(for: .continual)
         configurePoller()
-    }
-
-    private func requestLocationUpdate() {
-        geoLocationManager.attemptToRequestLocation { result in
-            switch result {
-            case .success(let location):
-                self.userStorageHandler.set(value: location.timestamp, forKey: UserDefaultsKeys.locationTimestampKey)
-                self.trackLocEvent(location)
-            case .failure(let error):
-                RLogger.debug(message: error.localizedDescription)
-            }
-        }
     }
 
     func configurePoller() {
@@ -196,8 +190,12 @@ extension GeoManager {
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let strongSelf = self,
                   strongSelf.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey) else { return }
-            strongSelf.requestLocationUpdate()
+            strongSelf.requestLocationUpdate(for: .continual)
         }
+    }
+
+    func requestLocationUpdate(for requestType: GeoRequestLocationType) {
+        geoLocationManager.requestLocationUpdate(for: requestType)
     }
 }
 
@@ -206,7 +204,7 @@ extension GeoManager {
 extension GeoManager {
 
     private func manageStopLocationCollection() {
-        userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
+        geoLocationManager.stopMonitoringSignificantLocationChanges()
         geoLocationManager.stopLocationUpdates()
         poller.invalidateLocationCollectionPoller()
     }
@@ -222,5 +220,36 @@ private extension GeoManager {
         let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.geoLocation,
                                     parameters: nil)
         analyticsManager.process(event, coreOrigin: .geo(location))
+    }
+}
+
+// MARK: - GeoLocationManagerDelegate
+
+extension GeoManager: GeoLocationManagerDelegate {
+
+    func geoLocationManager(didUpdateLocation location: CLLocation, for requestType: GeoRequestLocationType) {
+        switch requestType {
+        case .continual:
+            let locationModel = LocationModel(location: location)
+            trackLocEvent(locationModel)
+            userStorageHandler.set(value: locationModel.timestamp, forKey: UserDefaultsKeys.locationTimestampKey)
+        case .userAction:
+            let locationModel = LocationModel(location: location, isAction: true, actionParameters: userActionParameters)
+            trackLocEvent(locationModel)
+            if let safeCallback = userActionLocationCallback {
+                safeCallback(.success(locationModel))
+            }
+        }
+    }
+
+    func geoLocationManager(didFailWithError error: Error, for requestType: GeoRequestLocationType) {
+        switch requestType {
+        case .continual:
+            RLogger.debug(message: error.localizedDescription)
+        case .userAction:
+            if let userActionLocationCallback = userActionLocationCallback {
+                userActionLocationCallback(.failure(error))
+            }
+        }
     }
 }

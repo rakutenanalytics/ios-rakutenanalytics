@@ -210,12 +210,17 @@ public final class TrackerMock: NSObject, Tracker {
 // MARK: - Location Manager
 
 public final class LocationManagerMock: NSObject, LocationManageable {
+    public var monitoredRegions: Set<CLRegion> = []
     public var desiredAccuracy: CLLocationAccuracy = 0.0
     public weak var delegate: CLLocationManagerDelegate?
     public var location: CLLocation?
     public var startUpdatingLocationIsCalled = false
     public var stopUpdatingLocationIsCalled = false
     public var requestLocationIsCalled = false
+    public var startMonitoringSignificantLocationChangesIsCalled = false
+    public var stopMonitoringSignificantLocationChangesIsCalled = false
+    public var startMonitoringForRegionIsCalled = false
+    public var stopMonitoringForRegionIsCalled = false
 
     public override init() {
         super.init()
@@ -235,6 +240,28 @@ public final class LocationManagerMock: NSObject, LocationManageable {
 
     public func requestLocation() {
         requestLocationIsCalled = true
+    }
+
+    public static func significantLocationChangeMonitoringAvailable() -> Bool {
+        true
+    }
+
+    public func startMonitoringSignificantLocationChanges() {
+        startMonitoringSignificantLocationChangesIsCalled = true
+    }
+
+    public func stopMonitoringSignificantLocationChanges() {
+        stopMonitoringSignificantLocationChangesIsCalled = true
+    }
+
+    public func startMonitoring(for region: CLRegion) {
+        startMonitoringForRegionIsCalled = true
+        monitoredRegions.insert(region)
+    }
+
+    public func stopMonitoring(for region: CLRegion) {
+        stopMonitoringForRegionIsCalled = true
+        monitoredRegions.remove(region)
     }
 }
 
@@ -663,30 +690,56 @@ public final class ScreenMock: Screenable {
 
 // MARK: - GeoLocationManagerMock
 
-public final class GeoLocationManagerMock: GeoLocationManageable {
+public final class GeoLocationManagerMock: GeoLocationManageable, GeoLocationManagerDelegate {
 
-    public var completionFailed = false
-    public var requestLocationIsCalled = false
-    public var attemptToRequestLocationUpdatesIsCalled = false
+    public var locationModel: LocationModel!
+    public var locationError: NSError!
+    public var delegate: RAnalytics.GeoLocationManagerDelegate?
+    public var requestLocationUserActionIsCalled = false
+    public var requestLocationContinualIsCalled = false
     public var stopLocationUpdatesCalled = false
+    public var startMonitoringSignificantLocationChangesIsCalled = false
+    public var stopMonitoringSignificantLocationChangesIsCalled = false
+    public var delegateGeoLocationManagerDidUpdateLocationIsCalled = false
+    public var delegateGeoLocationManagerDidFailWithErrorIsCalled = false
 
     public init() {
-    }
-
-    public func attemptToRequestLocation(completionHandler: @escaping (RAnalytics.GeoRequestLocationResult) -> Void) {
-        attemptToRequestLocationUpdatesIsCalled = true
-        guard completionFailed else {
-            completionHandler(.success(LocationModel(location: CLLocation())))
-            return
-        }
-        completionHandler(.failure(NSError(domain: "", code: 0, userInfo: nil)))
     }
 
     public func stopLocationUpdates() {
         stopLocationUpdatesCalled = true
     }
-    public func requestLocation(actionParameters: RAnalytics.GeoActionParameters?, completionHandler: @escaping (Result<RAnalytics.LocationModel, Error>) -> Void) {
-        requestLocationIsCalled = true
+
+    public func requestLocationUpdate(for requestType: RAnalytics.GeoRequestLocationType) {
+        switch requestType {
+        case .continual:
+            requestLocationContinualIsCalled = true
+        case .userAction:
+            requestLocationUserActionIsCalled = true
+        }
+    }
+
+    public func startMonitoringSignificantLocationChanges() {
+        startMonitoringSignificantLocationChangesIsCalled = true
+    }
+
+    public func stopMonitoringSignificantLocationChanges() {
+        stopMonitoringSignificantLocationChangesIsCalled = true
+    }
+
+    public func geoLocationManager(didUpdateLocation location: CLLocation, for requestType: GeoRequestLocationType) {
+        delegateGeoLocationManagerDidUpdateLocationIsCalled = true
+        switch requestType {
+        case .continual:
+            locationModel = LocationModel(location: location)
+        case .userAction:
+            locationModel = LocationModel(location: location, isAction: true)
+        }
+    }
+
+    public func geoLocationManager(didFailWithError error: Error, for requestType: GeoRequestLocationType) {
+        delegateGeoLocationManagerDidFailWithErrorIsCalled = true
+        locationError = error as NSError
     }
 }
 
