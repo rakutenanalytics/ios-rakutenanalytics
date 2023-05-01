@@ -780,42 +780,38 @@ final class GeoManagerSpec: QuickSpec {
             }
 
             describe("on stopLocationCollection()") {
-                var manager: GeoManager!
+
+                var geoManager: GeoManager!
                 let geoLocationManagerMock = GeoLocationManagerMock()
 
-                context("preferences") {
-                    beforeEach {
-                        manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
-                                             geoLocationManager: geoLocationManager,
-                                             device: UIDevice.current,
-                                             tracker: TrackerMock(),
-                                             analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
-                    }
+                beforeEach {
+                    geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
+                                            geoLocationManager: geoLocationManagerMock,
+                                            device: UIDevice.current,
+                                            tracker: TrackerMock(),
+                                            analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
 
-                    context("on calling stopLocationCollection()") {
-                        it("should return bool for locationCollectionKey as false") {
-                            manager.stopLocationCollection()
-                            expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).to(beFalse())
-                        }
-                    }
-                    afterEach {
-                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
-                    }
+                    geoManager.stopLocationCollection()
                 }
 
-                context("significant-location change service") {
-                    beforeEach {
-                        manager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
-                                             geoLocationManager: geoLocationManagerMock,
-                                             device: UIDevice.current,
-                                             tracker: TrackerMock(),
-                                             analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
+                it("should call stopLocationUpdates") {
+                    expect(geoLocationManagerMock.stopLocationUpdatesCalled).to(beTrue())
+                }
 
-                        manager.stopLocationCollection()
-                    }
-                    it("should be stopped") {
-                        expect(geoLocationManagerMock.stopMonitoringSignificantLocationChangesIsCalled).to(beTrue())
-                    }
+                it("should call stopMonitoringSignificantLocationChanges") {
+                    expect(geoLocationManagerMock.stopMonitoringSignificantLocationChangesIsCalled).to(beTrue())
+                }
+
+                it("should return false for locationCollectionKey in userStorageHandler") {
+                    expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)).to(beFalse())
+                }
+
+                it("should return nil for configurationKey in userStorageHandler") {
+                    expect(dependenciesContainer.userStorageHandler.bool(forKey: UserDefaultsKeys.configurationKey)).to(beFalse())
+                }
+
+                it("should return nil on getConfiguration()") {
+                    expect(geoManager.getConfiguration()).to(beNil())
                 }
             }
         }

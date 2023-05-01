@@ -208,6 +208,7 @@ extension GeoManager {
         geoLocationManager.stopMonitoringSignificantLocationChanges()
         geoLocationManager.stopLocationUpdates()
         poller.invalidateLocationCollectionPoller()
+        configurationStore.purgeConfiguration()
     }
 }
 

@@ -21,6 +21,7 @@ protocol GeoConfigurationStorable {
     var configuration: GeoConfiguration { get }
     @discardableResult func store(configuration: GeoConfiguration) -> Bool
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration?
+    func purgeConfiguration()
 }
 
 struct GeoConfigurationStore: GeoConfigurationStorable {
@@ -85,7 +86,11 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
         RLogger.debug(message: "No GeoConfiguration to retrieve from shared preference")
         return nil
     }
-    
+
+    func purgeConfiguration() {
+        userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+    }
+
     func validateTime(startTime: GeoTime, endTime: GeoTime) -> (startTime: GeoTime, endTime: GeoTime) {
         
         // Check startTime range
