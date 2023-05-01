@@ -145,6 +145,7 @@ extension GeoManager: GeoTrackable {
 
     public func requestLocation(actionParameters: GeoActionParameters? = nil,
                                 completionHandler: @escaping GeoRequestLocationBlock) {
+        self.userActionParameters = actionParameters
         self.userActionLocationCallback = completionHandler
         requestLocationUpdate(for: .userAction)
     }

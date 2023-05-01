@@ -31,6 +31,7 @@
 
 ### Bug fixes
 * [CONRAT-28848](https://jira.rakuten-it.com/jira/browse/CONRAT-28848): Make the maximum upload time interval configurable in RAnalyticsSender for GeoTracker.
+* [CONRAT-28925](https://jira.rakuten-it.com/jira/browse/CONRAT-28925): Fix missing action parameters on request location.
 
 ### Changes
 * [CONRAT-27817](https://jira.rakuten-it.com/jira/browse/CONRAT-27817): Remove dependency on RSDKUtils.
