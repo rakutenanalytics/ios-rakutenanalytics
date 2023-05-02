@@ -50,4 +50,8 @@ cyclomatic_complexity:
     warning: 15
     error: 25
 
+function_parameter_count:
+    warning: 13
+    error: 14
+
 reporter: "xcode"
