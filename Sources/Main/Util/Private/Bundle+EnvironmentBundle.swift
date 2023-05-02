@@ -21,6 +21,8 @@ protocol EnvironmentBundle: Bundleable {
     var version: String? { get }
     var applicationSceneManifest: ApplicationSceneManifest? { get }
     var isWebViewAppUserAgentEnabledAtBuildtime: Bool { get }
+    var databaseParentDirectory: FileManager.SearchPathDirectory { get }
+    var backgroundLocationUpdates: Bool { get }
 }
 
 extension Bundle: EnvironmentBundle {
@@ -171,6 +173,14 @@ extension Bundle: EnvironmentBundle {
             return nil
         }
         return try? Bundle.jsonDecoder.decode(ApplicationSceneManifest.self, from: data)
+    }
+
+    var backgroundLocationUpdates: Bool {
+        guard let backgroundModes = object(forInfoDictionaryKey: "UIBackgroundModes") as? [String],
+                backgroundModes.contains("location") else {
+            return false
+        }
+        return true
     }
 }
 

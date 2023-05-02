@@ -18,7 +18,8 @@ final class GeoManagerSpec: QuickSpec {
         let configurationStore = GeoConfigurationStore(userStorageHandler: dependenciesContainer.userStorageHandler)
 
         describe("GeoManager") {
-            let geoLocationManager = GeoLocationManager(coreLocationManager: LocationManagerMock(),
+            let geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                        coreLocationManager: LocationManagerMock(),
                                                         configurationStore: configurationStore)
             let coreLocationManager = CLLocationManager()
 
@@ -77,7 +78,8 @@ final class GeoManagerSpec: QuickSpec {
                         trackerMock = TrackerMock()
 
                         coreLocationManagerMock = LocationManagerMock()
-                        geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                        geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                                coreLocationManager: coreLocationManagerMock,
                                                                 configurationStore: configurationStore)
 
                         analyticsDependenciesContainer.adIdentifierManager = asIdentifierManagerMock
@@ -644,7 +646,8 @@ final class GeoManagerSpec: QuickSpec {
 
                         coreLocationManagerMock = LocationManagerMock()
 
-                        geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                        geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                                coreLocationManager: coreLocationManagerMock,
                                                                 configurationStore: configurationStore)
 
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
@@ -685,7 +688,8 @@ final class GeoManagerSpec: QuickSpec {
 
                     coreLocationManagerMock = LocationManagerMock()
 
-                    geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                    geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                            coreLocationManager: coreLocationManagerMock,
                                                             configurationStore: configurationStore)
 
                     geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,
@@ -758,7 +762,8 @@ final class GeoManagerSpec: QuickSpec {
 
                         coreLocationManagerMock = LocationManagerMock()
 
-                        geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                        geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                                coreLocationManager: coreLocationManagerMock,
                                                                 configurationStore: configurationStore)
 
                         geoManager = GeoManager(userStorageHandler: dependenciesContainer.userStorageHandler,

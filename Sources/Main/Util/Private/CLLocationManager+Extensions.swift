@@ -2,6 +2,7 @@ import Foundation
 import CoreLocation
 
 protocol LocationManageable: AnyObject {
+    var allowsBackgroundLocationUpdates: Bool { get set }
     var desiredAccuracy: CLLocationAccuracy { get set }
     var delegate: CLLocationManagerDelegate? { get set }
     var location: CLLocation? { get }

@@ -76,17 +76,19 @@ public final class GeoManager {
         let dependenciesContainer = SimpleDependenciesContainer()
         let coreLocationManager = dependenciesContainer.locationManager
         let userStorageHandler = dependenciesContainer.userStorageHandler
+        let bundle = dependenciesContainer.bundle
 
         var geoTracker: GeoTracker?
         if let databaseConfiguration = DatabaseConfigurationHandler.create(databaseName: GeoTrackerConstants.databaseName,
                                                                            tableName: GeoTrackerConstants.tableName,
-                                                                           databaseParentDirectory: Bundle.main.databaseParentDirectory) {
+                                                                           databaseParentDirectory: bundle.databaseParentDirectory) {
             geoTracker = GeoTracker(dependenciesContainer: dependenciesContainer,
                                     databaseConfiguration: databaseConfiguration)
         }
-        
+
         return GeoManager(userStorageHandler: userStorageHandler,
-                          geoLocationManager: GeoLocationManager(coreLocationManager: coreLocationManager,
+                          geoLocationManager: GeoLocationManager(bundle: bundle,
+                                                                 coreLocationManager: coreLocationManager,
                                                                  configurationStore: GeoConfigurationStore(userStorageHandler: userStorageHandler)),
                           device: dependenciesContainer.deviceCapability,
                           tracker: geoTracker,

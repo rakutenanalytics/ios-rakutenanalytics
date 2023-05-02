@@ -45,16 +45,18 @@ final class GeoLocationManager: NSObject {
 
     /// Creates a new instance of `GeoLocationManager`.
     ///
+    /// - Parameter bundle: Application's bundle.
     /// - Parameter coreLocationManager: The core location service manager.
     /// - Parameter configurationStore: Object to store configuration.
-    init(coreLocationManager: LocationManageable,
+    init(bundle: EnvironmentBundle,
+         coreLocationManager: LocationManageable,
          configurationStore: GeoConfigurationStore) {
         self.coreLocationManager = coreLocationManager
         self.configurationStore = configurationStore
         super.init()
 
         coreLocationManager.delegate = self
-
+        coreLocationManager.allowsBackgroundLocationUpdates = bundle.backgroundLocationUpdates
         coreLocationManager.desiredAccuracy = configurationStore.configuration.accuracy.desiredAccuracy
     }
 }

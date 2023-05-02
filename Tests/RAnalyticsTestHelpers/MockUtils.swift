@@ -214,6 +214,7 @@ public final class TrackerMock: NSObject, Tracker {
 // MARK: - Location Manager
 
 public final class LocationManagerMock: NSObject, LocationManageable {
+    public var allowsBackgroundLocationUpdates: Bool = false
     public var monitoredRegions: Set<CLRegion> = []
     public var desiredAccuracy: CLLocationAccuracy = 0.0
     public weak var delegate: CLLocationManagerDelegate?
@@ -586,6 +587,8 @@ public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObservable {
 // MARK: - BundleMock
 
 public final class BundleMock: NSObject, EnvironmentBundle {
+    public var databaseParentDirectory: FileManager.SearchPathDirectory = FileManager.SearchPathDirectory.documentDirectory
+    public var backgroundLocationUpdates: Bool = false
     public var languageCode: Any?
     public var accountIdentifier: Int64 = 1
     public var applicationIdentifier: Int64 = 1

@@ -10,6 +10,7 @@
 * [CONRAT-28669](https://jira.rakuten-it.com/jira/browse/CONRAT-28669): Implement timer based location collection.
 * [CONRAT-28793](https://jira.rakuten-it.com/jira/browse/CONRAT-28793): Implement distance based location collection.
 * [CONRAT-28380](https://jira.rakuten-it.com/jira/browse/CONRAT-28380): Implement stop location collection.
+* [CONRAT-28904](https://jira.rakuten-it.com/jira/browse/CONRAT-28904): Add background modes location updates capability.
 
 ### Improvements
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.

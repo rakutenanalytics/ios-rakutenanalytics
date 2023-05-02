@@ -31,7 +31,8 @@ final class GeoLocationManagerSpec: QuickSpec {
 
             beforeEach {
                 coreLocationManagerMock = LocationManagerMock()
-                geoLocationManager = GeoLocationManager(coreLocationManager: coreLocationManagerMock,
+                geoLocationManager = GeoLocationManager(bundle: BundleMock(),
+                                                        coreLocationManager: coreLocationManagerMock,
                                                         configurationStore: configurationStore)
                 geoLocationManagerMock = GeoLocationManagerMock()
             }
@@ -42,6 +43,19 @@ final class GeoLocationManagerSpec: QuickSpec {
 
             it("should set desiredAccuracy to configured value") {
                 expect(coreLocationManager.desiredAccuracy).to(equal(kCLLocationAccuracyBest))
+            }
+
+            it("should set allowsBackgroundLocationUpdates as per configured capabilities") {
+                expect(coreLocationManager.allowsBackgroundLocationUpdates).to(equal(false))
+            }
+
+            it("should return false for allowsBackgroundLocationUpdates by default") {
+                expect(coreLocationManagerMock.allowsBackgroundLocationUpdates).to(beFalse())
+            }
+
+            it("should return true when allowsBackgroundLocationUpdates is set to true") {
+                coreLocationManagerMock.allowsBackgroundLocationUpdates = true
+                expect(coreLocationManagerMock.allowsBackgroundLocationUpdates).to(beTrue())
             }
 
             context("on instantiation") {

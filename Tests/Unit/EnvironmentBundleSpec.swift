@@ -273,6 +273,18 @@ final class EnvironmentBundleSpec: QuickSpec {
                 }
             }
 
+            describe("backgroundLocationUpdates") {
+                it("should return false when value is not set") {
+                    bundleMock.injectedDictionary = [:]
+                    expect(bundleMock.backgroundLocationUpdates).to(beFalse())
+                }
+
+                it("should return true when value is set") {
+                    bundleMock.injectedDictionary = ["UIBackgroundModes": ["location"]]
+                    expect(bundleMock.backgroundLocationUpdates).to(beTrue())
+                }
+            }
+
             describe("sdkComponentMap") {
                 it("should not return nil") {
                     let sdkComponentMap = Bundle.sdkComponentMap
