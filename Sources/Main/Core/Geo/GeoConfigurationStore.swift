@@ -72,13 +72,13 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
         return false
     }
     
-    // Retrieve configuration from storage if present, else return nil
+    /// Retrieve configuration from storage if present, else return nil.
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration? {
         do {
             if let data = userStorageHandler.data(forKey: UserDefaultsKeys.configurationKey) {
-                let configuration = try JSONDecoder().decode(GeoConfiguration.self, from: data)
+                let geoConfiguration = try JSONDecoder().decode(GeoConfiguration.self, from: data)
                 RLogger.debug(message: "GeoConfiguration retrieved from shared preference")
-                return configuration
+                return geoConfiguration
             }
         } catch {
             RLogger.debug(message: "\(error.localizedDescription)")
