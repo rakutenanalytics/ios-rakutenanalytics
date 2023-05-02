@@ -67,8 +67,10 @@ final class GeoTracker: NSObject {
                                   databaseTable: databaseConfiguration.tableName,
                                   bundle: dependenciesContainer.bundle,
                                   session: dependenciesContainer.session,
-                                  maxUploadInterval: batchingDelay)
+                                  maxUploadInterval: batchingDelay,
+                                  userStorageHandler: dependenciesContainer.userStorageHandler)
         sender.setBatchingDelayBlock(batchingDelay)
+        sender.backgroundTimerEnabler = .enabled(startTimeKey: UserDefaultsKeys.geoScheduleStartTimeKey)
 
         super.init()
 

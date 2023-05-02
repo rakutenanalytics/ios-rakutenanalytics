@@ -131,6 +131,10 @@ extension UserDefaultsMock: UserStorageHandleable {
     public func register(defaults registrationDictionary: [String: Any]) {
     }
     public func synchronize() -> Bool { true }
+
+    public func double(forKey key: String) -> Double {
+        (dictionary?[key] as? Double) ?? 0.0
+    }
 }
 
 // MARK: - Session

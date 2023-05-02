@@ -154,7 +154,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         // Sender
         self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
                                        bundle: bundleContainer,
-                                       session: dependenciesContainer.session)
+                                       session: dependenciesContainer.session,
+                                       userStorageHandler: dependenciesContainer.userStorageHandler)
         self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         // Attempt to read the IDs from the app's plist

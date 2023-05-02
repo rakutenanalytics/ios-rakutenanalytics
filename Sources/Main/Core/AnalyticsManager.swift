@@ -206,6 +206,10 @@ protocol ReferralAppTrackable: AnyObject {
         userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)
     }
 
+    var shouldContinueGeoBackgroundTimer: Bool {
+        userStorageHandler.shouldContinueGeoBackgroundTimer
+    }
+
     var easyIdentifier: String? {
         externalCollector.easyIdentifier
     }

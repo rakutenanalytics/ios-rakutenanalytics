@@ -65,6 +65,8 @@ enum ErrorCode: Int {
 
     // Geo Tracker
     case geoTrackerCreationFailed
+
+    case senderBackgroundTimerStartDateIsNil
 }
 
 enum ErrorDescription {

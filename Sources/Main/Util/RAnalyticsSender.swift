@@ -16,6 +16,16 @@ private enum SenderConstants {
     @objc(sendJSONObject:) func send(jsonObject: Any)
 }
 
+private enum AppStateOrigin {
+    case foreground
+    case background
+}
+
+enum SenderBackgroundTimerEnabler {
+    case none
+    case enabled(startTimeKey: String)
+}
+
 @objc public final class RAnalyticsSender: NSObject, EndpointSettable, Sendable {
     @objc public var endpointURL: URL? {
         get {
@@ -25,6 +35,13 @@ private enum SenderConstants {
             self._endpointURL = newValue
         }
     }
+
+    /// Enables the background timer update.
+    var backgroundTimerEnabler: SenderBackgroundTimerEnabler = .none
+
+    private let userStorageHandler: UserStorageHandleable
+
+    private var scheduleStartDate: Date?
 
     @AtomicGetSet private var _endpointURL: URL?
     /// Enable the experimental internal JSON serialization or not.
@@ -57,14 +74,17 @@ private enum SenderConstants {
     ///   - endpoint: endpoint URL
     ///   - database: database to read/write
     ///   - databaseTable: name of database
+    ///   - userStorageHandler: the user storage handler.
     convenience init(endpoint: URL,
                      database: RAnalyticsDatabase,
-                     databaseTable: String) {
+                     databaseTable: String,
+                     userStorageHandler: UserStorageHandleable) {
         self.init(endpoint: endpoint,
                   database: database,
                   databaseTable: databaseTable,
                   bundle: Bundle.main,
-                  session: URLSession.shared)
+                  session: URLSession.shared,
+                  userStorageHandler: userStorageHandler)
     }
 
     /// Initialize Sender
@@ -75,6 +95,7 @@ private enum SenderConstants {
     ///   - bundle: the bundle
     ///   - session: the URL session
     ///   - maxUploadInterval: the maximum time interval. The default value is 60 seconds.
+    ///   - userStorageHandler: the user storage handler.
     ///
     ///   - Note: if the batching delay is greater than `maxUploadInterval`, then `maxUploadInterval` is taken as the default batching delay.
     init(endpoint: URL,
@@ -82,7 +103,8 @@ private enum SenderConstants {
          databaseTable: String,
          bundle: EnvironmentBundle,
          session: SwiftySessionable,
-         maxUploadInterval: TimeInterval = TimeInterval(60.0)) {
+         maxUploadInterval: TimeInterval = TimeInterval(60.0),
+         userStorageHandler: UserStorageHandleable) {
         self._endpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
@@ -90,6 +112,7 @@ private enum SenderConstants {
         self.enableInternalSerialization = bundle.enableInternalSerialization
         self.session = session
         self.maxUploadInterval = maxUploadInterval
+        self.userStorageHandler = userStorageHandler
         super.init()
 
         configureNotifications()
@@ -134,9 +157,36 @@ private enum SenderConstants {
 
 // MARK: Scheduling
 fileprivate extension RAnalyticsSender {
-    func scheduleUploadOrPerformImmediately() {
+    /// - Returns: the schedule elapsed time or `nil` if the elapsed time is not stored in the UserDefaults.
+    private func scheduleElapsedTime(for startTimeKey: String) -> TimeInterval? {
+        let scheduleStartTime = userStorageHandler.object(forKey: startTimeKey)
+
+        guard let startedDateTime = scheduleStartTime as? NSNumber else {
+            return nil
+        }
+
+        let elapsedTime = Date().timeIntervalSince1970 - startedDateTime.doubleValue
+
+        return elapsedTime
+    }
+
+    /// Schedule an upload.
+    ///
+    /// - Parameter appStateOrigin: the app state origin needed for a background upload.
+    func scheduleUploadOrPerformImmediately(appStateOrigin: AppStateOrigin) {
         if let delay = batchingDelayClosure?() {
-            uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay), maxUploadInterval)
+            if case .enabled(let startTimeKey) = backgroundTimerEnabler,
+               let elapsedTime = scheduleElapsedTime(for: startTimeKey) {
+                if elapsedTime <= delay {
+                    uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay - elapsedTime), maxUploadInterval)
+
+                } else {
+                    uploadTimerInterval = 0
+                }
+
+            } else {
+                uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay), maxUploadInterval)
+            }
         }
 
         /// Upload immediately if batching delay is 0 and a request isn't in progress.
@@ -149,33 +199,59 @@ fileprivate extension RAnalyticsSender {
                 self.fetchAndUpload()
             }
         } else {
-            scheduleBackgroundUpload()
+            scheduleBackgroundUpload(appStateOrigin: appStateOrigin)
         }
     }
 
     /// Schedule a new background upload, if none has already been scheduled or is currently being processed.
-    func scheduleBackgroundUpload() {
+    ///
+    /// - Parameter appStateOrigin: the app state origin. Only read when `backgroundTimerEnabler` is set to true.
+    func scheduleBackgroundUpload(appStateOrigin: AppStateOrigin) {
         DispatchQueue.main.async {
             if self.uploadTimer?.isValid == true {
-                /// Background upload has already been scheduled or is underway
-                self.uploadRequested = true
+                if case .enabled(_) = self.backgroundTimerEnabler,
+                   appStateOrigin == .background {
+                    self.uploadTimer?.invalidate()
+                    self.createUploadTimer()
+
+                } else {
+                    /// Background upload has already been scheduled or is underway
+                    self.uploadRequested = true
+                }
                 return
             }
 
-            /// If timer interval is zero and we got here it means that there is an upload in progress.
-            /// Therefore, schedule a timer with a 10s delay which is short-ish but long enough that
-            /// the in progress upload will likely complete before the timer fires.
-            let interval = self.uploadTimerInterval == 0 ? SenderConstants.retryInterval : self.uploadTimerInterval
+            if case .enabled(let startTimeKey) = self.backgroundTimerEnabler {
+                if let scheduleStartTime = self.userStorageHandler.object(forKey: startTimeKey) as? NSNumber {
+                    self.scheduleStartDate = Date(timeIntervalSince1970: scheduleStartTime.doubleValue)
 
-            let uploadTimer = Timer(timeInterval: interval,
-                                    target: self,
-                                    selector: #selector(self.fetchAndUpload),
-                                    userInfo: nil,
-                                    repeats: false)
-            self.uploadTimer = uploadTimer
-            RunLoop.current.add(uploadTimer, forMode: .common)
-            self.uploadRequested = false
+                } else {
+                    let nowDate = Date()
+                    self.scheduleStartDate = nowDate
+                    self.userStorageHandler.set(value: NSNumber(value: nowDate.timeIntervalSince1970),
+                                                forKey: startTimeKey)
+                }
+            }
+
+            self.createUploadTimer()
         }
+    }
+
+    /// Create an upload timer.
+    private func createUploadTimer() {
+        /// If timer interval is zero and we got here it means that there is an upload in progress.
+        /// Therefore, schedule a timer with a 10s delay which is short-ish but long enough that
+        /// the in progress upload will likely complete before the timer fires.
+        let interval = self.uploadTimerInterval == 0 ? SenderConstants.retryInterval : self.uploadTimerInterval
+
+        let uploadTimer = Timer(timeInterval: interval,
+                                target: self,
+                                selector: #selector(self.fetchAndUpload),
+                                userInfo: nil,
+                                repeats: false)
+        self.uploadTimer = uploadTimer
+        RunLoop.current.add(uploadTimer, forMode: .common)
+        self.uploadRequested = false
     }
 
     /// Called whenever a background upload ends, successfully or not.
@@ -186,7 +262,7 @@ fileprivate extension RAnalyticsSender {
         zeroBatchingDelayUploadInProgress = false
 
         if uploadRequested {
-            scheduleBackgroundUpload()
+            scheduleBackgroundUpload(appStateOrigin: .foreground)
         }
     }
 
@@ -231,7 +307,7 @@ fileprivate extension RAnalyticsSender {
                 self.logSentRecords(ratJsonRecords)
 
                 self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
-                    self.scheduleUploadOrPerformImmediately()
+                    self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
                 }
             }
         }
@@ -261,11 +337,16 @@ fileprivate extension RAnalyticsSender {
 extension RAnalyticsSender {
     func insert(dataBlob: Data) {
         database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
-            self.scheduleUploadOrPerformImmediately()
+            self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
         }
     }
 
     @objc func fetchAndUpload() {
+        // Remove schedule start time from UserDefaults
+        if case .enabled(let startTimeKey) = backgroundTimerEnabler {
+            userStorageHandler.removeObject(forKey: startTimeKey)
+        }
+
         database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
 
             assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")
@@ -292,7 +373,7 @@ extension RAnalyticsSender {
     }
 
     @objc func appDidBecomeActive() {
-        scheduleUploadOrPerformImmediately()
+        scheduleUploadOrPerformImmediately(appStateOrigin: .background)
     }
 }
 
@@ -311,14 +392,16 @@ extension RAnalyticsSender {
     @objc public convenience init?(endpoint: URL,
                                    databaseName: String,
                                    databaseTableName: String,
-                                   databaseParentDirectory: FileManager.SearchPathDirectory = .documentDirectory) {
+                                   databaseParentDirectory: FileManager.SearchPathDirectory = .documentDirectory,
+                                   userStorageHandler: UserDefaults = UserDefaults.standard) {
         guard let connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
                                                                           databaseParentDirectory: databaseParentDirectory) else {
             return nil
         }
         self.init(endpoint: endpoint,
                   database: RAnalyticsDatabase.database(connection: connection),
-                  databaseTable: databaseTableName)
+                  databaseTable: databaseTableName,
+                  userStorageHandler: userStorageHandler)
     }
 }
 
@@ -326,7 +409,8 @@ extension RAnalyticsSender {
 extension RAnalyticsSender {
     convenience init?(databaseConfiguration: DatabaseConfigurable?,
                       bundle: EnvironmentBundle,
-                      session: SwiftySessionable) {
+                      session: SwiftySessionable,
+                      userStorageHandler: UserStorageHandleable) {
         guard let databaseConfiguration = databaseConfiguration else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
                                              code: ErrorCode.senderCreationFailed.rawValue,
@@ -345,6 +429,7 @@ extension RAnalyticsSender {
                   database: databaseConfiguration.database,
                   databaseTable: databaseConfiguration.tableName,
                   bundle: bundle,
-                  session: session)
+                  session: session,
+                  userStorageHandler: userStorageHandler)
     }
 }

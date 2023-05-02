@@ -16,6 +16,7 @@ class SenderSpec: QuickSpec {
             let databaseTableName = "testTableName"
             let payload = ["key": "value"]
             let bundle = BundleMock()
+            var userDefaultsMock: UserDefaultsMock!
 
             var sender: RAnalyticsSender!
             var databaseConnection: SQlite3Pointer!
@@ -26,12 +27,14 @@ class SenderSpec: QuickSpec {
                 // Create in-memory DB
                 databaseConnection = DatabaseTestUtils.openRegularConnection()
                 database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
+                userDefaultsMock = UserDefaultsMock([:])
 
                 sender = RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
                                           database: database,
                                           databaseTable: databaseTableName,
                                           bundle: bundle,
-                                          session: URLSession.shared)
+                                          session: URLSession.shared,
+                                          userStorageHandler: userDefaultsMock)
             }
 
             afterEach {
@@ -46,6 +49,18 @@ class SenderSpec: QuickSpec {
                 databaseConnection = nil
                 database = nil
                 bundle.mutableEnableInternalSerialization = false
+            }
+
+            context("initialization") {
+                it("should set enableBackgroundTimerUpdate to false") {
+                    var isNone = false
+
+                    if case .none = sender.backgroundTimerEnabler {
+                        isNone = true
+                    }
+
+                    expect(isNone).to(beTrue())
+                }
             }
 
             context("JSON serialization") {
@@ -67,6 +82,159 @@ class SenderSpec: QuickSpec {
                     bundle.mutableEnableInternalSerialization = true
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
+                }
+            }
+
+            describe("enableBackgroundTimerUpdate") {
+                let geoScheduleStartTimeKey = "RATGeoScheduleStartTime"
+                var isSendingCompleted = false
+
+                beforeEach {
+                    sender = RAnalyticsSender(endpoint: URL(string: "https://endpoint.co.jp/")!,
+                                              database: database,
+                                              databaseTable: databaseTableName,
+                                              bundle: bundle,
+                                              session: URLSession.shared,
+                                              maxUploadInterval: 900.0,
+                                              userStorageHandler: userDefaultsMock)
+                }
+
+                context("When setting enableBackgroundTimerUpdate to false") {
+                    beforeEach {
+                        sender.backgroundTimerEnabler = .none
+                        isSendingCompleted = false
+                    }
+
+                    context("When the batching delay is set to 0") {
+                        beforeEach {
+                            sender.setBatchingDelayBlock(0.0)
+                        }
+
+                        context("When not sending data") {
+                            it("should not set the start date") {
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+
+                        context("When sending data") {
+                            beforeEach {
+                                sessionMock.stubResponse(statusCode: 200) {
+                                    isSendingCompleted = true
+                                }
+                                sender.send(jsonObject: payload)
+                            }
+
+                            it("should not set the start date") {
+                                expect(isSendingCompleted).toEventually(beTrue())
+
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+                    }
+
+                    context("When the batching delay is set to 900.0") {
+                        beforeEach {
+                            sender.setBatchingDelayBlock(900.0)
+                        }
+
+                        context("When not sending data") {
+                            it("should not set the start date") {
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+
+                        context("When sending data") {
+                            beforeEach {
+                                sender.send(jsonObject: payload)
+                            }
+
+                            it("should not set the start date") {
+                                let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                                expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+                    }
+                }
+
+                context("When setting enableBackgroundTimerUpdate to true") {
+                    beforeEach {
+                        sender.backgroundTimerEnabler = .enabled(startTimeKey: geoScheduleStartTimeKey)
+                    }
+
+                    context("When the batching delay is set to 0") {
+                        beforeEach {
+                            sender.setBatchingDelayBlock(0.0)
+                        }
+
+                        context("When not sending data") {
+                            it("should not set the start date") {
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+
+                        context("When sending data") {
+                            beforeEach {
+                                sessionMock.stubResponse(statusCode: 200) {
+                                    isSendingCompleted = true
+                                }
+                                sender.send(jsonObject: payload)
+                            }
+
+                            it("should not set the start date") {
+                                expect(isSendingCompleted).toEventually(beTrue())
+
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).toNot(equal(0.0))
+                            }
+                        }
+                    }
+
+                    context("When the batching delay is set to 900.0") {
+                        beforeEach {
+                            sender.setBatchingDelayBlock(900.0)
+                        }
+
+                        context("When not sending data") {
+                            it("should not set the start date") {
+                                expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
+                            }
+                        }
+
+                        context("When sending data") {
+                            beforeEach {
+                                sender.send(jsonObject: payload)
+                            }
+
+                            it("should set the schedule start date") {
+                                let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                                expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+
+                                let starteDateTime = userDefaultsMock.double(forKey: geoScheduleStartTimeKey)
+
+                                expect(starteDateTime).to(beGreaterThan(0.0))
+                            }
+
+                            context("Then the app goes to foreground") {
+                                it("should set an updated uploadTimerInterval") {
+                                    let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                                    expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+
+                                    let scheduleElapsedTime = userDefaultsMock.double(forKey: geoScheduleStartTimeKey)
+
+                                    expect(scheduleElapsedTime).to(beGreaterThan(0.0))
+
+                                    sleep(3)
+
+                                    sender.appDidBecomeActive()
+
+                                    let elapsedTime = Date().timeIntervalSince1970 - scheduleElapsedTime
+
+                                    expect(ceil(sender.uploadTimerInterval)).to(beLessThanOrEqualTo(ceil(900.0 - elapsedTime)))
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -156,7 +324,7 @@ class SenderSpec: QuickSpec {
                     sender.setBatchingDelayBlock(30.0)
                     sender.send(jsonObject: payload)
 
-                    let getDBContent = { return DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
+                    let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
                     expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
                 })
 

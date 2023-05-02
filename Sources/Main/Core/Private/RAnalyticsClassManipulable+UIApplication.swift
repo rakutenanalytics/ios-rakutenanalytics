@@ -46,6 +46,11 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             GeoManager.shared.configurePoller()
         }
 
+        // Instantiate GeoManager singleton when the geo background timer must continue
+        if AnalyticsManager.shared().shouldContinueGeoBackgroundTimer {
+            _ = GeoManager.shared
+        }
+
         // Delegates may not implement the original method
         if responds(to: #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) {
             return rAutotrackApplication(application,

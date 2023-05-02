@@ -5,6 +5,7 @@ enum UserDefaultsKeys {
     static let locationCollectionKey = "RATGeoLocationCollection"
     static let locationTimestampKey = "RATGeoLocationTimestamp"
     static let configurationKey = "RATGeoCongiuration"
+    static let geoScheduleStartTimeKey = "RATGeoScheduleStartTime"
 }
 
 /// Note:
@@ -20,6 +21,7 @@ protocol UserStorageHandleable {
     func data(forKey defaultName: String) -> Data?
     func bool(forKey defaultName: String) -> Bool
     func string(forKey defaultName: String) -> String?
+    func double(forKey key: String) -> Double
     func set(value: Any?, forKey defaultName: String)
     func removeObject(forKey defaultName: String)
     func register(defaults registrationDictionary: [String: Any])
@@ -29,5 +31,12 @@ protocol UserStorageHandleable {
 extension UserDefaults: UserStorageHandleable {
     func set(value: Any?, forKey defaultName: String) {
         set(value, forKey: defaultName)
+    }
+}
+
+extension UserStorageHandleable {
+    /// - Returns: `true` when there is a value for `RATGeoScheduleStartTime`  key, or `false` otherwise.
+    var shouldContinueGeoBackgroundTimer: Bool {
+        object(forKey: UserDefaultsKeys.geoScheduleStartTimeKey) != nil
     }
 }
