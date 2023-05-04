@@ -50,6 +50,7 @@
 * [CONRAT-28146](https://jira.rakuten-it.com/jira/browse/CONRAT-28146): Fix RP Cookie Fetcher Integration Spec failing test.
 * [CONRAT-28195](https://jira.rakuten-it.com/jira/browse/CONRAT-28195): Create BDD tests for isTrackableAsPageVisit.
 * [CONRAT-28528](https://jira.rakuten-it.com/jira/browse/CONRAT-28528): Improve UIViewControllerExtensionsSpec BDD Tests in oder to test the fix made in CONRAT-28236.
+* [CONRAT-28931](https://jira.rakuten-it.com/jira/browse/CONRAT-28931): Add missed Test cases for Action Parameters in requestLocation.
 
 ## 9.8.1 (2023-03-23)
 

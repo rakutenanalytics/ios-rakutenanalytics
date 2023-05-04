@@ -60,9 +60,6 @@ final class GeoManagerSpec: QuickSpec {
                     var returnedLocationModel: LocationModel!
                     var result: GeoRequestLocationResult!
                     let location = CLLocation(latitude: -56.6462520, longitude: -36.6462520)
-                    let expectedLocationModel = LocationModel(location: location,
-                                                              isAction: true,
-                                                              actionParameters: nil)
                     var trackerMock: TrackerMock!
                     var coreLocationManagerMock: LocationManagerMock!
                     var geoLocationManager: GeoLocationManager!
@@ -100,62 +97,139 @@ final class GeoManagerSpec: QuickSpec {
                     }
 
                     context("When core location manager returns a location") {
-                        beforeEach {
-                            geoManager.requestLocation { aResult in
-                                result = aResult
+                        func verifyState() {
+                            it("should process the location event with an expected name") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.event?.name).to(equal(RAnalyticsEvent.Name.geoLocation))
                             }
 
-                            coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didUpdateLocations: [location])
-                        }
-
-                        it("should return an expected location") {
-                            expect(result).toEventuallyNot(beNil())
-                            
-                            if case .success(let locationModel) = result {
-                                returnedLocationModel = locationModel
+                            it("should process the location event with empty parameters") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.event?.parameters).to(beEmpty())
                             }
-                            
-                            expect(returnedLocationModel).to(equal(expectedLocationModel))
+
+                            it("should process the location event with a non-empty cks") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.sessionIdentifier).toNot(beEmpty())
+                            }
+
+                            it("should process the location event with a non-empty ckp") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.deviceIdentifier).toNot(beEmpty())
+                            }
+
+                            it("should process the location event with a non-empty userid") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.userIdentifier).to(equal("flo_test"))
+                            }
+
+                            it("should process the location event with a non-empty easyid") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.easyIdentifier).to(equal("123456"))
+                            }
+
+                            it("should process the location event with a non-empty cka") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.advertisingIdentifier).to(equal("E621E1F8-C36C-495A-93FC-0C247A3E6E5F"))
+                            }
                         }
 
-                        it("should process the location event with an expected name") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.event?.name).to(equal(RAnalyticsEvent.Name.geoLocation))
+                        context("When action parameters are nil") {
+                            let expectedLocationModel = LocationModel(location: location,
+                                                                      isAction: true,
+                                                                      actionParameters: nil)
+
+                            beforeEach {
+                                geoManager.requestLocation(actionParameters: nil) { aResult in
+                                    result = aResult
+                                }
+
+                                coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didUpdateLocations: [location])
+                            }
+
+                            verifyState()
+
+                            it("should return an expected location") {
+                                expect(result).toEventuallyNot(beNil())
+
+                                if case .success(let locationModel) = result {
+                                    returnedLocationModel = locationModel
+                                }
+
+                                expect(returnedLocationModel).to(equal(expectedLocationModel))
+                            }
+
+                            it("should process the location event with an expected location model") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation).to(equal(expectedLocationModel))
+                            }
+
+                            it("should process the location event with nil action parameters") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters).to(beNil())
+                            }
                         }
 
-                        it("should process the location event with empty parameters") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.event?.parameters).to(beEmpty())
-                        }
+                        context("When action parameters are not nil") {
+                            let actionParameters = GeoActionParameters(actionType: "test-actionType",
+                                                                       actionLog: "test-actionLog",
+                                                                       actionId: "test-actionId",
+                                                                       actionDuration: "test-actionDuration",
+                                                                       additionalLog: "test-additionalLog")
 
-                        it("should process the location event with an expected state") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.lastKnownLocation).to(equal(expectedLocationModel))
-                        }
+                            let expectedLocationModel = LocationModel(location: location,
+                                                                      isAction: true,
+                                                                      actionParameters: actionParameters)
 
-                        it("should process the location event with a non-empty cks") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.sessionIdentifier).toNot(beEmpty())
-                        }
+                            beforeEach {
+                                geoManager.requestLocation(actionParameters: actionParameters) { aResult in
+                                    result = aResult
+                                }
 
-                        it("should process the location event with a non-empty ckp") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.deviceIdentifier).toNot(beEmpty())
-                        }
+                                coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didUpdateLocations: [location])
+                            }
 
-                        it("should process the location event with a non-empty userid") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.userIdentifier).to(equal("flo_test"))
-                        }
+                            verifyState()
 
-                        it("should process the location event with a non-empty easyid") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.easyIdentifier).to(equal("123456"))
-                        }
+                            it("should return an expected location") {
+                                expect(result).toEventuallyNot(beNil())
 
-                        it("should process the location event with a non-empty cka") {
-                            expect(result).toEventuallyNot(beNil())
-                            expect(trackerMock.state?.advertisingIdentifier).to(equal("E621E1F8-C36C-495A-93FC-0C247A3E6E5F"))
+                                if case .success(let locationModel) = result {
+                                    returnedLocationModel = locationModel
+                                }
+
+                                expect(returnedLocationModel).to(equal(expectedLocationModel))
+                            }
+
+                            it("should process the location event with an expected location model") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation).to(equal(expectedLocationModel))
+                            }
+
+                            it("should process the location event with an action type") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters?.actionType).to(equal("test-actionType"))
+                            }
+
+                            it("should process the location event with an action log") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters?.actionLog).to(equal("test-actionLog"))
+                            }
+
+                            it("should process the location event with an action id") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters?.actionId).to(equal("test-actionId"))
+                            }
+
+                            it("should process the location event with an action duration") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters?.actionDuration).to(equal("test-actionDuration"))
+                            }
+
+                            it("should process the location event with an additional log") {
+                                expect(result).toEventuallyNot(beNil())
+                                expect(trackerMock.state?.lastKnownLocation?.actionParameters?.additionalLog).to(equal("test-additionalLog"))
+                            }
                         }
                     }
 
