@@ -160,7 +160,7 @@ extension LocationModel {
         location[PayloadParameterKeys.Location.isAction] = isAction
 
         // Add action parameters only when isAction is true and only when parameters are not empty
-        if isAction == true,
+        if isAction,
            let actionParameters = actionParameters {
 
             if let actionType = actionParameters.actionType, !actionType.isEmpty {
