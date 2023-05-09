@@ -53,6 +53,7 @@
 * [CONRAT-28195](https://jira.rakuten-it.com/jira/browse/CONRAT-28195): Create BDD tests for isTrackableAsPageVisit.
 * [CONRAT-28528](https://jira.rakuten-it.com/jira/browse/CONRAT-28528): Improve UIViewControllerExtensionsSpec BDD Tests in oder to test the fix made in CONRAT-28236.
 * [CONRAT-28931](https://jira.rakuten-it.com/jira/browse/CONRAT-28931): Add missed Test cases for Action Parameters in requestLocation.
+* [CONRAT-28951](https://jira.rakuten-it.com/jira/browse/CONRAT-28951): Create a separate folder for Geo BDD Test Files.
 
 ## 9.8.1 (2023-03-23)
 

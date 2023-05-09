@@ -26,7 +26,6 @@
 		C9010C442670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */; };
 		C9010C6D2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */; };
 		C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */; };
-		C906219729E08E180055AE03 /* GeoLocationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */; };
 		C91AA26629487672005D134C /* UNUserNotificationCenterDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91AA26529487672005D134C /* UNUserNotificationCenterDelegateSpec.swift */; };
 		C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */; };
 		C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */; };
@@ -104,14 +103,15 @@
 		C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */; };
 		C9EA33EF28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */; };
 		C9EB107C29125FDC00E3E903 /* URLRequestSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */; };
+		C9F01EA12A08DE090017AE54 /* GeoAccuracySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E952A08DDFE0017AE54 /* GeoAccuracySpec.swift */; };
+		C9F01EA22A08DE090017AE54 /* GeoManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E982A08DDFE0017AE54 /* GeoManagerSpec.swift */; };
+		C9F01EA32A08DE090017AE54 /* GeoTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E992A08DDFE0017AE54 /* GeoTrackerSpec.swift */; };
+		C9F01EA42A08DE090017AE54 /* GeoActionParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E962A08DDFE0017AE54 /* GeoActionParametersSpec.swift */; };
+		C9F01EA52A08DE090017AE54 /* GeoLocationManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E9A2A08DDFE0017AE54 /* GeoLocationManagerSpec.swift */; };
+		C9F01EA62A08DE0A0017AE54 /* GeoPollerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F01E972A08DDFE0017AE54 /* GeoPollerSpec.swift */; };
 		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
 		C9F1376129438BD7005A0DBF /* AnalyticsManagerUASpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */; };
 		C9F1376429438C56005A0DBF /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */; };
-		C9FD321D29C85D1600A98ECF /* GeoTrackerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FD321C29C85D1600A98ECF /* GeoTrackerSpec.swift */; };
-		F921521829B9EA000025DE26 /* GeoActionParametersSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F921521729B9EA000025DE26 /* GeoActionParametersSpec.swift */; };
-		F921521A29B9EA480025DE26 /* GeoAccuracySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F921521929B9EA480025DE26 /* GeoAccuracySpec.swift */; };
-		F945101A29B8EEA30086385F /* GeoManagerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F945101929B8EEA30086385F /* GeoManagerSpec.swift */; };
-		F9A27C2D29E5460B00ECCDB2 /* GeoPollerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A27C2C29E5460B00ECCDB2 /* GeoPollerSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,7 +174,6 @@
 		C9010C432670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerProcessSpec.swift; sourceTree = "<group>"; };
 		C9010C6C2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerPayloadSpec.swift; sourceTree = "<group>"; };
 		C9010DCD2671E77400769C83 /* PositiveIntegerNumberSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositiveIntegerNumberSpec.swift; sourceTree = "<group>"; };
-		C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoLocationManagerSpec.swift; sourceTree = "<group>"; };
 		C91AA26529487672005D134C /* UNUserNotificationCenterDelegateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNUserNotificationCenterDelegateSpec.swift; sourceTree = "<group>"; };
 		C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetWebViewURLSpec.swift; sourceTree = "<group>"; };
 		C92602C328F7F8F400C1BC41 /* RpCookieSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RpCookieSpec.swift; sourceTree = "<group>"; };
@@ -243,14 +242,15 @@
 		C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerSpec.swift; sourceTree = "<group>"; };
 		C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceIdentifierHandlerSpec.swift; sourceTree = "<group>"; };
 		C9EB107B29125FDC00E3E903 /* URLRequestSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestSpec.swift; sourceTree = "<group>"; };
+		C9F01E952A08DDFE0017AE54 /* GeoAccuracySpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoAccuracySpec.swift; sourceTree = "<group>"; };
+		C9F01E962A08DDFE0017AE54 /* GeoActionParametersSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoActionParametersSpec.swift; sourceTree = "<group>"; };
+		C9F01E972A08DDFE0017AE54 /* GeoPollerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoPollerSpec.swift; sourceTree = "<group>"; };
+		C9F01E982A08DDFE0017AE54 /* GeoManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoManagerSpec.swift; sourceTree = "<group>"; };
+		C9F01E992A08DDFE0017AE54 /* GeoTrackerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoTrackerSpec.swift; sourceTree = "<group>"; };
+		C9F01E9A2A08DDFE0017AE54 /* GeoLocationManagerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoLocationManagerSpec.swift; sourceTree = "<group>"; };
 		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
 		C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerUASpec.swift; sourceTree = "<group>"; };
 		C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
-		C9FD321C29C85D1600A98ECF /* GeoTrackerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoTrackerSpec.swift; sourceTree = "<group>"; };
-		F921521729B9EA000025DE26 /* GeoActionParametersSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoActionParametersSpec.swift; sourceTree = "<group>"; };
-		F921521929B9EA480025DE26 /* GeoAccuracySpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoAccuracySpec.swift; sourceTree = "<group>"; };
-		F945101929B8EEA30086385F /* GeoManagerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoManagerSpec.swift; sourceTree = "<group>"; };
-		F9A27C2C29E5460B00ECCDB2 /* GeoPollerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoPollerSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -309,12 +309,6 @@
 				C9EA33EE28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift */,
 				C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */,
 				C98D70CB25A5D7F800B1D048 /* EventCheckerSpec.swift */,
-				F921521929B9EA480025DE26 /* GeoAccuracySpec.swift */,
-				F921521729B9EA000025DE26 /* GeoActionParametersSpec.swift */,
-				C906219629E08E180055AE03 /* GeoLocationManagerSpec.swift */,
-				F945101929B8EEA30086385F /* GeoManagerSpec.swift */,
-				C9FD321C29C85D1600A98ECF /* GeoTrackerSpec.swift */,
-				F9A27C2C29E5460B00ECCDB2 /* GeoPollerSpec.swift */,
 				C92602C128F6C87A00C1BC41 /* GetWebViewURLSpec.swift */,
 				693B580C1B7C6159008C5E86 /* Info.plist */,
 				C992E79028D85FDA005E32F9 /* KeychainHandlerSpec.swift */,
@@ -409,6 +403,7 @@
 			children = (
 				C95A91CC279E89E4003BA1DA /* CoreSubspec */,
 				16E4817620B28F08006CB857 /* Functional */,
+				C9F01E942A08DDFE0017AE54 /* GeoSpec */,
 				45ABC4CD26DE08550030BB70 /* Integration */,
 				C94B70512798CFE000A1898A /* RAnalyticsBroadcast */,
 				C94B70372798719000A1898A /* RAnalyticsTestHelpers */,
@@ -513,6 +508,19 @@
 				C9C3B8BA279ED2DD00FBA3FE /* rat.json */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		C9F01E942A08DDFE0017AE54 /* GeoSpec */ = {
+			isa = PBXGroup;
+			children = (
+				C9F01E952A08DDFE0017AE54 /* GeoAccuracySpec.swift */,
+				C9F01E962A08DDFE0017AE54 /* GeoActionParametersSpec.swift */,
+				C9F01E972A08DDFE0017AE54 /* GeoPollerSpec.swift */,
+				C9F01E982A08DDFE0017AE54 /* GeoManagerSpec.swift */,
+				C9F01E992A08DDFE0017AE54 /* GeoTrackerSpec.swift */,
+				C9F01E9A2A08DDFE0017AE54 /* GeoLocationManagerSpec.swift */,
+			);
+			path = GeoSpec;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -765,38 +773,39 @@
 			buildActionMask = 2147483647;
 			files = (
 				C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */,
-				F945101A29B8EEA30086385F /* GeoManagerSpec.swift in Sources */,
 				C94F90D426DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift in Sources */,
 				6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */,
 				C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */,
 				C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */,
 				C944CDC92990F6970074319F /* URLSessionMock.swift in Sources */,
 				C944CDF4299125520074319F /* LockableSpec.swift in Sources */,
+				C9F01EA22A08DE090017AE54 /* GeoManagerSpec.swift in Sources */,
 				C944CDF7299125520074319F /* RLoggerSpec.swift in Sources */,
 				C9010C442670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift in Sources */,
 				C944CDF1299125520074319F /* AtomicWrapperSpec.swift in Sources */,
 				C944CDEC299125520074319F /* NSObjectExtensionsSpec.swift in Sources */,
-				F921521A29B9EA480025DE26 /* GeoAccuracySpec.swift in Sources */,
 				C94B70332798702500A1898A /* ClassManipulatorUIApplicationTests.m in Sources */,
 				C94B70532798CFE500A1898A /* RABEventBroadcasterSpec.swift in Sources */,
 				C9010C6D2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift in Sources */,
 				C944CDF8299125520074319F /* OptionalExtensionsSpec.swift in Sources */,
+				C9F01EA62A08DE0A0017AE54 /* GeoPollerSpec.swift in Sources */,
 				C944CDF3299125520074319F /* DictionaryExtensionsSpec.swift in Sources */,
 				C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */,
+				C9F01EA52A08DE090017AE54 /* GeoLocationManagerSpec.swift in Sources */,
 				C94B70342798702500A1898A /* ObjcInteropSpec.m in Sources */,
 				C94B70442798734600A1898A /* RAnalyticsRATExpecter.swift in Sources */,
 				C94B70482798739100A1898A /* BundleHelper.swift in Sources */,
 				4BB2042E268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */,
+				C9F01EA42A08DE090017AE54 /* GeoActionParametersSpec.swift in Sources */,
 				C9B395FA2768A4C1003F2D5D /* AnalyticsEventObserverSpec.swift in Sources */,
+				C9F01EA32A08DE090017AE54 /* GeoTrackerSpec.swift in Sources */,
 				C9CCE45D268B6E5B008AA9D0 /* RAnalyticsCookieInjectorSpec.swift in Sources */,
 				C9EA33EF28323E8C00465945 /* DeviceIdentifierHandlerSpec.swift in Sources */,
 				C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */,
 				C950D8E4276261A800DF9589 /* PushEventHandlerSpec.swift in Sources */,
 				C980DA9627BA5C300059E12D /* Data+Extensions.swift in Sources */,
 				45E3BC4A2581476400319ECF /* RAnalyticsDatabaseSpec.swift in Sources */,
-				C906219729E08E180055AE03 /* GeoLocationManagerSpec.swift in Sources */,
 				C954C667269439CE002AAFF7 /* TelephonyHandlerSpec.swift in Sources */,
-				F921521829B9EA000025DE26 /* GeoActionParametersSpec.swift in Sources */,
 				C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */,
 				C926164A26D562E800119292 /* RAnalyticsEndpointSettableSpec.swift in Sources */,
 				C944CDCF2990F74C0074319F /* NimbleExtensions.swift in Sources */,
@@ -810,7 +819,6 @@
 				C9010C222670BBDB00769C83 /* RAnalyticsRATTrackerInitSpec.swift in Sources */,
 				C9F1376129438BD7005A0DBF /* AnalyticsManagerUASpec.swift in Sources */,
 				45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */,
-				C9FD321D29C85D1600A98ECF /* GeoTrackerSpec.swift in Sources */,
 				C9AC4739299B96280045C21A /* CoreInfosCollectorSpec.swift in Sources */,
 				5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */,
 				C92829B125D162C500A31375 /* UserIdentifierSelectorSpec.swift in Sources */,
@@ -835,8 +843,8 @@
 				C9D2E7A925DCFA60009CBBAF /* RAnalyticsStateSpec.swift in Sources */,
 				C9AC4F5A29B1FB230073CD6B /* UIViewControllerExtensionsSpec.swift in Sources */,
 				C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */,
-				F9A27C2D29E5460B00ECCDB2 /* GeoPollerSpec.swift in Sources */,
 				C94B704F2798749D00A1898A /* Array+Extensions.swift in Sources */,
+				C9F01EA12A08DE090017AE54 /* GeoAccuracySpec.swift in Sources */,
 				C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */,
 				C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */,
 				C9AC473C299C060D0045C21A /* Dictionary+RAT.swift in Sources */,

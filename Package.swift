@@ -48,7 +48,10 @@ let package = Package(
         .testTarget(name: "Unit",
                     dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],
                     exclude: ["Info.plist"],
-                    resources: [.process("Resources")])
+                    resources: [.process("Resources")]),
+
+        .testTarget(name: "GeoSpec",
+                    dependencies: ["RAnalytics", "RAnalyticsTestHelpers"])
     ],
     swiftLanguageVersions: [.v5]
 )
