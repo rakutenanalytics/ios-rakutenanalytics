@@ -30,18 +30,32 @@ extension LocationModel {
                        timestamp: Date = Date(timeIntervalSince1970: 1679054447.532),
                        isAction: Bool = false,
                        actionParameters: GeoActionParameters? = nil) -> LocationModel {
-        LocationModel(latitude: latitude,
-                      longitude: longitude,
-                      horizontalAccuracy: horizontalAccuracy,
-                      speed: speed,
-                      speedAccuracy: speedAccuracy,
-                      verticalAccuracy: verticalAccuracy,
-                      altitude: altitude,
-                      course: course,
-                      courseAccuracy: courseAccuracy,
-                      timestamp: timestamp,
-                      isAction: isAction,
-                      actionParameters: actionParameters)
+        let location: CLLocation
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+        if #available(iOS 13.4, *) {
+            location = CLLocation(coordinate: coordinate,
+                                  altitude: altitude,
+                                  horizontalAccuracy: horizontalAccuracy,
+                                  verticalAccuracy: verticalAccuracy,
+                                  course: course,
+                                  courseAccuracy: courseAccuracy,
+                                  speed: speed,
+                                  speedAccuracy: speedAccuracy,
+                                  timestamp: timestamp)
+        } else {
+            location = CLLocation(coordinate: coordinate,
+                                  altitude: altitude,
+                                  horizontalAccuracy: horizontalAccuracy,
+                                  verticalAccuracy: verticalAccuracy,
+                                  course: course,
+                                  speed: speed,
+                                  timestamp: timestamp)
+        }
+
+        return LocationModel(location: location,
+                             isAction: isAction,
+                             actionParameters: actionParameters)
     }
 }
 

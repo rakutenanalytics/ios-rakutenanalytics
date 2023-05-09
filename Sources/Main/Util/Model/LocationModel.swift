@@ -81,33 +81,6 @@ public struct LocationModel {
         self.isAction = isAction
         self.actionParameters = actionParameters
     }
-
-    /// Creates a new instance of `LocationModel`.
-    init(latitude: CLLocationDegrees,
-         longitude: CLLocationDegrees,
-         horizontalAccuracy: CLLocationAccuracy,
-         speed: CLLocationSpeed,
-         speedAccuracy: CLLocationSpeedAccuracy,
-         verticalAccuracy: CLLocationAccuracy,
-         altitude: CLLocationDistance,
-         course: CLLocationDirection,
-         courseAccuracy: CLLocationDirectionAccuracy,
-         timestamp: Date,
-         isAction: Bool = false,
-         actionParameters: GeoActionParameters? = nil) {
-        self.latitude = latitude
-        self.longitude = longitude
-        self.horizontalAccuracy = horizontalAccuracy
-        self.speed = speed
-        self.speedAccuracy = speedAccuracy
-        self.verticalAccuracy = verticalAccuracy
-        self.altitude = altitude
-        self.course = course
-        self.courseAccuracy = courseAccuracy
-        self.timestamp = timestamp
-        self.isAction = isAction
-        self.actionParameters = actionParameters
-    }
 }
 
 // MARK: - Hashable

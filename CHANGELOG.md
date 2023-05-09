@@ -44,6 +44,7 @@
 * [CONRAT-28044](https://jira.rakuten-it.com/jira/browse/CONRAT-28044): Fix Reachability.swift SonarQube issues.
 * [CONRAT-28054](https://jira.rakuten-it.com/jira/browse/CONRAT-28054): Fix CoreInfosCollector SonarQube issue.
 * [CONRAT-28056](https://jira.rakuten-it.com/jira/browse/CONRAT-28056): Fix String+Extensions.swift SonarQube issues.
+* [CONRAT-28957](https://jira.rakuten-it.com/jira/browse/CONRAT-28957): Fix LocationModel internal init - SonarQube issue.
 
 ### Unit tests
 * [CONRAT-27983](https://jira.rakuten-it.com/jira/browse/CONRAT-27983): Improve the RAT Tracking tests with CoreHelpers injection.
