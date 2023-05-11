@@ -12,7 +12,7 @@ public class SwiftInterop: XCTestCase {
 
             // Testing NS_SWIFT_NAME conversion from Objective-C enum
             switch state.origin {
-            case AnalyticsManager.State.Origin.internal,
+            case AnalyticsManager.State.Origin.inner,
                  AnalyticsManager.State.Origin.external,
                  AnalyticsManager.State.Origin.push: ()
             @unknown default: ()

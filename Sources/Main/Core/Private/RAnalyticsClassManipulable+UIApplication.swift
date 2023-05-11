@@ -21,7 +21,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         // because automatic events have to be tracked when the app is launched
         _ = AnalyticsManager.shared()
 
-        AnalyticsManager.shared().launchCollector.origin = .internal
+        AnalyticsManager.shared().launchCollector.origin = .inner
 
         // Delegates may not implement the original method
         if responds(to: #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:))) {
@@ -37,7 +37,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
         RLogger.verbose(message: "Application did finish launching with options = \(String(describing: launchOptions))")
 
-        AnalyticsManager.shared().launchCollector.origin = .internal
+        AnalyticsManager.shared().launchCollector.origin = .inner
 
         if AnalyticsManager.shared().isTrackingGeoLocation {
             if let isLocationLaunch = launchOptions?[UIApplication.LaunchOptionsKey.location] as? Bool, isLocationLaunch {

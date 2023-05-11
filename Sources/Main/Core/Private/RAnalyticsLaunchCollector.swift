@@ -37,8 +37,8 @@ final class RAnalyticsLaunchCollector {
     private(set) var lastVersionLaunches: UInt = 0
 
     /// String identifying the origin of the launch or visit, if it can be determined.
-    /// Default value: .internal
-    internal var origin: AnalyticsManager.State.Origin = .internal
+    /// Default value: .inner
+    internal var origin: AnalyticsManager.State.Origin = .inner
 
     /// The referral tracking type.
     internal var referralTracking: ReferralTrackingType
@@ -186,7 +186,7 @@ extension RAnalyticsLaunchCollector {
 
         /// Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external
         /// call or push notification.
-        origin = .internal
+        origin = .inner
     }
 }
 

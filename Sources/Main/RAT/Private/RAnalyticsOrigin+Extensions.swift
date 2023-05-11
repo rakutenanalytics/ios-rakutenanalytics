@@ -3,7 +3,7 @@ import Foundation
 extension RAnalyticsOrigin {
     var toString: String {
         switch self {
-        case .internal:
+        case .inner:
             return "internal"
 
         case .external:

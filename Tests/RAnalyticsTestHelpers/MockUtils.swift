@@ -424,7 +424,7 @@ public enum Tracking {
         defaultState.userIdentifier        = "userId"
         defaultState.easyIdentifier        = "easyId"
         defaultState.loginMethod           = .oneTapLogin
-        defaultState.origin                = .internal
+        defaultState.origin                = .inner
         defaultState.lastVersion           = "1.0"
         defaultState.initialLaunchDate     = initialLaunchDate
         defaultState.installLaunchDate     = initialLaunchDate?.addingTimeInterval(-10)

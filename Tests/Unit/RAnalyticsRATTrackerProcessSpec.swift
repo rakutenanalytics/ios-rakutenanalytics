@@ -19,7 +19,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
             let dependenciesContainer = SimpleContainerMock()
-            let appInfoMock = "{\"xcode\":\"1410.14B47a\",\"sdk\":\"iphonesimulator16.1.internal\",\"deployment_target\":\"11.0\"}"
+            let appInfoMock = "{\"xcode\":\"1410.14B47a\",\"sdk\":\"iphonesimulator16.1.inner\",\"deployment_target\":\"11.0\"}"
             let sdkDependenciesMock = ["rsdks_inappmessaging": "7.2.0",
                                        "rsdks_pushpnp": "10.0.0",
                                        "rsdks_geo": "2.2.0",
@@ -470,7 +470,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         }
 
                         context("Internal origin") {
-                            verifyPageTracking(origin: .internal)
+                            verifyPageTracking(origin: .inner)
                         }
 
                         context("External origin") {
@@ -492,7 +492,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                 var payload: [String: Any]?
 
                                 let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
-                                state.origin = .internal
+                                state.origin = .inner
                                 state.referralTracking = .page(currentPage: Tracking.customPage)
 
                                 ratTracker.process(event: firstEvent, state: state)

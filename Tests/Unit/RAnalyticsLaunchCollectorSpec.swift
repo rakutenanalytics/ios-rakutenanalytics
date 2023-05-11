@@ -106,7 +106,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
                 expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).to(beFalse())
                 launchCollector.didPresentViewController(UIViewController())
                 expect(analyticsTrackerMock.dictionary?[AnalyticsManager.Event.Name.pageVisit]?.tracked).toEventually(beTrue())
-                expect(launchCollector.origin).toEventually(equal(.internal))
+                expect(launchCollector.origin).toEventually(equal(.inner))
             }
             it("should not track the visit event when a presented view controller is UINavigationController") {
                 analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.pageVisit: TrackerResult(tracked: false, parameters: nil)]

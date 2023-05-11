@@ -29,7 +29,7 @@ import CoreLocation.CLLocation
 /// @ingroup AnalyticsConstants
 @objc public enum RAnalyticsOrigin: Int {
     /// The visit originates from within the app itself.
-    @objc(RAnalyticsInternalOrigin) case `internal` = 0
+    @objc(RAnalyticsInternalOrigin) case inner = 0
 
     /// The visit originates from another app (i.e. deep-linking).
     @objc(RAnalyticsExternalOrigin) case external
@@ -89,7 +89,7 @@ import CoreLocation.CLLocation
     @objc public internal(set) var loginMethod: RAnalyticsLoginMethod = .other
 
     /// String identifying the origin of the launch or visit, if it can be determined.
-    @objc public internal(set) var origin: RAnalyticsOrigin = .internal
+    @objc public internal(set) var origin: RAnalyticsOrigin = .inner
 
     /// Version of the app when it was last run.
     @objc public internal(set) var lastVersion: String?

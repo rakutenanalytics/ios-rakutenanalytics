@@ -548,7 +548,7 @@ private extension RAnalyticsRATTracker {
         // If no page id was found, simply ignore this view controller.
         guard !pageIdentifier.isEmpty else {
             // If this originated from a push notification or an inbound URL, keep that for next call.
-            if state.origin != .internal {
+            if state.origin != .inner {
                 self.carriedOverOrigin = NSNumber(value: state.origin.rawValue)
             }
             return false
@@ -565,7 +565,7 @@ private extension RAnalyticsRATTracker {
         // If this transition was internal but a previous (skipped) transition
         // originated from a push notification or an inbound URL, use the correct origin.
         var origin = state.origin
-        if origin == .internal,
+        if origin == .inner,
            let carriedOverOrigin = self.carriedOverOrigin,
            let result = RAnalyticsOrigin(rawValue: carriedOverOrigin.intValue) {
             origin = result

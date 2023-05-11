@@ -131,7 +131,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                     expect(state.lastUpdateDate).to(beNil())
                     expect(state.lastVersionLaunches).to(equal(0))
                     expect(state.loginMethod).to(equal(.other))
-                    expect(state.origin).to(equal(.internal))
+                    expect(state.origin).to(equal(.inner))
                     expect(state.referralTracking).to(equal(ReferralTrackingType.none))
                 }
             }

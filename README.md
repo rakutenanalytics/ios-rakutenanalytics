@@ -390,6 +390,9 @@ public internal(set) var lastKnownLocation: LocationModel?
 ```
 It is also no longer available in Objective-C.
 
+### RAnalyticsInternalOrigin
+`internal` has been replaced by `inner`.
+
 ## Migrating to v9.8.0
 `_rem_push_notify` event is no longer tracked when a regular push notification is opened.
 
