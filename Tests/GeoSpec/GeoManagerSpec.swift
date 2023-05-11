@@ -329,6 +329,7 @@ final class GeoManagerSpec: QuickSpec {
 
                 context("preferences") {
                     beforeEach {
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationCollectionKey)
                     }
 
@@ -400,9 +401,9 @@ final class GeoManagerSpec: QuickSpec {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
 
-                    it("should return configuration as nil from getConfiguration") {
+                    it("should return default configuration on calling getConfiguration") {
                         geoManager.startLocationCollection(configuration: nil)
-                        expect(geoManager.getConfiguration()).to(beNil())
+                        expect(geoManager.getConfiguration()).to(equal(GeoConfigurationFactory.defaultConfiguration))
                     }
                 }                
 
@@ -625,6 +626,8 @@ final class GeoManagerSpec: QuickSpec {
                     geoLocationManagerMock.startMonitoringSignificantLocationChangesIsCalled = false
                     geoLocationManagerMock.requestLocationContinualIsCalled = false
 
+                    dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+
                     geoManager.startLocationCollection()
                 }
 
@@ -730,6 +733,8 @@ final class GeoManagerSpec: QuickSpec {
                                                 tracker: TrackerMock(),
                                                 analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
 
+                        dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+
                         geoManager.startLocationCollection()
                     }
 
@@ -776,6 +781,8 @@ final class GeoManagerSpec: QuickSpec {
 
                     context("when the region is not monitored") {
                         beforeEach {
+                            dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
+
                             geoManager.startLocationCollection()
                             coreLocationManagerMock.delegate?.locationManager?(coreLocationManager,
                                                                                didUpdateLocations: [CLLocation(latitude: 78.9,
@@ -853,6 +860,11 @@ final class GeoManagerSpec: QuickSpec {
                     it("should stop monitoring location collection region") {
                         geoManager.stopLocationCollection()
                         expect(coreLocationManagerMock.monitoredRegions.count).to(equal(0))
+                    }
+
+                    it("should return nil on calling getConfiguration after stopLocationCollection") {
+                        geoManager.stopLocationCollection()
+                        expect(geoManager.getConfiguration()).to(beNil())
                     }
                 }
                 

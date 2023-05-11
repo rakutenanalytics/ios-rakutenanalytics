@@ -133,11 +133,12 @@ extension GeoManager: GeoTrackable {
 
     public func startLocationCollection(configuration: GeoConfiguration? = nil) {
         if let safeConfiguration = configuration,
-               safeConfiguration != getConfiguration() {
-            configurationStore.store(configuration: safeConfiguration)
+           safeConfiguration != getConfiguration() {
+            handleConfigurationAndLocationCollection(configuration: safeConfiguration)
+        } else if configuration == nil,
+                  getConfiguration() != GeoConfiguration() {
+            handleConfigurationAndLocationCollection(configuration: GeoConfiguration())
         }
-        userStorageHandler.set(value: true, forKey: UserDefaultsKeys.locationCollectionKey)
-        manageStartLocationCollection()
     }
 
     public func stopLocationCollection() {
@@ -160,6 +161,12 @@ extension GeoManager: GeoTrackable {
 // MARK: - Start Location Collection Helper
 
 extension GeoManager {
+
+    private func handleConfigurationAndLocationCollection(configuration: GeoConfiguration) {
+        configurationStore.store(configuration: configuration)
+        userStorageHandler.set(value: true, forKey: UserDefaultsKeys.locationCollectionKey)
+        manageStartLocationCollection()
+    }
 
     private func manageStartLocationCollection() {
         geoLocationManager.startMonitoringSignificantLocationChanges()
