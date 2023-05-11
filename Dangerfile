@@ -4,7 +4,7 @@ declared_trivial = git.lines_of_code <= 2
 warn("Big PR") if git.lines_of_code > 1000
 
 if defined?(github)
-  warn "This PR does not have any assignees yet" unless github.pr_json["assignee"]
+  warn "This PR does not have any reviewers yet" unless github.pr_json["requested_reviewers"]
 
   # Branch name should be properly formatted
   type_pattern = /(fix|feat|refactor|improve|build|ci|docs|chore|test|tests|revert)/
@@ -16,7 +16,7 @@ if defined?(github)
 
   branch_name = github.branch_for_head
   is_branch_compliant = branch_name.match(branch_name_pattern_1) || branch_name.match(branch_name_pattern_2) || branch_name.match(branch_name_pattern_3)
-  warn("Branch name \"#{branch_name}\" should match format: `<type>/<ticket-no>_<short-desc>` or `<type>/<short-desc>` or `release/<version or desc>`") if !is_branch_compliant
+  warn("Branch name \"#{branch_name}\" should match format: `<type>/<ticket-no>_<short-desc>` or `<type>/<short-desc>` or `release/<version or desc>` (desc should be in lowercase letters)") if !is_branch_compliant
 end
 
 has_app_changes = !git.modified_files.grep(/Sources/).empty?
