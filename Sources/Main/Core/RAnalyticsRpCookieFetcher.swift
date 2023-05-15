@@ -10,14 +10,14 @@ import Foundation
     /// The endpoint to fetch the Rp Cookie.
     @objc public var endpointURL: URL? {
         get {
-            self._endpointURL
+            self.safeEndpointURL
         }
         set {
-            self._endpointURL = newValue
+            self.safeEndpointURL = newValue
         }
     }
 
-    @AtomicGetSet private var _endpointURL: URL?
+    @AtomicGetSet private var safeEndpointURL: URL?
     private var retryInterval: TimeInterval
     private var rpCookieRequestRetryCount: UInt
     private let rpCookieQueue: DispatchQueue
@@ -80,7 +80,7 @@ import Foundation
                                              reason: ErrorReason.endpointMissing))
             return nil
         }
-        _endpointURL = endpointAddress
+        safeEndpointURL = endpointAddress
         retryInterval = Constants.initialRetryInterval
         rpCookieRequestRetryCount = 0
         rpCookieQueue = DispatchQueue(label: "com.rakuten.tech.analytics.rpcookie")

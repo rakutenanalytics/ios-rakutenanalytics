@@ -49,6 +49,7 @@
 * [CONRAT-28957](https://jira.rakuten-it.com/jira/browse/CONRAT-28957): Fix LocationModel internal init - SonarQube issue.
 * [CONRAT-28958](https://jira.rakuten-it.com/jira/browse/CONRAT-28958): Remove the unnecessary Boolean literal in LocationModel - SonarQube Issue.
 * [CONRAT-29000](https://jira.rakuten-it.com/jira/browse/CONRAT-29000): Remove backticks (`) from "internal" and rename it to inner in RAnalyticsInternalOrigin - Sonarqube Issue.
+* [CONRAT-29007](https://jira.rakuten-it.com/jira/browse/CONRAT-29007): Rename this field "_endpointURL" to match the regular expression ^[a-z][a-zA-Z0-9]*$. - SonarQube issue.
 
 ### Unit tests
 * [CONRAT-27983](https://jira.rakuten-it.com/jira/browse/CONRAT-27983): Improve the RAT Tracking tests with CoreHelpers injection.

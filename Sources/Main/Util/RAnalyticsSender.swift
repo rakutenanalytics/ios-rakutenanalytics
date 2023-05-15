@@ -29,10 +29,10 @@ enum SenderBackgroundTimerEnabler {
 @objc public final class RAnalyticsSender: NSObject, EndpointSettable, Sendable {
     @objc public var endpointURL: URL? {
         get {
-            self._endpointURL
+            self.safeEndpointURL
         }
         set {
-            self._endpointURL = newValue
+            self.safeEndpointURL = newValue
         }
     }
 
@@ -43,7 +43,7 @@ enum SenderBackgroundTimerEnabler {
 
     private var scheduleStartDate: Date?
 
-    @AtomicGetSet private var _endpointURL: URL?
+    @AtomicGetSet private var safeEndpointURL: URL?
     /// Enable the experimental internal JSON serialization or not.
     /// The experimental internal JSON serialization fixes the float numbers decimals.
     private let enableInternalSerialization: Bool
@@ -105,7 +105,7 @@ enum SenderBackgroundTimerEnabler {
          session: SwiftySessionable,
          maxUploadInterval: TimeInterval = TimeInterval(60.0),
          userStorageHandler: UserStorageHandleable) {
-        self._endpointURL = endpoint
+        self.safeEndpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
         self.batchingDelayClosure = { return SenderConstants.defaultUploadInterval }
