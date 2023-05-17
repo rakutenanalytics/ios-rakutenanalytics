@@ -19,7 +19,7 @@ extension RunLoop: PollerRunLoopProtocol {
 
 internal class GeoPoller {
 
-    private var runLoop: PollerRunLoopProtocol?
+    private let runLoop: PollerRunLoopProtocol
     private var locationCollectionTimer: Timer?
 
     init(runLoop: PollerRunLoopProtocol = RunLoop.current) {
@@ -39,15 +39,16 @@ internal class GeoPoller {
             DispatchQueue.main.async {
                 // note: timer must be invalidated on the
                 // same thread it was added to the run loop
-                self.runLoop?.add(timer: timer)
+                self.runLoop.add(timer: timer)
             }
         }
     }
 
-    func invalidateLocationCollectionPoller() {
+    func invalidateLocationCollectionPoller(completion: (() -> Void)? = nil) {
         guard let timer = self.locationCollectionTimer else { return }
         DispatchQueue.main.async {
-            self.runLoop?.invalidate(timer: timer)
+            self.runLoop.invalidate(timer: timer)
+            completion?()
         }
     }
 }

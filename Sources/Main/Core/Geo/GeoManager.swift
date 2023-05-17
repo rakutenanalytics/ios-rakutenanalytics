@@ -188,11 +188,12 @@ extension GeoManager {
     private func startPoller(interval: UInt, delay: UInt, repeats: Bool) {
         poller.pollLocationCollection(delay: repeats ? TimeInterval(interval) : TimeInterval(delay), repeats: repeats) { [weak self] in
             guard let self = self else { return }
-            self.performLocationCollectionTasks()
             if !repeats {
-                self.poller.invalidateLocationCollectionPoller()
-                self.startPoller(interval: interval, delay: delay, repeats: true)
+                self.poller.invalidateLocationCollectionPoller {
+                    self.startPoller(interval: interval, delay: delay, repeats: true)
+                }
             }
+            self.performLocationCollectionTasks()
         }
     }
 
