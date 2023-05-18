@@ -14,7 +14,7 @@ import RAnalyticsTestHelpers
 final class GeoManagerSpec: QuickSpec {
     override func spec() {
 
-        let dependenciesContainer = SimpleDependenciesContainer()
+        let dependenciesContainer = GeoDependenciesContainer()
         let configurationStore = GeoConfigurationStore(userStorageHandler: dependenciesContainer.userStorageHandler)
 
         describe("GeoManager") {

@@ -341,6 +341,31 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     }
 }
 
+// MARK: - GeoContainerMock
+
+public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
+    public var notificationHandler: NotificationObservable = NotificationCenter.default
+    public var userStorageHandler: UserStorageHandleable = UserDefaults.standard
+    public var locationManager: LocationManageable = CLLocationManager()
+    public var bundle: EnvironmentBundle = Bundle.main
+    public var telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
+    public var deviceCapability: DeviceCapability = UIDevice.current
+    public var screenHandler: Screenable = UIScreen.main
+    public var session: SwiftySessionable = URLSession.shared
+    public var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
+    public var automaticFieldsBuilder: AutomaticFieldsBuildable
+
+    public override init() {
+        automaticFieldsBuilder = AutomaticFieldsBuilder(bundle: bundle,
+                                                        deviceCapability: deviceCapability,
+                                                        screenHandler: screenHandler,
+                                                        telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
+                                                        notificationHandler: notificationHandler,
+                                                        analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
+                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+    }
+}
+
 // MARK: - CustomPage
 
 public final class CustomPage: UIViewController {

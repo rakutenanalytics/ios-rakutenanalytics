@@ -48,7 +48,7 @@ final class GeoTracker: NSObject {
     /// let geoTracker = GeoTracker(dependenciesContainer: SimpleDependenciesContainer(),
     ///                             databaseConfiguration: databaseConfiguration)
     ///  ```
-    init?(dependenciesContainer: SimpleDependenciesContainable,
+    init?(dependenciesContainer: GeoDependenciesContainable,
           batchingDelay: TimeInterval = 900.0,
           databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = dependenciesContainer.bundle.endpointAddress else {

@@ -24,7 +24,7 @@ final class GeoTrackerSpec: QuickSpec {
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
             var databaseConfiguration: DatabaseConfiguration!
-            let dependenciesContainer = SimpleContainerMock()
+            let dependenciesContainer = GeoContainerMock()
             var geoTracker: GeoTracker!
 
             beforeEach {

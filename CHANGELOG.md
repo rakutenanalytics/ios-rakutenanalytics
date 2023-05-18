@@ -31,6 +31,7 @@
 * [CONRAT-28751](https://jira.rakuten-it.com/jira/browse/CONRAT-28751): Process loc event with AnalyticsManager in order to add additional state parameters.
 * [CONRAT-28743](https://jira.rakuten-it.com/jira/browse/CONRAT-28743): Refactor 'loc' field with action Parameters in single Map Object.
 * [CONRAT-28813](https://jira.rakuten-it.com/jira/browse/CONRAT-28813): Remove GeoSharedPreferences.
+* [CONRAT-29099](https://jira.rakuten-it.com/jira/browse/CONRAT-29099): Remove unused dependencies in GeoManager.
 
 ### Bug fixes
 * [CONRAT-28848](https://jira.rakuten-it.com/jira/browse/CONRAT-28848): Make the maximum upload time interval configurable in RAnalyticsSender for GeoTracker.

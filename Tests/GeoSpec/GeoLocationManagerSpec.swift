@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 final class GeoLocationManagerSpec: QuickSpec {
     override func spec() {
 
-        let dependenciesContainer = SimpleDependenciesContainer()
+        let dependenciesContainer = GeoDependenciesContainer()
         let userStorageHandler = dependenciesContainer.userStorageHandler
         let configurationStore = GeoConfigurationStore(userStorageHandler: userStorageHandler)
 

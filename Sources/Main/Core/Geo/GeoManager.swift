@@ -73,7 +73,7 @@ public final class GeoManager {
 
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
-        let dependenciesContainer = SimpleDependenciesContainer()
+        let dependenciesContainer = GeoDependenciesContainer()
         let coreLocationManager = dependenciesContainer.locationManager
         let userStorageHandler = dependenciesContainer.userStorageHandler
         let bundle = dependenciesContainer.bundle
