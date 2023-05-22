@@ -22,20 +22,30 @@ protocol GeoTrackable {
     /// Call this method to start the location collection.
     /// 
     /// - Parameter configuration: GeoConfiguration used for location collection.
+    ///
     /// - NOTE: On calling this method if a value is not passed in configuration, the default configuration value will be used.
+    ///
+    /// - Warning: This function should be called on the main thread, otherwise starting the location collection is not guaranteed.
     func startLocationCollection(configuration: GeoConfiguration?)
+
     /// This method stops the location collection.
     ///
     /// Call this method to any ongoing location collection.
+    ///
+    /// - Warning: This function should be called on the main thread, otherwise stopping the location collection is not guaranteed.
     func stopLocationCollection()
+
     /// Requests a one-time delivery of the user’s current location.
     ///
     /// Call this method to get a single location update of the user's current location.
     /// - parameters:
     ///     - actionParameters: Represents optional value of type `GeoActionParameters`.
     ///     - completionHandler: Executes a block called `GeoRequestLocationBlock`.
+    ///
+    /// - Warning: This function should be called on the main thread, otherwise requesting the location collection is not guaranteed.
     func requestLocation(actionParameters: GeoActionParameters?,
                          completionHandler: @escaping GeoRequestLocationBlock)
+
     /// Get configuration used for location collection.
     ///
     /// - Returns: GeoConfiguration set calling `startLocationCollection(configuration:)`.

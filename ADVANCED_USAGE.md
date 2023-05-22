@@ -111,6 +111,8 @@ Start the location collection using a custom configuration as shown below:
 GeoManager.shared.startLocationCollection(configuration: configuration)
 ```
 
+- Note: This function should be called on the main thread, otherwise starting the location collection is not guaranteed.
+
 #### Stop Location Collection
 
 Stops any ongoing location collection process and deletes the custom configuration set.
@@ -118,6 +120,8 @@ Stops any ongoing location collection process and deletes the custom configurati
 ```
 GeoManager.shared.stopLocationCollection()
 ```
+
+- Note: This function should be called on the main thread, otherwise stopping the location collection is not guaranteed.
 
 #### Get Configuration
 
@@ -162,6 +166,8 @@ GeoManager.shared.requestLocation(actionParameters: actionParameters) { result i
     }
 }
 ```
+
+- Note: This function should be called on the main thread, otherwise requesting the location collection is not guaranteed.
 
 ## IDFA tracking
 
