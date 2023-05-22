@@ -139,6 +139,12 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         // MARK: mnetwd
         payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
 
+        // MARK: netop
+        payload[PayloadParameterKeys.Telephony.netop] = telephonyHandler.netop
+
+        // MARK: netopn
+        payload[PayloadParameterKeys.Telephony.netopn] = telephonyHandler.netopn
+
         // MARK: mori
         payload[PayloadParameterKeys.Orientation.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
 

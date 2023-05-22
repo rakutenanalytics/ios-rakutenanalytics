@@ -13,4 +13,20 @@ extension Optional where Wrapped == String {
         guard let str = self else { return true }
         return str.isEmpty
     }
+
+    /// Combine 2 optional strings
+    ///
+    /// - Returns: The combined string or ""
+    func combine(with other: String?) -> String {
+        switch (self, other) {
+        case let (.some(first), .some(second)):
+            return first + second
+        case let (.some(first), _):
+            return first
+        case let (_, .some(second)):
+            return second
+        default:
+            return ""
+        }
+    }
 }

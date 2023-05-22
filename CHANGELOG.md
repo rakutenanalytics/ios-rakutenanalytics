@@ -12,6 +12,7 @@
 * [CONRAT-28380](https://jira.rakuten-it.com/jira/browse/CONRAT-28380): Implement stop location collection.
 * [CONRAT-28904](https://jira.rakuten-it.com/jira/browse/CONRAT-28904): Add background modes location updates capability.
 * [CONRAT-29001](https://jira.rakuten-it.com/jira/browse/CONRAT-29001): Save default configuration when nil is passed in startLocationCollection.
+* [CONRAT-29102](https://jira.rakuten-it.com/jira/browse/CONRAT-29102): Carrier Identification.
 
 ### Improvements
 * [SDKCF-6199](https://jira.rakuten-it.com/jira/browse/SDKCF-6199): Move sharedPayload to RAnalyticsState extension and rename it to corePayload.

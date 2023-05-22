@@ -1033,6 +1033,184 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
+                context("netopn and netop") {
+                    context("When there is no carrier") {
+                        context("And the connection is offline") {
+                            it("should process an event without netopn and netop") {
+                                reachabilityMock.flags = .connectionRequired
+                                
+                                verifyEmptyNetopnAndNetop()
+                            }
+                        }
+                        
+                        context("And the connection is WWAN") {
+                            it("should process an event without mcn and mcnd ") {
+                                reachabilityMock.flags = [.isWWAN, .reachable]
+                                
+                                verifyEmptyNetopnAndNetop()
+                            }
+                        }
+                        
+                        context("And the connection is Wifi") {
+                            it("should process an event without mcn and mcnd ") {
+                                reachabilityMock.flags = [.isDirect, .reachable]
+                                
+                                verifyEmptyNetopnAndNetop()
+                            }
+                        }
+                        func verifyEmptyNetopnAndNetop() {
+                            var payload: [String: Any]?
+                            
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = nil
+                            primaryCarrier.mobileCountryCode = nil
+                            primaryCarrier.mobileNetworkCode = nil
+                            
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            primaryCarrier.mobileCountryCode = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+                            
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = nil
+                            
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["netopn"] as? String).to(equal(""))
+                            expect(payload?["netop"] as? String).to(equal(""))
+                        }
+                    }
+                    context("When there is only one carrier") {
+                        it("should process an event with netopn and netop with primary") {
+                            let expectedNetopnValue = "Rakuten Mobile"
+                            let expectedNetopValue = "44011"
+
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileCountryCode = "440"
+                            primaryCarrier.mobileNetworkCode = "11"
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["netopn"] as? String).to(equal(expectedNetopnValue))
+                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                        }
+                        it("netop contains only mcc when mcc is non empty and mnc is empty") {
+                            let expectedNetopValue = "440"
+
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileCountryCode = "440"
+                            primaryCarrier.mobileNetworkCode = nil
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            secondaryCarrier.mobileCountryCode = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["netopn"] as? String).to(equal(""))
+                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                        }
+
+                        it("netop contains only mnc, when mcc is empty and mnc is non empty") {
+                            let expectedNetopnValue = "Rakuten Mobile"
+                            let expectedNetopValue = "11"
+
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileCountryCode = nil
+                            primaryCarrier.mobileNetworkCode = "11"
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = nil
+                            secondaryCarrier.mobileNetworkCode = nil
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: ""]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["netopn"] as? String).to(equal(expectedNetopnValue))
+                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                        }
+                    }
+
+                    context("when there are two carriers") {
+                        it("should process an event with netopn and netop with primaryNetwork") {
+                            reachabilityMock.flags = [.isDirect, .reachable]
+
+                            let expectedNetOpnValue = "Rakuten Mobile"
+                            let expectedNetOpValue = "44011"
+
+                            var payload: [String: Any]?
+
+                            let primaryCarrier = CarrierMock()
+                            primaryCarrier.carrierName = "Rakuten Mobile"
+                            primaryCarrier.mobileCountryCode = "440"
+                            primaryCarrier.mobileNetworkCode = "11"
+
+                            let secondaryCarrier = CarrierMock()
+                            secondaryCarrier.carrierName = "Softbank"
+                            secondaryCarrier.mobileCountryCode = "440"
+                            secondaryCarrier.mobileNetworkCode = "20"
+
+                            let telephonyNetworkInfo = dependenciesContainer.telephonyNetworkInfoHandler as? TelephonyNetworkInfoMock
+                            telephonyNetworkInfo?.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
+                                                                 TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
+
+                            telephonyNetworkInfo?.serviceCurrentRadioAccessTechnology = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: CTRadioAccessTechnologyLTE,
+                                                                                         TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: CTRadioAccessTechnologyLTE]
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+                            expect(payload?["netopn"] as? String).to(equal(expectedNetOpnValue))
+                            expect(payload?["netop"] as? String).to(equal(expectedNetOpValue))
+                        }
+                    }
+                }
+
                 context("mnetw and mnetwd") {
                     context("Wwan") {
                         it("should process an event with no primary radio and no secondary radio when the network status is offline") {

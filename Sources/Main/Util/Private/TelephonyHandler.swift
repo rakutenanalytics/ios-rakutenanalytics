@@ -16,6 +16,8 @@ protocol TelephonyHandleable {
     var mcnd: String { get }
     var mnetw: NSNumber? { get }
     var mnetwd: NSNumber? { get }
+    var netopn: String { get }
+    var netop: String { get }
     func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
 }
 
@@ -84,18 +86,28 @@ extension TelephonyHandler {
     }
 }
 
-// MARK: - mcn and mcnd
+// MARK: - mcn, mcnd, netopn, netop
 
 extension TelephonyHandler {
     /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
     var mcn: String {
+        retrieveNetworkName()
+    }
+
+    /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
+    var netopn: String {
+        retrieveNetworkName()
+    }
+
+    /// - Returns: The network country code + network operator code or empty string if the network carrier is not registered (airplane mode or no primary sim).
+    var netop: String {
         guard let carrierKey = selectedCarrierKey,
               let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
               !radioName.isEmpty,
               let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
             return ""
         }
-        return carrier.displayedCarrierName ?? ""
+        return carrier.mobileCountryCode.combine(with: carrier.mobileNetworkCode)
     }
 
     /// - Returns: The name of the secondary carrier or empty string if the secondary carrier is not registered (airplane mode or no secondary sim).
@@ -226,5 +238,19 @@ extension String {
         } else {
             return .cellularOther
         }
+    }
+}
+
+// MARK: - Helper
+
+extension TelephonyHandler {
+    private func retrieveNetworkName() -> String {
+        guard let carrierKey = selectedCarrierKey,
+              let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
+              !radioName.isEmpty,
+              let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
+            return ""
+        }
+        return carrier.displayedCarrierName ?? ""
     }
 }

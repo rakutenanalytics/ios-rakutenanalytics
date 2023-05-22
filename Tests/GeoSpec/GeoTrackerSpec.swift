@@ -273,6 +273,10 @@ final class GeoTrackerSpec: QuickSpec {
 
                         expect(json[PayloadParameterKeys.Telephony.mnetwd] as? Int).to(equal(1))
 
+                        expect(json[PayloadParameterKeys.Telephony.netopn] as? String).to(beEmpty())
+
+                        expect(json[PayloadParameterKeys.Telephony.netop] as? String).to(beEmpty())
+
                         expect(json[PayloadParameterKeys.Device.model] as? String).to(equal(expectedModel))
 
                         expect(json[PayloadParameterKeys.Language.dln] as? String).to(equal(expectedLanguageCode))

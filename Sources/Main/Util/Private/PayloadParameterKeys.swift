@@ -209,6 +209,13 @@ enum PayloadParameterKeys {
 
         /// The network status of the secondary carrier.
         static let mnetwd = "mnetwd"
+
+        /// The network carrier name
+        static let netopn = "netopn"
+
+        /// The network operator code mcc+mnc
+        ///  ex: mcc = 440 and mnc = 11 then netop = 44011
+        static let netop = "netop"
     }
 }
 
