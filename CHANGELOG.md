@@ -33,6 +33,7 @@
 * [CONRAT-28743](https://jira.rakuten-it.com/jira/browse/CONRAT-28743): Refactor 'loc' field with action Parameters in single Map Object.
 * [CONRAT-28813](https://jira.rakuten-it.com/jira/browse/CONRAT-28813): Remove GeoSharedPreferences.
 * [CONRAT-29099](https://jira.rakuten-it.com/jira/browse/CONRAT-29099): Remove unused dependencies in GeoManager.
+* [CONRAT-29127](https://jira.rakuten-it.com/jira/browse/CONRAT-29127): Refactor 'dln' field to retrieve correct device language.
 
 ### Bug fixes
 * [CONRAT-28848](https://jira.rakuten-it.com/jira/browse/CONRAT-28848): Make the maximum upload time interval configurable in RAnalyticsSender for GeoTracker.

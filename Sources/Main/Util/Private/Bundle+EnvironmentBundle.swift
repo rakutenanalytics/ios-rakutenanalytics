@@ -34,11 +34,9 @@ extension Bundle: EnvironmentBundle {
     }
 
     var languageCode: Any? {
-        if let preferredLocaleLanguage = NSLocale.preferredLanguages.first,
-           let preferredLocalizationLanguage = preferredLocalizations.first {
+        if let preferredLocaleLanguage = NSLocale.preferredLanguages.first {
             let localeLanguageCode = NSLocale(localeIdentifier: preferredLocaleLanguage).object(forKey: NSLocale.Key.languageCode)
-            let bundleLanguageCode = NSLocale(localeIdentifier: preferredLocalizationLanguage).object(forKey: NSLocale.Key.languageCode)
-            return bundleLanguageCode ?? localeLanguageCode
+            return localeLanguageCode
         }
         return nil
     }
