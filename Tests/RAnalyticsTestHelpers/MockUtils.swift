@@ -722,8 +722,7 @@ public final class ScreenMock: Screenable {
 
 // MARK: - GeoLocationManagerMock
 
-public final class GeoLocationManagerMock: GeoLocationManageable, GeoLocationManagerDelegate {
-
+public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoLocationManagerDelegate, CLLocationManagerDelegate {
     public var locationModel: LocationModel!
     public var locationError: NSError!
     public var delegate: RAnalytics.GeoLocationManagerDelegate?
@@ -734,8 +733,9 @@ public final class GeoLocationManagerMock: GeoLocationManageable, GeoLocationMan
     public var stopMonitoringSignificantLocationChangesIsCalled = false
     public var delegateGeoLocationManagerDidUpdateLocationIsCalled = false
     public var delegateGeoLocationManagerDidFailWithErrorIsCalled = false
+    public var delegateCLLocationManagerDidDetermineStateIsCalled = false
 
-    public init() {
+    public override init() {
     }
 
     public func stopLocationUpdates() {
@@ -772,6 +772,12 @@ public final class GeoLocationManagerMock: GeoLocationManageable, GeoLocationMan
     public func geoLocationManager(didFailWithError error: Error, for requestType: GeoRequestLocationType) {
         delegateGeoLocationManagerDidFailWithErrorIsCalled = true
         locationError = error as NSError
+    }
+
+    public func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        if state == .outside && region.identifier == "GeoLocationCollectionRegionIdentifier" {
+            delegateCLLocationManagerDidDetermineStateIsCalled = true
+        }
     }
 }
 

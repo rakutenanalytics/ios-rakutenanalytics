@@ -105,6 +105,56 @@ final class GeoLocationManagerSpec: QuickSpec {
                 }
             }
 
+            context("locationManager(_:, didDetermineState:, for:)") {
+                beforeEach {
+                    geoLocationManagerMock.delegateCLLocationManagerDidDetermineStateIsCalled = false
+                }
+
+                it("should be called when state is outside and region identifier is correct") {
+                    let monitoredRegion = CLCircularRegion(center: CLLocationCoordinate2D(latitude: 1.2345, longitude: 6.7890),
+                                                           radius: 300,
+                                                           identifier: "GeoLocationCollectionRegionIdentifier")
+
+                    coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didDetermineState: .outside, for: monitoredRegion)
+                    geoLocationManagerMock.locationManager(coreLocationManager, didDetermineState: .outside, for: monitoredRegion)
+
+                    expect(geoLocationManagerMock.delegateCLLocationManagerDidDetermineStateIsCalled).to(beTrue())
+                }
+
+                it("should not be called when state is not outside and region identifier is incorrect") {
+                    let monitoredRegion = CLCircularRegion(center: CLLocationCoordinate2D(latitude: 1.2345, longitude: 6.7890),
+                                                           radius: 300,
+                                                           identifier: "BadGeoLocationCollectionRegionIdentifier")
+
+                    coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didDetermineState: .inside, for: monitoredRegion)
+                    geoLocationManagerMock.locationManager(coreLocationManager, didDetermineState: .inside, for: monitoredRegion)
+
+                    expect(geoLocationManagerMock.delegateCLLocationManagerDidDetermineStateIsCalled).to(beFalse())
+                }
+
+                it("should not be called when state is outside and region identifier is incorrect") {
+                    let monitoredRegion = CLCircularRegion(center: CLLocationCoordinate2D(latitude: 1.2345, longitude: 6.7890),
+                                                           radius: 300,
+                                                           identifier: "BadGeoLocationCollectionRegionIdentifier")
+
+                    coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didDetermineState: .outside, for: monitoredRegion)
+                    geoLocationManagerMock.locationManager(coreLocationManager, didDetermineState: .outside, for: monitoredRegion)
+
+                    expect(geoLocationManagerMock.delegateCLLocationManagerDidDetermineStateIsCalled).to(beFalse())
+                }
+
+                it("should not be called when state is not outside and region identifier is correct") {
+                    let monitoredRegion = CLCircularRegion(center: CLLocationCoordinate2D(latitude: 1.2345, longitude: 6.7890),
+                                                           radius: 300,
+                                                           identifier: "GeoLocationCollectionRegionIdentifier")
+
+                    coreLocationManagerMock.delegate?.locationManager?(coreLocationManager, didDetermineState: .inside, for: monitoredRegion)
+                    geoLocationManagerMock.locationManager(coreLocationManager, didDetermineState: .inside, for: monitoredRegion)
+
+                    expect(geoLocationManagerMock.delegateCLLocationManagerDidDetermineStateIsCalled).to(beFalse())
+                }
+            }
+
             context("When requestLocationUpdate(for: .continual) is called") {
                 it("should call CLLocationManager's requestLocationUpdate(for: .continual)") {
                     geoLocationManager.requestLocationUpdate(for: .continual)

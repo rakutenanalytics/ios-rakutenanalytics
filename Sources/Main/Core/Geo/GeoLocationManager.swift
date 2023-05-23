@@ -127,14 +127,17 @@ extension GeoLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        if state == .outside {
-            guard isCollectionTime, let location = manager.location else {
-                RLogger.debug(message: "could not requestLocation() as it is not the collection time.")
-                return
-            }
-            startRegionMonitoring(at: location)
-            delegate?.geoLocationManager(didUpdateLocation: location, for: .continual)
+        guard (state == .outside && region.identifier == GeoConstants.locationCollectionRegionIdentifier),
+              let location = manager.location else {
+            RLogger.debug(message: "should not update for region state: \(state.rawValue) with id: \(region.identifier)")
+            return
         }
+        startRegionMonitoring(at: location)
+        guard isCollectionTime else {
+            RLogger.debug(message: "could not requestLocation() as it is not collection time")
+            return
+        }
+        delegate?.geoLocationManager(didUpdateLocation: location, for: .continual)
     }
 
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
