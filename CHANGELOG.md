@@ -66,6 +66,7 @@
 
 ### Docs
 * [CONRAT-29006](https://jira.rakuten-it.com/jira/browse/CONRAT-29006): Add comments to GeoManager public functions about main thread warnings.
+* [CONRAT-29314](https://jira.rakuten-it.com/jira/browse/CONRAT-29314): Update README.md for UIKit's pv event.
 
 ## 9.8.1 (2023-03-23)
 

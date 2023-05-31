@@ -245,9 +245,35 @@ Then you can track events in your iOS extensions using the following function:
 AnalyticsEventPoster.post(name: "myEventName", parameters: ["key1": "value1"])
 ```
 
+## Tracking events in `UIKit`'s `UIViewController`
+
+Page visit events (etype = `pv`) are automatically tracked for `UIViewController` instances.
+
+### `UIViewController` restrictions
+
+Page visit events are not tracked for these `UIViewController` subclasses:
+
+- `UINavigationController`
+- `UISplitViewController`
+- `UIPageViewController`
+- `UITabBarController`
+
+### `UIView` retrictions
+
+Page visit events are not tracked when the `UIViewController`'s view type is:
+
+- `UIAlertView`
+- `UIActionSheet`
+- `UIAlertController`
+
+### Other restrictions
+
+- Private Apple classes are not tracked as page visit events.
+- `UIView`'s window property type must be kind of `UIWindow` class
+
 ## Tracking events in SwiftUI views
 
-To track page visit events in your SwiftUI apps, call this function in your SwiftUI views body:
+To track page visit events (etype = `pv`) in your SwiftUI apps, call this function in your SwiftUI views body:
 ```
 public func rviewOnAppear(pageName: String, perform action: (() -> Void)? = nil) -> some View
 ```
