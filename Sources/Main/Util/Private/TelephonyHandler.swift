@@ -16,8 +16,8 @@ protocol TelephonyHandleable {
     var mcnd: String { get }
     var mnetw: NSNumber? { get }
     var mnetwd: NSNumber? { get }
-    var netopn: String { get }
-    var netop: String { get }
+    var simopn: String { get }
+    var simop: String { get }
     func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
 }
 
@@ -86,7 +86,7 @@ extension TelephonyHandler {
     }
 }
 
-// MARK: - mcn, mcnd, netopn, netop
+// MARK: - mcn, mcnd, simopn, simop
 
 extension TelephonyHandler {
     /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
@@ -94,13 +94,13 @@ extension TelephonyHandler {
         retrieveNetworkName()
     }
 
-    /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
-    var netopn: String {
+    /// - Returns: The name of the primary SIM carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
+    var simopn: String {
         retrieveNetworkName()
     }
 
-    /// - Returns: The network country code + network operator code or empty string if the network carrier is not registered (airplane mode or no primary sim).
-    var netop: String {
+    /// - Returns: The SIM country code + network operator code or empty string if the SIM carrier is not registered (airplane mode or no primary sim).
+    var simop: String {
         guard let carrierKey = selectedCarrierKey,
               let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
               !radioName.isEmpty,

@@ -1033,13 +1033,13 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
-                context("netopn and netop") {
+                context("simopn and simop") {
                     context("When there is no carrier") {
                         context("And the connection is offline") {
-                            it("should process an event without netopn and netop") {
+                            it("should process an event without simopn and simop") {
                                 reachabilityMock.flags = .connectionRequired
                                 
-                                verifyEmptyNetopnAndNetop()
+                                verifyNilSimopnAndSimop()
                             }
                         }
                         
@@ -1047,7 +1047,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                             it("should process an event without mcn and mcnd ") {
                                 reachabilityMock.flags = [.isWWAN, .reachable]
                                 
-                                verifyEmptyNetopnAndNetop()
+                                verifyNilSimopnAndSimop()
                             }
                         }
                         
@@ -1055,10 +1055,10 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                             it("should process an event without mcn and mcnd ") {
                                 reachabilityMock.flags = [.isDirect, .reachable]
                                 
-                                verifyEmptyNetopnAndNetop()
+                                verifyNilSimopnAndSimop()
                             }
                         }
-                        func verifyEmptyNetopnAndNetop() {
+                        func verifyNilSimopnAndSimop() {
                             var payload: [String: Any]?
                             
                             let primaryCarrier = CarrierMock()
@@ -1080,14 +1080,14 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                 payload = $0.first
                             }
                             expect(payload).toEventuallyNot(beNil())
-                            expect(payload?["netopn"] as? String).to(equal(""))
-                            expect(payload?["netop"] as? String).to(equal(""))
+                            expect(payload?["simopn"] as? String).to(beNil())
+                            expect(payload?["simop"] as? String).to(beNil())
                         }
                     }
                     context("When there is only one carrier") {
-                        it("should process an event with netopn and netop with primary") {
-                            let expectedNetopnValue = "Rakuten Mobile"
-                            let expectedNetopValue = "44011"
+                        it("should process an event with simopn and simop with primary") {
+                            let expectedSimopnValue = "Rakuten Mobile"
+                            let expectedSimopValue = "44011"
 
                             var payload: [String: Any]?
 
@@ -1111,11 +1111,11 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                 payload = $0.first
                             }
                             expect(payload).toEventuallyNot(beNil())
-                            expect(payload?["netopn"] as? String).to(equal(expectedNetopnValue))
-                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                            expect(payload?["simopn"] as? String).to(equal(expectedSimopnValue))
+                            expect(payload?["simop"] as? String).to(equal(expectedSimopValue))
                         }
-                        it("netop contains only mcc when mcc is non empty and mnc is empty") {
-                            let expectedNetopValue = "440"
+                        it("simop contains only mcc when mcc is non empty and mnc is empty") {
+                            let expectedSimopValue = "440"
 
                             var payload: [String: Any]?
 
@@ -1140,13 +1140,13 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                 payload = $0.first
                             }
                             expect(payload).toEventuallyNot(beNil())
-                            expect(payload?["netopn"] as? String).to(equal(""))
-                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                            expect(payload?["simopn"] as? String).to(beNil())
+                            expect(payload?["simop"] as? String).to(equal(expectedSimopValue))
                         }
 
-                        it("netop contains only mnc, when mcc is empty and mnc is non empty") {
-                            let expectedNetopnValue = "Rakuten Mobile"
-                            let expectedNetopValue = "11"
+                        it("simop contains only mnc, when mcc is empty and mnc is non empty") {
+                            let expectedSimopnValue = "Rakuten Mobile"
+                            let expectedSimopValue = "11"
 
                             var payload: [String: Any]?
 
@@ -1170,17 +1170,17 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                 payload = $0.first
                             }
                             expect(payload).toEventuallyNot(beNil())
-                            expect(payload?["netopn"] as? String).to(equal(expectedNetopnValue))
-                            expect(payload?["netop"] as? String).to(equal(expectedNetopValue))
+                            expect(payload?["simopn"] as? String).to(equal(expectedSimopnValue))
+                            expect(payload?["simop"] as? String).to(equal(expectedSimopValue))
                         }
                     }
 
                     context("when there are two carriers") {
-                        it("should process an event with netopn and netop with primaryNetwork") {
+                        it("should process an event with simopn and simop with primaryNetwork") {
                             reachabilityMock.flags = [.isDirect, .reachable]
 
-                            let expectedNetOpnValue = "Rakuten Mobile"
-                            let expectedNetOpValue = "44011"
+                            let expectedSimOpnValue = "Rakuten Mobile"
+                            let expectedSimOpValue = "44011"
 
                             var payload: [String: Any]?
 
@@ -1205,8 +1205,8 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                 payload = $0.first
                             }
                             expect(payload).toEventuallyNot(beNil())
-                            expect(payload?["netopn"] as? String).to(equal(expectedNetOpnValue))
-                            expect(payload?["netop"] as? String).to(equal(expectedNetOpValue))
+                            expect(payload?["simopn"] as? String).to(equal(expectedSimOpnValue))
+                            expect(payload?["simop"] as? String).to(equal(expectedSimOpValue))
                         }
                     }
                 }

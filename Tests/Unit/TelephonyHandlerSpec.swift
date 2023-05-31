@@ -26,20 +26,20 @@ final class TelephonyHandlerSpec: QuickSpec {
                 telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = nil
             }
 
-            describe("mcn, mcnd, netopn, netop") {
-                it(#"should return mcn == "", mcnd == "", netopn == "", netop == "" when there are no carriers"#) {
+            describe("mcn, mcnd, simopn, simop") {
+                it(#"should return mcn == "", mcnd == "", simopn == "", simop == "" when there are no carriers"#) {
                     telephonyNetworkInfo.subscribers = nil
                     telephonyNetworkInfo.safeDataServiceIdentifier = nil
 
                     expect(telephonyHandler.mcn).to(beEmpty())
                     expect(telephonyHandler.mcnd).to(beEmpty())
-                    expect(telephonyHandler.netopn).to(beEmpty())
-                    expect(telephonyHandler.netop).to(beEmpty())
+                    expect(telephonyHandler.simopn).to(beEmpty())
+                    expect(telephonyHandler.simop).to(beEmpty())
                 }
 
                 context("when there is only one carrier (Physical SIM is primary)") {
-                    it(#"should return mcn == Carrier1, mcnd == "", netopn == Carrier1, netop == 23420 when the Physical SIM radio is not empty"#) {
-                        let netop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
+                    it(#"should return mcn == Carrier1, mcnd == "", simopn == Carrier1, simop == 23420 when the Physical SIM radio is not empty"#) {
+                        let simop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
@@ -48,11 +48,11 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(equal(primaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
 
-                    it(#"should return mcn == "", mcnd == "", netopn == "", netop == "" when the Physical SIM radio is empty"#) {
+                    it(#"should return mcn == "", mcnd == "", simopn == "", simop == "" when the Physical SIM radio is empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
 
@@ -61,14 +61,14 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
                 }
 
                 context("when there is only one carrier (eSIM is primary)") {
-                    it(#"should return mcn == Carrier2, mcnd == "", netopn == Carrier2, netop == 20825  when the eSIM radio is not empty"#) {
-                        let netop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
+                    it(#"should return mcn == Carrier2, mcnd == "", simopn == Carrier2, simop == 20825  when the eSIM radio is not empty"#) {
+                        let simop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
 
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
@@ -78,11 +78,11 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(equal(secondaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
 
-                    it(#"should return mcn == "", mcnd == "", netopn == "", netop == "" when the eSIM radio is empty"#) {
+                    it(#"should return mcn == "", mcnd == "", simopn == "", simop == "" when the eSIM radio is empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
 
@@ -91,13 +91,13 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
                 }
 
                 context("when the primary carrier is Carrier1 (Physical SIM), the secondary carrier is Carrier 2 (eSIM)") {
-                    it(#"should return mcn == "", mcnd == "", netopn == "", netop == "" when the radios are empty"#) {
+                    it(#"should return mcn == "", mcnd == "", simopn == "", simop == "" when the radios are empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
@@ -107,12 +107,12 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
 
-                    it(#"should return mcn == Carrier1, mcnd == "", netopn == Carrier1, netop == 23420  when only the Physical SIM radio is not empty"#) {
-                        let netop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
+                    it(#"should return mcn == Carrier1, mcnd == "", simopn == Carrier1, simop == 23420  when only the Physical SIM radio is not empty"#) {
+                        let simop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
@@ -122,11 +122,11 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(equal(primaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
 
-                    it(#"should return mcn == "", mcnd == Carrier2, netopn == "", netop == "" when only the eSIM radio is not empty"#) {
+                    it(#"should return mcn == "", mcnd == Carrier2, simopn == "", simop == "" when only the eSIM radio is not empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
@@ -136,12 +136,12 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
 
-                    it("should return mcn == Carrier1, mcnd == Carrier2, netopn == Carrier1, netop == 23420 when the radios are not empty") {
-                        let netop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
+                    it("should return mcn == Carrier1, mcnd == Carrier2, simopn == Carrier1, simop == 23420 when the radios are not empty") {
+                        let simop = primaryCarrier.mobileCountryCode.combine(with: primaryCarrier.mobileNetworkCode)
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.primaryCarrierKey
@@ -151,13 +151,13 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(primaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(equal(secondaryCarrier.carrierName))
-                        expect(telephonyHandler.netopn).to(equal(primaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(primaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
                 }
 
                 context("when the primary carrier is Carrier2 (eSIM), the secondary carrier is Carrier1 (Physical SIM)") {
-                    it(#"should return mcn == "", mcnd == "", netopn == "", netop == "" when the radios are empty"#) {
+                    it(#"should return mcn == "", mcnd == "", simopn == "", simop == "" when the radios are empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
@@ -167,11 +167,11 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
 
-                    it(#"should return mcn == "", mcnd == Carrier1, netopn == "", netop == "" when the eSIM radio is empty"#) {
+                    it(#"should return mcn == "", mcnd == Carrier1, simopn == "", simop == "" when the eSIM radio is empty"#) {
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
                         telephonyNetworkInfo.safeDataServiceIdentifier = TelephonyNetworkInfoMock.Constants.secondaryCarrierKey
@@ -181,12 +181,12 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(beEmpty())
                         expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
-                        expect(telephonyHandler.netopn).to(beEmpty())
-                        expect(telephonyHandler.netop).to(beEmpty())
+                        expect(telephonyHandler.simopn).to(beEmpty())
+                        expect(telephonyHandler.simop).to(beEmpty())
                     }
 
-                    it(#"should return mcn == Carrier2, mcnd == "", netopn == Carrier2, netop == 20825 when the Physical SIM radio is empty"#) {
-                        let netop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
+                    it(#"should return mcn == Carrier2, mcnd == "", simopn == Carrier2, simop == 20825 when the Physical SIM radio is empty"#) {
+                        let simop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
 
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
@@ -197,12 +197,12 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(beEmpty())
-                        expect(telephonyHandler.netopn).to(equal(secondaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
 
-                    it("should return mcn == Carrier2, mcnd == Carrier1, netopn == Carrier2, netop == 20825 when the radios are not empty") {
-                        let netop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
+                    it("should return mcn == Carrier2, mcnd == Carrier1, simopn == Carrier2, simop == 20825 when the radios are not empty") {
+                        let simop = secondaryCarrier.mobileCountryCode.combine(with: secondaryCarrier.mobileNetworkCode)
 
                         telephonyNetworkInfo.subscribers = [TelephonyNetworkInfoMock.Constants.primaryCarrierKey: primaryCarrier,
                                                             TelephonyNetworkInfoMock.Constants.secondaryCarrierKey: secondaryCarrier]
@@ -213,8 +213,8 @@ final class TelephonyHandlerSpec: QuickSpec {
 
                         expect(telephonyHandler.mcn).to(equal(secondaryCarrier.carrierName))
                         expect(telephonyHandler.mcnd).to(equal(primaryCarrier.carrierName))
-                        expect(telephonyHandler.netopn).to(equal(secondaryCarrier.carrierName))
-                        expect(telephonyHandler.netop).to(equal(netop))
+                        expect(telephonyHandler.simopn).to(equal(secondaryCarrier.carrierName))
+                        expect(telephonyHandler.simop).to(equal(simop))
                     }
                 }
             }
