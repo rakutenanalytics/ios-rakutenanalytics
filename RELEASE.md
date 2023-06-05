@@ -83,6 +83,27 @@ git clone git@github.com:rakuten-mag/ios-analytics.git
 git checkout x.y.z
 ```
 
+- Install Ruby:
+    - Note: Ruby < 3.2.0 needs to be installed in order to generate the documentation
+    - Prerequisite: Uninstall any previously installed versions of ruby execpt the macOS's ruby version.
+    - Run:
+```
+\curl -sSL https://get.rvm.io | bash -s stable
+source ~/.rvm/scripts/rvm
+rvm install 3.0.2
+rvm use 3.0.2 --default
+```
+
+- Confirm that ruby 3.0.2 is correclty installed:
+```
+ruby -v
+```
+
+- Install bundler:
+```
+gem install bundler
+```
+
 - Create a deploy key for the online documentation
     - Download `id_ghe_deploy_analytics` from:
         - https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics
