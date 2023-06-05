@@ -118,6 +118,29 @@ bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Ftags%2F{tag}
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Fheads%2Frelease%2F{tag}
 
+- Install watchOS simulator in Xcode:
+    - Open Xcode>Preferences...
+    - Click on Platforms tab
+    - Install watchOS simulator
+    
+- Remove unpaired devices by executing this script:
+```
+#!/usr/bin/env bash
+set -x
+
+# Removing unpaired watchOS simulators fixes an issue with `pod lib lint` of RAnalyticsBroadcast on Xcode 14
+
+xcrun simctl list --json > simulators.json
+watch_os_udids=$(jq '.devices[] | map(select(.name | contains("Watch"))) | .[].udid' simulators.json -r)
+paired_watch_udids=$(jq '.pairs | map(.watch) | .[].udid' simulators.json -r)
+
+while IFS= read -r udid; do
+if [[ ! "${paired_watch_udids[*]}" =~ "${udid}" ]]; then
+    xcrun simctl delete ${udid}
+fi
+done <<< "$watch_os_udids"
+```
+
 - Confirm pod spec lint passes (will need to update repo first):
 ```
 bundle exec pod spec lint --allow-warnings --sources=https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git,https://cdn.cocoapods.org/
