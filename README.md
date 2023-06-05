@@ -419,6 +419,33 @@ It is also no longer available in Objective-C.
 ### RAnalyticsInternalOrigin
 `internal` has been replaced by `inner`.
 
+### RAnalyticsPushTrackingUtility
+`RAnalyticsPushTrackingUtility` has been removed.
+Please use `PushTrackingUtility` instead in RPushPNP SDK version 10.1.0.
+
+### RAnalyticsEvent
+
+#### Static properties
+
+The deprecated `pushNotification` property has been removed.
+Use `pushNotificationExternal` instead.
+
+The deprecated `pushNotificationReceived` property has been removed.
+Use `pushNotificationReceivedExternal` instead.
+        
+The deprecated `pushAutoRegistration` property has been removed.
+Use `pushAutoRegistrationExternal` instead.
+
+The deprecated `pushAutoUnregistration` property has been removed.
+Use `pushAutoUnregistrationExternal` instead.
+
+#### Functions
+
+This deprecated function has been removed:
+```@objc public convenience init(pushNotificationPayload: [String: Any])```
+
+Use `@objc public init(name: String, parameters: [String: Any]?)` instead.
+
 ## Migrating to v9.8.0
 `_rem_push_notify` event is no longer tracked when a regular push notification is opened.
 
