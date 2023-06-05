@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 10.0.0 (2023-06-05)
 
 ### Features
 * [CONRAT-27822](https://jira.rakuten-it.com/jira/browse/CONRAT-27822): Update rsdks parameter format.
