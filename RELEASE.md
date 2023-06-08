@@ -83,6 +83,27 @@ git clone git@github.com:rakuten-mag/ios-analytics.git
 git checkout x.y.z
 ```
 
+- Install Ruby:
+    - Note: Ruby < 3.2.0 needs to be installed in order to generate the documentation
+    - Prerequisite: Uninstall any previously installed versions of ruby execpt the macOS's ruby version.
+    - Run:
+```
+\curl -sSL https://get.rvm.io | bash -s stable
+source ~/.rvm/scripts/rvm
+rvm install 3.0.2
+rvm use 3.0.2 --default
+```
+
+- Confirm that ruby 3.0.2 is correclty installed:
+```
+ruby -v
+```
+
+- Install bundler:
+```
+gem install bundler
+```
+
 - Create a deploy key for the online documentation
     - Download `id_ghe_deploy_analytics` from:
         - https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics
@@ -117,6 +138,29 @@ bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/
 - Confirm tag/branch mirrored back to gitpub:
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Ftags%2F{tag}
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Fheads%2Frelease%2F{tag}
+
+- Install watchOS simulator in Xcode:
+    - Open Xcode>Preferences...
+    - Click on Platforms tab
+    - Install watchOS simulator
+    
+- Remove unpaired devices by executing this script:
+```
+#!/usr/bin/env bash
+set -x
+
+# Removing unpaired watchOS simulators fixes an issue with `pod lib lint` of RAnalyticsBroadcast on Xcode 14
+
+xcrun simctl list --json > simulators.json
+watch_os_udids=$(jq '.devices[] | map(select(.name | contains("Watch"))) | .[].udid' simulators.json -r)
+paired_watch_udids=$(jq '.pairs | map(.watch) | .[].udid' simulators.json -r)
+
+while IFS= read -r udid; do
+if [[ ! "${paired_watch_udids[*]}" =~ "${udid}" ]]; then
+    xcrun simctl delete ${udid}
+fi
+done <<< "$watch_os_udids"
+```
 
 - Confirm pod spec lint passes (will need to update repo first):
 ```
