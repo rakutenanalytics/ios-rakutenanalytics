@@ -95,6 +95,20 @@ final class DeviceIdentifierHandlerSpec: QuickSpec {
 
                             expect(handler.ckp()).to(equal("428529fb27609e73dce768588ba6f1a1c1647451"))
                         }
+
+                        it("should return 98f43051f367e16779c645e32fb731368e9fa792") {
+                            deviceIdentifierMock.idfvUUID = "D552F5FB-270F-4236-8FE9-11C14A353E71"
+                            let handler = DeviceIdentifierHandler(device: deviceIdentifierMock, hasher: SecureHasher())
+
+                            expect(handler.ckp()).to(equal("98f43051f367e16779c645e32fb731368e9fa792"))
+                        }
+
+                        it("should return ba63e16988f226917060c08f19e060f119509e9c") {
+                            deviceIdentifierMock.idfvUUID = "8D0E6370-A418-4A3C-81E1-6211D9C74071"
+                            let handler = DeviceIdentifierHandler(device: deviceIdentifierMock, hasher: SecureHasher())
+
+                            expect(handler.ckp()).to(equal("ba63e16988f226917060c08f19e060f119509e9c"))
+                        }
                     }
                 }
             }

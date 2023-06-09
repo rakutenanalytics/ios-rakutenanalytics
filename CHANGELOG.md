@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased Next
+
+### Improvements
+* [SDKCF-29393](https://jira.rakuten-it.com/jira/browse/SDKCF-29393): Add more tests to CKP in DeviceIdentifierHandlerSpec.
+
 ## Unreleased
 
 ## 10.0.0 (2023-06-05)
