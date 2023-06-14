@@ -195,7 +195,7 @@ platform :ios do
       # upload RELEASE framework to public GitHub repo and push podspec
       github_release = set_github_release(
         repository_name: public_repo,
-        api_token: ENV["RELEASE_GITHUB_TOKEN"],
+        api_token: ENV["RELEASE_PUBLIC_GITHUB_TOKEN"],
         name: release_name,
         tag_name: version,
         description: release_description,
@@ -204,7 +204,7 @@ platform :ios do
       ) unless skip_upload
 
       unless skip_pod_push
-        push_podspec(path: podspecPath, repo: public_repo, token: ENV["RELEASE_GITHUB_TOKEN"])
+        push_podspec(path: podspecPath, repo: public_repo, token: ENV["RELEASE_PUBLIC_GITHUB_TOKEN"])
       end
 
       UI.success "Successfully released v#{version}"

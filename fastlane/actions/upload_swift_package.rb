@@ -37,7 +37,7 @@ module Fastlane
             UI.message "Getting exiting Package.swift sha from the repo"
             existingPackageSwiftSha = nil
             GithubApiAction.run(
-              api_token: ENV["RELEASE_GITHUB_TOKEN"],
+              api_token: ENV["RELEASE_PUBLIC_GITHUB_TOKEN"],
               server_url: "https://api.github.com",
               http_method: "GET",
               path: "/repos/#{release_repo}/contents/Package.swift?ref=#{target_branch}",
@@ -65,7 +65,7 @@ module Fastlane
 
             UI.message "Uploading Package.swift to GitHub repo: #{release_repo}, branch #{target_branch}"
             result = other_action.github_api(
-              api_token: ENV["RELEASE_GITHUB_TOKEN"],
+              api_token: ENV["RELEASE_PUBLIC_GITHUB_TOKEN"],
               server_url: "https://api.github.com",
               http_method: "PUT",
               path: "/repos/#{release_repo}/contents/Package.swift",
@@ -80,7 +80,7 @@ module Fastlane
       def self.description
         "For release: Update RAnalytics target in Package.swift file using SDK framework zip file.
         For snapshot: Push updated XCFramework to the snapshot repo. 
-        The action requires SNAPSHOT_GITHUB_TOKEN and RELEASE_GITHUB_TOKEN env vars to be set."
+        The action requires SNAPSHOT_GITHUB_TOKEN and RELEASE_PUBLIC_GITHUB_TOKEN env vars to be set."
       end
 
       def self.available_options
