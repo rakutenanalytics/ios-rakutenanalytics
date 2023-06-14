@@ -92,7 +92,7 @@ enum PayloadParameterKeys {
 
     /// Location
     enum Location {
-        /// The location dictionary containing `lat`, `long`, `accu`, `tms`, `speed`, `speed_accuracy`, `alt`, `vertical_accuracy`, `bearing`, `bearing_accuracy`, `isaction`, `action_params`
+        /// The location dictionary containing `lat`, `long`, `accu`, `tms`, `speed`, `speed_accuracy`, `alt`, `vertical_accuracy`, `bearing`, `bearing_accuracy`
         static let loc = "loc"
 
         /// Latitude of collected location in degrees
@@ -140,30 +140,34 @@ enum PayloadParameterKeys {
         /// Bearing accuracy in degrees of this location
         /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
         static let bearingAccuracy = "bearing_accuracy"
+    }
 
-        /// isAction = false → The Location collection in regular interval/distance.
-        /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
-        /// Default value: `false`
-        static let isAction = "isaction"
+    /// Available only when the etype = `loc`
+    /// isAction = false → The Location collection in regular interval/distance.
+    /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
+    /// Default value: `false`
+    static let isAction = "isaction"
 
-        /// Optional Values which application can send along with requestLocation() method of public API.
-        /// - Note: Present only when `isaction` = true.
-        enum ActionParameters {
-            /// Type of action performed in requesting location
-            static let type = "action_type"
+    /// Optional Values which application can send along with requestLocation() method of public API.
+    /// - Note: Present only when `isaction` = true.
+    enum ActionParameters {
 
-            /// Logs related to performed action
-            static let log = "action_log"
+        static let actionParams = "action_params"
 
-            /// Identifier associated with the action
-            static let identifier = "action_id"
+        /// Type of action performed in requesting location
+        static let type = "type"
 
-            /// Duration of action
-            static let duration = "action_duration"
+        /// Logs related to performed action
+        static let log = "log"
 
-            /// Additional Information related to performed action
-            static let addLog = "action_add_log"
-        }
+        /// Identifier associated with the action
+        static let identifier = "id"
+
+        /// Duration of action
+        static let duration = "duration"
+
+        /// Additional Information related to performed action
+        static let addLog = "add_log"
     }
 
     enum Orientation {

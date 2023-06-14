@@ -154,37 +154,35 @@ extension LocationModel {
         return payload
     }
 
-    func addAction(to payload: [String: Any]) -> [String: Any] {
-        var location = payload
-
-        location[PayloadParameterKeys.Location.isAction] = isAction
+    func requestLocationActionParameters() -> [String: Any] {
+        var locationActionParameters = [String: Any]()
 
         // Add action parameters only when isAction is true and only when parameters are not empty
         if isAction,
            let actionParameters = actionParameters {
 
             if let actionType = actionParameters.actionType, !actionType.isEmpty {
-                location[PayloadParameterKeys.Location.ActionParameters.type] = actionType
+                locationActionParameters[PayloadParameterKeys.ActionParameters.type] = actionType
             }
 
             if let actionLog = actionParameters.actionLog, !actionLog.isEmpty {
-                location[PayloadParameterKeys.Location.ActionParameters.log] = actionLog
+                locationActionParameters[PayloadParameterKeys.ActionParameters.log] = actionLog
             }
 
             if let actionId = actionParameters.actionId, !actionId.isEmpty {
-                location[PayloadParameterKeys.Location.ActionParameters.identifier] = actionId
+                locationActionParameters[PayloadParameterKeys.ActionParameters.identifier] = actionId
             }
 
             if let actionDuration = actionParameters.actionDuration, !actionDuration.isEmpty {
-                location[PayloadParameterKeys.Location.ActionParameters.duration] = actionDuration
+                locationActionParameters[PayloadParameterKeys.ActionParameters.duration] = actionDuration
             }
 
             if let additionalLog = actionParameters.additionalLog, !additionalLog.isEmpty {
-                location[PayloadParameterKeys.Location.ActionParameters.addLog] = additionalLog
+                locationActionParameters[PayloadParameterKeys.ActionParameters.addLog] = additionalLog
             }
         }
 
-        return location
+        return locationActionParameters
     }
 }
 

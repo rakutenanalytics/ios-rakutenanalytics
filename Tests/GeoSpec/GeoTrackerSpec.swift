@@ -322,24 +322,14 @@ final class GeoTrackerSpec: QuickSpec {
                         expect(location[PayloadParameterKeys.Location.bearingAccuracy] as? CLLocationAccuracy).to(equal(expectedBearingAccuracy))
                     }
 
-                    func verifyNilActionParametersProperties(json: [String: Any]) {
-                        let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(beNil())
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(beNil())
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(beNil())
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(beNil())
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(beNil())
-                    }
-
                     func verifyNonEmptyActionParameters(json: [String: Any]) {
-                        let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
+                        let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
 
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(equal(expectedActionParamType))
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(equal(expectedActionParamLog))
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(equal(expectedActionParamId))
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(equal(expectedActionParamDuration))
-                        expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(equal(expectedActionParamAddLog))
+                        expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(equal(expectedActionParamType))
+                        expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(equal(expectedActionParamLog))
+                        expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(equal(expectedActionParamId))
+                        expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(equal(expectedActionParamDuration))
+                        expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(equal(expectedActionParamAddLog))
                     }
 
                     context("When loc event is sent without action parameters") {
@@ -356,17 +346,15 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                 verifyLocation(json: json)
 
-                                let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beFalse())
+                                expect(json[PayloadParameterKeys.isAction] as? Bool).to(beFalse())
 
-                                verifyNilActionParametersProperties(json: json)
                             }
                         }
 
                         context("When isAction is true") {
                             it("should send the expected RAT payload without nil action parameters properties") {
                                 state.lastKnownLocation = createLocation(isAction: true,
-                                                                         actionParameters: nilActionParameters)
+                                                                         actionParameters: GeoActionParameters())
 
                                 _ = geoTracker?.process(event: createLocEvent(), state: state)
 
@@ -377,10 +365,9 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                 verifyLocation(json: json)
 
-                                let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                verifyNilActionParametersProperties(json: json)
+                                expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
                     }
@@ -400,10 +387,8 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                 verifyLocation(json: json)
 
-                                let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beFalse())
+                                expect(json[PayloadParameterKeys.isAction] as? Bool).to(beFalse())
 
-                                verifyNilActionParametersProperties(json: json)
                             }
                         }
 
@@ -421,10 +406,9 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                 verifyLocation(json: json)
 
-                                let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                verifyNilActionParametersProperties(json: json)
+                                expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
                     }
@@ -444,10 +428,9 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                 verifyLocation(json: json)
 
-                                let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beFalse())
+                                expect(json[PayloadParameterKeys.isAction] as? Bool).to(beFalse())
 
-                                verifyNilActionParametersProperties(json: json)
+                                expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
 
@@ -466,8 +449,7 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
                                     verifyNonEmptyActionParameters(json: json)
                                 }
@@ -493,14 +475,14 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(equal(expectedActionParamType))
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(equal(expectedActionParamType))
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(beNil())
                                 }
                             }
 
@@ -524,14 +506,14 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(equal(expectedActionParamLog))
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(equal(expectedActionParamLog))
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(beNil())
                                 }
                             }
 
@@ -555,14 +537,14 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(equal(expectedActionParamId))
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(equal(expectedActionParamId))
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(beNil())
                                 }
                             }
 
@@ -586,14 +568,14 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(equal(expectedActionParamDuration))
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(equal(expectedActionParamDuration))
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(beNil())
                                 }
                             }
 
@@ -617,14 +599,14 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyAutomaticFields(json: json, expectedLtm: expectedLtm, expectedTs1: expectedTs1)
                                     verifyLocation(json: json)
 
-                                    let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
-                                    expect(location[PayloadParameterKeys.Location.isAction] as? Bool).to(beTrue())
+                                    let actionParametersProperties: [String: Any]! = json[PayloadParameterKeys.ActionParameters.actionParams] as? [String: Any]
+                                    expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
 
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.type] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.log] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.identifier] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.duration] as? String).to(beNil())
-                                    expect(location[PayloadParameterKeys.Location.ActionParameters.addLog] as? String).to(equal(expectedActionParamAddLog))
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.type] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.log] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.identifier] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.duration] as? String).to(beNil())
+                                    expect(actionParametersProperties[PayloadParameterKeys.ActionParameters.addLog] as? String).to(equal(expectedActionParamAddLog))
                                 }
                             }
                         }

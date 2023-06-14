@@ -226,12 +226,14 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             return
         }
 
-        var locationPayload = locationModel.toDictionary
+        payload[PayloadParameterKeys.Location.loc] = locationModel.toDictionary
 
         if addActionParameters {
-            locationPayload = locationModel.addAction(to: locationPayload)
+            let requestLocationActionParameters = locationModel.requestLocationActionParameters()
+            if !requestLocationActionParameters.isEmpty {
+                payload[PayloadParameterKeys.ActionParameters.actionParams] = requestLocationActionParameters
+            }
+            payload[PayloadParameterKeys.isAction] = locationModel.isAction
         }
-
-        payload[PayloadParameterKeys.Location.loc] = locationPayload
     }
 }
