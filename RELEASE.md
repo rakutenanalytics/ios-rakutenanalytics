@@ -123,6 +123,7 @@ chmod 400 deploy_key
 ```
 bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/ios-analytics-docs.git" deploy_key:deploy_key
 ```
+Note: deploy_key is optional and can be nil. In this case, ssh key is used.
 
 - Confirm docs for this version have been published to:
     - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs
