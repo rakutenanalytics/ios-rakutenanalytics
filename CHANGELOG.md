@@ -1,12 +1,10 @@
 # Changelog
 
-## Unreleased Next
+## Unreleased
 
 ### Improvements
 * [CONRAT-29393](https://jira.rakuten-it.com/jira/browse/CONRAT-29393): Add more tests to CKP in DeviceIdentifierHandlerSpec.
 * [CONRAT-29521](https://jira.rakuten-it.com/jira/browse/CONRAT-29521): Change payload format of action parameters for `loc` events.
-
-## Unreleased
 
 ## 10.0.0 (2023-06-05)
 
