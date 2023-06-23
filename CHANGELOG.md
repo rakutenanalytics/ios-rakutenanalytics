@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 10.0.1 (2023-06-23)
 
 ### Improvements
 * [CONRAT-29393](https://jira.rakuten-it.com/jira/browse/CONRAT-29393): Add more tests to CKP in DeviceIdentifierHandlerSpec.
