@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 10.0.1 (2023-06-23)
 
 ### Improvements
