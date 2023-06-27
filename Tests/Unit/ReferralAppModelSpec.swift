@@ -117,23 +117,62 @@ final class ReferralAppModelSpec: QuickSpec {
                 }
 
                 context("Initialization with mandatory parameters") {
-                    it("should be initialized with expected values") {
-                        let appURL = URL(string: "app://?\(mandatoryParametersQueryItems)")!
-                        let appModel = ReferralAppModel(url: appURL, sourceApplication: bundleIdentifier)!
-                        verify(model: appModel)
+                    context("When url is URL scheme") {
+                        let appURL: URL! = URL(string: "app://?\(mandatoryParametersQueryItems)")
+                        let model: ReferralAppModel! = ReferralAppModel(url: appURL, sourceApplication: bundleIdentifier)
 
-                        let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(mandatoryParametersQueryItems)")!
-                        let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
-                        verify(model: universalModel)
+                        it("should set an expected bundle identifier") {
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
+                        }
+
+                        it("should set an expected account identifier") {
+                            expect(model.accountIdentifier).to(equal(1))
+                        }
+
+                        it("should set an expected application identifier") {
+                            expect(model.applicationIdentifier).to(equal(2))
+                        }
+
+                        it("should set a nil link") {
+                            expect(model.link).to(beNil())
+                        }
+
+                        it("should set a nil component") {
+                            expect(model.component).to(beNil())
+                        }
+
+                        it("should set an empty custom parameters") {
+                            expect(model.customParameters).to(equal([:]))
+                        }
                     }
 
-                    func verify(model: ReferralAppModel) {
-                        expect(model.bundleIdentifier).to(equal(bundleIdentifier))
-                        expect(model.accountIdentifier).to(equal(1))
-                        expect(model.applicationIdentifier).to(equal(2))
-                        expect(model.link).to(beNil())
-                        expect(model.component).to(beNil())
-                        expect(model.customParameters).to(equal([:]))
+                    context("When url is universal link") {
+                        let universalLinkURL: URL! = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(mandatoryParametersQueryItems)")
+                        let model: ReferralAppModel! = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)
+
+                        it("should set an expected bundle identifier") {
+                            expect(model.bundleIdentifier).to(equal(bundleIdentifier))
+                        }
+
+                        it("should set an expected account identifier") {
+                            expect(model.accountIdentifier).to(equal(1))
+                        }
+
+                        it("should set an expected application identifier") {
+                            expect(model.applicationIdentifier).to(equal(2))
+                        }
+
+                        it("should set a nil link") {
+                            expect(model.link).to(beNil())
+                        }
+
+                        it("should set a nil component") {
+                            expect(model.component).to(beNil())
+                        }
+
+                        it("should set an empty custom parameters") {
+                            expect(model.customParameters).to(equal([:]))
+                        }
                     }
                 }
 
