@@ -178,17 +178,27 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
-                context("Language Code") {
-                    it("should set a non-nil dln") {
-                        var payload: [String: Any]?
+                context("Device Language Code") {
+                    let deviceLanguageCodes = ["jp", "en", "de", "fr", "hi"]
 
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
+                    func verify(deviceLanguageCode: String) {
+                        it("should set a non-nil dln") {
+                            var payload: [String: Any]?
+
+                            bundle.languageCode = deviceLanguageCode
+
+                            expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                                payload = $0.first
+                            }
+                            expect(payload).toEventuallyNot(beNil())
+
+                            let dln = payload?["dln"] as? String
+                            expect(dln).to(equal(deviceLanguageCode))
                         }
-                        expect(payload).toEventuallyNot(beNil())
+                    }
 
-                        let dln = payload?["dln"] as? String
-                        expect(dln).to(equal(bundle.languageCode as? String))
+                    deviceLanguageCodes.forEach { deviceLanguageCode in
+                        verify(deviceLanguageCode: deviceLanguageCode)
                     }
                 }
 

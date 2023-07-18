@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Unit tests
+* [CONRAT-29129](https://jira.rakuten-it.com/jira/browse/CONRAT-29129): BDD test cases for dln field Device Language.
+
 ## 10.0.1 (2023-06-23)
 
 ### Improvements
