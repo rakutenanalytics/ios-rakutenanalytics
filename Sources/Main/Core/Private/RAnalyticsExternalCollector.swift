@@ -78,7 +78,7 @@ final class RAnalyticsExternalCollector: UserIdentifiable {
 
     /// The IDSDK user identifier.
     ///
-    /// - Note: The easy identifier is being stored in shared preferences.
+    /// - Note: The easy identifier is being stored in keychain.
     var easyIdentifier: String? {
         willSet(newValue) {
             guard easyIdentifier != newValue else {
