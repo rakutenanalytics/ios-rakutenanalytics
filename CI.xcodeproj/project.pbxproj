@@ -52,8 +52,10 @@
 		C944CDF6299125520074319F /* ReachabilitySpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C944CDDE299125340074319F /* ReachabilitySpec.swift */; };
 		C944CDF7299125520074319F /* RLoggerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C944CDD4299125340074319F /* RLoggerSpec.swift */; };
 		C944CDF8299125520074319F /* OptionalExtensionsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C944CDD7299125340074319F /* OptionalExtensionsSpec.swift */; };
+		C94648A42A6A8BF5005FC801 /* IceBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94648A22A6A8BD9005FC801 /* IceBase.swift */; };
+		C94648A72A6A8C31005FC801 /* AppDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94648A52A6A8C27005FC801 /* AppDelegates.swift */; };
+		C94648AA2A6A8DB1005FC801 /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94648A82A6A8D98005FC801 /* UIApplication+Extensions.swift */; };
 		C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */; };
-		C94B70332798702500A1898A /* ClassManipulatorUIApplicationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B702C2798700300A1898A /* ClassManipulatorUIApplicationTests.m */; };
 		C94B70342798702500A1898A /* ObjcInteropSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B702B2798700300A1898A /* ObjcInteropSpec.m */; };
 		C94B703A2798719400A1898A /* DatabaseTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70382798719000A1898A /* DatabaseTestUtils.swift */; };
 		C94B703B2798719500A1898A /* DatabaseTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70382798719000A1898A /* DatabaseTestUtils.swift */; };
@@ -76,6 +78,7 @@
 		C969130D25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */; };
 		C96A34F725F8A9AC00527DCD /* RAnalyticsEventSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */; };
 		C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */; };
+		C97641632A69073000108774 /* AppDelegateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97641622A69073000108774 /* AppDelegateSpec.swift */; };
 		C97AB9AA272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */; };
 		C97C0B8A268524F90046F0CE /* EnvironmentBundleSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */; };
 		C980DA9627BA5C300059E12D /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DA9527BA5C300059E12D /* Data+Extensions.swift */; };
@@ -198,9 +201,11 @@
 		C944CDDC299125340074319F /* StringExtensionsSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensionsSpec.swift; sourceTree = "<group>"; };
 		C944CDDD299125340074319F /* URLSessionMockSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLSessionMockSpec.swift; sourceTree = "<group>"; };
 		C944CDDE299125340074319F /* ReachabilitySpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReachabilitySpec.swift; sourceTree = "<group>"; };
+		C94648A22A6A8BD9005FC801 /* IceBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IceBase.swift; sourceTree = "<group>"; };
+		C94648A52A6A8C27005FC801 /* AppDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegates.swift; sourceTree = "<group>"; };
+		C94648A82A6A8D98005FC801 /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsErrorSpec.swift; sourceTree = "<group>"; };
 		C94B702B2798700300A1898A /* ObjcInteropSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcInteropSpec.m; sourceTree = "<group>"; };
-		C94B702C2798700300A1898A /* ClassManipulatorUIApplicationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassManipulatorUIApplicationTests.m; sourceTree = "<group>"; };
 		C94B70382798719000A1898A /* DatabaseTestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseTestUtils.swift; sourceTree = "<group>"; };
 		C94B703C2798721400A1898A /* MockUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUtils.swift; sourceTree = "<group>"; };
 		C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsCookieInjector+Create.swift"; sourceTree = "<group>"; };
@@ -218,6 +223,7 @@
 		C969130C25CAD82D0073D804 /* RAnalyticsExternalCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollectorSpec.swift; sourceTree = "<group>"; };
 		C96A34F625F8A9AC00527DCD /* RAnalyticsEventSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEventSpec.swift; sourceTree = "<group>"; };
 		C96B72E9261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRpCookieFetcherSpec.swift; sourceTree = "<group>"; };
+		C97641622A69073000108774 /* AppDelegateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegateSpec.swift; sourceTree = "<group>"; };
 		C97AB9A9272865CC00F3BAB8 /* AdvertisementIdentifiableSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisementIdentifiableSpec.swift; sourceTree = "<group>"; };
 		C97C0B89268524F90046F0CE /* EnvironmentBundleSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentBundleSpec.swift; sourceTree = "<group>"; };
 		C980DA9527BA5C300059E12D /* Data+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
@@ -302,6 +308,7 @@
 				C9B395FD276A12FD003F2D5D /* AnalyticsEventTrackerSpec.swift */,
 				C9E95A212642C1880077881B /* AnalyticsManagerSpec.swift */,
 				C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */,
+				C97641622A69073000108774 /* AppDelegateSpec.swift */,
 				C9B2806726A6B0BF00A410D5 /* AppleClassSpec.swift */,
 				C9AC4738299B96280045C21A /* CoreInfosCollectorSpec.swift */,
 				C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */,
@@ -459,7 +466,6 @@
 		C94B702A2798700300A1898A /* UnitObjc */ = {
 			isa = PBXGroup;
 			children = (
-				C94B702C2798700300A1898A /* ClassManipulatorUIApplicationTests.m */,
 				C94B702B2798700300A1898A /* ObjcInteropSpec.m */,
 			);
 			path = UnitObjc;
@@ -468,17 +474,20 @@
 		C94B70372798719000A1898A /* RAnalyticsTestHelpers */ = {
 			isa = PBXGroup;
 			children = (
-				C9C3B8B9279ED2DD00FBA3FE /* Resources */,
+				C94648A52A6A8C27005FC801 /* AppDelegates.swift */,
 				C94B704C2798749A00A1898A /* Array+Extensions.swift */,
 				C94B70472798739000A1898A /* BundleHelper.swift */,
 				C980DA9527BA5C300059E12D /* Data+Extensions.swift */,
 				C94B70382798719000A1898A /* DatabaseTestUtils.swift */,
 				C9AC473A299C05FA0045C21A /* Dictionary+RAT.swift */,
+				C94648A22A6A8BD9005FC801 /* IceBase.swift */,
 				C94B703C2798721400A1898A /* MockUtils.swift */,
 				C944CDCD2990F72A0074319F /* NimbleExtensions.swift */,
 				C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */,
 				C94B704B2798749A00A1898A /* RAnalyticsEvent+Helper.swift */,
 				C94B70432798734600A1898A /* RAnalyticsRATExpecter.swift */,
+				C9C3B8B9279ED2DD00FBA3FE /* Resources */,
+				C94648A82A6A8D98005FC801 /* UIApplication+Extensions.swift */,
 				C944CDC82990F6970074319F /* URLSessionMock.swift */,
 				C9E7602427B12168006B22F5 /* URLSessionMock+Stub.swift */,
 				C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */,
@@ -773,6 +782,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */,
+				C94648A72A6A8C31005FC801 /* AppDelegates.swift in Sources */,
 				C94F90D426DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift in Sources */,
 				6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */,
 				C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */,
@@ -784,7 +794,7 @@
 				C9010C442670C2BC00769C83 /* RAnalyticsRATTrackerProcessSpec.swift in Sources */,
 				C944CDF1299125520074319F /* AtomicWrapperSpec.swift in Sources */,
 				C944CDEC299125520074319F /* NSObjectExtensionsSpec.swift in Sources */,
-				C94B70332798702500A1898A /* ClassManipulatorUIApplicationTests.m in Sources */,
+				C94648AA2A6A8DB1005FC801 /* UIApplication+Extensions.swift in Sources */,
 				C94B70532798CFE500A1898A /* RABEventBroadcasterSpec.swift in Sources */,
 				C9010C6D2670D9CD00769C83 /* RAnalyticsRATTrackerPayloadSpec.swift in Sources */,
 				C944CDF8299125520074319F /* OptionalExtensionsSpec.swift in Sources */,
@@ -849,8 +859,10 @@
 				C92602C228F6C87A00C1BC41 /* GetWebViewURLSpec.swift in Sources */,
 				C9AC473C299C060D0045C21A /* Dictionary+RAT.swift in Sources */,
 				C9B39600276A17C8003F2D5D /* AnalyticsEventPosterSpec.swift in Sources */,
+				C97641632A69073000108774 /* AppDelegateSpec.swift in Sources */,
 				C94B703E2798721900A1898A /* MockUtils.swift in Sources */,
 				C9E7602627B121C2006B22F5 /* URLSessionMock+Stub.swift in Sources */,
+				C94648A42A6A8BF5005FC801 /* IceBase.swift in Sources */,
 				C9010DCE2671E77400769C83 /* PositiveIntegerNumberSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

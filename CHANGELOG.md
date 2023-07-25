@@ -4,6 +4,7 @@
 
 ### Unit tests
 * [CONRAT-29129](https://jira.rakuten-it.com/jira/browse/CONRAT-29129): BDD test cases for dln field Device Language.
+* [CONRAT-30217](https://jira.rakuten-it.com/jira/browse/CONRAT-30217): Migrate ClassManipulatorUIApplicationTests.m to Swift.
 
 ## 10.0.1 (2023-06-23)
 
