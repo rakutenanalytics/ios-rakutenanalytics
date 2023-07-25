@@ -35,7 +35,8 @@ private final class CustomSceneDelegate: NSObject, UISceneDelegate {
 final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
     override func spec() {
         describe("ReferralAppTrackingSceneDelegateSpec") {
-            let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
+            let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
+            let databaseName = "ReferralAppTrackingSceneDelegateSpec.db"
             let databaseTableName = "testTableName_ReferralAppTrackingSceneDelegateSpec"
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
@@ -50,9 +51,16 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
             var analyticsManager: ReferralAppTrackable!
 
             context("When the delegate is set to a non-nil value") {
+                beforeSuite {
+                    let databaseURL: URL! = FileManager.default.databaseFileURL(databaseName: databaseName,
+                                                                                databaseParentDirectory: databaseParentDirectory)
+
+                    try? FileManager.default.removeItem(at: databaseURL)
+                }
+
                 beforeEach {
-                    databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseTableName,
-                                                                                    databaseParentDirectory: databaseDirectory)!
+                    databaseConnection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
+                                                                                    databaseParentDirectory: databaseParentDirectory)
                     database = RAnalyticsDatabase.database(connection: databaseConnection)
                     dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database,
                                                                                         tableName: databaseTableName)
