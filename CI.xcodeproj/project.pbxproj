@@ -56,7 +56,6 @@
 		C94648A72A6A8C31005FC801 /* AppDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94648A52A6A8C27005FC801 /* AppDelegates.swift */; };
 		C94648AA2A6A8DB1005FC801 /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94648A82A6A8D98005FC801 /* UIApplication+Extensions.swift */; };
 		C9493EAA2786D09D00BA278D /* AnalyticsErrorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */; };
-		C94B70342798702500A1898A /* ObjcInteropSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = C94B702B2798700300A1898A /* ObjcInteropSpec.m */; };
 		C94B703A2798719400A1898A /* DatabaseTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70382798719000A1898A /* DatabaseTestUtils.swift */; };
 		C94B703B2798719500A1898A /* DatabaseTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B70382798719000A1898A /* DatabaseTestUtils.swift */; };
 		C94B703E2798721900A1898A /* MockUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94B703C2798721400A1898A /* MockUtils.swift */; };
@@ -205,7 +204,6 @@
 		C94648A52A6A8C27005FC801 /* AppDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegates.swift; sourceTree = "<group>"; };
 		C94648A82A6A8D98005FC801 /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		C9493EA92786D09D00BA278D /* AnalyticsErrorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsErrorSpec.swift; sourceTree = "<group>"; };
-		C94B702B2798700300A1898A /* ObjcInteropSpec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjcInteropSpec.m; sourceTree = "<group>"; };
 		C94B70382798719000A1898A /* DatabaseTestUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseTestUtils.swift; sourceTree = "<group>"; };
 		C94B703C2798721400A1898A /* MockUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUtils.swift; sourceTree = "<group>"; };
 		C94B70402798725200A1898A /* RAnalyticsCookieInjector+Create.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAnalyticsCookieInjector+Create.swift"; sourceTree = "<group>"; };
@@ -415,7 +413,6 @@
 				C94B70512798CFE000A1898A /* RAnalyticsBroadcast */,
 				C94B70372798719000A1898A /* RAnalyticsTestHelpers */,
 				16E4817520B28EDB006CB857 /* Unit */,
-				C94B702A2798700300A1898A /* UnitObjc */,
 				C944CDD1299125340074319F /* UtilsSpec */,
 			);
 			path = Tests;
@@ -461,14 +458,6 @@
 				C944CDDE299125340074319F /* ReachabilitySpec.swift */,
 			);
 			path = UtilsSpec;
-			sourceTree = "<group>";
-		};
-		C94B702A2798700300A1898A /* UnitObjc */ = {
-			isa = PBXGroup;
-			children = (
-				C94B702B2798700300A1898A /* ObjcInteropSpec.m */,
-			);
-			path = UnitObjc;
 			sourceTree = "<group>";
 		};
 		C94B70372798719000A1898A /* RAnalyticsTestHelpers */ = {
@@ -802,7 +791,6 @@
 				C944CDF3299125520074319F /* DictionaryExtensionsSpec.swift in Sources */,
 				C96B72EA261DF98200CF91BA /* RAnalyticsRpCookieFetcherSpec.swift in Sources */,
 				C9F01EA52A08DE090017AE54 /* GeoLocationManagerSpec.swift in Sources */,
-				C94B70342798702500A1898A /* ObjcInteropSpec.m in Sources */,
 				C94B70442798734600A1898A /* RAnalyticsRATExpecter.swift in Sources */,
 				C94B70482798739100A1898A /* BundleHelper.swift in Sources */,
 				4BB2042E268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */,

@@ -7,8 +7,6 @@ inhibit_all_warnings!
 
 abstract_target 'Common' do
   pod 'RAnalyticsBroadcast', :inhibit_warnings => false, :path => './RAnalyticsBroadcast.podspec'
-  pod 'OCMock'
-  pod 'Kiwi', '~> 3.0'
   pod 'Quick', '~> 5.0'
   pod 'Nimble'
   pod 'ViewInspector'

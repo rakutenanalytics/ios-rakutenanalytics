@@ -6,6 +6,7 @@
 * [CONRAT-29129](https://jira.rakuten-it.com/jira/browse/CONRAT-29129): BDD test cases for dln field Device Language.
 * [CONRAT-30217](https://jira.rakuten-it.com/jira/browse/CONRAT-30217): Migrate ClassManipulatorUIApplicationTests.m to Swift.
 * [CONRAT-30240](https://jira.rakuten-it.com/jira/browse/CONRAT-30240): Fix ReferralAppTrackingSceneDelegateSpec failure on Bitrise.
+* [CONRAT-30252](https://jira.rakuten-it.com/jira/browse/CONRAT-30252): Remove `ObjcInteropSpec.m`.
 
 ## 10.0.1 (2023-06-23)
 
