@@ -305,6 +305,36 @@ struct ContentView: View {
 The IDSDK member identifier needs to be set and unset manually in order to track login and logout events with the correct member identifier.
 In most cases, the value you set as member identifier should be the member's easy identifier. The easy identifier can be extracted from the IDSDK ID token.
 
+## Handle RAE to IDSDK migration
+
+### Tracking
+
+For information:
+- `userid` is set in the RAT payload when user is logged-in with `RAuthenticationCore` SDK (RAE).
+- `easyid` is set in the RAT payload when user is logged-in with `IDSDK`.
+
+### Warning
+
+If `RAuthenticationCore` SDK (RAE) is replaced by `IDSDK`, therefore `userid` will still be set in the RAT payload.
+It is an issue because the presence of `userid` in the RAT payload means that the user is still logged-in with RAE.
+
+### How to properly handle RAE->IDSDK Migration?
+
+If `RAuthenticationCore` SDK (RAE) is intended to be replaced by `IDSDK`, therefore the user has to be first logged out from RAE so `userid` won't be set in the RAT payload.
+
+Therefore, in order to have a proper RAE->IDSDK migration, it is strongly recommended to keep `RAuthenticationCore` SDK (RAE) in your app in order to logout your users from RAE as below:
+```
+import RAuthenticationCore
+
+func logout() {
+    account.logout(with: settings) { error in
+        ...
+    }
+}
+```
+
+That means that `RAuthenticationCore` SDK (RAE) must be kept in your app (using exclusively `IDSDK` authentication) until all your users are logged out from RAE.
+
 ## Handle login
 
 When you successfully [acquire an ID-SDK session](https://pages.ghe.rakuten-it.com/id-sdk/specs/user-guide/#session-request) you should notify the RAnalytics SDK of the user's member identifier (Easy ID) using `setMemberIdentifier`. 

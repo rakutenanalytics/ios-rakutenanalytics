@@ -8,6 +8,9 @@
 * [CONRAT-30240](https://jira.rakuten-it.com/jira/browse/CONRAT-30240): Fix ReferralAppTrackingSceneDelegateSpec failure on Bitrise.
 * [CONRAT-30252](https://jira.rakuten-it.com/jira/browse/CONRAT-30252): Remove `ObjcInteropSpec.m`.
 
+### Docs
+* [CONRAT-30239](https://jira.rakuten-it.com/jira/browse/CONRAT-30239): Update Readme about migration of RAE to IDSDK.
+
 ## 10.0.1 (2023-06-23)
 
 ### Improvements
