@@ -17,9 +17,7 @@ https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
 - All code has been merged and tested
 - Confirm intended new release version tag is consistent with the public API changes since previous release:
     - Use the sdk-api-diff tool or git diff
-- Create release branch then create PR to update:
-    - READMEs
-    - CHANGELOG (pending release notes for this version should go under the "## Unreleased" header)
+- Create release branch (example: release/9.6.0)
 
 ## Operations
 
@@ -35,6 +33,8 @@ https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
 - Click on 'Start build'
 
 ## Post Operations
+
+### Verify the release
 
 - Confirm that the Release workflow passed:
     - https://app.bitrise.io/app/4b13c693939a9575
@@ -73,6 +73,8 @@ https://github.com/rakuten-mag/ios-analytics/blob/master/bitrise.yml
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/browse/Specs/RAnalytics/{tag}/RAnalytics.podspec
         - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-specs/commits
 
+### Upload the documentation
+
 - Clone the repository:
 ```bash
 git clone git@github.com:rakuten-mag/ios-analytics.git
@@ -104,6 +106,16 @@ ruby -v
 gem install bundler
 ```
 
+#### Upload with ssh key
+
+- Run following command line to upload documentation:
+```
+bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/ios-analytics-docs.git" deploy_key:deploy_key
+```
+Note: deploy_key must be passed as nil value
+
+#### Upload wih deploy key (optional)
+
 - Create a deploy key for the online documentation
     - Download `id_ghe_deploy_analytics` from:
         - https://confluence.rakuten-it.com/confluence/display/MAGS/Internal+accounts+for+SDK+Team#InternalaccountsforSDKTeam-ios-analytics
@@ -123,10 +135,13 @@ chmod 400 deploy_key
 ```
 bundle exec fastlane ios deploy_ghpages ghpages_url:"git@ghe.rakuten-it.com:mag/ios-analytics-docs.git" deploy_key:deploy_key
 ```
-Note: deploy_key is optional and can be nil. In this case, ssh key is used.
+
+#### Verify the documentation publication
 
 - Confirm docs for this version have been published to:
     - https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs
+
+### Update the portal
 
 - Add new version in docs portal (https://pages.ghe.rakuten-it.com/mag/mag-sdk-docs/): 
     - Please see readme (https://ghe.rakuten-it.com/mag/mag-sdk-docs#adding-new-sdk-version) for details.
@@ -139,6 +154,8 @@ Note: deploy_key is optional and can be nil. In this case, ssh key is used.
 - Confirm tag/branch mirrored back to gitpub:
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Ftags%2F{tag}
     - https://gitpub.rakuten-it.com/projects/ECO/repos/core-ios-analytics/browse?at=refs%2Fheads%2Frelease%2F{tag}
+
+### Cocoapods verification
 
 - Install watchOS simulator in Xcode:
     - Open Xcode>Preferences...
@@ -168,6 +185,8 @@ done <<< "$watch_os_udids"
 bundle exec pod spec lint --allow-warnings --sources=https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git,https://cdn.cocoapods.org/
 ```
 
+### Build and run sample apps
+
 - Confirm that pod install / build / running of sample app succeeds after:
     - executing `pod repo update`
     - setting the sample app Podfile RAnalytics dependency to the released GitHub version (pod 'RAnalytics', '9.6.0'):
@@ -175,6 +194,8 @@ bundle exec pod spec lint --allow-warnings --sources=https://gitpub.rakuten-it.c
 
 - Confirm that build / running of SamplesSPM app succeeds after setting the Swift package dependency to the released github version:
     - Set the public framework in the Swift Package Manager section and set the exact version: https://github.com/rakutentech/ios-analytics-framework
+
+### Inform the customers
 
 - Inform any waiting customers that the release is available
 
