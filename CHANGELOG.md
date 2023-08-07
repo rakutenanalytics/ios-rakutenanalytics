@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improvements
+* [CONRAT-30314](https://jira.rakuten-it.com/jira/browse/CONRAT-30314): Show an empty page in Sample app to test pv event tracking.
+
 ### Unit tests
 * [CONRAT-29129](https://jira.rakuten-it.com/jira/browse/CONRAT-29129): BDD test cases for dln field Device Language.
 * [CONRAT-30217](https://jira.rakuten-it.com/jira/browse/CONRAT-30217): Migrate ClassManipulatorUIApplicationTests.m to Swift.

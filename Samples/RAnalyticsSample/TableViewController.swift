@@ -14,6 +14,8 @@ enum GlobalConstants {
     static let showWebViewUserAgent = "Show WKWebView's user agent"
     static let startLocationCollection = "Start Location Collection"
     static let requestGeoLocation = "Request Geo Location"
+    static let showEmptyPage = "Show empty page (for pv event tests)"
+    static let emptyPageTitle = "Empty page"
 }
 
 enum TableViewCellType: Int, CaseIterable {
@@ -26,7 +28,8 @@ enum TableViewCellType: Int, CaseIterable {
          enableAppUserAgent,
          showWebViewUserAgent,
          requestGeoLocation,
-         startLocationCollection
+         startLocationCollection,
+         showEmptyPage
 
     var cellIdentifier: String {
         switch self {
@@ -34,7 +37,7 @@ enum TableViewCellType: Int, CaseIterable {
             return "SwitchTableViewCell"
         case .accountID, .appID:
             return "TextFieldTableViewCell"
-        case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation:
+        case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation, .showEmptyPage:
             return "BaseTableViewCell"
         }
     }
@@ -61,6 +64,8 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.requestGeoLocation
         case .startLocationCollection:
             return GlobalConstants.startLocationCollection
+        case .showEmptyPage:
+            return GlobalConstants.showEmptyPage
         }
     }
 }
@@ -246,6 +251,11 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                                            from: self)
                 }
             }
+
+        case .showEmptyPage:
+            let viewController = UIViewController()
+            viewController.title = GlobalConstants.emptyPageTitle
+            navigationController?.pushViewController(viewController, animated: true)
 
         default: ()
         }
