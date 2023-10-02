@@ -10,7 +10,6 @@
 * [CONRAT-30217](https://jira.rakuten-it.com/jira/browse/CONRAT-30217): Migrate ClassManipulatorUIApplicationTests.m to Swift.
 * [CONRAT-30240](https://jira.rakuten-it.com/jira/browse/CONRAT-30240): Fix ReferralAppTrackingSceneDelegateSpec failure on Bitrise.
 * [CONRAT-30252](https://jira.rakuten-it.com/jira/browse/CONRAT-30252): Remove `ObjcInteropSpec.m`.
-* [CONRAT-30915](https://jira.rakuten-it.com/jira/browse/CONRAT-30915): Update Test framework dependency version of Quick and Nimble.
 
 ### Docs
 * [CONRAT-30239](https://jira.rakuten-it.com/jira/browse/CONRAT-30239): Update Readme about migration of RAE to IDSDK.

@@ -10,9 +10,9 @@ let package = Package(
         .library(name: "RAnalytics", targets: ["RAnalytics"])
     ],
     dependencies: [
-             .package(url: "https://github.com/Quick/Quick.git", "5.0.0"..<"7.3.0"),
+             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
 
-             .package(url: "https://github.com/Quick/Nimble.git", "9.1.0"..<"12.3.0"),
+             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
 
              .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.9.1")),
         ],
