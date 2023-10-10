@@ -4,3 +4,6 @@ source "https://rubygems.org"
 
 gem 'cocoapods'
 gem 'cocoapods-user-defined-build-types'
+
+# to solve incompatibility issue of activesupport v7.1.0 with cocoapods
+gem "activesupport", "= 7.0.8"

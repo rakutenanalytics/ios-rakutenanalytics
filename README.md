@@ -212,6 +212,29 @@ RAnalyticsPushTrackingUtility.trackPushConversionEvent(pushRequestIdentifier: pu
 
 Note: The RAT event name is `_rem_push_cv`.
 
+## Core Telephony values tracking: CTCarrier deprecation
+
+We used [CTCarrier](https://developer.apple.com/documentation/coretelephony/ctcarrier) API to track values:
+
+- `carrierName`
+- `mobileCountryCode`
+- `mobileNetworkCode`
+- `isoCountryCode`
+- `allowsVOIP`
+
+⚠️ Since iOS 16.4 `CTCarrier` is a **deprecated** API ([iOS 16.4 Release Notes](https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-16_4-release-notes)) and **will be removed in future without any replacement**. As a part of the deprecation process `CTCarrier` values will always return `empty string` or `65535` as **default value**. 
+
+`CTCarrier` has been used to provide `mcn`, `mcnd`, `simopn` and `simop` values. According to the `CTCarrier` changes, we **stop support** of `CTCarrier` API and will **remove** it after Apple removes this API from `Core Telephony` in the future iOS updates.
+
+**Example of `mcn`, `mcnd`, `simopn` and `simop` values before/after CTCarrier deprecation:**
+
+| Key | Description | Value before iOS 16.4 | Value after iOS 16.4 |
+| -------- | -------- | -------- | -------- |
+| `mcn` | The name of the primary carrier | `Rakuten` | `--` |
+| `mcnd` | The name of the secondary carrier | `Rakuten` or empty string | `--` |
+| `simopn` | The Service Provider Name | `Rakuten` | `--` |
+| `simop` | The SIM operator code  | `44011` | `6553565535` |
+
 ## Tracking events in iOS Extensions
 
 ### Warning
