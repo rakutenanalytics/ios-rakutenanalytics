@@ -13,6 +13,7 @@
 
 ### Docs
 * [CONRAT-30239](https://jira.rakuten-it.com/jira/browse/CONRAT-30239): Update Readme about migration of RAE to IDSDK.
+* [CONRAT-30618](https://jira.rakuten-it.com/jira/browse/CONRAT-30618): Remove RAnalytics/Core from README.
 
 ## 10.0.1 (2023-06-23)
 

@@ -65,19 +65,6 @@ pod 'RAnalytics'
 
 Run `pod install` to install the module and its dependencies.
 
-⚠️ The analytics module since version 3.0.0 is separated into `Core` and `RAT` subspecs. 
-
-The default subspec is `RAT`, which depends on `Core`. 
-
-If you do not want automatic user tracking sent to RAT you should use the `Core` subspec in your Podfile:
-
-```ruby
-source 'https://cdn.cocoapods.org/'
-source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
-
-pod 'RAnalytics/Core'
-```
-
 ### Swift Package Manager
 
 Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
