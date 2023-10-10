@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01049E282ACBA16700B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01049E272ACBA16700B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */; };
+		01049E2A2ACBA60100B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01049E292ACBA60100B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */; };
 		3A514860256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */; };
 		3A76BCA12589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */; };
 		45ABC4BE26DE06C00030BB70 /* StressTestsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45ABC4B626DDFF6F0030BB70 /* StressTestsSpec.swift */; };
 		45ABC4CF26DE08A40030BB70 /* IntegrationTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */; };
 		45B5732825AE2C2E005A80F7 /* SenderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B5732725AE2C2E005A80F7 /* SenderSpec.swift */; };
 		45E3BC4A2581476400319ECF /* RAnalyticsDatabaseSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E3BC492581476400319ECF /* RAnalyticsDatabaseSpec.swift */; };
-		45EAE08F2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EAE08E2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift */; };
 		4BB2042E268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB2042D268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift */; };
 		5A895AEA20F724D500D2E771 /* SwiftInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A895AE920F724D500D2E771 /* SwiftInterop.swift */; };
-		6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0AD19B2582383500206848 /* RATExtensionsTests.swift */; };
 		6D63A7A11E1F975E00F89009 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D63A7A01E1F975E00F89009 /* main.m */; };
 		6D63A7A41E1F975E00F89009 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D63A7A31E1F975E00F89009 /* AppDelegate.m */; };
 		6D63A7AA1E1F975E00F89009 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D63A7A81E1F975E00F89009 /* Main.storyboard */; };
@@ -148,6 +148,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01049E272ACBA16700B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseFunctionalSpec.swift; sourceTree = "<group>"; };
+		01049E292ACBA60100B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RAnalyticsDatabaseFunctionalSpec.swift; path = Tests/Functional/RAnalyticsDatabaseFunctionalSpec.swift; sourceTree = "<group>"; };
 		16E4817D20B3A789006CB857 /* FunctionalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FunctionalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A51485F256E3D2D00AA704A /* RStatusBarOrientationHandlerSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RStatusBarOrientationHandlerSpec.swift; sourceTree = "<group>"; };
 		3A76BCA02589EF2000F0118C /* RAnalyticsLaunchCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollectorSpec.swift; sourceTree = "<group>"; };
@@ -156,7 +158,6 @@
 		45ABC4CE26DE08A40030BB70 /* IntegrationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "IntegrationTests-Info.plist"; path = "Tests/Integration/IntegrationTests-Info.plist"; sourceTree = SOURCE_ROOT; };
 		45B5732725AE2C2E005A80F7 /* SenderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SenderSpec.swift; sourceTree = "<group>"; };
 		45E3BC492581476400319ECF /* RAnalyticsDatabaseSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseSpec.swift; sourceTree = "<group>"; };
-		45EAE08E2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseFunctionalTests.swift; sourceTree = "<group>"; };
 		4BB2042D268447D600BD72B4 /* RAnalyticsRATTrackerDuplicateSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerDuplicateSpec.swift; sourceTree = "<group>"; };
 		5A895AE820F724D400D2E771 /* UnitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnitTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5A895AE920F724D500D2E771 /* SwiftInterop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftInterop.swift; sourceTree = "<group>"; };
@@ -355,7 +356,7 @@
 		16E4817620B28F08006CB857 /* Functional */ = {
 			isa = PBXGroup;
 			children = (
-				45EAE08E2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift */,
+				01049E272ACBA16700B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */,
 			);
 			path = Functional;
 			sourceTree = "<group>";
@@ -384,6 +385,7 @@
 		693B57EF1B7C613E008C5E86 = {
 			isa = PBXGroup;
 			children = (
+				01049E292ACBA60100B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift */,
 				693B58091B7C6159008C5E86 /* Tests */,
 				6D63A79E1E1F975E00F89009 /* Host */,
 				693B57F91B7C613E008C5E86 /* Products */,
@@ -742,7 +744,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C94B703B2798719500A1898A /* DatabaseTestUtils.swift in Sources */,
-				45EAE08F2587F6DA0025422B /* RAnalyticsDatabaseFunctionalTests.swift in Sources */,
+				01049E282ACBA16700B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift in Sources */,
 				C94B70492798739600A1898A /* BundleHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -770,10 +772,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01049E2A2ACBA60100B08FBF /* RAnalyticsDatabaseFunctionalSpec.swift in Sources */,
 				C92602C428F7F8F400C1BC41 /* RpCookieSpec.swift in Sources */,
 				C94648A72A6A8C31005FC801 /* AppDelegates.swift in Sources */,
 				C94F90D426DFAC970068B44E /* ReferralAppTrackingIntegrationSpec.swift in Sources */,
-				6D0AD19C2582383500206848 /* RATExtensionsTests.swift in Sources */,
 				C9B2806626A6AD0700A410D5 /* RAnalyticsSharedApplicationSpec.swift in Sources */,
 				C9E95A232642C1880077881B /* AnalyticsManagerSpec.swift in Sources */,
 				C944CDC92990F6970074319F /* URLSessionMock.swift in Sources */,

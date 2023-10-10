@@ -8,7 +8,7 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-class RAnalyticsDatabaseFunctionalTests: QuickSpec {
+class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
 
     override func spec() {
         describe("RAnalyticsDatabase") {

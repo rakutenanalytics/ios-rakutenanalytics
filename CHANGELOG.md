@@ -10,6 +10,7 @@
 * [CONRAT-30217](https://jira.rakuten-it.com/jira/browse/CONRAT-30217): Migrate ClassManipulatorUIApplicationTests.m to Swift.
 * [CONRAT-30240](https://jira.rakuten-it.com/jira/browse/CONRAT-30240): Fix ReferralAppTrackingSceneDelegateSpec failure on Bitrise.
 * [CONRAT-30252](https://jira.rakuten-it.com/jira/browse/CONRAT-30252): Remove `ObjcInteropSpec.m`.
+* [CONRAT-30452](https://jira.rakuten-it.com/jira/browse/CONRAT-30452): Refactor test file suffix to Spec.
 
 ### Docs
 * [CONRAT-30239](https://jira.rakuten-it.com/jira/browse/CONRAT-30239): Update Readme about migration of RAE to IDSDK.
