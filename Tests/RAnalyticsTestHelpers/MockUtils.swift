@@ -383,6 +383,7 @@ public final class CustomPage: UIViewController {
 // MARK: - CustomWebPage
 
 public final class CustomWebPage: UIViewController {
+    // TODO: remove or replace sensitive URL if needed later
     private let url: URL! = URL(string: "https://rat.rakuten.co.jp/")
     private var webView: WKWebView!
 
@@ -405,7 +406,7 @@ public final class CustomWebPage: UIViewController {
 
 public enum Tracking {
     // MARK: - APNS Device Token
-    public static let deviceToken = "e621e1f7c36c495a93fc0c247a3e6e5f"
+    public static let deviceToken = "e621e1f7c36c495a93fc0c237a3e6e5z"
 
     // MARK: - PNP Client Identifier
     public static let pnpClientIdentifier = "pnpClientIdentifier"
@@ -419,7 +420,7 @@ public enum Tracking {
 
     // MARK: - Default State
     public static let defaultState: RAnalyticsState = {
-        let defaultState = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB",
+        let defaultState = RAnalyticsState(sessionIdentifier: "CA7A88AR-82FE-40C9-A836-B1B3455DECAF",
                                            deviceIdentifier: "deviceId")
 
         let calendar = Calendar(identifier: .gregorian)

@@ -121,8 +121,6 @@ extension LocationModel: Hashable {
 
 extension LocationModel {
     /// Convert LocationModel to a RAT location payload.
-    ///
-    /// - Spec: https://confluence.rakuten-it.com/confluence/display/RAT/analytics+sdk%3A+Implement+GeoTracker
     var toDictionary: [String: Any] {
         var payload = [String: Any]()
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

@@ -822,7 +822,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                 }
 
                 context("Session Identifier") {
-                    it("should set cks to CA7A88AB-82FE-40C9-A836-B1B3455DECAB") {
+                    it("should set cks to CA7A88AR-82FE-40C9-A836-B1B3455DECAF") {
                         var payload: [String: Any]?
 
                         expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
@@ -831,7 +831,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         expect(payload).toEventuallyNot(beNil())
 
                         let cks = payload?["cks"] as? String
-                        expect(cks).to(equal("CA7A88AB-82FE-40C9-A836-B1B3455DECAB"))
+                        expect(cks).to(equal("CA7A88AR-82FE-40C9-A836-B1B3455DECAF"))
                     }
                 }
 
@@ -1484,7 +1484,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     it("should not set the userid when the state's userIdentifier is not set") {
                         var payload: [String: Any]?
 
-                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB",
+                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AR-82FE-40C9-A836-B1B3455DECAF",
                                                     deviceIdentifier: "deviceId")
                         state.userIdentifier = nil
 
@@ -1510,7 +1510,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     it("should not set the easyid when the state's easyIdentifier is not set") {
                         var payload: [String: Any]?
 
-                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AB-82FE-40C9-A836-B1B3455DECAB",
+                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AR-82FE-40C9-A836-B1B3455DECAF",
                                                     deviceIdentifier: "deviceId")
                         state.easyIdentifier = nil
 

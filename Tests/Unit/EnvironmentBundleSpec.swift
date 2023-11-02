@@ -222,16 +222,19 @@ final class EnvironmentBundleSpec: QuickSpec {
 
                 it("should return production RAT url if user set an empty RAT url in app info.plist") {
                     bundleMock.injectedDictionary = ["RATEndpoint": ""]
+                    // TODO: remove or replace sensitive URL if needed later
                     expect(bundleMock.endpointAddress?.absoluteString).to(equal("https://rat.rakuten.co.jp/"))
                 }
 
                 it("should return production RAT url if user did not set RAT url in app info.plist") {
                     bundleMock.injectedDictionary = [:]
+                    // TODO: remove or replace sensitive URL if needed later
                     expect(bundleMock.endpointAddress?.absoluteString).to(equal("https://rat.rakuten.co.jp/"))
                 }
 
                 it("should return production RAT url if the info dictionary is nil") {
                     bundleMock.injectedDictionary = nil
+                    // TODO: remove or replace sensitive URL if needed later
                     expect(bundleMock.endpointAddress?.absoluteString).to(equal("https://rat.rakuten.co.jp/"))
                 }
             }

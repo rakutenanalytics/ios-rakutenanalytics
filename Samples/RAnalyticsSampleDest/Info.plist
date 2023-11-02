@@ -14,9 +14,9 @@
 		</dict>
 	</array>
 	<key>RATAccountIdentifier</key>
-	<integer>999</integer>
+	<integer>123</integer>
 	<key>RATAppIdentifier</key>
-	<integer>1</integer>
+	<integer>456</integer>
 	<key>RATEndpoint</key>
 	<string>https://check.rat.rakuten.co.jp/</string>
 	<key>UIApplicationSceneManifest</key>

@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         RAnalyticsRATTracker.shared().set(batchingDelay: 15)
 
+        // TODO: remove or replace sensitive URL if needed later
         AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
 
         UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .alert, .badge]) { granted, _ in

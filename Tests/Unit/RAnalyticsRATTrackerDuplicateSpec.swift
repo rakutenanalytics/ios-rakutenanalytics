@@ -15,6 +15,7 @@ private final class SenderSpy: NSObject, Sendable {
 
     // MARK: - Sendable
 
+    // TODO: remove or replace sensitive URL if needed later
     var endpointURL: URL? = URL(string: "https://rakuten.co.jp")
 
     func setBatchingDelayBlock(_ batchingDelayBlock: @autoclosure @escaping BatchingDelayBlock) { }

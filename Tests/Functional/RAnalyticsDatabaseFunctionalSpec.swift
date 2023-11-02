@@ -89,7 +89,7 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
 
     let mkEvent = #"""
         {
-        "ckp": "bd7ac43958a9e7fa0f097c0a0ba5c2979299e69e",
+        "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
         "ts1": 1526965941,
         "ltm": "2018-05-22 14:12:22",
         "app_name": "jp.co.rakuten.Host",
@@ -102,9 +102,9 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
         "tzo": 9,
         "res": "414x736",
         "ver": "3.0.0",
-        "cks": "D4EE83DC-815B-41D3-88D8-BE94C4B7E0E1",
+        "cks": "D4EE83DC-815B-41D4-88D8-BE94C4B7E0E2",
         "acc": 477,
-        "cka": "334A064E-3B19-45FB-BED2-A887E68FF7B3",
+        "cka": "334A064E-3B19-45FA-BED2-A887E68FF8B3",
         "app_ver": "1.0",
         "model": "x86_64",
         "mos": "iOS 11.2",
@@ -118,7 +118,7 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
 
     let mkAnotherEvent = #"""
         {
-        "ckp": "bd7ac43958a9e7fa0f097c0a0ba5c2979299e69e",
+        "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
         "ts1": 1526966160,
         "ltm": "2018-05-22 14:12:22",
         "app_name": "jp.co.rakuten.Host",
@@ -131,9 +131,9 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
         "tzo": 9,
         "res": "414x736",
         "ver": "3.0.0",
-        "cks": "D4EE83DC-815B-41D3-88D8-BE94C4B7E0E1",
+        "cks": "D4EE83DC-815B-41D4-88D8-BE94C4B7E0E2",
         "acc": 477,
-        "cka": "334A064E-3B19-45FB-BED2-A887E68FF7B3",
+        "cka": "334A064E-3B19-45FA-BED2-A887E68FF8B3",
         "app_ver": "1.0",
         "model": "x86_64",
         "mos": "iOS 11.2",

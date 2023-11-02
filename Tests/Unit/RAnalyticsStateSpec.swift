@@ -12,7 +12,7 @@ import RAnalyticsTestHelpers
 final class RAnalyticsStateSpec: QuickSpec {
     override func spec() {
         describe("AnalyticsManager.State") {
-            let sessionIdentifier = "CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
+            let sessionIdentifier = "CA7A88AR-82FE-40C9-A836-B1B3455DECAF"
             let deviceIdentifier = "deviceId"
             let advertisingIdentifier = "adId"
             let userIdentifier = "userId"

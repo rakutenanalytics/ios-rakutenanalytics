@@ -344,6 +344,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                         expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
 
+                                        // TODO: remove or replace sensitive URL if needed later
                                         expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
                                     }
                                 }
@@ -424,6 +425,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         expect(cpPayload).toEventuallyNot(beNil())
 
                                         expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
+                                        // TODO: remove or replace sensitive URL if needed later
                                         expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
                                     }
                                 }

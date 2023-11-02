@@ -66,10 +66,6 @@ extension KeychainHandler: KeychainHandleable {
     ///
     /// - Throws an error if the bundle identfier is nil.
     ///
-    /// - Note:
-    ///
-    /// Duplicate of https://github.com/rakutentech/macos-push-tester/blob/master/PusherMainView/PusherMainView/Keychain.swift
-    ///
     /// Additional features:
     ///     - The function throws errors
     ///     - The function is not static
@@ -105,10 +101,6 @@ extension KeychainHandler: KeychainHandleable {
     ///    - key: the associated key of the value to store
     ///
     /// - Throws an error if the bundle identfier is nil.
-    ///
-    /// - Note:
-    ///
-    /// Duplicate of https://github.com/rakutentech/macos-push-tester/blob/master/PusherMainView/PusherMainView/Keychain.swift
     ///
     /// Additional features:
     ///     - The function throws errors

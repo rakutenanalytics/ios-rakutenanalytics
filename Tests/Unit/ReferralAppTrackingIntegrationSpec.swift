@@ -19,6 +19,7 @@ enum Payloads {
     static let encodedComponent = Payloads.component.addEncodingForRFC3986UnreservedCharacters()!
     static let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=\(Payloads.refAccountIdentifier)&\(CpParameterKeys.Ref.applicationIdentifier)=\(Payloads.refApplicationIdentifier)&\(CpParameterKeys.Ref.link)=\(encodedLink)&\(CpParameterKeys.Ref.component)=\(encodedComponent)"
     static let urlScheme: URL! = URL(string: "app://?\(Payloads.parameters)")
+    // TODO: remove or replace sensitive URL if needed later
     static let universalLink: URL! = URL(string: "https://www.rakuten.co.jp?\(PayloadParameterKeys.ref)=\(encodedAppBundleIdentifier)&\(Payloads.parameters)")
 
     static func verifyPayloads(_ payloads: [[String: Any]]) {

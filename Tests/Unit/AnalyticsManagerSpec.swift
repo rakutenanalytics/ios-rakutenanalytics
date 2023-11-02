@@ -24,7 +24,9 @@ final class AnalyticsManagerSpec: QuickSpec {
             let parameters = "\(CpParameterKeys.Ref.accountIdentifier)=1&\(CpParameterKeys.Ref.applicationIdentifier)=2"
             let appURL = URL(string: "app://?\(parameters)")!
             let appURLWithRef = URL(string: "app://?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
+            // TODO: remove or replace sensitive URL if needed later
             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(PayloadParameterKeys.ref)=\(bundleIdentifier)&\(parameters)")!
+            // TODO: remove or replace sensitive URL if needed later
             let universalLinkURLWithoutRef = URL(string: "https://www.rakuten.co.jp?\(parameters)")!
 
             let dependenciesContainerWithEmptyBundle = SimpleContainerMock()
@@ -148,7 +150,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                     containerMock.wkHttpCookieStore = cookieStore
                     let cookieInjector = RAnalyticsCookieInjector(dependenciesContainer: containerMock)
                     let analyticsManager = AnalyticsManager(dependenciesContainer: containerMock)
-                    let deviceID = "cc851515e51366f4856d165c3ea117e592db6fbc"
+                    let deviceID = "cc851516e51366f4856d165c3ea117e592db6fba"
 
                     var hasCookie = true
                     let cookieStoreObserver = CookieStoreObserver {
@@ -279,9 +281,11 @@ final class AnalyticsManagerSpec: QuickSpec {
                         analyticsManager.add(TrackerMock())
                     }
 
+                    // TODO: remove or replace sensitive URL if needed later
                     analyticsManager.set(endpointURL: URL(string: "https://endpoint.com")!)
                     analyticsManager.trackersLockableObject.get().forEach {
                         if let tracker = $0 as? Tracker {
+                            // TODO: remove or replace sensitive URL if needed later
                             expect(tracker.endpointURL).to(equal(URL(string: "https://endpoint.com")!))
                         }
                     }

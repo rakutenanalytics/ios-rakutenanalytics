@@ -329,8 +329,7 @@ class SenderSpec: QuickSpec {
                 })
 
                 // This test is temporarily disabled.
-                // It should be fixed in this ticket:
-                // https://jira.rakuten-it.com/jira/browse/SDKCF-5304
+                //
                 //                it("should not send duplicate events when app becomes active") {
                 //                    var isSendingCompleted = false
                 //                    sessionMock.stubResponse(statusCode: 200) {
