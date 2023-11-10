@@ -1,6 +1,3 @@
-source 'https://cdn.cocoapods.org/'
-source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
-
 workspace 'RAnalyticsSample.xcworkspace'
 
 platform :ios, "12.0"
@@ -17,7 +14,7 @@ abstract_target 'Common' do
   # pod 'RAnalytics', :path => '../RAnalytics.podspec'
 
   # GitHub pod
-  # pod 'RAnalytics', :source => 'https://github.com/rakutentech/ios-analytics-framework.git'
+  # pod 'RAnalytics'
   
   target 'RAnalyticsSample'
   target 'RAnalyticsSampleDest'
