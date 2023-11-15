@@ -57,7 +57,6 @@ final class URLSessionMockSpec: QuickSpec {
 
             describe("Cookie storage") {
                 var cookie: HTTPCookie?
-                // TODO: remove or replace sensitive URL if needed later
                 let url: URL! = URL(string: "https://rakuten.com")
                 var urlRequest: URLRequest!
                 let cookieName = "TestCookieName"

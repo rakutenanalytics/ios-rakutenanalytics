@@ -127,7 +127,7 @@ AnalyticsManager.Event(name: "my.event", parameters: ["foo": "bar"]).track()
 ```
 #### Tracking RAT-specific events
 
-A concrete tracker, `RAnalyticsRATTracker`, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use `RAnalyticsRATTracker#eventWithEventType:parameters:` for creating events that will only be processed by RAT. For more information about the various parameters accepted by that service, see the [RAT Parameter Spec](https://confluence.rakuten-it.com/confluence/display/RAT/RAT+Parameter+Specifications).
+A concrete tracker, `RAnalyticsRATTracker`, is automatically registered and interacts with the **Rakuten Analytics Tracker (RAT)**. You can also use `RAnalyticsRATTracker#eventWithEventType:parameters:` for creating events that will only be processed by RAT.
 
 > **Note:** Our SDK automatically tracks a number of RAT parameters for you, so you don't have to include those when creating an event: `acc`, `aid`, `etype`, `powerstatus`, `mbat`, `dln`, `loc`, `mcn`, `model`, `mnetw`, `mori`, `mos`, `online`, `cka`, `ckp`, `cks`, `ua`, `app_name`, `app_ver`, `res`, `ltm`, `ts1`, `tzo`, `userid` and `ver`.
 

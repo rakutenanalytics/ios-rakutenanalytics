@@ -21,7 +21,7 @@
 
 ## Configure a custom endpoint
 
-To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to [https://stg.rat.rakuten.co.jp/]: # (https://stg.rat.rakuten.co.jp/).
+To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint.
 
 A custom endpoint can also be configured at runtime as below:
 
@@ -473,8 +473,6 @@ App Extensions need to follow the requirements at [Configuring RAT](readme.html#
 #### Viewing App Extension events in Kibana
 
 To search for App Extension events in Kibana use your **App Extension** name and not the application name.
-
-[Kibana]: # (https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver)
 
 ## Creating a custom tracker
 

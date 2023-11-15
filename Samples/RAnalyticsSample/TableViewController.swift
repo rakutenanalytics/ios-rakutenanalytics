@@ -84,7 +84,6 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         customParameters["ref_custom_param2"] = "rome"
         return customParameters
     }()
-    // TODO: remove or replace sensitive URL if needed later
     private let webViewURL: URL! = URL(string: "https://www.rakuten.co.jp")
     private var webView: WKWebView!
     private let locationManager = CLLocationManager()
@@ -157,7 +156,6 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             }
         }
         // For quick testing of _RAnalyticsCookieInjector load a zero-frame webview
-        // TODO: remove or replace sensitive URL if needed later
         WKWebView(frame: .zero).load(URLRequest(url: URL(string: "https://corp.rakuten.co.jp")!))
     }
 

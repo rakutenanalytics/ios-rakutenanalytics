@@ -25,7 +25,6 @@ extension URLSessionMock {
 // MARK: - Stub RAT Response
 
 extension URLSessionMock {
-    // TODO: remove or replace sensitive URL if needed later
     public func stubRATSuccessResponse(url: URL? = URL(string: "https://rat.rakuten.co.jp"),
                                        cookieName: String,
                                        cookieValue: String,
@@ -37,7 +36,6 @@ extension URLSessionMock {
                      headerFields: ["Set-Cookie": cookie])
     }
     
-    // TODO: remove or replace sensitive URL if needed later
     public func stubRATServerErrorResponse(url: URL? = URL(string: "https://rat.rakuten.co.jp")) {
         stubResponse(url: url, statusCode: 500)
     }

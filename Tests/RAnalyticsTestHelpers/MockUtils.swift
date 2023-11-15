@@ -383,7 +383,6 @@ public final class CustomPage: UIViewController {
 // MARK: - CustomWebPage
 
 public final class CustomWebPage: UIViewController {
-    // TODO: remove or replace sensitive URL if needed later
     private let url: URL! = URL(string: "https://rat.rakuten.co.jp/")
     private var webView: WKWebView!
 

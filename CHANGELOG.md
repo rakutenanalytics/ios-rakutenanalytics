@@ -266,7 +266,7 @@ Add RSDKUtils SDK
 * SDKCF-4547: Suppressed unwanted TelephonyHandler error logs on simulator.
 
 ### Improvements
-* SDKCF-4350 / SDKCF-4423: Refactored module to use common code from [RSDKUtils library](https://github.com/rakutentech/ios-sdkutils).
+* SDKCF-4350 / SDKCF-4423: Refactored module to use common code from RSDKUtils library.
 * SDKCF-4455: Fixed module code to be compatible with Xcode 12.3, which some customers are still using to build their app.
 * SDKCF-4484: Migrated `RAnalyticsProgressNotifications` and `RAnalyticsPushTrackingUtility` constants to Swift.
 * SDKCF-4483: Migrated all `RAnalyticsEvent` event declarations to Swift.

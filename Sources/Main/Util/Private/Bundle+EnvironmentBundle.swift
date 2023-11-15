@@ -58,7 +58,6 @@ extension Bundle: EnvironmentBundle {
             #endif
             return nil
             #else
-            // TODO: remove or replace sensitive URL if needed later
             let prodURL = URL(string: "https://rat.rakuten.co.jp/")
             return prodURL
             #endif
