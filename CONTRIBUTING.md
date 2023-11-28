@@ -125,4 +125,3 @@ The footer should reference GitHub issues that this commit **Closes**.
 * All features or bug fixes **must be tested** by one or more unit tests/specs
 * All public API methods **must be documented** in a standard format and potentially in the user guide
 * All code must follow the style of the existing code
-
