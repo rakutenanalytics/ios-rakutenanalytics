@@ -191,9 +191,7 @@ fileprivate extension RAnalyticsSender {
 
         /// Upload immediately if batching delay is 0 and a request isn't in progress.
         /// Otherwise, schedule the upload in background.
-        if uploadTimerInterval <= 0,
-           (uploadTimer == nil || uploadTimer?.isValid == false),
-           !zeroBatchingDelayUploadInProgress {
+        if uploadTimerInterval <= 0, uploadTimer == nil || uploadTimer?.isValid == false, !zeroBatchingDelayUploadInProgress {
             zeroBatchingDelayUploadInProgress = true
             DispatchQueue.main.async {
                 self.fetchAndUpload()

@@ -25,6 +25,8 @@ protocol GeoTrackable {
     ///
     /// - NOTE: On calling this method if a value is not passed in configuration, the default configuration value will be used.
     ///
+    /// - NOTE: The timer interval based collection only works when the app is in foreground. The distance based collection will work in all states of the app provided user has granted always access to location services.
+    ///
     /// - Warning: This function should be called on the main thread, otherwise starting the location collection is not guaranteed.
     func startLocationCollection(configuration: GeoConfiguration?)
 

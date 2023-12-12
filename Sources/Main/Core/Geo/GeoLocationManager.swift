@@ -127,8 +127,7 @@ extension GeoLocationManager: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        guard (state == .outside && region.identifier == GeoConstants.locationCollectionRegionIdentifier),
-              let location = manager.location else {
+        guard state == .outside, region.identifier == GeoConstants.locationCollectionRegionIdentifier, let location = manager.location else {
             RLogger.debug(message: "should not update for region state: \(state.rawValue) with id: \(region.identifier)")
             return
         }

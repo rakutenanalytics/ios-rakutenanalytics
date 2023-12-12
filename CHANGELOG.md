@@ -16,6 +16,7 @@
 * [CONRAT-30239](https://jira.rakuten-it.com/jira/browse/CONRAT-30239): Update Readme about migration of RAE to IDSDK.
 * [CONRAT-31053](https://jira.rakuten-it.com/jira/browse/CONRAT-31053): Update README about CTCarrier API deprecation.
 * [CONRAT-30618](https://jira.rakuten-it.com/jira/browse/CONRAT-30618): Remove RAnalytics/Core from README.
+* [CONRAT-31467](https://jira.rakuten-it.com/jira/browse/CONRAT-31467): Update information about time interval based collection.
 
 ## 10.0.1 (2023-06-23)
 
