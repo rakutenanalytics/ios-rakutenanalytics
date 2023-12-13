@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   s.subspec 'Core' do |ss|
     ss.source_files = [
       'Sources/Main/RAnalytics.h',
+      'Sources/Main/RAT/**/*.{swift}',
       'Sources/{Main/Core/,Main/Core/Private/,Main/Core/Geo/,RAnalyticsSwiftLoader/,Main/Util/,Main/Util/Private/,Main/Util/Model/,Main/Util/Optional/,Main/Util/Wrapper/,Main/Util/Extensions/,Main/Util/Lockable/,Main/Util/RLogger/,Main/Util/Networking/,Main/Util/DependencyInjection/,Main/Util/Environment/}*.{m,swift}'
     ]
     ss.private_header_files = 'Sources/Main/Core/{Private,Util}/*.h'
