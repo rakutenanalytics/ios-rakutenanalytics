@@ -127,6 +127,7 @@
 		C9FD322D29C8AF2300A98ECF /* SCNetworkReachabilityFlags+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FD322529C8AF2300A98ECF /* SCNetworkReachabilityFlags+Extensions.swift */; };
 		C9FD323029C8E37200A98ECF /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FD322F29C8E37200A98ECF /* LocationModel.swift */; };
 		C9FE405E2836C975006B9E60 /* LogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FE405C2836C974006B9E60 /* LogMessage.swift */; };
+		CAF67D6B2ACB89EF00C31D66 /* PrivacyInfo.xcprivacy in Sources */ = {isa = PBXBuildFile; fileRef = CAF67D652AC6AC0300C31D66 /* PrivacyInfo.xcprivacy */; };
 		F9059BDF29DEF17F00E9F8BD /* GeoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9059BDD29DEF17F00E9F8BD /* GeoConfiguration.swift */; };
 		F9BC415729E558310083790F /* GeoPoller.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BC415429E558310083790F /* GeoPoller.swift */; };
 		F9BC415A29E5587C0083790F /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BC415929E5587C0083790F /* Date+Extensions.swift */; };
@@ -256,6 +257,7 @@
 		C9FD322529C8AF2300A98ECF /* SCNetworkReachabilityFlags+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNetworkReachabilityFlags+Extensions.swift"; sourceTree = "<group>"; };
 		C9FD322F29C8E37200A98ECF /* LocationModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
 		C9FE405C2836C974006B9E60 /* LogMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogMessage.swift; sourceTree = "<group>"; };
+		CAF67D652AC6AC0300C31D66 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F9059BDD29DEF17F00E9F8BD /* GeoConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoConfiguration.swift; sourceTree = "<group>"; };
 		F9BC415429E558310083790F /* GeoPoller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoPoller.swift; sourceTree = "<group>"; };
 		F9BC415929E5587C0083790F /* Date+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 			children = (
 				C9320A6A279FF79B009FE6EC /* Main */,
 				C9320A67279FF79B009FE6EC /* RAnalyticsSwiftLoader */,
+				CAAC4C982B1FF2A000178E7D /* Resources */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -582,6 +585,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		CAAC4C982B1FF2A000178E7D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CAF67D652AC6AC0300C31D66 /* PrivacyInfo.xcprivacy */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -664,6 +675,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAF67D6B2ACB89EF00C31D66 /* PrivacyInfo.xcprivacy in Sources */,
 				C9320AEA279FF79B009FE6EC /* RAnalyticsExternalCollector.swift in Sources */,
 				C9320B08279FF79B009FE6EC /* AnalyticsTracker.swift in Sources */,
 				C9B2F33C29D44109002702A2 /* GeoAccuracy.swift in Sources */,

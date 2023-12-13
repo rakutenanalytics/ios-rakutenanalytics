@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* [CONRAT-30888](https://jira.rakuten-it.com/jira/browse/CONRAT-30888): Add Privacy Manifest file with Privacy info usage description and Required Reason API.
+
 ### Improvements
 * [CONRAT-30314](https://jira.rakuten-it.com/jira/browse/CONRAT-30314): Show an empty page in Sample app to test pv event tracking.
 
