@@ -93,6 +93,8 @@ The default `GeoConfiguration` object captures `.best` accurate location updates
 3. `accuracy` should be a value specified in type `GeoAccuracy`.
 4. `startTime` should not be equal to or exceed `endTime`.
 
+> **Warning:** The timer interval based collection only works when the app is in foreground. The distance based collection will work in all states of the app provided user has granted always access to location services.
+
 The `GeoConfiguration` object to capture `.hundredMeters` accurate location updates from `08:00` to `20:00` at regular intervals of `300 seconds` and/or on covering a distance of every `400 meters` can be created as shown below:
 
 ```

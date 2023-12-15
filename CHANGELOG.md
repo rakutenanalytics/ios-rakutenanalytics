@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* CONRAT-30888: Add Privacy Manifest file with Privacy info usage description and Required Reason API.
+
 ### Improvements
 * CONRAT-30314: Show an empty page in Sample app to test pv event tracking.
 
@@ -16,6 +19,7 @@
 * CONRAT-30239: Update Readme about migration of RAE to IDSDK.
 * CONRAT-31053: Update README about CTCarrier API deprecation.
 * CONRAT-30618: Remove RAnalytics/Core from README.
+* CONRAT-31467: Update information about time interval based collection.
 
 ## 10.0.1 (2023-06-23)
 

@@ -45,7 +45,7 @@ final class GeoTracker: NSObject {
     ///                             databaseConfiguration: databaseConfiguration)
     ///  ```
     init?(dependenciesContainer: GeoDependenciesContainable,
-          batchingDelay: TimeInterval = 900.0,
+          batchingDelay: TimeInterval = RAnalyticsRATTracker.Constants.ratBatchingDelay,
           databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = dependenciesContainer.bundle.endpointAddress else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.geoTrackerErrorDomain,
