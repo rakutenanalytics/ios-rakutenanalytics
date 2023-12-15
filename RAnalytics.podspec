@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RAnalytics"
-  s.version      = "10.1.0-snapshot"
+  s.version      = "10.1.0"
   s.authors      = "Rakuten Analytics"
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
   s.homepage     = "https://github.com/rakutenanalytics/ios-ranalytics"
