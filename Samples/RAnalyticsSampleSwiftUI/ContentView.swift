@@ -1,5 +1,5 @@
 import SwiftUI
-import RAnalytics
+import RakutenAnalytics
 
 struct ContentView: View {
     @State private var showingSheet = false

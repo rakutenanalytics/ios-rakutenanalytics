@@ -2,7 +2,7 @@ import Quick
 import Nimble
 import SQLite3
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers

@@ -1,5 +1,5 @@
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 extension Data {
     public var ratPayload: [[String: Any]]? {

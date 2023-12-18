@@ -5,7 +5,7 @@ import AdSupport
 import WebKit
 import SystemConfiguration
 
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 // MARK: - Tracker
 
@@ -648,7 +648,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     }
 
     public var version: String? = "1"
-    public var applicationSceneManifest: RAnalytics.ApplicationSceneManifest?
+    public var applicationSceneManifest: RakutenAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
 
     public override init() {
@@ -701,7 +701,7 @@ public struct CoreInfosCollectorMock: CoreInfosCollectable {
         self.sdkDependencies = sdkDependencies
     }
 
-    public func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [RAnalytics.EnvironmentBundle]) -> [String: Any]? {
+    public func getCollectedInfos(sdkComponentMap: NSDictionary?, allFrameworks: [RakutenAnalytics.EnvironmentBundle]) -> [String: Any]? {
         nil
     }
 }
@@ -725,7 +725,7 @@ public final class ScreenMock: Screenable {
 public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoLocationManagerDelegate, CLLocationManagerDelegate {
     public var locationModel: LocationModel!
     public var locationError: NSError!
-    public var delegate: RAnalytics.GeoLocationManagerDelegate?
+    public var delegate: RakutenAnalytics.GeoLocationManagerDelegate?
     public var requestLocationUserActionIsCalled = false
     public var requestLocationContinualIsCalled = false
     public var stopLocationUpdatesCalled = false
@@ -742,7 +742,7 @@ public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoL
         stopLocationUpdatesCalled = true
     }
 
-    public func requestLocationUpdate(for requestType: RAnalytics.GeoRequestLocationType) {
+    public func requestLocationUpdate(for requestType: RakutenAnalytics.GeoRequestLocationType) {
         switch requestType {
         case .continual:
             requestLocationContinualIsCalled = true

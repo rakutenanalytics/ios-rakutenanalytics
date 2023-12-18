@@ -2,7 +2,7 @@ import Quick
 import Nimble
 import Foundation
 import UIKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import WebKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

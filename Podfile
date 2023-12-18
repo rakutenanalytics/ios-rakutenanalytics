@@ -9,19 +9,19 @@ abstract_target 'Common' do
   pod 'ViewInspector'
 
   target 'UnitTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'FunctionalTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'IntegrationTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'CoreTests' do
-    pod 'RAnalytics/Core', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics/Core', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 end
 

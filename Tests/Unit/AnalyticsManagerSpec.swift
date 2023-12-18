@@ -6,7 +6,7 @@ import Nimble
 import AdSupport
 import WebKit
 import CoreLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

@@ -10,7 +10,7 @@ import SQLite3
 import UIKit.UIDevice
 import SystemConfiguration
 import CoreLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

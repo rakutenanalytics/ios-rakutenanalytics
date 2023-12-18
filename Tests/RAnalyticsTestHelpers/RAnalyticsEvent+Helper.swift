@@ -1,5 +1,5 @@
 import Foundation
-import RAnalytics
+import RakutenAnalytics
 
 extension RAnalyticsEvent {
     @objc public static var pushTrackingIdentifier: String {

@@ -5,7 +5,7 @@ import Quick
 import Nimble
 import CoreLocation
 import UIKit.UIDevice
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if SWIFT_PACKAGE
 import RAnalyticsTestHelpers

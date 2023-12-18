@@ -1,6 +1,6 @@
 import UIKit
 import CoreLocation
-import RAnalytics
+import RakutenAnalytics
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

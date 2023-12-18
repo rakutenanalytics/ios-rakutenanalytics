@@ -1,6 +1,6 @@
 import Quick
 import Nimble
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 class RLoggerSpec: QuickSpec {
     override func spec() {

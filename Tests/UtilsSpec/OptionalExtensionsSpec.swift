@@ -3,7 +3,7 @@ import Quick
 import Nimble
 import UIKit
 import CoreLocation.CLLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 class OptionalExtensionsSpec: QuickSpec {
 

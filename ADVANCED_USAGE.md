@@ -215,13 +215,13 @@ More details can be found in [Configure automatic tracking](#configure-automatic
 If your app is coded in Objective-C, please import this header file in order to use our public Swift classes: 
 
 ```objc
-#import <RAnalytics/RAnalytics-Swift.h>
+#import <RakutenAnalytics/RAnalytics-Swift.h>
 ```
 
 If your app is coded in Swift, please import the RAnalytics framework: 
 
 ```swift
-import RAnalytics
+import RakutenAnalytics
 ```
 
 ### Automatics events tracking configuration

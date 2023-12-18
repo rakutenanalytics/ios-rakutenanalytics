@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "RAnalytics"
+  s.name         = "RakutenAnalytics"
   s.version      = "10.1.0"
   s.authors      = "Rakuten Analytics"
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
@@ -44,7 +44,7 @@ Pod::Spec.new do |s|
       'CoreTelephony',
       'SystemConfiguration'
     ]
-    ss.dependency 'RAnalytics/Core'
+    ss.dependency 'RakutenAnalytics/Core'
   end
 
   s.default_subspecs = ['RAT']

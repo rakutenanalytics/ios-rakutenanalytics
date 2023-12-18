@@ -6,6 +6,7 @@
 * CONRAT-30888: Add Privacy Manifest file with Privacy info usage description and Required Reason API.
 
 ### Improvements
+* CONRAT-32117: Rename RAnalytics pod to RakutenAnalytics for public release and fix all the issues.
 * CONRAT-30314: Show an empty page in Sample app to test pv event tracking.
 
 ### Unit tests

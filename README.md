@@ -1,4 +1,4 @@
-# RAnalytics SDK
+# RakutenAnalytics SDK
 
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the Rakuten Analytics Tracker (RAT) service.
 
@@ -28,7 +28,7 @@ Note: The SDK may build on earlier Xcode versions but it is not officially suppo
 To use the module in its default configuration your `Podfile` should contain:
 
 ```ruby
-pod 'RAnalytics'
+pod 'RakutenAnalytics'
 ```
 Run `pod install` to install the module and its dependencies.
 
@@ -45,12 +45,12 @@ Choose `RAnalytics` product for your target. If you want to link other targets (
 
 ### Swift
 ```
-import RAnalytics
+import RakutenAnalytics
 ```
 
 ### Objective-C
 ```
-@import RAnalytics;
+@import RakutenAnalytics;
 ```
 
 # Configuring
