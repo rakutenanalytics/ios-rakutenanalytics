@@ -8,6 +8,7 @@
 ### Improvements
 * CONRAT-32117: Rename RAnalytics pod to RakutenAnalytics for public release and fix all the issues.
 * CONRAT-30314: Show an empty page in Sample app to test pv event tracking.
+* CONRAT-32046: Change Geo Tracker batching delay from 15 minutes to 60 seconds.
 
 ### Unit tests
 * CONRAT-29129: BDD test cases for dln field Device Language.

@@ -3,6 +3,7 @@ import Foundation
 enum GeoTrackerConstants {
     static let tableName = "RAKUTEN_ANALYTICS_GEO_TABLE"
     static let databaseName = "RAnalyticsGeoTracker.db"
+    static let geoBatchingDelay: TimeInterval = 60.0 // Batching delay is 60 seconds by default
 }
 
 /// The GeoTracker is responsible for processing Location events received from GeoManager.
@@ -28,7 +29,7 @@ final class GeoTracker: NSObject {
     /// Creates a new instance of `GeoTracker`.
     ///
     /// - Parameter dependenciesContainer: The dependencies container.
-    /// - Parameter batchingDelay: The batching delay - default value: 15 minutes.
+    /// - Parameter batchingDelay: The batching delay - default value: 60 seconds.
     /// - Parameter databaseConfiguration: The database configuration.
     ///
     /// - Returns: a new instance of `GeoTracker` or nil if the enpoint is nil.
@@ -45,7 +46,7 @@ final class GeoTracker: NSObject {
     ///                             databaseConfiguration: databaseConfiguration)
     ///  ```
     init?(dependenciesContainer: GeoDependenciesContainable,
-          batchingDelay: TimeInterval = RAnalyticsRATTracker.Constants.ratBatchingDelay,
+          batchingDelay: TimeInterval = GeoTrackerConstants.geoBatchingDelay,
           databaseConfiguration: DatabaseConfigurable) {
         guard let endpointURL = dependenciesContainer.bundle.endpointAddress else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.geoTrackerErrorDomain,
@@ -57,7 +58,7 @@ final class GeoTracker: NSObject {
 
         self.automaticFieldsBuilder = dependenciesContainer.automaticFieldsBuilder
 
-        // maxUploadInterval equals to batchingDelay in order to send events every 900 seconds
+        // maxUploadInterval equals to batchingDelay in order to send events every 60 seconds
         sender = RAnalyticsSender(endpoint: endpointURL,
                                   database: databaseConfiguration.database,
                                   databaseTable: databaseConfiguration.tableName,
