@@ -1,0 +1,39 @@
+#OSX
+.DS_Store
+.LSOverride
+
+#vim
+*.swp
+
+#Xcode
+xcuserdata
+*.xccheckout
+*.xcworkspace
+build
+
+# Cocoapods
+Podfile.lock
+Pods
+
+# Fastlane
+/artifacts
+/fastlane/report.xml
+/fastlane/README.md
+
+# Documentation
+/.doxygen
+/Doxyfile
+/docs
+
+# Bundler
+vendor
+.bundle
+Gemfile.lock
+
+# Public framework
+RakutenAnalyticsSDK/RAnalyticsDebug*.zip
+RakutenAnalyticsSDK/RAnalyticsRelease*.zip
+RakutenAnalyticsSDK/RAnalytics.xcframework
+RakutenAnalyticsSDK/build
+RakutenAnalyticsSDK/output
+Samples/RAnalytics.zip

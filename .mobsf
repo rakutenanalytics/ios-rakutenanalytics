@@ -1,0 +1,18 @@
+---
+  ignore-paths:
+  - __MACOSX
+
+  ignore-rules:
+  - ios_cert_pinning
+  - ios_detect_reversing
+  - ios_detect_jailbreak_check
+  - ios_jailbreak_detect
+  - ios_custom_keyboard_disabled
+  - ios_keyboard_cache
+  - ios_mach_ports
+  - ios_piracy_check
+
+  severity-filter:
+  - WARNING
+  - ERROR
+  - INFO

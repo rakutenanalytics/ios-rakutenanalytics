@@ -1,0 +1,25 @@
+# this plugin is used in order to build the Pod library as static even if it contains swift code
+# This fixes this error:
+# "Using Swift static libraries with custom module maps is currently not supported. Please build `RAnalytics` as a framework or remove the custom module map."
+# https://github.com/joncardasis/cocoapods-user-defined-build-types
+plugin 'cocoapods-user-defined-build-types'
+enable_user_defined_build_types!
+
+platform :ios, '12.0'
+inhibit_all_warnings!
+
+workspace 'RakutenAnalyticsSDK'
+
+target 'RAnalytics' do
+  pod 'RSDKUtils', '~> 4.0', :build_type => :static_framework
+  pod 'RSDKUtils/RLogger', '~> 4.0', :build_type => :static_framework
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'YES'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+    end
+  end
+end

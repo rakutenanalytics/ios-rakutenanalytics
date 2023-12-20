@@ -1,0 +1,13 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "5J4GVGN58B.jp.co.rakuten.sdk.ecosystemdemo",
+                "paths": [
+                    "*"
+                ]
+            }
+        ]
+    }
+}
