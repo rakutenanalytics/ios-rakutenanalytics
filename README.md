@@ -1,3 +1,5 @@
+[![Build Status](https://app.bitrise.io/app/4b13c693939a9575/status.svg?token=dgmDnWxutQeMP9wR79z1oQ&branch=master)](https://app.bitrise.io/app/4b13c693939a9575)
+
 # RAnalytics iOS SDK
 
 1. [Introduction](#introduction)
