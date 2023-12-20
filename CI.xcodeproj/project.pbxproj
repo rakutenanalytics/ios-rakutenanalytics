@@ -113,6 +113,7 @@
 		C9F0AEAC2718220800676992 /* DatabaseDirectoriesSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */; };
 		C9F1376129438BD7005A0DBF /* AnalyticsManagerUASpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */; };
 		C9F1376429438C56005A0DBF /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */; };
+		CA272D2B2B3169810022DB7D /* CoreSubspecSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA272D2A2B3169810022DB7D /* CoreSubspecSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -254,6 +255,7 @@
 		C9F0AEAB2718220800676992 /* DatabaseDirectoriesSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseDirectoriesSpec.swift; sourceTree = "<group>"; };
 		C9F1376029438BD7005A0DBF /* AnalyticsManagerUASpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsManagerUASpec.swift; sourceTree = "<group>"; };
 		C9F1376229438C47005A0DBF /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
+		CA272D2A2B3169810022DB7D /* CoreSubspecSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreSubspecSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -406,6 +408,7 @@
 		693B58091B7C6159008C5E86 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CA272D292B3169630022DB7D /* CoreSubspec */,
 				16E4817620B28F08006CB857 /* Functional */,
 				C9F01E942A08DDFE0017AE54 /* GeoSpec */,
 				45ABC4CD26DE08550030BB70 /* Integration */,
@@ -510,6 +513,14 @@
 				C9F01E9A2A08DDFE0017AE54 /* GeoLocationManagerSpec.swift */,
 			);
 			path = GeoSpec;
+			sourceTree = "<group>";
+		};
+		CA272D292B3169630022DB7D /* CoreSubspec */ = {
+			isa = PBXGroup;
+			children = (
+				CA272D2A2B3169810022DB7D /* CoreSubspecSpec.swift */,
+			);
+			path = CoreSubspec;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -860,6 +871,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C94B704A2798739600A1898A /* BundleHelper.swift in Sources */,
+				CA272D2B2B3169810022DB7D /* CoreSubspecSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

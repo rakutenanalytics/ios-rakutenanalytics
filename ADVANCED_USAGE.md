@@ -65,7 +65,7 @@ Whilst tracking for location events the `GeoManager` captures location updates a
 
 If the app is not being used actively the `GeoManager` depends only on significant change in device's location to gather location updates.
 
-The `GeoManager` consists of a `GeoTracker` that spools the captured location updates every `15 minutes` which is set as default batching delay.
+The `GeoManager` consists of a `GeoTracker` that spools the captured location updates every `60 seconds` which is set as default batching delay.
 
 **NOTE:** Developer needs to enable `Location Updates` for `Background Modes` in `Signing & Capabilities` in Xcode. Also the `GeoManager` cannot track the device's location for terminated state if the user has not granted `Always Authorization` to the location services.
 
