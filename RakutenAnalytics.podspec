@@ -3,9 +3,9 @@ Pod::Spec.new do |s|
   s.version      = "10.1.0"
   s.authors      = "Rakuten Analytics"
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
-  s.homepage     = "https://github.com/rakutenanalytics/ios-ranalytics"
+  s.homepage     = "https://github.com/rakutenanalytics/ios-rakutenanalytics"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
-  s.source       = { :git => "https://github.com/rakutenanalytics/ios-ranalytics.git", :tag => s.version.to_s }
+  s.source       = { :git => "https://github.com/rakutenanalytics/ios-rakutenanalytics", :tag => s.version.to_s }
   s.platform     = :ios, "12.0"
   s.requires_arc = true
   s.swift_versions = ['5.7.1']

@@ -36,7 +36,7 @@ Run `pod install` to install the module and its dependencies.
 
 Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
 
-* Repository URL: `git@github.com:rakutenanalytics/ios-ranalytics.git`
+* Repository URL: `git@github.com:rakutenanalytics/ios-rakutenanalytics.git`
 * Version settings: 10.0.1 "Up to Next Major"
 
 Choose `RAnalytics` product for your target. If you want to link other targets (Notification Service Extension, Notification Content Extension, etc), go to Build Phases of that target, then in Link Binary With Libraries click + button and add `RAnalytics`.
