@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22,8 +22,8 @@
 		C9981C6828CA91EB00B63A5A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6728CA91EB00B63A5A /* Assets.xcassets */; };
 		C9981C6B28CA91EB00B63A5A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C6928CA91EB00B63A5A /* LaunchScreen.storyboard */; };
 		C9981C7928CA932D00B63A5A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9981C7728CA932D00B63A5A /* Main.storyboard */; };
-		C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7C28CA94FE00B63A5A /* RAnalytics */; };
-		C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = C9981C7E28CA950300B63A5A /* RAnalytics */; };
+		CA272D2D2B3181760022DB7D /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CA272D2C2B3181760022DB7D /* RakutenAnalytics */; };
+		CA272D2F2B31817E0022DB7D /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CA272D2E2B31817E0022DB7D /* RakutenAnalytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9981C7D28CA94FE00B63A5A /* RAnalytics in Frameworks */,
+				CA272D2D2B3181760022DB7D /* RakutenAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9981C7F28CA950300B63A5A /* RAnalytics in Frameworks */,
+				CA272D2F2B31817E0022DB7D /* RakutenAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,7 +169,7 @@
 			);
 			name = RAnalyticsSampleSPMInternal;
 			packageProductDependencies = (
-				C9981C7C28CA94FE00B63A5A /* RAnalytics */,
+				CA272D2C2B3181760022DB7D /* RakutenAnalytics */,
 			);
 			productName = RAnalyticsSampleSPM;
 			productReference = C96B7222261DBA5E00CF91BA /* RAnalyticsSampleSPMInternal.app */;
@@ -189,7 +189,7 @@
 			);
 			name = RAnalyticsSampleDest;
 			packageProductDependencies = (
-				C9981C7E28CA950300B63A5A /* RAnalytics */,
+				CA272D2E2B31817E0022DB7D /* RakutenAnalytics */,
 			);
 			productName = RAnalyticsSampleDest;
 			productReference = C9981C5C28CA91EA00B63A5A /* RAnalyticsSampleDestSPM.app */;
@@ -567,13 +567,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C9981C7C28CA94FE00B63A5A /* RAnalytics */ = {
+		CA272D2C2B3181760022DB7D /* RakutenAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = RAnalytics;
+			productName = RakutenAnalytics;
 		};
-		C9981C7E28CA950300B63A5A /* RAnalytics */ = {
+		CA272D2E2B31817E0022DB7D /* RakutenAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = RAnalytics;
+			productName = RakutenAnalytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

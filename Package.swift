@@ -4,10 +4,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "RAnalytics",
+    name: "RakutenAnalytics",
     platforms: [.iOS(.v12)],
     products: [
-        .library(name: "RAnalytics", targets: ["RAnalytics"])
+        .library(name: "RakutenAnalytics", targets: ["RakutenAnalytics"])
     ],
     dependencies: [
              .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
@@ -17,7 +17,7 @@ let package = Package(
              .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.9.1")),
         ],
     targets: [
-        .target(name: "RAnalytics",
+        .target(name: "RakutenAnalytics",
                 dependencies: ["RAnalyticsSwiftLoader"],
                 path: "Sources/Main",
                 exclude: ["Core/SDK_TRACKING_GUIDE.md"],
@@ -30,28 +30,28 @@ let package = Package(
                 publicHeadersPath: ""),
 
         .target(name: "RAnalyticsTestHelpers",
-                dependencies: ["RAnalytics",
+                dependencies: ["RakutenAnalytics",
                                "Quick",
                                "Nimble",
                                "ViewInspector"],
                 path: "Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
 
-        .testTarget(name: "Functional", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
+        .testTarget(name: "Functional", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"]),
 
-        .testTarget(name: "UtilsSpec", dependencies: ["RAnalytics", "RAnalyticsTestHelpers"]),
+        .testTarget(name: "UtilsSpec", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"]),
 
         .testTarget(name: "Integration",
-                    dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],
+                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
                     exclude: ["IntegrationTests-Info.plist"]),
 
         .testTarget(name: "Unit",
-                    dependencies: ["RAnalytics", "RAnalyticsTestHelpers"],
+                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
                     exclude: ["Info.plist"],
                     resources: [.process("Resources")]),
 
         .testTarget(name: "GeoSpec",
-                    dependencies: ["RAnalytics", "RAnalyticsTestHelpers"])
+                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"])
     ],
     swiftLanguageVersions: [.v5]
 )
