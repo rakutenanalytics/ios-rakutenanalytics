@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 10.1.0 (2023-12-21)
 
 ### Features
 * CONRAT-30888: Add Privacy Manifest file with Privacy info usage description and Required Reason API.
