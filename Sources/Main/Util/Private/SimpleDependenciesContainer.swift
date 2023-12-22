@@ -35,7 +35,6 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let userStorageHandler: UserStorageHandleable = UserDefaults.standard
     let sharedUserStorageHandlerType: UserStorageHandleable.Type = UserDefaults.self
     let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
-    let wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
     let httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
     let locationManager: LocationManageable = CLLocationManager()
     let bundle: EnvironmentBundle = Bundle.main
@@ -53,6 +52,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let pushEventHandler: PushEventHandleable
     let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
     let automaticFieldsBuilder: AutomaticFieldsBuildable
+    lazy var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
 
     init() {
         let appGroupId = bundle.appGroupId

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Crash fixes
+* [CONRAT-32190](https://jira.rakuten-it.com/jira/browse/CONRAT-32190): Fix a crash that occurs when watchOS interact with iOS in terminat state.
+
 ### Features
 * [CONRAT-30888](https://jira.rakuten-it.com/jira/browse/CONRAT-30888): Add Privacy Manifest file with Privacy info usage description and Required Reason API.
 
