@@ -8,6 +8,7 @@
 ### Improvements
 * [CONRAT-30314](https://jira.rakuten-it.com/jira/browse/CONRAT-30314): Show an empty page in Sample app to test pv event tracking.
 * [CONRAT-32046](https://jira.rakuten-it.com/jira/browse/CONRAT-32046): Change Geo Tracker batching delay from 15 minutes to 60 seconds.
+* [CONRAT-32200](https://jira.rakuten-it.com/jira/browse/CONRAT-32200): Fix local CI build to support macOS Sonoma.
 
 ### Unit tests
 * [CONRAT-29129](https://jira.rakuten-it.com/jira/browse/CONRAT-29129): BDD test cases for dln field Device Language.
