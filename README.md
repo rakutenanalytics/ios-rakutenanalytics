@@ -1,5 +1,7 @@
 # Rakuten Analytics SDK
 
+[![Build Status](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d/status.svg?token=UYFmpndY0hzbg-ef9G-NPA&branch=master)](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d)
+
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the Rakuten Analytics Tracker (RAT) service.
 
 1. [RAnalytics SDK](#ranalytics-sdk)
