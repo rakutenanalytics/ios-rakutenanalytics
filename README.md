@@ -1,6 +1,6 @@
 # Rakuten Analytics SDK
 
-[![Build Status](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d/status.svg?token=UYFmpndY0hzbg-ef9G-NPA&branch=master)](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d)
+[![Build Status](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d/status.svg?token=UYFmpndY0hzbg-ef9G-NPA&branch=master)](https://app.bitrise.io/app/ae604b34-c715-49a3-819d-029f2299366d) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=rakutenanalytics_ios-rakutenanalytics&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=rakutenanalytics_ios-rakutenanalytics)
 
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the Rakuten Analytics Tracker (RAT) service.
 
