@@ -1,12 +1,9 @@
 # Changelog
 
-## Unreleased
+## 10.1.0 (2024-01-18)
 
-### Docs
-
-* CONRAT-32367: Documentation clarification related to migration and issues hadnling with RAnalytics and RakutenAnalytics.
-
-## 10.1.0 (2023-12-21)
+### Crash fixes
+* CONRAT-32190: Fix a crash that occurs when watchOS interact with iOS in terminat state.
 
 ### Features
 * CONRAT-30888: Add Privacy Manifest file with Privacy info usage description and Required Reason API.
@@ -15,6 +12,7 @@
 * CONRAT-32117: Rename RAnalytics pod to RakutenAnalytics for public release and fix all the issues.
 * CONRAT-30314: Show an empty page in Sample app to test pv event tracking.
 * CONRAT-32046: Change Geo Tracker batching delay from 15 minutes to 60 seconds.
+* CONRAT-32200: Fix local CI build to support macOS Sonoma.
 
 ### Unit tests
 * CONRAT-29129: BDD test cases for dln field Device Language.
@@ -24,6 +22,7 @@
 * CONRAT-30452: Refactor test file suffix to Spec.
 
 ### Docs
+* CONRAT-32367: Documentation clarification related to migration and issues hadnling with RAnalytics and RakutenAnalytics.
 * CONRAT-30239: Update Readme about migration of RAE to IDSDK.
 * CONRAT-31053: Update README about CTCarrier API deprecation.
 * CONRAT-30618: Remove RAnalytics/Core from README.
