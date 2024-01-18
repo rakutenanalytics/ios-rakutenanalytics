@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Docs
+
+* CONRAT-32367: Documentation clarification related to migration and issues hadnling with RAnalytics and RakutenAnalytics.
+
 ## 10.1.0 (2023-12-21)
 
 ### Features

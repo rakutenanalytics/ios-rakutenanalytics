@@ -55,6 +55,52 @@ import RakutenAnalytics
 @import RakutenAnalytics;
 ```
 
+## Migration from RAnalytics to RakutenAnalytics 
+
+At the moment there are no major API changes and diffrences between `RAnalytics` and `RakutenAnalytics`. The migration process relates only to reinstalling dependencies and updating imports.
+
+### CocoaPods
+
+To migrate from `RAnalytics` to `RakutenAnalytics` using CocoaPods, please, change `Podfile` the dependency from:
+
+```
+pod 'RAnalytics'
+```
+
+to:
+
+```
+pod 'RakutenAnalytics'
+```
+
+And run `pod install` command to install dependency.
+
+### Swift Package Manager
+
+To migrate from `RAnalytics` to `RakutenAnalytics` using Swift Package Manager, please, open your project settings in Xcode and remove `RAnalytics` dependency from Xcode Project. After that, please use this package url:
+
+`https://github.com/rakutenanalytics/ios-rakutenanalytics.git`
+
+instead of:
+
+`ssh://git@gitpub.rakuten-it.com:7999/eco/core-ios-analytics.git`
+
+To install `RakutenAnalytics` package dependency.
+
+### Module imports
+
+After installing `RakutenAnalytics` instead of `RAnalytics` dependency, please, update module imports in the project from:
+
+```
+import RAnalytics
+```
+
+to:
+
+```
+import RakutenAnalytics
+```
+
 # Configuring
 
 ## Credentials
@@ -368,6 +414,28 @@ xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuilti
 Xcode 13 introduced an option (**enabled** by default) to automatically manage app version numbering. Exporting your app with this option enabled breaks the Analytics SDK’s framework version tracking feature. 
 
 When exporting for the App Store please disable the option “Manage Version and Build Number” in the Xcode UI. If you prefer to keep this option enabled, be aware that the SDK will not be able to track the versions of your embedded SDKs/frameworks.
+
+## Handle RakutenAnalytics and RAnalytics dependencies at the same project
+
+The situations where the project contains both `RakutenAnalytics` and `RAnaltyics` (as a part of other framework) dependencies can cause isses similar to: 
+
+```
+import RakutenAnalytics
+import %SomeFrameworkWithRAnalyticsDependency%  
+
+let analyticsManager = AnalyticsManager.shared() // ERROR: Ambiguous use of 'shared()'
+```
+
+It happens because of dublicated class names between different modules and namespaces. As temporary solution for minor issues we can recommend to specify direct module name for all framework related calls. Example:
+
+```
+import RakutenAnalytics
+import %SomeFrameworkWithRAnalyticsDependency%  
+
+let analyticsManager = RakutenAnalytics.AnalyticsManager.shared() // No compilation error. We declare and call directly RakutenAnalytics instance.
+```
+
+Unfortunately, this approach does not work for all the cases and really depends on framework usage. For major issues we recommend to wait until framework with `RAnalytics` dependency will update their dependency to `RakutenAnalytics`.
 
 ## How page views are automatically tracked
 
