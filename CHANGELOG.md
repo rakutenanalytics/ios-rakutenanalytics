@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.0.2 (2024-01-31)
+## Unreleased
 
 ### Crash fixes
 * [CONRAT-32190](https://jira.rakuten-it.com/jira/browse/CONRAT-32190): Fix a crash that occurs when watchOS interact with iOS in terminat state.
