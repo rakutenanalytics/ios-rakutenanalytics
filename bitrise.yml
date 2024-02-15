@@ -89,7 +89,7 @@ workflows:
             set -e
 
             git fetch --all --tags
-            git remote add gitpub $GITPUB_MIRROR_GIT
+            git remote add gitpub https://$BITBUCKETSERVER_USERNAME:$BITBUCKETSERVER_PASSWORD@$GITPUB_MIRROR_REPO_URL || echo Remote already added
             git push gitpub "refs/remotes/origin/$BITRISE_GIT_BRANCH:refs/heads/$BITRISE_GIT_BRANCH" --force
             git push gitpub "refs/tags/$RELEASE_VERSION:refs/tags/$RELEASE_VERSION"
     - script@1:
