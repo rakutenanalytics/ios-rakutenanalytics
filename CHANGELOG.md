@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 10.0.2 (2024-02-15)
 
 ### Crash fixes
