@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+* [CONRAT-32240](https://jira.rakuten-it.com/jira/browse/CONRAT-32240): Multi domain support.
+
 ## 10.0.2 (2024-02-15)
 
 ### Crash fixes

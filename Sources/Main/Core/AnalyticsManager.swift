@@ -169,6 +169,7 @@ protocol ReferralAppTrackable: AnyObject {
     private var sessionCookie: String?
     private var sessionStartDate: Date?
     private var cookieDomainBlock: WebTrackingCookieDomainBlock?
+    private var cookieDomains: [String]?
 
     /// Trackers Set
     /// - Note: The 'Tracker' type has to conform to protocol `Hashable` in order to use `Set` instead of `NSMutableSet`
@@ -316,17 +317,31 @@ extension AnalyticsManager {
                                                name: UIApplication.willResignActiveNotification,
                                                object: nil)
     }
-
-    private func refreshCookieStore() {
-        if enableAppToWebTracking {
-            analyticsCookieInjector.injectAppToWebTrackingCookie(
-                domain: cookieDomainBlock?(),
-                deviceIdentifier: deviceIdentifierHandler.ckp(),
-                completionHandler: nil)
-        } else {
+    
+    private func refreshCookieStore(with targetDomains: [String]? = nil) {
+        guard enableAppToWebTracking else {
             analyticsCookieInjector.clearCookies { }
+            return
+        }
+        
+        guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
+            injectAppToWebTrackingCookie(domain: nil)
+            return
+        }
+
+        for domain in targetDomains {
+            injectAppToWebTrackingCookie(domain: domain)
         }
     }
+
+    private func injectAppToWebTrackingCookie(domain: String?) {
+        analyticsCookieInjector.injectAppToWebTrackingCookie(
+            domain: domain,
+            deviceIdentifier: deviceIdentifierHandler.ckp(),
+            completionHandler: nil
+        )
+    }
+
 }
 
 // MARK: - UIApplication Notifications
@@ -570,12 +585,30 @@ extension AnalyticsManager {
     ///     - cookieDomainBlock: The block returns the domain string to set on the cookie.
     @objc(setWebTrackingCookieDomainWithBlock:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock) {
         self.cookieDomainBlock = cookieDomainBlock
-        refreshCookieStore()
+        guard let domain = self.cookieDomainBlock?() else {
+            refreshCookieStore()
+            return
+        }
+        refreshCookieStore(with: [domain])
+    }
+    
+    /// Method to allow the app to set multiple custom domains for app-to-web tracking cookies.
+    ///
+    /// - Parameters:
+    ///     - cookieDomains: An array of domain strings to set on the cookie.
+    @objc(setWebTrackingCookieMultipleDomainsWithArray:) public func setWebTrackingCookieMultipleDomains(array cookieDomains: [String]?) {
+        self.cookieDomains = cookieDomains
+        refreshCookieStore(with: cookieDomains)
     }
 
     /// Returns the web tracking cookie domain set by `setWebTrackingCookieDomain(block:)`
     @objc public func webTrackingCookieDomain() -> String? {
         cookieDomainBlock?()
+    }
+    
+    /// Returns the latest web tracking cookie domains set by `setWebTrackingCookieMultipleDomains(array:)`
+    @objc public func webTrackingCookieMultipleDomains() -> [String]? {
+        cookieDomains
     }
 
     /// Set the endpoint URL for all the trackers at runtime.
