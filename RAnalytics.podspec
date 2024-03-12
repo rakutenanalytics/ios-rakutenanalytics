@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "12.0"
   s.requires_arc = true
   s.swift_versions = ['5.7.1']
-  s.resources = ['Sources/Resources/PrivacyInfo.xcprivacy']
+  s.resources = ['Sources/Main/Resources/PrivacyInfo.xcprivacy']
 
   options = {
     'CLANG_ENABLE_MODULES'    => 'YES',
