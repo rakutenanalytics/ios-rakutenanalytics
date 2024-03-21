@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 10.0.3 (2024-03-21)
 
 ### Bug fixes
