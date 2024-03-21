@@ -5,6 +5,11 @@
 ### Features
 * [CONRAT-32240](https://jira.rakuten-it.com/jira/browse/CONRAT-32240): Multi domain support.
 
+## 10.0.3 (2024-03-21)
+
+### Bug fixes
+* [CONRAT-33270](https://jira.rakuten-it.com/jira/browse/CONRAT-33270): Fix PrivacyReport generation for SPM and update Privacy Tracking Domains.
+
 ## 10.0.2 (2024-02-15)
 
 ### Crash fixes

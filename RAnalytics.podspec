@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RAnalytics"
-  s.version      = "10.1.2-snapshot"
+  s.version      = "10.1.3-snapshot"
   s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
   s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "12.0"
   s.requires_arc = true
   s.swift_versions = ['5.7.1']
-  s.resources = ['Sources/Resources/PrivacyInfo.xcprivacy']
+  s.resources = ['Sources/Main/Resources/PrivacyInfo.xcprivacy']
 
   options = {
     'CLANG_ENABLE_MODULES'    => 'YES',

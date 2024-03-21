@@ -313,7 +313,6 @@
 			children = (
 				C9320A6A279FF79B009FE6EC /* Main */,
 				C9320A67279FF79B009FE6EC /* RAnalyticsSwiftLoader */,
-				CAAC4C982B1FF2A000178E7D /* Resources */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -334,6 +333,7 @@
 				C9320A6B279FF79B009FE6EC /* Core */,
 				C9320ABC279FF79B009FE6EC /* RAT */,
 				C9320A81279FF79B009FE6EC /* Util */,
+				CAAC4C982B1FF2A000178E7D /* Resources */,
 			);
 			path = Main;
 			sourceTree = "<group>";
