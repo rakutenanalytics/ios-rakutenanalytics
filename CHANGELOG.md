@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 10.0.3 (2024-03-21)
 
 ### Bug fixes
 * [CONRAT-33270](https://jira.rakuten-it.com/jira/browse/CONRAT-33270): Fix PrivacyReport generation for SPM and update Privacy Tracking Domains.
