@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.1.1 (2024-03-22)
+
+### Bug fixes
+* CONRAT-33270: Fix Privacy Report generation for SPM and update Privacy Tracking Domains.
+
 ## 10.1.0 (2024-01-18)
 
 ### Crash fixes
