@@ -21,7 +21,8 @@ let package = Package(
                 dependencies: ["RAnalyticsSwiftLoader"],
                 path: "Sources/Main",
                 exclude: ["Core/SDK_TRACKING_GUIDE.md"],
-                resources: [.process("Core/Assets")]),
+                resources: [.process("Core/Assets"), 
+                            .copy("Resources/PrivacyInfo.xcprivacy")]),
 
         .target(name: "RAnalyticsSwiftLoader",
                 path: "Sources/RAnalyticsSwiftLoader",
