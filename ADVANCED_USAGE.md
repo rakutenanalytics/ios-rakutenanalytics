@@ -405,6 +405,12 @@ AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
 }
 ```
 
+You can set multiple custom domains with `setWebTrackingCookieMultipleDomains(:)` method:
+
+```swift
+AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domain.co.jp", ".example-domain.com"])
+```
+
 ## Configure the tracker batching delay
 
 A tracker collects events and sends them to a backend in batches.

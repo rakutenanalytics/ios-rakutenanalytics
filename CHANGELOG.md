@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Features
+* CONRAT-32240: Multi domain support.
+
 ## 10.1.1 (2024-03-22)
 
 ### Bug fixes

@@ -149,7 +149,6 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                                             parameters: ["foo": "bar",
                                                          "acc": accountId,
                                                          "aid": applicationId]).track()
-
         WKWebsiteDataStore.default().httpCookieStore.getAllCookies { (cookies) in
             _ = cookies.map { (cookie) in
                 print(cookie)
@@ -158,7 +157,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         // For quick testing of _RAnalyticsCookieInjector load a zero-frame webview
         WKWebView(frame: .zero).load(URLRequest(url: URL(string: "https://corp.rakuten.co.jp")!))
     }
-
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
