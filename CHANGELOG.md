@@ -5,6 +5,9 @@
 ### Features
 * [CONRAT-32240](https://jira.rakuten-it.com/jira/browse/CONRAT-32240): Multi domain support.
 
+### Unit tests
+* [CONRAT-30960](https://jira.rakuten-it.com/jira/browse/CONRAT-30960): Fix the failing test case on Analytics.
+
 ## 10.0.3 (2024-03-21)
 
 ### Bug fixes

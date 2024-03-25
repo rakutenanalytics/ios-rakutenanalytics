@@ -55,7 +55,7 @@ for scheme in ${shemes[@]}; do
         -workspace RakutenAnalyticsSDK.xcworkspace \
         -scheme $FRAMEWORK_NAME-Framework \
         -sdk iphonesimulator \
-        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
+        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" \
         -archivePath $SIMULATOR_ARCHIVE_FOLDER | xcpretty
 
     # build device framework
@@ -63,7 +63,7 @@ for scheme in ${shemes[@]}; do
         -workspace RakutenAnalyticsSDK.xcworkspace \
         -scheme $FRAMEWORK_NAME-Framework \
         -sdk iphoneos \
-        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-fembed-bitcode -DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" BITCODE_GENERATION_MODE=bitcode \
+        -configuration $scheme SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES OTHER_CFLAGS="-DRMSDK_ANALYTICS_VERSION=$RANALYTICS_FRAMEWORK_VERSION -DPUBLIC_ANALYTICS_IOS_SDK=1" \
         -archivePath $DEVICE_ARCHIVE_FOLDER | xcpretty
 
     # create xcframework
@@ -96,26 +96,4 @@ for scheme in ${shemes[@]}; do
     done
 done
 
-# check bitcode for each mobile architecture
-allArchitectures=("arm64")
-
 set +e
-
-bitcode()
-{
-    otoolResult=$(otool -arch $1 -l $2 | grep __LLVM)
-    size=${#otoolResult}
-    if (( $size > 0 )); then
-        echo "Has bitcode"
-    else
-        echo "Doesn't have bitcode"
-        exit 1
-    fi
-}
-
-for item in ${allArchitectures[@]}; do
-    for scheme in ${shemes[@]}; do
-        echo "Framework - $scheme mode - architecture $item:"
-        bitcode $item $OUTPUT_FOLDER/$scheme/$frameworkBinaryPath
-    done
-done

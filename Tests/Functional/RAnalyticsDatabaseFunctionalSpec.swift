@@ -28,7 +28,10 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
             beforeEach {
                 connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
                                                                         databaseParentDirectory: databaseParentDirectory)
-                database = RAnalyticsDatabase.database(connection: connection)
+                guard let safeConnection = connection else {
+                    return
+                }
+                database = RAnalyticsDatabase.database(connection: safeConnection)
             }
 
             afterEach {

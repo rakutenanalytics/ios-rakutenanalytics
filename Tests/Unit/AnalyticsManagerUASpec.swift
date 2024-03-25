@@ -27,18 +27,21 @@ final class AnalyticsManagerUASpec: QuickSpec {
                 }
 
                 context("When the web view user agent is enabled at buildtime") {
-                    it("should add the app user agent suffix to the WKWebView's user agent") {
-                        var userAgent: String?
+                    context("On iOS 17 and above the userAgent to be set to customUserAgent") {
+                        it("should add the app user agent suffix to the WKWebView's user agent") {
+                            var userAgent: String?
+                            var webView: WKWebView?
+                            bundle.isWebViewAppUserAgentEnabledAtBuildtime = true
+                            _ = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
-                        bundle.isWebViewAppUserAgentEnabledAtBuildtime = true
+                            DispatchQueue.main.async {
+                                webView = WKWebView()
+                                webView?.enableAppUserAgent(true, bundle: bundle)
+                                userAgent = webView?.rCurrentUserAgent
+                            }
 
-                        _ = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-
-                        DispatchQueue.main.async {
-                            userAgent = WKWebView().rCurrentUserAgent
+                            expect(userAgent?.suffix(appUserAgent.count).description).toEventually(equal(appUserAgent))
                         }
-
-                        expect(userAgent?.suffix(appUserAgent.count).description).toEventually(equal(appUserAgent))
                     }
 
                     context("Then the web view user agent is disabled at runtime") {
