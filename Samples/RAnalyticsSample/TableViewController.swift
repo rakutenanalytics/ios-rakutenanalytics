@@ -16,6 +16,8 @@ enum GlobalConstants {
     static let requestGeoLocation = "Request Geo Location"
     static let showEmptyPage = "Show empty page (for pv event tests)"
     static let emptyPageTitle = "Empty page"
+    static let urlSchemeLocator = "appToAppTracking_button_urlScheme"
+    static let universalLinkLocator = "appToAppTracking_button_universalLink"
 }
 
 enum TableViewCellType: Int, CaseIterable {
@@ -181,6 +183,16 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         if cell is SwitchTableViewCell && cellType == .startLocationCollection {
             let value = UserDefaults.standard.bool(forKey: UserDefaultsKeys.locationCollectionKey)
             (cell as? SwitchTableViewCell)?.usingSwitch.isOn = value
+        }
+        
+        if cell is SwitchTableViewCell && cellType == .urlScheme {
+            cell.contentView.accessibilityIdentifier = GlobalConstants.urlSchemeLocator
+            cell.titleLabel.accessibilityIdentifier = GlobalConstants.urlSchemeLocator
+        }
+        
+        if cell is SwitchTableViewCell && cellType == .universalLink {
+            cell.contentView.accessibilityIdentifier = GlobalConstants.universalLinkLocator
+            cell.titleLabel.accessibilityIdentifier = GlobalConstants.universalLinkLocator
         }
 
         cell.delegate = self
