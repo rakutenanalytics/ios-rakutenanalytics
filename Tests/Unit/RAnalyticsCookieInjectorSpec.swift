@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import WebKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -11,8 +11,8 @@ import RAnalyticsTestHelpers
 final class RAnalyticsCookieInjectorSpec: QuickSpec {
     override func spec() {
         describe("RAnalyticsCookieInjector") {
-            let deviceID = "cc851515e51366f4856d165c3ea117e592db6fbc"
-            let idfa = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+            let deviceID = "cc851516e51366f4856d165c3ea117e592db6fba"
+            let idfa = "E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"
 
             let containerMock = SimpleContainerMock()
             containerMock.adIdentifierManager = ASIdentifierManagerMock()

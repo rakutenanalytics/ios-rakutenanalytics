@@ -3,7 +3,7 @@ import Nimble
 import Foundation
 import CoreGraphics
 import UIKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

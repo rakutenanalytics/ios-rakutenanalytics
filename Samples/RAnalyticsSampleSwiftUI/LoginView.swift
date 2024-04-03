@@ -1,5 +1,5 @@
 import SwiftUI
-import RAnalytics
+import RakutenAnalytics
 
 struct LoginView: View {
     var body: some View {

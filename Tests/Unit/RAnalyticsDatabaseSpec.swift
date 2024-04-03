@@ -7,7 +7,7 @@ import Nimble
 import SQLite3
 import Foundation
 import UIKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

@@ -6,7 +6,7 @@ import Quick
 import Nimble
 import SQLite3
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -341,9 +341,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                         }
 
                                         expect(cpPayload).toEventuallyNot(beNil())
-
                                         expect(cpPayload?["title"] as? String).to(equal("CustomWebPageTitle"))
-
                                         expect(cpPayload?["url"] as? String).to(equal("https://rat.rakuten.co.jp/"))
                                     }
                                 }

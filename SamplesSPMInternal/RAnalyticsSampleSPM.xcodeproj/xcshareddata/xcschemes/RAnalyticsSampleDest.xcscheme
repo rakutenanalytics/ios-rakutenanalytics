@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C9981C5B28CA91EA00B63A5A"
-               BuildableName = "RAnalyticsSampleDest.app"
+               BuildableName = "RAnalyticsSampleDestSPM.app"
                BlueprintName = "RAnalyticsSampleDest"
                ReferencedContainer = "container:RAnalyticsSampleSPM.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C9981C5B28CA91EA00B63A5A"
-            BuildableName = "RAnalyticsSampleDest.app"
+            BuildableName = "RAnalyticsSampleDestSPM.app"
             BlueprintName = "RAnalyticsSampleDest"
             ReferencedContainer = "container:RAnalyticsSampleSPM.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C9981C5B28CA91EA00B63A5A"
-            BuildableName = "RAnalyticsSampleDest.app"
+            BuildableName = "RAnalyticsSampleDestSPM.app"
             BlueprintName = "RAnalyticsSampleDest"
             ReferencedContainer = "container:RAnalyticsSampleSPM.xcodeproj">
          </BuildableReference>

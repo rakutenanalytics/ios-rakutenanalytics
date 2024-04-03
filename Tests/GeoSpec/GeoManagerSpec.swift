@@ -5,7 +5,7 @@ import Quick
 import Nimble
 import CoreLocation
 import UIKit.UIDevice
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if SWIFT_PACKAGE
 import RAnalyticsTestHelpers
@@ -65,7 +65,7 @@ final class GeoManagerSpec: QuickSpec {
                     var geoLocationManager: GeoLocationManager!
                     var geoManager: GeoManager!
                     let asIdentifierManagerMock = ASIdentifierManagerMock()
-                    asIdentifierManagerMock.advertisingIdentifierUUIDString = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+                    asIdentifierManagerMock.advertisingIdentifierUUIDString = "E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"
                     let userDefaultsMock = UserDefaultsMock([:])
                     userDefaultsMock.set(value: "flo_test", forKey: RAnalyticsExternalCollector.Constants.trackingIdentifierKey)
                     let keychainHandlerMock = KeychainHandlerMock()
@@ -130,7 +130,7 @@ final class GeoManagerSpec: QuickSpec {
 
                             it("should process the location event with a non-empty cka") {
                                 expect(result).toEventuallyNot(beNil())
-                                expect(trackerMock.state?.advertisingIdentifier).to(equal("E621E1F8-C36C-495A-93FC-0C247A3E6E5F"))
+                                expect(trackerMock.state?.advertisingIdentifier).to(equal("E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"))
                             }
                         }
 

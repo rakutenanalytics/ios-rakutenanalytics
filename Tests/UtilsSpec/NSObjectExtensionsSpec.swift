@@ -2,7 +2,7 @@ import Foundation
 import Quick
 import Nimble
 import class UIKit.UIWindow
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 class NSObjectExtensionsSpec: QuickSpec {
 

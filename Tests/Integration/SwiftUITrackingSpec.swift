@@ -3,7 +3,7 @@ import Nimble
 import Foundation
 import ViewInspector
 import SwiftUI
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers

@@ -8,7 +8,7 @@ import SQLite3
 import Foundation
 import UIKit
 import CoreLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -87,9 +87,9 @@ final class GeoTrackerSpec: QuickSpec {
                 let expectedBearing = 22.0
                 let expectedBearingAccuracy = 20.0
                 let expectedResolution = "375x812"
-                let expectedSessionIdentifier = "CA7A88AB-82FE-40C9-A836-B1B3455DECAB"
-                let expectedCkp = "bd7ac43958a9e7fa0f097c0a0ba5c2979299e69e"
-                let expectedCka = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+                let expectedSessionIdentifier = "CA7A88AR-82FE-40C9-A836-B1B3455DECAF"
+                let expectedCkp = "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d"
+                let expectedCka = "E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"
                 let expectedActionParamType = "ButtonClick"
                 let expectedActionParamLog = "In the Check screen"
                 let expectedActionParamId = "abc123"

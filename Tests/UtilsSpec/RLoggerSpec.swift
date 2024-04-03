@@ -1,6 +1,6 @@
 import Quick
 import Nimble
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 class RLoggerSpec: QuickSpec {
     override func spec() {
@@ -14,8 +14,8 @@ class RLoggerSpec: QuickSpec {
             }
 
             describe("callerModuleName") {
-                it("should return RAnalytics or UtilsSpec (spm)") {
-                    expect(["RAnalytics", "UtilsSpec"]).to(contain(RLogger.callerModuleName))
+                it("should return RakutenAnalytics or UtilsSpec (spm)") {
+                    expect(["RakutenAnalytics", "UtilsSpec"]).to(contain(RLogger.callerModuleName))
                 }
             }
 

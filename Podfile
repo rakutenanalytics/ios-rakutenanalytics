@@ -1,6 +1,3 @@
-source 'https://cdn.cocoapods.org/'
-source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
-
 platform :ios, '12.0'
 use_frameworks!
 inhibit_all_warnings!
@@ -12,19 +9,19 @@ abstract_target 'Common' do
   pod 'ViewInspector'
 
   target 'UnitTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'FunctionalTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'IntegrationTests' do
-    pod 'RAnalytics', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 
   target 'CoreTests' do
-    pod 'RAnalytics/Core', :inhibit_warnings => false, :path => './RAnalytics.podspec'
+    pod 'RakutenAnalytics/Core', :inhibit_warnings => false, :path => './RakutenAnalytics.podspec'
   end
 end
 

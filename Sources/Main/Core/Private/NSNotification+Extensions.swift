@@ -1,7 +1,6 @@
 import Foundation
 
 /// Discover events
-/// See https://confluence.rakuten-it.com/confluence/display/ESD/Usage+Tracking+for+Discover
 extension Notification.Name {
     static let discoverPageVisit               = Self("_rem_discover_discoverpage_visit")
     static let discoverPageTap                 = Self("_rem_discover_discoverpage_tap")

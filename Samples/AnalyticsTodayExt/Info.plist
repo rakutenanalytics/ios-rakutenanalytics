@@ -28,9 +28,9 @@
 		<string>com.apple.widget-extension</string>
 	</dict>
 	<key>RATAccountIdentifier</key>
-	<integer>111</integer>
-	<key>RATAppIdentifier</key>
 	<integer>123</integer>
+	<key>RATAppIdentifier</key>
+	<integer>456</integer>
 	<key>RMSDKEnableDebugLogging</key>
 	<true/>
 </dict>

@@ -1,6 +1,3 @@
-source 'https://cdn.cocoapods.org/'
-source 'https://gitpub.rakuten-it.com/scm/eco/core-ios-specs.git'
-
 workspace 'RAnalyticsSample.xcworkspace'
 
 platform :ios, "12.0"
@@ -10,14 +7,14 @@ framework_name = 'RAnalytics.zip'
 framework_zip = 'file:' + __dir__ + '/' + framework_name
 
 abstract_target 'Common' do
-  # Binary framework pod of ../RakutenAnalyticsSDK
-  pod 'RAnalytics', :http => framework_zip
+  # Binary framework pod of ../RAnalyticsSDK
+  pod 'RakutenAnalytics', :http => framework_zip
 
-  # Source-based pod of ../RAnalytics for local development
-  # pod 'RAnalytics', :path => '../RAnalytics.podspec'
+  # Source-based pod of ../RakutenAnalytics for local development
+  # pod 'RakutenAnalytics', :path => '../RakutenAnalytics.podspec'
 
   # GitHub pod
-  # pod 'RAnalytics', :source => 'https://github.com/rakutentech/ios-analytics-framework.git'
+  # pod 'RakutenAnalytics'
   
   target 'RAnalyticsSample'
   target 'RAnalyticsSampleDest'

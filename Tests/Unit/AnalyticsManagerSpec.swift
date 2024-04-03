@@ -6,7 +6,7 @@ import Nimble
 import AdSupport
 import WebKit
 import CoreLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -148,7 +148,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                     containerMock.wkHttpCookieStore = cookieStore
                     let cookieInjector = RAnalyticsCookieInjector(dependenciesContainer: containerMock)
                     let analyticsManager = AnalyticsManager(dependenciesContainer: containerMock)
-                    let deviceID = "cc851515e51366f4856d165c3ea117e592db6fbc"
+                    let deviceID = "cc851516e51366f4856d165c3ea117e592db6fba"
 
                     var hasCookie = true
                     let cookieStoreObserver = CookieStoreObserver {

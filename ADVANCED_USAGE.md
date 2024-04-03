@@ -7,7 +7,6 @@
 1. [Configure App-to-App referral tracking](#configure-app-to-app-referral-tracking)
 1. [Configure automatic tracking](#configure-automatic-tracking)
 1. [Duplicate events across multiple RAT Accounts](#duplicate-events-across-multiple-rat-accounts)
-1. [Manually set a user identifier](#manually-set-a-user-identifier)
 1. [Handling errors](#handling-errors)
 1. [Configure debug logging](#configure-debug-logging)
 1. [App to web tracking](#app-to-web-tracking)
@@ -22,18 +21,17 @@
 
 ## Configure a custom endpoint
 
-To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint. e.g. to use the RAT staging environment set `RATEndpoint` to [https://stg.rat.rakuten.co.jp/](https://stg.rat.rakuten.co.jp/).
+To use a custom endpoint when talking to the analytics backend add a `RATEndpoint` key to the app's info.plist and set it to the custom endpoint.
 
 A custom endpoint can also be configured at runtime as below:
 
 ```swift
-AnalyticsManager.shared().set(endpointURL: URL(string: "https://rat.rakuten.co.jp/"))
+AnalyticsManager.shared().set(endpointURL: URL(string: "%custom_endpoint_url%"))
 ```
 
 ⚠️ The runtime endpoint you set is not persisted and is intended only for developer/QA testing.
 
 **Note**: If you have implemenented a [custom tracker](#creating-a-custom-tracker) ensure that you have added your tracker to the manager before calling the set endpoint function.
-
 
 ## Location tracking
 
@@ -217,13 +215,13 @@ More details can be found in [Configure automatic tracking](#configure-automatic
 If your app is coded in Objective-C, please import this header file in order to use our public Swift classes: 
 
 ```objc
-#import <RAnalytics/RAnalytics-Swift.h>
+#import <RakutenAnalytics/RAnalytics-Swift.h>
 ```
 
 If your app is coded in Swift, please import the RAnalytics framework: 
 
 ```swift
-import RAnalytics
+import RakutenAnalytics
 ```
 
 ### Automatics events tracking configuration
@@ -359,20 +357,6 @@ RAnalyticsRATTracker.shared().shouldDuplicateRATEventHandler = { eventName, dupl
 }
 ```
 
-## Manually set a user identifier
-
-From version 5.2.0 there is a new `setUserIdentifier:` API available for your app to manually set the tracking user identifier. After calling the API the user identifier that you set will be used for subsequent tracked events.
-
-```swift
-RAnalyticsManager.sharedInstance.setUserIdentifier("a_user_identifier")
-```
-
-Use cases:
-
-* App retrieves the encrypted easy ID using other SDKs or REST API then sets it using the `setUserIdentifier:` method.
-* App can do this every time the app is launched/opened, or when new a user logs in.
-* App should set the user identifier to nil when the user logs out.
-
 # Handling errors
 
 The SDK will automatically raise errors if the `errorHandler` is set as below:
@@ -433,11 +417,9 @@ A tracker collects events and sends them to a backend in batches.
 
 The batching delay is a configurable value with default set to 1 second.
 
-⚠️ In our [internal testing](https://jira.rakuten-it.com/jira/browse/SDKCF-1596) we noticed no significant impact on battery usage when the batching delay was reduced to 1 sec in our demo app. However you should perform your own developer testing and QA to determine the appropriate batching delay for your app.
-
+⚠️ In our internal testing, we noticed no significant impact on battery usage when the batching delay was reduced to 1 sec in our demo app. However you should perform your own developer testing and QA to determine the appropriate batching delay for your app.
 
 You can configure a different delay with the `AnalyticsTracker#setBatchingDelay:` and `AnalyticsTracker#setBatchingDelayWithBlock:` methods.
-
 
 ### Example 1: Configure batching interval of 10 seconds
 
@@ -498,19 +480,7 @@ App Extensions need to follow the requirements at [Configuring RAT](readme.html#
 
 #### Viewing App Extension events in Kibana
 
-To search for App Extension events in [Kibana](https://confluence.rakuten-it.com/confluence/display/RAT/How+to+Check+Data+that+is+being+Sent+to+RAT#HowtoCheckDatathatisbeingSenttoRAT-Step2:[ServerSide]ChecktheeventonRATserver) use your **App Extension** name and not the application name e.g. use `app_name:jp.co.rakuten.sdk.ecosystemdemo.today` as the search term not `app_name:jp.co.rakuten.sdk.ecosystemdemo`.
-
-#### Limitations
-
-A known limitation due to app sandboxing is that the SDK cannot automatically fill the `userid` (normally contains a logged-in user's encrypted easy id) field in the payload of automatically tracked events such as `_rem_launch` when an event is sent by an App Extension.
-
-#### Track encrypted easy id
-
-To send the encrypted easy id in custom events you can add a Podfile dependency on [RAuthenticationCore](https://documents.developers.rakuten.com/ios-sdk/authentication-latest/#authentication-installing) to the App Extension target, load the user's account using `RAuthenticationAccount` method `loadAccountWithName:service:error:` and then manually set the `userid` key to the loaded account's `trackingIdentifier`:
-
-```swift
-RAnalyticsRATTracker.shared().event(eventType: "custom_name", parameters: ["userid": account.trackingIdentifier]).track()
-```
+To search for App Extension events in Kibana use your **App Extension** name and not the application name.
 
 ## Creating a custom tracker
 
@@ -634,15 +604,11 @@ guard let model = ReferralAppModel(link: "campaign-abc123",
 // create deeplink url from model using `urlScheme(appScheme:)` or `universalLink(domain:)`
 ```
 
-See the [feature page](https://confluence.rakuten-it.com/confluence/display/MAGS/RAnalytics+SDK%3A+App+to+App+tracking#RAnalyticsSDK:ApptoApptracking-FunctionalSpec) sections "Standard Referral Parameters" and "Custom Referral Parameters" for more details.
-
 ### Events sent to RAT
 
-If Analytics SDK v8.3.0 or later is integrated in the referred-to app, the SDK automatically sends two events to RAT:
+The SDK automatically sends two events to RAT:
 - an etype `pv` visit event sent to the **referred** app's RAT account
 - an etype `deeplink` event sent to the **referral** app's RAT account
-
-See the [feature page](https://confluence.rakuten-it.com/confluence/display/MAGS/RAnalytics+SDK%3A+App+to+App+tracking) or [RAT's guide](https://confluence.rakuten-it.com/confluence/x/SOs1rw) to understand more about app-to-app referral tracking with RAT.
 
 ## How to configure the database directory path
 It is possible to change the database directory path in the app's `Info.plist`.
@@ -803,37 +769,6 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 
 ### SDKs NSNotification
 
-#### RAE SDK notifications
-
-- `_rem_login` is sent when:
-    - RAE login succeeds
-    - one of these NSNotifications is received:
-        - com.rakuten.esd.sdk.events.login.password
-        - com.rakuten.esd.sdk.events.login.one_tap
-        - com.rakuten.esd.sdk.events.login.other
-
-- `_rem_login_failure` is sent when:
-    - RAE login fails
-    - this NSNotification is received: com.rakuten.esd.sdk.events.login.failure
-
-- `_rem_logout` is sent when:
-    - RAE logout succeeds
-    - one of these NSNotifications is received:
-        - com.rakuten.esd.sdk.events.logout.local
-        - com.rakuten.esd.sdk.events.logout.global
-
-- `_rem_sso_credential_found` is sent when:
-    - the RAE login webview page is loaded
-    - this NSNotification is received: is com.rakuten.esd.sdk.events.ssocredentialfound
-
-- `_rem_login_credential_found` is sent when:
-    - password extension button is tapped
-    - this NSNotification is received: is com.rakuten.esd.sdk.events.logincredentialfound
-
-- pv (page visit) is sent when:
-    - the forgot password button or the privacy policy button or the help button or the create account button is tapped
-    - this NSNotification is received: com.rakuten.esd.sdk.events.ssodialog
-
 #### IDSDK notifications
 
 - `_rem_login` is sent when:
@@ -847,21 +782,6 @@ https://developer.apple.com/documentation/uikit/uiviewcontroller/1621423-viewdid
 - `_rem_logout` is sent when:
     - IDSDK logout succeeds
     - this NSNotification is received: com.rakuten.esd.sdk.events.logout.idtoken_memberid
-
-### RDiscover SDK notifications
-
-- `_rem_discover_discoverpage_visit` is sent when:
-    - willMoveToWindow: is called in the Discover view (https://developer.apple.com/documentation/uikit/uiview/1622563-willmovetowindow)
-    - this notification is received: com.rakuten.esd.sdk.events.discover.visitPage
-
-- `_rem_discover_discoverpage_tap` is sent in any cases when:
-    - collectionView:didSelectItemAtIndexPath: is called in the Discover view (https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/1618032-collectionview?language=objc)
-    - this NSNotification is received: com.rakuten.esd.sdk.events.discover.tapPage
-    
-- `_rem_discover_discoverpage_redirect` is sent when:
-    - collectionView:didSelectItemAtIndexPath: is called in the Discover view (https://developer.apple.com/documentation/uikit/uicollectionviewdelegate/1618032-collectionview?language=objc)
-    - the landing page is opened
-    - this NSNotification is received: com.rakuten.esd.sdk.events.discover.redirectPage
 
 #### Custom notification
 

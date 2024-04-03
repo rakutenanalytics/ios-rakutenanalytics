@@ -5,7 +5,7 @@
 import Quick
 import Nimble
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -106,12 +106,10 @@ final class ReferralAppModelSpec: QuickSpec {
 
                 it("should fail when mandatory parameters are unexpected") {
                     // URL Scheme
-
                     expect(ReferralAppModel(url: URL(string: "app://\(CpParameterKeys.Ref.accountIdentifier)=\(encodedStandardCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
                     expect(ReferralAppModel(url: URL(string: "app://\(CpParameterKeys.Ref.accountIdentifier)=\(encodedSpecialCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: bundleIdentifier)).to(beNil())
 
                     // Universal Link
-
                     expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(CpParameterKeys.Ref.accountIdentifier)=\(encodedStandardCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedStandardCharacters)")!, sourceApplication: nil)).to(beNil())
                     expect(ReferralAppModel(url: URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(CpParameterKeys.Ref.accountIdentifier)=\(encodedSpecialCharacters)&\(CpParameterKeys.Ref.applicationIdentifier)=\(encodedSpecialCharacters)")!, sourceApplication: nil)).to(beNil())
                 }
@@ -190,7 +188,6 @@ final class ReferralAppModelSpec: QuickSpec {
                             let commonParameters = "\(mandatoryParametersQueryItems)&\(linkQueryItem)"
                             let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!, sourceApplication: bundleIdentifier)!
                             verify(model: appModel)
-
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                             let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
@@ -212,7 +209,6 @@ final class ReferralAppModelSpec: QuickSpec {
                             let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!,
                                                             sourceApplication: bundleIdentifier)!
                             verify(model: appModel)
-
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                             let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
@@ -245,7 +241,6 @@ final class ReferralAppModelSpec: QuickSpec {
                                 let url = URL(string: "app://?\(commonParameters)")!
                                 let appModel = ReferralAppModel(url: url, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
-
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                                 let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
@@ -268,7 +263,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                             let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!, sourceApplication: bundleIdentifier)!
                             verify(model: appModel)
-
                             let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                             let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                             verify(model: universalModel)
@@ -310,7 +304,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                                 let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
-
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                                 let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
@@ -356,7 +349,6 @@ final class ReferralAppModelSpec: QuickSpec {
                                 let appModel = ReferralAppModel(url: URL(string: "app://?\(commonParameters)")!,
                                                                 sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
-
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                                 let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
@@ -402,7 +394,6 @@ final class ReferralAppModelSpec: QuickSpec {
                                 let appURL = URL(string: "app://?\(commonParameters)")!
                                 let appModel = ReferralAppModel(url: appURL, sourceApplication: bundleIdentifier)!
                                 verify(model: appModel, customParameters: customParameters)
-
                                 let universalLinkURL = URL(string: "https://www.rakuten.co.jp?\(bundleIdentifierQueryItem)&\(commonParameters)")!
                                 let universalModel = ReferralAppModel(url: universalLinkURL, sourceApplication: nil)!
                                 verify(model: universalModel, customParameters: customParameters)
@@ -444,7 +435,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                         it("should return expected universal link with minimal non-optional parameters") {
                             let model = ReferralAppModel(bundle: bundle)
-
                             expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1"))
                         }
                     }
@@ -458,7 +448,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                         it("should return expected universal link with RAT identifiers set to 0 and minimal non-optional parameters") {
                             let model = ReferralAppModel()
-
                             expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0"))
                         }
                     }
@@ -481,7 +470,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                     it("should return expected universal link with all expected parameters") {
                         let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
-
                         expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=477&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                         expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
@@ -508,7 +496,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                     it("should return expected universal link with RAT identifiers set to 0 and all expected parameters") {
                         let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
-
                         expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                         expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
@@ -585,7 +572,6 @@ final class ReferralAppModelSpec: QuickSpec {
 
                 it("should return the expected URL") {
                     let universalLink = model.universalLink(domain: "rakuten.co.jp")?.absoluteString
-
                     expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=1&ref_aid=2&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                     expect(universalLink?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())

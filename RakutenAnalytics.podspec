@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
-  s.name         = "RAnalytics"
-  s.version      = "10.1.3-snapshot"
-  s.authors      = { "Rakuten Ecosystem Mobile" => "ecosystem-mobile@mail.rakuten.com" }
+  s.name         = "RakutenAnalytics"
+  s.version      = "10.1.1"
+  s.authors      = "Rakuten Analytics"
   s.summary      = "SDK that can record user activity and automatically send tracking events to RAT."
-  s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
-  s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
-  s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => s.version.to_s }
+  s.homepage     = "https://github.com/rakutenanalytics/ios-rakutenanalytics"
+  s.license      = { :type => 'MIT', :file => 'LICENSE' }
+  s.source       = { :git => "https://github.com/rakutenanalytics/ios-rakutenanalytics", :tag => s.version.to_s }
   s.platform     = :ios, "12.0"
   s.requires_arc = true
   s.swift_versions = ['5.7.1']
@@ -43,7 +43,7 @@ Pod::Spec.new do |s|
       'CoreTelephony',
       'SystemConfiguration'
     ]
-    ss.dependency 'RAnalytics/Core'
+    ss.dependency 'RakutenAnalytics/Core'
   end
 
   s.default_subspecs = ['RAT']

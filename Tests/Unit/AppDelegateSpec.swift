@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import UIKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if SWIFT_PACKAGE
 // As UIApplication.shared is nil in Swift Package tests target, these tests are disabled.

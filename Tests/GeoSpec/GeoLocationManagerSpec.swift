@@ -1,6 +1,6 @@
 import Quick
 import Nimble
-@testable import RAnalytics
+@testable import RakutenAnalytics
 import CoreLocation.CLLocationManager
 
 #if SWIFT_PACKAGE

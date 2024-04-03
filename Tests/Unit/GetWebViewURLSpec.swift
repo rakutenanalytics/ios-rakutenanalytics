@@ -3,7 +3,7 @@ import Nimble
 import Foundation
 import UIKit
 import WebKit
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 #if SWIFT_PACKAGE
 import RAnalyticsTestHelpers

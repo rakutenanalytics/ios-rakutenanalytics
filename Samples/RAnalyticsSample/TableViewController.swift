@@ -1,5 +1,5 @@
 import UIKit
-import RAnalytics
+import RakutenAnalytics
 import WebKit
 import CoreLocation.CLLocationManager
 

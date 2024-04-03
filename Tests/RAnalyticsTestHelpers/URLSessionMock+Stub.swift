@@ -35,7 +35,7 @@ extension URLSessionMock {
                      statusCode: 200,
                      headerFields: ["Set-Cookie": cookie])
     }
-
+    
     public func stubRATServerErrorResponse(url: URL? = URL(string: "https://rat.rakuten.co.jp")) {
         stubResponse(url: url, statusCode: 500)
     }

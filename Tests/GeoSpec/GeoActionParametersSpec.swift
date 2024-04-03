@@ -1,6 +1,6 @@
 import Quick
 import Nimble
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 final class GeoActionParametersSpec: QuickSpec {
 

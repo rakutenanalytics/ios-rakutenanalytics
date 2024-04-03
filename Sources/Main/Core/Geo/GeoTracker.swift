@@ -9,10 +9,6 @@ enum GeoTrackerConstants {
 /// The GeoTracker is responsible for processing Location events received from GeoManager.
 ///
 /// - Note: `NSObject` inheritance is needed in order to conform to `Tracker` protocol.
-///
-/// - Links:
-/// https://jira.rakuten-it.com/jira/browse/CONRAT-28248
-/// https://confluence.rakuten-it.com/confluence/display/RAT/analytics+sdk%3A+Implement+GeoTracker
 final class GeoTracker: NSObject {
     /// The Sender used to send requests to RAT
     private var sender: RAnalyticsSender

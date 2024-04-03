@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 final class EventCheckerSpec: QuickSpec {
     override func spec() {

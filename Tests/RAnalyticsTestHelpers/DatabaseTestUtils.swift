@@ -1,6 +1,6 @@
 import Foundation
 import SQLite3
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 @objc public final class DatabaseTestUtils: NSObject {
     @objc public static func openRegularConnection() -> SQlite3Pointer? {

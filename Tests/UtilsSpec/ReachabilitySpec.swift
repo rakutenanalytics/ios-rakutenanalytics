@@ -2,7 +2,7 @@ import Foundation
 import Quick
 import Nimble
 import struct SystemConfiguration.SCNetworkReachabilityFlags
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 class ReachabilitySpec: QuickSpec {
 

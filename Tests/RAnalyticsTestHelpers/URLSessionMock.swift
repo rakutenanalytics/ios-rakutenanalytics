@@ -1,5 +1,5 @@
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 public final class URLSessionMock: URLSession {
 

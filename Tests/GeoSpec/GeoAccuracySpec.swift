@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import CoreLocation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 final class GeoAccuracySpec: QuickSpec {
     

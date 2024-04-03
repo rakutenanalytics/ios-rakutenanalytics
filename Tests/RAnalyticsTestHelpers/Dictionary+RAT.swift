@@ -1,5 +1,5 @@
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 public extension Dictionary where Key == String, Value == Any {
     var appInfo: String? {

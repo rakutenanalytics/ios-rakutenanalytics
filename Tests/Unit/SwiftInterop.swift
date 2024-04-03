@@ -1,5 +1,5 @@
 import XCTest
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 public class SwiftInterop: XCTestCase {
     @objc

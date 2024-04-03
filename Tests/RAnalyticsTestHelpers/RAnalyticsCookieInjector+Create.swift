@@ -1,5 +1,5 @@
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 
 extension RAnalyticsCookieInjector {
     static func create() -> RAnalyticsCookieInjector? {

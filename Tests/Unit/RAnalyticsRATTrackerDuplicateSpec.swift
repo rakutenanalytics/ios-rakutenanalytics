@@ -3,7 +3,7 @@
 import Quick
 import Nimble
 import CoreTelephony
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif

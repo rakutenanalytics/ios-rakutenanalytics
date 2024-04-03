@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 import Foundation
-@testable import RAnalytics
+@testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
@@ -31,11 +31,11 @@ final class RAdvertisingIdentifierHandlerSpec: QuickSpec {
                     expect(advertisingIdentifierHandler.idfa).to(beNil())
                 }
 
-                it("should return E621E1F8-C36C-495A-93FC-0C247A3E6E5F when idfa UUID equals E621E1F8-C36C-495A-93FC-0C247A3E6E5F") {
-                    mock?.advertisingIdentifierUUIDString = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
+                it("should return E621E1F8-A36C-495B-93FC-0C247A3E6E5Q when idfa UUID equals E621E1F8-A36C-495B-93FC-0C247A3E6E5Q") {
+                    mock?.advertisingIdentifierUUIDString = "E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"
 
                     let advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesContainer: dependenciesContainer)
-                    expect(advertisingIdentifierHandler.idfa).to(equal("E621E1F8-C36C-495A-93FC-0C247A3E6E5F"))
+                    expect(advertisingIdentifierHandler.idfa).to(equal("E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"))
                 }
             }
         }
