@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improvements
+* CONRAT-33619: Update framework name for document generation.
+
 ### Features
 * CONRAT-32240: Multi domain support.
 
