@@ -66,18 +66,23 @@ final class GetWebViewURLSpec: QuickSpec {
                         }
 
                         context("When app user agent is set at buildtime (registered in UserDefaults)") {
-                            it("should return a non-empty value with the app user agent suffix") {
-                                let webView = WKWebView()
-                                let defaultWebViewUserAgent: String! = webView.rCurrentUserAgent
-                                let webViewUserAgent: String = webView.webViewUserAgent(defaultWebViewUserAgent: defaultWebViewUserAgent,
-                                                                                        for: bundle)!
-                                UserDefaults.standard.register(defaults: [UserDefaultsKeys.userAgentKey: webViewUserAgent])
-
-                                let userAgent = WKWebView().rCurrentUserAgent
-                                let suffix = userAgent?.suffix(appUserAgent.count).description
-
-                                expect(userAgent).toNot(beEmpty())
-                                expect(suffix).to(equal(appUserAgent))
+                            context("On iOS 17 and above the userAgent is to be set to customUserAgent") {
+                                it("should return a non-empty value with the app user agent suffix") {
+                                    let webView = WKWebView()
+                                    let defaultWebViewUserAgent: String! = webView.rCurrentUserAgent
+                                    let webViewUserAgent: String = webView.webViewUserAgent(defaultWebViewUserAgent: defaultWebViewUserAgent,
+                                                                                            for: bundle)!
+                                    UserDefaults.standard.register(defaults: [UserDefaultsKeys.userAgentKey: webViewUserAgent])
+                                    
+                                    // need to set to customUserAgent
+                                    webView.enableAppUserAgent(true, bundle: bundle)
+                                    let userAgent = webView.rCurrentUserAgent
+                                    webView.customUserAgent = webViewUserAgent
+                                    let suffix = userAgent?.suffix(appUserAgent.count).description
+                                    
+                                    expect(userAgent).toNot(beEmpty())
+                                    expect(suffix).to(equal(appUserAgent))
+                                }
                             }
                         }
 

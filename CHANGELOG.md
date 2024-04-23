@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Features
+* CONRAT-32240: Multi domain support.
+
+### Unit tests
+* CONRAT-30960: Fix the failing test case on Analytics.
+
 ## 10.1.2 (2024-04-23)
 
 ### Improvements
