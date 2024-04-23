@@ -117,16 +117,6 @@
 			<string>NSPrivacyCollectedDataTypePreciseLocation</string>
 		</dict>
 	</array>
-    <key>NSPrivacyTrackingDomains</key>
-    <array>
-        <string>rat.rakuten.co.jp</string>
-        <string>secure.rat.rakuten.co.jp</string>
-        <string>rat.rakuten.com</string>
-        <string>rat.rakuten.es</string>
-        <string>rat.rakuten.co.uk</string>
-        <string>rat.rakuten.de</string>
-        <string>rat.rakuten.fr</string>
-    </array>
 	<key>NSPrivacyTracking</key>
 	<false/>
 </dict>

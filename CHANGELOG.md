@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.1.2 (2024-04-23)
+
+### Improvements
+* CONRAT-33927: Update privacy manifest file to remove the Privacy Tracking Domains.
+
 ## 10.1.1 (2024-03-22)
 
 ### Bug fixes
