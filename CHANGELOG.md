@@ -2,10 +2,14 @@
 
 ## 10.1.2 (2024-04-23)
 
+⚠️ Important: RakutenAnalytics SDK version 10.1.1 has an issue where the RakutenAnalytics SDK tracking events are blocked until the user grants permission for [App Tracking Transparency](https://support.apple.com/en-us/102420) within the application. This issue occurs specifically when the application target utilizes SPM. To resolve this issue, please update to RakutenAnalytics SDK v10.1.2, where we have removed the RakutenAnalytics SDK Tracking Domains from the privacy manifest.
+
 ### Improvements
 * CONRAT-33927: Update privacy manifest file to remove the Privacy Tracking Domains.
 
 ## 10.1.1 (2024-03-22)
+
+⚠️ **Important:** Do not use this version due to an issue where AnalyticsSDK tracking is blocked until the user grants permission for [App Tracking Transparency](https://support.apple.com/en-us/102420) within the application. See the v10.1.2 changelog for details.
 
 ### Bug fixes
 * CONRAT-33270: Fix Privacy Report generation for SPM and update Privacy Tracking Domains.
