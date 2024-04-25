@@ -1,6 +1,6 @@
 author: Rakuten Group, Inc.
 module: RakutenAnalytics
-module_version: 10.1.1
+module_version: 10.1.2
 readme: README.md
 documentation: "{CHANGELOG.md,CONTRIBUTING.md,ADVANCED_USAGE.md}"
 hide_documentation_coverage: true
@@ -10,4 +10,4 @@ xcodebuild_arguments:
   - -workspace
   - RakutenAnalyticsSDK/RakutenAnalyticsSDK.xcworkspace
   - -scheme
-  - RAnalytics
+  - RakutenAnalytics
