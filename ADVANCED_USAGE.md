@@ -397,19 +397,17 @@ You can configure the SDK to inject a special tracking cookie which allows RAT t
 AnalyticsManager.shared().enableAppToWebTracking = true
 ```
 
-By default the cookie's domain will be set to the top-level Rakuten domain. Optionally, you can set a custom domain on the tracking cookie with `setWebTrackingCookieDomainWithBlock`:
+By default the cookie's domain will be set to the top-level Rakuten domain. Optionally, you can set a custom domain(s) on the tracking cookie with `setWebTrackingCookieMultipleDomains(:)` method:
 
 ```swift
-AnalyticsManager.shared().setWebTrackingCookieDomain { () -> String? in
-    return ".my-domain.co.jp"
-}
-```
+// To set a custom tracking cookie to a domain
+AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domain.co.jp"])
 
-You can set multiple custom domains with `setWebTrackingCookieMultipleDomains(:)` method:
-
-```swift
+// To set custom tracking cookies to more than 1 domain
 AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domain.co.jp", ".example-domain.com"])
 ```
+
+⚠️ The previous set domain API `setWebTrackingCookieDomain` is deprecated so if you are using that method, we suggest to update to use `setWebTrackingCookieMultipleDomains(:)` instead.
 
 ## Configure the tracker batching delay
 

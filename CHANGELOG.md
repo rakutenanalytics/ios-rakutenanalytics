@@ -8,6 +8,9 @@
 ### Features
 * CONRAT-32240: Multi domain support.
 
+### Docs
+* CONRAT-34592: Multi domain documentation update.
+
 ### Unit tests
 * CONRAT-30960: Fix the failing test case on Analytics.
 
