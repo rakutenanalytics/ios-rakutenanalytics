@@ -1,13 +1,13 @@
 author: Rakuten Group, Inc.
-module: RAnalytics
-module_version: 10.1.1
+module: RakutenAnalytics
+module_version: 10.1.2
 readme: README.md
 documentation: "{CHANGELOG.md,CONTRIBUTING.md,ADVANCED_USAGE.md}"
 hide_documentation_coverage: true
 copyright: "© Rakuten Group, Inc."
-podspec: RAnalytics.podspec
+podspec: RakutenAnalytics.podspec
 xcodebuild_arguments:
   - -workspace
   - RakutenAnalyticsSDK/RakutenAnalyticsSDK.xcworkspace
   - -scheme
-  - RAnalytics
+  - RakutenAnalytics

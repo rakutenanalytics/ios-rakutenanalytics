@@ -1,0 +1,64 @@
+name: "Lint PR"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+jobs:
+  main:
+    name: Validate PR Size, PR Name and Branch Name
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      issues: write
+    steps:
+      # Ported from Dangerfile https://github.com/rakutentech/android-buildconfig/blob/75349e38d73f111b0e98525e3532a09442dab646/danger/Dangerfile#L4
+      - name: Check PR Size
+        uses: ookami-kb/gh-pr-size-watcher@v1.5.0
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }} # required
+          errorSize: 1000 # optional
+          errorMessage: ':no_entry: PR has more than **{allowed} additions**. Split it into smaller PRs.' # optional
+          warningSize: 500 # optional
+          warningMessage: ':warning: PR has more than **{allowed} additions**. Consider splitting it into smaller PRs.' # optional
+
+      # Ensures that your pull request titles match the Conventional Commits spec.
+      # https://github.com/marketplace/actions/semantic-pull-request
+      - name: Check PR Title
+        uses: amannn/action-semantic-pull-request@v5.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Configure which scopes are allowed (newline-delimited).
+          # These are regex patterns auto-wrapped in `^ $`.
+          scopes: |
+            CONRAT-\d+
+            RATQ-\d+
+          # Configure that a scope must always be provided.
+          requireScope: false
+
+      # Ported from Dangerfile https://github.com/rakutentech/android-buildconfig/blob/75349e38d73f111b0e98525e3532a09442dab646/danger/Dangerfile#L14
+      - name: Check Branch Name
+        id: branch_name
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const typePattern = /(fix|feat|refactor|improve|build|ci|docs|chore|test|tests|revert)/;
+            const ticketPattern = /(CONRAT|RATQ)-\d+/; // Match JIRA project keys CONRAT or RATQ
+            const descPattern = /[a-z0-9]+(?:-+[a-z0-9]+)*$/; // Short description in small letters and separated by dashes to easily identify the purpose of branch at a glance
+            const branchNamePattern1 = new RegExp(`^${typePattern.source}/${ticketPattern.source}_${descPattern.source}`);
+            const branchNamePattern2 = new RegExp(`^${typePattern.source}/${descPattern.source}`);
+            const branchNamePattern3 = /^release\/[\w]+/; // Less strict check for release branches (can contain special releases not only using version name)
+            
+            const branchName = context.payload.pull_request.head.ref;
+            const isBranchCompliant = branchName.match(branchNamePattern1) || branchName.match(branchNamePattern2) || branchName.match(branchNamePattern3);
+            
+            if (!isBranchCompliant) {
+              const message = `Branch name "${branchName}" should match format: '<type>/<ticket-no>_<short-desc>' or '<type>/<short-desc>' or 'release/<version or desc>'.`;
+              console.log(message);
+              core.setFailed('Branch name does not match the required format.');
+            }

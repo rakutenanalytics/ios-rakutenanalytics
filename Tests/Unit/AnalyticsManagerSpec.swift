@@ -192,7 +192,7 @@ final class AnalyticsManagerSpec: QuickSpec {
                         expect(analyticsManager.webTrackingCookieDomain()).to(beNil())
                     }
                 }
-
+                
                 context("When web tracking cookie domain is not nil") {
                     it("should return a non nil web tracking cookie domain") {
                         let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
@@ -200,6 +200,25 @@ final class AnalyticsManagerSpec: QuickSpec {
                             "mydomain.com"
                         }
                         expect(analyticsManager.webTrackingCookieDomain()).to(equal("mydomain.com"))
+                    }
+                }
+            }
+                
+            describe("webTrackingCookieMultipleDomains()") {
+                context("When web tracking multiple domains are nil") {
+                    it("should return a nil web tracking cookie domains") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                        analyticsManager.setWebTrackingCookieMultipleDomains(array: nil)
+                        expect(analyticsManager.webTrackingCookieMultipleDomains()).to(beNil())
+                    }
+                }
+                
+                context("When web tracking cookie multiple domains is not nil") {
+                    it("should return a non nil web tracking cookie multiple domains") {
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+                        let domains = ["mydomain.com", "example.com"]
+                        analyticsManager.setWebTrackingCookieMultipleDomains(array: domains)
+                        expect(analyticsManager.webTrackingCookieMultipleDomains()).to(equal(domains))
                     }
                 }
             }

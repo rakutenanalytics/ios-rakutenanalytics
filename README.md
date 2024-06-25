@@ -4,7 +4,6 @@
 
 The **analytics** module provides APIs for tracking events and automatically sends a subset of lifecycle events to the Rakuten Analytics Tracker (RAT) service.
 
-1. [RAnalytics SDK](#ranalytics-sdk)
 1. [Requirements](#requirements)
 1. [How to install](#how-to-install)
 1. [Configuring](#configuring)

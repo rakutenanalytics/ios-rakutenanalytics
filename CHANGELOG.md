@@ -1,5 +1,19 @@
 # Changelog
 
+## 10.2.0 (2024-06-25)
+
+### Improvements
+* CONRAT-33619: Update framework name for document generation.
+
+### Features
+* CONRAT-32240: Multi domain support.
+
+### Docs
+* CONRAT-34592: Multi domain documentation update.
+
+### Unit tests
+* CONRAT-30960: Fix the failing test case on Analytics.
+
 ## 10.1.2 (2024-04-23)
 
 ⚠️ Important: RakutenAnalytics SDK version 10.1.1 has an issue where the RakutenAnalytics SDK tracking events are blocked until the user grants permission for [App Tracking Transparency](https://support.apple.com/en-us/102420) within the application. This issue occurs specifically when the application target utilizes SPM. To resolve this issue, please update to RakutenAnalytics SDK v10.1.2, where we have removed the RakutenAnalytics SDK Tracking Domains from the privacy manifest.

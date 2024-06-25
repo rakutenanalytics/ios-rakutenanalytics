@@ -3,7 +3,7 @@
         "apps": [],
         "details": [
             {
-                "appID": "5J4GVGN58B.jp.co.rakuten.sdk.ecosystemdemo",
+                "appID": "5J4GVGN58B.com.rakuten.analytics.mobile.demoapp",
                 "paths": [
                     "*"
                 ]
