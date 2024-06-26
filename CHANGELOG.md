@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 10.2.0 (2024-06-25)
+
 ### Improvements
 * CONRAT-33619: Update framework name for document generation.
 
