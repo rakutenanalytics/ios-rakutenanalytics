@@ -54,8 +54,8 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
                     expect(ratTracker.applicationIdentifier).to(equal(10))
                 }
 
-                it("should equal to 0 when the plist key is not set") {
-                    expect(RAnalyticsRATTracker.shared().applicationIdentifier).to(equal(0))
+                it("should equal to 1 when the plist key is not set") {
+                    expect(RAnalyticsRATTracker.shared().applicationIdentifier).to(equal(1))
                 }
             }
 

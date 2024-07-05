@@ -6,6 +6,7 @@
 
 ### Improvements
 * CONRAT-33619: Update framework name for document generation.
+* CONRAT-34200: Optional App Identifier (aid).
 
 ### Features
 * CONRAT-32240: Multi domain support.

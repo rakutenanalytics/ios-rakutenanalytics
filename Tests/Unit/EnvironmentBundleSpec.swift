@@ -123,9 +123,9 @@ final class EnvironmentBundleSpec: QuickSpec {
 
             describe("applicationIdentifier") {
                 context("When the application identifier is not configured") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = nil
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
@@ -165,51 +165,51 @@ final class EnvironmentBundleSpec: QuickSpec {
                 }
 
                 context(#"When the application identifier is String and set to "hello world" in the Bundle"#) {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: "hello world"]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Boolean and set to false") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: false]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Boolean and set to true") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: true]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Array") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: [45, 76, 89]]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Dictionary") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: ["key1": "value1", "key2": "value2"]]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Data") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: Data()]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
 
                 context("When the application identifier is Date") {
-                    it("should return 0") {
+                    it("should return 1") {
                         bundleMock.injectedDictionary = [RATAccount.CodingKeys.applicationId.rawValue: Date()]
-                        expect(bundleMock.applicationIdentifier).to(equal(0))
+                        expect(bundleMock.applicationIdentifier).to(equal(1))
                     }
                 }
             }

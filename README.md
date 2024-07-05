@@ -108,16 +108,18 @@ You must have a RAT account ID and application ID to track events using the Raku
 
 ## Build-time Configuration
 
-Applications **MUST** configure their RAT identifiers (`RATAccountIdentifier` and `RATAppIdentifier`) in their `Info.plist` as follows:
+Applications **MUST** configure `RATAccountIdentifier` in their `Info.plist` as follows:
 
 | Key    | Value     |
 |  -------- | -------- |
 | `RATAccountIdentifier` | `YOUR_RAT_ACCOUNT_ID` (Number type) |
 | `RATAppIdentifier` | `YOUR_RAT_APPLICATION_ID` (Number type) |
 
+`RATAppIdentifier` is an optional key. If not specified, it's default value is set to `1`.
+
 Otherwise:
-- RAnalytics SDK **THROWS AN EXCEPTION** in **DEBUG MODE** when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's `Info.plist`
-- RAnalytics SDK tracking is **DISABLED** in **RELEASE MODE** when `RATAccountIdentifier` and `RATAppIdentifier` keys are missing in the app's `Info.plist`
+- RakutenAnalytics SDK **THROWS AN EXCEPTION** in **DEBUG MODE** when `RATAccountIdentifier` key is missing in the app's `Info.plist`
+- RakutenAnalytics SDK tracking is **DISABLED** in **RELEASE MODE** when `RATAccountIdentifier` key is missing in the app's `Info.plist`
 
 ## Using Kibana to verify successful integration
 

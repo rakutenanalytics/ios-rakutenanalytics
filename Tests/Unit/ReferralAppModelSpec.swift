@@ -440,15 +440,15 @@ final class ReferralAppModelSpec: QuickSpec {
                     }
 
                     context("When RAT identifiers are not configured") {
-                        it("should return expected url scheme with RAT identifiers set to 0 and minimal non-optional parameters") {
+                        it("should return expected url scheme with RAT identifiers set to 1 and minimal non-optional parameters") {
                             let model = ReferralAppModel()
 
-                            expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=0&ref_aid=0"))
+                            expect(model?.urlScheme(appScheme: "app")?.absoluteString).to(equal("app://?ref_acc=0&ref_aid=1"))
                         }
 
-                        it("should return expected universal link with RAT identifiers set to 0 and minimal non-optional parameters") {
+                        it("should return expected universal link with RAT identifiers set to 1 and minimal non-optional parameters") {
                             let model = ReferralAppModel()
-                            expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0"))
+                            expect(model?.universalLink(domain: "rakuten.co.jp")?.absoluteString).to(equal("https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=1"))
                         }
                     }
                 }
@@ -485,18 +485,18 @@ final class ReferralAppModelSpec: QuickSpec {
                                                  customParameters: customParameters,
                                                  bundle: Bundle.main)
 
-                    it("should return expected url scheme with RAT identifiers set to 0 and all expected parameters") {
+                    it("should return expected url scheme with RAT identifiers and all expected parameters") {
                         let urlScheme = model?.urlScheme(appScheme: "app")?.absoluteString
-                        expect(urlScheme?.starts(with: "app://?ref_acc=0&ref_aid=0&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(urlScheme?.starts(with: "app://?ref_acc=0&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
                         expect(urlScheme?.contains("custom_param1=japan")).to(beTrue())
                         expect(urlScheme?.contains("custom_param2=tokyo")).to(beTrue())
                         expect(urlScheme?.contains("ref_custom_param1%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=italy%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
                         expect(urlScheme?.contains("ref_custom_param2%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D=rome%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
                     }
 
-                    it("should return expected universal link with RAT identifiers set to 0 and all expected parameters") {
+                    it("should return expected universal link with RAT identifiers and all expected parameters") {
                         let universalLink = model?.universalLink(domain: "rakuten.co.jp")?.absoluteString
-                        expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=0&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
+                        expect(universalLink?.starts(with: "https://rakuten.co.jp?ref=\(bundleIdentifier)&ref_acc=0&ref_aid=1&ref_link=campaignCode%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D&ref_comp=news%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")).to(beTrue())
 
                         expect(universalLink?.contains("custom_param1=japan")).to(beTrue())
                         expect(universalLink?.contains("custom_param2=tokyo")).to(beTrue())
