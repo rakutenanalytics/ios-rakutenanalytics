@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improvements
+* CONRAT-29134: Fix the failing tests of ReferralAppTrackingIntegrationSpec
+
 ## 10.2.0 (2024-06-25)
 
 ### Improvements

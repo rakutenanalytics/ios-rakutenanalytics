@@ -10,4 +10,3 @@ Add links to github/jira issues, design documents and other relevant resources (
 - [ ] I have added to the [changelog](../blob/master/CHANGELOG.md#Unreleased)
 - [ ] I wrote/updated tests for new/changed code
 - [ ] I removed all sensitive data **before every commit**, including API endpoints and keys
-- [ ] I ran `fastlane ci` without errors

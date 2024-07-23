@@ -38,9 +38,9 @@ enum Payloads {
         expect(cpPayload1?[CpParameterKeys.Ref.component] as? String).to(equal(component))
 
         expect(payload2).toNot(beNil())
-        // expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
-        // expect(payload2[PayloadParameterKeys.acc] as? Int).to(equal(1))
-        // expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(2))
+        expect(payload2[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.deeplink))
+        expect(payload2[PayloadParameterKeys.acc] as? Int).to(equal(1))
+        expect(payload2[PayloadParameterKeys.aid] as? Int).to(equal(2))
         expect(payload2[PayloadParameterKeys.ref] as? String).to(equal(appBundleIdentifier))
         expect(cpPayload2).toNot(beNil())
         expect(cpPayload2?[CpParameterKeys.Ref.type] as? String).to(equal(RAnalyticsOrigin.external.toString))
@@ -108,7 +108,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                 analyticsManager.trackReferralApp(url: url, sourceApplication: bundleIdentifier)
 
                 expect(payloads.isEmpty).toEventually(beFalse())
-                // expect(payloads.count).to(equal(2))
+                expect(payloads.count).to(equal(2))
 
                 DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
 
