@@ -540,12 +540,14 @@
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
 				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -571,6 +573,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
 				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -578,6 +581,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
