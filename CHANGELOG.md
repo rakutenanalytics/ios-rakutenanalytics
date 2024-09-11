@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.2.0 (2024-09-11)
+## 10.3.0 (2024-09-11)
 
 ### Improvements
 * CONRAT-29134: Fix the failing tests of ReferralAppTrackingIntegrationSpec
