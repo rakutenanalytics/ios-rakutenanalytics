@@ -149,7 +149,7 @@ enum ErrorReason {
 
     // Bundle
     static let bundleIdentifierIsNil = "The bundle identifier is nil"
-    static let ratIdentifiersAreNotSet = "`RATAccountIdentifier` and `RATAppIdentifier` must be set in the app's Info.plist."
+    static let ratIdentifiersAreNotSet = "`RATAccountIdentifier` must be set in the app's Info.plist."
 }
 
 enum ErrorConstants {

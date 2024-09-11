@@ -78,7 +78,7 @@ extension Bundle: Bundleable {
 
     public var applicationIdentifier: Int64 {
         identifier(from: IdentifierModel(key: RATAccount.CodingKeys.applicationId.rawValue,
-                                         defaultValue: 0,
+                                         defaultValue: 1,
                                          configWarning: LogMessage.applicationIdentifierConfigWarning,
                                          typeWarning: LogMessage.applicationIdentifierTypeWarning)).toInt64()
 

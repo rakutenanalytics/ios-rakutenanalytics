@@ -10,7 +10,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 /// - Attention: Application developers **MUST** configure the instance by setting
 /// the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
 ///
-/// - Warning: The app **CRASHES** in DEBUG mode when `RATAccountIdentifier` and `RATAppIdentifier` keys are not set in their app's Info.plist.
+/// - Warning: The app **CRASHES** in DEBUG mode when `RATAccountIdentifier`key is not set in their app's Info.plist.
 @objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
     enum Constants {
         static let ratEventPrefix      = "rat."
@@ -59,7 +59,6 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Warning: If this identifier is not configured in the app's `Info.plist`:
     ///
-    ///     - The RAnalytics framework crashes in Debug mode.
     ///     - The RAT tracking is disabled in Release mode.
     ///
     /// - Warning: The type of this identifier must be `Number` in the app's `Info.plist`.
@@ -195,12 +194,11 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         // 2) Call
         // This check is called here in order to avoid this error before the `super.init()` call:
         // `super.init isn't called on all paths before returning from initializer`
-        guard bundleContainer.accountIdentifier != 0 && bundleContainer.applicationIdentifier != 0 else {
+        guard bundleContainer.accountIdentifier != 0 else {
             #if DEBUG
             // Crash only when the target is not the Tests Target
             if NSClassFromString("XCTest") == nil {
                 assertionFailure(ErrorReason.ratIdentifiersAreNotSet)
-
             } else {
                 RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
             }
