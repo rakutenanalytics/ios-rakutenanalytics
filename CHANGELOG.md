@@ -2,14 +2,16 @@
 
 ## Unreleased
 
+## 10.3.0 (2024-09-11)
+
 ### Improvements
 * CONRAT-29134: Fix the failing tests of ReferralAppTrackingIntegrationSpec
+* CONRAT-34200: Optional App Identifier (aid).
 
 ## 10.2.0 (2024-06-25)
 
 ### Improvements
 * CONRAT-33619: Update framework name for document generation.
-* CONRAT-34200: Optional App Identifier (aid).
 
 ### Features
 * CONRAT-32240: Multi domain support.
