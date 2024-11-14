@@ -88,6 +88,10 @@ enum PayloadParameterKeys {
         /// The screen resolution.
         /// - Note: returned by `UIScreen.main.bounds.size`
         static let res = "res"
+        
+        /// The device permissions
+        /// - Note: returned by `AnalyticsDevicePermissionCollector`
+        static let devicePer = "device_per"
     }
 
     /// Location
@@ -202,24 +206,11 @@ enum PayloadParameterKeys {
     }
 
     enum Telephony {
-        /// The name of the primary carrier
-        static let mcn = "mcn"
-
-        /// The name of the secondary carrier
-        static let mcnd = "mcnd"
-
         /// The network status of the primary carrier.
         static let mnetw = "mnetw"
 
         /// The network status of the secondary carrier.
         static let mnetwd = "mnetwd"
-
-        /// The Service Provider Name
-        static let simopn = "simopn"
-
-        /// The SIM operator code mcc+mnc
-        ///  ex: mcc = 440 and mnc = 11 then simop = 44011
-        static let simop = "simop"
     }
 }
 

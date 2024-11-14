@@ -15,7 +15,7 @@ extension ReferralAppModel {
             return nil
         }
 
-        guard let bundleIdentifier = sourceApplication ?? (queryItems.first(where: { $0.name == PayloadParameterKeys.ref })?.value) else {
+        guard let bundleIdentifier = (queryItems.first(where: { $0.name == PayloadParameterKeys.ref })?.value) ?? sourceApplication else {
             return nil
         }
         self.bundleIdentifier = bundleIdentifier
@@ -51,7 +51,7 @@ extension ReferralAppModel {
 // MARK: - Query
 
 extension ReferralAppModel {
-    var query: String {
+    public var query: String {
         var queryBuilder = [String]()
 
         if let encodedKey = CpParameterKeys.Ref.accountIdentifier.addEncodingForRFC3986UnreservedCharacters(),

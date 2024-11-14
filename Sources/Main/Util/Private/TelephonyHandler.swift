@@ -12,12 +12,8 @@ enum RATMobileNetworkType: Int {
 
 protocol TelephonyHandleable {
     var reachabilityStatus: NSNumber? { get set }
-    var mcn: String { get }
-    var mcnd: String { get }
     var mnetw: NSNumber? { get }
     var mnetwd: NSNumber? { get }
-    var simopn: String { get }
-    var simop: String { get }
     func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
 }
 
@@ -86,47 +82,6 @@ extension TelephonyHandler {
     }
 }
 
-// MARK: - mcn, mcnd, simopn, simop
-
-extension TelephonyHandler {
-    /// - Returns: The name of the primary carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
-    var mcn: String {
-        retrieveNetworkName()
-    }
-
-    /// - Returns: The name of the primary SIM carrier or empty string if the primary carrier is not registered (airplane mode or no primary sim).
-    var simopn: String {
-        retrieveNetworkName()
-    }
-
-    /// - Returns: The SIM country code + network operator code or empty string if the SIM carrier is not registered (airplane mode or no primary sim).
-    var simop: String {
-        guard let carrierKey = selectedCarrierKey,
-              let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
-              !radioName.isEmpty,
-              let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
-            return ""
-        }
-        return carrier.mobileCountryCode.combine(with: carrier.mobileNetworkCode)
-    }
-
-    /// - Returns: The name of the secondary carrier or empty string if the secondary carrier is not registered (airplane mode or no secondary sim).
-    var mcnd: String {
-        // Note: Only one eSIM can be enabled on iOS.
-        // If there are more than one eSim, `serviceSubscriberCellularProviders.count` always equals to 2.
-        let otherKey = telephonyNetworkInfo.subscribers?.filter {
-            selectedCarrierKey != $0.key
-        }.keys.first
-        if let key = otherKey,
-           let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[key],
-           !radioName.isEmpty,
-           let carrier = telephonyNetworkInfo.subscribers?[key] {
-            return carrier.displayedCarrierName ?? ""
-        }
-        return ""
-    }
-}
-
 // MARK: - mnetw and mnetwd
 
 extension TelephonyHandler {
@@ -188,28 +143,6 @@ private extension TelephonyHandler {
     }
 }
 
-// MARK: - CTCarrier
-
-/// - Returns: The carrier name maximum length.
-private let carrierNameLengthMax: Int = 32
-
-private extension Carrierable {
-
-    /// - Returns: The displayed carrier name.
-    var displayedCarrierName: String? {
-        var name: String?
-
-        if let carrierName = carrierName {
-            name = carrierName[0..<min(carrierNameLengthMax, carrierName.count)]
-        }
-
-        if !name.isEmpty && !mobileNetworkCode.isEmpty {
-            return name
-        }
-        return nil
-    }
-}
-
 // MARK: - Radio Access Technology
 
 private extension String {
@@ -238,19 +171,5 @@ extension String {
         } else {
             return .cellularOther
         }
-    }
-}
-
-// MARK: - Helper
-
-extension TelephonyHandler {
-    private func retrieveNetworkName() -> String {
-        guard let carrierKey = selectedCarrierKey,
-              let radioName = telephonyNetworkInfo.serviceCurrentRadioAccessTechnology?[carrierKey],
-              !radioName.isEmpty,
-              let carrier = telephonyNetworkInfo.subscribers?[carrierKey] else {
-            return ""
-        }
-        return carrier.displayedCarrierName ?? ""
     }
 }

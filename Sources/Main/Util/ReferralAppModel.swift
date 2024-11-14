@@ -91,22 +91,17 @@ extension Bundle: Bundleable {
 public struct ReferralAppModel: Hashable {
     /// The referral app's bundle identifier
     public let bundleIdentifier: String
-
     /// The referral app's RAT account identifier
     public let accountIdentifier: Int64
-
     /// The referral app's RAT application identifier
     public let applicationIdentifier: Int64
-
     /// The referral app's link
     public let link: String?
-
     /// The referral app's component
     public let component: String?
-
     /// The referral app's custom parameters
     public var customParameters: [String: String]?
-
+    
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -143,7 +138,7 @@ public struct ReferralAppModel: Hashable {
                   customParameters: customParameters,
                   bundle: bundle)
     }
-
+    
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -187,7 +182,7 @@ public struct ReferralAppModel: Hashable {
                   component: component,
                   customParameters: customParameters)
     }
-
+    
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -212,26 +207,91 @@ public struct ReferralAppModel: Hashable {
         self.component = component
         self.customParameters = customParameters
     }
-
-    /// - Parameters:
-    ///     - appScheme: the app scheme name defined in `CFBundleURLSchemes` in the app's `Info.plist`.
+    
+    /// Constructs a URL Scheme for app-to-app referral tracking.
     ///
-    /// - Returns the URL Scheme for the app-to-app referral tracking, `nil` otherwise.
-    public func urlScheme(appScheme: String) -> URL? {
+    /// - Parameters:
+    ///   - appScheme: The app scheme name defined in `CFBundleURLSchemes` in the app's `Info.plist`.
+    ///   - pathComponent: An optional path component to be appended to the app scheme. This can be used to specify a particular resource or endpoint within the domain. Example: `path/to/resource`.
+    ///     If this parameter is `nil` or an empty string, no path component will be added to the URL.
+    ///   - ref: The referral identifier to be included in the URL. If this parameter is `nil` or an empty string, the application bundle identifier will be added.
+    ///
+    /// - Returns: The URL Scheme for the app-to-app referral tracking, `nil` otherwise.
+    public func urlScheme(appScheme: String, pathComponent: String? = nil, ref: String? = nil) -> URL? {
         guard !appScheme.isEmpty else {
             return nil
         }
-        return URL(string: "\(appScheme)://?\(query)")
+        
+        var components = URLComponents()
+        components.scheme = appScheme
+        components.host = ""
+        
+        return buildURLWithComponents(components: components, pathComponent: pathComponent, ref: ref)
     }
-
-    /// - Parameters:
-    ///     - domain: the associated domain for the Universal Link. Example: `rakuten.co.jp`.
+    
+    /// Constructs a universal link for app-to-app referral tracking.
     ///
-    /// - Returns the Universal Link for the app-to-app referral tracking, `nil` otherwise.
-    public func universalLink(domain: String) -> URL? {
+    /// - Parameters:
+    ///   - domain: The domain name for the universal link.
+    ///   - pathComponent: An optional path component to be appended to the domain. This can be used to specify a particular resource or endpoint within the domain. Example: `path/to/resource`.
+    ///     If this parameter is `nil` or an empty string, no path component will be added to the URL.
+    ///   - ref: The referral identifier to be included in the URL. If this parameter is `nil` or an empty string, the application bundle identifier will be added.
+    ///
+    /// - Returns: The universal link for the app-to-app referral tracking, `nil` otherwise.
+    public func universalLink(domain: String, pathComponent: String? = nil, ref: String? = nil) -> URL? {
         guard !domain.isEmpty else {
             return nil
         }
-        return URL(string: "https://\(domain)?ref=\(bundleIdentifier)&\(query)")
+        
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = domain
+        
+        return buildURLWithComponents(components: components, pathComponent: pathComponent, ref: ref)
     }
+}
+
+extension ReferralAppModel {
+    
+    /// Constructs a URL from the given URL components, optional path component, and reference.
+    /// - Parameters:
+    ///   - urlComponents: The base URL components to configure.
+    ///   - pathComponent: An optional path component to append to the URL.
+    ///   - ref: An optional reference to include as a query item. If not provided, the bundle identifier will be used.
+    /// - Returns: A configured URL or nil if the URL could not be constructed.
+    private func buildURLWithComponents(components: URLComponents, pathComponent: String? = nil, ref: String? = nil) -> URL? {
+        var configuredComponents = components
+        
+        if let pathComponent = pathComponent, !pathComponent.isEmpty {
+            configuredComponents.path = "/\(pathComponent)"
+        }
+        
+        var queryItems = [URLQueryItem]()
+        
+        if let ref = ref, !ref.isEmpty {
+            queryItems.append(URLQueryItem(name: "ref", value: ref))
+        } else {
+            if let bundleIdentifier = Bundle.main.bundleIdentifier {
+                queryItems.append(URLQueryItem(name: "ref", value: bundleIdentifier))
+            }
+        }
+        
+        let queryString = self.query
+        if !queryString.isEmpty {
+            let queryComponents = queryString.split(separator: "&")
+            for queryComponent in queryComponents {
+                let keyValue = queryComponent.split(separator: "=")
+                if keyValue.count == 2 {
+                    let name = String(keyValue[0])
+                    let value = String(keyValue[1])
+                    queryItems.append(URLQueryItem(name: name, value: value))
+                }
+            }
+        }
+        
+        configuredComponents.queryItems = queryItems.isEmpty ? nil : queryItems
+        
+        return configuredComponents.url
+    }
+    
 }

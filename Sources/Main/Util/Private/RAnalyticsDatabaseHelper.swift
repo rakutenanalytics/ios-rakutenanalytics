@@ -32,8 +32,9 @@ internal enum RAnalyticsDatabaseHelper {
     }
 
     @discardableResult
-    static func prepareStatement(_ statement: inout SQlite3Pointer?, query: String, connection: SQlite3Pointer) -> Bool {
-        guard sqlite3_prepare_v2(connection, query, -1, &statement, nil) == SQLITE_OK else {
+    static func prepareStatement(_ statement: inout OpaquePointer?, query: String, connection: OpaquePointer) -> Bool {
+        let result = sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        if result != SQLITE_OK {
             let errorMsg = String(cString: sqlite3_errmsg(connection))
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
                                              code: ErrorCode.databasePrepareStatementFailure.rawValue,
@@ -41,7 +42,6 @@ internal enum RAnalyticsDatabaseHelper {
                                              reason: "prepare statement failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
-
         return true
     }
 }

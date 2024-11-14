@@ -1,28 +1,12 @@
 import Foundation
 import CoreTelephony
 
-// MARK: - Carrierable
-
-protocol Carrierable {
-    var carrierName: String? { get }
-    var mobileCountryCode: String? { get }
-    var mobileNetworkCode: String? { get }
-    var isoCountryCode: String? { get }
-    var allowsVOIP: Bool { get }
-}
-
-extension CTCarrier: Carrierable {
-}
-
 // MARK: - TelephonyNetworkInfoHandleable
 
 /// - Note: NSObjectProtocol is used for calling `responds(to:)` method in `TelephonyHandler` class.
 protocol TelephonyNetworkInfoHandleable: NSObjectProtocol {
     @available(iOS 13.0, *)
     var safeDataServiceIdentifier: String? { get }
-
-    @available(iOS 12.0, *)
-    var subscribers: [String: Carrierable]? { get }
 
     @available(iOS 12.0, *)
     var serviceSubscriberCellularProvidersDidUpdateNotifier: ((String) -> Void)? { get set }
@@ -42,11 +26,5 @@ extension CTTelephonyNetworkInfo: TelephonyNetworkInfoHandleable {
         #else
         return dataServiceIdentifier
         #endif
-    }
-
-    /// - Note: It solves a compiler error because the compiler can't match Carrierable and CTCarrier.
-    @available(iOS 12.0, *)
-    var subscribers: [String: Carrierable]? {
-        serviceSubscriberCellularProviders
     }
 }

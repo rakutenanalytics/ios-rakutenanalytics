@@ -6,15 +6,11 @@ import PackageDescription
 let package = Package(
     name: "RakutenAnalytics",
     platforms: [.iOS(.v12)],
-    products: [
-        .library(name: "RakutenAnalytics", targets: ["RakutenAnalytics"])
-    ],
+    products: [.library(name: "RakutenAnalytics", targets: ["RakutenAnalytics"])],
     dependencies: [
-             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.0")),
-
-             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.1.0")),
-
-             .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.9.1")),
+             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.1")),
+             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "10.0.0")),
+             .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.7.1")),
         ],
     targets: [
         .target(name: "RakutenAnalytics",
@@ -22,7 +18,8 @@ let package = Package(
                 path: "Sources/Main",
                 exclude: ["Core/SDK_TRACKING_GUIDE.md"],
                 resources: [.process("Core/Assets"), 
-                            .copy("Resources/PrivacyInfo.xcprivacy")]),
+                .copy("Resources/PrivacyInfo.xcprivacy")],
+                publicHeadersPath: ""),
 
         .target(name: "RAnalyticsSwiftLoader",
                 path: "Sources/RAnalyticsSwiftLoader",
@@ -35,24 +32,30 @@ let package = Package(
                                "Quick",
                                "Nimble",
                                "ViewInspector"],
-                path: "Tests/RAnalyticsTestHelpers",
+                path: "UnitTestApp/Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
 
-        .testTarget(name: "Functional", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"]),
+        .testTarget(name: "Functional", 
+                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
+                    path: "UnitTestApp/Tests/Functional"),
 
-        .testTarget(name: "UtilsSpec", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"]),
+        .testTarget(name: "UtilsSpec", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
+                    path: "UnitTestApp/Tests/UtilsSpec"),
 
         .testTarget(name: "Integration",
                     dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
+                    path: "UnitTestApp/Tests/Integration",
                     exclude: ["IntegrationTests-Info.plist"]),
 
         .testTarget(name: "Unit",
                     dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
+                    path: "UnitTestApp/Tests/Unit",
                     exclude: ["Info.plist"],
                     resources: [.process("Resources")]),
 
         .testTarget(name: "GeoSpec",
-                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"])
+                    dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"], 
+                    path: "UnitTestApp/Tests/GeoSpec")
     ],
     swiftLanguageVersions: [.v5]
 )
