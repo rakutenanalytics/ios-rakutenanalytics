@@ -1,6 +1,6 @@
 author: Rakuten Group, Inc.
 module: RakutenAnalytics
-module_version: 10.1.2
+module_version: 10.4.0
 readme: README.md
 documentation: "{CHANGELOG.md,CONTRIBUTING.md,ADVANCED_USAGE.md}"
 hide_documentation_coverage: true

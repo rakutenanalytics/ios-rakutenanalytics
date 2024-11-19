@@ -127,27 +127,11 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         // Telephony Handler
         telephonyHandler.reachabilityStatus = reachabilityStatus
 
-        // MARK: mcn
-        payload[PayloadParameterKeys.Telephony.mcn] = telephonyHandler.mcn
-
-        // MARK: mcnd
-        payload[PayloadParameterKeys.Telephony.mcnd] = telephonyHandler.mcnd
-
         // MARK: mnetw
         payload[PayloadParameterKeys.Telephony.mnetw] = telephonyHandler.mnetw ?? ""
 
         // MARK: mnetwd
         payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
-
-        // MARK: simop
-        if !telephonyHandler.simop.isEmpty {
-            payload[PayloadParameterKeys.Telephony.simop] = telephonyHandler.simop
-        }
-
-        // MARK: simopn
-        if !telephonyHandler.simopn.isEmpty {
-            payload[PayloadParameterKeys.Telephony.simopn] = telephonyHandler.simopn
-        }
 
         // MARK: mori
         payload[PayloadParameterKeys.Orientation.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
@@ -199,6 +183,11 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         // MARK: easyid
         if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
             payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
+        }
+        
+        // MARK: device_per
+        if payload[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.sessionEnd {
+            payload[PayloadParameterKeys.Device.devicePer] = AnalyticsDevicePermissionCollector.shared.collectPermissions()
         }
     }
 

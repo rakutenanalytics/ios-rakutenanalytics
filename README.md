@@ -13,6 +13,8 @@ The **analytics** module provides APIs for tracking events and automatically sen
 1. [Troubleshooting](#troubleshooting)
 1. [FAQ](#faq)
 
+For more detailed information, please refer to the [Advanced Usage](ADVANCED_USAGE.md).
+
 # Requirements
 
 This module supports iOS 12.0 and above. It has been tested with iOS 12.5 and above. Our minimum supported version is updated annually based on the OS version usage.
@@ -38,9 +40,9 @@ Run `pod install` to install the module and its dependencies.
 Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
 
 * Repository URL: `https://github.com/rakutenanalytics/ios-rakutenanalytics.git`
-* Version settings: 10.1.0 "Up to Next Major"
+* Version settings: 10.4.0 "Up to Next Major"
 
-Choose `RAnalytics` product for your target. If you want to link other targets (Notification Service Extension, Notification Content Extension, etc), go to Build Phases of that target, then in Link Binary With Libraries click + button and add `RAnalytics`.
+Choose `RakutenAnalytics` product for your target. If you want to link other targets (Notification Service Extension, Notification Content Extension, etc), go to Build Phases of that target, then in Link Binary With Libraries click + button and add `RakutenAnalytics`.
 
 ## Importing the module to use it in your app
 
@@ -135,7 +137,7 @@ To find data for a certain event type, such as one of the [standard events](#sta
 
 The member identifier needs to be set and unset manually in order to track login and logout events with the correct member identifier. In most cases, the value you set as member identifier should be the member's identifier. The member identifier can be extracted from the IDSDK ID token or passed as `String` value.
 
-You should notify the RAnalytics SDK of the user's member identifier using `setMemberIdentifier`. 
+You should notify the RakutenAnalytics SDK of the user's member identifier using `setMemberIdentifier`. 
 
 ```swift
     AnalyticsManager.shared().setMemberIdentifier(%member_identifier%)
@@ -145,7 +147,7 @@ Note: By setting the member identifier, `_rem_login` is automatically tracked.
 
 ## Handle login failure
 
-If user login fails, notify the RAnalytics SDK using `setMemberError` as follows:
+If user login fails, notify the RakutenAnalytics SDK using `setMemberError` as follows:
 
 ```swift
     AnalyticsManager.shared().setMemberError(error)
@@ -155,7 +157,7 @@ Note: By setting a member error, `_rem_login_failure` is automatically tracked.
 
 ## Handle logout
 
-When a user logs out, notify the RAnalytics SDK using `removeMemberIdentifier` as follows:
+When a user logs out, notify the RakutenAnalytics SDK using `removeMemberIdentifier` as follows:
 
 ```swift
     AnalyticsManager.shared().removeMemberIdentifier()
@@ -333,9 +335,7 @@ RAnalyticsRATTracker.shared().event(eventType: "pv",
 
 # Sample app
 
-* Run `bundle exec fastlane ios build_sample`
-  - By default the `RAnalyticsSample` app depends on the compiled `RAnalytics` framework which gets built via this command invocation. It will also install dependencies.
-* Open `Samples/RAnalyticsSample.xcworkspace` in Xcode then run
+* Sample app located by path: `Sample/RakutenAnalyticsSample.xcodeproj`.
 
 # App Store Submission Procedure
 
@@ -367,7 +367,7 @@ The Rakuten SDK only uses the IDFA for `conversion events, estimating the number
 
 ## How to build your project without use_frameworks!
 
-RAnalytics is a Swift framework and contains a custom module map.
+RakutenAnalytics is a Swift framework and contains a custom module map.
 
 If `use_frameworks!` is not defined in your app's Podfile the following Cocoapods error occurs:
 
@@ -389,9 +389,9 @@ end
 
 **Note:** The `cocoapods-user-defined-build-types` plugin is developed by a third party and we cannot guarantee that its support will continue.
 
-## RAnalytics Swift Package checkout tip
+## RakutenAnalytics Swift Package checkout tip
 
-If you can't checkout the RAnalytics Swift Package in Xcode, please execute these 2 command lines:
+If you can't checkout the RakutenAnalytics Swift Package in Xcode, please execute these 2 command lines:
 ```
 /usr/libexec/Plistbuddy -c "Add :IDEPackageSupportUseBuiltinSCM bool 1" ~/Library/Preferences/com.apple.dt.Xcode.plist
 xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuiltinSCM
@@ -401,14 +401,14 @@ xcodebuild -scheme MyScheme -resolvePackageDependencies -usePackageSupportBuilti
 
 ## Build and run module
 
-* Clone or fork the [iOS analytics repository](git@github.com:rakutenanalytics/ios-ranalytics.git)  
+* Clone or fork the [iOS analytics repository](git@github.com:rakutenanalytics/ios-rakutenanalytics.git)  
 * `cd` to the repository folder
 * Run `bundle install --path vendor/bundle`
 
 ### Unit tests
 
 * Run `bundle exec pod install` to install dependencies
-* Open `CI.xcworkspace` in Xcode then build/run
+* Open `UnitTestApp.xcworkspace` in Xcode then build/run
 
 ### Building app for App Store
 
@@ -420,7 +420,7 @@ When exporting for the App Store please disable the option “Manage Version and
 
 The situations where the project contains both `RakutenAnalytics` and `RAnaltyics` (as a part of other framework) dependencies can cause isses similar to: 
 
-```
+```swift
 import RakutenAnalytics
 import %SomeFrameworkWithRAnalyticsDependency%  
 
@@ -429,7 +429,7 @@ let analyticsManager = AnalyticsManager.shared() // ERROR: Ambiguous use of 'sha
 
 It happens because of dublicated class names between different modules and namespaces. As temporary solution for minor issues we can recommend to specify direct module name for all framework related calls. Example:
 
-```
+```swift
 import RakutenAnalytics
 import %SomeFrameworkWithRAnalyticsDependency%  
 
@@ -484,6 +484,8 @@ You can monitor the tracker network activity by listening to the `RAnalyticsWill
 If the SDK correctly integrated, the events sent to RAT for a logged-in user will contain an `easyid` field containing the user's member identfier. See [here](#using-kibana-to-verify-successful-integration) for a guide on how to check the events sent to RAT.
 
 ## Core Telephony values tracking: CTCarrier deprecation
+
+**Note:** Since SDK version 10.3.0 CTCarrier values will be removed from RakutenAnalyticsSDK. [iOS 16.4 Release Notes](https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-16_4-release-notes)
 
 We used [CTCarrier](https://developer.apple.com/documentation/coretelephony/ctcarrier) API to track values:
 

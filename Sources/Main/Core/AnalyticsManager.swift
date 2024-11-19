@@ -318,28 +318,45 @@ extension AnalyticsManager {
                                                object: nil)
     }
     
-    private func refreshCookieStore(with targetDomains: [String]? = nil) {
+    private func refreshCookieStore(with targetDomains: [String]? = nil, completion: (([HTTPCookie]) -> Void)? = nil) {
         guard enableAppToWebTracking else {
             analyticsCookieInjector.clearCookies { }
             return
         }
         
         guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
-            injectAppToWebTrackingCookie(domain: nil)
+            injectAppToWebTrackingCookie(domain: nil) { trackingCookie in
+                if let trackingCookie = trackingCookie {
+                    completion?([trackingCookie])
+                } else {
+                    completion?([])
+                }
+            }
             return
         }
 
+        var trackingCookies: [HTTPCookie] = []
+        let group = DispatchGroup()
+        
         for domain in targetDomains {
-            injectAppToWebTrackingCookie(domain: domain)
+            group.enter()
+            injectAppToWebTrackingCookie(domain: domain) { trackingCookie in
+                if let trackingCookie = trackingCookie {
+                    trackingCookies.append(trackingCookie)
+                }
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion?(trackingCookies)
         }
     }
 
-    private func injectAppToWebTrackingCookie(domain: String?) {
-        analyticsCookieInjector.injectAppToWebTrackingCookie(
-            domain: domain,
-            deviceIdentifier: deviceIdentifierHandler.ckp(),
-            completionHandler: nil
-        )
+    private func injectAppToWebTrackingCookie(domain: String?, completion: ((HTTPCookie?) -> Void)? = nil) {
+        analyticsCookieInjector.injectAppToWebTrackingCookie(domain: domain, deviceIdentifier: deviceIdentifierHandler.ckp()) { trackingCookie in
+            completion?(trackingCookie)
+        }
     }
 
 }
@@ -583,22 +600,24 @@ extension AnalyticsManager {
     ///
     /// - Parameters:
     ///     - cookieDomainBlock: The block returns the domain string to set on the cookie.
-    @objc(setWebTrackingCookieDomainWithBlock:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock) {
+    ///     - completion: An optional completion handler that returns the tracking cookies.
+    @objc(setWebTrackingCookieDomainWithBlock:completion:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock, completion: (([HTTPCookie]) -> Void)? = nil) {
         self.cookieDomainBlock = cookieDomainBlock
         guard let domain = self.cookieDomainBlock?() else {
-            refreshCookieStore()
+            refreshCookieStore(completion: completion)
             return
         }
-        refreshCookieStore(with: [domain])
+        refreshCookieStore(with: [domain], completion: completion)
     }
     
     /// Method to allow the app to set multiple custom domains for app-to-web tracking cookies.
     ///
     /// - Parameters:
     ///     - cookieDomains: An array of domain strings to set on the cookie.
-    @objc(setWebTrackingCookieMultipleDomainsWithArray:) public func setWebTrackingCookieMultipleDomains(array cookieDomains: [String]?) {
+    ///     - completion: An optional completion handler that returns the tracking cookies.
+    @objc(setWebTrackingCookieMultipleDomainsWithArray:completion:) public func setWebTrackingCookieMultipleDomains(array cookieDomains: [String]?, completion: (([HTTPCookie]) -> Void)? = nil) {
         self.cookieDomains = cookieDomains
-        refreshCookieStore(with: cookieDomains)
+        refreshCookieStore(with: cookieDomains, completion: completion)
     }
 
     /// Returns the web tracking cookie domain set by `setWebTrackingCookieDomain(block:)`

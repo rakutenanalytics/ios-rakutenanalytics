@@ -179,7 +179,7 @@ AnalyticsManager.shared().shouldTrackAdvertisingIdentifier = false
 
 #### IDFA tracking on iOS 14.x and above
 
-⚠️ If the available IDFA value is valid (non-zero'd) the RAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
+⚠️ If the available IDFA value is valid (non-zero'd) the RakutenAnalytics SDK will use it. This change was implemented in response to Apple's [announcement](https://developer.apple.com/news/?id=hx9s63c5) that they have delayed the below requirement to obtain permission for user tracking until early 2021.
 
 
 If the app is built with the iOS 14 SDK and embeds the [AppTrackingTransparency framework](https://developer.apple.com/documentation/apptrackingtransparency), the Analytics SDK uses IDFA on iOS 14.x and greater only when the user has authorized tracking. Your app can display the IDFA tracking authorization popup by adding a `NSUserTrackingUsageDescription` key in your Info.plist and calling the [requestTrackingAuthorization function](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorization).
@@ -206,7 +206,7 @@ More details can be found in [Configure automatic tracking](#configure-automatic
 
 By default the SDK automatically tracks the app-to-app referral tracking: `pv` and `deeplink` events are tracked.
 The automatic tracking can be disabled by adding `_rem_applink` to disabled events list.
-More details can be found in [Configure automatic tracking](#configure-automatic-tracking) section.
+More details can be found in [Configure automatic tracking](#configure-automatic-tracking) and [App-to-App referral tracking](#app-to-app-referral-tracking) sections.
 
 ## Configure automatic tracking
 
@@ -218,7 +218,7 @@ If your app is coded in Objective-C, please import this header file in order to 
 #import <RakutenAnalytics/RAnalytics-Swift.h>
 ```
 
-If your app is coded in Swift, please import the RAnalytics framework: 
+If your app is coded in Swift, please import the RakutenAnalytics framework: 
 
 ```swift
 import RakutenAnalytics
@@ -285,7 +285,7 @@ AnalyticsManager.shared().shouldTrackEventHandler = { eventName in
 }
 ```
 
-Note: The runtime configuration overrides the build time configuration. If an event is disabled in the build time configuration and enabled in the runtime configuration the event will be tracked by RAnalytics.
+Note: The runtime configuration overrides the build time configuration. If an event is disabled in the build time configuration and enabled in the runtime configuration the event will be tracked by RakutenAnalytics.
 
 In order to override the build time configuration at runtime set `AnalyticsManager.shared().shouldTrackEventHandler` in `application(_:willFinishLaunchingWithOptions:)`: 
 
@@ -391,7 +391,7 @@ AnalyticsManager.shared().set(loggingLevel: .none)
 
 ## App to web tracking
 
-You can configure the SDK to inject a special tracking cookie which allows RAT to track events between the app and in-app webviews. The cookie is only injected on iOS 11.0 and later versions. This feaure is OFF by default. It can be enabled by setting `enableAppToWebTracking` to true.
+You can configure the SDK to inject a special tracking cookie called `ra_uid`, which allows RAT to track events between the app and in-app webviews. This functionality allows you to track either a single domain or multiple domains. The cookie is only injected on iOS 11.0 and later versions. This feaure is OFF by default. It can be enabled by setting `enableAppToWebTracking` to true.
 
 ```swift
 AnalyticsManager.shared().enableAppToWebTracking = true
@@ -407,7 +407,40 @@ AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domai
 AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domain.co.jp", ".example-domain.com"])
 ```
 
+Both `setWebTrackingCookieMultipleDomains` and `setWebTrackingCookieMultipleDomains` have an optional completion handler. This handler returns the array of edited tracking `HTTPCookie`.
+
+```swift
+AnalyticsManager.shared().setWebTrackingCookieMultipleDomains(array: [".my-domain.co.jp", ".example-domain.com"]) { [weak self] trackingCookies in
+    // Edited cookie is available here as [HTTPCookie], the number of elements depends on the passed domain(s)
+}
+```
+
 ⚠️ The previous set domain API `setWebTrackingCookieDomain` is deprecated so if you are using that method, we suggest to update to use `setWebTrackingCookieMultipleDomains(:)` instead.
+
+Two key parameters used in the `ra_uid` cookie are `ckp` and `cka`:
+- **ckp**: This is the unique device identifier, used to track the device across all Rakuten applications.
+- **cka**: This is the Advertising ID (IDFA), a unique, user-resettable identifier. It is used for advertising and analytics purposes. If the IDFA is not available, a default value of `00000000-0000-0000-0000-000000000000` is used.
+
+#### `ra_uid` Cookie Format
+The cookie is formatted using the `COOKIE_FORMAT`, which is defined as:
+```swift
+COOKIE_FORMAT = "rat_uid=%s;a_uid=%s"
+```
+In this format:  
+* `rat_uid` takes the value of `ckp`.
+* `a_uid` takes the value of `cka`.
+
+#### Example of the `ra_uid` cookie value
+
+For each domain you configure, the cookie will appear as follows in the request content:
+
+```swift
+// IDFA is available
+ra_uid=rat_uid%3D82b93c49c8cc62a76e26346433dee49c%3Ba_uid%3Dad7ab8a4-83c8-4ae2-b31f-20b453a62621
+
+// IDFA is not available
+ra_uid=rat_uid%3D82b93c49c8cc62a76e26346433dee49c%3Ba_uid%3D00000000-0000-0000-0000-000000000000
+```
 
 ## Configure the tracker batching delay
 
@@ -523,7 +556,7 @@ AnalyticsManager.Event(name: CustomTrackerMyEventName, parameters: nil).track()
 
 ## Fetching a RP Cookie
 
-RAnalytics provides a public API to fetch the RP Cookie by instantiating `RAnalyticsRpCookieFetcher` class.
+RakutenAnalytics provides a public API to fetch the RP Cookie by instantiating `RAnalyticsRpCookieFetcher` class.
 
 Note: the completion handler of `getRpCookieCompletionHandler` may be called on a background queue.
 
@@ -572,21 +605,110 @@ If your app uses SceneDelegate, your app's `Info.plist` should contain `UISceneD
 
 ### Create and open URL Scheme deeplink in 'referral' app
 ```swift
-guard let  url = ReferralAppModel().urlScheme(appScheme: "app"), UIApplication.shared.canOpenURL(url) else {
+guard let  url = ReferralAppModel().urlScheme(appScheme: "app", pathComponent: "path", ref: "any"), UIApplication.shared.canOpenURL(url) else {
     return
 }
 UIApplication.shared.open(url, options: [:])
+```
+
+#### Parameters:
+
+- `appScheme`: The app scheme name defined in `CFBundleURLSchemes` in the app's `Info.plist`.
+- `pathComponent`: An optional path component to be appended to the app scheme. This can be used to specify a particular resource or endpoint within the domain. Example: `path/to/resource`. If this parameter is `nil` or an empty string, no path component will be added to the URL.
+- `ref`: The referral identifier to be included in the URL. If this parameter is `nil` or an empty string, application bundle identifier will be added.
+
+#### Example:
+
+```
+demoapp://app?ref=any&ref_acc=123&ref_aid=456&ref_link=campaignCode&ref_comp=news&custom_param1=japan&ref_custom_param2=rome&ref_custom_param1=italy&custom_param2=tokyo
+```
+
+Tracked Event (Kibana):
+
+```
+{
+  ...
+  "_source": {
+    ...
+    "ref": "any",
+    "acc": 123,
+    ...
+    "etype": "deeplink",
+    "aid": 456,
+    ...
+    "cp": {
+      "custom_param1": "japan",
+      "ref_type": "external",
+      "ref_custom_param2": "rome",
+      "custom_param2": "tokyo",
+      "ref_comp": "news",
+      "ref_link": "campaignCode",
+      "ref_custom_param1": "italy"
+    },
+    ...
+  },
+  ...
+}
 ```
 
 ### Create and open Universal Link deeplink in 'referral' app
 ```swift
-guard let  url = ReferralAppModel().universalLink(domain: "domain.com"), UIApplication.shared.canOpenURL(url) else {
+guard let  url = ReferralAppModel().universalLink(domain: "domain.com", pathComponent: "path", ref: "any"), UIApplication.shared.canOpenURL(url) else {
     return
 }
 UIApplication.shared.open(url, options: [:])
 ```
 
-### Optional parameters
+#### Parameters:
+
+- `domain`: The associated domain for the Universal Link. Example: `rakuten.co.jp`.
+- `pathComponent`: An optional path component to be appended to the domain. This can be used to specify a particular resource or endpoint within the domain. Example: `path/to/resource`. If this parameter is `nil` or an empty string, no path component will be added to the URL.
+- `ref`: The referral identifier to be included in the URL. If this parameter is `nil` or an empty string, application bundle identifier will be added.
+
+#### Example:
+
+```
+https://domain.com/path?ref=any&ref_acc=123&ref_aid=456&ref_link=campaignCode&ref_comp=news&custom_param1=japan&custom_param2=tokyo&ref_custom_param2=rome&ref_custom_param1=italy
+```
+
+Tracked Event (Kibana):
+
+```
+{
+  ...
+  "_source": {
+    ...
+    "ref": "any",
+    "acc": 123,
+    ...
+    "aid": 456,
+    ...
+    "etype": "deeplink",
+    ...
+    "cp": {
+      "custom_param1": "japan",
+      "ref_type": "external",
+      "ref_custom_param2": "rome",
+      "custom_param2": "tokyo",
+      "ref_comp": "news",
+      "ref_link": "campaignCode",
+      "ref_custom_param1": "italy"
+    },
+    ...
+  },
+  ...
+}
+```
+
+### Query in the Referral App Model
+
+The query property in the `ReferralAppModel` creates a URL query string by encoding and joining different parameters. This property is helpful for generating a query string that can be added to a URL for HTTP requests.
+
+#### Parameters
+- `accountIdentifier`: A required property representing the account identifier.
+- `applicationIdentifier`: A required property representing the application identifier.
+
+#### Optional parameters
 
 It is also possible to include the following _optional_ parameters when creating a deeplink:
 - `link` - unique identifier of the referral trigger e.g., `"campaign-abc123"`
@@ -594,13 +716,19 @@ It is also possible to include the following _optional_ parameters when creating
 - `customParameters` - `[String: String]` dictionary of key-value pairs e.g., `["custom1": "value1"]`
 
 ```swift
-guard let model = ReferralAppModel(link: "campaign-abc123",
+guard let model = ReferralAppModel(accountIdentifier: 123,
+                                   applicationIdentifier: 456,
+                                   link: "campaign-abc123",
                                    component: "checkout",
                                    customParameters: ["custom1": "value1"]) else {
     return
 }
 // create deeplink url from model using `urlScheme(appScheme:)` or `universalLink(domain:)`
 ```
+
+#### Notes:
+- The query property ensures that all characters in the keys and values are encoded according to [RFC 3986](ttps://datatracker.ietf.org/doc/html/rfc3986), which is essential for creating valid URL query strings.
+- The order of parameters in the query string is determined by the order in which they are appended.
 
 ### Events sent to RAT
 

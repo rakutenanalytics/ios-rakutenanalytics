@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased
+## 10.4.0 (2024-11-14)
+
+### Features
+* CONRAT-35750: Add device permission collection functionality.
+* CONRAT-36167: Add path component to UrlScheme and UniversalLink.
+* CONRAT-36739: Add completion handler to single/multi domian API to return injected HTTPCookie.
+
+### Improvements
+* CONRAT-34208: Remove deprecated CTCarrier values: mcn, mcnd, simop, simopn.
+* CONRAT-35476: Update Unit Test app and Sample app project and file structure.
+* CONRAT-36618: UrlScheme and UniversalLink improvements related to utilizing URL Components.
+
+### Docs
+* CONRAT-36612: Multi domain documentation update related to rat_uid and a_uid.
 
 ## 10.3.0 (2024-09-11)
 

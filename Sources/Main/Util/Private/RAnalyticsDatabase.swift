@@ -133,36 +133,39 @@ final class RAnalyticsDatabase {
             var identifiers = [Int64]()
 
             defer {
-                completion(blobs.isEmpty ? nil : blobs,
-                           identifiers.isEmpty ? nil : identifiers)
+                completion(blobs.isEmpty ? nil : blobs, identifiers.isEmpty ? nil : identifiers)
             }
-            guard let self = self else {
-                return
-            }
+            
+            guard let self = self else { return }
 
             blobs.reserveCapacity(Int(maximumNumberOfBlobs))
             identifiers.reserveCapacity(Int(maximumNumberOfBlobs))
 
             let error = self.prepareTable(table)
-            guard error == nil, maximumNumberOfBlobs > 0 else {
-                return
-            }
+            guard error == nil, maximumNumberOfBlobs > 0 else { return }
 
-            let query = "select * from \(table) limit \(maximumNumberOfBlobs)"
-            var statement: SQlite3Pointer?
-            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else {
-                return
+            let query = "SELECT * FROM \(table) LIMIT \(maximumNumberOfBlobs)"
+            var statement: OpaquePointer?
+
+            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: self.connection) else { return }
+
+            defer {
+                if statement != nil {
+                    sqlite3_finalize(statement)
+                }
             }
 
             while sqlite3_step(statement) == SQLITE_ROW {
                 let primaryKey = sqlite3_column_int64(statement, 0)
-                let bytes: UnsafeRawPointer = sqlite3_column_blob(statement, 1)
+                
+                guard let bytes = sqlite3_column_blob(statement, 1) else {
+                    continue
+                }
+                
                 let length = sqlite3_column_bytes(statement, 1)
-
                 blobs.append(Data(bytes: bytes, count: Int(length)))
                 identifiers.append(primaryKey)
             }
-            sqlite3_finalize(statement)
         }
     }
 
