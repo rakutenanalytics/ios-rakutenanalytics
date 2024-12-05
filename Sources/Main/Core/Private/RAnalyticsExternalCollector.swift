@@ -355,7 +355,7 @@ extension RAnalyticsExternalCollector {
     func receiveCredentialsNotification(_ notification: NSNotification) {
         var eventName: String?
         if notification.name.rawValue == "\(Constants.notificationBaseName).ssocredentialfound" {
-            eventName = AnalyticsManager.Event.Name.SSOCredentialFound
+            eventName = AnalyticsManager.Event.Name.ssoCredentialFound
 
         } else {
             eventName = AnalyticsManager.Event.Name.loginCredentialFound

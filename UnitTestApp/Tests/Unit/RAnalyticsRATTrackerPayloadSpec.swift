@@ -82,7 +82,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                 database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
                 dependenciesContainer.bundle = bundle
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
-                dependenciesContainer.session = SwityURLSessionMock()
+                dependenciesContainer.session = SwiftyURLSessionMock()
                 dependenciesContainer.deviceCapability = DeviceMock()
                 dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
                 dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)

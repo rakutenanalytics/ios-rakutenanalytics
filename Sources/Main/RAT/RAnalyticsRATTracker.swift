@@ -407,15 +407,9 @@ extension RAnalyticsRATTracker {
         case RAnalyticsEvent.Name.applink:
             // Override etype
             payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
-
-            switch state.referralTracking {
-
-            case .referralApp(let referralAppModel):
-                updatePayloadForReferralApp(payload: payload,
-                                            extra: extra,
-                                            referralApp: referralAppModel)
-
-            default:
+            if case .referralApp(let referralAppModel) = state.referralTracking {
+                updatePayloadForReferralApp(payload: payload, extra: extra, referralApp: referralAppModel)
+            } else {
                 return false
             }
 
@@ -439,7 +433,7 @@ extension RAnalyticsRATTracker {
             extra.addEntries(from: event.discoverParameters)
 
         // MARK: _rem_sso_credential_found
-        case RAnalyticsEvent.Name.SSOCredentialFound:
+        case RAnalyticsEvent.Name.ssoCredentialFound:
             extra.addEntries(from: event.ssoParameters)
 
         // MARK: _rem_login_credential_found

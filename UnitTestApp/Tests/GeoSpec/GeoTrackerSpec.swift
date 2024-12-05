@@ -19,7 +19,7 @@ final class GeoTrackerSpec: QuickSpec {
             let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "test_RAnalyticsSDKTracker.db"
             let databaseTableName = "testTableName_SDKTrackerSpec"
-            let urlSession = SwityURLSessionMock()
+            let urlSession = SwiftyURLSessionMock()
             let bundle = BundleMock()
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!

@@ -8,7 +8,7 @@ class ReachabilitySpec: QuickSpec {
 
     override func spec() {
 
-        describe("Reachablity") {
+        describe("Reachability") {
 
             context("init") {
 
@@ -41,9 +41,17 @@ class ReachabilitySpec: QuickSpec {
 
             context("connection available") {
                 var reachability: Reachability!
+                var observer: Observer!
 
                 beforeEach {
                     reachability = Reachability(url: URL(string: "http://localhost")!)
+                    observer = Observer()
+                }
+
+                afterEach {
+                    reachability.removeObserver(observer)
+                    reachability = nil
+                    observer = nil
                 }
 
                 it("will return proper flag") {
@@ -56,7 +64,6 @@ class ReachabilitySpec: QuickSpec {
                 }
 
                 it("will notify observers") {
-                    let observer = Observer()
                     reachability.addObserver(observer)
                     expect(observer.currentStatus).toEventually(equal(.wifi))
                 }

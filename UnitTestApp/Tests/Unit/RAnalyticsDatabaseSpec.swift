@@ -225,12 +225,51 @@ class RAnalyticsDatabaseSpec: QuickSpec {
 
                     expect(fetchedBlobs).to(elementsEqual([blob]))
                 }
+                
+                it("should fetch blobs from passed table") {
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let blob = "foo".data(using: .utf8)!
+                    DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
+                    
+                    var fetchedBlobs: [Data]?
+                    waitUntil { done in
+                        database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                            fetchedBlobs = blobs
+                            done()
+                        }
+                    }
+                    
+                    expect(fetchedBlobs).to(elementsEqual([blob]))
+                }
+                
+                it("should handle nil blob data gracefully") {
+                    let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                    let query = "CREATE TABLE IF NOT EXISTS some_table (id INTEGER PRIMARY KEY, data BLOB)"
+                    var statement: OpaquePointer?
+                    sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+                    sqlite3_step(statement)
+                    sqlite3_finalize(statement)
+                    
+                    let insertQuery = "INSERT INTO some_table (data) VALUES (NULL)"
+                    sqlite3_prepare_v2(connection, insertQuery, -1, &statement, nil)
+                    sqlite3_step(statement)
+                    sqlite3_finalize(statement)
+                    
+                    var fetchedBlobs: [Data]?
+                    waitUntil { done in
+                        database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                            fetchedBlobs = blobs
+                            done()
+                        }
+                    }
+                    
+                    expect(fetchedBlobs).to(beNil())
+                }
 
                 it("should fetch ids corresponding to blobs from passed table") {
                     let database = DatabaseTestUtils.mkDatabase(connection: connection)
                     let blob = "foo".data(using: .utf8)!
                     DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
-
                     var fetchedIds: [Int64]?
                     waitUntil { done in
                         database.fetchBlobs(bigNumber, from: "some_table") { _, ids in
@@ -238,7 +277,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedIds).to(elementsEqual([1]))
                 }
 

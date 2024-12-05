@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Improvements
+* CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.
+
 ## 10.4.0 (2024-11-14)
 
 ### Features

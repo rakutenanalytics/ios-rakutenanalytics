@@ -32,6 +32,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+         # Configure which types are allowed.
+          types: |
+            fix
+            feat
+            refactor
+            improve
+            build
+            ci
+            docs
+            chore
+            test
+            tests
+            revert
           # Configure which scopes are allowed (newline-delimited).
           # These are regex patterns auto-wrapped in `^ $`.
           scopes: |

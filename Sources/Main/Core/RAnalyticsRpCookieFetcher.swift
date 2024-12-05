@@ -221,66 +221,75 @@ extension RAnalyticsRpCookieFetcher {
             completionHandler(.failure(RpCookieFetcherError.endpoint))
             return
         }
+
         var request = URLRequest(url: endpointURL)
         request.httpShouldHandleCookies = bundle.useDefaultSharedCookieStorage
 
         session.createDataTask(with: request) { _, response, error in
-            let httpResponse = response as? HTTPURLResponse
-
-            if error != nil || httpResponse?.statusCode != 200 {
-                self.retryFetchingRpCookie { retry in
-                    guard retry else {
-                        self.rpCookieRequestRetryCount = 0
-
-                        if let error = error {
-                            completionHandler(.failure(error))
-
-                        } else if let statusCode = httpResponse?.statusCode {
-                            let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(endpointURL.absoluteString)"
-                            let userInfo = [NSLocalizedDescriptionKey: errorDescription]
-                            let statusCodeError = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
-                                                          code: statusCode,
-                                                          userInfo: userInfo)
-                            completionHandler(.failure(statusCodeError))
-
-                        } else {
-                            completionHandler(.failure(RpCookieFetcherError.unknown))
-                        }
-                        return
-                    }
-                    self.getRpCookieFromRAT(completionHandler)
-                }
-
-            } else {
-                self.rpCookieRequestRetryCount = 0
-
-                if request.httpShouldHandleCookies {
-                    do {
-                        let retrievedCookie = try self.getRpCookie(from: self.cookieStorage)
-                        completionHandler(.success(retrievedCookie))
-
-                    } catch {
-                        completionHandler(.failure(error))
-                    }
-
-                } else if let httpResponse = httpResponse {
-                    do {
-                        let retrievedCookie = try self.getRpCookie(from: httpResponse)
-                        completionHandler(.success(retrievedCookie))
-
-                    } catch {
-                        completionHandler(.failure(error))
-                    }
-
-                } else {
-                    let errorDescription = "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(endpointURL.absoluteString)"
-                    let userInfo = [NSLocalizedDescriptionKey: errorDescription,
-                                    NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."]
-                    completionHandler(.failure(NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: userInfo)))
-                }
-            }
-
+            self.handleResponse(request: request, response: response, error: error, completionHandler: completionHandler)
         }.resume()
+    }
+
+    private func handleResponse(request: URLRequest, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+        let httpResponse = response as? HTTPURLResponse
+
+        if let error = error {
+            self.handleError(error: error, httpResponse: httpResponse, completionHandler: completionHandler)
+        } else if httpResponse?.statusCode != 200 {
+            self.handleNon200Response(httpResponse: httpResponse, completionHandler: completionHandler)
+        } else {
+            self.handleSuccess(request: request, httpResponse: httpResponse, completionHandler: completionHandler)
+        }
+    }
+
+    private func handleError(error: Error, httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+        self.retryFetchingRpCookie { retry in
+            guard retry else {
+                self.rpCookieRequestRetryCount = 0
+                completionHandler(.failure(error))
+                return
+            }
+            self.getRpCookieFromRAT(completionHandler)
+        }
+    }
+
+    private func handleNon200Response(httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+        self.retryFetchingRpCookie { retry in
+            guard retry else {
+                self.rpCookieRequestRetryCount = 0
+                if let statusCode = httpResponse?.statusCode {
+                    let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(self.endpointURL?.absoluteString ?? "")"
+                    let userInfo = [NSLocalizedDescriptionKey: errorDescription]
+                    let statusCodeError = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: statusCode, userInfo: userInfo)
+                    completionHandler(.failure(statusCodeError))
+                } else {
+                    completionHandler(.failure(RpCookieFetcherError.unknown))
+                }
+                return
+            }
+            self.getRpCookieFromRAT(completionHandler)
+        }
+    }
+
+    private func handleSuccess(request: URLRequest, httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+        self.rpCookieRequestRetryCount = 0
+
+        do {
+            let retrievedCookie: HTTPCookie
+            if request.httpShouldHandleCookies {
+                retrievedCookie = try self.getRpCookie(from: self.cookieStorage)
+            } else if let httpResponse = httpResponse {
+                retrievedCookie = try self.getRpCookie(from: httpResponse)
+            } else {
+                throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: [
+                    NSLocalizedDescriptionKey: "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(endpointURL?.absoluteString ?? "")",
+                    NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."
+                ])
+            }
+            completionHandler(.success(retrievedCookie))
+        } catch {
+            completionHandler(.failure(error))
+        }
     }
 }
 

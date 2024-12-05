@@ -538,7 +538,7 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
             }
             describe("receiveCredentialsNotification") {
                 it("should track a credential event when a credential notification is received") {
-                    let mapping = ["ssocredentialfound": AnalyticsManager.Event.Name.SSOCredentialFound,
+                    let mapping = ["ssocredentialfound": AnalyticsManager.Event.Name.ssoCredentialFound,
                                    "logincredentialfound": AnalyticsManager.Event.Name.loginCredentialFound]
 
                     mapping.forEach {

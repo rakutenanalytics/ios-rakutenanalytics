@@ -56,7 +56,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                 dependenciesContainer.bundle = bundle
                 dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
-                dependenciesContainer.session = SwityURLSessionMock()
+                dependenciesContainer.session = SwiftyURLSessionMock()
                 dependenciesContainer.deviceCapability = DeviceMock()
                 dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
                 dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
@@ -495,7 +495,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
 
                                 ratTracker.process(event: firstEvent, state: state)
 
-                                let session = dependenciesContainer.session as? SwityURLSessionMock
+                                let session = dependenciesContainer.session as? SwiftyURLSessionMock
 
                                 session?.completion = {
                                     let databaseConfiguration: DatabaseConfiguration! = dependenciesContainer.databaseConfiguration as? DatabaseConfiguration
@@ -816,8 +816,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                 }
 
                 it("should process the SSOCredentialFound event") {
-                    let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.SSOCredentialFound, parameters: ["source": "device"])
-                    expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.SSOCredentialFound)
+                    let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.ssoCredentialFound, parameters: ["source": "device"])
+                    expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.ssoCredentialFound)
                 }
 
                 context("LoginCredentialFound") {

@@ -6,6 +6,7 @@ import Nimble
 // MARK: - RAnalyticsRATExpecter
 
 public final class RAnalyticsRATExpecter {
+    private let queue = DispatchQueue(label: "com.example.RAnalyticsRATExpecter.queue")
     public var dependenciesContainer: SimpleDependenciesContainable! = nil
     public var endpointURL: URL! = nil
     public var databaseTableName: String! = nil
@@ -16,18 +17,22 @@ public final class RAnalyticsRATExpecter {
     }
 
     private func configureSession(completion: @escaping (() -> Void)) {
-        let session = dependenciesContainer.session as? SwityURLSessionMock
+        queue.sync {
+            let session = dependenciesContainer.session as? SwiftyURLSessionMock
 
-        session?.response = HTTPURLResponse(url: endpointURL,
-                                            statusCode: 200,
-                                            httpVersion: nil,
-                                            headerFields: nil)
+            session?.response = HTTPURLResponse(url: endpointURL,
+                                                statusCode: 200,
+                                                httpVersion: nil,
+                                                headerFields: nil)
 
-        session?.completion = completion
+            session?.completion = completion
+        }
     }
 
     private func processEventWithRATTracker(_ event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
-        ratTracker.process(event: event, state: state)
+        return queue.sync {
+            ratTracker.process(event: event, state: state)
+        }
     }
 
     public func expectEvent(_ event: RAnalyticsEvent,
@@ -37,8 +42,12 @@ public final class RAnalyticsRATExpecter {
         var payloads = [[String: Any]]()
 
         configureSession {
-            let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
-            payloads = result.deserialize()
+            self.queue.sync {
+                let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
+                DispatchQueue.main.async {
+                    payloads = result.deserialize()
+                }
+            }
         }
 
         let processed = processEventWithRATTracker(event, state: state)
@@ -54,11 +63,15 @@ public final class RAnalyticsRATExpecter {
         var payloads = [[String: Any]]()
 
         configureSession {
-            let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
-            payloads = result.deserialize()
-            completion?(payloads)
+            self.queue.sync {
+                let result = DatabaseTestUtils.fetchTableContents(self.databaseTableName, connection: self.databaseConnection)
+                payloads = result.deserialize()
+                completion?(payloads)
+            }
         }
 
         _ = processEventWithRATTracker(event, state: state)
     }
 }
+
+

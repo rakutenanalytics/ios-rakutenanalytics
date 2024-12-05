@@ -290,7 +290,7 @@ class SenderSpec: QuickSpec {
 
                         var didReceiveNotification = false
                         let queue = OperationQueue()
-                        let observer = NotificationCenter.default.addObserver(forName: Notification.Name.RAnalyticsUploadFailure,
+                        let observer = NotificationCenter.default.addObserver(forName: Notification.Name.rAnalyticsUploadFailure,
                                                                               object: nil,
                                                                               queue: queue) { (notification) in
                             let error = notification.userInfo?[NSUnderlyingErrorKey] as? Error
@@ -338,7 +338,7 @@ class SenderSpec: QuickSpec {
                 //
                 //                    var uploadsToRat = 0
                 //                    let queue = OperationQueue()
-                //                    let uploadObserver = NotificationCenter.default.addObserver(forName: Notification.Name.RAnalyticsUploadSuccess,
+                //                    let uploadObserver = NotificationCenter.default.addObserver(forName: Notification.Name.rAnalyticsUploadSuccess,
                 //                                                                                object: nil,
                 //                                                                                queue: queue) { (notification) in
                 //                        if (notification.object as? [Any])?.first as? [String: String] == payload {

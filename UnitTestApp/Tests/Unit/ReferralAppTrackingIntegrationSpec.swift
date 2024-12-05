@@ -58,7 +58,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
             let databaseTableName = "testTableName_ReferralAppTrackingIntegrationSpec"
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
-            let session = SwityURLSessionMock()
+            let session = SwiftyURLSessionMock()
             let dependenciesContainer = SimpleContainerMock()
 
             beforeEach {

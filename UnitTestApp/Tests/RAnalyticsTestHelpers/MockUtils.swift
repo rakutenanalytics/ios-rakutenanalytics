@@ -166,7 +166,8 @@ final class URLSessionTaskMock: URLSessionTaskable {
 
 // MARK: - Swifty Session
 
-public final class SwityURLSessionMock: NSObject, SwiftySessionable {
+public final class SwiftyURLSessionMock: NSObject, SwiftySessionable {
+    private let queue = DispatchQueue(label: "com.example.SwityURLSessionMock.queue")
     public var urlRequest: URLRequest?
     public var response: URLResponse?
     public var completion: (() -> Void)?
@@ -176,12 +177,15 @@ public final class SwityURLSessionMock: NSObject, SwiftySessionable {
     }
 
     public func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
-        self.urlRequest = request
-        completionHandler(.success((nil, response ?? URLResponse())))
-        completion?()
+        queue.sync {
+            self.urlRequest = request
+            completionHandler(.success((nil, response ?? URLResponse())))
+            completion?()
+        }
         return URLSessionTaskMock()
     }
 }
+
 
 // MARK: - HTTP Cookie Storage
 
@@ -708,9 +712,13 @@ public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoL
     public func requestLocationUpdate(for requestType: RakutenAnalytics.GeoRequestLocationType) {
         switch requestType {
         case .continual:
-            requestLocationContinualIsCalled = true
+            DispatchQueue.main.async { [weak self] in
+                self?.requestLocationContinualIsCalled = true
+            }
         case .userAction:
-            requestLocationUserActionIsCalled = true
+            DispatchQueue.main.async { [weak self] in
+                self?.requestLocationUserActionIsCalled = true
+            }
         }
     }
 

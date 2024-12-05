@@ -22,7 +22,7 @@ private final class CustomSceneDelegate: NSObject, UISceneDelegate {
     var sceneopenURLContextsIsCalled = false
     var sceneContinueIsCalled = false
 
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
         sceneopenURLContextsIsCalled = true
     }
 
@@ -40,7 +40,7 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
             let databaseTableName = "testTableName_ReferralAppTrackingSceneDelegateSpec"
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
-            let session = SwityURLSessionMock()
+            let session = SwiftyURLSessionMock()
             let dependenciesContainer = SimpleContainerMock()
             dependenciesContainer.session = session
             dependenciesContainer.bundle = BundleMock.create()

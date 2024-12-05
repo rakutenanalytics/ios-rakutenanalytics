@@ -266,12 +266,15 @@ final class GeoManagerSpec: QuickSpec {
                                             analyticsManager: AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer()))
                 
                 context("on startLocationCollection not called before getConfiguration()") {
-                    
                     beforeEach {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                     
-                    let configuration = geoManager.getConfiguration()
+                    var configuration: GeoConfiguration?
+                    
+                    beforeEach {
+                        configuration = geoManager.getConfiguration()
+                    }
                     
                     it("should set distanceInterval to be nil") {
                         expect(configuration?.distanceInterval).to(beNil())
@@ -297,6 +300,7 @@ final class GeoManagerSpec: QuickSpec {
                         dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
                     }
                 }
+
                 
                 context("on startLocationCollection called before getConfiguration()") {
                     let configuration = GeoConfiguration(distanceInterval: 300,
@@ -628,20 +632,34 @@ final class GeoManagerSpec: QuickSpec {
                     geoLocationManagerMock.requestLocationContinualIsCalled = false
 
                     dependenciesContainer.userStorageHandler.removeObject(forKey: UserDefaultsKeys.configurationKey)
-
                     geoManager.startLocationCollection()
                 }
 
                 it("should call startMonitoringSignificantLocationChanges()") {
-                    expect(geoLocationManagerMock.startMonitoringSignificantLocationChangesIsCalled).to(beTrue())
+                    waitUntil(timeout: .seconds(1)) { done in
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            expect(geoLocationManagerMock.startMonitoringSignificantLocationChangesIsCalled).to(beTrue())
+                            done()
+                        }
+                    }
                 }
 
                 it("should call requestLocationUpdate(for: .continual) for inital update") {
-                    expect(geoLocationManagerMock.requestLocationContinualIsCalled).to(beTrue())
+                    waitUntil(timeout: .seconds(1)) { done in
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            expect(geoLocationManagerMock.requestLocationContinualIsCalled).to(beTrue())
+                            done()
+                        }
+                    }
                 }
 
                 it("should call requestLocationUpdate(for: .continual) on configuring poller at specified timeInterval") {
-                    expect(geoLocationManagerMock.requestLocationContinualIsCalled).to(beTrue())
+                    waitUntil(timeout: .seconds(1)) { done in
+                        DispatchQueue.main.asyncAfter(deadline: .now()) {
+                            expect(geoLocationManagerMock.requestLocationContinualIsCalled).to(beTrue())
+                            done()
+                        }
+                    }
                 }
 
                 context("configurePoller()") {

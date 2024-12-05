@@ -324,11 +324,13 @@ extension AnalyticsManager {
             return
         }
         
+        // If targetDomains is not nil and not empty, proceed with the following logic
         guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
             injectAppToWebTrackingCookie(domain: nil) { trackingCookie in
                 if let trackingCookie = trackingCookie {
                     completion?([trackingCookie])
                 } else {
+                    // No tracking cookie found, return an empty array
                     completion?([])
                 }
             }
