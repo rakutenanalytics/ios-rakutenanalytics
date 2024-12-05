@@ -5,6 +5,9 @@
 ### Improvements
 * CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.
 
+### Bug fixes
+* CONRAT-34249: Fix ref type for first pv event after app-to-app tracking.
+
 ## 10.4.0 (2024-11-14)
 
 ### Features
