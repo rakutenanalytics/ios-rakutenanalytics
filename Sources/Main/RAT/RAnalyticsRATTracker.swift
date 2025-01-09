@@ -563,7 +563,7 @@ private extension RAnalyticsRATTracker {
         if pageIdentifier != lastVisitedPageIdentifier {
             lastUniqueSearchIdentifier = state.uniqueSearchId
             // TODO: add relevant payload key
-            payload["uniquePageId"] = lastVisitedPageIdentifier
+            payload["uniquePageId"] = lastUniqueSearchIdentifier
         }
         
         payload[PayloadParameterKeys.pgn] = pageIdentifier
