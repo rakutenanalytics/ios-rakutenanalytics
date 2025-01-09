@@ -20,6 +20,9 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
     /// The identifer of the last-tracked visited page, if any.
     private var lastVisitedPageIdentifier: String?
+    
+    /// The unique identifier of last-tracked visited page. Used to link tracked events to page.
+    private var lastUniqueSearchIdentifier: String?
 
     /// Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
     private var carriedOverOrigin: NSNumber?
@@ -458,6 +461,11 @@ extension RAnalyticsRATTracker {
             }
 
             payload[PayloadParameterKeys.etype] = eventName
+            
+            if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+                // TODO: add relevant payload key
+                payload["uniquePageId"] = lastUniqueSearchIdentifier
+            }
 
             if let topLevelObject = event.parameters[RAnalyticsEvent.Parameter.topLevelObject] as? [AnyHashable: Any],
                !topLevelObject.isEmpty {
@@ -551,7 +559,13 @@ private extension RAnalyticsRATTracker {
             }
             return false
         }
-
+        
+        if pageIdentifier != lastVisitedPageIdentifier {
+            lastUniqueSearchIdentifier = state.uniqueSearchId
+            // TODO: add relevant payload key
+            payload["uniquePageId"] = lastVisitedPageIdentifier
+        }
+        
         payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
