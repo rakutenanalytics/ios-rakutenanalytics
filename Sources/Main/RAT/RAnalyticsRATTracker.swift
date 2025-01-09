@@ -486,6 +486,11 @@ extension RAnalyticsRATTracker {
             if !event.parameters.isEmpty {
                 payload.addEntries(from: event.parameters)
             }
+            
+            if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+                // TODO: add relevant payload key
+                payload["uniquePageId"] = lastUniqueSearchIdentifier
+            }
 
             guard let etype = event.eType else {
                 return false
