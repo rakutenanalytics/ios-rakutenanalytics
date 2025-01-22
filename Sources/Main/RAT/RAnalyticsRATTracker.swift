@@ -464,7 +464,7 @@ extension RAnalyticsRATTracker {
             
             if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
                 // TODO: add relevant payload key
-                payload["uniquePageId"] = lastUniqueSearchIdentifier
+                payload["pgid"] = lastUniqueSearchIdentifier
             }
 
             if let topLevelObject = event.parameters[RAnalyticsEvent.Parameter.topLevelObject] as? [AnyHashable: Any],
@@ -489,7 +489,7 @@ extension RAnalyticsRATTracker {
             
             if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
                 // TODO: add relevant payload key
-                payload["uniquePageId"] = lastUniqueSearchIdentifier
+                payload["pgid"] = lastUniqueSearchIdentifier
             }
 
             guard let etype = event.eType else {
@@ -568,7 +568,7 @@ private extension RAnalyticsRATTracker {
         if pageIdentifier != lastVisitedPageIdentifier {
             lastUniqueSearchIdentifier = state.uniqueSearchId
             // TODO: add relevant payload key
-            payload["uniquePageId"] = lastUniqueSearchIdentifier
+            payload["pgid"] = lastUniqueSearchIdentifier
         }
         
         payload[PayloadParameterKeys.pgn] = pageIdentifier
