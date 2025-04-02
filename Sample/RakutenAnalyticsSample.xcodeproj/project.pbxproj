@@ -10,14 +10,10 @@
 		5A7D6385201827520025F4F1 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */; };
 		5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */; };
 		5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */; };
-		5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */; };
-		5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */; };
-		5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */; };
 		5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */; };
 		5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CBE2016CE8A0028CEBC /* Main.storyboard */; };
 		5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
-		6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
 		77E4D94CD1BB0C06E404C98D /* Pods_Common_RakutenAnalyticsSamplePod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 562589AF5E352880CEC7DEF7 /* Pods_Common_RakutenAnalyticsSamplePod.framework */; };
 		C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEC28C0DAC400596714 /* AppDelegate.swift */; };
@@ -43,29 +39,10 @@
 		CFF8E14C2C61B3C900B1C970 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
 		CFF8E14D2C61B3C900B1C970 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
 		CFF8E14E2C61B3C900B1C970 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CBE2016CE8A0028CEBC /* Main.storyboard */; };
-		CFF8E1502C61B3C900B1C970 /* AnalyticsTodayExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CFF8E15B2C61BB2A00B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E15A2C61BB2A00B1C970 /* RakutenAnalytics */; };
 		CFF8E15D2C61BB3300B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E15C2C61BB3300B1C970 /* RakutenAnalytics */; };
 		CFF8E15F2C61BB3700B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E15E2C61BB3700B1C970 /* RakutenAnalytics */; };
-		CFF8E1612C61BB3B00B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E1602C61BB3B00B1C970 /* RakutenAnalytics */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		6D2B866123D5A56C00960D85 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 697AAE0F192DA4FA006EF197 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5AB2B82A1FC3F64A0017CF83;
-			remoteInfo = AnalyticsTodayExt;
-		};
-		CFF8E13D2C61B3C900B1C970 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 697AAE0F192DA4FA006EF197 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5AB2B82A1FC3F64A0017CF83;
-			remoteInfo = AnalyticsTodayExt;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		6D2B866323D5A56C00960D85 /* Embed App Extensions */ = {
@@ -74,7 +51,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				6D2B866023D5A56C00960D85 /* AnalyticsTodayExt.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,7 +61,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				CFF8E1502C61B3C900B1C970 /* AnalyticsTodayExt.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,12 +72,7 @@
 		5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
-		5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AnalyticsTodayExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
-		5AB2B82F1FC3F64C0017CF83 /* TodayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayViewController.h; sourceTree = "<group>"; };
-		5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
-		5AB2B8331FC3F64C0017CF83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
-		5AB2B8351FC3F64C0017CF83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CB82016CE890028CEBC /* RakutenAnalyticsSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakutenAnalyticsSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5AB66CBF2016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -137,15 +107,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5AB2B8281FC3F64A0017CF83 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CFF8E1612C61BB3B00B1C970 /* RakutenAnalytics in Frameworks */,
-				5AB2B82D1FC3F64C0017CF83 /* NotificationCenter.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5AB66CB52016CE890028CEBC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -181,17 +142,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */ = {
-			isa = PBXGroup;
-			children = (
-				5AB2B82F1FC3F64C0017CF83 /* TodayViewController.h */,
-				5AB2B8301FC3F64C0017CF83 /* TodayViewController.m */,
-				5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */,
-				5AB2B8351FC3F64C0017CF83 /* Info.plist */,
-			);
-			path = AnalyticsTodayExt;
-			sourceTree = "<group>";
-		};
 		5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,7 +164,6 @@
 			isa = PBXGroup;
 			children = (
 				CFF8E1592C61BB1800B1C970 /* ios-analytics */,
-				5AB2B82E1FC3F64C0017CF83 /* AnalyticsTodayExt */,
 				5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */,
 				C980DAC227BAA4E80059E12D /* RAnalyticsSampleSwiftUI */,
 				C900FBEB28C0DAC400596714 /* RAnalyticsSampleDest */,
@@ -227,7 +176,6 @@
 		697AAE18192DA4FA006EF197 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */,
 				5AB66CB82016CE890028CEBC /* RakutenAnalyticsSample.app */,
 				C980DAC127BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI.app */,
 				C900FBEA28C0DAC400596714 /* RakutenAnalyticsSampleDest.app */,
@@ -295,26 +243,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 5AB2B83B1FC3F64C0017CF83 /* Build configuration list for PBXNativeTarget "AnalyticsTodayExt" */;
-			buildPhases = (
-				5AB2B8271FC3F64A0017CF83 /* Sources */,
-				5AB2B8281FC3F64A0017CF83 /* Frameworks */,
-				5AB2B8291FC3F64A0017CF83 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = AnalyticsTodayExt;
-			packageProductDependencies = (
-				CFF8E1602C61BB3B00B1C970 /* RakutenAnalytics */,
-			);
-			productName = AnalyticsTodayExt;
-			productReference = 5AB2B82B1FC3F64A0017CF83 /* AnalyticsTodayExt.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		5AB66CB72016CE890028CEBC /* RakutenAnalyticsSample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSample" */;
@@ -328,7 +256,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				6D2B866223D5A56C00960D85 /* PBXTargetDependency */,
 			);
 			name = RakutenAnalyticsSample;
 			packageProductDependencies = (
@@ -392,7 +319,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				CFF8E13C2C61B3C900B1C970 /* PBXTargetDependency */,
 			);
 			name = RakutenAnalyticsSamplePod;
 			productName = RSDKAnalyticsSampleSwift;
@@ -410,11 +336,6 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Rakuten Group, Inc.";
 				TargetAttributes = {
-					5AB2B82A1FC3F64A0017CF83 = {
-						CreatedOnToolsVersion = 9.1;
-						DevelopmentTeam = 5J4GVGN58B;
-						ProvisioningStyle = Manual;
-					};
 					5AB66CB72016CE890028CEBC = {
 						CreatedOnToolsVersion = 9.2;
 						DevelopmentTeam = 5J4GVGN58B;
@@ -455,7 +376,6 @@
 			projectRoot = "";
 			targets = (
 				5AB66CB72016CE890028CEBC /* RakutenAnalyticsSample */,
-				5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */,
 				C980DAC027BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI */,
 				C900FBE928C0DAC400596714 /* RakutenAnalyticsSampleDest */,
 				CFF8E13B2C61B3C900B1C970 /* RakutenAnalyticsSamplePod */,
@@ -464,14 +384,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5AB2B8291FC3F64A0017CF83 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5AB2B8341FC3F64C0017CF83 /* MainInterface.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5AB66CB62016CE890028CEBC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -578,14 +490,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5AB2B8271FC3F64A0017CF83 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5AB2B8311FC3F64C0017CF83 /* TodayViewController.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5AB66CB42016CE890028CEBC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -634,28 +538,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		6D2B866223D5A56C00960D85 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */;
-			targetProxy = 6D2B866123D5A56C00960D85 /* PBXContainerItemProxy */;
-		};
-		CFF8E13C2C61B3C900B1C970 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5AB2B82A1FC3F64A0017CF83 /* AnalyticsTodayExt */;
-			targetProxy = CFF8E13D2C61B3C900B1C970 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
-		5AB2B8321FC3F64C0017CF83 /* MainInterface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5AB2B8331FC3F64C0017CF83 /* Base */,
-			);
-			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
 		5AB66CBE2016CE8A0028CEBC /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -691,81 +574,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		5AB2B8391FC3F64C0017CF83 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		5AB2B83A1FC3F64C0017CF83 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
-				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		5AB66CC72016CE8A0028CEBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -885,7 +693,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				ONLY_ACTIVE_ARCH = YES;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
@@ -926,7 +734,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -971,7 +779,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1029,7 +837,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1085,7 +893,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1142,7 +950,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1246,15 +1054,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5AB2B83B1FC3F64C0017CF83 /* Build configuration list for PBXNativeTarget "AnalyticsTodayExt" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5AB2B8391FC3F64C0017CF83 /* Debug */,
-				5AB2B83A1FC3F64C0017CF83 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1323,10 +1122,6 @@
 			productName = RakutenAnalytics;
 		};
 		CFF8E15E2C61BB3700B1C970 /* RakutenAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RakutenAnalytics;
-		};
-		CFF8E1602C61BB3B00B1C970 /* RakutenAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RakutenAnalytics;
 		};

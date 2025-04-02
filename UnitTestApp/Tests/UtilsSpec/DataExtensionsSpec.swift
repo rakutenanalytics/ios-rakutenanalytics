@@ -5,7 +5,7 @@ import Nimble
 
 class DataExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("DataExtensions") {
 

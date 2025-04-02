@@ -66,6 +66,6 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                        reachability: Reachability())
     }
 }

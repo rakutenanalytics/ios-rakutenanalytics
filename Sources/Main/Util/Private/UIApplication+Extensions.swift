@@ -9,14 +9,15 @@ protocol StatusBarOrientationGettable {
 
 extension UIApplication: StatusBarOrientationGettable {
     var analyticsStatusBarOrientation: UIInterfaceOrientation {
-        if #available(iOS 13.0, *) {
-            guard let interfaceOrientation = windows.first?.windowScene?.interfaceOrientation else {
-                return .portrait // default value
-            }
+        if let interfaceOrientation = connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first?.windowScene?.interfaceOrientation {
             return interfaceOrientation
-
+        } else if let interfaceOrientation = delegate?.window??.windowScene?.interfaceOrientation {
+            return interfaceOrientation
         } else {
-            return statusBarOrientation
+            return .portrait
         }
     }
 }

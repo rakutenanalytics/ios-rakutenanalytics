@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class GeoLocationManagerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
 
         let dependenciesContainer = GeoDependenciesContainer()
         let userStorageHandler = dependenciesContainer.userStorageHandler

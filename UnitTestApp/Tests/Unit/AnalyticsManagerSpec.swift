@@ -12,7 +12,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class AnalyticsManagerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsManager") {
             let bundleIdentifier = "jp.co.rakuten.app"
             let model = ReferralAppModel(bundleIdentifier: bundleIdentifier,

@@ -8,9 +8,8 @@ import RAnalyticsTestHelpers
 
 final class URLSessionMockSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("URLSessionMock") {
-
             var originalSession: URLSession!
             var sessionMock: URLSessionMock!
 
@@ -119,8 +118,10 @@ final class URLSessionMockSpec: QuickSpec {
                                     done()
                                 }.resume()
                             }
-
-                            expect(cookie).toAfterTimeout(beNil(), timeout: 1.0)
+                            
+                            QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                                expect(cookie).to(beNil())
+                            }
                         }
                     }
 
@@ -138,7 +139,9 @@ final class URLSessionMockSpec: QuickSpec {
                                 }.resume()
                             }
 
-                            expect(cookie).toAfterTimeout(beNil(), timeout: 1.0)
+                            QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                                expect(cookie).to(beNil())
+                            }
                         }
                     }
                 }

@@ -14,7 +14,7 @@ import RAnalyticsTestHelpers
 
 class RAnalyticsDatabaseSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsDatabase") {
 
             let bigNumber = UInt(100500)

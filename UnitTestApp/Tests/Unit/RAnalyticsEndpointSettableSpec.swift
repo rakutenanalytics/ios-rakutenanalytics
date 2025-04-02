@@ -11,7 +11,7 @@ private final class RAnalyticsEndpointHandler: NSObject, EndpointSettable {
 }
 
 final class RAnalyticsEndpointSettableSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsEndpointSettable") {
             describe("endpointURL") {
                 it("should return https//endpoint.com when the endpoint is https//endpoint.com") {

@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsRpCookieFetcherSpec
 
 final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRpCookieFetcher") {
             let headerFields = ["Set-Cookie": "Rp=cookieValue; path=/; expires=Fri, 16-Nov-50 16:59:07 GMT; session-only=0; domain=.rakuten.co.jp"]
             let noRpCookieHeaderFields = ["Set-Token": "1234"]
@@ -315,7 +315,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                     it("should return nil") {
                         cookieStorageMock.cookiesArray = nil
                         let rpCookie = cookieFetcher?.getRpCookieFromCookieStorage()
-                        expect(rpCookie).toAfterTimeout(beNil())
+                        
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(rpCookie).to(beNil())
+                        }
                     }
                 }
 

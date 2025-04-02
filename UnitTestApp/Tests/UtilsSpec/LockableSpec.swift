@@ -29,7 +29,7 @@ private class LockableTestObject: Lockable {
 
 final class LockableSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("Lockable object") {
             var lockableObject: LockableTestObject!
@@ -48,7 +48,9 @@ final class LockableSpec: QuickSpec {
                 })
 
                 lockableObject.lockResources()
-                expect(lockableObject.resource.get()).toAfterTimeout(equal([1, 2]), timeout: 2.0)
+                QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                    expect(lockableObject.resource.get()).to(equal([1, 2]))
+                }
             }
 
             it("will unlock provided resources when unlock is called on them") {
@@ -74,7 +76,9 @@ final class LockableSpec: QuickSpec {
                 expect(resource.isLocked).to(beTrue()) // 3. check if thread A locked the resource
                 resource.set(value: [1]) // 4. thread A - modify the resource
                 resource.unlock() // 5. thread A - unlock
-                expect(resource.isLocked).toAfterTimeout(beTrue()) // 8. confirm thread B executed the lock
+                QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                    expect(resource.isLocked).to(beTrue()) // 8. confirm thread B executed the lock
+                }
             }
 
             it("will keep the lock if number of unlock() calls did not match the number of lock() calls") {

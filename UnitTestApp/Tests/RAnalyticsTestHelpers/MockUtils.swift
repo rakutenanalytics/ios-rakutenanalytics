@@ -343,7 +343,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                        reachability: Reachability())
         super.init()
     }
 }
@@ -369,7 +369,7 @@ public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                        reachability: Reachability())
     }
 }
 
@@ -550,17 +550,10 @@ public final class AnalyticsManagerMock: AnalyticsManageable {
 
 public final class ReachabilityMock: ReachabilityType {
     public var flags: SCNetworkReachabilityFlags?
-
     public var connection: Reachability.Connection = .cellular
-
-    public init() {
-    }
-
-    public func addObserver(_ observer: ReachabilityObserver) {
-    }
-
-    public func removeObserver(_ observer: ReachabilityObserver) {
-    }
+    public init() {}
+    public func addObserver(_ observer: ReachabilityObserver) {}
+    public func removeObserver(_ observer: ReachabilityObserver) {}
 }
 
 // MARK: - CookieStoreObserver

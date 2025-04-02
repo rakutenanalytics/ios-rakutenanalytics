@@ -16,7 +16,7 @@ private func defaultEvent() -> AnalyticsManager.Event {
 // MARK: - RAnalyticsEventSpec
 
 final class RAnalyticsEventSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsManager.Event") {
             describe("init") {
                 it("should have the correct default values") {

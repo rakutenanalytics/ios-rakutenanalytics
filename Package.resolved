@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Quick/Nimble.git",
       "state" : {
-        "revision" : "1f3bde57bde12f5e7b07909848c071e9b73d6edc",
-        "version" : "10.0.0"
+        "revision" : "f3bedd7c2a858f4513e7d004def200a69238db2f",
+        "version" : "13.6.2"
       }
     },
     {
@@ -32,8 +32,35 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Quick/Quick.git",
       "state" : {
-        "revision" : "f9d519828bb03dfc8125467d8f7b93131951124c",
-        "version" : "5.0.1"
+        "revision" : "1163a1b1b114a657c7432b63dd1f92ce99fe11a6",
+        "version" : "7.6.2"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "41982a3656a71c768319979febd796c6fd111d5c",
+        "version" : "1.5.0"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "e0ec0f5f3af6f3e4d5e7a19d2af26b481acb6ba8",
+        "version" : "1.0.3"
       }
     },
     {
@@ -41,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector",
       "state" : {
-        "revision" : "7b1732802ffe30e6a67754bda6c7819e5cb0eb70",
-        "version" : "0.9.11"
+        "revision" : "788e7879d38a839c4e348ab0762dcc0364e646a2",
+        "version" : "0.10.1"
       }
     }
   ],

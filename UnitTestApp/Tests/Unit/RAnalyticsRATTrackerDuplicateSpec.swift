@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 
 // MARK: - SenderSpy
 
-private final class SenderSpy: NSObject, Sendable {
+private final class SenderSpy: NSObject, AnalyticsSendable {
     var sendSpy: ((NSMutableDictionary) -> Void)?
 
     // MARK: - Sendable
@@ -33,7 +33,7 @@ private final class SenderSpy: NSObject, Sendable {
 // MARK: - RAnalyticsRATTrackerDuplicateSpec
 
 class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRATTracker") {
             var ratTracker: RAnalyticsRATTracker!
             let sender = SenderSpy()

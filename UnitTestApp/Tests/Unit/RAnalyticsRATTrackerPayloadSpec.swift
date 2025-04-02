@@ -62,7 +62,7 @@ extension LocationModel {
 // MARK: - RAnalyticsRATTrackerPayloadSpec
 
 class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRATTracker") {
             let bundle = BundleMock.create()
             bundle.languageCode = Bundle.main.languageCode

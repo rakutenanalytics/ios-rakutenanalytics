@@ -30,11 +30,6 @@ enum ErrorCode: Int {
     case rpCookieCantBeFetched
     case getRpCookieFromRATFailed
 
-    // Reachability Notifier
-    case scNetworkReachabilityCreateWithNameFailed
-    case scNetworkReachabilitySetCallback
-    case scNetworkReachabilityScheduleWithRunLoop
-
     // RAT Tracker
     case eventsNotProcessedByRATracker
 
@@ -132,11 +127,6 @@ enum ErrorReason {
     // Sender
     static let senderSerializationFailure = "Sender failed to serialize event dictionary."
     static let senderRequestBodyCreationFailure = "Failed to create RAT request body data."
-
-    // Reachability Notifier
-    static let networkReachabilityCreateWithNameFailure = "SCNetworkReachabilityCreateWithName failed."
-    static let networkReachabilitySetCallbackFailure = "SCNetworkReachabilitySetCallback failed"
-    static let networkReachabilityScheduleWithRunLoopFailure = "SCNetworkReachabilityScheduleWithRunLoop failed"
 
     // Connection
     static let connectionIsOffline = "The connection is offline."

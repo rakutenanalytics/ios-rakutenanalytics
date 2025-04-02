@@ -375,7 +375,7 @@ extension AnalyticsManager {
     }
 
     @objc private func stopMonitoringLocationUnlessAlways() {
-        if CLLocationManager.authorizationStatus() != .authorizedAlways {
+        if CLLocationManager().authorizationStatus != .authorizedAlways {
             stopMonitoringLocation()
         }
     }

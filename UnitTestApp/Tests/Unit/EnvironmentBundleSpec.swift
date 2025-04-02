@@ -8,7 +8,8 @@ import RAnalyticsTestHelpers
 
 // MARK: - EnvironmentBundleMock
 
-private final class EnvironmentBundleMock: Bundle {
+private final class EnvironmentBundleMock: Bundle, @unchecked Sendable {
+    
     var injectedDictionary: [String: Any]?
 
     override var infoDictionary: [String: Any]? {
@@ -24,7 +25,7 @@ private final class EnvironmentBundleMock: Bundle {
 
 final class EnvironmentBundleSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("EnvironmentBundle") {
             let bundleMock = EnvironmentBundleMock()
 

@@ -14,7 +14,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class GeoTrackerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("GeoTracker") {
             let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "test_RAnalyticsSDKTracker.db"
@@ -161,7 +161,7 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                           telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                           notificationHandler: dependenciesContainer.notificationHandler,
                                                                                           analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                          reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                                                          reachability: Reachability())
                 }
 
                 context("When the event is not loc") {
@@ -238,79 +238,51 @@ final class GeoTrackerSpec: QuickSpec {
                         let expectedAppName = "jp.co.rakuten.Host"
                         #endif
                         let expectedModel = UIDevice.current.modelIdentifier
+                        
+                        DispatchQueue.global(qos: .userInitiated).sync {
+                            expect(json[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.geoLocation))
+                            expect(json[PayloadParameterKeys.acc] as? Int64).to(equal(expectedAccountIdentifier))
+                            expect(json[PayloadParameterKeys.aid] as? Int64).to(equal(expectedApplicationIdentifier))
+                            expect(json[PayloadParameterKeys.Core.appVer] as? String).toNot(beEmpty())
+                            expect(json[PayloadParameterKeys.Core.appName] as? String).to(equal(expectedAppName))
+                            expect(json[PayloadParameterKeys.Core.ts1] as? Double).to(equal(expectedTs1))
+                            expect(json[PayloadParameterKeys.Core.ver] as? String).to(equal(CoreHelpers.Constants.sdkVersion))
 
-                        expect(json[PayloadParameterKeys.etype] as? String).to(equal(RAnalyticsEvent.Name.geoLocation))
+                            let mos = json[PayloadParameterKeys.Core.mos] as? String
+                            expect(mos).toNot(beEmpty())
+                            expect(mos?.hasPrefix("iOS")).to(beTrue())
 
-                        expect(json[PayloadParameterKeys.acc] as? Int64).to(equal(expectedAccountIdentifier))
-
-                        expect(json[PayloadParameterKeys.aid] as? Int64).to(equal(expectedApplicationIdentifier))
-
-                        expect(json[PayloadParameterKeys.Core.appVer] as? String).toNot(beEmpty())
-
-                        expect(json[PayloadParameterKeys.Core.appName] as? String).to(equal(expectedAppName))
-
-                        expect(json[PayloadParameterKeys.Core.ts1] as? Double).to(equal(expectedTs1))
-
-                        expect(json[PayloadParameterKeys.Core.ver] as? String).to(equal(CoreHelpers.Constants.sdkVersion))
-
-                        let mos = json[PayloadParameterKeys.Core.mos] as? String
-                        expect(mos).toNot(beEmpty())
-                        expect(mos?.hasPrefix("iOS")).to(beTrue())
-
-                        expect(json[PayloadParameterKeys.Time.ltm] as? String).to(equal(expectedLtm))
-
-                        expect(json[PayloadParameterKeys.TimeZone.tzo] as? Int).toNot(beNil())
-
-                        expect(json[PayloadParameterKeys.Network.online] as? Bool).to(beTrue())
-
-                        expect(json[PayloadParameterKeys.Orientation.mori] as? Int).to(equal(1))
-
-                        expect(json[PayloadParameterKeys.Telephony.mnetw] as? Int).to(equal(1))
-
-                        expect(json[PayloadParameterKeys.Telephony.mnetwd] as? Int).to(equal(1))
-
-                        expect(json[PayloadParameterKeys.Device.model] as? String).to(equal(expectedModel))
-
-                        expect(json[PayloadParameterKeys.Language.dln] as? String).to(equal(expectedLanguageCode))
-
-                        expect(json[PayloadParameterKeys.Device.res] as? String).to(equal(expectedResolution))
-
-                        expect(json[PayloadParameterKeys.UserAgent.ua] as? String).to(beNil())
-
-                        expect(json[PayloadParameterKeys.Identifier.ckp] as? String).to(equal(expectedCkp))
-
-                        expect(json[PayloadParameterKeys.Identifier.cka] as? String).to(equal(expectedCka))
-
-                        expect(json[PayloadParameterKeys.Identifier.cks] as? String).to(equal(expectedSessionIdentifier))
-
-                        expect(json[PayloadParameterKeys.Identifier.userid] as? String).to(equal(expectedUserIdentifier))
-
-                        expect(json[PayloadParameterKeys.Identifier.easyid] as? String).to(equal(expectedEasyIdentifier))
+                            expect(json[PayloadParameterKeys.Time.ltm] as? String).to(equal(expectedLtm))
+                            expect(json[PayloadParameterKeys.TimeZone.tzo] as? Int).toNot(beNil())
+                            expect(json[PayloadParameterKeys.Network.online] as? Bool).to(beTrue())
+                            expect(json[PayloadParameterKeys.Orientation.mori] as? Int).to(equal(1))
+                            expect(json[PayloadParameterKeys.Telephony.mnetw] as? Int).to(equal(1))
+                            expect(json[PayloadParameterKeys.Telephony.mnetwd] as? Int).to(equal(1))
+                            expect(json[PayloadParameterKeys.Device.model] as? String).to(equal(expectedModel))
+                            expect(json[PayloadParameterKeys.Language.dln] as? String).to(equal(expectedLanguageCode))
+                            expect(json[PayloadParameterKeys.Device.res] as? String).to(equal(expectedResolution))
+                            expect(json[PayloadParameterKeys.UserAgent.ua] as? String).to(beNil())
+                            expect(json[PayloadParameterKeys.Identifier.ckp] as? String).to(equal(expectedCkp))
+                            expect(json[PayloadParameterKeys.Identifier.cka] as? String).to(equal(expectedCka))
+                            expect(json[PayloadParameterKeys.Identifier.cks] as? String).to(equal(expectedSessionIdentifier))
+                            expect(json[PayloadParameterKeys.Identifier.userid] as? String).to(equal(expectedUserIdentifier))
+                            expect(json[PayloadParameterKeys.Identifier.easyid] as? String).to(equal(expectedEasyIdentifier))
+                        }
                     }
 
                     func verifyLocation(json: [String: Any]) {
                         let location: [String: Any]! = json[PayloadParameterKeys.Location.loc] as? [String: Any]
 
                         expect(location).toNot(beNil())
-
                         expect(location[PayloadParameterKeys.Location.lat] as? CLLocationDegrees).to(equal(expectedLatitude))
-
                         expect(location[PayloadParameterKeys.Location.long] as? CLLocationDegrees).to(equal(expectedLongitude))
-
                         expect(location[PayloadParameterKeys.Location.accu] as? CLLocationAccuracy).to(equal(expectedAccuracy))
-
                         expect(location[PayloadParameterKeys.Location.tms] as? TimeInterval).to(equal(expectedTms*1000.0))
-
                         expect(location[PayloadParameterKeys.Location.speed] as? CLLocationSpeed).to(equal(expectedSpeed))
-
                         expect(location[PayloadParameterKeys.Location.speedAccuracy] as? CLLocationSpeedAccuracy).to(equal(expectedSpeedAccuracy))
-
                         expect(location[PayloadParameterKeys.Location.altitude] as? CLLocationDistance).to(equal(expectedAltitude))
-
                         expect(location[PayloadParameterKeys.Location.verticalAccuracy] as? CLLocationAccuracy).to(equal(expectedVerticalAccuracy))
-
                         expect(location[PayloadParameterKeys.Location.bearing] as? CLLocationDegrees).to(equal(expectedBearing))
-
                         expect(location[PayloadParameterKeys.Location.bearingAccuracy] as? CLLocationAccuracy).to(equal(expectedBearingAccuracy))
                     }
 
@@ -358,7 +330,6 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyLocation(json: json)
 
                                 expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
-
                                 expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
@@ -399,7 +370,6 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyLocation(json: json)
 
                                 expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
-
                                 expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
@@ -421,7 +391,6 @@ final class GeoTrackerSpec: QuickSpec {
                                 verifyLocation(json: json)
 
                                 expect(json[PayloadParameterKeys.isAction] as? Bool).to(beFalse())
-
                                 expect(json[PayloadParameterKeys.ActionParameters.actionParams]).to(beNil())
                             }
                         }
@@ -442,7 +411,6 @@ final class GeoTrackerSpec: QuickSpec {
                                     verifyLocation(json: json)
 
                                     expect(json[PayloadParameterKeys.isAction] as? Bool).to(beTrue())
-
                                     verifyNonEmptyActionParameters(json: json)
                                 }
                             }

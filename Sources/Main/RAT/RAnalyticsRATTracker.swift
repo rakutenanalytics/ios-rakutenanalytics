@@ -36,7 +36,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// Sender
     /// - Note: marked as `@objc` for this deprecated method:
     /// `@objc public static func endpointAddress() -> URL?`
-    @objc private let sender: Sendable?
+    @objc private let sender: AnalyticsSendable?
 
     /// The RAT Automatic Fields Setter
     private let automaticFieldsBuilder: AutomaticFieldsBuildable

@@ -55,7 +55,7 @@ import Foundation
         self.init(cookieStorage: cookieStorage,
                   bundle: Bundle.main,
                   session: URLSession.shared,
-                  reachability: Reachability(hostname: ReachabilityConstants.host),
+                  reachability: Reachability(),
                   maximumTimeOut: Constants.timeOut)
     }
 
@@ -326,7 +326,7 @@ extension RAnalyticsRpCookieFetcher {
         self.init(cookieStorage: cookieStorage,
                   bundle: Bundle.main,
                   session: URLSession.shared,
-                  reachability: Reachability(hostname: ReachabilityConstants.host),
+                  reachability: Reachability(),
                   maximumTimeOut: Constants.timeOut)
     }
 }

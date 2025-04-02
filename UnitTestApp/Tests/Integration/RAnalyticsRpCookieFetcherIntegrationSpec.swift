@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class RAnalyticsRpCookieFetcherIntegrationSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRpCookieFetcher") {
             describe("getRpCookieCompletionHandler") {
                 it("should fetch a non-nil Rp Cookie") {

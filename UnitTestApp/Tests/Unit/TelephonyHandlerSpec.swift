@@ -11,7 +11,7 @@ import RAnalyticsTestHelpers
 // MARK: - TelephonyHandlerSpec
 
 final class TelephonyHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("TelephonyHandler") {
             let telephonyNetworkInfo = TelephonyNetworkInfoMock()
 

@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 
 final class PositiveIntegerNumberSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("PositiveIntegerNumber") {
             it("should return nil when called from an optional") {
                 let object: NSObject? = nil

@@ -52,7 +52,7 @@ enum Payloads {
 // MARK: - ReferralAppTrackingIntegrationSpec
 
 final class ReferralAppTrackingIntegrationSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsManager") {
             let databaseDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseTableName = "testTableName_ReferralAppTrackingIntegrationSpec"
@@ -75,7 +75,7 @@ final class ReferralAppTrackingIntegrationSpec: QuickSpec {
                                                                                       telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                       notificationHandler: dependenciesContainer.notificationHandler,
                                                                                       analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                      reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                                                      reachability: Reachability())
             }
 
             afterEach {

@@ -14,7 +14,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsRATTrackerProcessSpec
 
 class RAnalyticsRATTrackerProcessSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRATTracker") {
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
@@ -67,7 +67,7 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                                                                       telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                       notificationHandler: dependenciesContainer.notificationHandler,
                                                                                       analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                      reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                                                      reachability: Reachability())
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)
@@ -217,7 +217,10 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                         expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.login) {
                             cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
                         }
-                        expect(cpPayload).toAfterTimeout(beNil())
+                        
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(cpPayload).to(beNil())
+                        }
                     }
                 }
 
