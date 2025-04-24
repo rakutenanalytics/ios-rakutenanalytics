@@ -658,7 +658,16 @@ extension RAnalyticsRATTracker {
     /// - Parameters:
     ///     - accountId: RAT account ID.
     ///     - applicationId: RAT application ID.
-    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int64, applicationId: Int64) {
-        duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
+    ///
+    /// - Returns: Whether or not the duplicate account was added.
+    ///
+    /// Note: Negative and zero values are not accepted. Both `accountId` and `applicationId` must be > 0.
+    @discardableResult
+    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int64, applicationId: Int64) -> Bool {
+        guard (accountId > 0) && (applicationId > 0) else {
+            return false
+        }
+        let (wasAdded, _) = duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
+        return wasAdded
     }
 }

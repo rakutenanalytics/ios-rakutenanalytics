@@ -51,6 +51,36 @@ class RAnalyticsRATTrackerDuplicateSpec: QuickSpec {
                 bundleMock.duplicateAccounts = nil
                 sender.sendSpy = nil
             }
+            
+            describe("addDuplicateAccount") {
+                context("when account and application IDs are zero or negative") {
+                    it("should not add duplicate accounts") {
+                        // given
+                        let accounts: [(acc: Int64, aid: Int64)] = [
+                            (acc: -420, aid: 0),
+                            (acc: 0, aid: 60),
+                            (acc: -420, aid: 60),
+                            (acc: 421, aid: -60),
+                            (acc: 421, aid: 0)
+                        ]
+                        
+                        // expect
+                        accounts.forEach { expect(ratTracker.addDuplicateAccount(accountId: $0.0, applicationId: $0.1)).to(beFalse()) }
+                    }
+                }
+                context("when account and application IDs are valid") {
+                    it("should add duplicate accounts") {
+                        // given
+                        let accounts: [(acc: Int64, aid: Int64)] = [
+                            (acc: 420, aid: 69),
+                            (acc: 421, aid: 60)
+                        ]
+                        
+                        // expect
+                        accounts.forEach { expect(ratTracker.addDuplicateAccount(accountId: $0.0, applicationId: $0.1)).to(beTrue()) }
+                    }
+                }
+            }
 
             describe("duplicateEvent") {
                 context("shouldDuplicateRATEventHandler is nil") {
