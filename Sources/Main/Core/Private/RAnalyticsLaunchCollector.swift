@@ -76,9 +76,14 @@ final class RAnalyticsLaunchCollector {
     }
 
     private func configureNotifications() {
+//        notificationHandler?.addObserver(self,
+//                                         selector: #selector(willResume(_:)),
+//                                         name: UIApplication.willEnterForegroundNotification,
+//                                         object: nil)
+        
         notificationHandler?.addObserver(self,
                                          selector: #selector(willResume(_:)),
-                                         name: UIApplication.willEnterForegroundNotification,
+                                         name: UIApplication.didBecomeActiveNotification,
                                          object: nil)
 
         notificationHandler?.addObserver(self,
