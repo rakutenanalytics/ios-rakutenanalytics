@@ -121,7 +121,7 @@ final class RAnalyticsLaunchCollector {
 
 @objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
-        guard UIApplication.shared.applicationState == .background || UIApplication.shared.applicationState == .inactive else {
+        guard UIApplication.shared.applicationState == .background else {
             return
         }
         update()
