@@ -76,14 +76,9 @@ final class RAnalyticsLaunchCollector {
     }
 
     private func configureNotifications() {
-//        notificationHandler?.addObserver(self,
-//                                         selector: #selector(willResume(_:)),
-//                                         name: UIApplication.willEnterForegroundNotification,
-//                                         object: nil)
-        
         notificationHandler?.addObserver(self,
                                          selector: #selector(willResume(_:)),
-                                         name: UIApplication.didBecomeActiveNotification,
+                                         name: UIApplication.willEnterForegroundNotification,
                                          object: nil)
 
         notificationHandler?.addObserver(self,
@@ -126,6 +121,9 @@ final class RAnalyticsLaunchCollector {
 
 @objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
+        guard UIApplication.shared.applicationState == .background || UIApplication.shared.applicationState == .inactive else {
+            return
+        }
         update()
         trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
     }
