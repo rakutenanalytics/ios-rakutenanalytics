@@ -331,6 +331,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var pushEventHandler: PushEventHandleable
     public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
     public var automaticFieldsBuilder: AutomaticFieldsBuildable
+    public var applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
 
     public override init() {
         let appGroupId = bundle.appGroupId
@@ -520,6 +521,20 @@ public final class ApplicationMock: NSObject, StatusBarOrientationGettable {
     }
 
     public var analyticsStatusBarOrientation: UIInterfaceOrientation {
+        injectedValue
+    }
+}
+
+// MARK: - ApplicationStateMock
+
+public final class ApplicationStateMock: ApplicationStateGettable {
+    public var injectedValue: UIApplication.State
+    
+    public init(_ injectedValue: UIApplication.State) {
+        self.injectedValue = injectedValue
+    }
+    
+    public var applicationState: UIApplication.State {
         injectedValue
     }
 }
