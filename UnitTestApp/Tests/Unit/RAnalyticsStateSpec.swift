@@ -267,7 +267,7 @@ final class RAnalyticsStateSpec: QuickSpec {
                     it("should be generated correctly") {
                         let state = defaultState
                         let ckp = state.deviceIdentifier
-                        let timestamp = Date().toRatTimestamp
+                        let timestamp = Int(Date().toRatTimestamp)
                         let generatedUniqueId = state.uniqueSearchId
                         expect(generatedUniqueId).to(equal("\(ckp)_\(timestamp)"))
                     }

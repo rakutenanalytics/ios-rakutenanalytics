@@ -9,7 +9,7 @@ import SystemConfiguration
 extension RAnalyticsState {
     /// Generate unique search identifier in format %ckp%_%timestamp%
     var uniqueSearchId: String {
-        return "\(self.deviceIdentifier)_\(Date().toRatTimestamp)"
+        return "\(self.deviceIdentifier)_\(Int(Date().toRatTimestamp))"
     }
 }
 
