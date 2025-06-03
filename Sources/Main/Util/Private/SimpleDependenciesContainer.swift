@@ -23,6 +23,7 @@ protocol SimpleDependenciesContainable {
     var pushEventHandler: PushEventHandleable { get }
     var coreInfosCollector: CoreInfosCollectable { get }
     var automaticFieldsBuilder: AutomaticFieldsBuildable { get }
+    var applicationStateGetter: ApplicationStateGettable? { get }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -52,6 +53,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let pushEventHandler: PushEventHandleable
     let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
     let automaticFieldsBuilder: AutomaticFieldsBuildable
+    let applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
     lazy var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
 
     init() {

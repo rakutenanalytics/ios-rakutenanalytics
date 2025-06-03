@@ -22,6 +22,13 @@ extension UIApplication: StatusBarOrientationGettable {
     }
 }
 
+// MARK: - ApplicationStateGettable
+protocol ApplicationStateGettable {
+    var applicationState: UIApplication.State { get }
+}
+
+extension UIApplication: ApplicationStateGettable {}
+
 // MARK: - RAnalyticsSharedApplication
 
 extension UIApplication {

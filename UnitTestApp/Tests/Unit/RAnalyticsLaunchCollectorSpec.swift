@@ -76,6 +76,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
             }
             it("should track the session start event when the app is resumed") {
                 analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.sessionStart: TrackerResult(tracked: false, parameters: nil)]
+                dependenciesFactory.applicationStateGetter = ApplicationStateMock(.background)
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
                 launchCollector.trackerDelegate = analyticsTrackerMock
