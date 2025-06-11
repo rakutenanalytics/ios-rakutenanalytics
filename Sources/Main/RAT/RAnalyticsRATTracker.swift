@@ -455,10 +455,6 @@ extension RAnalyticsRATTracker {
             }
 
             payload[PayloadParameterKeys.etype] = eventName
-            
-            if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
-                payload["pgid"] = lastUniqueSearchIdentifier
-            }
 
             if let topLevelObject = event.parameters[RAnalyticsEvent.Parameter.topLevelObject] as? [AnyHashable: Any],
                !topLevelObject.isEmpty {
@@ -479,10 +475,6 @@ extension RAnalyticsRATTracker {
             if !event.parameters.isEmpty {
                 payload.addEntries(from: event.parameters)
             }
-            
-            if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
-                payload["pgid"] = lastUniqueSearchIdentifier
-            }
 
             guard let etype = event.eType else {
                 return false
@@ -492,6 +484,10 @@ extension RAnalyticsRATTracker {
         // MARK: Unsupported events
         default:
             return false
+        }
+        
+        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+            payload["pgid"] = lastUniqueSearchIdentifier
         }
 
         return true
@@ -559,7 +555,6 @@ private extension RAnalyticsRATTracker {
         
         if pageIdentifier != lastVisitedPageIdentifier {
             lastUniqueSearchIdentifier = state.uniqueSearchId
-            payload["pgid"] = lastUniqueSearchIdentifier
         }
         
         payload[PayloadParameterKeys.pgn] = pageIdentifier
@@ -587,6 +582,10 @@ private extension RAnalyticsRATTracker {
 
         if let pageURL = pageURL {
             extra[CpParameterKeys.Page.url] = pageURL.absoluteString
+        }
+        
+        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+            payload["pgid"] = lastUniqueSearchIdentifier
         }
 
         return true
