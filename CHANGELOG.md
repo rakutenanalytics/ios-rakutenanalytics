@@ -1,6 +1,6 @@
 # Changelog
 
-## 10.5.0 (2025-06-..)
+## 10.5.0 (2025-06-16)
 
 ### Features
 * CONRAT-37737: Add unique id (pgid) based on ckp and timestamp.
