@@ -106,7 +106,7 @@ import Foundation
         static let pushAutoUnregistrationForRAT = "_rem_push_auto_unregister"
 
         /// Event triggered when an SSO credential is found.
-        public static let SSOCredentialFound = "_rem_sso_credential_found"
+        public static let ssoCredentialFound = "_rem_sso_credential_found"
 
         /// Event triggered when a login credential is found.
         public static let loginCredentialFound = "_rem_login_credential_found"

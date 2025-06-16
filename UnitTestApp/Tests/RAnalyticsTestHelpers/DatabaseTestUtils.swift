@@ -33,7 +33,7 @@ import SQLite3
         let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
 
         var statement: SQlite3Pointer?
-        sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
         sqlite3_step(statement)
         let tableCount = sqlite3_column_int(statement, 0)
         sqlite3_reset(statement)
@@ -46,7 +46,7 @@ import SQLite3
         let query = "DROP TABLE IF EXISTS '\(table)'"
 
         var statement: SQlite3Pointer?
-        sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
         sqlite3_step(statement)
         sqlite3_reset(statement)
         sqlite3_finalize(statement)
@@ -57,7 +57,8 @@ import SQLite3
         let query = "select * from \(table)"
 
         var statement: SQlite3Pointer?
-        let code = sqlite3_prepare_v2(connection, query, -1, &statement, nil)
+        
+        let code = sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
         switch code {
         case SQLITE_OK:
             while sqlite3_step(statement) == SQLITE_ROW {
@@ -86,7 +87,7 @@ import SQLite3
 
         let insertQuery = "insert into \(table) (data) values(?)"
         var statement: SQlite3Pointer?
-        assert(sqlite3_prepare_v2(connection, insertQuery, -1, &statement, nil) == SQLITE_OK)
+        assert(sqlite3_prepare_v3(connection, insertQuery, -1, 0, &statement, nil) == SQLITE_OK)
 
         blobs.forEach { blob in
             blob.withUnsafeBytes { bytes -> Void in

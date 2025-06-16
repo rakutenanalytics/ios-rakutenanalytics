@@ -48,14 +48,12 @@ internal enum RAnalyticsDatabaseHelper {
 
 extension RAnalyticsDatabase {
 
-    static func mkAnalyticsDBConnection(databaseName: String,
-                                        databaseParentDirectory: FileManager.SearchPathDirectory) -> SQlite3Pointer? {
-        var connection: SQlite3Pointer?
+    static func mkAnalyticsDBConnection(databaseName: String, databaseParentDirectory: FileManager.SearchPathDirectory) -> OpaquePointer? {
+        var connection: OpaquePointer?
         let databaseFileURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
 
         guard let databasePath = databaseFileURL,
-              sqlite3_open(databasePath.path, &connection) == SQLITE_OK,
-              let databaseConnection = connection else {
+              sqlite3_open(databasePath.path, &connection) == SQLITE_OK else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
                                              code: ErrorCode.databaseTableCreationFailure.rawValue,
                                              description: ErrorDescription.databaseError,
@@ -64,11 +62,11 @@ extension RAnalyticsDatabase {
             return mkAnalyticsInMemoryDBConnection()
         }
 
-        return databaseConnection
+        return connection
     }
 
-    private static func mkAnalyticsInMemoryDBConnection() -> SQlite3Pointer? {
-        var connection: SQlite3Pointer?
+    private static func mkAnalyticsInMemoryDBConnection() -> OpaquePointer? {
+        var connection: OpaquePointer?
         sqlite3_open("file::memory:?cache=shared", &connection)
 
         return connection

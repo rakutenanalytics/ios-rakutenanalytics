@@ -143,13 +143,12 @@ final class LockableSpec: QuickSpec {
             it("will unlock the thread if the resource was deallocated") {
                 var resource: LockableObject? = LockableObject([Int]())
                 resource?.lock()
-                resource?.lock()
-                waitUntil { done in
+                waitUntil(timeout: .seconds(2)) { done in
                     DispatchQueue.global().async {
+                        resource = nil
                         expect(resource?.get()).to(beNil())
                         done()
                     }
-                    resource = nil
                 }
             }
         }

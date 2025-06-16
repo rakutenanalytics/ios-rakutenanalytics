@@ -20,6 +20,9 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
     /// The identifer of the last-tracked visited page, if any.
     private var lastVisitedPageIdentifier: String?
+    
+    /// The unique identifier of last-tracked visited page. Used to link tracked events to page.
+    private var lastUniqueSearchIdentifier: String?
 
     /// Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
     private var carriedOverOrigin: NSNumber?
@@ -407,15 +410,9 @@ extension RAnalyticsRATTracker {
         case RAnalyticsEvent.Name.applink:
             // Override etype
             payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
-
-            switch state.referralTracking {
-
-            case .referralApp(let referralAppModel):
-                updatePayloadForReferralApp(payload: payload,
-                                            extra: extra,
-                                            referralApp: referralAppModel)
-
-            default:
+            if case .referralApp(let referralAppModel) = state.referralTracking {
+                updatePayloadForReferralApp(payload: payload, extra: extra, referralApp: referralAppModel)
+            } else {
                 return false
             }
 
@@ -439,7 +436,7 @@ extension RAnalyticsRATTracker {
             extra.addEntries(from: event.discoverParameters)
 
         // MARK: _rem_sso_credential_found
-        case RAnalyticsEvent.Name.SSOCredentialFound:
+        case RAnalyticsEvent.Name.ssoCredentialFound:
             extra.addEntries(from: event.ssoParameters)
 
         // MARK: _rem_login_credential_found
@@ -487,6 +484,10 @@ extension RAnalyticsRATTracker {
         // MARK: Unsupported events
         default:
             return false
+        }
+        
+        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+            payload["pgid"] = lastUniqueSearchIdentifier
         }
 
         return true
@@ -551,7 +552,11 @@ private extension RAnalyticsRATTracker {
             }
             return false
         }
-
+        
+        if pageIdentifier != lastVisitedPageIdentifier {
+            lastUniqueSearchIdentifier = state.uniqueSearchId
+        }
+        
         payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
@@ -577,6 +582,10 @@ private extension RAnalyticsRATTracker {
 
         if let pageURL = pageURL {
             extra[CpParameterKeys.Page.url] = pageURL.absoluteString
+        }
+        
+        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
+            payload["pgid"] = lastUniqueSearchIdentifier
         }
 
         return true

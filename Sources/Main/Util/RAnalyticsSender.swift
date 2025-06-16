@@ -66,6 +66,7 @@ enum SenderBackgroundTimerEnabler {
     @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?
+    private let batchingDelayQueue = DispatchQueue(label: "com.analytics.batchingDelayQueue")
     @AtomicGetSet private var uploadRequested = false
     @AtomicGetSet private var zeroBatchingDelayUploadInProgress = false
 
@@ -145,13 +146,19 @@ enum SenderBackgroundTimerEnabler {
     /// Set the batching delay
     /// - Parameter batchingDelayBlock: batching delay block
     @objc public func setBatchingDelayBlock(_ batchingDelayBlock: @escaping @autoclosure BatchingDelayBlock) {
-        batchingDelayClosure = batchingDelayBlock
+        batchingDelayQueue.async {
+            self.batchingDelayClosure = batchingDelayBlock
+        }
     }
 
     /// Batching delay
     /// - Returns: batching delay block
     @objc public func batchingDelayBlock() -> BatchingDelayBlock? {
-        return batchingDelayClosure
+        var delayBlock: BatchingDelayBlock?
+        batchingDelayQueue.sync {
+            delayBlock = self.batchingDelayClosure
+        }
+        return delayBlock
     }
 }
 
@@ -174,10 +181,10 @@ fileprivate extension RAnalyticsSender {
     ///
     /// - Parameter appStateOrigin: the app state origin needed for a background upload.
     func scheduleUploadOrPerformImmediately(appStateOrigin: AppStateOrigin) {
-        if let delay = batchingDelayClosure?() {
+        if let delay = batchingDelayBlock()?() {
             if case .enabled(let startTimeKey) = backgroundTimerEnabler,
                let elapsedTime = scheduleElapsedTime(for: startTimeKey) {
-                if elapsedTime <= delay {
+                if (elapsedTime <= delay) {
                     uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay - elapsedTime), maxUploadInterval)
 
                 } else {
@@ -301,7 +308,7 @@ fileprivate extension RAnalyticsSender {
                     return
                 }
 
-                NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadSuccess, object: ratJsonRecords)
+                NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
                 self.logSentRecords(ratJsonRecords)
 
                 self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
@@ -324,7 +331,7 @@ fileprivate extension RAnalyticsSender {
     }
 
     private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) {
-        NotificationCenter.default.post(name: Notification.Name.RAnalyticsUploadFailure,
+        NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadFailure,
                                         object: ratJsonRecords,
                                         userInfo: [NSUnderlyingErrorKey: error])
         backgroundUploadEnded()

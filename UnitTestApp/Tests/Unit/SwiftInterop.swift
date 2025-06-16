@@ -87,8 +87,8 @@ public class SwiftInterop: XCTestCase {
         XCTAssertNotNil(tracker.lastState)
 
         let nCenter = NotificationCenter.default
-        nCenter.post(name: Notification.Name.RAnalyticsWillUpload, object: nil)
-        nCenter.post(name: Notification.Name.RAnalyticsUploadFailure, object: nil)
-        nCenter.post(name: Notification.Name.RAnalyticsUploadSuccess, object: nil)
+        nCenter.post(name: Notification.Name.rAnalyticsWillUpload, object: nil)
+        nCenter.post(name: Notification.Name.rAnalyticsUploadFailure, object: nil)
+        nCenter.post(name: Notification.Name.rAnalyticsUploadSuccess, object: nil)
     }
 }

@@ -34,20 +34,26 @@ final class RStatusBarOrientationHandlerSpec: QuickSpec {
                     it("should equal RMoriType.portrait if UIApplication.shared.statusBarOrientation equals .portrait") {
                         let queue = DispatchQueue(label: "com.analytics.status-bar-orientation-handler-spec.queue", qos: .default)
                         var result: RMoriType = .landscape
-                        queue.async {
+                        
+                        queue.sync {
                             result = RStatusBarOrientationHandler(application: ApplicationMock(.portrait)).mori
                         }
-                        expect(result).toEventually(equal(.portrait))
+                        
+                        expect(result).to(equal(.portrait))
                     }
+                    
                     it("should equal RMoriType.landscape if UIApplication.shared.statusBarOrientation equals .landscape") {
                         let queue = DispatchQueue(label: "com.analytics.status-bar-orientation-handler-spec.queue", qos: .default)
                         var result: RMoriType = .portrait
-                        queue.async {
+                        
+                        queue.sync {
                             result = RStatusBarOrientationHandler(application: ApplicationMock(.landscapeLeft)).mori
                         }
-                        expect(result).toEventually(equal(.landscape))
+                        
+                        expect(result).to(equal(.landscape))
                     }
                 }
+
             }
         }
     }

@@ -112,8 +112,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             }
 
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(cookie).toEventuallyNot(beNil())
                             expect(error).to(beNil())
@@ -126,8 +128,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var error: Error?
                             sessionMock.response = response
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error).toEventuallyNot(beNil())
                             expect((error as NSError?)?.localizedDescription)
@@ -144,8 +148,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(cookie?.name).toEventually(equal("Rp"))
                             expect(error).to(beNil())
@@ -158,8 +164,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error).toEventuallyNot(beNil())
                             expect((error as NSError?)?.localizedDescription)
@@ -176,8 +184,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error).toEventuallyNot(beNil())
                             expect((error as NSError?)?.localizedDescription)
@@ -196,8 +206,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(cookie?.name).toEventually(equal("Rp"))
                             expect(error).to(beNil())
@@ -210,8 +222,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error).toEventuallyNot(beNil())
                             expect((error as NSError?)?.localizedDescription)
@@ -228,8 +242,10 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             var cookie: HTTPCookie?
                             var error: Error?
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error).toEventuallyNot(beNil())
                             expect((error as NSError?)?.localizedDescription)
@@ -247,32 +263,35 @@ final class RAnalyticsRpCookieFetcherSpec: QuickSpec {
                             let rpError = NSError(domain: NSURLErrorDomain, code: 500, userInfo: nil)
                             sessionMock.error = rpError
                             cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                                cookie = aCookie
-                                error = anError
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
                             }
                             expect(error as NSError?).toEventually(equal(rpError), timeout: .seconds(Int(maximumTimeOut)))
                             expect(cookie).to(beNil())
                         }
                     }
 
-                    // Temporarily disabled test
-                    //                    context("when the session returns a status code equal to 400") {
-                    //                        it("should return an error after retry timeout") {
-                    //                            var cookie: HTTPCookie?
-                    //                            var error: Error?
-                    //                            let errorResponse = HTTPURLResponse(url: URL(string: urlString)!,
-                    //                                                                statusCode: 400,
-                    //                                                                httpVersion: nil,
-                    //                                                                headerFields: nil)
-                    //                            sessionMock.response = errorResponse
-                    //                            cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
-                    //                                cookie = aCookie
-                    //                                error = anError
-                    //                            }
-                    //                            expect(error as NSError?).toAfterTimeoutNot(beNil(), timeout: TimeInterval(maximumTimeOut))
-                    //                            expect(cookie).to(beNil())
-                    //                        }
-                    //                    }
+                    context("when the session returns a status code equal to 400") {
+                        it("should return an error after retry timeout") {
+                            var cookie: HTTPCookie?
+                            var error: Error?
+                            let errorResponse = HTTPURLResponse(url: URL(string: urlString)!,
+                                                                statusCode: 400,
+                                                                httpVersion: nil,
+                                                                headerFields: nil)
+                            sessionMock.response = errorResponse
+                            cookieFetcher?.getRpCookieCompletionHandler { aCookie, anError in
+                                DispatchQueue.main.async {
+                                    cookie = aCookie
+                                    error = anError
+                                }
+                            }
+                            expect(error as NSError?).toEventuallyNot(beNil(), timeout: .seconds(Int(maximumTimeOut)))
+                            expect(cookie).to(beNil())
+                        }
+                    }
                 }
             }
 

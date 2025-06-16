@@ -102,15 +102,15 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
     /// This delegate method is called when the app is opened from a URL Scheme.
     ///
     /// - Note: This callback is not called when the app is launched. It is called when the app is already running.
-    @objc func rAutotrackScene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        let url = UIOpenURLContext.DefaultValues.url ?? URLContexts.first?.url
-        let sourceApplication = UIOpenURLContext.DefaultValues.sourceApplication ?? URLContexts.first?.options.sourceApplication
+    @objc func rAutotrackScene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {
+        let url = UIOpenURLContext.DefaultValues.url ?? urlContexts.first?.url
+        let sourceApplication = UIOpenURLContext.DefaultValues.sourceApplication ?? urlContexts.first?.options.sourceApplication
         analyticsManager.tryToTrackReferralApp(with: url,
                                                sourceApplication: sourceApplication)
 
         // Delegates may not implement the original method
         if responds(to: #selector(rAutotrackScene(_:openURLContexts:))) {
-            return rAutotrackScene(scene, openURLContexts: URLContexts)
+            return rAutotrackScene(scene, openURLContexts: urlContexts)
         }
     }
 
