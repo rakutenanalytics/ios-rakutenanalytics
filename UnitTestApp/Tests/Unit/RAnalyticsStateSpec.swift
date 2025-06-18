@@ -261,6 +261,19 @@ final class RAnalyticsStateSpec: QuickSpec {
                     }
                 }
             }
+            
+            describe("uniqueSearchId") {
+                context("Generate unique search identifier") {
+                    it("should be generated correctly") {
+                        let state = defaultState
+                        let ckp = state.deviceIdentifier
+                        let timestamp = Int(Date().toRatTimestamp)
+                        let generatedUniqueId = state.uniqueSearchId
+                        expect(generatedUniqueId).to(equal("\(ckp)_\(timestamp)"))
+                    }
+                }
+            }
+            
             describe("hash") {
                 context("Visited UIKit page") {
                     it("should be identical if it is a copy of an other state") {

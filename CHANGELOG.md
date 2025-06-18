@@ -10,10 +10,22 @@
 * CONRAT-30450: Migrate from SCNetworkReachability to NWPathMonitor for network reachability.
 * CONRAT-38688: Improve code coverage with unit tests.
 
+
 ### Bug fixes
 * CONRAT-34249: Fix ref type for first pv event after app-to-app tracking.
 * CONRAT-35311: Refuse zero and negative values for account and application identifiers when adding a duplicate account.
 * CONRAT-34265: Fix duplicate `_rem_launch` event on app launch for apps with `SceneDelegate`.
+
+## 10.5.0 (2025-06-16)
+
+### Features
+* CONRAT-37737: Add unique id (pgid) based on ckp and timestamp.
+
+### Improvements
+* CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.
+
+### Bug fixes
+* CONRAT-34249: Fix ref type for first pv event after app-to-app tracking.
 
 ## 10.4.0 (2024-11-14)
 
