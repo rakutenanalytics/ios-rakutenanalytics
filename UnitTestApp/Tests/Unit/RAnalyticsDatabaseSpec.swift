@@ -20,6 +20,7 @@ class RAnalyticsDatabaseSpec: QuickSpec {
             let bigNumber = UInt(100500)
             var connection: SQlite3Pointer!
             var readonlyConnection: SQlite3Pointer!
+            let bundle = BundleMock()
 
             beforeEach {
                 connection = DatabaseTestUtils.openRegularConnection()
@@ -34,6 +35,9 @@ class RAnalyticsDatabaseSpec: QuickSpec {
 
                 connection = nil
                 readonlyConnection = nil
+                
+                bundle.isManualInitializationEnabled = false
+                AnalyticsManager.isConfigured = true
             }
 
             context("when calling insert(blobs:into:limit:then:)") {
@@ -63,8 +67,45 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(insertedBlobs).to(elementsEqual([blob, anotherBlob]))
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not insert given blobs if SDK not initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blob = "foo".data(using: .utf8)!
+                        let anotherBlob = "bar".data(using: .utf8)!
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.isConfigured = false
+
+                        var insertedBlobs = [Data]()
+                        waitUntil { done in
+                            database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
+                                insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
+                                done()
+                            }
+                        }
+                        expect(insertedBlobs).to(beEmpty())
+                    }
+                    
+                    it("should insert given blobs if SDK initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blob = "foo".data(using: .utf8)!
+                        let anotherBlob = "bar".data(using: .utf8)!
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.configure()
+
+                        var insertedBlobs = [Data]()
+                        waitUntil { done in
+                            database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
+                                insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
+                                done()
+                            }
+                        }
+                        expect(insertedBlobs).to(elementsEqual([blob, anotherBlob]))
+                    }
                 }
 
                 it("should limit amount of records in updated table as limit passed in param") {
@@ -133,7 +174,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                 }
 
                 context("and some error occurred") {
-
                     it("should not create passed table") {
                         let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
@@ -144,7 +184,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(tableExists).to(beFalse())
                     }
 
@@ -158,7 +197,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(tableContents).to(equal([]))
                     }
 
@@ -173,14 +211,12 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(tableContents).to(elementsEqual(["foo".data(using: .utf8)!]))
                     }
                 }
             }
 
             context("when calling fetch(blobs:into:limit:then:)") {
-
                 it("should create passed table if table did not exist before") {
                     let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
@@ -191,7 +227,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(tableExists).to(beTrue())
                 }
 
@@ -206,7 +241,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(tableExists).to(beFalse())
                 }
 
@@ -222,8 +256,45 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedBlobs).to(elementsEqual([blob]))
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not fetch given blobs if SDK not initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blob = "foo".data(using: .utf8)!
+                        DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.isConfigured = false
+
+                        var fetchedBlobs: [Data]?
+                        waitUntil { done in
+                            database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                                fetchedBlobs = blobs
+                                done()
+                            }
+                        }
+                        expect(fetchedBlobs).to(beNil())
+                    }
+                    
+                    it("should fetch given blobs if SDK initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blob = "foo".data(using: .utf8)!
+                        DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.configure()
+
+                        var fetchedBlobs: [Data]?
+                        waitUntil { done in
+                            database.fetchBlobs(bigNumber, from: "some_table") { blobs, _ in
+                                fetchedBlobs = blobs
+                                done()
+                            }
+                        }
+                        expect(fetchedBlobs).to(elementsEqual([blob]))
+                    }
                 }
                 
                 it("should fetch blobs from passed table") {
@@ -238,7 +309,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-                    
                     expect(fetchedBlobs).to(elementsEqual([blob]))
                 }
                 
@@ -262,7 +332,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-                    
                     expect(fetchedBlobs).to(beNil())
                 }
 
@@ -292,7 +361,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedBlobs).to(beNil())
                 }
 
@@ -308,7 +376,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedIds).to(beNil())
                 }
 
@@ -328,7 +395,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedBlobs).to(elementsEqual(["foo".data(using: .utf8)!,
                                                            "bar".data(using: .utf8)!]))
                 }
@@ -349,12 +415,10 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(fetchedIds).to(elementsEqual([1, 2]))
                 }
 
                 context("and some error occurred") {
-
                     it("should not create passed table") {
                         let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
@@ -365,7 +429,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(tableExists).to(beFalse())
                     }
 
@@ -381,7 +444,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(fetchedBlobs).to(beNil())
                     }
 
@@ -397,14 +459,12 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(fetchedIds).to(beNil())
                     }
                 }
             }
 
             describe("when calling deleteBlobs(identifiers:in:then:") {
-
                 it("should not create passed table if table did not exist before") {
                     let database = DatabaseTestUtils.mkDatabase(connection: connection)
 
@@ -415,7 +475,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(tableExists).to(beFalse())
                 }
 
@@ -434,8 +493,51 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(itemsInDb).to(beEmpty())
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not delete given items if SDK not initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blobs = [
+                            "foo".data(using: .utf8)!,
+                            "bar".data(using: .utf8)!
+                        ]
+                        DatabaseTestUtils.insert(blobs: blobs, table: "some_table", connection: connection)
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.isConfigured = false
+
+                        var itemsInDb: [Data]?
+                        waitUntil { done in
+                            database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
+                                itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
+                                done()
+                            }
+                        }
+                        expect(itemsInDb).toNot(beEmpty())
+                    }
+                    
+                    it("should delete given items if SDK initialized") {
+                        let database = DatabaseTestUtils.mkDatabase(connection: connection)
+                        let blobs = [
+                            "foo".data(using: .utf8)!,
+                            "bar".data(using: .utf8)!
+                        ]
+                        DatabaseTestUtils.insert(blobs: blobs, table: "some_table", connection: connection)
+                        
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.configure()
+
+                        var itemsInDb: [Data]?
+                        waitUntil { done in
+                            database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
+                                itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
+                                done()
+                            }
+                        }
+                        expect(itemsInDb).to(beEmpty())
+                    }
                 }
 
                 it("should not delete items which IDs were not passed for deletion") {
@@ -453,12 +555,10 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                             done()
                         }
                     }
-
                     expect(itemsInDb).to(elementsEqual(["bar".data(using: .utf8)!]))
                 }
 
                 context("and some error occurred") {
-
                     it("should not create passed table") {
                         let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
 
@@ -469,7 +569,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(tableExists).to(beFalse())
                     }
 
@@ -485,7 +584,6 @@ class RAnalyticsDatabaseSpec: QuickSpec {
                                 done()
                             }
                         }
-
                         expect(itemsInDb).to(elementsEqual(["foo".data(using: .utf8)!]))
                     }
                 }

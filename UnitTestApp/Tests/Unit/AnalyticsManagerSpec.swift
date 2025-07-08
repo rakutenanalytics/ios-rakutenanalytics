@@ -55,6 +55,30 @@ final class AnalyticsManagerSpec: QuickSpec {
                     expect(AnalyticsManager.shared() == AnalyticsManager.shared()).to(beTrue())
                 }
             }
+            
+            describe("manual configuration") {                
+                context("when manual initialization is enabled") {
+                    it("should return singleton instance after configure() is called") {
+                        let dependenciesContainer = SimpleContainerMock()
+                        let bundle = BundleMock()
+                        bundle.isManualInitializationEnabled = true
+                        dependenciesContainer.bundle = bundle
+                        
+                        AnalyticsManager.configure()
+                        
+                        let instance = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                        expect(instance).toNot(beNil())
+                    }
+                }
+                
+                describe("configure()") {
+                    it("should set AnalyticsManager.isConfigured to true") {
+                        AnalyticsManager.isConfigured = false
+                        AnalyticsManager.configure()
+                        expect(AnalyticsManager.isConfigured).to(beTrue())
+                    }
+                }
+            }
 
             describe("add") {
                 it("should add the trackers as expected") {
@@ -417,6 +441,24 @@ final class AnalyticsManagerSpec: QuickSpec {
                     analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer))
                     let result = analyticsManager.process(RAnalyticsEvent(name: "rat.foo", parameters: nil))
                     expect(result).to(beTrue())
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not process the event if SDK not initialized") {
+                        let dependenciesContainer = SimpleContainerMock()
+                        let bundle = BundleMock()
+                        bundle.isManualInitializationEnabled = true
+                        dependenciesContainer.bundle = bundle
+                        
+                        let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                        analyticsManager.remove(RAnalyticsRATTracker.shared())
+                        analyticsManager.add(RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer))
+                        AnalyticsManager.isConfigured = false
+                        
+                        let result = analyticsManager.process(RAnalyticsEvent(name: "rat.foo", parameters: nil))
+                        expect(result).to(beFalse())
+                        AnalyticsManager.isConfigured = true
+                    }
                 }
 
                 it("should process the event without referral tracking") {

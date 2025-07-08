@@ -138,7 +138,15 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
-        singleton
+        if Bundle.main.isManualInitializationEnabled {
+            guard AnalyticsManager.isConfigured else {
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+                return singleton
+            }
+            return singleton
+        } else {
+            return singleton
+        }
     }
 
     /// Creates a new instance of `RAnalyticsRATTracker`.

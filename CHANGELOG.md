@@ -4,6 +4,9 @@
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.
 
+### Features
+* CONRAT-38785: Add manual initialization of the SDK.
+
 ### Improvements
 * CONRAT-36390: Setup iOS 15.0 as minimum supported version, fix deprecation warnings, update dependencies, remove unused and refacor deprecated code.
 * CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.

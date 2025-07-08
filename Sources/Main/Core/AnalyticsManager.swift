@@ -38,6 +38,8 @@ protocol ReferralAppTrackable: AnyObject {
 
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
+    static var isConfigured: Bool = false
+    
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
@@ -46,7 +48,16 @@ protocol ReferralAppTrackable: AnyObject {
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> AnalyticsManager {
-        singleton
+        if Bundle.main.isManualInitializationEnabled {
+            guard isConfigured else {
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance. Call AnalyticsManager.configure() first.")
+                return singleton
+            }
+            return singleton
+        } else {
+            isConfigured = true
+            return singleton
+        }
     }
 
     /// Control whether the SDK should track the device's location or not.
@@ -477,7 +488,11 @@ extension AnalyticsManager: AnalyticsManageable {
     /// - Returns: A boolean value indicating if the event has been processed.
     @discardableResult
     @objc dynamic public func process(_ event: RAnalyticsEvent) -> Bool {
-        process(event, coreOrigin: .analytics)
+        guard AnalyticsManager.isConfigured else {
+            return false
+        }
+
+        return process(event, coreOrigin: .analytics)
     }
 
     @discardableResult
@@ -539,6 +554,22 @@ extension AnalyticsManager: AnalyticsManageable {
             RLogger.debug(message: "No tracker processed event \(event.name)")
         }
         return processed
+    }
+    
+    /// Initializes the SDK and installs auto-tracking hooks.
+    ///
+    /// This method sets up automatic tracking for various components of the app, such as the application lifecycle,
+    /// user notifications, view controllers, and window scenes (if available).
+    ///
+    /// - Note: For iOS 13.0 and above, it also installs auto-tracking hooks for `UIWindowScene`.
+    public static func configure() {
+        UIApplication.installAutoTrackingHooks()
+        UNUserNotificationCenter.installAutoTrackingHooks()
+        UIViewController.installAutoTrackingHooks()
+        if #available(iOSApplicationExtension 13.0, *) {
+            UIWindowScene.installAutoTrackingHooks()
+        }
+        isConfigured = true
     }
 }
 

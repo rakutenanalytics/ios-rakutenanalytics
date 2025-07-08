@@ -38,16 +38,17 @@ class SenderSpec: QuickSpec {
 
             afterEach {
                 URLSessionMock.stopMockingURLSession()
-
                 sender.setBatchingDelayBlock(0)
-
                 sender.uploadTimer?.invalidate()
 
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
                 database.closeConnection()
                 databaseConnection = nil
                 database = nil
+                
                 bundle.mutableEnableInternalSerialization = false
+                bundle.isManualInitializationEnabled = false
+                AnalyticsManager.isConfigured = true
             }
 
             context("initialization") {
@@ -243,7 +244,6 @@ class SenderSpec: QuickSpec {
             }
 
             context("when setting batching delay") {
-
                 it("should succeed with default batching delay", closure: {
                     sessionMock.stubResponse(statusCode: 200)
 
@@ -261,7 +261,6 @@ class SenderSpec: QuickSpec {
             }
 
             context("when sending events to RAT") {
-
                 it("should send given payload") {
                     var isSendingCompleted = false
                     sessionMock.stubResponse(statusCode: 200) {
@@ -269,6 +268,30 @@ class SenderSpec: QuickSpec {
                     }
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not send given payload if SDK not initialized") {
+                        var isSendingCompleted = false
+                        sessionMock.stubResponse(statusCode: 200) {
+                            isSendingCompleted = true
+                        }
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.isConfigured = false
+                        sender.send(jsonObject: payload)
+                        expect(isSendingCompleted).toEventually(beFalse())
+                    }
+                    
+                    it("should send given payload if SDK initialized") {
+                        var isSendingCompleted = false
+                        sessionMock.stubResponse(statusCode: 200) {
+                            isSendingCompleted = true
+                        }
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.configure()
+                        sender.send(jsonObject: payload)
+                        expect(isSendingCompleted).toEventually(beTrue())
+                    }
                 }
 
                 context("When sending fails") {

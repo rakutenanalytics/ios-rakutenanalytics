@@ -127,6 +127,11 @@ enum SenderBackgroundTimerEnabler {
     /// - Parameter jsonObject: json object
     @objc(sendJSONObject:)
     public func send(jsonObject: Any) {
+        guard AnalyticsManager.isConfigured else {
+            RLogger.error(message: "Analytics event dropped because manual initialization is enabled and AnalyticsManager is not configured.")
+            return
+        }
+        
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,

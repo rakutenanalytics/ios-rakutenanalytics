@@ -3,6 +3,12 @@ import UIKit
 extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
     @objc public static func loadSwift() {
+        if !Bundle.main.isManualInitializationEnabled {
+            installAutoTrackingHooks()
+        }
+    }
+    
+    @objc public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
                       with: #selector(rAutotrackSetApplicationDelegate),

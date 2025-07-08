@@ -625,6 +625,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var version: String? = "1"
     public var applicationSceneManifest: RakutenAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
+    public var isManualInitializationEnabled: Bool = false
 
     public override init() {
         self.dictionary = [String: Any]()
