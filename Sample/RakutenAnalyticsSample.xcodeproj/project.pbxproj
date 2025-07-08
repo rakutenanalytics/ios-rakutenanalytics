@@ -574,6 +574,81 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5AB2B8391FC3F64C0017CF83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5AB2B83A1FC3F64C0017CF83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5J4GVGN58B;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
+				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		5AB66CC72016CE8A0028CEBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -604,7 +679,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = RakutenAnalyticsSample;
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -645,7 +720,7 @@
 				PRODUCT_NAME = RakutenAnalyticsSample;
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -790,7 +865,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.analytics.mobile.demoapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse230830;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse240404;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse250702;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -848,7 +923,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.analytics.mobile.demoapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse230830;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse240404;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse250702;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -904,7 +979,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -961,7 +1036,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -1001,7 +1076,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1043,7 +1118,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise13th_240621;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
