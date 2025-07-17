@@ -690,6 +690,9 @@ extension AnalyticsManager {
     ///
     /// - Note: By setting the member identifier, `_rem_login` is automatically tracked.
     public func setMemberIdentifier(_ memberIdentifier: String) {
+        if externalCollector.userIdentifier != nil {
+            externalCollector.userIdentifier = nil
+        }
         externalCollector.trackLogin(.easyIdentifier(memberIdentifier))
     }
 
