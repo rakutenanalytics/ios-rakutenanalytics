@@ -184,11 +184,6 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             payload[PayloadParameterKeys.Identifier.cka] = state.advertisingIdentifier
         }
 
-        // MARK: userid
-        if !state.userIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.userid] as? String).isEmpty {
-            payload[PayloadParameterKeys.Identifier.userid] = state.userIdentifier
-        }
-
         // MARK: easyid
         if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
             payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier

@@ -621,14 +621,6 @@ extension AnalyticsManager {
         trackersLockableObject.unlock()
     }
 
-    /// Set the user identifier of the logged in user.
-    ///
-    /// - Parameters:
-    ///     - userID:  The user identifier. This can be the encrypted internal tracking ID.
-    @objc public func setUserIdentifier(_ userID: String?) {
-        externalCollector.userIdentifier = userID
-    }
-
     /// Block to allow the app to set a custom domain on the app-to-web tracking cookie.
     ///
     /// - Parameters:

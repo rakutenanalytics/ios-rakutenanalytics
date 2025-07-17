@@ -1177,32 +1177,6 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
-                context("userid") {
-                    it("should set the userid") {
-                        var payload: [String: Any]?
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["userid"] as? String).to(equal("userId"))
-                    }
-
-                    it("should not set the userid when the state's userIdentifier is not set") {
-                        var payload: [String: Any]?
-
-                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AR-82FE-40C9-A836-B1B3455DECAF",
-                                                    deviceIdentifier: "deviceId")
-                        state.userIdentifier = nil
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
-                            payload = $0.first
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["userid"] as? String).to(beNil())
-                    }
-                }
-
                 context("easyid") {
                     it("should set the easyid") {
                         var payload: [String: Any]?

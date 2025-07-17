@@ -265,7 +265,6 @@ final class GeoTrackerSpec: QuickSpec {
                             expect(json[PayloadParameterKeys.Identifier.ckp] as? String).to(equal(expectedCkp))
                             expect(json[PayloadParameterKeys.Identifier.cka] as? String).to(equal(expectedCka))
                             expect(json[PayloadParameterKeys.Identifier.cks] as? String).to(equal(expectedSessionIdentifier))
-                            expect(json[PayloadParameterKeys.Identifier.userid] as? String).to(equal(expectedUserIdentifier))
                             expect(json[PayloadParameterKeys.Identifier.easyid] as? String).to(equal(expectedEasyIdentifier))
                         }
                     }

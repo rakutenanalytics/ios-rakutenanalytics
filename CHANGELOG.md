@@ -12,7 +12,7 @@
 * CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.
 * CONRAT-30450: Migrate from SCNetworkReachability to NWPathMonitor for network reachability.
 * CONRAT-38688: Improve code coverage with unit tests.
-
+* CONRAT-39006: Remove the deprecated setUserIdentifier (RAE) public API method and eliminate all usage of userId from the payload.
 
 ### Bug fixes
 * CONRAT-34249: Fix ref type for first pv event after app-to-app tracking.

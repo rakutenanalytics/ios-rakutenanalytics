@@ -57,9 +57,6 @@ enum PayloadParameterKeys {
         /// https://developer.apple.com/documentation/adsupport/asidentifiermanager/1614151-advertisingidentifier
         static let cka = "cka"
 
-        /// The RAE user identifier.
-        static let userid = "userid"
-
         /// The IDSDK easy identifier.
         static let easyid = "easyid"
     }

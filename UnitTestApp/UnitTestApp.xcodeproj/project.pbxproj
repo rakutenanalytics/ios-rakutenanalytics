@@ -1494,7 +1494,7 @@
 			repositoryURL = "https://github.com/nalexn/ViewInspector";
 			requirement = {
 				kind = exactVersion;
-				version = 0.10.1;
+				version = 0.10.2;
 			};
 		};
 		CFA3FA172C7450C90038933F /* XCRemoteSwiftPackageReference "Nimble" */ = {
