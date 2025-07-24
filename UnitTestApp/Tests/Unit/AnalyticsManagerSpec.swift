@@ -722,6 +722,19 @@ final class AnalyticsManagerSpec: QuickSpec {
 
                     expect(analyticsManager.easyIdentifier).to(equal("idsdkIdentifier"))
                 }
+                
+                it ("should set easyIdentifier to idsdkIdentifier and delete stored userIdentifier") {
+                    dependenciesContainer.userStorageHandler.set(
+                        value: "testUserIdentifier",
+                        forKey: RAnalyticsExternalCollector.Constants.trackingIdentifierKey
+                    )
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    analyticsManager.setMemberIdentifier("idsdkIdentifier")
+                    
+                    expect(analyticsManager.easyIdentifier).to(equal("idsdkIdentifier"))
+                    expect(dependenciesContainer.userStorageHandler
+                        .string(forKey: RAnalyticsExternalCollector.Constants.trackingIdentifierKey)).to(beNil())
+                }
             }
 
             describe("removeMemberIdentifier()") {
