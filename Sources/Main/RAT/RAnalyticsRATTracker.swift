@@ -23,6 +23,12 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     
     /// The unique identifier of last-tracked visited page. Used to link tracked events to page.
     private var lastUniqueSearchIdentifier: String?
+    
+    /// Flag to track if pgid was manually set via setPageId method
+    private var isManualPageIdSet: Bool = false
+    
+    /// The last manually set page ID for comparison
+    private var lastManualPageId: String?
 
     /// Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
     private var carriedOverOrigin: NSNumber?
@@ -553,8 +559,14 @@ private extension RAnalyticsRATTracker {
             return false
         }
         
-        if pageIdentifier != lastVisitedPageIdentifier {
+        // Determine if we should regenerate pgid
+        let shouldRegeneratePgid = pageIdentifier != lastVisitedPageIdentifier && 
+                                   shouldAllowPgidRegeneration(for: pageIdentifier, state: state)
+        
+        if shouldRegeneratePgid {
             lastUniqueSearchIdentifier = state.uniqueSearchId
+            isManualPageIdSet = false
+            lastManualPageId = nil
         }
         
         payload[PayloadParameterKeys.pgn] = pageIdentifier
@@ -683,5 +695,28 @@ extension RAnalyticsRATTracker {
     /// - Parameter uniqueSearchId: The unique search identifier to set.
     @objc public func setPageId(uniqueSearchId: String) {
         lastUniqueSearchIdentifier = uniqueSearchId
+        lastManualPageId = uniqueSearchId
+        isManualPageIdSet = true
+    }
+    
+    /// Determines whether pgid should be regenerated based on context.
+    /// Prevents regeneration when:
+    /// - pgid was manually set and we're revisiting the same page (typically during app lifecycle transitions)
+    ///
+    /// - Parameters:
+    ///   - pageIdentifier: The current page identifier
+    ///   - state: The current analytics state
+    /// - Returns: true if pgid should be regenerated, false otherwise
+    private func shouldAllowPgidRegeneration(for pageIdentifier: String, state: RAnalyticsState) -> Bool {
+        // If pgid was manually set and we're returning to the same page due to app lifecycle, don't regenerate
+        if isManualPageIdSet,
+           let lastManual = lastManualPageId,
+           lastManual == lastUniqueSearchIdentifier,
+           pageIdentifier == lastVisitedPageIdentifier {
+            return false
+        }
+        
+        // Allow regeneration for genuine page changes
+        return true
     }
 }
