@@ -99,6 +99,52 @@ class RAnalyticsRATTrackerInitSpec: QuickSpec {
                     expect(ratTracker.batchingDelay).to(equal(1.0))
                 }
             }
+            
+            describe("setPageId") {
+                it("should set the lastUniqueSearchIdentifier") {
+                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let testUniqueSearchId = "test_device_id_1234567890"
+                    
+                    ratTracker.setPageId(uniqueSearchId: testUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(testUniqueSearchId))
+                }
+                
+                it("should update lastUniqueSearchIdentifier when called multiple times") {
+                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let firstUniqueSearchId = "first_unique_id_1111111111"
+                    let secondUniqueSearchId = "second_unique_id_2222222222"
+                    
+                    ratTracker.setPageId(uniqueSearchId: firstUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(firstUniqueSearchId))
+                    
+                    ratTracker.setPageId(uniqueSearchId: secondUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(secondUniqueSearchId))
+                }
+                
+                it("should accept empty string as valid input") {
+                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let emptyUniqueSearchId = ""
+                    
+                    ratTracker.setPageId(uniqueSearchId: emptyUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(emptyUniqueSearchId))
+                }
+                
+                it("should handle special characters in unique search ID") {
+                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let specialCharUniqueSearchId = "device@123_#$%^&*()_timestamp_456"
+                    
+                    ratTracker.setPageId(uniqueSearchId: specialCharUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(specialCharUniqueSearchId))
+                }
+                
+                it("should handle very long unique search ID") {
+                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let longUniqueSearchId = String(repeating: "a", count: 1000) + "_" + String(repeating: "1", count: 13)
+                    
+                    ratTracker.setPageId(uniqueSearchId: longUniqueSearchId)
+                    expect(ratTracker.lastUniqueSearchIdentifier).to(equal(longUniqueSearchId))
+                }
+            }
         }
     }
 }

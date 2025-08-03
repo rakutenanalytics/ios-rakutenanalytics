@@ -1,5 +1,9 @@
 # Changelog
 
+## 10.6.0 (2025-08-04)
+
+* CONRAT-40669: Add setPageId public interface to generate unique page id (pgid)
+
 ## 10.5.0 (2025-06-16)
 
 ### Features
