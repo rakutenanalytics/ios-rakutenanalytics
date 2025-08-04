@@ -19,6 +19,11 @@
 * CONRAT-35311: Refuse zero and negative values for account and application identifiers when adding a duplicate account.
 * CONRAT-34265: Fix duplicate `_rem_launch` event on app launch for apps with `SceneDelegate`.
 
+## 10.6.0 (2025-08-04)
+
+### Improvements
+* CONRAT-40669: Add setPageId public interface to generate unique page id (pgid)
+
 ## 10.5.0 (2025-06-16)
 
 ### Features

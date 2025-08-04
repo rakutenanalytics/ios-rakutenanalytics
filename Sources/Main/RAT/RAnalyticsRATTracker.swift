@@ -693,4 +693,12 @@ extension RAnalyticsRATTracker {
         let (wasAdded, _) = duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
         return wasAdded
     }
+    
+    /// Generates a new unique search identifier and sets it as the last unique search identifier.
+    /// This identifier is used to link tracked events to the current page.
+    ///
+    /// - Parameter uniqueSearchId: The unique search identifier to set.
+    @objc public func setPageId(uniqueSearchId: String) {
+        lastUniqueSearchIdentifier = uniqueSearchId
+    }
 }
