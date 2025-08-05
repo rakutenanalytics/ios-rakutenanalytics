@@ -620,14 +620,6 @@ extension AnalyticsManager {
         }
         trackersLockableObject.unlock()
     }
-
-    /// Set the user identifier of the logged in user.
-    ///
-    /// - Parameters:
-    ///     - userID:  The user identifier. This can be the encrypted internal tracking ID.
-    @objc public func setUserIdentifier(_ userID: String?) {
-        externalCollector.userIdentifier = userID
-    }
     
     /// Generates a new unique search identifier and sets it as the page ID for all RAT trackers.
     /// This identifier is used to link tracked events to the current page.
