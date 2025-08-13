@@ -679,18 +679,7 @@ extension RAnalyticsRATTracker {
     private func validatePgidFormat(_ pgid: String, deviceIdentifier: String) -> Bool {
         let components = pgid.components(separatedBy: "_")
         
-        guard components.count == 2 else {
-            return false
-        }
-        
-        let ckpComponent = components[0]
-        let timestampComponent = components[1]
-        
-        guard ckpComponent == deviceIdentifier else {
-            return false
-        }
-        
-        guard Int(timestampComponent) != nil else {
+        guard components.count == 2, components[0] == deviceIdentifier, TimeInterval(components[1]) != nil else {
             return false
         }
         
