@@ -1,5 +1,10 @@
 # Changelog
 
+## 10.7.0 (2025-08-...)
+
+### Improvements
+* CONRAT-40771: Unique page id (pgid) feature approach and implementation update: update manual page id generation API and remove automatic update based on View Controller lifecycle.
+
 ## 10.6.0 (2025-08-04)
 
 ### Improvements

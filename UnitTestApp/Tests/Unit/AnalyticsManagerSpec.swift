@@ -699,44 +699,15 @@ final class AnalyticsManagerSpec: QuickSpec {
                     expect(analyticsManager.easyIdentifier).to(beNil())
                 }
             }
-        }
-        
-        describe("setPageId") {
-            context("when session cookie exists") {
-                beforeEach {
-                    let sessionIdentifier = "test_session_id"
-                    UserDefaults.standard.set(sessionIdentifier, forKey: "RAnalyticsRpCookieStorageKey")
-                }
-                
-                afterEach {
-                    UserDefaults.standard.removeObject(forKey: "RAnalyticsRpCookieStorageKey")
-                }
-                
-                it("should generate and set unique search ID for RAT trackers") {
+            
+            describe("generatePageId") {
+                it("should generate a page ID with correct format") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     
-                    analyticsManager.add(ratTracker)
-                    let initialUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    analyticsManager.setPageId()
+                    let pageId = analyticsManager.generatePageId()
                     
-                    let newUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(newUniqueSearchId).toNot(equal(initialUniqueSearchId))
-                    expect(newUniqueSearchId).toNot(beEmpty())
-                }
-                
-                it("should set unique search ID with correct format") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
-                    
-                    analyticsManager.add(ratTracker)
-                    
-                    analyticsManager.setPageId()
-                    
-                    let uniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(uniqueSearchId).to(contain("_"))
-                    
-                    let components = uniqueSearchId.components(separatedBy: "_")
+                    expect(pageId).to(contain("_"))
+                    let components = pageId.components(separatedBy: "_")
                     expect(components.count).to(equal(2))
                     
                     expect(components[0]).toNot(beEmpty())
@@ -746,53 +717,24 @@ final class AnalyticsManagerSpec: QuickSpec {
                     expect(Double(timestamp)!).to(beGreaterThan(0))
                 }
                 
-                it("should set same unique search ID for multiple RAT trackers") {
+                it("should generate different page IDs when called multiple times") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker1 = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
-                    let ratTracker2 = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                     
-                    analyticsManager.add(ratTracker1)
-                    analyticsManager.add(ratTracker2)
+                    let firstPageId = analyticsManager.generatePageId()
+                    Thread.sleep(forTimeInterval: 0.001)
+                    let secondPageId = analyticsManager.generatePageId()
                     
-                    analyticsManager.setPageId()
-                    
-                    let uniqueSearchId1 = ratTracker1.lastUniqueSearchIdentifier
-                    let uniqueSearchId2 = ratTracker2.lastUniqueSearchIdentifier
-                    
-                    expect(uniqueSearchId1).to(equal(uniqueSearchId2))
-                    expect(uniqueSearchId1).toNot(beEmpty())
+                    expect(firstPageId).toNot(equal(secondPageId))
                 }
                 
-                it("should not affect non-RAT trackers") {
+                it("should include device identifier in generated page ID") {
                     let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let mockTracker = TrackerMock()
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                    let expectedDeviceId = AnalyticsManager.shared().deviceIdentifier
                     
-                    analyticsManager.add(mockTracker)
-                    analyticsManager.add(ratTracker)
+                    let pageId = analyticsManager.generatePageId()
+                    let components = pageId.components(separatedBy: "_")
                     
-                    analyticsManager.setPageId()
-                    
-                    expect(ratTracker.lastUniqueSearchIdentifier).toNot(beEmpty())
-                    expect(mockTracker).toNot(beNil())
-                }
-            }
-            
-            context("when session cookie does not exist") {
-                beforeEach {
-                    UserDefaults.standard.removeObject(forKey: "RAnalyticsRpCookieStorageKey")
-                }
-                
-                it("should not update unique search ID when session cookie is nil") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
-                    
-                    analyticsManager.add(ratTracker)
-                    let initialUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    analyticsManager.setPageId()
-                    
-                    let afterUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(afterUniqueSearchId).to(equal(initialUniqueSearchId))
+                    expect(components[0]).to(equal(expectedDeviceId))
                 }
             }
         }
