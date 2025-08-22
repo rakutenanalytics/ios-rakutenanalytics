@@ -699,6 +699,44 @@ final class AnalyticsManagerSpec: QuickSpec {
                     expect(analyticsManager.easyIdentifier).to(beNil())
                 }
             }
+            
+            describe("generatePageId") {
+                it("should generate a page ID with correct format") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    
+                    let pageId = analyticsManager.generatePageId()
+                    
+                    expect(pageId).to(contain("_"))
+                    let components = pageId.components(separatedBy: "_")
+                    expect(components.count).to(equal(2))
+                    
+                    expect(components[0]).toNot(beEmpty())
+                    
+                    let timestamp = components[1]
+                    expect(Double(timestamp)).toNot(beNil())
+                    expect(Double(timestamp)!).to(beGreaterThan(0))
+                }
+                
+                it("should generate different page IDs when called multiple times") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    
+                    let firstPageId = analyticsManager.generatePageId()
+                    Thread.sleep(forTimeInterval: 0.001)
+                    let secondPageId = analyticsManager.generatePageId()
+                    
+                    expect(firstPageId).toNot(equal(secondPageId))
+                }
+                
+                it("should include device identifier in generated page ID") {
+                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
+                    let expectedDeviceId = AnalyticsManager.shared().deviceIdentifier
+                    
+                    let pageId = analyticsManager.generatePageId()
+                    let components = pageId.components(separatedBy: "_")
+                    
+                    expect(components[0]).to(equal(expectedDeviceId))
+                }
+            }
         }
         
         describe("setPageId") {
