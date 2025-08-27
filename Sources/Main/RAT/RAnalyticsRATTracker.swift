@@ -20,9 +20,6 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
     /// The identifer of the last-tracked visited page, if any.
     private var lastVisitedPageIdentifier: String?
-    
-    /// The unique identifier of last-tracked visited page. Used to link tracked events to page.
-    private var lastUniqueSearchIdentifier: String?
 
     /// Carried-over origin, if the previous visit was skipped because it didn't qualify as a page for RAT.
     private var carriedOverOrigin: NSNumber?
@@ -494,8 +491,12 @@ extension RAnalyticsRATTracker {
             return false
         }
         
-        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
-            payload["pgid"] = lastUniqueSearchIdentifier
+        if let pgidValue = event.parameters["pgid"] as? String {
+            if validatePgidFormat(pgidValue, deviceIdentifier: state.deviceIdentifier) {
+                payload["pgid"] = pgidValue
+            } else {
+                payload.removeObject(forKey: "pgid")
+            }
         }
 
         return true
@@ -561,10 +562,6 @@ private extension RAnalyticsRATTracker {
             return false
         }
         
-        if pageIdentifier != lastVisitedPageIdentifier {
-            lastUniqueSearchIdentifier = state.uniqueSearchId
-        }
-        
         payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
@@ -590,10 +587,6 @@ private extension RAnalyticsRATTracker {
 
         if let pageURL = pageURL {
             extra[CpParameterKeys.Page.url] = pageURL.absoluteString
-        }
-        
-        if let lastUniqueSearchIdentifier = lastUniqueSearchIdentifier {
-            payload["pgid"] = lastUniqueSearchIdentifier
         }
 
         return true
@@ -694,11 +687,19 @@ extension RAnalyticsRATTracker {
         return wasAdded
     }
     
-    /// Generates a new unique search identifier and sets it as the last unique search identifier.
-    /// This identifier is used to link tracked events to the current page.
+    /// Validates the format of a pgid parameter.
     ///
-    /// - Parameter uniqueSearchId: The unique search identifier to set.
-    @objc public func setPageId(uniqueSearchId: String) {
-        lastUniqueSearchIdentifier = uniqueSearchId
+    /// - Parameters:
+    ///   - pgid: The pgid value to validate
+    ///   - deviceIdentifier: The current device identifier (ckp) for comparison
+    /// - Returns: `true` if the pgid format is valid, `false` otherwise
+    private func validatePgidFormat(_ pgid: String, deviceIdentifier: String) -> Bool {
+        let components = pgid.components(separatedBy: "_")
+        
+        guard components.count == 2, components[0] == deviceIdentifier, TimeInterval(components[1]) != nil else {
+            return false
+        }
+        
+        return true
     }
 }

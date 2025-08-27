@@ -621,21 +621,13 @@ extension AnalyticsManager {
         trackersLockableObject.unlock()
     }
     
-    /// Generates a new unique search identifier and sets it as the page ID for all RAT trackers.
-    /// This identifier is used to link tracked events to the current page.
-    @objc public func setPageId() {
-        guard let sessionIdentifier = sessionCookie else { return }
-        let state = RAnalyticsState(sessionIdentifier: sessionIdentifier, deviceIdentifier: deviceIdentifierHandler.ckp())
-        let uniqueSearchId = state.uniqueSearchId
-        
-        trackersLockableObject.lock()
-        let trackers = trackersLockableObject.get()
-        trackers.forEach { tracker in
-            if let ratTracker = tracker as? RAnalyticsRATTracker {
-                ratTracker.setPageId(uniqueSearchId: uniqueSearchId)
-            }
-        }
-        trackersLockableObject.unlock()
+    /// Generates a new unique page identifier using device identifier and timestamp.
+    /// Returns the generated page ID for the app to use as needed.
+    ///
+    /// - Returns: A unique page identifier in the format "<ckp>_<timestamp>"
+    @objc public func generatePageId() -> String {
+        let deviceIdentifier = deviceIdentifierHandler.ckp()
+        return "\(deviceIdentifier)_\(Int(Date().toRatTimestamp))"
     }
 
     /// Block to allow the app to set a custom domain on the app-to-web tracking cookie.

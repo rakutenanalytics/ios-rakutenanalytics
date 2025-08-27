@@ -1096,6 +1096,71 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         }
                     }
                 }
+                
+                context("PageId") {
+                    describe("pgid validation and handling") {
+                        it("should include pgid in payload when valid pgid is provided as event parameter") {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let deviceIdentifier = "deviceId"
+                            let validPgid = "\(deviceIdentifier)_1234567890123"
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgid": validPgid])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgid")).to(beTrue())
+                        }
+                        
+                        it("should not include pgid in payload when invalid format is provided") {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgid": "invalid_format"])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgid")).to(beFalse())
+                        }
+                        
+                        it("should not include pgid in payload when ckp does not match") {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let wrongCkp = "wrong_device_id_1234567890123"
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgid": wrongCkp])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgid")).to(beFalse())
+                        }
+                        
+                        it("should not include pgid in payload when timestamp is not numeric") {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let deviceIdentifier = "deviceId"
+                            let invalidPgid = "\(deviceIdentifier)_not_a_number"
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgid": invalidPgid])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgid")).to(beFalse())
+                        }
+                    }
+                }
 
                 context("Batching Delay") {
                     it("should set the expected batching delay to the sender when the RAT tracker batching delay is set") {

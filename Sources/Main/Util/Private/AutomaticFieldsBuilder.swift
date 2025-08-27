@@ -4,15 +4,6 @@ import CoreLocation
 import CoreTelephony
 import SystemConfiguration
 
-// MARK: - RAnalyticsState extension
-
-extension RAnalyticsState {
-    /// Generate unique search identifier in format %ckp%_%timestamp%
-    var uniqueSearchId: String {
-        return "\(self.deviceIdentifier)_\(Int(Date().toRatTimestamp))"
-    }
-}
-
 // MARK: - Date extension
 
 extension Date {
