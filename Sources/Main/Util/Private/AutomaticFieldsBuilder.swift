@@ -36,6 +36,8 @@ protocol AutomaticFieldsBuildable {
     func addLocation(_ payload: NSMutableDictionary,
                      state: RAnalyticsState,
                      addActionParameters: Bool)
+    func updateCarrierNames(mcn: String?, mcnd: String?)
+    func getCarrierNames() -> (primary: String?, secondary: String?)
 }
 
 // MARK: - AutomaticFieldsBuilder
@@ -126,6 +128,16 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // Telephony Handler
         telephonyHandler.reachabilityStatus = reachabilityStatus
+
+        // MARK: mcn
+        if let mcn = telephonyHandler.mcn, !mcn.isEmpty {
+            payload[PayloadParameterKeys.Telephony.mcn] = mcn
+        }
+
+        // MARK: mcnd
+        if let mcnd = telephonyHandler.mcnd, !mcnd.isEmpty {
+            payload[PayloadParameterKeys.Telephony.mcnd] = mcnd
+        }
 
         // MARK: mnetw
         payload[PayloadParameterKeys.Telephony.mnetw] = telephonyHandler.mnetw ?? ""
@@ -219,5 +231,22 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             }
             payload[PayloadParameterKeys.isAction] = locationModel.isAction
         }
+    }
+    
+    /// Update the carrier names in the telephony handler
+    ///
+    /// - Parameters:
+    ///   - mcn: The primary carrier name
+    ///   - mcnd: The secondary carrier name
+    func updateCarrierNames(mcn: String?, mcnd: String?) {
+        telephonyHandler.mcn = mcn
+        telephonyHandler.mcnd = mcnd
+    }
+    
+    /// Get the current carrier names from the telephony handler
+    ///
+    /// - Returns: Tuple containing primary and secondary carrier names
+    func getCarrierNames() -> (primary: String?, secondary: String?) {
+        return (primary: telephonyHandler.mcn, secondary: telephonyHandler.mcnd)
     }
 }

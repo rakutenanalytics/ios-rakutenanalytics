@@ -272,6 +272,25 @@ protocol ReferralAppTrackable: AnyObject {
     deinit {
         stopMonitoringLocation()
     }
+    
+    /// Set carrier names for analytics tracking
+    /// - Parameters:
+    ///   - primary: Primary carrier name (mcn)
+    ///   - secondary: Secondary carrier name (mcnd), optional for single SIM devices
+    @objc public func setCarrierNames(primary: String?, secondary: String? = nil) {
+        RAnalyticsRATTracker.shared().updateCarrierNames(mcn: primary, mcnd: secondary)
+    }
+    
+    /// Clear all carrier information
+    @objc public func clearCarrierNames() {
+        setCarrierNames(primary: nil, secondary: nil)
+    }
+    
+    /// Get current carrier names
+    /// - Returns: Tuple containing primary and secondary carrier names
+    public func getCarrierNames() -> (primary: String?, secondary: String?) {
+        return RAnalyticsRATTracker.shared().getCarrierNames()
+    }
 }
 
 // MARK: - Configuration

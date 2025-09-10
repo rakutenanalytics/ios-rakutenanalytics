@@ -203,6 +203,12 @@ enum PayloadParameterKeys {
     }
 
     enum Telephony {
+        /// The name of the primary carrier
+        static let mcn = "mcn"
+
+        /// The name of the secondary carrier
+        static let mcnd = "mcnd"
+
         /// The network status of the primary carrier.
         static let mnetw = "mnetw"
 

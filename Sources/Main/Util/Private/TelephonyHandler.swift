@@ -14,6 +14,8 @@ protocol TelephonyHandleable {
     var reachabilityStatus: NSNumber? { get set }
     var mnetw: NSNumber? { get }
     var mnetwd: NSNumber? { get }
+    var mcn: String? { get set }
+    var mcnd: String? { get set }
     func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
 }
 
@@ -23,6 +25,12 @@ final class TelephonyHandler: TelephonyHandleable {
     private let notificationCenter: NotificationObservable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
     var reachabilityStatus: NSNumber?
+    
+    /// Custom primary carrier name (mcn) set by the user
+    var mcn: String?
+    
+    /// Custom secondary carrier name (mcnd) set by the user
+    var mcnd: String?
 
     private var reachabilityStatusType: RATReachabilityStatus? {
         guard let value = reachabilityStatus?.intValue else {
