@@ -31,7 +31,8 @@ protocol AutomaticFieldsBuildable {
          telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable,
          notificationHandler: NotificationObservable,
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
-         reachability: ReachabilityType?)
+         reachability: ReachabilityType?,
+         userStorageHandler: UserStorageHandleable)
     func addCommonParameters(_ payload: NSMutableDictionary, state: RAnalyticsState)
     func addLocation(_ payload: NSMutableDictionary,
                      state: RAnalyticsState,
@@ -83,13 +84,15 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
          telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable,
          notificationHandler: NotificationObservable,
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
-         reachability: ReachabilityType?) {
+         reachability: ReachabilityType?,
+         userStorageHandler: UserStorageHandleable) {
         self.startTime = NSDate().toString
         self.bundle = bundle
         self.deviceHandler = DeviceHandler(device: deviceCapability,
                                            screen: screenHandler)
         self.telephonyHandler = TelephonyHandler(telephonyNetworkInfo: telephonyNetworkInfoHandler,
-                                                 notificationCenter: notificationHandler)
+                                                 notificationCenter: notificationHandler,
+                                                 userStorageHandler: userStorageHandler)
         self.statusBarOrientationHandler = RStatusBarOrientationHandler(application: analyticsStatusBarOrientationGetter)
         self.userAgentHandler = UserAgentHandler(bundle: bundle)
         self.notificationHandler = notificationHandler

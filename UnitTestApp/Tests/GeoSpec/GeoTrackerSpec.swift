@@ -161,7 +161,8 @@ final class GeoTrackerSpec: QuickSpec {
                                                                                           telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                           notificationHandler: dependenciesContainer.notificationHandler,
                                                                                           analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                          reachability: Reachability())
+                                                                                          reachability: Reachability(),
+                                                                                          userStorageHandler: dependenciesContainer.userStorageHandler)
                 }
 
                 context("When the event is not loc") {

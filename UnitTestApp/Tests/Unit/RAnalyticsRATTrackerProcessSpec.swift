@@ -67,7 +67,8 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                                                                                       telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                       notificationHandler: dependenciesContainer.notificationHandler,
                                                                                       analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                      reachability: Reachability())
+                                                                                      reachability: Reachability(),
+                                                                                      userStorageHandler: dependenciesContainer.userStorageHandler)
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
                 ratTracker.set(batchingDelay: 0)

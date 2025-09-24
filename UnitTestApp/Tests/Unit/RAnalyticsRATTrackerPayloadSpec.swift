@@ -92,7 +92,8 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                                                       telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                       notificationHandler: dependenciesContainer.notificationHandler,
                                                                                       analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                      reachability: reachabilityMock)
+                                                                                      reachability: reachabilityMock,
+                                                                                      userStorageHandler: dependenciesContainer.userStorageHandler)
                 reachabilityMock.flags = nil
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)

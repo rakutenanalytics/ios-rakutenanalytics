@@ -36,6 +36,7 @@ final class GeoDependenciesContainer: GeoDependenciesContainable {
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability())
+                                                        reachability: Reachability(),
+                                                        userStorageHandler: userStorageHandler)
     }
 }

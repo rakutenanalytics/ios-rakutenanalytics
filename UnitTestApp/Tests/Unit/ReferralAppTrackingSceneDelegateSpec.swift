@@ -73,7 +73,8 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
                                                                                           telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                           notificationHandler: dependenciesContainer.notificationHandler,
                                                                                           analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                          reachability: Reachability())
+                                                                                          reachability: Reachability(),
+                                                                                          userStorageHandler: dependenciesContainer.userStorageHandler)
 
                     analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
