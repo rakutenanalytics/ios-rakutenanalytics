@@ -6,6 +6,7 @@
 
 ### Features
 * CONRAT-38785: Add manual initialization of the SDK.
+* CONRAT-41112: Add primary and secondary carrier public API.
 
 ### Improvements
 * CONRAT-36390: Setup iOS 15.0 as minimum supported version, fix deprecation warnings, update dependencies, remove unused and refacor deprecated code.
