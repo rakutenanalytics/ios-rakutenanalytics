@@ -793,6 +793,127 @@ final class AnalyticsManagerSpec: QuickSpec {
                 }
             }
         }
+        
+        describe("Carrier Names API") {
+            let analyticsManager = AnalyticsManager.shared()
+            
+            afterEach {
+                analyticsManager.clearCarrierNames()
+            }
+            
+            describe("setCarrierNames and getCarrierNames") {
+                it("should set and get primary carrier name only") {
+                    analyticsManager.setCarrierNames(primary: "Rakuten Mobile")
+
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Rakuten Mobile"))
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should set and get secondary carrier name only") {
+                    analyticsManager.setCarrierNames(primary: nil, secondary: "NTT Docomo")
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(equal("NTT Docomo"))
+                }
+                
+                it("should set and get both carrier names") {
+                    analyticsManager.setCarrierNames(primary: "SoftBank", secondary: "au")
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("SoftBank"))
+                    expect(carrierNames.secondary).to(equal("au"))
+                }
+                
+                it("should handle empty strings") {
+                    analyticsManager.setCarrierNames(primary: "", secondary: "")
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal(""))
+                    expect(carrierNames.secondary).to(equal(""))
+                }
+                
+                it("should update existing carrier names") {
+                    analyticsManager.setCarrierNames(primary: "Initial Primary", secondary: "Initial Secondary")
+                    analyticsManager.setCarrierNames(primary: "Updated Primary", secondary: "Updated Secondary")
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Updated Primary"))
+                    expect(carrierNames.secondary).to(equal("Updated Secondary"))
+                }
+            }
+            
+            describe("clearCarrierNames") {
+                it("should clear both carrier names when both were set") {
+                    analyticsManager.setCarrierNames(primary: "Test Primary", secondary: "Test Secondary")
+                    
+                    var carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Test Primary"))
+                    expect(carrierNames.secondary).to(equal("Test Secondary"))
+                    
+                    analyticsManager.clearCarrierNames()
+                    
+                    carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should clear carrier names when only primary was set") {
+                    analyticsManager.setCarrierNames(primary: "Only Primary")
+                    
+                    analyticsManager.clearCarrierNames()
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should clear carrier names when only secondary was set") {
+                    analyticsManager.setCarrierNames(primary: nil, secondary: "Only Secondary")
+                    
+                    analyticsManager.clearCarrierNames()
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should be safe to call when no carrier names are set") {
+                    let initialCarrierNames = analyticsManager.getCarrierNames()
+                    expect(initialCarrierNames.primary).to(beNil())
+                    expect(initialCarrierNames.secondary).to(beNil())
+                    
+                    analyticsManager.clearCarrierNames()
+
+                    let finalCarrierNames = analyticsManager.getCarrierNames()
+                    expect(finalCarrierNames.primary).to(beNil())
+                    expect(finalCarrierNames.secondary).to(beNil())
+                }
+            }
+            
+            describe("API integration") {
+                it("should work with method chaining pattern") {
+                    analyticsManager.setCarrierNames(primary: "Chain Primary", secondary: "Chain Secondary")
+                    let carrierNames1 = analyticsManager.getCarrierNames()
+                    
+                    analyticsManager.clearCarrierNames()
+                    let carrierNames2 = analyticsManager.getCarrierNames()
+                    
+                    analyticsManager.setCarrierNames(primary: "New Primary")
+                    let carrierNames3 = analyticsManager.getCarrierNames()
+                    
+                    expect(carrierNames1.primary).to(equal("Chain Primary"))
+                    expect(carrierNames1.secondary).to(equal("Chain Secondary"))
+                    
+                    expect(carrierNames2.primary).to(beNil())
+                    expect(carrierNames2.secondary).to(beNil())
+                    
+                    expect(carrierNames3.primary).to(equal("New Primary"))
+                    expect(carrierNames3.secondary).to(beNil())
+                }
+            }
+        }
     }
 }
 
