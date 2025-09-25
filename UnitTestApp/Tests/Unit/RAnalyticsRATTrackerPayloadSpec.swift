@@ -883,6 +883,72 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
+                context("Mobile Carrier Names") {
+                    it("should include mcn when set via ratTracker") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "Rakuten Mobile", mcnd: nil)
+                        
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcn = payload?["mcn"] as? String
+                        expect(mcn).to(equal("Rakuten Mobile"))
+                        expect(payload?["mcnd"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should include mcnd when set via ratTracker") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: "NTT Docomo")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcnd = payload?["mcnd"] as? String
+                        expect(mcnd).to(equal("NTT Docomo"))
+                        expect(payload?["mcn"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should include both mcn and mcnd when both are set") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "Primary Carrier", mcnd: "Secondary Carrier")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcn = payload?["mcn"] as? String
+                        let mcnd = payload?["mcnd"] as? String
+                        
+                        expect(mcn).to(equal("Primary Carrier"))
+                        expect(mcnd).to(equal("Secondary Carrier"))
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should not include mcn or mcnd when they are empty strings") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "", mcnd: "")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?["mcn"]).to(beNil())
+                        expect(payload?["mcnd"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                }
+
                 context("Device") {
                     context("Model") {
                         it("should set a non-nil model") {

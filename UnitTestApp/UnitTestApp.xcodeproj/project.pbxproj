@@ -132,6 +132,7 @@
 		CFC7F3832D0BC47F0007B53B /* QuickExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC7F3822D0BC47F0007B53B /* QuickExtensions.swift */; };
 		CFC7F3842D0BC47F0007B53B /* QuickExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC7F3822D0BC47F0007B53B /* QuickExtensions.swift */; };
 		CFC7F3852D0BC47F0007B53B /* QuickExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC7F3822D0BC47F0007B53B /* QuickExtensions.swift */; };
+		CFE09BF62E84B776002FB2DB /* UserAgentHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE09BF52E84B776002FB2DB /* UserAgentHandlerSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -277,6 +278,7 @@
 		CFA3FA0C2C744FAC0038933F /* ios-analytics */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-analytics"; path = ..; sourceTree = "<group>"; };
 		CFA3FA302C75B7050038933F /* DevicePermissionsCollectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePermissionsCollectorSpec.swift; sourceTree = "<group>"; };
 		CFC7F3822D0BC47F0007B53B /* QuickExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickExtensions.swift; sourceTree = "<group>"; };
+		CFE09BF52E84B776002FB2DB /* UserAgentHandlerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAgentHandlerSpec.swift; sourceTree = "<group>"; };
 		E34B800794678A365562E04C /* Pods_Common_FunctionalTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Common_FunctionalTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C3E7FA68980A43FD629F90 /* Pods-Common-FunctionalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-FunctionalTests.debug.xcconfig"; path = "Target Support Files/Pods-Common-FunctionalTests/Pods-Common-FunctionalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F62E109D74B8E4D1A8F75805 /* Pods-Common-UnitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-UnitTests.release.xcconfig"; path = "Target Support Files/Pods-Common-UnitTests/Pods-Common-UnitTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -527,6 +529,7 @@
 				CF3502B92C5B3D4100F95F77 /* URLRequestSpec.swift */,
 				CF3502BA2C5B3D4100F95F77 /* UserIdentifierSelectorSpec.swift */,
 				CFA3FA302C75B7050038933F /* DevicePermissionsCollectorSpec.swift */,
+				CFE09BF52E84B776002FB2DB /* UserAgentHandlerSpec.swift */,
 				CF369AF12DB9F785009E47E6 /* SceneDelegateHelperSpec.swift */,
 			);
 			path = Unit;
@@ -962,6 +965,7 @@
 				CF35030A2C5B40AC00F95F77 /* RAnalyticsLaunchCollectorSpec.swift in Sources */,
 				CF35030B2C5B40AC00F95F77 /* RAnalyticsRATTrackerDuplicateSpec.swift in Sources */,
 				CF658BEC2D793BC600BD205D /* WKHTTPCookieStoreSpec.swift in Sources */,
+				CFE09BF62E84B776002FB2DB /* UserAgentHandlerSpec.swift in Sources */,
 				CF35030C2C5B40AC00F95F77 /* KeychainHandlerSpec.swift in Sources */,
 				CF35030D2C5B40AC00F95F77 /* ReferralAppModelSpec.swift in Sources */,
 				CF35030E2C5B40AC00F95F77 /* RATExtensionsSpec.swift in Sources */,
