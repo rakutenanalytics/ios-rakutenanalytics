@@ -216,6 +216,20 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             return
         }
     }
+    
+    /// Update carrier names in the RAnalyticsRATTracker's AutomaticFieldsBuilder
+    /// - Parameters:
+    ///   - mcn: The primary carrier name
+    ///   - mcnd: The secondary carrier name
+    internal func updateCarrierNames(mcn: String?, mcnd: String?) {
+        automaticFieldsBuilder.updateCarrierNames(mcn: mcn, mcnd: mcnd)
+    }
+    
+    /// Get current carrier names from the RAnalyticsRATTracker's AutomaticFieldsBuilder
+    /// - Returns: Tuple containing primary and secondary carrier names
+    internal func getCarrierNames() -> (primary: String?, secondary: String?) {
+        return automaticFieldsBuilder.getCarrierNames()
+    }
 }
 
 // MARK: - Process an event

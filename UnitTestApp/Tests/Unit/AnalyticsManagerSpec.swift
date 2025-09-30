@@ -794,98 +794,123 @@ final class AnalyticsManagerSpec: QuickSpec {
             }
         }
         
-        describe("setPageId") {
-            context("when session cookie exists") {
-                beforeEach {
-                    let sessionIdentifier = "test_session_id"
-                    UserDefaults.standard.set(sessionIdentifier, forKey: "RAnalyticsRpCookieStorageKey")
+        describe("Carrier Names API") {
+            let analyticsManager = AnalyticsManager.shared()
+            
+            afterEach {
+                analyticsManager.clearCarrierNames()
+            }
+            
+            describe("setCarrierNames and getCarrierNames") {
+                it("should set and get primary carrier name only") {
+                    analyticsManager.setCarrierNames(primary: "Rakuten Mobile")
+
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Rakuten Mobile"))
+                    expect(carrierNames.secondary).to(beNil())
                 }
                 
-                afterEach {
-                    UserDefaults.standard.removeObject(forKey: "RAnalyticsRpCookieStorageKey")
+                it("should set and get secondary carrier name only") {
+                    analyticsManager.setCarrierNames(primary: nil, secondary: "NTT Docomo")
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(equal("NTT Docomo"))
                 }
                 
-                it("should generate and set unique search ID for RAT trackers") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                it("should set and get both carrier names") {
+                    analyticsManager.setCarrierNames(primary: "SoftBank", secondary: "au")
                     
-                    analyticsManager.add(ratTracker)
-                    let initialUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    analyticsManager.setPageId()
-                    
-                    let newUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(newUniqueSearchId).toNot(equal(initialUniqueSearchId))
-                    expect(newUniqueSearchId).toNot(beEmpty())
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("SoftBank"))
+                    expect(carrierNames.secondary).to(equal("au"))
                 }
                 
-                it("should set unique search ID with correct format") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                it("should handle empty strings") {
+                    analyticsManager.setCarrierNames(primary: "", secondary: "")
                     
-                    analyticsManager.add(ratTracker)
-                    
-                    analyticsManager.setPageId()
-                    
-                    let uniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(uniqueSearchId).to(contain("_"))
-                    
-                    let components = uniqueSearchId.components(separatedBy: "_")
-                    expect(components.count).to(equal(2))
-                    
-                    expect(components[0]).toNot(beEmpty())
-                    
-                    let timestamp = components[1]
-                    expect(Double(timestamp)).toNot(beNil())
-                    expect(Double(timestamp)!).to(beGreaterThan(0))
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal(""))
+                    expect(carrierNames.secondary).to(equal(""))
                 }
                 
-                it("should set same unique search ID for multiple RAT trackers") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker1 = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
-                    let ratTracker2 = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                it("should update existing carrier names") {
+                    analyticsManager.setCarrierNames(primary: "Initial Primary", secondary: "Initial Secondary")
+                    analyticsManager.setCarrierNames(primary: "Updated Primary", secondary: "Updated Secondary")
                     
-                    analyticsManager.add(ratTracker1)
-                    analyticsManager.add(ratTracker2)
-                    
-                    analyticsManager.setPageId()
-                    
-                    let uniqueSearchId1 = ratTracker1.lastUniqueSearchIdentifier
-                    let uniqueSearchId2 = ratTracker2.lastUniqueSearchIdentifier
-                    
-                    expect(uniqueSearchId1).to(equal(uniqueSearchId2))
-                    expect(uniqueSearchId1).toNot(beEmpty())
-                }
-                
-                it("should not affect non-RAT trackers") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let mockTracker = TrackerMock()
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
-                    
-                    analyticsManager.add(mockTracker)
-                    analyticsManager.add(ratTracker)
-                    
-                    analyticsManager.setPageId()
-                    
-                    expect(ratTracker.lastUniqueSearchIdentifier).toNot(beEmpty())
-                    expect(mockTracker).toNot(beNil())
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Updated Primary"))
+                    expect(carrierNames.secondary).to(equal("Updated Secondary"))
                 }
             }
             
-            context("when session cookie does not exist") {
-                beforeEach {
-                    UserDefaults.standard.removeObject(forKey: "RAnalyticsRpCookieStorageKey")
+            describe("clearCarrierNames") {
+                it("should clear both carrier names when both were set") {
+                    analyticsManager.setCarrierNames(primary: "Test Primary", secondary: "Test Secondary")
+                    
+                    var carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(equal("Test Primary"))
+                    expect(carrierNames.secondary).to(equal("Test Secondary"))
+                    
+                    analyticsManager.clearCarrierNames()
+                    
+                    carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
                 }
                 
-                it("should not update unique search ID when session cookie is nil") {
-                    let analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
-                    let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                it("should clear carrier names when only primary was set") {
+                    analyticsManager.setCarrierNames(primary: "Only Primary")
                     
-                    analyticsManager.add(ratTracker)
-                    let initialUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    analyticsManager.setPageId()
+                    analyticsManager.clearCarrierNames()
                     
-                    let afterUniqueSearchId = ratTracker.lastUniqueSearchIdentifier
-                    expect(afterUniqueSearchId).to(equal(initialUniqueSearchId))
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should clear carrier names when only secondary was set") {
+                    analyticsManager.setCarrierNames(primary: nil, secondary: "Only Secondary")
+                    
+                    analyticsManager.clearCarrierNames()
+                    
+                    let carrierNames = analyticsManager.getCarrierNames()
+                    expect(carrierNames.primary).to(beNil())
+                    expect(carrierNames.secondary).to(beNil())
+                }
+                
+                it("should be safe to call when no carrier names are set") {
+                    let initialCarrierNames = analyticsManager.getCarrierNames()
+                    expect(initialCarrierNames.primary).to(beNil())
+                    expect(initialCarrierNames.secondary).to(beNil())
+                    
+                    analyticsManager.clearCarrierNames()
+
+                    let finalCarrierNames = analyticsManager.getCarrierNames()
+                    expect(finalCarrierNames.primary).to(beNil())
+                    expect(finalCarrierNames.secondary).to(beNil())
+                }
+            }
+            
+            describe("API integration") {
+                it("should work with method chaining pattern") {
+                    analyticsManager.setCarrierNames(primary: "Chain Primary", secondary: "Chain Secondary")
+                    let carrierNames1 = analyticsManager.getCarrierNames()
+                    
+                    analyticsManager.clearCarrierNames()
+                    let carrierNames2 = analyticsManager.getCarrierNames()
+                    
+                    analyticsManager.setCarrierNames(primary: "New Primary")
+                    let carrierNames3 = analyticsManager.getCarrierNames()
+                    
+                    expect(carrierNames1.primary).to(equal("Chain Primary"))
+                    expect(carrierNames1.secondary).to(equal("Chain Secondary"))
+                    
+                    expect(carrierNames2.primary).to(beNil())
+                    expect(carrierNames2.secondary).to(beNil())
+                    
+                    expect(carrierNames3.primary).to(equal("New Primary"))
+                    expect(carrierNames3.secondary).to(beNil())
                 }
             }
         }

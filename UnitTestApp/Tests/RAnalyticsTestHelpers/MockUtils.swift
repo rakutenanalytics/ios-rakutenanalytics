@@ -344,7 +344,8 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability())
+                                                        reachability: Reachability(),
+                                                        userStorageHandler: userStorageHandler)
         super.init()
     }
 }
@@ -370,7 +371,8 @@ public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability())
+                                                        reachability: Reachability(),
+                                                        userStorageHandler: userStorageHandler)
     }
 }
 
