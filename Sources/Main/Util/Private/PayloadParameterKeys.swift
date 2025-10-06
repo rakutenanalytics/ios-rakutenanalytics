@@ -21,6 +21,9 @@ enum PayloadParameterKeys {
     /// The previous page name.
     /// - Note: previous `UIViewController` Class Name
     static let ref = "ref"
+    
+    /// The page section the event originated from.
+    static let pageSection = "pgs"
 
     enum Core {
         /// The application version.

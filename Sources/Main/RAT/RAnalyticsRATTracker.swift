@@ -512,6 +512,10 @@ extension RAnalyticsRATTracker {
                 payload.removeObject(forKey: "pgid")
             }
         }
+        
+        if let pageSection = event.parameters[RAnalyticsEvent.Parameter.pageSection] as? String {
+            payload[PayloadParameterKeys.pageSection] = pageSection
+        }
 
         return true
     }
