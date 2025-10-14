@@ -1228,6 +1228,57 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         }
                     }
                 }
+                
+                context("Page Section") {
+                    it("should include pgs when a non-empty string is provided") {
+                        var payload: [String: Any]?
+                        let validPageSection = "test-section"
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": validPageSection])
+                        let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                        expect(result).to(beTrue())
+                        
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+                        
+                        expect(payload?.keys.contains("pgs")).to(beTrue())
+                        expect(payload?["pgs"] as? String).to(equal(validPageSection))
+                    }
+                    
+                    it("should not include when an empty string is provided") {
+                        var payload: [String: Any]?
+                        let invalidPageSection = ""
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": invalidPageSection])
+                        let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                        expect(result).to(beTrue())
+                        
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+                        
+                        expect(payload?.keys.contains("pgs")).to(beFalse())
+                    }
+                    
+                    it("should not include when a non-string value is provided") {
+                        let invalidValues: [Any] = [1, 20.0, true, false, NSNull()]
+                        
+                        for invalidPageSection in invalidValues {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": invalidPageSection])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgs")).to(beFalse())
+                        }
+                    }
+                }
 
                 context("Batching Delay") {
                     it("should set the expected batching delay to the sender when the RAT tracker batching delay is set") {
