@@ -96,6 +96,7 @@ final class UserAgentHandlerSpec: QuickSpec {
                         let bundle = BundleMock.create()
                         bundle.bundleIdentifier = "jp.co.rakuten.TestApp"
                         bundle.shortVersion = "1.2.3"
+                        bundle.preferredLocalization = "japanese"
                         
                         let state = RAnalyticsState(sessionIdentifier: "test-session", deviceIdentifier: "test-device", for: bundle)
                         
@@ -111,13 +112,7 @@ final class UserAgentHandlerSpec: QuickSpec {
                                                                 localeProvider: DefaultLocaleProvider())
                         let result = userAgentHandler.enrichedValue(for: state)
                         
-                        expect(result).toNot(beNil())
-                        expect(result?.hasPrefix("jp.co.rakuten.TestApp/1.2.3 (")).to(beTrue())
-                        expect(result?.hasSuffix(")")).to(beTrue())
-                        expect(result?.contains("iOS 15.0")).to(beTrue())
-                        expect(result?.contains("iPhone14,2")).to(beTrue())
-                        expect(result?.contains("phone")).to(beTrue())
-                        expect(result?.contains("Analytics/\(CoreHelpers.Constants.sdkVersion)")).to(beTrue())
+                        expect(result).to(equal("jp.co.rakuten.TestApp/1.2.3 (iOS 15.0; iPhone14,2; phone; ja; Analytics/\(CoreHelpers.Constants.sdkVersion))"))
                     }
                 }
                 
@@ -151,6 +146,7 @@ final class UserAgentHandlerSpec: QuickSpec {
                         bundle.bundleIdentifier = "jp.co.rakuten.TestApp"
                         bundle.shortVersion = nil
                         bundle.version = nil
+                        bundle.preferredLocalization = "japanese"
                         
                         let state = RAnalyticsState(sessionIdentifier: "test-session", deviceIdentifier: "test-device", for: bundle)
                         
@@ -166,7 +162,7 @@ final class UserAgentHandlerSpec: QuickSpec {
                                                                 localeProvider: DefaultLocaleProvider())
                         let result = userAgentHandler.enrichedValue(for: state)
                         
-                        expect(result).to(equal("jp.co.rakuten.TestApp/ (iOS 15.0; iPhone14,2; phone; en-JP; Analytics/\(CoreHelpers.Constants.sdkVersion))"))
+                        expect(result).to(equal("jp.co.rakuten.TestApp/ (iOS 15.0; iPhone14,2; phone; ja; Analytics/\(CoreHelpers.Constants.sdkVersion))"))
                     }
                 }
                 
@@ -287,32 +283,6 @@ final class UserAgentHandlerSpec: QuickSpec {
                             
                             expect(result).to(equal("jp.co.rakuten.TestApp/1.2.3 (iOS 15.0; iPhone14,2; phone; ja_JP; Analytics/\(CoreHelpers.Constants.sdkVersion))"))
                         }
-                    }
-                }
-                
-                describe("Component Integration") {
-                    it("should include all required components in correct order") {
-                        let bundle = BundleMock.create()
-                        bundle.bundleIdentifier = "jp.co.rakuten.TestApp"
-                        bundle.shortVersion = "1.2.3"
-                        
-                        let state = RAnalyticsState(sessionIdentifier: "test-session", deviceIdentifier: "test-device", for: bundle)
-                        
-                        let mockDevice = MockDeviceInfoProvider(
-                            systemName: "iOS",
-                            systemVersion: "16.0",
-                            modelIdentifier: "iPhone15,2",
-                            userInterfaceIdiom: .phone
-                        )
-                        
-                        let mockLocaleProvider = MockLocaleProvider(preferredLanguages: ["en_US"])
-                        
-                        let userAgentHandler = UserAgentHandler(bundle: bundle,
-                                                                deviceInfoProvider: mockDevice,
-                                                                localeProvider: mockLocaleProvider)
-                        let result = userAgentHandler.enrichedValue(for: state)
-                        
-                        expect(result).to(equal("jp.co.rakuten.TestApp/1.2.3 (iOS 16.0; iPhone15,2; phone; en_US; Analytics/\(CoreHelpers.Constants.sdkVersion))"))
                     }
                 }
             }
