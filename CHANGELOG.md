@@ -7,7 +7,8 @@
 ### Features
 * CONRAT-38785: Add manual initialization of the SDK.
 * CONRAT-41112: Add primary and secondary carrier public API.
-* CONRAT-40899: Add support for the page section parameter (pgs)
+* CONRAT-40899: Add support for the page section parameter (pgs).
+* CONRAT-41034: Add enriched user agent parameter to events (ua_enriched).
 
 ### Improvements
 * CONRAT-36390: Setup iOS 15.0 as minimum supported version, fix deprecation warnings, update dependencies, remove unused and refacor deprecated code.
