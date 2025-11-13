@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CB6200C2EC59DE400EEC43D /* UserAgentHandlerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE09BF52E84B776002FB2DB /* UserAgentHandlerSpec.swift */; };
 		618FA23F826E72AC1B9586F5 /* Pods_Common_FunctionalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E34B800794678A365562E04C /* Pods_Common_FunctionalTests.framework */; };
 		A0291070C7A6E74F29B2BC98 /* Pods_Common_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF7829D22A490E81E6E5542C /* Pods_Common_UnitTests.framework */; };
 		A62AE57E91ED2FCE40037A7B /* Pods_Common_IntegrationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95CD75EC9ACD9D623661DA00 /* Pods_Common_IntegrationTests.framework */; };
@@ -920,6 +921,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CB6200C2EC59DE400EEC43D /* UserAgentHandlerSpec.swift in Sources */,
 				CF3502F82C5B3FFA00F95F77 /* RAnalyticsEvent+Helper.swift in Sources */,
 				CF3502F22C5B3FD400F95F77 /* IceBase.swift in Sources */,
 				CF3502DB2C5B3EBA00F95F77 /* AppDelegates.swift in Sources */,

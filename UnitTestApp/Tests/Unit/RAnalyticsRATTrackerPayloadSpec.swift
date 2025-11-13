@@ -69,6 +69,7 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
             bundle.shortVersion = Bundle.main.shortVersion
             bundle.version = Bundle.main.version
             bundle.bundleIdentifier = Bundle.main.bundleIdentifier
+            bundle.preferredLocalization = Bundle.main.preferredLocalizations.first
             let expecter = RAnalyticsRATExpecter()
             var databaseConnection: SQlite3Pointer!
             var database: RAnalyticsDatabase!
@@ -880,6 +881,38 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         expect(ua).to(equal("jp.co.rakuten.Host/\(Tracking.defaultState.currentVersion)"))
                         #endif
 
+                    }
+                }
+
+                context("Enriched User Agent") {
+                    it("should set ua_enriched with the expected format") {
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let uaEnriched = payload?["ua_enriched"] as? String
+                        
+                        // Build expected string from the same components used to generate it
+                        #if SWIFT_PACKAGE
+                        let appName = "com.apple.dt.xctest.tool"
+                        #else
+                        let appName = "jp.co.rakuten.Host"
+                        #endif
+                        let appVersion = Tracking.defaultState.currentVersion
+                        let osInfo = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+                        let deviceModel = UIDevice.current.modelIdentifier
+                        let deviceType = "phone"
+                        let localeCode = bundle.preferredLocalization?.prefix(2)
+                        let language = String(localeCode ?? "")
+                        
+                        let analyticsVersion = CoreHelpers.Constants.sdkVersion
+                        
+                        let expectedUA = "\(appName)/\(appVersion) (\(osInfo); \(deviceModel); \(deviceType); \(language); Analytics/\(analyticsVersion))"
+                        
+                        expect(uaEnriched).to(equal(expectedUA))
                     }
                 }
 

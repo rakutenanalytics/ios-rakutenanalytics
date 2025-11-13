@@ -592,6 +592,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var databaseParentDirectory: FileManager.SearchPathDirectory = FileManager.SearchPathDirectory.documentDirectory
     public var backgroundLocationUpdates: Bool = false
     public var languageCode: Any?
+    public var preferredLocalization: String?
     public var accountIdentifier: Int64 = 1
     public var applicationIdentifier: Int64 = 1
     public var disabledEventsAtBuildTime: [String]?

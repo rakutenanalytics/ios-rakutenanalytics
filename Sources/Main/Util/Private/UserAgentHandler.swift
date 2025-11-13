@@ -134,7 +134,7 @@ private extension UserAgentHandler {
     
     /// Gets the language code using the locale provider.
     func getLanguageCode() -> String {
-        if let appLanguage = Bundle.main.preferredLocalizations.first {
+        if let appLanguage = bundle.preferredLocalization {
             return String(appLanguage.prefix(2))
         } else if let systemLanguage = localeProvider.preferredLanguages.first {
             return systemLanguage
