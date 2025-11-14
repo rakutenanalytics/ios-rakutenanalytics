@@ -190,6 +190,10 @@ enum PayloadParameterKeys {
         /// The application user agent.
         /// - Note: the format is `bundleIdentifier/currentVersion`
         static let ua = "ua"
+        
+        /// The enriched application user agent.
+        /// - Note: the format is `<application_name>/<application_version> (<operating_system_info>; <device_info>; <device_type>; <language>; Analytics/<sdk_version>)`
+        static let uaEnriched = "ua_enriched"
     }
 
     enum Time {

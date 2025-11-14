@@ -8,6 +8,7 @@ internal enum AppGroupUserDefaultsKeys {
 
 protocol EnvironmentBundle: Bundleable {
     var languageCode: Any? { get }
+    var preferredLocalization: String? { get }
     var bundleIdentifier: String? { get }
     var useDefaultSharedCookieStorage: Bool { get }
     var endpointAddress: URL? { get }
@@ -39,6 +40,10 @@ extension Bundle: EnvironmentBundle {
             return localeLanguageCode
         }
         return nil
+    }
+    
+    var preferredLocalization: String? {
+        return preferredLocalizations.first
     }
 
     var useDefaultSharedCookieStorage: Bool {

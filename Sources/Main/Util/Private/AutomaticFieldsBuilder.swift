@@ -162,6 +162,9 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // MARK: ua
         payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
+        
+        // MARK: ua_enriched
+        payload[PayloadParameterKeys.UserAgent.uaEnriched] = userAgentHandler.enrichedValue(for: state)
 
         // MARK: res
         payload[PayloadParameterKeys.Device.res] = deviceHandler.screenResolution
