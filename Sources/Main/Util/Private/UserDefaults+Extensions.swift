@@ -6,6 +6,8 @@ enum UserDefaultsKeys {
     static let locationTimestampKey = "RATGeoLocationTimestamp"
     static let configurationKey = "RATGeoCongiuration"
     static let geoScheduleStartTimeKey = "RATGeoScheduleStartTime"
+    static let carrierPrimaryNameKey = "RATCarrierPrimaryName"
+    static let carrierSecondaryNameKey = "RATCarrierSecondaryName"
 }
 
 /// Note:

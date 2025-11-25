@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAdvertisingIdentifierHandlerSpec
 
 final class RAdvertisingIdentifierHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAdvertisingIdentifierHandler") {
             describe("idfa") {
                 let dependenciesContainer = SimpleContainerMock()

@@ -38,6 +38,7 @@ jobs:
             feat
             refactor
             improve
+            improvements
             build
             ci
             docs

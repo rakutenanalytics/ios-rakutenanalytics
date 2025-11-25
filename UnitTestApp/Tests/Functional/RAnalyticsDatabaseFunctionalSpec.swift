@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 
 class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsDatabase") {
             let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "RSDKAnalytics_Test.db"
@@ -90,7 +90,7 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
         }
     }
 
-    let mkEvent = #"""
+    static let mkEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
         "ts1": 1526965941,
@@ -119,7 +119,7 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
         }
     """#.data(using: .utf8)!
 
-    let mkAnotherEvent = #"""
+    static let mkAnotherEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
         "ts1": 1526966160,

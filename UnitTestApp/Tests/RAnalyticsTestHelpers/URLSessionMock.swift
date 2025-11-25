@@ -1,7 +1,7 @@
 import Foundation
 @testable import RakutenAnalytics
 
-public final class URLSessionMock: URLSession {
+public final class URLSessionMock: URLSession, @unchecked Sendable {
 
     public typealias SessionTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 
@@ -38,10 +38,10 @@ public final class URLSessionMock: URLSession {
 
         let originalMethod = class_getInstanceMethod(
             URLSession.self,
-            #selector(URLSession().dataTask(with:completionHandler:)
+            #selector(URLSession(configuration: .default).dataTask(with:completionHandler:)
                 as (URLRequest, @escaping SessionTaskCompletion) -> URLSessionDataTask))!
 
-        let dummyObject = URLSessionMock(originalInstance: URLSession())
+        let dummyObject = URLSessionMock(originalInstance: URLSession(configuration: .default))
         let swizzledMethod = class_getInstanceMethod(
             URLSessionMock.self,
             #selector(dummyObject.dataTask(with:completionHandler:)

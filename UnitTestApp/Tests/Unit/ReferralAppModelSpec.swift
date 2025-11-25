@@ -13,7 +13,7 @@ import RAnalyticsTestHelpers
 // MARK: - ReferralAppModelSpec
 
 final class ReferralAppModelSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("ReferralAppModel") {
             #if SWIFT_PACKAGE
             let bundleIdentifier = "com.apple.dt.xctest.tool"

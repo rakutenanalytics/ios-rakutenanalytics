@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsRATTrackerInitSpec
 
 class RAnalyticsRATTrackerInitSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRATTracker") {
             let dependenciesContainer = SimpleContainerMock()
             let bundle = BundleMock()

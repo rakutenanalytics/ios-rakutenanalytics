@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class RStatusBarOrientationHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RStatusBarOrientationHandler") {
             describe("mori") {
                 context("executed on the Main Thread") {

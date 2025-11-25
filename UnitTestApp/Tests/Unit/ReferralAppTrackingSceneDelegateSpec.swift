@@ -33,7 +33,7 @@ private final class CustomSceneDelegate: NSObject, UISceneDelegate {
 
 @available(iOS 13.0, *)
 final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("ReferralAppTrackingSceneDelegateSpec") {
             let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
             let databaseName = "ReferralAppTrackingSceneDelegateSpec.db"
@@ -73,7 +73,8 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
                                                                                           telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                           notificationHandler: dependenciesContainer.notificationHandler,
                                                                                           analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                          reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                                                          reachability: Reachability(),
+                                                                                          userStorageHandler: dependenciesContainer.userStorageHandler)
 
                     analyticsManager = AnalyticsManager(dependenciesContainer: dependenciesContainer)
 
@@ -107,7 +108,9 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
 
                         windowScene?.delegate?.scene?(windowScene, openURLContexts: [])
 
-                        expect(payloads.isEmpty).toAfterTimeout(beFalse(), timeout: 1.0)
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(payloads.isEmpty).to(beFalse())
+                        }
                         expect(payloads.count).to(equal(2))
                         expect(sceneDelegate.sceneopenURLContextsIsCalled).to(beTrue())
 
@@ -129,7 +132,9 @@ final class ReferralAppTrackingSceneDelegateSpec: QuickSpec {
 
                         windowScene?.delegate?.scene?(windowScene, continue: userActivity)
 
-                        expect(payloads.isEmpty).toAfterTimeout(beFalse(), timeout: 1.0)
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(payloads.isEmpty).to(beFalse())
+                        }
                         expect(payloads.count).to(equal(2))
                         expect(sceneDelegate.sceneContinueIsCalled).to(beTrue())
 

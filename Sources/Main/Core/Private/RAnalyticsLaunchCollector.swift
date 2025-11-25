@@ -47,6 +47,7 @@ final class RAnalyticsLaunchCollector {
     private let userStorageHandler: UserStorageHandleable?
     private let pushEventHandler: PushEventHandleable
     private let keychainHandler: KeychainHandleable?
+    private let applicationStateGetter: ApplicationStateGettable?
 
     /// A delegate for tracking an event and its parameters
     weak var trackerDelegate: Trackable?
@@ -67,6 +68,7 @@ final class RAnalyticsLaunchCollector {
         self.keychainHandler = dependenciesContainer.keychainHandler
         self.referralTracking = .none
         pushEventHandler = dependenciesContainer.pushEventHandler
+        applicationStateGetter = dependenciesContainer.applicationStateGetter
 
         configureNotifications()
         configureLaunchValues()
@@ -121,6 +123,9 @@ final class RAnalyticsLaunchCollector {
 
 @objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
+        guard applicationStateGetter?.applicationState == .background else {
+            return
+        }
         update()
         trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
     }

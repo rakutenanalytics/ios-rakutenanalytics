@@ -1,5 +1,26 @@
 # Changelog
 
+## 11.0.0 (2025-11-25)
+
+⚠️ **Important**: The minimum supported version is now iOS 15.0.
+
+### Features
+* CONRAT-38785: Add manual initialization of the SDK.
+* CONRAT-41112: Add primary and secondary carrier public API.
+* CONRAT-40899: Add support for the page section parameter (pgs)
+
+### Improvements
+* CONRAT-36390: Setup iOS 15.0 as minimum supported version, fix deprecation warnings, update dependencies, remove unused and refacor deprecated code.
+* CONRAT-36208: Fix code quality issues, flaky unit test and concurrency issues.
+* CONRAT-30450: Migrate from SCNetworkReachability to NWPathMonitor for network reachability.
+* CONRAT-38688: Improve code coverage with unit tests.
+* CONRAT-39006: Remove the deprecated setUserIdentifier (RAE) public API method and eliminate all usage of userId from the payload.
+
+### Bug fixes
+* CONRAT-34249: Fix ref type for first pv event after app-to-app tracking.
+* CONRAT-35311: Refuse zero and negative values for account and application identifiers when adding a duplicate account.
+* CONRAT-34265: Fix duplicate `_rem_launch` event on app launch for apps with `SceneDelegate`.
+
 ## 10.7.0 (2025-08-22)
 
 ### Improvements
@@ -58,7 +79,7 @@
 
 ## 10.1.2 (2024-04-23)
 
-⚠️ Important: RakutenAnalytics SDK version 10.1.1 has an issue where the RakutenAnalytics SDK tracking events are blocked until the user grants permission for [App Tracking Transparency](https://support.apple.com/en-us/102420) within the application. This issue occurs specifically when the application target utilizes SPM. To resolve this issue, please update to RakutenAnalytics SDK v10.1.2, where we have removed the RakutenAnalytics SDK Tracking Domains from the privacy manifest.
+⚠️ **Important**: RakutenAnalytics SDK version 10.1.1 has an issue where the RakutenAnalytics SDK tracking events are blocked until the user grants permission for [App Tracking Transparency](https://support.apple.com/en-us/102420) within the application. This issue occurs specifically when the application target utilizes SPM. To resolve this issue, please update to RakutenAnalytics SDK v10.1.2, where we have removed the RakutenAnalytics SDK Tracking Domains from the privacy manifest.
 
 ### Improvements
 * CONRAT-33927: Update privacy manifest file to remove the Privacy Tracking Domains.

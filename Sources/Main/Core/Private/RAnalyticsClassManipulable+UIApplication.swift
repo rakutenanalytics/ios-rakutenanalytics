@@ -3,6 +3,12 @@ import UIKit
 extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
 
     @objc public static func loadSwift() {
+        if !Bundle.main.isManualInitializationEnabled {
+            installAutoTrackingHooks()
+        }
+    }
+    
+    @objc public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
                       with: #selector(rAutotrackSetApplicationDelegate),
@@ -62,20 +68,6 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
     /*
      * Methods below are only added if the delegate implements the original method.
      */
-    @objc func rAutotrackApplication(_ application: UIApplication,
-                                     handleOpen url: URL) -> Bool {
-        RLogger.verbose(message: "Application was asked to open URL \(url.absoluteString)")
-
-        AnalyticsManager.shared().launchCollector.origin = .external
-
-        AnalyticsManager.shared().trackReferralApp(url: url)
-
-        // Delegates may not implement the original method
-        if responds(to: #selector(rAutotrackApplication(_:handleOpen:))) {
-            return rAutotrackApplication(application, handleOpen: url)
-        }
-        return true
-    }
 
     @objc func rAutotrackApplication(_ app: UIApplication,
                                      open url: URL,
@@ -83,33 +75,11 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         RLogger.verbose(message: "Application was asked to open URL \(url.absoluteString) with options =  \(options)")
 
         AnalyticsManager.shared().launchCollector.origin = .external
-
         AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: options[.sourceApplication] as? String)
 
         // Delegates may not implement the original method
         if responds(to: #selector(rAutotrackApplication(_:open:options:))) {
             return rAutotrackApplication(app, open: url, options: options)
-        }
-        return true
-    }
-
-    @objc func rAutotrackApplication(_ application: UIApplication,
-                                     open url: URL,
-                                     sourceApplication: String?,
-                                     annotation: Any) -> Bool {
-        let message = "Application was asked by \(sourceApplication ?? "nil") to open URL \(url.absoluteString) with annotation \(annotation)"
-        RLogger.verbose(message: message)
-
-        AnalyticsManager.shared().launchCollector.origin = .external
-
-        AnalyticsManager.shared().trackReferralApp(url: url, sourceApplication: sourceApplication)
-
-        // Delegates may not implement the original method
-        if responds(to: #selector(rAutotrackApplication(_:open:sourceApplication:annotation:))) {
-            return rAutotrackApplication(application,
-                                         open: url,
-                                         sourceApplication: sourceApplication,
-                                         annotation: annotation)
         }
         return true
     }
@@ -146,10 +116,8 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
         }
 
         guard let unwrappedDelegate = delegate,
-              !unwrappedDelegate.responds(to:
-                                            #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:))),
-              !unwrappedDelegate.responds(to:
-                                            #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) else {
+              !unwrappedDelegate.responds(to: #selector(rAutotrackApplication(_:willFinishLaunchingWithOptions:))),
+              !unwrappedDelegate.responds(to: #selector(rAutotrackApplication(_:didFinishLaunchingWithOptions:))) else {
             // This delegate has already been extended.
             return
         }
@@ -172,21 +140,9 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(
-            #selector(UIApplicationDelegate.application(_:handleOpen:)),
-            inClass: recipient,
-            with: #selector(rAutotrackApplication(_:handleOpen:)),
-            onlyIfPresent: false)
-
-        UIApplication.replaceMethod(
             #selector(UIApplicationDelegate.application(_:open:options:)),
             inClass: recipient,
             with: #selector(rAutotrackApplication(_:open:options:)),
-            onlyIfPresent: false)
-
-        UIApplication.replaceMethod(
-            #selector(UIApplicationDelegate.application(_:open:sourceApplication:annotation:)),
-            inClass: recipient,
-            with: #selector(rAutotrackApplication(_:open:sourceApplication:annotation:)),
             onlyIfPresent: false)
 
         UIApplication.replaceMethod(

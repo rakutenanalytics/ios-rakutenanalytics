@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 
 final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsEventTrackerIntegration") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),
@@ -64,8 +64,9 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
             context("No events are cached before the tracking") {
                 it("should not track events") {
                     tracker.track()
-
-                    expect(analyticsManager.processedEvents).toAfterTimeout(beEmpty())
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        expect(analyticsManager.processedEvents).to(beEmpty())
+                    }
                 }
 
                 it("should have an empty cache") {
@@ -74,7 +75,9 @@ final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
                     let cache = pushEventHandler.cachedDarwinEvents()
                     eventsCache = cache
 
-                    expect(eventsCache).toAfterTimeout(beEmpty())
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        expect(eventsCache).to(beEmpty())
+                    }
                 }
             }
         }

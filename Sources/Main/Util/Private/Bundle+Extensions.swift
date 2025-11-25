@@ -33,3 +33,26 @@ extension Bundle {
         }
     }
 }
+
+// MARK: - Manual Initialization
+
+extension Bundle {
+    
+    private enum Keys {
+        static let manualInitializationEnabledKey = "RATEnableManualInitialization"
+    }
+    
+    /// Indicates whether manual initialization is enabled.
+    ///
+    /// This property retrieves its value from the app's Info.plist using the key `manualInitializationEnabled`.
+    /// If the key is not present or its value is not a boolean, the property returns `false`.
+    ///
+    /// - Returns: A boolean value indicating if manual initialization is enabled.
+    var isManualInitializationEnabled: Bool {
+        guard let value = object(forInfoDictionaryKey: Keys.manualInitializationEnabledKey) as? Bool else {
+            return false
+        }
+        return value
+    }
+    
+}

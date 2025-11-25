@@ -21,6 +21,9 @@ enum PayloadParameterKeys {
     /// The previous page name.
     /// - Note: previous `UIViewController` Class Name
     static let ref = "ref"
+    
+    /// The page section the event originated from.
+    static let pageSection = "pgs"
 
     enum Core {
         /// The application version.
@@ -56,9 +59,6 @@ enum PayloadParameterKeys {
         /// - Note: based on `ASIdentifierManager.advertisingIdentifier.uuidString`
         /// https://developer.apple.com/documentation/adsupport/asidentifiermanager/1614151-advertisingidentifier
         static let cka = "cka"
-
-        /// The RAE user identifier.
-        static let userid = "userid"
 
         /// The IDSDK easy identifier.
         static let easyid = "easyid"
@@ -206,6 +206,12 @@ enum PayloadParameterKeys {
     }
 
     enum Telephony {
+        /// The name of the primary carrier
+        static let mcn = "mcn"
+
+        /// The name of the secondary carrier
+        static let mcnd = "mcnd"
+
         /// The network status of the primary carrier.
         static let mnetw = "mnetw"
 

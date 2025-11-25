@@ -7,7 +7,7 @@ class AtomicWrapperSpec: QuickSpec {
 
     @AtomicGetSet var atomicArray = [String]()
 
-    override func spec() {
+    override class func spec() {
 
         struct DelayedValue<T> {
             private let queue = DispatchQueue(label: "DelayedQueue")
@@ -32,8 +32,11 @@ class AtomicWrapperSpec: QuickSpec {
             let queueA = DispatchQueue(label: "QueueA")
             let queueB = DispatchQueue(label: "QueueB")
 
+            var instance: AtomicWrapperSpec!
+
             beforeEach {
-                self.atomicArray = []
+                instance = AtomicWrapperSpec()
+                instance.atomicArray = []
             }
 
             it("will not crash when two threads access the same value at the same time (get)") {
@@ -43,13 +46,13 @@ class AtomicWrapperSpec: QuickSpec {
 
                 queueA.async {
                     for _ in (1...1_000_000) {
-                        _ = self.atomicArray
+                        _ = instance.atomicArray
                     }
                     dispatchGroup.leave()
                 }
                 queueB.async {
                     for _ in (1...1_000_000) {
-                        _ = self.atomicArray
+                        _ = instance.atomicArray
                     }
                     dispatchGroup.leave()
                 }
@@ -64,14 +67,14 @@ class AtomicWrapperSpec: QuickSpec {
                 queueA.async {
                     let valueToSet = ["1"]
                     for _ in (1...1_000_000) {
-                        self.atomicArray = valueToSet
+                        instance.atomicArray = valueToSet
                     }
                     dispatchGroup.leave()
                 }
                 queueB.async {
                     let valueToSet = ["2"]
                     for _ in (1...1_000_000) {
-                        self.atomicArray = valueToSet
+                        instance.atomicArray = valueToSet
                     }
                     dispatchGroup.leave()
                 }
@@ -85,14 +88,14 @@ class AtomicWrapperSpec: QuickSpec {
 
                 queueA.async {
                     for _ in (1...1_000_000) {
-                        _ = self.atomicArray
+                        _ = instance.atomicArray
                     }
                     dispatchGroup.leave()
                 }
                 queueB.async {
                     let valueToSet = ["value"]
                     for _ in (1...1_000_000) {
-                        self.atomicArray = valueToSet
+                        instance.atomicArray = valueToSet
                     }
                     dispatchGroup.leave()
                 }
@@ -113,7 +116,7 @@ class AtomicWrapperSpec: QuickSpec {
                         let queueDispatchCoordinator = DispatchGroup()
                         queueDispatchCoordinator.enter()
                         queueA.async {
-                            self._atomicArray.mutate {
+                            instance._atomicArray.mutate {
                                 queueDispatchCoordinator.leave()
                                 $0.append(DelayedValue("string 1").get())
                             }
@@ -121,14 +124,14 @@ class AtomicWrapperSpec: QuickSpec {
                         }
                         queueB.async {
                             queueDispatchCoordinator.wait()
-                            self._atomicArray.mutate { $0.append("string 2") }
+                            instance._atomicArray.mutate { $0.append("string 2") }
                             dispatchGroup.leave()
                         }
                         dispatchGroup.wait()
                     }
 
                     let expected = [[String]](repeating: ["string 1", "string 2"], count: 100).flatMap({ $0 })
-                    expect(self.atomicArray).to(elementsEqual(expected))
+                    expect(instance.atomicArray).to(elementsEqual(expected))
                 }
 
                 it("should ensure atomicity when using `mutate` function and setter") {
@@ -140,7 +143,7 @@ class AtomicWrapperSpec: QuickSpec {
                         let queueDispatchCoordinator = DispatchGroup()
                         queueDispatchCoordinator.enter()
                         queueA.async {
-                            self._atomicArray.mutate {
+                            instance._atomicArray.mutate {
                                 queueDispatchCoordinator.leave()
                                 $0.append(DelayedValue("string 1").get())
                             }
@@ -148,11 +151,11 @@ class AtomicWrapperSpec: QuickSpec {
                         }
                         queueB.async {
                             queueDispatchCoordinator.wait()
-                            self.atomicArray = ["string 2"]
+                            instance.atomicArray = ["string 2"]
                             dispatchGroup.leave()
                         }
                         dispatchGroup.wait()
-                        expect(self.atomicArray).to(elementsEqual(["string 2"]))
+                        expect(instance.atomicArray).to(elementsEqual(["string 2"]))
                     }
                 }
 
@@ -166,19 +169,19 @@ class AtomicWrapperSpec: QuickSpec {
                         queueDispatchCoordinator.enter()
                         queueA.async {
                             queueDispatchCoordinator.leave()
-                            self.atomicArray.append(DelayedValue("string 1").get())
+                            instance.atomicArray.append(DelayedValue("string 1").get())
                             dispatchGroup.leave()
                         }
                         queueB.async {
                             queueDispatchCoordinator.wait()
-                            self.atomicArray.append("string 2")
+                            instance.atomicArray.append("string 2")
                             dispatchGroup.leave()
                         }
                         dispatchGroup.wait()
                     }
 
                     let expected = [[String]](repeating: ["string 1", "string 2"], count: 100).flatMap({ $0 })
-                    expect(self.atomicArray).toNot(elementsEqual(expected))
+                    expect(instance.atomicArray).toNot(elementsEqual(expected))
                 }
 
                 it("should not expect atomic operation without using `mutate` function and setter") {
@@ -191,16 +194,16 @@ class AtomicWrapperSpec: QuickSpec {
                         queueDispatchCoordinator.enter()
                         queueA.async {
                             queueDispatchCoordinator.leave()
-                            self.atomicArray.append(DelayedValue("string 1").get())
+                            instance.atomicArray.append(DelayedValue("string 1").get())
                             dispatchGroup.leave()
                         }
                         queueB.async {
                             queueDispatchCoordinator.wait()
-                            self.atomicArray = ["string 2"]
+                            instance.atomicArray = ["string 2"]
                             dispatchGroup.leave()
                         }
                         dispatchGroup.wait()
-                        expect(self.atomicArray).to(elementsEqual(["string 2", "string 1"]))
+                        expect(instance.atomicArray).to(elementsEqual(["string 2", "string 1"]))
                     }
                 }
             }

@@ -3,7 +3,7 @@ import Nimble
 @testable import RakutenAnalytics
 
 class RLoggerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
 
         describe("RLogger") {
 

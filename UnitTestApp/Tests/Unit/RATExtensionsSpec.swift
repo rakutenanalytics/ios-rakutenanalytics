@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class RATArrayExtensionSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("init") {
             context("when the passed in array elements are serialized json dictionaries") {
                 it("should return an array of the expected json dictionary elements") {
@@ -32,7 +32,7 @@ final class RATArrayExtensionSpec: QuickSpec {
 }
 
 final class RATDataExtensionSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("init") {
             context("when the internal serializer serializes a big amount of data") {
                 let jsonData = try? String(contentsOf: BundleHelper.ratJsonUrl!, encoding: .utf8).data(using: .utf8)

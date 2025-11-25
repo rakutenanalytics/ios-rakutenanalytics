@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsCookieInjectorSpec
 
 final class RAnalyticsCookieInjectorSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsCookieInjector") {
             let deviceID = "cc851516e51366f4856d165c3ea117e592db6fba"
             let idfa = "E621E1F8-A36C-495B-93FC-0C247A3E6E5Q"
@@ -91,7 +91,9 @@ final class RAnalyticsCookieInjectorSpec: QuickSpec {
                     cookieInjector.injectAppToWebTrackingCookie(domain: nil, deviceIdentifier: "") {
                         cookie = $0
                     }
-                    expect(cookie).toAfterTimeout(beNil())
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        expect(cookie).to(beNil())
+                    }
                 }
 
                 it("should inject cookie into WKWebsiteDataStore httpCookieStore") {

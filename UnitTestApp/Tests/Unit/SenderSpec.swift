@@ -9,8 +9,7 @@ import RAnalyticsTestHelpers
 
 class SenderSpec: QuickSpec {
 
-    override func spec() {
-
+    override class func spec() {
         describe("RAnalyticsSender") {
             let sessionMock = URLSessionMock.mock(originalInstance: .shared)
             let databaseTableName = "testTableName"
@@ -39,16 +38,17 @@ class SenderSpec: QuickSpec {
 
             afterEach {
                 URLSessionMock.stopMockingURLSession()
-
                 sender.setBatchingDelayBlock(0)
-
                 sender.uploadTimer?.invalidate()
 
                 DatabaseTestUtils.deleteTableIfExists(databaseTableName, connection: databaseConnection)
                 database.closeConnection()
                 databaseConnection = nil
                 database = nil
+                
                 bundle.mutableEnableInternalSerialization = false
+                bundle.isManualInitializationEnabled = false
+                AnalyticsManager.isConfigured = true
             }
 
             context("initialization") {
@@ -150,8 +150,9 @@ class SenderSpec: QuickSpec {
 
                             it("should not set the start date") {
                                 let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-                                expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
-
+                                QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                                    expect(getDBContent()).to(haveCount(1))
+                                }
                                 expect(userDefaultsMock.double(forKey: geoScheduleStartTimeKey)).to(equal(0.0))
                             }
                         }
@@ -208,7 +209,9 @@ class SenderSpec: QuickSpec {
 
                             it("should set the schedule start date") {
                                 let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-                                expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+                                QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                                    expect(getDBContent()).to(haveCount(1))
+                                }
 
                                 let starteDateTime = userDefaultsMock.double(forKey: geoScheduleStartTimeKey)
 
@@ -218,7 +221,9 @@ class SenderSpec: QuickSpec {
                             context("Then the app goes to foreground") {
                                 it("should set an updated uploadTimerInterval") {
                                     let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-                                    expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+                                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                                        expect(getDBContent()).to(haveCount(1))
+                                    }
 
                                     let scheduleElapsedTime = userDefaultsMock.double(forKey: geoScheduleStartTimeKey)
 
@@ -239,7 +244,6 @@ class SenderSpec: QuickSpec {
             }
 
             context("when setting batching delay") {
-
                 it("should succeed with default batching delay", closure: {
                     sessionMock.stubResponse(statusCode: 200)
 
@@ -257,7 +261,6 @@ class SenderSpec: QuickSpec {
             }
 
             context("when sending events to RAT") {
-
                 it("should send given payload") {
                     var isSendingCompleted = false
                     sessionMock.stubResponse(statusCode: 200) {
@@ -265,6 +268,30 @@ class SenderSpec: QuickSpec {
                     }
                     sender.send(jsonObject: payload)
                     expect(isSendingCompleted).toEventually(beTrue())
+                }
+                
+                context("when manual initialization is enabled") {
+                    it("should not send given payload if SDK not initialized") {
+                        var isSendingCompleted = false
+                        sessionMock.stubResponse(statusCode: 200) {
+                            isSendingCompleted = true
+                        }
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.isConfigured = false
+                        sender.send(jsonObject: payload)
+                        expect(isSendingCompleted).toEventually(beFalse())
+                    }
+                    
+                    it("should send given payload if SDK initialized") {
+                        var isSendingCompleted = false
+                        sessionMock.stubResponse(statusCode: 200) {
+                            isSendingCompleted = true
+                        }
+                        bundle.isManualInitializationEnabled = true
+                        AnalyticsManager.configure()
+                        sender.send(jsonObject: payload)
+                        expect(isSendingCompleted).toEventually(beTrue())
+                    }
                 }
 
                 context("When sending fails") {
@@ -316,7 +343,9 @@ class SenderSpec: QuickSpec {
                     expect(isSendingCompleted).toEventually(beTrue())
 
                     let dbContent = DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection)
-                    expect(dbContent).toAfterTimeout(beEmpty())
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        expect(dbContent).to(beEmpty())
+                    }
                 })
 
                 it("should not remove DB record before event is sent", closure: {
@@ -325,7 +354,9 @@ class SenderSpec: QuickSpec {
                     sender.send(jsonObject: payload)
 
                     let getDBContent = { DatabaseTestUtils.fetchTableContents(databaseTableName, connection: databaseConnection) }
-                    expect(getDBContent()).toAfterTimeout(haveCount(1), timeout: 2.0)
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                        expect(getDBContent()).to(haveCount(1))
+                    }
                 })
 
                 // This test is temporarily disabled.

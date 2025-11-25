@@ -19,7 +19,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
         static let lastVersionLaunchesKey = "com.rakuten.esd.sdk.properties.analytics.launchInformation.lastVersionLaunches"
     }
 
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsLaunchCollector") {
             let dependenciesFactory = SimpleContainerMock()
             let analyticsTrackerMock = AnalyticsTrackerMock()
@@ -76,6 +76,7 @@ final class RAnalyticsLaunchCollectorSpec: QuickSpec {
             }
             it("should track the session start event when the app is resumed") {
                 analyticsTrackerMock.dictionary = [AnalyticsManager.Event.Name.sessionStart: TrackerResult(tracked: false, parameters: nil)]
+                dependenciesFactory.applicationStateGetter = ApplicationStateMock(.background)
 
                 let launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesFactory)
                 launchCollector.trackerDelegate = analyticsTrackerMock

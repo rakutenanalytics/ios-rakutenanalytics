@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class AdvertisementIdentifiableSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("advertisingIdentifierUUIDString") {
             it("should return a non-empty value") {
                 let result = ASIdentifierManager.shared().advertisingIdentifierUUIDString

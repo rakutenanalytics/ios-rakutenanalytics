@@ -4,7 +4,7 @@ import Foundation
 @testable import RakutenAnalytics
 
 final class EventCheckerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("EventCheckerSpec") {
             describe("shouldProcess") {
                 context("shouldTrackEventHandler is nil") {

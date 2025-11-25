@@ -9,7 +9,7 @@ private enum SenderConstants {
     static let retryInterval = TimeInterval(10.0)
 }
 
-@objc public protocol Sendable: NSObjectProtocol {
+@objc public protocol AnalyticsSendable: NSObjectProtocol {
     var endpointURL: URL? { get set }
     func setBatchingDelayBlock(_ batchingDelayBlock: @escaping @autoclosure BatchingDelayBlock)
     func batchingDelayBlock() -> BatchingDelayBlock?
@@ -26,7 +26,7 @@ enum SenderBackgroundTimerEnabler {
     case enabled(startTimeKey: String)
 }
 
-@objc public final class RAnalyticsSender: NSObject, EndpointSettable, Sendable {
+@objc public final class RAnalyticsSender: NSObject, EndpointSettable, AnalyticsSendable {
     @objc public var endpointURL: URL? {
         get {
             self.safeEndpointURL
@@ -127,6 +127,11 @@ enum SenderBackgroundTimerEnabler {
     /// - Parameter jsonObject: json object
     @objc(sendJSONObject:)
     public func send(jsonObject: Any) {
+        guard AnalyticsManager.isConfigured else {
+            RLogger.error(message: "Analytics event dropped because manual initialization is enabled and AnalyticsManager is not configured.")
+            return
+        }
+        
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,

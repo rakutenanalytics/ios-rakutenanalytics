@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsSharedApplicationSpec
 
 final class RAnalyticsSharedApplicationSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("UIApplication") {
             describe("RAnalyticsSharedApplication") {
                 it("should not return nil") {

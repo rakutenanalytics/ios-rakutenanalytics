@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 
 final class GeoPollerSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("Poller functions") {
 
             it("creates timer for location collection with time interval equal to delay param passed in function call") {

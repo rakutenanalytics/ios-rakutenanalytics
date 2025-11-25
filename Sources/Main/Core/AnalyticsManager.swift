@@ -38,6 +38,8 @@ protocol ReferralAppTrackable: AnyObject {
 
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
+    static var isConfigured: Bool = false
+    
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
@@ -46,7 +48,16 @@ protocol ReferralAppTrackable: AnyObject {
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> AnalyticsManager {
-        singleton
+        if Bundle.main.isManualInitializationEnabled {
+            guard isConfigured else {
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance. Call AnalyticsManager.configure() first.")
+                return singleton
+            }
+            return singleton
+        } else {
+            isConfigured = true
+            return singleton
+        }
     }
 
     /// Control whether the SDK should track the device's location or not.
@@ -261,6 +272,25 @@ protocol ReferralAppTrackable: AnyObject {
     deinit {
         stopMonitoringLocation()
     }
+    
+    /// Set carrier names for analytics tracking
+    /// - Parameters:
+    ///   - primary: Primary carrier name (mcn)
+    ///   - secondary: Secondary carrier name (mcnd), optional for single SIM devices
+    @objc public func setCarrierNames(primary: String?, secondary: String? = nil) {
+        RAnalyticsRATTracker.shared().updateCarrierNames(mcn: primary, mcnd: secondary)
+    }
+    
+    /// Clear all carrier information
+    @objc public func clearCarrierNames() {
+        setCarrierNames(primary: nil, secondary: nil)
+    }
+    
+    /// Get current carrier names
+    /// - Returns: Tuple containing primary and secondary carrier names
+    public func getCarrierNames() -> (primary: String?, secondary: String?) {
+        return RAnalyticsRATTracker.shared().getCarrierNames()
+    }
 }
 
 // MARK: - Configuration
@@ -375,7 +405,7 @@ extension AnalyticsManager {
     }
 
     @objc private func stopMonitoringLocationUnlessAlways() {
-        if CLLocationManager.authorizationStatus() != .authorizedAlways {
+        if CLLocationManager().authorizationStatus != .authorizedAlways {
             stopMonitoringLocation()
         }
     }
@@ -477,7 +507,11 @@ extension AnalyticsManager: AnalyticsManageable {
     /// - Returns: A boolean value indicating if the event has been processed.
     @discardableResult
     @objc dynamic public func process(_ event: RAnalyticsEvent) -> Bool {
-        process(event, coreOrigin: .analytics)
+        guard AnalyticsManager.isConfigured else {
+            return false
+        }
+
+        return process(event, coreOrigin: .analytics)
     }
 
     @discardableResult
@@ -540,6 +574,22 @@ extension AnalyticsManager: AnalyticsManageable {
         }
         return processed
     }
+    
+    /// Initializes the SDK and installs auto-tracking hooks.
+    ///
+    /// This method sets up automatic tracking for various components of the app, such as the application lifecycle,
+    /// user notifications, view controllers, and window scenes (if available).
+    ///
+    /// - Note: For iOS 13.0 and above, it also installs auto-tracking hooks for `UIWindowScene`.
+    public static func configure() {
+        UIApplication.installAutoTrackingHooks()
+        UNUserNotificationCenter.installAutoTrackingHooks()
+        UIViewController.installAutoTrackingHooks()
+        if #available(iOSApplicationExtension 13.0, *) {
+            UIWindowScene.installAutoTrackingHooks()
+        }
+        isConfigured = true
+    }
 }
 
 extension AnalyticsManager {
@@ -588,14 +638,6 @@ extension AnalyticsManager {
             RLogger.debug(message: "Deleted tracker \(tracker)")
         }
         trackersLockableObject.unlock()
-    }
-
-    /// Set the user identifier of the logged in user.
-    ///
-    /// - Parameters:
-    ///     - userID:  The user identifier. This can be the encrypted internal tracking ID.
-    @objc public func setUserIdentifier(_ userID: String?) {
-        externalCollector.userIdentifier = userID
     }
     
     /// Generates a new unique page identifier using device identifier and timestamp.
@@ -668,6 +710,9 @@ extension AnalyticsManager {
     ///
     /// - Note: By setting the member identifier, `_rem_login` is automatically tracked.
     public func setMemberIdentifier(_ memberIdentifier: String) {
+        if externalCollector.userIdentifier != nil {
+            externalCollector.userIdentifier = nil
+        }
         externalCollector.trackLogin(.easyIdentifier(memberIdentifier))
     }
 

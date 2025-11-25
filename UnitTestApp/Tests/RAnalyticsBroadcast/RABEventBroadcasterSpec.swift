@@ -6,7 +6,7 @@ import RAnalyticsBroadcast
 // MARK: - RABEventBroadcasterSpec
 
 final class RABEventBroadcasterSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("sendEventName") {
             let dependenciesContainer = SimpleContainerMock()
             dependenciesContainer.bundle = BundleMock.create()

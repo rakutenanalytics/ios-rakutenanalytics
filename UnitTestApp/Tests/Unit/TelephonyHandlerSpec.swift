@@ -11,17 +11,78 @@ import RAnalyticsTestHelpers
 // MARK: - TelephonyHandlerSpec
 
 final class TelephonyHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("TelephonyHandler") {
             let telephonyNetworkInfo = TelephonyNetworkInfoMock()
+            let userStorageHandler = UserDefaultsMock([:])
 
             let telephonyHandler = TelephonyHandler(telephonyNetworkInfo: telephonyNetworkInfo,
-                                                    notificationCenter: NotificationCenter.default)
+                                                    notificationCenter: NotificationCenter.default,
+                                                    userStorageHandler: userStorageHandler)
 
             telephonyHandler.reachabilityStatus = NSNumber(value: 1)
 
             afterEach {
                 telephonyNetworkInfo.serviceCurrentRadioAccessTechnology = nil
+                telephonyHandler.mcn = nil
+                telephonyHandler.mcnd = nil
+                userStorageHandler.dictionary?.removeAll()
+            }
+
+            describe("Mobile Carrier Name - Primary") {
+                context("when setting mcn") {
+                    it("should store the value in user storage") {
+                        let carrierName = "Rakuten Mobile"
+                        telephonyHandler.mcn = carrierName
+                        
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierPrimaryNameKey) as? String).to(equal(carrierName))
+                        expect(telephonyHandler.mcn).to(equal(carrierName))
+                    }
+                    
+                    it("should remove the value from user storage when set to nil") {
+                        telephonyHandler.mcn = "Rakuten Mobile"
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierPrimaryNameKey)).toNot(beNil())
+                        
+                        telephonyHandler.mcn = nil
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierPrimaryNameKey)).to(beNil())
+                        expect(telephonyHandler.mcn).to(beNil())
+                    }
+                    
+                    it("should handle empty string") {
+                        telephonyHandler.mcn = ""
+                        
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierPrimaryNameKey) as? String).to(equal(""))
+                        expect(telephonyHandler.mcn).to(equal(""))
+                    }
+                }
+            }
+
+            describe("Mobile Carrier Name - Dual/Secondary") {
+                context("when setting mcnd") {
+                    it("should store the value in user storage") {
+                        let carrierName = "NTT Docomo"
+                        telephonyHandler.mcnd = carrierName
+                        
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierSecondaryNameKey) as? String).to(equal(carrierName))
+                        expect(telephonyHandler.mcnd).to(equal(carrierName))
+                    }
+                    
+                    it("should remove the value from user storage when set to nil") {
+                        telephonyHandler.mcnd = "NTT Docomo"
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierSecondaryNameKey)).toNot(beNil())
+                        
+                        telephonyHandler.mcnd = nil
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierSecondaryNameKey)).to(beNil())
+                        expect(telephonyHandler.mcnd).to(beNil())
+                    }
+                    
+                    it("should handle empty string") {
+                        telephonyHandler.mcnd = ""
+                        
+                        expect(userStorageHandler.object(forKey: UserDefaultsKeys.carrierSecondaryNameKey) as? String).to(equal(""))
+                        expect(telephonyHandler.mcnd).to(equal(""))
+                    }
+                }
             }
 
             describe("mnetw and mnetwd") {

@@ -12,9 +12,9 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsExternalCollectorSpec
 
 final class RAnalyticsExternalCollectorSpec: QuickSpec {
-    let notificationBaseName = "com.rakuten.esd.sdk.events"
+    static let notificationBaseName = "com.rakuten.esd.sdk.events"
 
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsExternalCollector") {
             var dependenciesContainer: SimpleContainerMock!
             let raeErrorParams = ["rae_error": "login failure",
@@ -386,7 +386,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                             assertionFailure("Unexpected login failure case.")
                         }
 
-                        expect(externalCollector.isLoggedIn).toAfterTimeout(beFalse())
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(externalCollector.isLoggedIn).to(beFalse())
+                        }
                         expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.loginFailure))
 
                         switch notificationName {
@@ -431,7 +433,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
 
                         NotificationCenter.default.post(name: notificationName, object: nil)
 
-                        expect(externalCollector.trackingIdentifier).toAfterTimeout(beNil())
+                        QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                            expect(externalCollector.trackingIdentifier).to(beNil())
+                        }
                         expect(externalCollector.easyIdentifier).to(beNil())
                         expect(externalCollector.isLoggedIn).to(beFalse())
                         expect(tracker.eventName).toEventually(equal(AnalyticsManager.Event.Name.logout))
@@ -440,7 +444,9 @@ final class RAnalyticsExternalCollectorSpec: QuickSpec {
                             expect(tracker.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toEventually(equal($0))
 
                         } else {
-                            expect(tracker.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).toAfterTimeout(beNil())
+                            QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                                expect(tracker.params?[AnalyticsManager.Event.Parameter.logoutMethod] as? String).to(beNil())
+                            }
                         }
 
                         tracker.reset()

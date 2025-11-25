@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class GetWebViewURLSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("getWebViewURL") {
             let url: URL! = URL(string: "https://rat.rakuten.co.jp/")
             var customView: UIView!

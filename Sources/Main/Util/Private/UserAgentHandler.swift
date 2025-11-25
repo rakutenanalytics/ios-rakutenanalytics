@@ -30,7 +30,6 @@ extension UserAgentHandler: UserAgentHandleable {
         if let bundleIdentifier = bundle.bundleIdentifier,
            let currentVersion = state?.currentVersion {
             return "\(bundleIdentifier)/\(currentVersion)"
-
         } else {
             return nil
         }

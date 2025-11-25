@@ -62,7 +62,7 @@ extension LocationModel {
 // MARK: - RAnalyticsRATTrackerPayloadSpec
 
 class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsRATTracker") {
             let bundle = BundleMock.create()
             bundle.languageCode = Bundle.main.languageCode
@@ -92,7 +92,8 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                                                                                       telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
                                                                                       notificationHandler: dependenciesContainer.notificationHandler,
                                                                                       analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
-                                                                                      reachability: reachabilityMock)
+                                                                                      reachability: reachabilityMock,
+                                                                                      userStorageHandler: dependenciesContainer.userStorageHandler)
                 reachabilityMock.flags = nil
 
                 ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
@@ -882,6 +883,72 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                     }
                 }
 
+                context("Mobile Carrier Names") {
+                    it("should include mcn when set via ratTracker") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "Rakuten Mobile", mcnd: nil)
+                        
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcn = payload?["mcn"] as? String
+                        expect(mcn).to(equal("Rakuten Mobile"))
+                        expect(payload?["mcnd"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should include mcnd when set via ratTracker") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: "NTT Docomo")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcnd = payload?["mcnd"] as? String
+                        expect(mcnd).to(equal("NTT Docomo"))
+                        expect(payload?["mcn"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should include both mcn and mcnd when both are set") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "Primary Carrier", mcnd: "Secondary Carrier")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+
+                        let mcn = payload?["mcn"] as? String
+                        let mcnd = payload?["mcnd"] as? String
+                        
+                        expect(mcn).to(equal("Primary Carrier"))
+                        expect(mcnd).to(equal("Secondary Carrier"))
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                    
+                    it("should not include mcn or mcnd when they are empty strings") {
+                        var payload: [String: Any]?
+                        ratTracker.updateCarrierNames(mcn: "", mcnd: "")
+
+                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
+                            payload = $0.first
+                        }
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?["mcn"]).to(beNil())
+                        expect(payload?["mcnd"]).to(beNil())
+                        
+                        ratTracker.updateCarrierNames(mcn: nil, mcnd: nil)
+                    }
+                }
+
                 context("Device") {
                     context("Model") {
                         it("should set a non-nil model") {
@@ -1161,6 +1228,57 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         }
                     }
                 }
+                
+                context("Page Section") {
+                    it("should include pgs when a non-empty string is provided") {
+                        var payload: [String: Any]?
+                        let validPageSection = "test-section"
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": validPageSection])
+                        let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                        expect(result).to(beTrue())
+                        
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+                        
+                        expect(payload?.keys.contains("pgs")).to(beTrue())
+                        expect(payload?["pgs"] as? String).to(equal(validPageSection))
+                    }
+                    
+                    it("should not include when an empty string is provided") {
+                        var payload: [String: Any]?
+                        let invalidPageSection = ""
+                        let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": invalidPageSection])
+                        let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                        expect(result).to(beTrue())
+                        
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+                        
+                        expect(payload?.keys.contains("pgs")).to(beFalse())
+                    }
+                    
+                    it("should not include when a non-string value is provided") {
+                        let invalidValues: [Any] = [1, 20.0, true, false, NSNull()]
+                        
+                        for invalidPageSection in invalidValues {
+                            var payload: [String: Any]?
+                            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                            let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["pgs": invalidPageSection])
+                            let result = ratTracker.process(event: event, state: Tracking.defaultState)
+                            expect(result).to(beTrue())
+                            
+                            expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                                payload = $0.first
+                            }
+                            
+                            expect(payload?.keys.contains("pgs")).to(beFalse())
+                        }
+                    }
+                }
 
                 context("Batching Delay") {
                     it("should set the expected batching delay to the sender when the RAT tracker batching delay is set") {
@@ -1239,32 +1357,6 @@ class RAnalyticsRATTrackerPayloadSpec: QuickSpec {
                         }
                         expect(payload).toEventuallyNot(beNil())
                         expect((payload?["mori"] as? NSNumber)?.intValue).to(equal(value))
-                    }
-                }
-
-                context("userid") {
-                    it("should set the userid") {
-                        var payload: [String: Any]?
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: Tracking.defaultState, equal: "defaultEvent") {
-                            payload = $0.first
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["userid"] as? String).to(equal("userId"))
-                    }
-
-                    it("should not set the userid when the state's userIdentifier is not set") {
-                        var payload: [String: Any]?
-
-                        let state = RAnalyticsState(sessionIdentifier: "CA7A88AR-82FE-40C9-A836-B1B3455DECAF",
-                                                    deviceIdentifier: "deviceId")
-                        state.userIdentifier = nil
-
-                        expecter.expectEvent(Tracking.defaultEvent, state: state, equal: "defaultEvent") {
-                            payload = $0.first
-                        }
-                        expect(payload).toEventuallyNot(beNil())
-                        expect(payload?["userid"] as? String).to(beNil())
                     }
                 }
 
