@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - CoreInfosCollectorSpec
 
 final class CoreInfosCollectorSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("CoreInfosCollector") {
             let collector = CoreInfosCollector()
 

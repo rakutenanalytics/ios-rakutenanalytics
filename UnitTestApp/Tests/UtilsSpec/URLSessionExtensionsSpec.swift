@@ -5,7 +5,7 @@ import Nimble
 
 class URLSessionExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("URLSessionExtensions") {
 
@@ -69,7 +69,7 @@ class URLSessionExtensionsSpec: QuickSpec {
     }
 }
 
-private class SwiftySessionableMock: URLSession {
+private class SwiftySessionableMock: URLSession, @unchecked Sendable {
     private(set) var callCompletionHandler: ((_ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void)?
 
     override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {

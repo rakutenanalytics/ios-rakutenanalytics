@@ -7,7 +7,7 @@ import CoreLocation.CLLocation
 
 class OptionalExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("Optional+NSObject Extensions") {
 
@@ -129,9 +129,14 @@ class OptionalExtensionsSpec: QuickSpec {
 
         describe("Optional+String Extensions") {
             context("safeHashValue instance variable") {
-                it("will return expected hashValue") {
+                it("will return expected hashValue for a non-empty string") {
                     let object: String? = "hello"
                     expect(object.safeHashValue).to(equal("hello".hashValue))
+                }
+
+                it("will return expected hashValue for an empty string") {
+                    let object: String? = ""
+                    expect(object.safeHashValue).to(equal("".hashValue))
                 }
 
                 it("will return 0 if object is nil") {
@@ -139,14 +144,65 @@ class OptionalExtensionsSpec: QuickSpec {
                     expect(object.safeHashValue).to(equal(0))
                 }
             }
+
             context("isEmpty instance variable") {
-                it("will return false if Wrapped is String") {
+                it("will return false if Wrapped is a non-empty String") {
                     let object: String? = "hello"
                     expect(object.isEmpty).to(beFalse())
                 }
+
+                it("will return true if Wrapped is an empty String") {
+                    let object: String? = ""
+                    expect(object.isEmpty).to(beTrue())
+                }
+
                 it("will return true if object is nil") {
                     let object: String? = nil
                     expect(object.isEmpty).to(beTrue())
+                }
+            }
+
+            context("combine(with:) instance method") {
+                it("will return combined string if both strings are non-nil") {
+                    let object: String? = "hello"
+                    let other: String? = " world"
+                    expect(object.combine(with: other)).to(equal("hello world"))
+                }
+
+                it("will return the first string if the second string is nil") {
+                    let object: String? = "hello"
+                    let other: String? = nil
+                    expect(object.combine(with: other)).to(equal("hello"))
+                }
+
+                it("will return the second string if the first string is nil") {
+                    let object: String? = nil
+                    let other: String? = "world"
+                    expect(object.combine(with: other)).to(equal("world"))
+                }
+
+                it("will return an empty string if both strings are nil") {
+                    let object: String? = nil
+                    let other: String? = nil
+                    expect(object.combine(with: other)).to(equal(""))
+                }
+
+                it("will return the first string if the second string is empty") {
+                    let object: String? = "hello"
+                    let other: String? = ""
+                    expect(object.combine(with: other)).to(equal("hello"))
+                }
+
+                it("will return the second string if the first string is empty") {
+                    let object: String? = ""
+                    let other: String? = "world"
+                    expect(object.combine(with: other)).to(equal("world"))
+                }
+
+                it("will return an empty string if both strings are empty") {
+                    let object: String? = ""
+                    let other: String? = ""
+                    expect(object.combine(with: other)).to(equal(""))
                 }
             }
         }

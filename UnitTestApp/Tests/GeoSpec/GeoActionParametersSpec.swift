@@ -4,7 +4,7 @@ import Nimble
 
 final class GeoActionParametersSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("GeoActionParameters") {
             context("instance when its stored properties are non-nil") {
                 let actionParameters = GeoActionParameters(actionType: "test-actionType",

@@ -4,7 +4,7 @@ import Foundation
 @testable import RakutenAnalytics
 
 final class AnalyticsErrorSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsError") {
             describe("nsError()") {
                 it("should return the expected embedded error") {
@@ -39,6 +39,18 @@ final class AnalyticsErrorSpec: QuickSpec {
                     let error = AnalyticsError.detailedError(domain: "domain", code: 123, description: "description", reason: "reason")
 
                     expect(error.log()).to(equal("domain, 123, description, reason"))
+                }
+            }
+            
+            describe("ErrorConstants") {
+                it("should return the expected pushConversionError") {
+                    let error = ErrorConstants.pushConversionError
+                    
+                    expect(error).toNot(beNil())
+                    expect(error.domain).to(equal(ErrorDomain.pushConversionTrackingErrorDomain))
+                    expect(error.code).to(equal(ErrorCode.pushConversionTrackingFailure.rawValue))
+                    expect(error.localizedDescription).to(equal(ErrorDescription.pushConversionTrackingFailed))
+                    expect(error.localizedFailureReason).to(equal(ErrorReason.emptyParameters))
                 }
             }
         }

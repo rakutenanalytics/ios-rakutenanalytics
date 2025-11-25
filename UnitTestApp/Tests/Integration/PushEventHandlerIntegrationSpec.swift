@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 
 final class PushEventHandlerIntegrationSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("PushEventHandlerIntegration") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),

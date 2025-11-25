@@ -23,6 +23,12 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
     // MARK: - RuntimeLoadable
 
     public static func loadSwift() {
+        if !Bundle.main.isManualInitializationEnabled {
+            installAutoTrackingHooks()
+        }
+    }
+    
+    public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
                       with: #selector(rAutotrackSetSceneDelegate),

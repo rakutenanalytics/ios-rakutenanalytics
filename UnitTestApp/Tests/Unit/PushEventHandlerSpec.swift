@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 
 final class PushEventHandlerSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("PushEventHandler") {
             let sentTrackingId = "a_good_tracking_id"
             let appGroupDictionary = [AppGroupUserDefaultsKeys.appGroupIdentifierPlistKey: "appGroupId"]

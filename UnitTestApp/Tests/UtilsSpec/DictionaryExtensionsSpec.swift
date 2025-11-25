@@ -5,7 +5,7 @@ import Nimble
 
 class DictionaryExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("DictionaryExtensions") {
 

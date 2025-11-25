@@ -5,7 +5,7 @@ import CoreLocation
 
 final class GeoAccuracySpec: QuickSpec {
     
-    override func spec() {
+    override class func spec() {
         describe("GeoAccuracy") {
             context("instance") {
                 it("should not be nil on instantiation") {

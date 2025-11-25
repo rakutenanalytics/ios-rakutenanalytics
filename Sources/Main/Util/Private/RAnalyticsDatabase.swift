@@ -70,6 +70,12 @@ final class RAnalyticsDatabase {
                 into table: String,
                 limit maximumNumberOfBlobs: UInt,
                 then completion: @escaping () -> Void) {
+        guard AnalyticsManager.isConfigured else {
+            RLogger.error(message: "Database insert operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
+            completion()
+            return
+        }
+        
         queue.addOperation { [weak self] in
             defer {
                 completion()
@@ -118,6 +124,12 @@ final class RAnalyticsDatabase {
     /// - Parameter table:                 Name of the table.
     /// - Parameter completion:            Block to call upon completion.
     func fetchBlobs(_ maximumNumberOfBlobs: UInt, from table: String, then completion: @escaping (_ blobs: [Data]?, _ identifiers: [Int64]?) -> Void) {
+        guard AnalyticsManager.isConfigured else {
+            RLogger.warning(message: "Database fetch operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
+            completion(nil, nil)
+            return
+        }
+        
         queue.addOperation { [weak self] in
             guard let self = self, let connection = self.connection else {
                 completion(nil, nil)
@@ -175,6 +187,12 @@ final class RAnalyticsDatabase {
     func deleteBlobs(identifiers: [Int64],
                      in table: String,
                      then completion: @escaping () -> Void) {
+        guard AnalyticsManager.isConfigured else {
+            RLogger.error(message: "Database delete operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
+            completion()
+            return
+        }
+        
         guard !appWillTerminate else {
             RLogger.debug(message: "RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
             completion()

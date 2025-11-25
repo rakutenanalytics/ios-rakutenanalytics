@@ -8,7 +8,7 @@ extension RAnalyticsRATTracker {
     ///     - payload: the RAT payload.
     ///     - excludedAccount: the excluded RAT account. Note: the payload won't be sent to the excluded RAT account.
     ///     - sender: the sender.
-    func duplicateEvent(named eventName: String, with payload: NSMutableDictionary, exclude excludedAccount: RATAccount? = nil, sender: Sendable) {
+    func duplicateEvent(named eventName: String, with payload: NSMutableDictionary, exclude excludedAccount: RATAccount? = nil, sender: AnalyticsSendable) {
         if let runtimeHandler = shouldDuplicateRATEventHandler {
             duplicateAccounts.filter { $0 != excludedAccount }.forEach { account in
                 if runtimeHandler(eventName, account.accountId) {

@@ -11,7 +11,7 @@ import RAnalyticsTestHelpers
 // MARK: - DeviceHandlerSpec
 
 final class DeviceHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("DeviceHandler") {
             describe("screenResolution") {
                 let currentDevice = UIDevice.current

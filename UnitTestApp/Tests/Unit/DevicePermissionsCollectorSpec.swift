@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class AnalyticsDevicePermissionCollectorSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsDevicePermissionCollector") {
             var collector: MockDevicePermissionCollector!
             

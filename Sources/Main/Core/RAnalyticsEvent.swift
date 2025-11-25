@@ -144,6 +144,9 @@ import Foundation
         // MARK: - Page parameters
 
         public static let pageId = "page_id"
+        
+        /// Parameter used to identify a section within a page (e.g. banner).
+        public static let pageSection = "pgs"
 
         // MARK: - PNP parameters
 

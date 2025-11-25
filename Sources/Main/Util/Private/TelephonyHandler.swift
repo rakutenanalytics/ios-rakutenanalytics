@@ -14,6 +14,8 @@ protocol TelephonyHandleable {
     var reachabilityStatus: NSNumber? { get set }
     var mnetw: NSNumber? { get }
     var mnetwd: NSNumber? { get }
+    var mcn: String? { get set }
+    var mcnd: String? { get set }
     func update(telephonyNetworkInfo: TelephonyNetworkInfoHandleable)
 }
 
@@ -21,8 +23,31 @@ protocol TelephonyHandleable {
 final class TelephonyHandler: TelephonyHandleable {
     private var telephonyNetworkInfo: TelephonyNetworkInfoHandleable
     private let notificationCenter: NotificationObservable
+    private let userStorageHandler: UserStorageHandleable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
     var reachabilityStatus: NSNumber?
+    
+    /// Custom primary carrier name (mcn) set by the user
+    var mcn: String? {
+        didSet {
+            if let mcn = mcn {
+                userStorageHandler.set(value: mcn, forKey: UserDefaultsKeys.carrierPrimaryNameKey)
+            } else {
+                userStorageHandler.removeObject(forKey: UserDefaultsKeys.carrierPrimaryNameKey)
+            }
+        }
+    }
+    
+    /// Custom secondary carrier name (mcnd) set by the user
+    var mcnd: String? {
+        didSet {
+            if let mcnd = mcnd {
+                userStorageHandler.set(value: mcnd, forKey: UserDefaultsKeys.carrierSecondaryNameKey)
+            } else {
+                userStorageHandler.removeObject(forKey: UserDefaultsKeys.carrierSecondaryNameKey)
+            }
+        }
+    }
 
     private var reachabilityStatusType: RATReachabilityStatus? {
         guard let value = reachabilityStatus?.intValue else {
@@ -36,13 +61,17 @@ final class TelephonyHandler: TelephonyHandleable {
     /// - Parameters:
     ///   - telephonyNetworkInfo: The telephony network info.
     ///   - notificationCenter: The notification center.
+    ///   - userStorageHandler: The user storage handler for persisting carrier names.
     ///
     /// - Returns: a new instance of `TelephonyHandler`.
     init(telephonyNetworkInfo: TelephonyNetworkInfoHandleable,
-         notificationCenter: NotificationObservable) {
+         notificationCenter: NotificationObservable,
+         userStorageHandler: UserStorageHandleable) {
         self.telephonyNetworkInfo = telephonyNetworkInfo
         self.notificationCenter = notificationCenter
-
+        self.userStorageHandler = userStorageHandler
+        self.mcn = userStorageHandler.string(forKey: UserDefaultsKeys.carrierPrimaryNameKey)
+        self.mcnd = userStorageHandler.string(forKey: UserDefaultsKeys.carrierSecondaryNameKey)
         configure()
     }
 

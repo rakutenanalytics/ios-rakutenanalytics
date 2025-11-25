@@ -3,6 +3,12 @@ import UIKit
 extension UIViewController: RAnalyticsClassManipulable, RuntimeLoadable {
 
     @objc public static func loadSwift() {
+        if !Bundle.main.isManualInitializationEnabled {
+            installAutoTrackingHooks()
+        }
+    }
+    
+    @objc public static func installAutoTrackingHooks() {
         replaceMethod(#selector(viewDidAppear),
                       inClass: self,
                       with: #selector(rAutotrackViewDidAppear),

@@ -11,7 +11,7 @@ import RAnalyticsTestHelpers
 // MARK: - DatabaseDirectoriesSpec
 
 final class DatabaseDirectoriesSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("FileManager") {
             describe("databaseFileURL(databaseName:databaseParentDirectory:)") {
                 let databaseName = "MyDatabase.db"

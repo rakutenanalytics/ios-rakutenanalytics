@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class URLRequestSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("URLRequest") {
             var request: URLRequest!
             let urlString = "https://www.example.com"

@@ -6,7 +6,7 @@ import class UIKit.UIWindow
 
 class NSObjectExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("NSObjectExtensionsSpec") {
 

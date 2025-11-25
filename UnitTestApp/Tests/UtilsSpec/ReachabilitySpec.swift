@@ -6,36 +6,14 @@ import struct SystemConfiguration.SCNetworkReachabilityFlags
 
 class ReachabilitySpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("Reachability") {
 
             context("init") {
-
-                it("will return nil for empty hostname") {
-                    let instance = Reachability(hostname: "")
-                    expect(instance).to(beNil())
-                }
-
-                it("will return nil for file:// url") {
-                    let instance = Reachability(url: Bundle.main.bundleURL)
-                    expect(instance).to(beNil())
-                }
-
-                it("will return nil for invalid url") {
-                    let instance = Reachability(url: URL(string: "aa")!)
-                    expect(instance).to(beNil())
-                }
-
-                it("will return an instance for valid http url") {
-                    let instance = Reachability(url: URL(string: "http://localhost:6789/")!)
+                it("will create an instance of Reachability") {
+                    let instance = Reachability()
                     expect(instance).toNot(beNil())
-                }
-
-                it("will return an instance for valid https url") {
-                    let instance = Reachability(url: URL(string: "https://google.com/")!)
-                    expect(instance).toNot(beNil())
-                    sleep(5)
                 }
             }
 
@@ -44,7 +22,7 @@ class ReachabilitySpec: QuickSpec {
                 var observer: Observer!
 
                 beforeEach {
-                    reachability = Reachability(url: URL(string: "http://localhost")!)
+                    reachability = Reachability()
                     observer = Observer()
                 }
 
@@ -54,23 +32,55 @@ class ReachabilitySpec: QuickSpec {
                     observer = nil
                 }
 
-                it("will return proper flag") {
-                    expect(reachability.flags).to(equal([SCNetworkReachabilityFlags.reachable]))
-                    expect(reachability.description).to(equal("-R -------"))
+                it("will return proper flags when connection is available") {
+                    // Simulate a reachable network
+                    reachability.setFlagsForTesting(.reachable)
+                    expect(reachability.flags).to(equal([.reachable]))
+                    expect(reachability.flags?.description).to(equal("-R"))
                 }
 
-                it("will return proper connection status") {
+                it("will return proper connection status for Wi-Fi") {
+                    // Simulate a Wi-Fi connection
+                    reachability.setFlagsForTesting(.reachable)
                     expect(reachability.connection).to(equal(.wifi))
                 }
 
-                it("will notify observers") {
+                it("will return proper connection status for cellular") {
+                    // Simulate a cellular connection
+                    reachability.setFlagsForTesting([.reachable, .isWWAN])
+                    #if targetEnvironment(simulator)
+                    expect(reachability.connection).toEventually(equal(.wifi))
+                    #else
+                    expect(reachability.connection).to(equal(.cellular))
+                    #endif
+                }
+
+                it("will return unavailable connection status when not reachable") {
+                    // Simulate no network connection
+                    reachability.setFlagsForTesting([])
+                    expect(reachability.connection).to(equal(.unavailable))
+                }
+
+                it("will notify observers when connection changes") {
                     reachability.addObserver(observer)
+
+                    // Simulate a Wi-Fi connection
+                    reachability.setFlagsForTesting(.reachable)
                     expect(observer.currentStatus).toEventually(equal(.wifi))
+
+                    // Simulate a cellular connection
+                    reachability.setFlagsForTesting([.reachable, .isWWAN])
+                    #if targetEnvironment(simulator)
+                    expect(observer.currentStatus).toEventually(equal(.wifi))
+                    #else
+                    expect(observer.currentStatus).toEventually(equal(.cellular))
+                    #endif
+
+                    // Simulate no network connection
+                    reachability.setFlagsForTesting([])
+                    expect(observer.currentStatus).toEventually(equal(.unavailable))
                 }
             }
-
-            // unfortunately there's no way to test unavailable connection on simulator,
-            // and therefore test observer notifications
         }
     }
 }

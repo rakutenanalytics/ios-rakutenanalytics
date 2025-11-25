@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class KeychainHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("KeychainHandler") {
             let key = "mykey"
             let bundleMock = BundleMock()

@@ -7,7 +7,7 @@ import UIKit
 // As UIApplication.shared is nil in Swift Package tests target, these tests are disabled.
 #else
 final class AppDelegateSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AppDelegateSpec") {
             var originalAppDelegate: UIApplicationDelegate?
             let willFinishLaunchingSelector = #selector(UIApplicationDelegate.application(_:willFinishLaunchingWithOptions:))

@@ -331,6 +331,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var pushEventHandler: PushEventHandleable
     public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
     public var automaticFieldsBuilder: AutomaticFieldsBuildable
+    public var applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
 
     public override init() {
         let appGroupId = bundle.appGroupId
@@ -343,7 +344,8 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                        reachability: Reachability(),
+                                                        userStorageHandler: userStorageHandler)
         super.init()
     }
 }
@@ -369,7 +371,8 @@ public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
                                                         telephonyNetworkInfoHandler: telephonyNetworkInfoHandler,
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
-                                                        reachability: Reachability(hostname: ReachabilityConstants.host))
+                                                        reachability: Reachability(),
+                                                        userStorageHandler: userStorageHandler)
     }
 }
 
@@ -524,6 +527,20 @@ public final class ApplicationMock: NSObject, StatusBarOrientationGettable {
     }
 }
 
+// MARK: - ApplicationStateMock
+
+public final class ApplicationStateMock: ApplicationStateGettable {
+    public var injectedValue: UIApplication.State
+    
+    public init(_ injectedValue: UIApplication.State) {
+        self.injectedValue = injectedValue
+    }
+    
+    public var applicationState: UIApplication.State {
+        injectedValue
+    }
+}
+
 // MARK: - AnalyticsManagerMock
 
 public final class AnalyticsManagerMock: AnalyticsManageable {
@@ -550,17 +567,10 @@ public final class AnalyticsManagerMock: AnalyticsManageable {
 
 public final class ReachabilityMock: ReachabilityType {
     public var flags: SCNetworkReachabilityFlags?
-
     public var connection: Reachability.Connection = .cellular
-
-    public init() {
-    }
-
-    public func addObserver(_ observer: ReachabilityObserver) {
-    }
-
-    public func removeObserver(_ observer: ReachabilityObserver) {
-    }
+    public init() {}
+    public func addObserver(_ observer: ReachabilityObserver) {}
+    public func removeObserver(_ observer: ReachabilityObserver) {}
 }
 
 // MARK: - CookieStoreObserver
@@ -617,6 +627,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var version: String? = "1"
     public var applicationSceneManifest: RakutenAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
+    public var isManualInitializationEnabled: Bool = false
 
     public override init() {
         self.dictionary = [String: Any]()

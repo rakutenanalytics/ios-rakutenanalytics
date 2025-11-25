@@ -36,7 +36,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     /// Sender
     /// - Note: marked as `@objc` for this deprecated method:
     /// `@objc public static func endpointAddress() -> URL?`
-    @objc private let sender: Sendable?
+    @objc private let sender: AnalyticsSendable?
 
     /// The RAT Automatic Fields Setter
     private let automaticFieldsBuilder: AutomaticFieldsBuildable
@@ -135,7 +135,15 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
-        singleton
+        if Bundle.main.isManualInitializationEnabled {
+            guard AnalyticsManager.isConfigured else {
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+                return singleton
+            }
+            return singleton
+        } else {
+            return singleton
+        }
     }
 
     /// Creates a new instance of `RAnalyticsRATTracker`.
@@ -207,6 +215,20 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             #endif
             return
         }
+    }
+    
+    /// Update carrier names in the RAnalyticsRATTracker's AutomaticFieldsBuilder
+    /// - Parameters:
+    ///   - mcn: The primary carrier name
+    ///   - mcnd: The secondary carrier name
+    internal func updateCarrierNames(mcn: String?, mcnd: String?) {
+        automaticFieldsBuilder.updateCarrierNames(mcn: mcn, mcnd: mcnd)
+    }
+    
+    /// Get current carrier names from the RAnalyticsRATTracker's AutomaticFieldsBuilder
+    /// - Returns: Tuple containing primary and secondary carrier names
+    internal func getCarrierNames() -> (primary: String?, secondary: String?) {
+        return automaticFieldsBuilder.getCarrierNames()
     }
 }
 
@@ -490,6 +512,12 @@ extension RAnalyticsRATTracker {
                 payload.removeObject(forKey: "pgid")
             }
         }
+        
+        if let pageSection = event.parameters[RAnalyticsEvent.Parameter.pageSection] as? String, !pageSection.isEmpty {
+            payload[PayloadParameterKeys.pageSection] = pageSection
+        } else {
+            payload.removeObject(forKey: PayloadParameterKeys.pageSection)
+        }
 
         return true
     }
@@ -666,8 +694,17 @@ extension RAnalyticsRATTracker {
     /// - Parameters:
     ///     - accountId: RAT account ID.
     ///     - applicationId: RAT application ID.
-    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int64, applicationId: Int64) {
-        duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
+    ///
+    /// - Returns: Whether or not the duplicate account was added.
+    ///
+    /// Note: Negative and zero values are not accepted. Both `accountId` and `applicationId` must be > 0.
+    @discardableResult
+    @objc(addDuplicateAccountWithId:applicationId:) public func addDuplicateAccount(accountId: Int64, applicationId: Int64) -> Bool {
+        guard (accountId > 0) && (applicationId > 0) else {
+            return false
+        }
+        let (wasAdded, _) = duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
+        return wasAdded
     }
     
     /// Validates the format of a pgid parameter.

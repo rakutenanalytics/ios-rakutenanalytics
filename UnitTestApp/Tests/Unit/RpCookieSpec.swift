@@ -7,7 +7,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class RpCookieSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RpCookie") {
             var cookie: HTTPCookie?
             let dependenciesContainer = SimpleContainerMock()
@@ -48,8 +48,8 @@ final class RpCookieSpec: QuickSpec {
                         cookie = rpCookieFromStorage()
                     }
 
-                    expect(cookie?.name).toEventually(equal("TestCookieName"))
-                    expect(cookie?.value).to(equal("TestCookieValue"))
+                    expect(cookie?.name).toEventually(equal("TestCookieName"), timeout: .seconds(2))
+                    expect(cookie?.value).toEventually(equal("TestCookieValue"), timeout: .seconds(2))
                 }
             }
 
@@ -68,8 +68,8 @@ final class RpCookieSpec: QuickSpec {
                         cookie = rpCookieFromStorage()
                     }
 
-                    expect(cookie?.name).toEventually(equal("Rp"))
-                    expect(cookie?.value).to(equal("CookieValue"))
+                    expect(cookie?.name).toEventually(equal("Rp"), timeout: .seconds(2))
+                    expect(cookie?.value).toEventually(equal("CookieValue"), timeout: .seconds(2))
                 }
             }
 
@@ -88,10 +88,11 @@ final class RpCookieSpec: QuickSpec {
                         cookie = rpCookieFromStorage()
                     }
 
-                    expect(cookie).toAfterTimeout(beNil(), timeout: 2.0)
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                        expect(cookie).to(beNil())
+                    }
                 }
             }
-
             context("When a server error occurs") {
                 it("should return nil cookie") {
                     let sessionMock = URLSessionMock.mock(originalInstance: .shared)
@@ -105,7 +106,9 @@ final class RpCookieSpec: QuickSpec {
                         cookie = rpCookieFromStorage()
                     }
 
-                    expect(cookie).toAfterTimeout(beNil(), timeout: 2.0)
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 2.0) {
+                        expect(cookie).to(beNil())
+                    }
                 }
             }
         }

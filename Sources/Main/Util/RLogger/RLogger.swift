@@ -7,52 +7,50 @@ enum RLoggingLevel: Int {
 /// Log messages for each level: verbose, debug, info, warning, error, none
 /// Setting a value to loggingLevel filters the logged messages
 struct RLogger {
-
+    
     static var loggingLevel = RLoggingLevel.error
-
+    
     @discardableResult
     private static func log(_ loggingLevelParam: RLoggingLevel, message: String) -> String? {
-        guard loggingLevel != .none && loggingLevel.rawValue <= loggingLevelParam.rawValue else {
-             return nil
-         }
-
-         switch loggingLevelParam {
-         case .verbose:
- #if DEBUG
-             NSLog("🟢 \(RLogger.callerModuleName)(Verbose): %@", message)
- #endif
-         case .debug:
- #if DEBUG
-             NSLog("🟡 \(RLogger.callerModuleName)(Debug): %@", message)
- #endif
-         case .info: NSLog("🔵 \(RLogger.callerModuleName)(Info): %@", message)
-         case .warning: NSLog("🟠 \(RLogger.callerModuleName)(Warning): %@", message)
-         case .error: NSLog("🔴 \(RLogger.callerModuleName)(Error): %@", message)
-         default: ()
-         }
-         return message
+        guard loggingLevel != .none && loggingLevel.rawValue <= loggingLevelParam.rawValue else { return nil }
+        
+        switch loggingLevelParam {
+        case .verbose:
+        #if DEBUG
+            NSLog("🟢 \(RLogger.callerModuleName)(Verbose): %@", message)
+        #endif
+        case .debug:
+        #if DEBUG
+            NSLog("🟡 \(RLogger.callerModuleName)(Debug): %@", message)
+        #endif
+        case .info: NSLog("🔵 \(RLogger.callerModuleName)(Info): %@", message)
+        case .warning: NSLog("🟠 \(RLogger.callerModuleName)(Warning): %@", message)
+        case .error: NSLog("🔴 \(RLogger.callerModuleName)(Error): %@", message)
+        default: ()
+        }
+        return message
     }
-
+    
     @discardableResult
     static func verbose(message: String) -> String? {
         log(.verbose, message: message)
     }
-
+    
     @discardableResult
     static func debug(message: String) -> String? {
         log(.debug, message: message)
     }
-
+    
     @discardableResult
     static func info(message: String) -> String? {
         log(.info, message: message)
     }
-
+    
     @discardableResult
     static func warning(message: String) -> String? {
         log(.warning, message: message)
     }
-
+    
     @discardableResult
     static func error(message: String) -> String? {
         log(.error, message: message)

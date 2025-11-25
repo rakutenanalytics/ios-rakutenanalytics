@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://pages.ghe.rakuten-it.com/mag/ios-analytics-docs/"
   s.license      = { :type => 'Proprietary', :file => 'LICENSE' }
   s.source       = { :git => "https://gitpub.rakuten-it.com/scm/eco/core-ios-analytics.git", :tag => 'broadcast-'+s.version.to_s }
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '15.0'
   s.watchos.deployment_target = '4.0'
   s.requires_arc = true
   

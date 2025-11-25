@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 
 final class AnalyticsEventObserverSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsEventObserver") {
             let eventsToCache = [[PushEventPayloadKeys.eventNameKey: RAnalyticsEvent.Name.pushNotificationExternal,
                                   PushEventPayloadKeys.eventParametersKey: ["rid": "abcd1234"]]]
@@ -58,7 +58,9 @@ final class AnalyticsEventObserverSpec: QuickSpec {
                     pushEventHandler.save(darwinEvents: eventsToCache)
                     DarwinNotificationHelper.send(notificationName: AnalyticsDarwinNotification.eventsTrackingRequest)
 
-                    expect(delegate.processedEvents).toAfterTimeout(beEmpty())
+                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        expect(delegate.processedEvents).to(beEmpty())
+                    }
                 }
             }
 

@@ -13,7 +13,7 @@ private struct NilHasher: SecureHashable {
 }
 
 final class DeviceIdentifierHandlerSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("DeviceIdentifierHandler") {
             let deviceIdentifierMock = DeviceMock()
 

@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 #endif
 
 final class AnalyticsManagerUASpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnalyticsManager's Web View User Agent") {
             let shortVersion = "1.0"
             let bundleIdentifier = "jp.co.rakuten.Host"

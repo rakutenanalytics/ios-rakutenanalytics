@@ -5,7 +5,7 @@ import Nimble
 
 class StringExtensionsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
 
         describe("StringExtensions") {
 

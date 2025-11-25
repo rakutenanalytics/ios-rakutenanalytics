@@ -8,7 +8,8 @@ import RAnalyticsTestHelpers
 
 // MARK: - EnvironmentBundleMock
 
-private final class EnvironmentBundleMock: Bundle {
+private final class EnvironmentBundleMock: Bundle, @unchecked Sendable {
+    
     var injectedDictionary: [String: Any]?
 
     override var infoDictionary: [String: Any]? {
@@ -24,7 +25,7 @@ private final class EnvironmentBundleMock: Bundle {
 
 final class EnvironmentBundleSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("EnvironmentBundle") {
             let bundleMock = EnvironmentBundleMock()
 
@@ -293,12 +294,28 @@ final class EnvironmentBundleSpec: QuickSpec {
                     expect(sdkComponentMap?["org.cocoapods.RInAppMessaging"] as? String).to(equal("inappmessaging"))
                 }
             }
+            
+            describe("RATEnableManualInitialization") {
+                it("should return false if not configured") {
+                    bundleMock.injectedDictionary = nil
+                    expect(bundleMock.isManualInitializationEnabled).to(equal(false))
+                }
+                
+                it("should return true if configured as true") {
+                    bundleMock.injectedDictionary = ["RATEnableManualInitialization": true]
+                    expect(bundleMock.isManualInitializationEnabled).to(equal(true))
+                }
+                
+                it("should return true if configured as false") {
+                    bundleMock.injectedDictionary = ["RATEnableManualInitialization": false]
+                    expect(bundleMock.isManualInitializationEnabled).to(equal(false))
+                }
+            }
 
             describe("applicationSceneManifest") {
                 context("When the bundle dictionary is nil") {
                     it("should return nil") {
                         bundleMock.injectedDictionary = nil
-
                         expect(bundleMock.applicationSceneManifest).to(beNil())
                     }
                 }
@@ -306,7 +323,6 @@ final class EnvironmentBundleSpec: QuickSpec {
                 context("When the bundle dictionary is empty") {
                     it("should return nil") {
                         bundleMock.injectedDictionary = [:]
-
                         expect(bundleMock.applicationSceneManifest).to(beNil())
                     }
                 }

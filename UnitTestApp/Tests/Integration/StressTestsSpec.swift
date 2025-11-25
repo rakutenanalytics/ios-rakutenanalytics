@@ -10,7 +10,7 @@ import class RAnalyticsTestHelpers.URLSessionMock
 
 class StressTestsSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("Stress tests") {
 
             let backgroundThread = DispatchQueue(label: "StressTests.Background", qos: .default)

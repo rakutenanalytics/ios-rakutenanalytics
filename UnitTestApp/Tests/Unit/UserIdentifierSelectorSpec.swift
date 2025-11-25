@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - UserIdentifierSelectorSpec
 
 final class UserIdentifierSelectorSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("UserIdentifierSelector") {
             let notificationName = Notification.Name(rawValue: "com.rakuten.esd.sdk.events.login.other")
             let dependenciesContainer = SimpleContainerMock()

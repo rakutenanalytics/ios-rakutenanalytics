@@ -5,9 +5,7 @@ import UIKit
 enum SceneDelegateHelper {
 
     /// Autotrack the UISceneDelegate functions.
-    static func autoTrack() {
-        let bundle: EnvironmentBundle = Bundle.main
-
+    static func autoTrack(bundle: EnvironmentBundle = Bundle.main) {
         guard let applicationSceneManifest = bundle.applicationSceneManifest else {
             RLogger.debug(message: "The app's Info.plist is not configured with UIApplicationSceneManifest.")
             return

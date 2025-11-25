@@ -5,12 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "RakutenAnalytics",
-    platforms: [.iOS(.v12)],
+    platforms: [.iOS(.v15)],
     products: [.library(name: "RakutenAnalytics", targets: ["RakutenAnalytics"])],
     dependencies: [
-             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "5.0.1")),
-             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "10.0.0")),
-             .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.7.1")),
+             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "7.6.2")),
+             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "13.6.2")),
+             .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.10.1")),
         ],
     targets: [
         .target(name: "RakutenAnalytics",

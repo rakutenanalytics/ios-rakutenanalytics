@@ -9,7 +9,7 @@ import RAnalyticsTestHelpers
 // MARK: - AppleClassSpec
 
 final class AppleClassSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("NSObject") {
             describe("isAppleClass") {
                 it("should return true if the class is an Apple class") {

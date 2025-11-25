@@ -99,7 +99,7 @@ final class UNUserNotificationCenterDelegateSpec: QuickSpec {
     static var applicationState: UIApplication.State = .active
     static var sendEvent: ((String, [String: Any]?) -> Void)?
 
-    override func spec() {
+    override class func spec() {
         describe("UNUserNotificationCenterDelegate") {
             let testUNNotificationDelegate = TestUNNotificationDelegate()
 

@@ -8,7 +8,7 @@ import RAnalyticsTestHelpers
 
 final class ExtensionEventTrackingSpec: QuickSpec {
 
-    override func spec() {
+    override class func spec() {
         describe("ExtensionEventTracking") {
             let pushEventHandler: PushEventHandler = {
                 return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),

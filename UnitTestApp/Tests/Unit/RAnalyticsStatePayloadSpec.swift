@@ -10,7 +10,7 @@ import RAnalyticsTestHelpers
 // MARK: - RAnalyticsStateSpec
 
 final class RAnalyticsStatePayloadSpec: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("RAnalyticsState's Payload Spec") {
             describe("corePayload") {
                 let sessionIdentifier = "CA7A88AR-82FE-40C9-A836-B1B3455DECAF"
