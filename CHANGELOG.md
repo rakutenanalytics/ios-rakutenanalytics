@@ -1,5 +1,10 @@
 # Changelog
 
+## 11.1.0 (2025-...-...)
+
+### Features
+* CONRAT-41923: Add sdk_source parameter for SDK usage tracking.
+
 ## 11.0.0 (2025-...-...)
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.

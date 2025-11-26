@@ -8,6 +8,10 @@ enum PayloadParameterKeys {
     /// The RAT application identifier.
     static let aid = "aid"
 
+    /// The SDK source parameter indicating which Analytics SDK is used.
+    /// Values: "main" (Analytics SDK), "ext" (Analytics SDK Extensions), "wrapper" (Analytics SDK Wrapper).
+    static let sdkSource = "sdk_source"
+
     /// The RAT event type.
     static let etype = "etype"
 

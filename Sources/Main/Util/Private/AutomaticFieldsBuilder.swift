@@ -33,6 +33,7 @@ protocol AutomaticFieldsBuildable {
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
          reachability: ReachabilityType?,
          userStorageHandler: UserStorageHandleable)
+    func addSdkSourceIfNeeded(_ payload: NSMutableDictionary, event: RAnalyticsEvent)
     func addCommonParameters(_ payload: NSMutableDictionary, state: RAnalyticsState)
     func addLocation(_ payload: NSMutableDictionary,
                      state: RAnalyticsState,
@@ -104,6 +105,30 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
                                         queue: nil) { _ in
             self.telephonyHandler.update(telephonyNetworkInfo: CTTelephonyNetworkInfo())
         }
+    }
+
+    /// Add sdk_source parameter to the payload if not already set.
+    /// This allows extensions and wrappers to set sdk_source before calling process(),
+    /// and the main SDK will not overwrite their values.
+    ///
+    /// - Parameters:
+    ///   - payload: The payload dictionary.
+    ///   - event: The event being processed (used to check event parameters for custom events).
+    func addSdkSourceIfNeeded(_ payload: NSMutableDictionary, event: RAnalyticsEvent) {
+        // Check if sdk_source is already set in payload (and not empty)
+        if let existingValue = payload[PayloadParameterKeys.sdkSource] as? String, !existingValue.isEmpty {
+            return
+        }
+        
+        // For custom events, check event parameters since regular params don't get copied to payload
+        if event.name == RAnalyticsEvent.Name.custom,
+           let sdkSource = event.parameters["sdk_source"] as? String, !sdkSource.isEmpty {
+            payload[PayloadParameterKeys.sdkSource] = sdkSource
+            return
+        }
+
+        // Always set to "main" if not set or empty
+        payload[PayloadParameterKeys.sdkSource] = "main"
     }
 
     /// Add the automatic fields to the RAT Payload.

@@ -912,6 +912,153 @@ class RAnalyticsRATTrackerProcessSpec: QuickSpec {
                     expect(ratTracker.process(event: event, state: Tracking.defaultState)).to(beFalse())
                 }
             }
+
+            describe("sdk_source parameter") {
+                context("When sdk_source is not set in event parameters") {
+                    it("should add sdk_source with value 'main' to payload") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.sessionStart, parameters: nil)
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.sessionStart) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                    }
+
+                    it("should add sdk_source to payload at top level (same level as acc and aid)") {
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: nil)
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                        expect(payload?[PayloadParameterKeys.acc]).toNot(beNil())
+                        expect(payload?[PayloadParameterKeys.aid]).toNot(beNil())
+                        expect(payload?.keys.contains(PayloadParameterKeys.sdkSource)).to(beTrue())
+                    }
+                }
+
+                context("When sdk_source is set to 'ext' in event parameters for rat.* events") {
+                    it("should use 'ext' value and not overwrite it") {
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["sdk_source": "ext"])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("ext"))
+                    }
+
+                    it("should preserve 'ext' value for custom events") {
+                        let event = RAnalyticsEvent(
+                            name: RAnalyticsEvent.Name.custom,
+                            parameters: [
+                                "eventName": "testEvent",
+                                "sdk_source": "ext"
+                            ])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "testEvent") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("ext"))
+                    }
+                }
+
+                context("When sdk_source is set to 'wrapper' in event parameters") {
+                    it("should use 'wrapper' value and not overwrite it") {
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["sdk_source": "wrapper"])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("wrapper"))
+                    }
+                }
+
+                context("When sdk_source is already set in payload") {
+                    it("should not overwrite existing sdk_source value") {
+                        let event = RAnalyticsEvent(name: "rat.test_event", parameters: ["sdk_source": "ext"])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("ext"))
+                    }
+                }
+
+                context("When sdk_source is set with empty string in rat.* events") {
+                    it("should use 'main' as default value") {
+                        let event = RAnalyticsEvent(name: "rat.test_event",
+                                                    parameters: ["sdk_source": ""])
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: "test_event") {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        // Empty string in parameters gets added to payload, but addSdkSourceIfNeeded will set it to "main" if empty
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                    }
+                }
+
+                context("sdk_source for different event types") {
+                    it("should add sdk_source to initialLaunch event") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.initialLaunch, parameters: nil)
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.initialLaunch) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                    }
+
+                    it("should add sdk_source to install event") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.install, parameters: nil)
+                        var payload: [String: Any]?
+
+                        expecter.expectEvent(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.install) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                    }
+
+                    it("should add sdk_source to pageVisit event") {
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pageVisit, parameters: nil)
+                        var payload: [String: Any]?
+
+                        let state: RAnalyticsState! = Tracking.defaultState.copy() as? RAnalyticsState
+                        state.referralTracking = .page(currentPage: Tracking.customPage)
+
+                        expecter.expectEvent(event, state: state, equal: RAnalyticsEvent.Name.pageVisitForRAT) {
+                            payload = $0.first
+                        }
+
+                        expect(payload).toEventuallyNot(beNil())
+                        expect(payload?[PayloadParameterKeys.sdkSource] as? String).to(equal("main"))
+                    }
+                }
+            }
         }
     }
 }

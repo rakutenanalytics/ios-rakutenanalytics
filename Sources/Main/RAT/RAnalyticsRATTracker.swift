@@ -336,6 +336,7 @@ extension RAnalyticsRATTracker {
             payload[PayloadParameterKeys.cp] = extra
         }
 
+        automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
         automaticFieldsBuilder.addCommonParameters(payload, state: state)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,
@@ -521,6 +522,7 @@ extension RAnalyticsRATTracker {
 
         return true
     }
+
 }
 
 // MARK: - Page Visit Event
