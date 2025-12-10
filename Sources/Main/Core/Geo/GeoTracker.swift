@@ -101,6 +101,7 @@ extension GeoTracker: Tracker {
 
         payload[PayloadParameterKeys.etype] = event.name
 
+        automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
         automaticFieldsBuilder.addCommonParameters(payload, state: state)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,
