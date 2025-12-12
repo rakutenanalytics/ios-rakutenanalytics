@@ -1,0 +1,106 @@
+import Foundation
+
+/// Helper functions for Testing framework, similar to Quick/Nimble's `toEventually` and `performAsyncTest`
+public enum TestingHelpers {
+    
+    /// Polls until a condition is met, similar to `toEventually` in Quick/Nimble
+    /// - Parameters:
+    ///   - timeout: Maximum time to wait for the condition (default: 2.0 seconds)
+    ///   - condition: Closure that returns true when the condition is met
+    /// - Throws: `TestError.conditionNotMet` if condition is not met within timeout
+    public static func eventually(timeout: TimeInterval = 2.0, condition: @escaping () -> Bool) async throws {
+        let startTime = Date()
+        let pollInterval = 50_000_000 // 0.05 seconds
+        
+        while Date().timeIntervalSince(startTime) < timeout {
+            if condition() {
+                return
+            }
+            try await Task.sleep(nanoseconds: UInt64(pollInterval))
+        }
+        
+        if !condition() {
+            throw TestError.conditionNotMet
+        }
+    }
+    
+    /// Polls until a condition is met on main actor, allowing run loop events to process
+    /// Similar to `toEventually` in Quick/Nimble, but ensures run loop processes timer events
+    /// - Parameters:
+    ///   - timeout: Maximum time to wait for the condition (default: 2.0 seconds)
+    ///   - condition: Closure that returns true when the condition is met
+    /// - Throws: `TestError.conditionNotMet` if condition is not met within timeout
+    @MainActor
+    public static func eventuallyOnMain(timeout: TimeInterval = 2.0, condition: @escaping () -> Bool) async throws {
+        let startTime = Date()
+        // Use a longer poll interval to give run loop time to process timer events
+        let pollInterval = 100_000_000 // 0.1 seconds
+        
+        while Date().timeIntervalSince(startTime) < timeout {
+            // Yield to allow other tasks and run loop events to process
+            await Task.yield()
+            
+            if condition() {
+                return
+            }
+            // Sleep longer to allow run loop to process timer events
+            try await Task.sleep(nanoseconds: UInt64(pollInterval))
+        }
+        
+        if !condition() {
+            throw TestError.conditionNotMet
+        }
+    }
+    
+    /// Performs an async test similar to `QuickSpec.performAsyncTest`
+    /// Waits for a specified timeout period, then executes the expectation closure
+    /// - Parameters:
+    ///   - timeForExecution: Expected time for async work to complete (used for documentation/logging)
+    ///   - timeout: Time to wait before executing the expectation closure
+    ///   - expectation: Closure containing test assertions to execute after the wait period
+    /// - Note: This is equivalent to Quick/Nimble's `performAsyncTest`. The expectation is executed
+    ///   after `timeout` seconds, allowing async work (expected to complete in `timeForExecution`) to finish.
+    public static func performAsyncTest(
+        timeForExecution: TimeInterval,
+        timeout: TimeInterval,
+        expectation: @escaping () async throws -> Void
+    ) async throws {
+        // Wait for the timeout period (equivalent to Quick's asyncAfter delay)
+        let timeoutNanoseconds = UInt64(timeout * 1_000_000_000)
+        try await Task.sleep(nanoseconds: timeoutNanoseconds)
+        
+        // Execute the expectation
+        try await expectation()
+    }
+    
+    /// Performs an async test on the main actor, similar to `QuickSpec.performAsyncTest`
+    /// Waits for a specified timeout period, then executes the expectation closure on the main thread
+    /// - Parameters:
+    ///   - timeForExecution: Expected time for async work to complete (used for documentation/logging)
+    ///   - timeout: Time to wait before executing the expectation closure
+    ///   - expectation: Closure containing test assertions to execute after the wait period
+    /// - Note: This ensures the expectation runs on the main thread, useful for UI-related tests.
+    ///   The expectation is executed after `timeout` seconds, allowing async work to finish.
+    @MainActor
+    public static func performAsyncTestOnMain(
+        timeForExecution: TimeInterval,
+        timeout: TimeInterval,
+        expectation: @escaping () async throws -> Void
+    ) async throws {
+        // Wait for the timeout period, yielding to allow run loop to process events
+        let startTime = Date()
+        while Date().timeIntervalSince(startTime) < timeout {
+            await Task.yield()
+            try await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
+        }
+        
+        // Execute the expectation on main actor
+        try await expectation()
+    }
+    
+    /// Error thrown when a condition is not met within the timeout period
+    public enum TestError: Error {
+        case conditionNotMet
+    }
+}
+

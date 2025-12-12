@@ -1,80 +1,85 @@
-import Quick
-import Nimble
+import Testing
 @testable import RakutenAnalytics
 
-class RLoggerSpec: QuickSpec {
-    override class func spec() {
-
-        describe("RLogger") {
-
-            beforeSuite {
-                // context("loggingLevel")
-                // it("should return RLoggingLevel.error by default")
-                expect(RLogger.loggingLevel).to(equal(.error))
+@Suite("RLogger")
+struct RLoggerSpec {
+    
+    @Test("should return RLoggingLevel.error by default")
+    func testDefaultLoggingLevel() {
+        // Verify default logging level is .error
+        #expect(RLogger.loggingLevel == .error)
+    }
+    
+    @Suite("callerModuleName")
+    struct CallerModuleNameTests {
+        @Test("should return RakutenAnalytics or UtilsSpec (spm)")
+        func testCallerModuleName() {
+            #expect(["RakutenAnalytics", "UtilsSpec", "UnitTests"].contains(RLogger.callerModuleName))
+        }
+    }
+    
+    @Suite("log(_:message:)")
+    struct LogMessageTests {
+        @Suite("when a message is logged")
+        struct WhenMessageIsLoggedTests {
+            @Test("should return message from this level: RLoggingLevel.verbose")
+            func testVerboseLevel() {
+                RLogger.loggingLevel = .verbose
+                #expect(RLogger.verbose(message: "test") == "test")
+                #expect(RLogger.debug(message: "test") == "test")
+                #expect(RLogger.info(message: "test") == "test")
+                #expect(RLogger.warning(message: "test") == "test")
+                #expect(RLogger.error(message: "test") == "test")
             }
-
-            describe("callerModuleName") {
-                it("should return RakutenAnalytics or UtilsSpec (spm)") {
-                    expect(["RakutenAnalytics", "UtilsSpec", "UnitTests"]).to(contain(RLogger.callerModuleName))
-                }
+            
+            @Test("should return message from this level: RLoggingLevel.debug")
+            func testDebugLevel() {
+                RLogger.loggingLevel = .debug
+                #expect(RLogger.verbose(message: "test") == nil)
+                #expect(RLogger.debug(message: "test") == "test")
+                #expect(RLogger.info(message: "test") == "test")
+                #expect(RLogger.warning(message: "test") == "test")
+                #expect(RLogger.error(message: "test") == "test")
             }
-
-            describe("log(_:message:)") {
-                context("when a message is logged") {
-                    it("should return message from this level: RLoggingLevel.verbose") {
-                        RLogger.loggingLevel = .verbose
-                        expect(RLogger.verbose(message: "test")).to(equal("test"))
-                        expect(RLogger.debug(message: "test")).to(equal("test"))
-                        expect(RLogger.info(message: "test")).to(equal("test"))
-                        expect(RLogger.warning(message: "test")).to(equal("test"))
-                        expect(RLogger.error(message: "test")).to(equal("test"))
-                    }
-
-                    it("should return message from this level: RLoggingLevel.debug") {
-                        RLogger.loggingLevel = .debug
-                        expect(RLogger.verbose(message: "test")).to(beNil())
-                        expect(RLogger.debug(message: "test")).to(equal("test"))
-                        expect(RLogger.info(message: "test")).to(equal("test"))
-                        expect(RLogger.warning(message: "test")).to(equal("test"))
-                        expect(RLogger.error(message: "test")).to(equal("test"))
-                    }
-
-                    it("should return message from this level: RLoggingLevel.info") {
-                        RLogger.loggingLevel = .info
-                        expect(RLogger.verbose(message: "test")).to(beNil())
-                        expect(RLogger.debug(message: "test")).to(beNil())
-                        expect(RLogger.info(message: "test")).to(equal("test"))
-                        expect(RLogger.warning(message: "test")).to(equal("test"))
-                        expect(RLogger.error(message: "test")).to(equal("test"))
-                    }
-
-                    it("should return message from this level: RLoggingLevel.warning") {
-                        RLogger.loggingLevel = .warning
-                        expect(RLogger.verbose(message: "test")).to(beNil())
-                        expect(RLogger.debug(message: "test")).to(beNil())
-                        expect(RLogger.info(message: "test")).to(beNil())
-                        expect(RLogger.warning(message: "test")).to(equal("test"))
-                        expect(RLogger.error(message: "test")).to(equal("test"))
-                    }
-
-                    it("should return message from this level: RLoggingLevel.error") {
-                        RLogger.loggingLevel = .error
-                        expect(RLogger.verbose(message: "test")).to(beNil())
-                        expect(RLogger.debug(message: "test")).to(beNil())
-                        expect(RLogger.info(message: "test")).to(beNil())
-                        expect(RLogger.warning(message: "test")).to(beNil())
-                        expect(RLogger.error(message: "test")).to(equal("test"))
-                    }
-
-                    it("should return message from this level: RLoggingLevel.none") {
-                        RLogger.loggingLevel = .none
-                        expect(RLogger.verbose(message: "test")).to(beNil())
-                        expect(RLogger.debug(message: "test")).to(beNil())
-                        expect(RLogger.info(message: "test")).to(beNil())
-                        expect(RLogger.warning(message: "test")).to(beNil())
-                        expect(RLogger.error(message: "test")).to(beNil())
-                    }
-                }
+            
+            @Test("should return message from this level: RLoggingLevel.info")
+            func testInfoLevel() {
+                RLogger.loggingLevel = .info
+                #expect(RLogger.verbose(message: "test") == nil)
+                #expect(RLogger.debug(message: "test") == nil)
+                #expect(RLogger.info(message: "test") == "test")
+                #expect(RLogger.warning(message: "test") == "test")
+                #expect(RLogger.error(message: "test") == "test")
+            }
+            
+            @Test("should return message from this level: RLoggingLevel.warning")
+            func testWarningLevel() {
+                RLogger.loggingLevel = .warning
+                #expect(RLogger.verbose(message: "test") == nil)
+                #expect(RLogger.debug(message: "test") == nil)
+                #expect(RLogger.info(message: "test") == nil)
+                #expect(RLogger.warning(message: "test") == "test")
+                #expect(RLogger.error(message: "test") == "test")
+            }
+            
+            @Test("should return message from this level: RLoggingLevel.error")
+            func testErrorLevel() {
+                RLogger.loggingLevel = .error
+                #expect(RLogger.verbose(message: "test") == nil)
+                #expect(RLogger.debug(message: "test") == nil)
+                #expect(RLogger.info(message: "test") == nil)
+                #expect(RLogger.warning(message: "test") == nil)
+                #expect(RLogger.error(message: "test") == "test")
+            }
+            
+            @Test("should return message from this level: RLoggingLevel.none")
+            func testNoneLevel() {
+                RLogger.loggingLevel = .none
+                #expect(RLogger.verbose(message: "test") == nil)
+                #expect(RLogger.debug(message: "test") == nil)
+                #expect(RLogger.info(message: "test") == nil)
+                #expect(RLogger.warning(message: "test") == nil)
+                #expect(RLogger.error(message: "test") == nil)
             }
         }
     }

@@ -1,94 +1,136 @@
 import Foundation
-import Quick
-import Nimble
+import Testing
 import struct SystemConfiguration.SCNetworkReachabilityFlags
 @testable import RakutenAnalytics
 
-class ReachabilitySpec: QuickSpec {
-
-    override class func spec() {
-
-        describe("Reachability") {
-
-            context("init") {
-                it("will create an instance of Reachability") {
-                    let instance = Reachability()
-                    expect(instance).toNot(beNil())
-                }
+@Suite("Reachability")
+struct ReachabilitySpec {
+    
+    @Suite("init")
+    struct InitTests {
+        @Test("will create an instance of Reachability")
+        func testCreatesInstance() {
+            let instance = Reachability()
+            // Verify instance was created successfully by checking it's not nil
+            // Since Reachability() returns non-optional, if initialization succeeds, instance exists
+            _ = instance
+        }
+    }
+    
+    @Suite("connection available")
+    struct ConnectionAvailableTests {
+        func createReachability() -> Reachability {
+            return Reachability()
+        }
+        
+        fileprivate func createObserver() -> Observer {
+            return Observer()
+        }
+        
+        @Test("will return proper flags when connection is available")
+        func testReturnsProperFlags() {
+            let reachability = createReachability()
+            let observer = createObserver()
+            defer {
+                reachability.removeObserver(observer)
             }
-
-            context("connection available") {
-                var reachability: Reachability!
-                var observer: Observer!
-
-                beforeEach {
-                    reachability = Reachability()
-                    observer = Observer()
-                }
-
-                afterEach {
-                    reachability.removeObserver(observer)
-                    reachability = nil
-                    observer = nil
-                }
-
-                it("will return proper flags when connection is available") {
-                    // Simulate a reachable network
-                    reachability.setFlagsForTesting(.reachable)
-                    expect(reachability.flags).to(equal([.reachable]))
-                    expect(reachability.flags?.description).to(equal("-R"))
-                }
-
-                it("will return proper connection status for Wi-Fi") {
-                    // Simulate a Wi-Fi connection
-                    reachability.setFlagsForTesting(.reachable)
-                    expect(reachability.connection).to(equal(.wifi))
-                }
-
-                it("will return proper connection status for cellular") {
-                    // Simulate a cellular connection
-                    reachability.setFlagsForTesting([.reachable, .isWWAN])
-                    #if targetEnvironment(simulator)
-                    expect(reachability.connection).toEventually(equal(.wifi))
-                    #else
-                    expect(reachability.connection).to(equal(.cellular))
-                    #endif
-                }
-
-                it("will return unavailable connection status when not reachable") {
-                    // Simulate no network connection
-                    reachability.setFlagsForTesting([])
-                    expect(reachability.connection).to(equal(.unavailable))
-                }
-
-                it("will notify observers when connection changes") {
-                    reachability.addObserver(observer)
-
-                    // Simulate a Wi-Fi connection
-                    reachability.setFlagsForTesting(.reachable)
-                    expect(observer.currentStatus).toEventually(equal(.wifi))
-
-                    // Simulate a cellular connection
-                    reachability.setFlagsForTesting([.reachable, .isWWAN])
-                    #if targetEnvironment(simulator)
-                    expect(observer.currentStatus).toEventually(equal(.wifi))
-                    #else
-                    expect(observer.currentStatus).toEventually(equal(.cellular))
-                    #endif
-
-                    // Simulate no network connection
-                    reachability.setFlagsForTesting([])
-                    expect(observer.currentStatus).toEventually(equal(.unavailable))
-                }
+            
+            // Simulate a reachable network
+            reachability.setFlagsForTesting(.reachable)
+            #expect(reachability.flags == [.reachable])
+            #expect(reachability.flags?.description == "-R")
+        }
+        
+        @Test("will return proper connection status for Wi-Fi")
+        func testReturnsWiFiConnectionStatus() {
+            let reachability = createReachability()
+            let observer = createObserver()
+            defer {
+                reachability.removeObserver(observer)
             }
+            
+            // Simulate a Wi-Fi connection
+            reachability.setFlagsForTesting(.reachable)
+            #expect(reachability.connection == .wifi)
+        }
+        
+        @Test("will return proper connection status for cellular")
+        func testReturnsCellularConnectionStatus() async throws {
+            let reachability = createReachability()
+            let observer = createObserver()
+            defer {
+                reachability.removeObserver(observer)
+            }
+            
+            // Simulate a cellular connection
+            reachability.setFlagsForTesting([.reachable, .isWWAN])
+            #if targetEnvironment(simulator)
+            try await TestingHelpers.eventually(timeout: 2.0) {
+                reachability.connection == .wifi
+            }
+            #expect(reachability.connection == .wifi)
+            #else
+            #expect(reachability.connection == .cellular)
+            #endif
+        }
+        
+        @Test("will return unavailable connection status when not reachable")
+        func testReturnsUnavailableConnectionStatus() {
+            let reachability = createReachability()
+            let observer = createObserver()
+            defer {
+                reachability.removeObserver(observer)
+            }
+            
+            // Simulate no network connection
+            reachability.setFlagsForTesting([])
+            #expect(reachability.connection == .unavailable)
+        }
+        
+        @Test("will notify observers when connection changes")
+        func testNotifiesObserversOnConnectionChange() async throws {
+            let reachability = createReachability()
+            let observer = createObserver()
+            defer {
+                reachability.removeObserver(observer)
+            }
+            
+            reachability.addObserver(observer)
+            
+            // Simulate a Wi-Fi connection
+            reachability.setFlagsForTesting(.reachable)
+            try await TestingHelpers.eventually(timeout: 2.0) {
+                observer.currentStatus == .wifi
+            }
+            #expect(observer.currentStatus == .wifi)
+            
+            // Simulate a cellular connection
+            reachability.setFlagsForTesting([.reachable, .isWWAN])
+            #if targetEnvironment(simulator)
+            try await TestingHelpers.eventually(timeout: 2.0) {
+                observer.currentStatus == .wifi
+            }
+            #expect(observer.currentStatus == .wifi)
+            #else
+            try await TestingHelpers.eventually(timeout: 2.0) {
+                observer.currentStatus == .cellular
+            }
+            #expect(observer.currentStatus == .cellular)
+            #endif
+            
+            // Simulate no network connection
+            reachability.setFlagsForTesting([])
+            try await TestingHelpers.eventually(timeout: 2.0) {
+                observer.currentStatus == .unavailable
+            }
+            #expect(observer.currentStatus == .unavailable)
         }
     }
 }
 
 private class Observer: ReachabilityObserver {
-
     var currentStatus: Reachability.Connection?
-
+    
     func reachabilityChanged(_ reachability: ReachabilityType) {
         currentStatus = reachability.connection
     }

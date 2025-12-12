@@ -1,80 +1,109 @@
-import Quick
-import Nimble
+import Testing
 import Foundation
 @testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
 
-class FileManagerExtensionsSpec: QuickSpec {
-    override class func spec() {
-        describe("FileManager") {
-            var fileManager: FileManager!
-            var tempDirectoryURL: URL!
-
-            beforeEach {
-                fileManager = FileManager.default
-                tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-                try? fileManager.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
-                MockFileManager.swizzleURLsMethod(toReturn: tempDirectoryURL)
+@Suite("FileManager")
+struct FileManagerExtensionsSpec {
+    
+    static func setup() -> (fileManager: FileManager, tempDirectoryURL: URL) {
+        let fileManager = FileManager.default
+        let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        try? fileManager.createDirectory(at: tempDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+        MockFileManager.swizzleURLsMethod(toReturn: tempDirectoryURL)
+        return (fileManager, tempDirectoryURL)
+    }
+    
+    static func cleanup(fileManager: FileManager, tempDirectoryURL: URL) {
+        try? fileManager.removeItem(at: tempDirectoryURL)
+        MockFileManager.restoreURLsMethod()
+    }
+    
+    // MARK: - Test databaseFileURL
+    
+    @Suite("databaseFileURL")
+    struct DatabaseFileURLTests {
+        @Suite("when analytics directory does not exist")
+        struct WhenAnalyticsDirectoryDoesNotExistTests {
+            @Test("creates the directory and returns the database file URL")
+            func testCreatesDirectoryAndReturnsURL() {
+                let (fileManager, tempDirectoryURL) = FileManagerExtensionsSpec.setup()
+                defer {
+                    FileManagerExtensionsSpec.cleanup(fileManager: fileManager, tempDirectoryURL: tempDirectoryURL)
+                }
+                
+                let databaseName = "testDatabase.sqlite"
+                let analyticsDirectoryURL = tempDirectoryURL.appendingPathComponent("com.rakuten.tech.analytics")
+                
+                let result = fileManager.databaseFileURL(
+                    databaseName: databaseName,
+                    databaseParentDirectory: .applicationSupportDirectory)
+                
+                #expect(result != nil)
+                #expect(result?.lastPathComponent == databaseName)
+                #expect(fileManager.fileExists(atPath: analyticsDirectoryURL.path) == true)
             }
-
-            afterEach {
-                try? fileManager.removeItem(at: tempDirectoryURL)
-                MockFileManager.restoreURLsMethod()
+        }
+        
+        @Suite("when analytics directory already exists")
+        struct WhenAnalyticsDirectoryExistsTests {
+            @Test("returns the database file URL without creating the directory")
+            func testReturnsURLWithoutCreatingDirectory() {
+                let (fileManager, tempDirectoryURL) = setup()
+                defer {
+                    cleanup(fileManager: fileManager, tempDirectoryURL: tempDirectoryURL)
+                }
+                
+                let databaseName = "testDatabase.sqlite"
+                let analyticsDirectoryURL = tempDirectoryURL.appendingPathComponent("com.rakuten.tech.analytics")
+                
+                try? fileManager.createDirectory(at: analyticsDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+                
+                let result = fileManager.databaseFileURL(
+                    databaseName: databaseName,
+                    databaseParentDirectory: .applicationSupportDirectory)
+                
+                #expect(result != nil)
+                #expect(result?.lastPathComponent == databaseName)
+                #expect(fileManager.fileExists(atPath: analyticsDirectoryURL.path) == true)
             }
-
-            // MARK: - Test databaseFileURL
-
-            describe("databaseFileURL") {
-                context("when analytics directory does not exist") {
-                    it("creates the directory and returns the database file URL") {
-                        let databaseName = "testDatabase.sqlite"
-                        let analyticsDirectoryURL = tempDirectoryURL.appendingPathComponent("com.rakuten.tech.analytics")
-
-                        let result = fileManager.databaseFileURL(databaseName: databaseName, databaseParentDirectory: .applicationSupportDirectory)
-
-                        expect(result).toNot(beNil())
-                        expect(result?.lastPathComponent).to(equal(databaseName))
-                        expect(fileManager.fileExists(atPath: analyticsDirectoryURL.path)).to(beTrue())
-                    }
+        }
+    }
+    
+    // MARK: - Test createSafeFile
+    
+    @Suite("createSafeFile")
+    struct CreateSafeFileTests {
+        @Suite("when file does not exist")
+        struct WhenFileDoesNotExistTests {
+            @Test("creates the file")
+            func testCreatesFile() {
+                let (fileManager, tempDirectoryURL) = setup()
+                defer {
+                    cleanup(fileManager: fileManager, tempDirectoryURL: tempDirectoryURL)
                 }
-
-                context("when analytics directory already exists") {
-                    it("returns the database file URL without creating the directory") {
-                        let databaseName = "testDatabase.sqlite"
-                        let analyticsDirectoryURL = tempDirectoryURL.appendingPathComponent("com.rakuten.tech.analytics")
-
-                        try? fileManager.createDirectory(at: analyticsDirectoryURL, withIntermediateDirectories: true, attributes: nil)
-
-                        let result = fileManager.databaseFileURL(databaseName: databaseName, databaseParentDirectory: .applicationSupportDirectory)
-
-                        expect(result).toNot(beNil())
-                        expect(result?.lastPathComponent).to(equal(databaseName))
-                        expect(fileManager.fileExists(atPath: analyticsDirectoryURL.path)).to(beTrue())
-                    }
-                }
+                
+                let testFileURL = tempDirectoryURL.appendingPathComponent("testfile.txt")
+                fileManager.createSafeFile(at: testFileURL)
+                #expect(fileManager.fileExists(atPath: testFileURL.path) == true)
             }
-
-            // MARK: - Test createSafeFile
-
-            describe("createSafeFile") {
-                context("when file does not exist") {
-                    it("creates the file") {
-                        let testFileURL = tempDirectoryURL.appendingPathComponent("testfile.txt")
-                        fileManager.createSafeFile(at: testFileURL)
-                        expect(fileManager.fileExists(atPath: testFileURL.path)).to(beTrue())
-                    }
+        }
+        
+        @Suite("when file already exists")
+        struct WhenFileExistsTests {
+            @Test("does not create the file again")
+            func testDoesNotCreateFileAgain() {
+                let (fileManager, tempDirectoryURL) = setup()
+                defer {
+                    cleanup(fileManager: fileManager, tempDirectoryURL: tempDirectoryURL)
                 }
-
-                context("when file already exists") {
-                    it("does not create the file again") {
-                        let testFileURL = tempDirectoryURL.appendingPathComponent("testfile.txt")
-                        fileManager.createFile(atPath: testFileURL.path, contents: nil, attributes: nil)
-                        fileManager.createSafeFile(at: testFileURL)
-                        expect(fileManager.fileExists(atPath: testFileURL.path)).to(beTrue())
-                    }
-                }
+                
+                let testFileURL = tempDirectoryURL.appendingPathComponent("testfile.txt")
+                fileManager.createFile(atPath: testFileURL.path, contents: nil, attributes: nil)
+                fileManager.createSafeFile(at: testFileURL)
+                #expect(fileManager.fileExists(atPath: testFileURL.path) == true)
             }
         }
     }
@@ -85,27 +114,27 @@ class FileManagerExtensionsSpec: QuickSpec {
 class MockFileManager: FileManager {
     private static var originalURLsMethod: Method?
     private static var swizzledURLsMethod: Method?
-
+    
     @objc func mockURLs(for directory: FileManager.SearchPathDirectory, in domainMask: FileManager.SearchPathDomainMask) -> [URL] {
         return [MockFileManager.mockedDirectoryURL]
     }
-
+    
     static var mockedDirectoryURL: URL!
-
+    
     static func swizzleURLsMethod(toReturn directoryURL: URL) {
         mockedDirectoryURL = directoryURL
-
+        
         let originalSelector = #selector(FileManager.urls(for:in:))
         let swizzledSelector = #selector(MockFileManager.mockURLs(for:in:))
-
+        
         originalURLsMethod = class_getInstanceMethod(FileManager.self, originalSelector)
         swizzledURLsMethod = class_getInstanceMethod(MockFileManager.self, swizzledSelector)
-
+        
         if let originalMethod = originalURLsMethod, let swizzledMethod = swizzledURLsMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
     }
-
+    
     static func restoreURLsMethod() {
         guard let originalMethod = originalURLsMethod, let swizzledMethod = swizzledURLsMethod else { return }
         method_exchangeImplementations(swizzledMethod, originalMethod)

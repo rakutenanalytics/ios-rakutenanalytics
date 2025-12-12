@@ -1,85 +1,88 @@
 import Foundation
-import Quick
-import Nimble
+import Testing
 @testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
 
-final class AnalyticsEventTrackerIntegrationSpec: QuickSpec {
-
-    override class func spec() {
-        describe("AnalyticsEventTrackerIntegration") {
-            let pushEventHandler: PushEventHandler = {
-                return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"),
-                                        appGroupId: "group.test")
-            }()
-
-            let analyticsManager = AnalyticsManagerMock()
-
-            var eventsCache: [[String: Any]]?
-            var trackingError: Error?
-
-            var tracker = AnalyticsEventTracker(pushEventHandler: pushEventHandler)
-            tracker.delegate = analyticsManager
-
-            afterEach {
-                eventsCache = nil
-                trackingError = nil
-                analyticsManager.processedEvents = [RAnalyticsEvent]()
+@Suite("AnalyticsEventTrackerIntegration")
+struct AnalyticsEventTrackerIntegrationSpec {
+    let pushEventHandler: PushEventHandler = {
+        return PushEventHandler(sharedUserStorageHandler: UserDefaults(suiteName: "group.test"), appGroupId: "group.test")
+    }()
+    
+    let analyticsManager = AnalyticsManagerMock()
+    
+    @Test("Events are cached before the tracking - should track the events and clear the events cache")
+    @MainActor
+    func testTrackEventsAndClearCache() async throws {
+        var tracker = AnalyticsEventTracker(pushEventHandler: pushEventHandler)
+        tracker.delegate = analyticsManager
+        
+        defer {
+            analyticsManager.processedEvents = [RAnalyticsEvent]()
+        }
+        
+        for index in 0..<100 {
+            let events = (0..<index + 1).map { [PushEventPayloadKeys.eventNameKey: "myEventName\($0)",
+                                                PushEventPayloadKeys.eventParametersKey: ["rid": "bonjour\($0)"]] as [String: Any] }
+            try await verifyEventsToTrack(events, tracker: &tracker)
+        }
+        
+        func verifyEventsToTrack(_ events: [[String: Any]], tracker: inout AnalyticsEventTracker) async throws {
+            pushEventHandler.save(darwinEvents: events)
+            
+            tracker.track()
+            
+            try await TestingHelpers.eventuallyOnMain { !analyticsManager.processedEvents.isEmpty }
+            #expect(analyticsManager.processedEvents.count == events.count)
+            
+            for index in 0..<events.count {
+                let eventName = events[index][PushEventPayloadKeys.eventNameKey] as? String
+                #expect(analyticsManager.processedEvents[index].name == eventName)
             }
-
-            context("Events are cached before the tracking") {
-                it("should track the events and clear the events cache") {
-                    (0..<100).forEach { index in
-                        verifyEventsToTrack((0..<index + 1).map { [PushEventPayloadKeys.eventNameKey: "myEventName\($0)",
-                                                                   PushEventPayloadKeys.eventParametersKey: ["rid": "bonjour\($0)"]] })
-                    }
-
-                    func verifyEventsToTrack(_ events: [[String: AnyHashable]]) {
-                        pushEventHandler.save(darwinEvents: events)
-
-                        tracker.track()
-
-                        let cache = pushEventHandler.cachedDarwinEvents()
-                        eventsCache = cache
-
-                        expect(analyticsManager.processedEvents).toEventuallyNot(beEmpty())
-                        expect(analyticsManager.processedEvents.count).to(equal(events.count))
-
-                        (0..<events.count).forEach { index in
-                            expect(analyticsManager.processedEvents[index].name).to(equal(events[index][PushEventPayloadKeys.eventNameKey]))
-                        }
-
-                        expect(eventsCache).toEventuallyNot(beNil())
-                        expect(eventsCache).to(beEmpty())
-
-                        expect(trackingError).to(beNil())
-
-                        analyticsManager.processedEvents = [RAnalyticsEvent]()
-                    }
-                }
-            }
-
-            context("No events are cached before the tracking") {
-                it("should not track events") {
-                    tracker.track()
-                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
-                        expect(analyticsManager.processedEvents).to(beEmpty())
-                    }
-                }
-
-                it("should have an empty cache") {
-                    tracker.track()
-
-                    let cache = pushEventHandler.cachedDarwinEvents()
-                    eventsCache = cache
-
-                    QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
-                        expect(eventsCache).to(beEmpty())
-                    }
-                }
-            }
+            
+            let cache = pushEventHandler.cachedDarwinEvents()
+            try await TestingHelpers.eventuallyOnMain { cache.isEmpty }
+            #expect(cache.isEmpty)
+            
+            analyticsManager.processedEvents = [RAnalyticsEvent]()
+        }
+    }
+    
+    @Test("No events are cached before the tracking - should not track events")
+    @MainActor
+    func testNoEventsCachedShouldNotTrack() async throws {
+        var tracker = AnalyticsEventTracker(pushEventHandler: pushEventHandler)
+        tracker.delegate = analyticsManager
+        
+        defer {
+            analyticsManager.processedEvents = [RAnalyticsEvent]()
+        }
+        
+        tracker.track()
+        
+        try await TestingHelpers.performAsyncTestOnMain(timeForExecution: 1.0, timeout: 1.0) {
+            #expect(analyticsManager.processedEvents.isEmpty)
+        }
+    }
+    
+    @Test("No events are cached before the tracking - should have an empty cache")
+    @MainActor
+    func testNoEventsCachedShouldHaveEmptyCache() async throws {
+        var tracker = AnalyticsEventTracker(pushEventHandler: pushEventHandler)
+        tracker.delegate = analyticsManager
+        
+        defer {
+            analyticsManager.processedEvents = [RAnalyticsEvent]()
+        }
+        
+        tracker.track()
+        
+        let cache = pushEventHandler.cachedDarwinEvents()
+        
+        try await TestingHelpers.performAsyncTestOnMain(timeForExecution: 1.0, timeout: 1.0) {
+            #expect(cache.isEmpty)
         }
     }
 }

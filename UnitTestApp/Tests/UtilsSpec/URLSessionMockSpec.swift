@@ -1,340 +1,529 @@
 import Foundation
-import Quick
-import Nimble
+import Testing
 @testable import RakutenAnalytics
 #if canImport(RAnalyticsTestHelpers)
 import RAnalyticsTestHelpers
 #endif
 
-final class URLSessionMockSpec: QuickSpec {
-
-    override class func spec() {
-        describe("URLSessionMock") {
-            var originalSession: URLSession!
-            var sessionMock: URLSessionMock!
-
-            beforeEach {
-                originalSession = URLSession(configuration: .ephemeral)
-                sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+@Suite("URLSessionMock")
+struct URLSessionMockSpec {
+    
+    func createSessionAndMock() -> (originalSession: URLSession, sessionMock: URLSessionMock) {
+        let originalSession = URLSession(configuration: .ephemeral)
+        let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+        return (originalSession, sessionMock)
+    }
+    
+    @Test("should return the same mock instance for the same url session")
+    func testReturnsSameMockInstance() {
+        let (originalSession, sessionMock) = createSessionAndMock()
+        #expect(URLSessionMock.mock(originalInstance: originalSession) === sessionMock)
+    }
+    
+    @Test("should use originalSession if startMockingURLSession() was not called")
+    func testUsesOriginalSessionWhenNotMocking() async throws {
+        let (originalSession, sessionMock) = createSessionAndMock()
+        
+        sessionMock.httpResponse = HTTPURLResponse(
+            url: URL(string: "some.url")!,
+            statusCode: 500,
+            httpVersion: nil,
+            headerFields: nil)
+        
+        try await withCheckedThrowingContinuation { continuation in
+            originalSession.dataTask(with: URLRequest(url: URL(string: "about:blank")!)) { _, response, _ in
+                #expect(response?.url?.absoluteString == "about:blank")
+                #expect(response is HTTPURLResponse == false)
+                continuation.resume()
+            }.resume()
+        }
+        
+        #expect(sessionMock.sentRequest == nil)
+    }
+    
+    @Test("should use originalSession if stopMockingURLSession() was called")
+    func testUsesOriginalSessionAfterStopMocking() async throws {
+        let (originalSession, sessionMock) = createSessionAndMock()
+        
+        URLSessionMock.startMockingURLSession()
+        sessionMock.httpResponse = HTTPURLResponse(
+            url: URL(string: "some.url")!,
+            statusCode: 500,
+            httpVersion: nil,
+            headerFields: nil)
+        URLSessionMock.stopMockingURLSession()
+        
+        try await withCheckedThrowingContinuation { continuation in
+            originalSession.dataTask(with: URLRequest(url: URL(string: "about:blank")!)) { _, response, _ in
+                #expect(response?.url?.absoluteString == "about:blank")
+                #expect(response is HTTPURLResponse == false)
+                continuation.resume()
+            }.resume()
+        }
+        
+        #expect(sessionMock.sentRequest == nil)
+    }
+    
+    @Suite("Cookie storage")
+    struct CookieStorageTests {
+        let url: URL = URL(string: "https://rakuten.com")!
+        let cookieName = "TestCookieName"
+        let cookieValue = "TestCookieValue"
+        let expiryDate = "Fri, 16-Nov-50 16:59:07 GMT"
+        var cookieToSet: String {
+            "\(cookieName)=\(cookieValue); path=/; expires=\(expiryDate); session-only=false; domain=.rakuten.com"
+        }
+        
+        func setup() -> (originalSession: URLSession, sessionMock: URLSessionMock, urlRequest: URLRequest) {
+            let originalSession = URLSession(configuration: .ephemeral)
+            let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+            let urlRequest = URLRequest(url: url)
+            URLSessionMock.startMockingURLSession()
+            return (originalSession, sessionMock, urlRequest)
+        }
+        
+        func cleanup(cookie: HTTPCookie?) {
+            URLSessionMock.stopMockingURLSession()
+            if let cookie = cookie {
+                HTTPCookieStorage.shared.deleteCookie(cookie)
             }
-
-            it("should return the same mock instance for the same url session") {
-                expect(URLSessionMock.mock(originalInstance: originalSession)).to(beIdenticalTo(sessionMock))
+        }
+        
+        @Suite("When a request is sent")
+        struct WhenRequestIsSentTests {
+            let url: URL = URL(string: "https://rakuten.com")!
+            let cookieName = "TestCookieName"
+            let cookieValue = "TestCookieValue"
+            let expiryDate = "Fri, 16-Nov-50 16:59:07 GMT"
+            var cookieToSet: String {
+                "\(cookieName)=\(cookieValue); path=/; expires=\(expiryDate); session-only=false; domain=.rakuten.com"
             }
-
-            it("should use originalSession if startMockingURLSession() was not called") {
-                sessionMock.httpResponse = HTTPURLResponse(url: URL(string: "some.url")!,
-                                                           statusCode: 500,
-                                                           httpVersion: nil,
-                                                           headerFields: nil)
-                waitUntil { done in
-                    originalSession.dataTask(with: URLRequest(url: URL(string: "about:blank")!)) { _, response, _ in
-                        expect(response?.url?.absoluteString).to(equal("about:blank"))
-                        expect(response).toNot(beAKindOf(HTTPURLResponse.self))
-                        done()
-                    }.resume()
-                }
-                expect(sessionMock.sentRequest).to(beNil())
-            }
-
-            it("should use originalSession if stopMockingURLSession() was called") {
-                URLSessionMock.startMockingURLSession()
-                sessionMock.httpResponse = HTTPURLResponse(url: URL(string: "some.url")!,
-                                                           statusCode: 500,
-                                                           httpVersion: nil,
-                                                           headerFields: nil)
-                URLSessionMock.stopMockingURLSession()
-                waitUntil { done in
-                    originalSession.dataTask(with: URLRequest(url: URL(string: "about:blank")!)) { _, response, _ in
-                        expect(response?.url?.absoluteString).to(equal("about:blank"))
-                        expect(response).toNot(beAKindOf(HTTPURLResponse.self))
-                        done()
-                    }.resume()
-                }
-                expect(sessionMock.sentRequest).to(beNil())
-            }
-
-            describe("Cookie storage") {
-                var cookie: HTTPCookie?
-                let url: URL! = URL(string: "https://rakuten.com")
-                var urlRequest: URLRequest!
+            
+            @Suite("When a non-nil valid cookie is set to the request header")
+            struct ValidCookieTests {
+                let url: URL = URL(string: "https://rakuten.com")!
                 let cookieName = "TestCookieName"
                 let cookieValue = "TestCookieValue"
                 let expiryDate = "Fri, 16-Nov-50 16:59:07 GMT"
-                let cookieToSet = "\(cookieName)=\(cookieValue); path=/; expires=\(expiryDate); session-only=false; domain=.rakuten.com"
-
-                beforeEach {
-                    urlRequest = URLRequest(url: url)
+                var cookieToSet: String {
+                    "\(cookieName)=\(cookieValue); path=/; expires=\(expiryDate); session-only=false; domain=.rakuten.com"
+                }
+                
+                func setup() async throws -> (originalSession: URLSession, sessionMock: URLSessionMock, urlRequest: URLRequest) {
+                    let originalSession = URLSession(configuration: .ephemeral)
+                    let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+                    let urlRequest = URLRequest(url: url)
                     URLSessionMock.startMockingURLSession()
+                    
+                    sessionMock.httpResponse = HTTPURLResponse(
+                        url: url,
+                        statusCode: 200,
+                        httpVersion: nil,
+                        headerFields: ["Set-Cookie": cookieToSet])
+                    
+                    try await withCheckedThrowingContinuation { continuation in
+                        originalSession.dataTask(with: urlRequest) { _, _, _ in
+                            continuation.resume()
+                        }.resume()
+                    }
+                    
+                    return (originalSession, sessionMock, urlRequest)
                 }
-
-                afterEach {
-                    URLSessionMock.stopMockingURLSession()
-
-                    if let cookie = cookie {
-                        HTTPCookieStorage.shared.deleteCookie(cookie)
+                
+                @Test("should set a non-nil request cookie in the cookie storage")
+                func testSetsNonNilCookie() async throws {
+                    _ = try await setup()
+                    defer {
+                        URLSessionMock.stopMockingURLSession()
+                        if let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first {
+                            HTTPCookieStorage.shared.deleteCookie(cookie)
+                        }
                     }
+                    
+                    try await TestingHelpers.eventually(timeout: 2.0) {
+                        HTTPCookieStorage.shared.cookies(for: url)?.first != nil
+                    }
+                    #expect(HTTPCookieStorage.shared.cookies(for: url)?.first != nil)
                 }
-
-                context("When a request is sent") {
-                    context("When a non-nil valid cookie is set to the request header") {
-                        beforeEach {
-                            sessionMock.httpResponse = HTTPURLResponse(url: url,
-                                                                       statusCode: 200,
-                                                                       httpVersion: nil,
-                                                                       headerFields: ["Set-Cookie": cookieToSet])
-
-                            waitUntil { done in
-                                originalSession.dataTask(with: urlRequest) { _, _, _ in
-                                    cookie = HTTPCookieStorage.shared.cookies(for: url)?.first
-                                    done()
-                                }.resume()
-                            }
-                        }
-
-                        it("should set a non-nil request cookie in the cookie storage") {
-                            expect(cookie).toEventuallyNot(beNil())
-                        }
-
-                        it("should set a non-nil cookie name") {
-                            expect(cookie?.name).toEventually(equal("TestCookieName"))
-                        }
-
-                        it("should set a non-nil cookie value") {
-                            expect(cookie?.value).toEventually(equal("TestCookieValue"))
+                
+                @Test("should set a non-nil cookie name")
+                func testSetsCookieName() async throws {
+                    _ = try await setup()
+                    defer {
+                        URLSessionMock.stopMockingURLSession()
+                        if let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first {
+                            HTTPCookieStorage.shared.deleteCookie(cookie)
                         }
                     }
-
-                    context("When an empty cookie is set to the request header") {
-                        it("should set the request cookie in the cookie storage") {
-                            sessionMock.httpResponse = HTTPURLResponse(url: url,
-                                                                       statusCode: 200,
-                                                                       httpVersion: nil,
-                                                                       headerFields: ["Set-Cookie": ""])
-
-                            waitUntil { done in
-                                originalSession.dataTask(with: urlRequest) { _, _, _ in
-                                    cookie = HTTPCookieStorage.shared.cookies(for: url)?.first
-                                    done()
-                                }.resume()
-                            }
-                            
-                            QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
-                                expect(cookie).to(beNil())
-                            }
+                    
+                    try await TestingHelpers.eventually(timeout: 2.0) {
+                        HTTPCookieStorage.shared.cookies(for: url)?.first?.name == cookieName
+                    }
+                    #expect(HTTPCookieStorage.shared.cookies(for: url)?.first?.name == cookieName)
+                }
+                
+                @Test("should set a non-nil cookie value")
+                func testSetsCookieValue() async throws {
+                    _ = try await setup()
+                    defer {
+                        URLSessionMock.stopMockingURLSession()
+                        if let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first {
+                            HTTPCookieStorage.shared.deleteCookie(cookie)
                         }
                     }
-
-                    context("When allHTTPHeaderFields is set to nil") {
-                        it("should set the request cookie in the cookie storage") {
-                            sessionMock.httpResponse = HTTPURLResponse(url: url,
-                                                                       statusCode: 200,
-                                                                       httpVersion: nil,
-                                                                       headerFields: nil)
-
-                            waitUntil { done in
-                                originalSession.dataTask(with: urlRequest) { _, _, _ in
-                                    cookie = HTTPCookieStorage.shared.cookies(for: url)?.first
-                                    done()
-                                }.resume()
-                            }
-
-                            QuickSpec.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
-                                expect(cookie).to(beNil())
-                            }
+                    
+                    try await TestingHelpers.eventually(timeout: 2.0) {
+                        HTTPCookieStorage.shared.cookies(for: url)?.first?.value == cookieValue
+                    }
+                    #expect(HTTPCookieStorage.shared.cookies(for: url)?.first?.value == cookieValue)
+                }
+            }
+            
+            @Suite("When an empty cookie is set to the request header")
+            struct EmptyCookieTests {
+                let url: URL = URL(string: "https://rakuten.com")!
+                
+                @Test("should set the request cookie in the cookie storage")
+                func testSetsEmptyCookie() async throws {
+                    let originalSession = URLSession(configuration: .ephemeral)
+                    let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+                    let urlRequest = URLRequest(url: url)
+                    URLSessionMock.startMockingURLSession()
+                    defer {
+                        URLSessionMock.stopMockingURLSession()
+                        if let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first {
+                            HTTPCookieStorage.shared.deleteCookie(cookie)
                         }
+                    }
+                    
+                    sessionMock.httpResponse = HTTPURLResponse(
+                        url: url,
+                        statusCode: 200,
+                        httpVersion: nil,
+                        headerFields: ["Set-Cookie": ""])
+                    
+                    try await withCheckedThrowingContinuation { continuation in
+                        originalSession.dataTask(with: urlRequest) { _, _, _ in
+                            continuation.resume()
+                        }.resume()
+                    }
+                    
+                    try await TestingHelpers.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first
+                        #expect(cookie == nil)
                     }
                 }
             }
-
-            context("when startMockingURLSession() was called") {
-                beforeEach {
+            
+            @Suite("When allHTTPHeaderFields is set to nil")
+            struct NilHeaderFieldsTests {
+                let url: URL = URL(string: "https://rakuten.com")!
+                
+                @Test("should set the request cookie in the cookie storage")
+                func testSetsNilHeaderFields() async throws {
+                    let originalSession = URLSession(configuration: .ephemeral)
+                    let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+                    let urlRequest = URLRequest(url: url)
                     URLSessionMock.startMockingURLSession()
-                }
-
-                it("should return mocked values in dataTask completion") {
-                    let expectedResponse = HTTPURLResponse(url: URL(string: "some.url")!,
-                                                           statusCode: 500,
-                                                           httpVersion: nil,
-                                                           headerFields: nil)
-                    let expectedError = NSError(domain: "mock.domain", code: 1234, userInfo: ["user": "info"])
-                    let expectedData = "data".data(using: .utf8)
-                    sessionMock.httpResponse = expectedResponse
-                    sessionMock.responseError = expectedError
-                    sessionMock.responseData = expectedData
-
-                    waitUntil { done in
-                        originalSession.dataTask(with: URLRequest(url: URL(string: "https://google.com")!)) { data, response, error in
-                            expect(data).to(equal(expectedData))
-                            expect(error as NSError?).to(equal(expectedError))
-                            expect(response).to(equal(expectedResponse))
-                            done()
+                    defer {
+                        URLSessionMock.stopMockingURLSession()
+                        if let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first {
+                            HTTPCookieStorage.shared.deleteCookie(cookie)
+                        }
+                    }
+                    
+                    sessionMock.httpResponse = HTTPURLResponse(
+                        url: url,
+                        statusCode: 200,
+                        httpVersion: nil,
+                        headerFields: nil)
+                    
+                    try await withCheckedThrowingContinuation { continuation in
+                        originalSession.dataTask(with: urlRequest) { _, _, _ in
+                            continuation.resume()
                         }.resume()
                     }
-                }
-
-                it("should call onCompletedTask when the task is finished") {
-                    var onCompletedTaskCalled = false
-                    sessionMock.onCompletedTask = {onCompletedTaskCalled = true }
-                    waitUntil { done in
-                        originalSession.dataTask(with: URLRequest(url: URL(string: "https://google.com")!)) { _, _, _ in
-                            done()
-                        }.resume()
-                    }
-
-                    expect(onCompletedTaskCalled).to(beTrue())
-                }
-
-                it("should keep a copy of last URLRequest in `sentRequest` var") {
-                    let request = URLRequest(url: URL(string: "https://google.com")!)
-                    expect(sessionMock.sentRequest).to(beNil())
-                    waitUntil { done in
-                        originalSession.dataTask(with: request) { _, _, _ in
-                            done()
-                        }.resume()
-                    }
-
-                    expect(sessionMock.sentRequest).toNot(beNil())
-                    expect(sessionMock.sentRequest).to(equal(request))
-                }
-
-                context("when calling decodeSentData()") {
-
-                    it("should succeed if all expected parameters are present") {
-                        let jsonData = """
-                        {"identifier":100, "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5"}
-                        """.data(using: .utf8)!
-
-                        var request = URLRequest(url: URL(string: "https://google.com")!)
-                        request.httpBody = jsonData
-                        waitUntil { done in
-                            originalSession.dataTask(with: request) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-
-                        let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
-                        expect(decodedModel).toNot(beNil())
-                        expect(decodedModel?.identifier).to(equal(100))
-                        expect(decodedModel?.isTest).to(beTrue())
-                        expect(decodedModel?.appVersion).to(equal("1.2.3"))
-                        expect(decodedModel?.sdkVersion).to(equal("0.0.5"))
-                    }
-
-                    it("should succeed if there are optional parameters in the json") {
-                        let jsonData = """
-                        {"identifier":100, "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5", "locale":"pl"}
-                        """.data(using: .utf8)!
-
-                        var request = URLRequest(url: URL(string: "https://google.com")!)
-                        request.httpBody = jsonData
-                        waitUntil { done in
-                            originalSession.dataTask(with: request) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-
-                        let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
-                        expect(decodedModel).toNot(beNil())
-                        expect(decodedModel?.identifier).to(equal(100))
-                        expect(decodedModel?.isTest).to(beTrue())
-                        expect(decodedModel?.appVersion).to(equal("1.2.3"))
-                        expect(decodedModel?.sdkVersion).to(equal("0.0.5"))
-                    }
-
-                    it("should fail if not all expected parameters are present") {
-                        let jsonData = """
-                        {"identifier":100, "isTest":true, "appVersion":"1.2.3"}
-                        """.data(using: .utf8)!
-
-                        var request = URLRequest(url: URL(string: "https://google.com")!)
-                        request.httpBody = jsonData
-                        waitUntil { done in
-                            originalSession.dataTask(with: request) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-
-                        let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
-                        expect(decodedModel).to(beNil())
-                    }
-
-                    it("should fail if parameter type does not match") {
-                        let jsonData = """
-                        {"identifier":"id", "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5"}
-                        """.data(using: .utf8)!
-
-                        var request = URLRequest(url: URL(string: "https://google.com")!)
-                        request.httpBody = jsonData
-                        waitUntil { done in
-                            originalSession.dataTask(with: request) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-
-                        let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
-                        expect(decodedModel).to(beNil())
+                    
+                    try await TestingHelpers.performAsyncTest(timeForExecution: 1.0, timeout: 1.0) {
+                        let cookie = HTTPCookieStorage.shared.cookies(for: url)?.first
+                        #expect(cookie == nil)
                     }
                 }
-
-                context("when calling decodeQueryItems()") {
-
-                    it("should succeed if all expected parameters are present") {
-                        let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3&sdkVersion=0.0.5")!
-
-                        waitUntil { done in
-                            originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-                        let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
-                        expect(decodedModel).toNot(beNil())
-                        expect(decodedModel?.identifier).to(equal(100))
-                        expect(decodedModel?.isTest).to(beTrue())
-                        expect(decodedModel?.appVersion).to(equal("1.2.3"))
-                        expect(decodedModel?.sdkVersion).to(equal("0.0.5"))
-                    }
-
-                    it("should succeed if there are optional parameters in the url") {
-                        let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3&sdkVersion=0.0.5&locale=pl")!
-
-                        waitUntil { done in
-                            originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-                        let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
-                        expect(decodedModel).toNot(beNil())
-                        expect(decodedModel?.identifier).to(equal(100))
-                        expect(decodedModel?.isTest).to(beTrue())
-                        expect(decodedModel?.appVersion).to(equal("1.2.3"))
-                        expect(decodedModel?.sdkVersion).to(equal("0.0.5"))
-                    }
-
-                    it("should fail if not all expected parameters are present") {
-                        let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3")!
-
-                        waitUntil { done in
-                            originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-                        let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
-                        expect(decodedModel).to(beNil())
-                    }
-
-                    it("should fail if parameter type does not match") {
-                        let urlQuery = URL(string: "http://config.url?isTest=true&identifier=id&appVersion=1.2.3&sdkVersion=0.0.5")!
-
-                        waitUntil { done in
-                            originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
-                                done()
-                            }.resume()
-                        }
-                        let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
-                        expect(decodedModel).to(beNil())
-                    }
+            }
+        }
+    }
+    
+    @Suite("when startMockingURLSession() was called")
+    struct WhenStartMockingCalledTests {
+        func setup() -> (originalSession: URLSession, sessionMock: URLSessionMock) {
+            let originalSession = URLSession(configuration: .ephemeral)
+            let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+            URLSessionMock.startMockingURLSession()
+            return (originalSession, sessionMock)
+        }
+        
+        func cleanup() {
+            URLSessionMock.stopMockingURLSession()
+        }
+        
+        @Test("should return mocked values in dataTask completion")
+        func testReturnsMockedValues() async throws {
+            let (originalSession, sessionMock) = setup()
+            defer { cleanup() }
+            
+            let expectedResponse = HTTPURLResponse(
+                url: URL(string: "some.url")!,
+                statusCode: 500,
+                httpVersion: nil,
+                headerFields: nil)
+            let expectedError = NSError(domain: "mock.domain", code: 1234, userInfo: ["user": "info"])
+            let expectedData = "data".data(using: .utf8)
+            sessionMock.httpResponse = expectedResponse
+            sessionMock.responseError = expectedError
+            sessionMock.responseData = expectedData
+            
+            try await withCheckedThrowingContinuation { continuation in
+                originalSession.dataTask(with: URLRequest(url: URL(string: "https://google.com")!)) { data, response, error in
+                    #expect(data == expectedData)
+                    #expect((error as NSError?) == expectedError)
+                    #expect(response == expectedResponse)
+                    continuation.resume()
+                }.resume()
+            }
+        }
+        
+        @Test("should call onCompletedTask when the task is finished")
+        func testCallsOnCompletedTask() async throws {
+            let (originalSession, sessionMock) = setup()
+            defer { cleanup() }
+            
+            var onCompletedTaskCalled = false
+            sessionMock.onCompletedTask = { onCompletedTaskCalled = true }
+            
+            try await withCheckedThrowingContinuation { continuation in
+                originalSession.dataTask(with: URLRequest(url: URL(string: "https://google.com")!)) { _, _, _ in
+                    continuation.resume()
+                }.resume()
+            }
+            
+            #expect(onCompletedTaskCalled == true)
+        }
+        
+        @Test("should keep a copy of last URLRequest in `sentRequest` var")
+        func testKeepsCopyOfSentRequest() async throws {
+            let (originalSession, sessionMock) = setup()
+            defer { cleanup() }
+            
+            let request = URLRequest(url: URL(string: "https://google.com")!)
+            #expect(sessionMock.sentRequest == nil)
+            
+            try await withCheckedThrowingContinuation { continuation in
+                originalSession.dataTask(with: request) { _, _, _ in
+                    continuation.resume()
+                }.resume()
+            }
+            
+            #expect(sessionMock.sentRequest != nil)
+            #expect(sessionMock.sentRequest == request)
+        }
+        
+        @Suite("when calling decodeSentData()")
+        struct DecodeSentDataTests {
+            func setup() -> (originalSession: URLSession, sessionMock: URLSessionMock) {
+                let originalSession = URLSession(configuration: .ephemeral)
+                let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+                URLSessionMock.startMockingURLSession()
+                return (originalSession, sessionMock)
+            }
+            
+            func cleanup() {
+                URLSessionMock.stopMockingURLSession()
+            }
+            
+            @Test("should succeed if all expected parameters are present")
+            func testSucceedsWithAllParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let jsonData = """
+                {"identifier":100, "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5"}
+                """.data(using: .utf8)!
+                
+                var request = URLRequest(url: URL(string: "https://google.com")!)
+                request.httpBody = jsonData
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: request) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
                 }
+                
+                let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
+                #expect(decodedModel != nil)
+                #expect(decodedModel?.identifier == 100)
+                #expect(decodedModel?.isTest == true)
+                #expect(decodedModel?.appVersion == "1.2.3")
+                #expect(decodedModel?.sdkVersion == "0.0.5")
+            }
+            
+            @Test("should succeed if there are optional parameters in the json")
+            func testSucceedsWithOptionalParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let jsonData = """
+                {"identifier":100, "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5", "locale":"pl"}
+                """.data(using: .utf8)!
+                
+                var request = URLRequest(url: URL(string: "https://google.com")!)
+                request.httpBody = jsonData
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: request) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
+                #expect(decodedModel != nil)
+                #expect(decodedModel?.identifier == 100)
+                #expect(decodedModel?.isTest == true)
+                #expect(decodedModel?.appVersion == "1.2.3")
+                #expect(decodedModel?.sdkVersion == "0.0.5")
+            }
+            
+            @Test("should fail if not all expected parameters are present")
+            func testFailsWithMissingParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let jsonData = """
+                {"identifier":100, "isTest":true, "appVersion":"1.2.3"}
+                """.data(using: .utf8)!
+                
+                var request = URLRequest(url: URL(string: "https://google.com")!)
+                request.httpBody = jsonData
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: request) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
+                #expect(decodedModel == nil)
+            }
+            
+            @Test("should fail if parameter type does not match")
+            func testFailsWithWrongParameterType() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let jsonData = """
+                {"identifier":"id", "isTest":true, "appVersion":"1.2.3", "sdkVersion":"0.0.5"}
+                """.data(using: .utf8)!
+                
+                var request = URLRequest(url: URL(string: "https://google.com")!)
+                request.httpBody = jsonData
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: request) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeSentData(modelType: BodyModel.self)
+                #expect(decodedModel == nil)
+            }
+        }
+        
+        @Suite("when calling decodeQueryItems()")
+        struct DecodeQueryItemsTests {
+            func setup() -> (originalSession: URLSession, sessionMock: URLSessionMock) {
+                let originalSession = URLSession(configuration: .ephemeral)
+                let sessionMock = URLSessionMock.mock(originalInstance: originalSession)
+                URLSessionMock.startMockingURLSession()
+                return (originalSession, sessionMock)
+            }
+            
+            func cleanup() {
+                URLSessionMock.stopMockingURLSession()
+            }
+            
+            @Test("should succeed if all expected parameters are present")
+            func testSucceedsWithAllParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3&sdkVersion=0.0.5")!
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
+                #expect(decodedModel != nil)
+                #expect(decodedModel?.identifier == 100)
+                #expect(decodedModel?.isTest == true)
+                #expect(decodedModel?.appVersion == "1.2.3")
+                #expect(decodedModel?.sdkVersion == "0.0.5")
+            }
+            
+            @Test("should succeed if there are optional parameters in the url")
+            func testSucceedsWithOptionalParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3&sdkVersion=0.0.5&locale=pl")!
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
+                #expect(decodedModel != nil)
+                #expect(decodedModel?.identifier == 100)
+                #expect(decodedModel?.isTest == true)
+                #expect(decodedModel?.appVersion == "1.2.3")
+                #expect(decodedModel?.sdkVersion == "0.0.5")
+            }
+            
+            @Test("should fail if not all expected parameters are present")
+            func testFailsWithMissingParameters() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let urlQuery = URL(string: "http://config.url?isTest=true&identifier=100&appVersion=1.2.3")!
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
+                #expect(decodedModel == nil)
+            }
+            
+            @Test("should fail if parameter type does not match")
+            func testFailsWithWrongParameterType() async throws {
+                let (originalSession, sessionMock) = setup()
+                defer { cleanup() }
+                
+                let urlQuery = URL(string: "http://config.url?isTest=true&identifier=id&appVersion=1.2.3&sdkVersion=0.0.5")!
+                
+                try await withCheckedThrowingContinuation { continuation in
+                    originalSession.dataTask(with: URLRequest(url: urlQuery)) { _, _, _ in
+                        continuation.resume()
+                    }.resume()
+                }
+                
+                let decodedModel = sessionMock.decodeQueryItems(modelType: URLQueryModel.self)
+                #expect(decodedModel == nil)
             }
         }
     }

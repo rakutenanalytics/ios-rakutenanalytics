@@ -1,5 +1,4 @@
-import Quick
-import Nimble
+import Testing
 import SQLite3
 import Foundation
 @testable import RakutenAnalytics
@@ -8,88 +7,97 @@ import Foundation
 import RAnalyticsTestHelpers
 #endif
 
-class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
-
-    override class func spec() {
-        describe("RAnalyticsDatabase") {
-            let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
-            let databaseName = "RSDKAnalytics_Test.db"
-            let events = [mkEvent, mkAnotherEvent]
-            var connection: SQlite3Pointer!
-            var databaseURL: URL!
-            var database: RAnalyticsDatabase!
-
-            beforeSuite {
-                databaseURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
-
-                try? FileManager.default.removeItem(at: databaseURL)
+@Suite("RAnalyticsDatabase")
+struct RAnalyticsDatabaseFunctionalSpec {
+    static let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
+    static let databaseName = "RSDKAnalytics_Test.db"
+    static let events = [mkEvent, mkAnotherEvent]
+    
+    var connection: SQlite3Pointer!
+    var databaseURL: URL!
+    var database: RAnalyticsDatabase!
+    
+    init() {
+        databaseURL = FileManager.default.databaseFileURL(
+            databaseName: Self.databaseName, databaseParentDirectory: Self.databaseParentDirectory)
+        try? FileManager.default.removeItem(at: databaseURL)
+    }
+    
+    mutating func setUp() {
+        connection = RAnalyticsDatabase.mkAnalyticsDBConnection(
+            databaseName: Self.databaseName, databaseParentDirectory: Self.databaseParentDirectory)
+        guard let safeConnection = connection else { return }
+        database = RAnalyticsDatabase.database(connection: safeConnection)
+    }
+    
+    mutating func tearDown() {
+        database?.closeConnection()
+        connection = nil
+        try? FileManager.default.removeItem(at: databaseURL)
+    }
+    
+    @Test("should create database stored in a file")
+    mutating func testDatabaseFileCreation() {
+        setUp()
+        defer { tearDown() }
+        #expect(FileManager.default.fileExists(atPath: databaseURL.path) == true)
+    }
+    
+    @Test("should insert events to database")
+    mutating func testInsertEvents() async {
+        setUp()
+        defer { tearDown() }
+        
+        let testDatabase = database!
+        let testConnection = connection!
+        
+        await withCheckedContinuation { continuation in
+            testDatabase.insert(blobs: Self.events, into: "events_table", limit: 2) {
+                continuation.resume()
             }
-
-            beforeEach {
-                connection = RAnalyticsDatabase.mkAnalyticsDBConnection(databaseName: databaseName,
-                                                                        databaseParentDirectory: databaseParentDirectory)
-                guard let safeConnection = connection else {
-                    return
-                }
-                database = RAnalyticsDatabase.database(connection: safeConnection)
+        }
+        
+        let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
+        #expect(eventsInDb.elementsEqual(Self.events))
+    }
+    
+    @Test("should fetch saved events from database")
+    mutating func testFetchEvents() async {
+        setUp()
+        defer { tearDown() }
+        
+        let testConnection = connection!
+        DatabaseTestUtils.insert(blobs: Self.events, table: "events_table", connection: testConnection)
+        
+        let testDatabase = database!
+        let (fetchedEvents, fetchedIds) = await withCheckedContinuation { continuation in
+            testDatabase.fetchBlobs(2, from: "events_table") { blobs, ids in
+                continuation.resume(returning: (blobs, ids))
             }
-
-            afterEach {
-                database.closeConnection()
-                connection = nil
-
-                try? FileManager.default.removeItem(at: databaseURL)
-            }
-
-            it("should create database stored in a file") {
-                expect(FileManager.default.fileExists(atPath: databaseURL.path)).to(beTrue())
-            }
-
-            it("should insert events to database") {
-                var eventsInDb: [Data]?
-                waitUntil { done in
-                    database.insert(blobs: events, into: "events_table", limit: 2) {
-                        eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: connection)
-                        done()
-                    }
-                }
-
-                expect(eventsInDb).to(elementsEqual(events))
-            }
-
-            it("should fetch saved events from database") {
-                DatabaseTestUtils.insert(blobs: events, table: "events_table", connection: connection)
-
-                var fetchedEvents: [Data]?
-                var fetchedIds: [Int64]?
-                waitUntil { done in
-                    database.fetchBlobs(2, from: "events_table") { blobs, ids in
-                        fetchedEvents = blobs
-                        fetchedIds = ids
-                        done()
-                    }
-                }
-
-                expect(fetchedEvents).to(elementsEqual(events))
-                expect(fetchedIds).to(elementsEqual([1, 2]))
-            }
-
-            it("should delete saved events according to passed IDs") {
-                DatabaseTestUtils.insert(blobs: events, table: "events_table", connection: connection)
-
-                var eventsInDb: [Data]?
-                waitUntil { done in
-                    database.deleteBlobs(identifiers: [1, 2], in: "events_table") {
-                        eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: connection)
-                        done()
-                    }
-                }
-
-                expect(eventsInDb).to(beEmpty())
+        }
+        
+        #expect(fetchedEvents?.elementsEqual(Self.events) == true)
+        #expect(fetchedIds?.elementsEqual([1, 2]) == true)
+    }
+    
+    @Test("should delete saved events according to passed IDs")
+    mutating func testDeleteEvents() async {
+        setUp()
+        defer { tearDown() }
+        
+        let testConnection = connection!
+        DatabaseTestUtils.insert(blobs: Self.events, table: "events_table", connection: testConnection)
+        
+        let testDatabase = database!
+        await withCheckedContinuation { continuation in
+            testDatabase.deleteBlobs(identifiers: [1, 2], in: "events_table") {
+                let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
+                #expect(eventsInDb.isEmpty == true)
+                continuation.resume()
             }
         }
     }
-
+    
     static let mkEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
@@ -118,7 +126,7 @@ class RAnalyticsDatabaseFunctionalSpec: QuickSpec {
         }
         }
     """#.data(using: .utf8)!
-
+    
     static let mkAnotherEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",

@@ -1,26 +1,22 @@
 import Foundation
-import Quick
-import Nimble
+import Testing
 @testable import RakutenAnalytics
 
-class DataExtensionsSpec: QuickSpec {
-
-    override class func spec() {
-
-        describe("DataExtensions") {
-
-            context("hexString") {
-
-                it("will return empty string for empty data") {
-                    let data = Data()
-                    expect(data.hexString).to(beEmpty())
-                }
-
-                it("will return expected hex string from data") {
-                    let data = Data(base64Encoded: "EjRWeJCrze8=")!
-                    expect(data.hexString).to(equal("1234567890abcdef"))
-                }
-            }
+@Suite("DataExtensions")
+struct DataExtensionsSpec {
+    
+    @Suite("hexString")
+    struct HexStringTests {
+        @Test("will return empty string for empty data")
+        func testEmptyDataReturnsEmptyString() {
+            let data = Data()
+            #expect(data.hexString.isEmpty)
+        }
+        
+        @Test("will return expected hex string from data")
+        func testHexStringFromData() {
+            let data = Data(base64Encoded: "EjRWeJCrze8=")!
+            #expect(data.hexString == "1234567890abcdef")
         }
     }
 }
