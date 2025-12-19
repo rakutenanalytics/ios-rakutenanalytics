@@ -2,7 +2,7 @@ import Foundation
 import SQLite3
 
 internal enum RAnalyticsDatabaseHelper {
-
+    
     @discardableResult
     static func beginTransaction(connection: SQlite3Pointer) -> Bool {
         guard sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK else {
@@ -13,10 +13,10 @@ internal enum RAnalyticsDatabaseHelper {
                                              reason: "begin transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
-
+        
         return true
     }
-
+    
     @discardableResult
     static func commitTransaction(connection: SQlite3Pointer) -> Bool {
         guard sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK else {
@@ -27,10 +27,10 @@ internal enum RAnalyticsDatabaseHelper {
                                              reason: "commit transaction failed with error \(errorMsg), code \(sqlite3_errcode(connection))"))
             return false
         }
-
+        
         return true
     }
-
+    
     @discardableResult
     static func prepareStatement(_ statement: inout OpaquePointer?, query: String, connection: OpaquePointer) -> Bool {
         let result = sqlite3_prepare_v2(connection, query, -1, &statement, nil)
@@ -47,28 +47,30 @@ internal enum RAnalyticsDatabaseHelper {
 }
 
 extension RAnalyticsDatabase {
-
+    
     static func mkAnalyticsDBConnection(databaseName: String, databaseParentDirectory: FileManager.SearchPathDirectory) -> OpaquePointer? {
         var connection: OpaquePointer?
         let databaseFileURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
-
-        guard let databasePath = databaseFileURL,
-              sqlite3_open(databasePath.path, &connection) == SQLITE_OK else {
+        
+        guard let databasePath = databaseFileURL, sqlite3_open_v2(databasePath.path, &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
                                              code: ErrorCode.databaseTableCreationFailure.rawValue,
                                              description: ErrorDescription.databaseError,
                                              reason: "Failed to open database: \(String(describing: databaseFileURL)). Using in-memory database."))
-
+            
             return mkAnalyticsInMemoryDBConnection()
         }
-
+        
+        // Reduce flakiness under concurrent access (tests and SDK background work).
+        sqlite3_busy_timeout(connection, 5_000)
         return connection
     }
-
+    
     private static func mkAnalyticsInMemoryDBConnection() -> OpaquePointer? {
         var connection: OpaquePointer?
-        sqlite3_open("file::memory:?cache=shared", &connection)
-
+        sqlite3_open_v2("file::memory:?cache=shared", &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_URI | SQLITE_OPEN_FULLMUTEX, nil)
+        
+        sqlite3_busy_timeout(connection, 5_000)
         return connection
     }
 }

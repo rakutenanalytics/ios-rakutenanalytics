@@ -8,8 +8,6 @@ let package = Package(
     platforms: [.iOS(.v15)],
     products: [.library(name: "RakutenAnalytics", targets: ["RakutenAnalytics"])],
     dependencies: [
-             .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "7.6.2")),
-             .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "13.6.2")),
              .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMajor(from: "0.10.1")),
         ],
     targets: [
@@ -29,8 +27,6 @@ let package = Package(
 
         .target(name: "RAnalyticsTestHelpers",
                 dependencies: ["RakutenAnalytics",
-                               "Quick",
-                               "Nimble",
                                "ViewInspector"],
                 path: "UnitTestApp/Tests/RAnalyticsTestHelpers",
                 resources: [.process("Resources")]),
@@ -39,8 +35,8 @@ let package = Package(
                     dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
                     path: "UnitTestApp/Tests/Functional"),
 
-        .testTarget(name: "UtilsSpec", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
-                    path: "UnitTestApp/Tests/UtilsSpec"),
+        .testTarget(name: "UtilsTests", dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
+                    path: "UnitTestApp/Tests/UtilsTests"),
 
         .testTarget(name: "Integration",
                     dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"],
@@ -53,9 +49,9 @@ let package = Package(
                     exclude: ["Info.plist"],
                     resources: [.process("Resources")]),
 
-        .testTarget(name: "GeoSpec",
+        .testTarget(name: "GeoTests",
                     dependencies: ["RakutenAnalytics", "RAnalyticsTestHelpers"], 
-                    path: "UnitTestApp/Tests/GeoSpec")
+                    path: "UnitTestApp/Tests/GeoTests")
     ],
     swiftLanguageVersions: [.v5]
 )

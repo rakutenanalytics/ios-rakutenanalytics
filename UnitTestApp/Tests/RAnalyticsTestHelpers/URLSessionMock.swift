@@ -6,6 +6,12 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
     public typealias SessionTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 
     private static var swizzledMethods: (Method, Method)?
+    private static var swizzleRefCount: Int = 0
+    private static let swizzleLock = DispatchQueue(label: "com.rakuten.analytics.URLSessionMock.swizzleLock")
+    /// Global exclusive gate while the URLSession swizzle is active.
+    /// Swizzling affects the entire process; without serialization, parallel tests can interfere by
+    /// reconfiguring the shared mock (or toggling swizzling) while other tests are running.
+    private static let mockingExclusiveSemaphore = DispatchSemaphore(value: 1)
     private static var mockSessionLinks = [URLSession: WeakWrapper<URLSessionMock>]()
 
     private let originalInstance: URLSession?
@@ -32,31 +38,44 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
     }
 
     public static func startMockingURLSession() {
-        guard swizzledMethods == nil else {
-            return
+        swizzleLock.sync {
+            if swizzleRefCount == 0 {
+                // Block other tests from entering a swizzled environment concurrently.
+                mockingExclusiveSemaphore.wait()
+
+                let originalMethod = class_getInstanceMethod(
+                    URLSession.self,
+                    #selector(URLSession(configuration: .default).dataTask(with:completionHandler:)
+                        as (URLRequest, @escaping SessionTaskCompletion) -> URLSessionDataTask))!
+
+                let dummyObject = URLSessionMock(originalInstance: URLSession(configuration: .default))
+                let swizzledMethod = class_getInstanceMethod(
+                    URLSessionMock.self,
+                    #selector(dummyObject.dataTask(with:completionHandler:)
+                        as (URLRequest, @escaping SessionTaskCompletion) -> URLSessionDataTask))!
+
+                swizzledMethods = (originalMethod, swizzledMethod)
+                method_exchangeImplementations(originalMethod, swizzledMethod)
+            }
+            swizzleRefCount += 1
         }
-
-        let originalMethod = class_getInstanceMethod(
-            URLSession.self,
-            #selector(URLSession(configuration: .default).dataTask(with:completionHandler:)
-                as (URLRequest, @escaping SessionTaskCompletion) -> URLSessionDataTask))!
-
-        let dummyObject = URLSessionMock(originalInstance: URLSession(configuration: .default))
-        let swizzledMethod = class_getInstanceMethod(
-            URLSessionMock.self,
-            #selector(dummyObject.dataTask(with:completionHandler:)
-                as (URLRequest, @escaping SessionTaskCompletion) -> URLSessionDataTask))!
-
-        swizzledMethods = (originalMethod, swizzledMethod)
-        method_exchangeImplementations(originalMethod, swizzledMethod)
     }
 
     public static func stopMockingURLSession() {
-        guard let swizzledMethods = swizzledMethods else {
-            return
+        swizzleLock.sync {
+            guard swizzleRefCount > 0 else {
+                return
+            }
+            swizzleRefCount -= 1
+            guard swizzleRefCount == 0, let swizzledMethods = swizzledMethods else {
+                return
+            }
+            method_exchangeImplementations(swizzledMethods.0, swizzledMethods.1)
+            self.swizzledMethods = nil
+
+            // Allow other tests to enter.
+            mockingExclusiveSemaphore.signal()
         }
-        method_exchangeImplementations(swizzledMethods.0, swizzledMethods.1)
-        self.swizzledMethods = nil
     }
 
     public func decodeSentData<T: Decodable>(modelType: T.Type) -> T? {
