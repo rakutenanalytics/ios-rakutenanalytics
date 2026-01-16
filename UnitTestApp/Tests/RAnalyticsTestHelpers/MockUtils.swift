@@ -167,21 +167,24 @@ final class URLSessionTaskMock: URLSessionTaskable {
 // MARK: - Swifty Session
 
 public final class SwiftyURLSessionMock: NSObject, SwiftySessionable {
-    private let queue = DispatchQueue(label: "com.example.SwityURLSessionMock.queue")
-    public var urlRequest: URLRequest?
-    public var response: URLResponse?
-    public var completion: (() -> Void)?
+    @AtomicGetSet public var urlRequest: URLRequest?
+    @AtomicGetSet public var response: URLResponse?
+    @AtomicGetSet public var completion: (() -> Void)?
 
     public override init() {
         super.init()
     }
 
     public func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
-        queue.sync {
-            self.urlRequest = request
-            completionHandler(.success((nil, response ?? URLResponse())))
-            completion?()
-        }
+        urlRequest = request
+        let responseSnapshot = response
+        let completionSnapshot = completion
+        let fallbackResponse = URLResponse(url: request.url ?? URL(string: "about:blank")!,
+                                           mimeType: nil,
+                                           expectedContentLength: 0,
+                                           textEncodingName: nil)
+        completionHandler(.success((nil, responseSnapshot ?? fallbackResponse)))
+        completionSnapshot?()
         return URLSessionTaskMock()
     }
 }

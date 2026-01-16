@@ -73,11 +73,23 @@ struct URLSessionExtensionsTests {
     }
 }
 
-private class SwiftySessionableMock: URLSession, @unchecked Sendable {
+private final class SwiftySessionableMock: SwiftySessionable, @unchecked Sendable {
     private(set) var callCompletionHandler: ((_ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void)?
-    
-    override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
-        self.callCompletionHandler = completionHandler
-        return URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
+
+    func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
+        callCompletionHandler = { data, response, error in
+            if let error = error {
+                completionHandler(.failure(error))
+                return
+            }
+
+            guard let response = response else {
+                completionHandler(.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown)))
+                return
+            }
+
+            completionHandler(.success((data, response)))
+        }
+        return URLSessionTaskMock()
     }
 }

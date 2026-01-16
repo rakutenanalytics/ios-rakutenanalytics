@@ -1,7 +1,7 @@
 import Foundation
 @testable import RakutenAnalytics
 
-public final class URLSessionMock: URLSession, @unchecked Sendable {
+public final class URLSessionMock: NSObject, @unchecked Sendable {
 
     public typealias SessionTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 
@@ -12,7 +12,7 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
     /// Swizzling affects the entire process; without serialization, parallel tests can interfere by
     /// reconfiguring the shared mock (or toggling swizzling) while other tests are running.
     private static let mockingExclusiveSemaphore = DispatchSemaphore(value: 1)
-    private static var mockSessionLinks = [URLSession: WeakWrapper<URLSessionMock>]()
+    private static var mockSessionLinks = [ObjectIdentifier: WeakWrapper<URLSessionMock>]()
 
     private let originalInstance: URLSession?
 
@@ -23,11 +23,12 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
     public var onCompletedTask: (() -> Void)?
 
     public static func mock(originalInstance: URLSession) -> URLSessionMock {
-        if let existingMock = URLSessionMock.mockSessionLinks[originalInstance]?.value {
+        let key = ObjectIdentifier(originalInstance as AnyObject)
+        if let existingMock = URLSessionMock.mockSessionLinks[key]?.value {
             return existingMock
         } else {
             let newMock = URLSessionMock(originalInstance: originalInstance)
-            URLSessionMock.mockSessionLinks[originalInstance] = WeakWrapper(value: newMock)
+            URLSessionMock.mockSessionLinks[key] = WeakWrapper(value: newMock)
             return newMock
         }
     }
@@ -109,7 +110,7 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
         return try? JSONDecoder().decode(modelType.self, from: jsonData)
     }
 
-    public override func dataTask(
+    @objc public func dataTask(
         with request: URLRequest,
         completionHandler: @escaping SessionTaskCompletion) -> URLSessionDataTask {
 
@@ -117,7 +118,8 @@ public final class URLSessionMock: URLSession, @unchecked Sendable {
         if self.responds(to: #selector(getter: sentRequest)) {
             mockedSession = self // not swizzled
         } else {
-            mockedSession = URLSessionMock.mockSessionLinks[self]?.value
+            let key = ObjectIdentifier(self)
+            mockedSession = URLSessionMock.mockSessionLinks[key]?.value
         }
 
         let originalSession = mockedSession?.originalInstance ?? URLSession.shared
