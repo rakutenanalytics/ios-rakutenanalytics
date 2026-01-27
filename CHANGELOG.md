@@ -4,6 +4,7 @@
 
 ### Features
 * CONRAT-41923: Add sdk_source parameter for SDK usage tracking.
+* CONRAT-42909: Add manual viewable impressions tracking for UIKit and SwiftUI.
 
 ### Improvements
 * CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework
