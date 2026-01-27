@@ -20,6 +20,7 @@ enum GlobalConstants {
     static let requestGeoLocation = "Request Geo Location"
     static let showEmptyPage = "Show empty page (for pv event tests)"
     static let emptyPageTitle = "Empty page"
+    static let viewableImpressions = "Viewable Impressions"
     static let urlSchemeLocator = "appToAppTracking_button_urlScheme"
     static let universalLinkLocator = "appToAppTracking_button_universalLink"
 }
@@ -39,7 +40,8 @@ enum TableViewCellType: Int, CaseIterable {
          showWebViewUserAgent,
          requestGeoLocation,
          startLocationCollection,
-         showEmptyPage
+         showEmptyPage,
+         viewableImpressions
 
     var cellIdentifier: String {
         switch self {
@@ -48,6 +50,8 @@ enum TableViewCellType: Int, CaseIterable {
         case .accountID, .appID, .urlSchemePathComponent, .universalLinkPathComponent, .urlSchemeRef, .universalLinkRef:
             return "TextFieldTableViewCell"
         case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation, .showEmptyPage:
+            return "BaseTableViewCell"
+        case .viewableImpressions:
             return "BaseTableViewCell"
         }
     }
@@ -84,6 +88,8 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.startLocationCollection
         case .showEmptyPage:
             return GlobalConstants.showEmptyPage
+        case .viewableImpressions:
+            return GlobalConstants.viewableImpressions
         }
     }
 }
@@ -303,6 +309,10 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         case .showEmptyPage:
             let viewController = UIViewController()
             viewController.title = GlobalConstants.emptyPageTitle
+            navigationController?.pushViewController(viewController, animated: true)
+
+        case .viewableImpressions:
+            let viewController = ViewableImpressionsViewController()
             navigationController?.pushViewController(viewController, animated: true)
 
         default: ()

@@ -119,6 +119,10 @@ import Foundation
         /// This event has parameters `RAnalyticsEvent.Parameter.eventName` and `RAnalyticsEvent.Parameter.eventData`.
         public static let custom = "_analytics_custom"
 
+        /// Batched viewable impressions event
+        /// Event triggered when the host decides to emit manual impressions.
+        public static let viewableImpression = "viewable_impression"
+
         /// Event triggered when the geolocation is updated.
         public static let geoLocation = "loc"
     }
@@ -169,6 +173,53 @@ import Foundation
 
         /// Parameter for custom account number object sent with a custom event.
         public static let customAccNumber = "customAccNumber"
+
+        // MARK: - Viewable Impression Event Parameters
+
+        /// Parameter for the viewable impression data sent with a custom event.
+        public static let viewableData = "viewable_data"
+
+        /// Parameter for item identifier that was viewed
+        public static let itemId = "item_id"
+
+        /// Parameter for item title/name
+        public static let itemTitle = "item_title"
+
+        /// Parameter for item description
+        public static let itemDescription = "item_description"
+
+        /// Parameter for item category
+        public static let itemCategory = "item_category"
+
+        /// Parameter for item genre
+        public static let itemGenre = "item_genre"
+
+        /// Parameter for item price
+        public static let itemPrice = "item_price"
+
+        /// Parameter for item position in the list
+        public static let itemPosition = "item_position"
+
+        /// Parameter for viewport visibility percentage (0.0 to 1.0)
+        public static let visibilityPercentage = "visibility_percentage"
+
+        /// Parameter for dwell time in seconds
+        public static let dwellTime = "dwell_time"
+
+        /// Parameter for viewable impression timestamp
+        public static let viewableImpressionTimestamp = "viewable_impression_timestamp"
+
+        /// Parameter for viewport bounds (visible area)
+        public static let viewportBounds = "viewport_bounds"
+
+        /// Parameter for screen name (view controller name) - included at item level
+        public static let screenName = "screen_name"
+
+        /// Parameter for scroll view identifier
+        public static let scrollViewIdentifier = "scroll_view_identifier"
+
+        /// Parameter for viewable impression trigger reason
+        public static let triggerReason = "trigger_reason"
     }
 
     /// Standard event parameter values

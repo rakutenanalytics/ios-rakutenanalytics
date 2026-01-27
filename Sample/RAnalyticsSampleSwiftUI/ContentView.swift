@@ -15,6 +15,10 @@ struct ContentView: View {
                     Text("Settings")
                 }
 
+                NavigationLink(destination: ViewableImpressionsView()) {
+                    Text("Viewable Impressions")
+                }
+
                 Button("Sheet") {
                     showingSheet.toggle()
 

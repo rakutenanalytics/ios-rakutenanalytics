@@ -99,6 +99,8 @@
 		CF35031B2C5B40AC00F95F77 /* PositiveIntegerNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35029C2C5B3D4100F95F77 /* PositiveIntegerNumberTests.swift */; };
 		CF35031C2C5B40AC00F95F77 /* SwiftInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502B42C5B3D4100F95F77 /* SwiftInterop.swift */; };
 		CF35031D2C5B40AC00F95F77 /* RAnalyticsEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502A22C5B3D4100F95F77 /* RAnalyticsEventTests.swift */; };
+		D1A1B2C3D4E5F60718293A4B /* ViewableImpressionTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */; };
+		D1A1B2C3D4E5F60718293A4D /* AnalyticsViewableImpressionModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */; };
 		CF35031E2C5B40AC00F95F77 /* ReferralAppTrackingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502AF2C5B3D4100F95F77 /* ReferralAppTrackingIntegrationTests.swift */; };
 		CF35031F2C5B40B000F95F77 /* CoreInfosCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502932C5B3D4100F95F77 /* CoreInfosCollectorTests.swift */; };
 		CF3503202C5B40B000F95F77 /* DatabaseDirectoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502942C5B3D4100F95F77 /* DatabaseDirectoriesTests.swift */; };
@@ -250,6 +252,8 @@
 		CF3502A02C5B3D4100F95F77 /* RAnalyticsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseTests.swift; sourceTree = "<group>"; };
 		CF3502A12C5B3D4100F95F77 /* RAnalyticsEndpointSettableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEndpointSettableTests.swift; sourceTree = "<group>"; };
 		CF3502A22C5B3D4100F95F77 /* RAnalyticsEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEventTests.swift; sourceTree = "<group>"; };
+		D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionTrackerTests.swift; sourceTree = "<group>"; };
+		D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewableImpressionModifierTests.swift; sourceTree = "<group>"; };
 		CF3502A32C5B3D4100F95F77 /* RAnalyticsExternalCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollectorTests.swift; sourceTree = "<group>"; };
 		CF3502A42C5B3D4100F95F77 /* RAnalyticsLaunchCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollectorTests.swift; sourceTree = "<group>"; };
 		CF3502A52C5B3D4100F95F77 /* RAnalyticsRATTrackerDuplicateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerDuplicateTests.swift; sourceTree = "<group>"; };
@@ -522,6 +526,8 @@
 				CF3502A02C5B3D4100F95F77 /* RAnalyticsDatabaseTests.swift */,
 				CF3502A12C5B3D4100F95F77 /* RAnalyticsEndpointSettableTests.swift */,
 				CF3502A22C5B3D4100F95F77 /* RAnalyticsEventTests.swift */,
+				D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */,
+				D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */,
 				CF3502A32C5B3D4100F95F77 /* RAnalyticsExternalCollectorTests.swift */,
 				CF3502A42C5B3D4100F95F77 /* RAnalyticsLaunchCollectorTests.swift */,
 				CF3502A52C5B3D4100F95F77 /* RAnalyticsRATTrackerDuplicateTests.swift */,
@@ -1011,6 +1017,8 @@
 				CF35031B2C5B40AC00F95F77 /* PositiveIntegerNumberTests.swift in Sources */,
 				CF35031C2C5B40AC00F95F77 /* SwiftInterop.swift in Sources */,
 				CF35031D2C5B40AC00F95F77 /* RAnalyticsEventTests.swift in Sources */,
+				D1A1B2C3D4E5F60718293A4B /* ViewableImpressionTrackerTests.swift in Sources */,
+				D1A1B2C3D4E5F60718293A4D /* AnalyticsViewableImpressionModifierTests.swift in Sources */,
 				CF35031E2C5B40AC00F95F77 /* ReferralAppTrackingIntegrationTests.swift in Sources */,
 				CF3502FA2C5B406C00F95F77 /* UIApplication+Extensions.swift in Sources */,
 				CF3502F12C5B3FCE00F95F77 /* Dictionary+RAT.swift in Sources */,

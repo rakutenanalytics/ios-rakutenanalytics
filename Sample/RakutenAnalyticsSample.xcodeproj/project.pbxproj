@@ -14,6 +14,7 @@
 		5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CBE2016CE8A0028CEBC /* Main.storyboard */; };
 		5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
+		8B3E9B4A44D64E66A1C0C2A1 /* ViewableImpressionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */; };
 		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
 		77E4D94CD1BB0C06E404C98D /* Pods_Common_RakutenAnalyticsSamplePod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 562589AF5E352880CEC7DEF7 /* Pods_Common_RakutenAnalyticsSamplePod.framework */; };
 		C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEC28C0DAC400596714 /* AppDelegate.swift */; };
@@ -24,6 +25,7 @@
 		C900FBF928C0DAC600596714 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */; };
 		C980DAC427BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */; };
 		C980DAC627BAA4E80059E12D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DAC527BAA4E80059E12D /* ContentView.swift */; };
+		9A1C3D4E5F60718293A4B5C6 /* ViewableImpressionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */; };
 		C980DAC827BAA4EA0059E12D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C980DAC727BAA4EA0059E12D /* Assets.xcassets */; };
 		C980DACB27BAA4EA0059E12D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C980DACA27BAA4EA0059E12D /* Preview Assets.xcassets */; };
 		C980DAD027BAA9F00059E12D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980DACF27BAA9F00059E12D /* LoginView.swift */; };
@@ -34,6 +36,7 @@
 		CFF8E1422C61B3C900B1C970 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */; };
 		CFF8E1432C61B3C900B1C970 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */; };
 		CFF8E1442C61B3C900B1C970 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
+		8B3E9B4A44D64E66A1C0C2A3 /* ViewableImpressionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */; };
 		CFF8E1452C61B3C900B1C970 /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */; };
 		CFF8E14B2C61B3C900B1C970 /* RAnalyticsConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */; };
 		CFF8E14C2C61B3C900B1C970 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
@@ -80,6 +83,7 @@
 		5AB66CC42016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionsViewController.swift; sourceTree = "<group>"; };
 		5BA0B31E81C6821A92DCDAD3 /* Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig"; path = "Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig"; sourceTree = "<group>"; };
 		6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSample.entitlements; sourceTree = "<group>"; };
 		8D060370386465E7A8C8ACA8 /* Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig"; path = "Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig"; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 		C980DAC127BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakutenAnalyticsSampleSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsSampleSwiftUIApp.swift; sourceTree = "<group>"; };
 		C980DAC527BAA4E80059E12D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionsView.swift; sourceTree = "<group>"; };
 		C980DAC727BAA4EA0059E12D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C980DACA27BAA4EA0059E12D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C980DACF27BAA9F00059E12D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -155,6 +160,7 @@
 				6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */,
 				5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */,
 				5AB66CD820171F730028CEBC /* TableViewController.swift */,
+				8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */,
 				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
 			);
 			path = RAnalyticsSample;
@@ -214,6 +220,7 @@
 				C9D1FB6F29261C3C0043C520 /* Info.plist */,
 				C980DAC727BAA4EA0059E12D /* Assets.xcassets */,
 				C980DAC527BAA4E80059E12D /* ContentView.swift */,
+				9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */,
 				C980DACF27BAA9F00059E12D /* LoginView.swift */,
 				C980DAC927BAA4EA0059E12D /* Preview Content */,
 				C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */,
@@ -498,6 +505,7 @@
 				5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */,
 				5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */,
 				5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */,
+				8B3E9B4A44D64E66A1C0C2A1 /* ViewableImpressionsViewController.swift in Sources */,
 				5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -520,6 +528,7 @@
 				C980DAD227BAAA130059E12D /* SettingsView.swift in Sources */,
 				C98A4AE727C3FF54006A76AA /* SheetView.swift in Sources */,
 				C980DAC627BAA4E80059E12D /* ContentView.swift in Sources */,
+				9A1C3D4E5F60718293A4B5C6 /* ViewableImpressionsView.swift in Sources */,
 				C980DAC427BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -532,6 +541,7 @@
 				CFF8E1422C61B3C900B1C970 /* TextFieldTableViewCell.swift in Sources */,
 				CFF8E1432C61B3C900B1C970 /* AppDelegate.swift in Sources */,
 				CFF8E1442C61B3C900B1C970 /* TableViewController.swift in Sources */,
+				8B3E9B4A44D64E66A1C0C2A3 /* ViewableImpressionsViewController.swift in Sources */,
 				CFF8E1452C61B3C900B1C970 /* SwitchTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

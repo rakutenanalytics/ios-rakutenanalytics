@@ -219,6 +219,86 @@ struct RAnalyticsRATTrackerProcessOtherEventsTests {
                         }
                         #expect(payload?[PayloadParameterKeys.acc] as? NSNumber == NSNumber(value: 777))
                     }
+
+                    @Test("should process the custom event with viewableData parameters")
+                    mutating func testShouldProcessCustomEventWithViewableData() async throws {
+                        helper.setUp()
+                        defer { helper.tearDown() }
+
+                        let viewableData: [String: Any] = [
+                            "items": [
+                                ["item_id": "item1", "item_title": "Title 1"],
+                                ["item_id": "item2", "item_title": "Title 2"]
+                            ],
+                            "item_count": 2,
+                            "trigger_reason": "scroll_stop"
+                        ]
+
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.custom,
+                                                    parameters: [
+                                                        "eventName": RAnalyticsEvent.Name.viewableImpression,
+                                                        RAnalyticsEvent.Parameter.viewableData: viewableData
+                                                    ])
+                        var payload: [String: Any]?
+                        var cpPayload: [String: Any]?
+
+                        try await helper.expecter.expectEventAsync(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.viewableImpression) {
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        }
+                        try await TestingHelpers.eventually {
+                            payload != nil && cpPayload != nil
+                        }
+
+                        let items = cpPayload?["items"] as? [[String: Any]]
+                        #expect(items != nil)
+                        #expect(items?.count == 2)
+                        #expect(items?[0]["item_id"] as? String == "item1")
+                        #expect(items?[1]["item_id"] as? String == "item2")
+                        let itemCount = cpPayload?["item_count"] as? Int
+                        #expect(itemCount == 2)
+                        let triggerReason = cpPayload?["trigger_reason"] as? String
+                        #expect(triggerReason == "scroll_stop")
+                    }
+
+                    @Test("should process the custom event with both eventData and viewableData parameters")
+                    mutating func testShouldProcessCustomEventWithEventDataAndViewableData() async throws {
+                        helper.setUp()
+                        defer { helper.tearDown() }
+
+                        let eventData: [String: Any] = ["foo": "bar"]
+                        let viewableData: [String: Any] = [
+                            "items": [["item_id": "item1"]],
+                            "item_count": 1
+                        ]
+
+                        let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.custom,
+                                                    parameters: [
+                                                        "eventName": "testEvent",
+                                                        "eventData": eventData,
+                                                        RAnalyticsEvent.Parameter.viewableData: viewableData
+                                                    ])
+                        var payload: [String: Any]?
+                        var cpPayload: [String: Any]?
+
+                        try await helper.expecter.expectEventAsync(event, state: Tracking.defaultState, equal: "testEvent") {
+                            payload = $0.first
+                            cpPayload = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
+                        }
+                        try await TestingHelpers.eventually {
+                            payload != nil && cpPayload != nil
+                        }
+
+                        let foo = cpPayload?["foo"] as? String
+                        #expect(foo == "bar")
+
+                        let items = cpPayload?["items"] as? [[String: Any]]
+                        #expect(items != nil)
+                        #expect(items?.count == 1)
+                        #expect(items?[0]["item_id"] as? String == "item1")
+                        let itemCount = cpPayload?["item_count"] as? Int
+                        #expect(itemCount == 1)
+                    }
                 }
                 
                 @Test("should not process an unknown event")
