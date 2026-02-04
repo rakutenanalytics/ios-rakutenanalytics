@@ -1,9 +1,6 @@
 import UIKit
 import Testing
 @preconcurrency @testable import RakutenAnalytics
-#if canImport(RAnalyticsTestHelpers)
-import RAnalyticsTestHelpers
-#endif
 
 private struct MockTrackableItem: ViewableImpressionTrackable {
     let itemId: String
@@ -14,28 +11,22 @@ private struct MockTrackableItem: ViewableImpressionTrackable {
     let itemPrice: String? = nil
 }
 
-private func extractViewableImpressionPayload(from requests: [URLRequest]) -> [String: Any]? {
-    for request in requests {
-        guard let payload = request.httpBody?.ratPayload else { continue }
-        for json in payload where (json[PayloadParameterKeys.etype] as? String) == RAnalyticsEvent.Name.viewableImpression {
-            return json
-        }
-    }
-    return nil
-}
-
 @Suite("ViewableImpressionTracker")
 struct ViewableImpressionTrackerTests {
     @MainActor
-    private static func installRATTrackerForSharedManager() -> (AnalyticsManager, Tracker) {
-        let manager = AnalyticsManager.shared()
-        let container = SimpleContainerMock()
-        container.bundle = BundleMock.create()
-        let tracker = RAnalyticsRATTracker(dependenciesContainer: container)
-        manager.add(tracker)
-        return (manager, tracker)
+    private static func eventData(from eventParameters: [String: Any]?) -> [[String: Any]] {
+        return eventParameters?[RAnalyticsEvent.Parameter.viewableData] as? [[String: Any]] ?? []
     }
 
+    @MainActor
+    private static func refreshResult(_ tracker: ViewableImpressionTracker,
+                                      viewportView: UIView? = nil) async -> [String: Any]? {
+        await withCheckedContinuation { continuation in
+            tracker.refreshState(viewportView: viewportView) { eventParameters in
+                continuation.resume(returning: eventParameters)
+            }
+        }
+    }
     @Suite("Manual Tracking")
     struct ManualTrackingTests {
         @MainActor
@@ -55,19 +46,6 @@ struct ViewableImpressionTrackerTests {
         @MainActor
         @Test("manual tracking uses viewport context when none provided")
         func testManualUsesViewportContext() async throws {
-            let (manager, ratTracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(ratTracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -83,29 +61,15 @@ struct ViewableImpressionTrackerTests {
             root.view.addSubview(view)
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
-            impressionTracker.refreshState()
-
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                extractViewableImpressionPayload(from: requests) != nil
-            }
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.count == 1)
+            #expect(eventData.first?[RAnalyticsEvent.Parameter.itemId] as? String == item.itemId)
         }
 
         @MainActor
-        @Test("manual track + refreshState emits a viewable impression event")
-        func testManualTrackAndRefreshEmitsEvent() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
+        @Test("manual track + refreshState returns qualified items")
+        func testManualTrackAndRefreshReturnsQualifiedItems() async throws {
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -124,36 +88,25 @@ struct ViewableImpressionTrackerTests {
             scrollView.addSubview(view)
 
             impressionTracker.track(view: view, item: item, itemPosition: 3)
-            impressionTracker.refreshState(viewportView: scrollView, triggerReason: "manual")
-
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                extractViewableImpressionPayload(from: requests) != nil
-            }
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.count == 1)
+            let qualified = eventData.first
+            #expect(qualified?[RAnalyticsEvent.Parameter.itemId] as? String == item.itemId)
+            #expect(qualified?[RAnalyticsEvent.Parameter.itemPosition] as? Int == 3)
+            let timestamp = qualified?[RAnalyticsEvent.Parameter.viewableImpressionTimestamp] as? NSNumber
+            #expect(timestamp != nil)
         }
 
         @MainActor
-        @Test("manual tracking includes scrollViewIdentifier and screen_name at item level")
-        func testManualIncludesScrollViewIdentifierAndScreenName() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
+        @Test("manual tracking includes screen_name at item level")
+        func testManualIncludesScreenName() async throws {
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
             window.makeKeyAndVisible()
 
             let scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
-            scrollView.scrollViewIdentifier = "viewable-scroll"
             root.view.addSubview(scrollView)
 
             let impressionTracker = ViewableImpressionTracker()
@@ -166,43 +119,14 @@ struct ViewableImpressionTrackerTests {
             scrollView.addSubview(view)
 
             impressionTracker.track(view: view, item: item, itemPosition: 1)
-            impressionTracker.refreshState(viewportView: scrollView, triggerReason: "manual")
-
-            var payload: [String: Any]?
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                if let found = extractViewableImpressionPayload(from: requests) {
-                    payload = found
-                    return true
-                }
-                return false
-            }
-
-            let resolvedPayload = try #require(payload)
-            #expect(resolvedPayload[RAnalyticsEvent.Parameter.scrollViewIdentifier] as? String == "viewable-scroll")
-            
-            let eventData = resolvedPayload["event_data"] as? [[String: Any]]
-            let firstItem = try #require(eventData?.first)
-            #expect(firstItem[RAnalyticsEvent.Parameter.screenName] as? String == "UIViewController")
-            // trigger_reason is also at item level
-            #expect(firstItem[RAnalyticsEvent.Parameter.triggerReason] as? String == "manual")
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.first?[RAnalyticsEvent.Parameter.screenName] as? String == "UIViewController")
         }
 
         @MainActor
-        @Test("manual untrack prevents viewable impression event")
+        @Test("manual untrack prevents qualified impressions")
         func testManualUntrackPreventsEvent() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -222,28 +146,14 @@ struct ViewableImpressionTrackerTests {
 
             impressionTracker.track(view: view, item: item, itemPosition: 1)
             impressionTracker.untrack(itemId: item.itemId)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.isEmpty)
         }
 
         @MainActor
         @Test("manual untrack allows tracking again")
         func testManualUntrackAllowsTrackingAgain() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -263,35 +173,19 @@ struct ViewableImpressionTrackerTests {
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
             impressionTracker.untrack(itemId: item.itemId)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let firstEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let firstEventData = ViewableImpressionTrackerTests.eventData(from: firstEventParameters)
+            #expect(firstEventData.isEmpty)
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                extractViewableImpressionPayload(from: requests) != nil
-            }
+            let secondEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let secondEventData = ViewableImpressionTrackerTests.eventData(from: secondEventParameters)
+            #expect(secondEventData.count == 1)
         }
 
         @MainActor
-        @Test("manual disableTracking prevents viewable impression event")
+        @Test("manual disableTracking prevents qualified impressions")
         func testManualDisableTrackingPreventsEvent() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -311,28 +205,14 @@ struct ViewableImpressionTrackerTests {
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
             impressionTracker.disableTracking()
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.isEmpty)
         }
 
         @MainActor
         @Test("manual clear removes all tracked items")
         func testManualClearRemovesAllTrackedItems() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -352,28 +232,14 @@ struct ViewableImpressionTrackerTests {
 
             impressionTracker.track(view: view, item: item, itemPosition: 2)
             impressionTracker.clearManualTracking()
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.isEmpty)
         }
 
         @MainActor
         @Test("manual clear allows tracking again")
         func testManualClearAllowsTrackingAgain() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -393,35 +259,19 @@ struct ViewableImpressionTrackerTests {
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
             impressionTracker.clearManualTracking()
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let firstEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let firstEventData = ViewableImpressionTrackerTests.eventData(from: firstEventParameters)
+            #expect(firstEventData.isEmpty)
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                extractViewableImpressionPayload(from: requests) != nil
-            }
+            let secondEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let secondEventData = ViewableImpressionTrackerTests.eventData(from: secondEventParameters)
+            #expect(secondEventData.count == 1)
         }
 
         @MainActor
         @Test("manual respects visibility threshold")
         func testManualRespectsVisibilityThreshold() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -440,28 +290,14 @@ struct ViewableImpressionTrackerTests {
             scrollView.addSubview(view)
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await Task.sleep(nanoseconds: 400_000_000)
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let eventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let eventData = ViewableImpressionTrackerTests.eventData(from: eventParameters)
+            #expect(eventData.isEmpty)
         }
 
         @MainActor
         @Test("manual refresh resets dwell when view becomes invalid")
         func testManualRefreshResetsWhenViewInvalid() async throws {
-            let (manager, tracker) = ViewableImpressionTrackerTests.installRATTrackerForSharedManager()
-            defer { manager.remove(tracker) }
-
-            URLSessionMock.startMockingURLSession()
-            defer { URLSessionMock.stopMockingURLSession() }
-
-            let sessionMock = URLSessionMock.mock(originalInstance: .shared)
-            sessionMock.stubResponse(statusCode: 200)
-            var requests: [URLRequest] = []
-            sessionMock.onCompletedTask = {
-                if let request = sessionMock.sentRequest { requests.append(request) }
-            }
-
             let root = UIViewController()
             let window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = root
@@ -480,23 +316,28 @@ struct ViewableImpressionTrackerTests {
             scrollView.addSubview(view)
 
             impressionTracker.track(view: view, item: item, itemPosition: 0)
-            impressionTracker.refreshState(viewportView: scrollView)
+            let firstEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let firstEventData = ViewableImpressionTrackerTests.eventData(from: firstEventParameters)
+            #expect(firstEventData.isEmpty)
 
             view.isHidden = true
-            impressionTracker.refreshState(viewportView: scrollView)
+            let hiddenEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let hiddenEventData = ViewableImpressionTrackerTests.eventData(from: hiddenEventParameters)
+            #expect(hiddenEventData.isEmpty)
 
             view.isHidden = false
-            impressionTracker.refreshState(viewportView: scrollView)
-            impressionTracker.refreshState(viewportView: scrollView)
+            let visibleEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let visibleEventData = ViewableImpressionTrackerTests.eventData(from: visibleEventParameters)
+            #expect(visibleEventData.isEmpty)
 
-            #expect(extractViewableImpressionPayload(from: requests) == nil)
+            let immediateEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let immediateEventData = ViewableImpressionTrackerTests.eventData(from: immediateEventParameters)
+            #expect(immediateEventData.isEmpty)
 
             try await Task.sleep(nanoseconds: 300_000_000)
-            impressionTracker.refreshState(viewportView: scrollView)
-
-            try await TestingHelpers.eventuallyOnMain(timeout: 6.0) {
-                extractViewableImpressionPayload(from: requests) != nil
-            }
+            let afterDwellEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
+            let afterDwellEventData = ViewableImpressionTrackerTests.eventData(from: afterDwellEventParameters)
+            #expect(afterDwellEventData.count == 1)
         }
     }
 }

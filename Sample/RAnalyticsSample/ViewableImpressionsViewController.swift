@@ -45,7 +45,7 @@ final class ViewableImpressionsViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        triggerDwellRefresh(reason: "pv")
+        triggerDwellRefresh()
     }
 
     private func setupTableView() {
@@ -66,7 +66,7 @@ final class ViewableImpressionsViewController: UIViewController {
     }
 
     @objc private func refreshTapped() {
-        triggerDwellRefresh(reason: "manual")
+        triggerDwellRefresh()
     }
 }
 
@@ -92,23 +92,24 @@ extension ViewableImpressionsViewController: UITableViewDataSource, UITableViewD
 
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard !decelerate else { return }
-        triggerDwellRefresh(reason: "scroll_stop")
+        triggerDwellRefresh()
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        triggerDwellRefresh(reason: "scroll_stop")
+        triggerDwellRefresh()
     }
 }
 
 private extension ViewableImpressionsViewController {
-    func triggerDwellRefresh(reason: String) {
-        tracker.refreshState(viewportView: tableView, triggerReason: reason)
-        let dwellTime = tracker.minimumDwellTime
-        guard dwellTime > 0 else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + dwellTime) {
-            self.tracker.refreshState(viewportView: self.tableView, triggerReason: reason)
+    func triggerDwellRefresh() {
+        tracker.refreshState(viewportView: tableView) { eventParameters in
+            guard let eventParameters = eventParameters else { return }
+            RAnalyticsRATTracker.shared()
+                .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
+                .track()
         }
     }
+
 }
 
 private final class ViewableItemCell: UITableViewCell {

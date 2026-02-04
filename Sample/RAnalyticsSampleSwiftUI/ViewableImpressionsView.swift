@@ -14,8 +14,7 @@ struct ViewableImpressionsView: View {
 
     @StateObject private var tracker = SwiftUIManualViewableImpressionTracker(
         minimumDwellTime: 0.5,
-        minimumVisibilityPercentage: 0.5,
-        scrollViewIdentifier: "viewable_swiftui"
+        minimumVisibilityPercentage: 0.5
     )
 
     @State private var isDragging = false
@@ -69,13 +68,14 @@ struct ViewableImpressionsView: View {
     }
 
     private func triggerDwellRefresh(reason: String) {
-        tracker.refreshState(viewport: UIScreen.main.bounds, triggerReason: reason)
-        let dwellTime = tracker.minimumDwellTime
-        guard dwellTime > 0 else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + dwellTime) {
-            tracker.refreshState(viewport: UIScreen.main.bounds, triggerReason: reason)
+        tracker.refreshState(viewport: UIScreen.main.bounds) { eventParameters in
+            guard let eventParameters = eventParameters else { return }
+            _ = RAnalyticsRATTracker.shared()
+                .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
+                .track()
         }
     }
+
 }
 
 private struct ViewableItemRow: View {

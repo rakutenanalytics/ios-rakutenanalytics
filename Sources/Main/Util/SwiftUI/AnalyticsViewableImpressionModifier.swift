@@ -2,82 +2,6 @@
 import SwiftUI
 import UIKit
 
-// MARK: - Batching Coordinator
-
-@available(iOS 13.0, *)
-final class SwiftUIViewableImpressionBatchCoordinator {
-    static let shared = SwiftUIViewableImpressionBatchCoordinator()
-
-    private struct PendingImpression {
-        let item: ViewableImpressionTrackable
-        let dwellTime: TimeInterval
-        let visibilityPercentage: Double
-        let viewport: CGRect
-        let itemPosition: Int
-    }
-
-    private let queue = DispatchQueue(label: "com.rakuten.analytics.swiftui.batching")
-    private var pendingImpressions: [String: [PendingImpression]] = [:]
-    private var scrollStopTimers: [String: DispatchWorkItem] = [:]
-
-    private init() {}
-
-    func registerImpression(item: ViewableImpressionTrackable,
-                            dwellTime: TimeInterval,
-                            visibilityPercentage: Double,
-                            viewport: CGRect,
-                            itemPosition: Int,
-                            triggerReason: String,
-                            scrollViewIdentifier: String?) {
-        let batchKey = scrollViewIdentifier ?? "default"
-
-        queue.async { [weak self] in
-            guard let self = self else { return }
-
-            let impression = PendingImpression(item: item,
-                                               dwellTime: dwellTime,
-                                               visibilityPercentage: visibilityPercentage,
-                                               viewport: viewport,
-                                               itemPosition: itemPosition)
-
-            if self.pendingImpressions[batchKey] == nil {
-                self.pendingImpressions[batchKey] = []
-            }
-            self.pendingImpressions[batchKey]?.append(impression)
-
-            self.scrollStopTimers[batchKey]?.cancel()
-            let task = DispatchWorkItem { [weak self] in
-                self?.sendBatch(for: batchKey,
-                                triggerReason: triggerReason,
-                                scrollViewIdentifier: scrollViewIdentifier)
-            }
-            self.scrollStopTimers[batchKey] = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + AnalyticsSwiftUIConstants.viewableImpressionBatchWindow, execute: task)
-        }
-    }
-
-    private func sendBatch(for batchKey: String,
-                           triggerReason: String,
-                           scrollViewIdentifier: String?) {
-        queue.async { [weak self] in
-            guard let self = self,
-                  let impressions = self.pendingImpressions[batchKey],
-                  !impressions.isEmpty else { return }
-
-            self.pendingImpressions.removeValue(forKey: batchKey)
-            self.scrollStopTimers.removeValue(forKey: batchKey)
-
-            // SwiftUI doesn't have direct view access, so screenName is nil
-            let items = impressions.map { ($0.item, $0.dwellTime, $0.visibilityPercentage, $0.viewport, $0.itemPosition, screenName: nil as String?) }
-            _ = ViewableImpressionEventEmitter.trackBatch(
-                items: items,
-                triggerReason: triggerReason,
-                scrollViewIdentifier: scrollViewIdentifier
-            )
-        }
-    }
-}
-
 // MARK: - Manual Tracker (SwiftUI)
 
 @available(iOS 13.0, *)
@@ -109,17 +33,14 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
 
     public var minimumDwellTime: TimeInterval
     public var minimumVisibilityPercentage: Double
-    public var scrollViewIdentifier: String?
-
     private let queue = DispatchQueue(label: "com.rakuten.analytics.swiftui.manualImpressions")
     private var itemsById: [String: ManualTrackedItem] = [:]
+    private var pendingRefreshWorkItem: DispatchWorkItem?
 
     public init(minimumDwellTime: TimeInterval = AnalyticsSwiftUIConstants.defaultMinimumDwellTime,
-                minimumVisibilityPercentage: Double = AnalyticsSwiftUIConstants.defaultMinimumVisibility,
-                scrollViewIdentifier: String? = nil) {
+                minimumVisibilityPercentage: Double = AnalyticsSwiftUIConstants.defaultMinimumVisibility) {
         self.minimumDwellTime = minimumDwellTime
         self.minimumVisibilityPercentage = minimumVisibilityPercentage
-        self.scrollViewIdentifier = scrollViewIdentifier
     }
 
     public func update(item: ViewableImpressionTrackable, frame: CGRect, itemPosition: Int = 0) {
@@ -146,18 +67,30 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         }
     }
 
+    /// Manually refresh visibility state once and receive results when ready.
+    /// The completion is called immediately if items already qualify, or after
+    /// the suggested dwell delay if items are still accumulating dwell time.
     public func refreshState(viewport: CGRect? = nil,
                              viewportInsets: UIEdgeInsets? = nil,
-                             triggerReason: String = "manual") {
-        queue.async { [weak self] in
-            guard let self = self else { return }
+                             onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
+        let result = refreshStateInternal(
+            viewport: viewport,
+            viewportInsets: viewportInsets
+        )
+        deliverRefreshResult(result, onResult: onResult)
+    }
 
+    private func refreshStateInternal(viewport: CGRect?,
+                                      viewportInsets: UIEdgeInsets?) -> ViewableImpressionRefreshResult {
+        var result = ViewableImpressionRefreshResult.empty
+        queue.sync {
             let now = Date()
             let viewportRect = viewport ?? UIScreen.main.bounds
             let insetViewport = viewportInsets.map { viewportRect.inset(by: $0) } ?? viewportRect
             guard insetViewport.width > 0, insetViewport.height > 0 else { return }
 
-            var qualifiedItems: [(item: ManualTrackedItem, dwellTime: TimeInterval, metrics: (visibility: Double, intersection: CGRect))] = []
+            var qualifiedItems: [(item: ViewableImpressionTrackable, dwellTime: TimeInterval, visibilityPercentage: Double, viewport: CGRect, itemPosition: Int, screenName: String?)] = []
+            var nextRefreshDelay: TimeInterval?
 
             for (_, trackedItem) in self.itemsById {
                 let intersection = insetViewport.intersection(trackedItem.frame)
@@ -182,9 +115,25 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
                     }
 
                     let visibleDuration = now.timeIntervalSince(trackedItem.firstVisibleTime)
-                    if !trackedItem.hasTriggered, visibleDuration >= self.minimumDwellTime {
-                        qualifiedItems.append((trackedItem, visibleDuration, (Double(visibility), intersection)))
-                        trackedItem.hasTriggered = true
+                    if !trackedItem.hasTriggered {
+                        if visibleDuration >= self.minimumDwellTime {
+                            qualifiedItems.append(
+                                (
+                                    item: trackedItem.item,
+                                    dwellTime: visibleDuration,
+                                    visibilityPercentage: Double(visibility),
+                                    viewport: intersection,
+                                    itemPosition: trackedItem.itemPosition,
+                                    screenName: nil
+                                )
+                            )
+                            trackedItem.hasTriggered = true
+                        } else if self.minimumDwellTime > 0 {
+                            let remaining = self.minimumDwellTime - visibleDuration
+                            if remaining > 0 {
+                                nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
+                            }
+                        }
                     }
                 } else {
                     trackedItem.isVisible = false
@@ -193,26 +142,61 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
                 }
             }
 
-            guard !qualifiedItems.isEmpty else { return }
-
-            // SwiftUI doesn't have direct view access, so screenName is nil
-            let items: [(item: ViewableImpressionTrackable, dwellTime: TimeInterval, visibilityPercentage: Double, viewport: CGRect, itemPosition: Int, screenName: String?)] = qualifiedItems.map { qualifiedItem in
-                (
-                    item: qualifiedItem.item.item,
-                    dwellTime: qualifiedItem.dwellTime,
-                    visibilityPercentage: qualifiedItem.metrics.visibility,
-                    viewport: qualifiedItem.metrics.intersection,
-                    itemPosition: qualifiedItem.item.itemPosition,
-                    screenName: nil
+            let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)? = nextRefreshDelay == nil ? nil : { [weak self] in
+                guard let self = self else { return .empty }
+                return self.refreshStateInternal(
+                    viewport: viewport,
+                    viewportInsets: viewportInsets
                 )
             }
 
-            _ = ViewableImpressionEventEmitter.trackBatch(
-                items: items,
-                triggerReason: triggerReason,
-                scrollViewIdentifier: self.scrollViewIdentifier
+            let eventTimestamp = NSNumber(value: Date().toRatTimestamp)
+            let eventData = ViewableImpressionEventEmitter.buildItemPayloads(
+                items: qualifiedItems,
+                eventTimestamp: eventTimestamp
+            )
+            let eventParameters = ViewableImpressionEventEmitter.buildEventParameters(
+                viewableData: eventData
+            )
+
+            result = ViewableImpressionRefreshResult(
+                eventData: eventData,
+                refreshAfterDelay: nextRefreshDelay,
+                refreshAfterDwell: refreshAfterDwell,
+                eventParameters: eventParameters
             )
         }
+        return result
+    }
+
+    private func deliverRefreshResult(_ result: ViewableImpressionRefreshResult,
+                                      onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
+        if !result.eventData.isEmpty || result.refreshAfterDelay == nil {
+            pendingRefreshWorkItem?.cancel()
+            pendingRefreshWorkItem = nil
+            DispatchQueue.main.async {
+                onResult(result.eventParameters)
+            }
+            return
+        }
+
+        guard let delay = result.refreshAfterDelay,
+              let refreshAfterDwell = result.refreshAfterDwell else {
+            pendingRefreshWorkItem?.cancel()
+            pendingRefreshWorkItem = nil
+            DispatchQueue.main.async {
+                onResult(result.eventParameters)
+            }
+            return
+        }
+
+        pendingRefreshWorkItem?.cancel()
+        let workItem = DispatchWorkItem {
+            let followUp = refreshAfterDwell()
+            onResult(followUp.eventParameters)
+        }
+        pendingRefreshWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 }
 
