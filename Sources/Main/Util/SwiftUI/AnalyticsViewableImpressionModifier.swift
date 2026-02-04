@@ -30,10 +30,7 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
 
         var itemId: String { item.itemId }
     }
-
-    extension ManualTrackedItem: ViewableImpressionTrackState {
-        var screenName: String? { nil }
-    }
+    
 
     public var minimumDwellTime: TimeInterval
     public var minimumVisibilityPercentage: Double
@@ -111,8 +108,21 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
                     visibility = (intersection.width * intersection.height) / area
                 }
 
+                let state = ViewableImpressionStateAdapter(
+                    item: trackedItem.item,
+                    itemPosition: trackedItem.itemPosition,
+                    screenName: nil,
+                    getIsVisible: { trackedItem.isVisible },
+                    setIsVisible: { trackedItem.isVisible = $0 },
+                    getFirstVisibleTime: { trackedItem.firstVisibleTime },
+                    setFirstVisibleTime: { trackedItem.firstVisibleTime = $0 },
+                    getHasTriggered: { trackedItem.hasTriggered },
+                    setHasTriggered: { trackedItem.hasTriggered = $0 },
+                    getVisibilityPercentage: { trackedItem.visibilityPercentage },
+                    setVisibilityPercentage: { trackedItem.visibilityPercentage = $0 }
+                )
                 let result = ViewableImpressionTrackStateProcessor.process(
-                    item: trackedItem,
+                    item: state,
                     visibility: visibility,
                     now: now,
                     minimumVisibility: self.minimumVisibilityPercentage,

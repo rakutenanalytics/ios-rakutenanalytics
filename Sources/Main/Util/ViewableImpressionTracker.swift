@@ -72,12 +72,6 @@ private final class ManualTrackedItem {
     var itemId: String { item.itemId }
 }
 
-extension ManualTrackedItem: ViewableImpressionTrackState {
-    var screenName: String? {
-        view?.findViewController().map { String(describing: type(of: $0)) }
-    }
-}
-
 // MARK: - Viewable Impression Tracker (Manual)
 
 @objc public final class ViewableImpressionTracker: NSObject {
@@ -261,8 +255,21 @@ extension ManualTrackedItem: ViewableImpressionTrackState {
                     visibility = nil
                 }
 
+                let state = ViewableImpressionStateAdapter(
+                    item: trackedItem.item,
+                    itemPosition: trackedItem.itemPosition,
+                    screenName: trackedItem.view?.findViewController().map { String(describing: type(of: $0)) },
+                    getIsVisible: { trackedItem.isVisible },
+                    setIsVisible: { trackedItem.isVisible = $0 },
+                    getFirstVisibleTime: { trackedItem.firstVisibleTime },
+                    setFirstVisibleTime: { trackedItem.firstVisibleTime = $0 },
+                    getHasTriggered: { trackedItem.hasTriggeredViewableImpression },
+                    setHasTriggered: { trackedItem.hasTriggeredViewableImpression = $0 },
+                    getVisibilityPercentage: { trackedItem.visibilityPercentage },
+                    setVisibilityPercentage: { trackedItem.visibilityPercentage = $0 }
+                )
                 let result = ViewableImpressionTrackStateProcessor.process(
-                    item: trackedItem,
+                    item: state,
                     visibility: visibility,
                     now: now,
                     minimumVisibility: self.minimumVisibilityPercentage,
