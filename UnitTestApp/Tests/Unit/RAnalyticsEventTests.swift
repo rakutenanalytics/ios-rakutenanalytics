@@ -143,9 +143,9 @@ struct RAnalyticsEventTests {
 
     @Suite("Event names")
     struct EventNamesTests {
-        @Test("should have viewableImpression event name")
-        func testShouldHaveViewableImpressionEventName() {
-            #expect(RAnalyticsEvent.Name.viewableImpression == "viewable_impression")
+        @Test("should have pageVisitForRAT event name")
+        func testShouldHavePageVisitForRATEventName() {
+            #expect(RAnalyticsEvent.Name.pageVisitForRAT == "pv")
         }
     }
 
@@ -164,25 +164,22 @@ struct RAnalyticsEventTests {
             #expect(RAnalyticsEvent.Parameter.visibilityPercentage == "visibility_percentage")
             #expect(RAnalyticsEvent.Parameter.dwellTime == "dwell_time")
             #expect(RAnalyticsEvent.Parameter.viewableImpressionTimestamp == "viewable_impression_timestamp")
-            #expect(RAnalyticsEvent.Parameter.viewportBounds == "viewport_bounds")
             #expect(RAnalyticsEvent.Parameter.screenName == "screen_name")
-            #expect(RAnalyticsEvent.Parameter.triggerReason == "trigger_reason")
         }
 
         @Test("should create event with viewable impression parameters")
         func testShouldCreateEventWithViewableImpressionParameters() {
-            let viewableData: [String: Any] = [
-                "event_data": [["item_id": "item1"]]
+            let viewableData: [[String: Any]] = [
+                ["item_id": "item1"]
             ]
             let parameters: [String: Any] = [
-                "eventName": RAnalyticsEvent.Name.viewableImpression,
-                RAnalyticsEvent.Parameter.topLevelObject: viewableData
+                RAnalyticsEvent.Parameter.viewableData: viewableData
             ]
             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.custom, parameters: parameters)
             #expect(event.name == RAnalyticsEvent.Name.custom)
-            let viewableDataParam = event.parameters[RAnalyticsEvent.Parameter.topLevelObject] as? [String: Any]
+            let viewableDataParam = event.parameters[RAnalyticsEvent.Parameter.viewableData] as? [[String: Any]]
             #expect(viewableDataParam != nil)
-            #expect((viewableDataParam?["event_data"] as? [[String: Any]])?.count == 1)
+            #expect(viewableDataParam?.count == 1)
         }
     }
 }

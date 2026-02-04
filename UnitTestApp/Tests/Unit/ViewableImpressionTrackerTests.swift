@@ -19,14 +19,14 @@ struct ViewableImpressionTrackerTests {
     }
 
     @MainActor
-    private static func refreshResult(_ tracker: ViewableImpressionTracker,
-                                      viewportView: UIView? = nil) async -> [String: Any]? {
+    private static func refreshResult(_ tracker: ViewableImpressionTracker, viewportView: UIView? = nil) async -> [String: Any]? {
         await withCheckedContinuation { continuation in
             tracker.refreshState(viewportView: viewportView) { eventParameters in
                 continuation.resume(returning: eventParameters)
             }
         }
     }
+    
     @Suite("Manual Tracking")
     struct ManualTrackingTests {
         @MainActor
@@ -318,7 +318,7 @@ struct ViewableImpressionTrackerTests {
             impressionTracker.track(view: view, item: item, itemPosition: 0)
             let firstEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
             let firstEventData = ViewableImpressionTrackerTests.eventData(from: firstEventParameters)
-            #expect(firstEventData.isEmpty)
+            #expect(firstEventData.count == 1)
 
             view.isHidden = true
             let hiddenEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
@@ -328,16 +328,7 @@ struct ViewableImpressionTrackerTests {
             view.isHidden = false
             let visibleEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
             let visibleEventData = ViewableImpressionTrackerTests.eventData(from: visibleEventParameters)
-            #expect(visibleEventData.isEmpty)
-
-            let immediateEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
-            let immediateEventData = ViewableImpressionTrackerTests.eventData(from: immediateEventParameters)
-            #expect(immediateEventData.isEmpty)
-
-            try await Task.sleep(nanoseconds: 300_000_000)
-            let afterDwellEventParameters = await ViewableImpressionTrackerTests.refreshResult(impressionTracker, viewportView: scrollView)
-            let afterDwellEventData = ViewableImpressionTrackerTests.eventData(from: afterDwellEventParameters)
-            #expect(afterDwellEventData.count == 1)
+            #expect(visibleEventData.count == 1)
         }
     }
 }

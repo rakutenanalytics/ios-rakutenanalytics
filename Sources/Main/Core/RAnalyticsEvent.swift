@@ -119,10 +119,6 @@ import Foundation
         /// This event has parameters `RAnalyticsEvent.Parameter.eventName` and `RAnalyticsEvent.Parameter.eventData`.
         public static let custom = "_analytics_custom"
 
-        /// Batched viewable impressions event
-        /// Event triggered when the host decides to emit manual impressions.
-        public static let viewableImpression = "viewable_impression"
-
         /// Event triggered when the geolocation is updated.
         public static let geoLocation = "loc"
     }
@@ -209,17 +205,8 @@ import Foundation
         /// Parameter for viewable impression timestamp
         public static let viewableImpressionTimestamp = "viewable_impression_timestamp"
 
-        /// Parameter for viewport bounds (visible area)
-        public static let viewportBounds = "viewport_bounds"
-
         /// Parameter for screen name (view controller name) - included at item level
         public static let screenName = "screen_name"
-
-        /// Parameter for scroll view identifier
-        public static let scrollViewIdentifier = "scroll_view_identifier"
-
-        /// Parameter for viewable impression trigger reason
-        public static let triggerReason = "trigger_reason"
     }
 
     /// Standard event parameter values

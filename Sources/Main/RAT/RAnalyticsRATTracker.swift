@@ -489,6 +489,9 @@ extension RAnalyticsRATTracker {
             if let parameters = event.parameters[RAnalyticsEvent.Parameter.viewableData] as? [AnyHashable: Any],
                !parameters.isEmpty {
                 extra.addEntries(from: parameters)
+            } else if let parameters = event.parameters[RAnalyticsEvent.Parameter.viewableData] as? [Any],
+                      !parameters.isEmpty {
+                extra[RAnalyticsEvent.Parameter.viewableData] = parameters
             }
 
             if let customAccNumber = event.parameters[RAnalyticsEvent.Parameter.customAccNumber] as? NSNumber {
