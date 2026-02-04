@@ -257,42 +257,36 @@ private final class ManualTrackedItem {
                     continue
                 }
 
-                if metrics.visibility > self.minimumVisibilityPercentage {
-                    if !trackedItem.isVisible {
-                        trackedItem.isVisible = true
-                        trackedItem.firstVisibleTime = now
-                        trackedItem.hasTriggeredViewableImpression = false
-                    }
+                let evaluation = ViewableImpressionEvaluation.evaluate(
+                    visibility: metrics.visibility,
+                    isVisible: trackedItem.isVisible,
+                    firstVisibleTime: trackedItem.firstVisibleTime,
+                    hasTriggered: trackedItem.hasTriggeredViewableImpression,
+                    minimumVisibility: self.minimumVisibilityPercentage,
+                    minimumDwell: self.minimumDwellTime,
+                    now: now
+                )
 
-                    trackedItem.visibilityPercentage = metrics.visibility
+                trackedItem.isVisible = evaluation.isVisible
+                trackedItem.firstVisibleTime = evaluation.firstVisibleTime
+                trackedItem.hasTriggeredViewableImpression = evaluation.hasTriggered
+                trackedItem.visibilityPercentage = metrics.visibility
 
+                if evaluation.qualifies {
+                    let screenName = trackedItem.view?.findViewController().map { String(describing: type(of: $0)) }
                     let visibleDuration = now.timeIntervalSince(trackedItem.firstVisibleTime)
-                    if !trackedItem.hasTriggeredViewableImpression {
-                        if visibleDuration >= self.minimumDwellTime {
-                            let screenName = trackedItem.view?.findViewController().map { String(describing: type(of: $0)) }
-                            qualifiedItems.append(
-                                (
-                                    item: trackedItem.item,
-                                    dwellTime: visibleDuration,
-                                    visibilityPercentage: metrics.visibility,
-                                    viewport: metrics.intersection,
-                                    itemPosition: trackedItem.itemPosition,
-                                    screenName: screenName
-                                )
-                            )
-                            trackedItem.hasTriggeredViewableImpression = true
-                        } else if self.minimumDwellTime > 0 {
-                            let remaining = self.minimumDwellTime - visibleDuration
-                            if remaining > 0 {
-                                nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
-                            }
-                        }
-                    }
-                } else {
-                    trackedItem.isVisible = false
-                    trackedItem.firstVisibleTime = .distantPast
-                    trackedItem.hasTriggeredViewableImpression = false
-                    trackedItem.visibilityPercentage = metrics.visibility
+                    qualifiedItems.append(
+                        (
+                            item: trackedItem.item,
+                            dwellTime: visibleDuration,
+                            visibilityPercentage: metrics.visibility,
+                            viewport: metrics.intersection,
+                            itemPosition: trackedItem.itemPosition,
+                            screenName: screenName
+                        )
+                    )
+                } else if let remaining = evaluation.remainingDwell, remaining > 0 {
+                    nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
                 }
             }
 
