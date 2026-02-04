@@ -72,6 +72,12 @@ private final class ManualTrackedItem {
     var itemId: String { item.itemId }
 }
 
+extension ManualTrackedItem: ViewableImpressionTrackState {
+    var screenName: String? {
+        view?.findViewController().map { String(describing: type(of: $0)) }
+    }
+}
+
 // MARK: - Viewable Impression Tracker (Manual)
 
 @objc public final class ViewableImpressionTracker: NSObject {
@@ -180,7 +186,11 @@ private final class ManualTrackedItem {
             viewportView: viewportView,
             viewportInsets: viewportInsets
         )
-        deliverRefreshResult(result, onResult: onResult)
+        ViewableImpressionRefreshScheduler.deliver(
+            result: result,
+            pendingWorkItem: &pendingRefreshWorkItem,
+            onResult: onResult
+        )
     }
 
     // MARK: - Private Helpers
@@ -231,7 +241,7 @@ private final class ManualTrackedItem {
         executeOnMain {
             let effectiveViewportView = viewportView ?? self.viewportContextView
             let now = Date()
-            var qualifiedItems: [(item: ViewableImpressionTrackable, dwellTime: TimeInterval, visibilityPercentage: Double, viewport: CGRect, itemPosition: Int, screenName: String?)] = []
+            var qualifiedItems: [ViewableImpressionQualifiedItemData] = []
             var itemsToRemove: [String] = []
             var nextRefreshDelay: TimeInterval?
 
@@ -242,50 +252,26 @@ private final class ManualTrackedItem {
                     continue
                 }
 
-                guard view.isValidForTracking else {
-                    trackedItem.isVisible = false
-                    trackedItem.firstVisibleTime = .distantPast
-                    trackedItem.hasTriggeredViewableImpression = false
-                    trackedItem.visibilityPercentage = 0.0
-                    continue
+                let visibility: Double?
+                if !view.isValidForTracking {
+                    visibility = nil
+                } else if let metrics = self.visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) {
+                    visibility = metrics.visibility
+                } else {
+                    visibility = nil
                 }
 
-                guard let metrics = self.visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) else {
-                    trackedItem.isVisible = false
-                    trackedItem.firstVisibleTime = .distantPast
-                    trackedItem.hasTriggeredViewableImpression = false
-                    continue
-                }
-
-                let evaluation = ViewableImpressionEvaluation.evaluate(
-                    visibility: metrics.visibility,
-                    isVisible: trackedItem.isVisible,
-                    firstVisibleTime: trackedItem.firstVisibleTime,
-                    hasTriggered: trackedItem.hasTriggeredViewableImpression,
+                let result = ViewableImpressionTrackStateProcessor.process(
+                    item: trackedItem,
+                    visibility: visibility,
+                    now: now,
                     minimumVisibility: self.minimumVisibilityPercentage,
-                    minimumDwell: self.minimumDwellTime,
-                    now: now
+                    minimumDwell: self.minimumDwellTime
                 )
 
-                trackedItem.isVisible = evaluation.isVisible
-                trackedItem.firstVisibleTime = evaluation.firstVisibleTime
-                trackedItem.hasTriggeredViewableImpression = evaluation.hasTriggered
-                trackedItem.visibilityPercentage = metrics.visibility
-
-                if evaluation.qualifies {
-                    let screenName = trackedItem.view?.findViewController().map { String(describing: type(of: $0)) }
-                    let visibleDuration = now.timeIntervalSince(trackedItem.firstVisibleTime)
-                    qualifiedItems.append(
-                        (
-                            item: trackedItem.item,
-                            dwellTime: visibleDuration,
-                            visibilityPercentage: metrics.visibility,
-                            viewport: metrics.intersection,
-                            itemPosition: trackedItem.itemPosition,
-                            screenName: screenName
-                        )
-                    )
-                } else if let remaining = evaluation.remainingDwell, remaining > 0 {
+                if let qualified = result.qualified {
+                    qualifiedItems.append(qualified)
+                } else if let remaining = result.remaining, remaining > 0 {
                     nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
                 }
             }
@@ -324,39 +310,10 @@ private final class ManualTrackedItem {
         return result
     }
 
-    private func deliverRefreshResult(_ result: ViewableImpressionRefreshResult,
-                                      onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
-        if !result.eventData.isEmpty || result.refreshAfterDelay == nil {
-            pendingRefreshWorkItem?.cancel()
-            pendingRefreshWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
-            }
-            return
-        }
-
-        guard let delay = result.refreshAfterDelay,
-              let refreshAfterDwell = result.refreshAfterDwell else {
-            pendingRefreshWorkItem?.cancel()
-            pendingRefreshWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
-            }
-            return
-        }
-
-        pendingRefreshWorkItem?.cancel()
-        let workItem = DispatchWorkItem {
-            let followUp = refreshAfterDwell()
-            onResult(followUp.eventParameters)
-        }
-        pendingRefreshWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
-    }
 }
 
 enum ViewableImpressionEventEmitter {
-    static func buildItemPayloads(items: [(item: ViewableImpressionTrackable, dwellTime: TimeInterval, visibilityPercentage: Double, viewport: CGRect, itemPosition: Int, screenName: String?)],
+    static func buildItemPayloads(items: [ViewableImpressionQualifiedItemData],
                                   eventTimestamp: NSNumber) -> [[String: Any]] {
         guard !items.isEmpty else { return [] }
         return items.map { itemData in

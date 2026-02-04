@@ -31,6 +31,10 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         var itemId: String { item.itemId }
     }
 
+    extension ManualTrackedItem: ViewableImpressionTrackState {
+        var screenName: String? { nil }
+    }
+
     public var minimumDwellTime: TimeInterval
     public var minimumVisibilityPercentage: Double
     private let queue = DispatchQueue(label: "com.rakuten.analytics.swiftui.manualImpressions")
@@ -77,7 +81,11 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
             viewport: viewport,
             viewportInsets: viewportInsets
         )
-        deliverRefreshResult(result, onResult: onResult)
+        ViewableImpressionRefreshScheduler.deliver(
+            result: result,
+            pendingWorkItem: &pendingRefreshWorkItem,
+            onResult: onResult
+        )
     }
 
     private func refreshStateInternal(viewport: CGRect?,
@@ -89,51 +97,31 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
             let insetViewport = viewportInsets.map { viewportRect.inset(by: $0) } ?? viewportRect
             guard insetViewport.width > 0, insetViewport.height > 0 else { return }
 
-            var qualifiedItems: [(item: ViewableImpressionTrackable, dwellTime: TimeInterval, visibilityPercentage: Double, viewport: CGRect, itemPosition: Int, screenName: String?)] = []
+            var qualifiedItems: [ViewableImpressionQualifiedItemData] = []
             var nextRefreshDelay: TimeInterval?
 
             for (_, trackedItem) in self.itemsById {
                 let intersection = insetViewport.intersection(trackedItem.frame)
                 let area = trackedItem.frame.width * trackedItem.frame.height
 
-                guard area > 0, !intersection.isNull else {
-                    trackedItem.isVisible = false
-                    trackedItem.firstVisibleTime = .distantPast
-                    trackedItem.hasTriggered = false
-                    trackedItem.visibilityPercentage = 0.0
-                    continue
+                let visibility: Double?
+                if area <= 0 || intersection.isNull {
+                    visibility = nil
+                } else {
+                    visibility = (intersection.width * intersection.height) / area
                 }
 
-                let visibility = (intersection.width * intersection.height) / area
-                trackedItem.visibilityPercentage = Double(visibility)
-
-                let evaluation = ViewableImpressionEvaluation.evaluate(
-                    visibility: Double(visibility),
-                    isVisible: trackedItem.isVisible,
-                    firstVisibleTime: trackedItem.firstVisibleTime,
-                    hasTriggered: trackedItem.hasTriggered,
+                let result = ViewableImpressionTrackStateProcessor.process(
+                    item: trackedItem,
+                    visibility: visibility,
+                    now: now,
                     minimumVisibility: self.minimumVisibilityPercentage,
-                    minimumDwell: self.minimumDwellTime,
-                    now: now
+                    minimumDwell: self.minimumDwellTime
                 )
 
-                trackedItem.isVisible = evaluation.isVisible
-                trackedItem.firstVisibleTime = evaluation.firstVisibleTime
-                trackedItem.hasTriggered = evaluation.hasTriggered
-
-                if evaluation.qualifies {
-                    let visibleDuration = now.timeIntervalSince(trackedItem.firstVisibleTime)
-                    qualifiedItems.append(
-                        (
-                            item: trackedItem.item,
-                            dwellTime: visibleDuration,
-                            visibilityPercentage: Double(visibility),
-                            viewport: intersection,
-                            itemPosition: trackedItem.itemPosition,
-                            screenName: nil
-                        )
-                    )
-                } else if let remaining = evaluation.remainingDwell, remaining > 0 {
+                if let qualified = result.qualified {
+                    qualifiedItems.append(qualified)
+                } else if let remaining = result.remaining, remaining > 0 {
                     nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
                 }
             }
@@ -165,35 +153,6 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         return result
     }
 
-    private func deliverRefreshResult(_ result: ViewableImpressionRefreshResult,
-                                      onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
-        if !result.eventData.isEmpty || result.refreshAfterDelay == nil {
-            pendingRefreshWorkItem?.cancel()
-            pendingRefreshWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
-            }
-            return
-        }
-
-        guard let delay = result.refreshAfterDelay,
-              let refreshAfterDwell = result.refreshAfterDwell else {
-            pendingRefreshWorkItem?.cancel()
-            pendingRefreshWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
-            }
-            return
-        }
-
-        pendingRefreshWorkItem?.cancel()
-        let workItem = DispatchWorkItem {
-            let followUp = refreshAfterDwell()
-            onResult(followUp.eventParameters)
-        }
-        pendingRefreshWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
-    }
 }
 
 // MARK: - View Modifier
