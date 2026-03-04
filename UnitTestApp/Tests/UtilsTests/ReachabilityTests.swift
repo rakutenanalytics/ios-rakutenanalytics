@@ -1,6 +1,9 @@
 import Foundation
 import Testing
 import struct SystemConfiguration.SCNetworkReachabilityFlags
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 @testable import RakutenAnalytics
 
 @Suite("Reachability")

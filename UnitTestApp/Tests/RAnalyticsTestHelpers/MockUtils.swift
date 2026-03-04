@@ -160,8 +160,9 @@ public final class SessionMock: Sessionable {
 
 // MARK: - URL Session Task
 
-final class URLSessionTaskMock: URLSessionTaskable {
-    func resume() {}
+public final class URLSessionTaskMock: URLSessionTaskable {
+    public init() {}
+    public func resume() {}
 }
 
 // MARK: - Swifty Session
@@ -852,12 +853,12 @@ class AVCaptureDeviceCollectorMock: AVCaptureDevice {
 
 // MARK: - MockDevicePermissionCollector
 
-class MockDevicePermissionCollector: DevicePermissionCollector {
-    static let shared = MockDevicePermissionCollector()
+public class MockDevicePermissionCollector: DevicePermissionCollector {
+    public static let shared = MockDevicePermissionCollector()
     
     let mockNotificationCenter = MockUserNotificationCenterCollector()
 
-    func collectPermissions() -> String {
+    public func collectPermissions() -> String {
         var permissions = [String]()
         
         permissions.append(collectLocationPermissions())
@@ -874,11 +875,11 @@ class MockDevicePermissionCollector: DevicePermissionCollector {
     }
     
     @available(iOS 14, *)
-    func setup(locationAuthStatus: CLAuthorizationStatus,
-               notificationsAuthStatus: UNAuthorizationStatus,
-               trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
-               videoAuthStatus: AVAuthorizationStatus,
-               audioAuthStatus: AVAuthorizationStatus) {
+    public func setup(locationAuthStatus: CLAuthorizationStatus,
+                      notificationsAuthStatus: UNAuthorizationStatus,
+                      trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
+                      videoAuthStatus: AVAuthorizationStatus,
+                      audioAuthStatus: AVAuthorizationStatus) {
         CLLocationManagerCollectorMock.mockAuthorizationStatus = locationAuthStatus
         mockNotificationCenter.settings = MockNotificationSettings(authorizationStatus: notificationsAuthStatus)
         ATTrackingManagerCollectorMock.trackingAuthorizationStatusMock = trackingAuthStatus
