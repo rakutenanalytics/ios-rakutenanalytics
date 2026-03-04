@@ -486,12 +486,16 @@ extension RAnalyticsRATTracker {
                 extra.addEntries(from: parameters)
             }
 
-            if let parameters = event.parameters[RAnalyticsEvent.Parameter.viewableData] as? [AnyHashable: Any],
-               !parameters.isEmpty {
-                extra.addEntries(from: parameters)
-            } else if let parameters = event.parameters[RAnalyticsEvent.Parameter.viewableData] as? [Any],
-                      !parameters.isEmpty {
-                extra[RAnalyticsEvent.Parameter.viewableData] = parameters
+            if let viewableData = event.parameters[RAnalyticsEvent.Parameter.viewableData] {
+                switch viewableData {
+                case let dictionary as [AnyHashable: Any] where !dictionary.isEmpty:
+                    extra.addEntries(from: dictionary)
+
+                case let array as [Any] where !array.isEmpty:
+                    extra[RAnalyticsEvent.Parameter.viewableData] = array
+
+                default: ()
+                }
             }
 
             if let customAccNumber = event.parameters[RAnalyticsEvent.Parameter.customAccNumber] as? NSNumber {
