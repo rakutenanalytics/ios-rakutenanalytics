@@ -27,10 +27,9 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
             self.hasTriggered = false
             self.visibilityPercentage = 0.0
         }
-
+        
         var itemId: String { item.itemId }
     }
-    
 
     public var minimumDwellTime: TimeInterval
     public var minimumVisibilityPercentage: Double
@@ -47,12 +46,12 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     public func update(item: ViewableImpressionTrackable, frame: CGRect, itemPosition: Int = 0) {
         queue.async { [weak self] in
             guard let self = self else { return }
-            if let existing = self.itemsById[item.itemId] {
-                existing.frame = frame
-                existing.itemPosition = itemPosition
-            } else {
+            guard let existing = self.itemsById[item.itemId] else {
                 self.itemsById[item.itemId] = ManualTrackedItem(item: item, frame: frame, itemPosition: itemPosition)
+                return
             }
+            existing.frame = frame
+            existing.itemPosition = itemPosition
         }
     }
 

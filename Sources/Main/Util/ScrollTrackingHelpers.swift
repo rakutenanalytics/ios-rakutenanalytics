@@ -1,5 +1,7 @@
 import UIKit
 
+private let unknownViewControllerName = "Unknown"
+
 internal extension UIView {
     /// Check if the view is in a valid state for tracking (visible, in window, app active)
     var isValidForTracking: Bool {
@@ -20,6 +22,6 @@ internal extension UIView {
 
     /// Find the view controller name in the responder chain
     func findViewControllerName() -> String {
-        findViewController().map { String(describing: type(of: $0)) } ?? "Unknown"
+        findViewController().map { String(describing: type(of: $0)) } ?? unknownViewControllerName
     }
 }
