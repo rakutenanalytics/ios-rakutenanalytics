@@ -10,6 +10,9 @@
 * CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework
 * CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects
 
+### Build fixes
+* CONRAT-43264: fix the Swift Package Test Target.
+
 ## 11.0.0 (2025-11-25)
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.

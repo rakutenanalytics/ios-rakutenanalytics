@@ -1,5 +1,8 @@
 import Foundation
 import Testing
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 @testable import RakutenAnalytics
 
 @Suite("URLSessionExtensions")

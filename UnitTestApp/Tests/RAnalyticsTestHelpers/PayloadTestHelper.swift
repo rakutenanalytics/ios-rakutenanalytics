@@ -5,7 +5,7 @@ import CoreLocation
 // MARK: - LocationModel Factory
 
 extension LocationModel {
-    static func create(
+    public static func create(
         latitude: CLLocationDegrees = -56.6462520,
         longitude: CLLocationDegrees = -36.6462520,
         horizontalAccuracy: CLLocationAccuracy = 10,
@@ -49,8 +49,8 @@ extension LocationModel {
 
 // MARK: - PayloadTestHelper
 
-enum PayloadTestHelper {
-    static let bundle: BundleMock = {
+public enum PayloadTestHelper {
+    public static let bundle: BundleMock = {
         let bundle = BundleMock.create()
         bundle.languageCode = Bundle.main.languageCode
         bundle.shortVersion = Bundle.main.shortVersion
@@ -62,15 +62,17 @@ enum PayloadTestHelper {
     
     // MARK: - Test Helper
     
-    struct TestHelper {
+    public struct TestHelper {
         var databaseConnection: SQlite3Pointer!
         var database: RAnalyticsDatabase!
-        let dependenciesContainer = SimpleContainerMock()
-        var ratTracker: RAnalyticsRATTracker!
-        let reachabilityMock = ReachabilityMock()
-        let expecter = RAnalyticsRATExpecter()
+        public let dependenciesContainer = SimpleContainerMock()
+        public var ratTracker: RAnalyticsRATTracker!
+        public let reachabilityMock = ReachabilityMock()
+        public let expecter = RAnalyticsRATExpecter()
         
-        mutating func setUp() {
+        public init() {}
+        
+        mutating public func setUp() {
             let databaseTableName = "testTableName_RAnalyticsRATTrackerTests"
             databaseConnection = DatabaseTestUtils.openRegularConnection()!
             database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
@@ -101,7 +103,7 @@ enum PayloadTestHelper {
             expecter.ratTracker = ratTracker
         }
         
-        mutating func tearDown() {
+        mutating public func tearDown() {
             DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
             database.closeConnection()
             databaseConnection = nil

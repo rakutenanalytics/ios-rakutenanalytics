@@ -1,6 +1,8 @@
 import Testing
 import UIKit
-
+#if canImport(RAnalyticsTestHelpers)
+import RAnalyticsTestHelpers
+#endif
 @testable import RakutenAnalytics
 
 @Suite("SceneDelegateHelper")
