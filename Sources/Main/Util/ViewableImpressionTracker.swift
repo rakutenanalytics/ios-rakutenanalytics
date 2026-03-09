@@ -216,11 +216,11 @@ private final class ManualTrackedItem {
     }
 
     private func executeOnMain(_ work: @escaping () -> Void) {
-        if Thread.isMainThread {
-            work()
-        } else {
+        guard Thread.isMainThread else {
             DispatchQueue.main.sync(execute: work)
+            return
         }
+        work()
     }
 
     private func performBarrier(_ work: () -> Void) {
@@ -246,13 +246,12 @@ private final class ManualTrackedItem {
                     continue
                 }
 
-                let visibility: Double?
-                if !view.isValidForTracking {
-                    visibility = nil
+                let visibility: Double? = if !view.isValidForTracking {
+                    nil
                 } else if let metrics = self.visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) {
-                    visibility = metrics.visibility
+                    metrics.visibility
                 } else {
-                    visibility = nil
+                    nil
                 }
 
                 let state = ViewableImpressionStateAdapter(

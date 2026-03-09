@@ -43,6 +43,13 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         self.minimumVisibilityPercentage = minimumVisibilityPercentage
     }
 
+    /// Updates the frame and position of a trackable item, or registers it if not yet tracked.
+    /// Call this when the item's on-screen bounds change (e.g. from a GeometryReader).
+    ///
+    /// - Parameters:
+    ///   - item: The trackable item to update.
+    ///   - frame: The item's current frame in screen coordinates.
+    ///   - itemPosition: Optional position index for ordering (default: 0).
     public func update(item: ViewableImpressionTrackable, frame: CGRect, itemPosition: Int = 0) {
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -55,12 +62,18 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         }
     }
 
+    /// Stops tracking the item with the given identifier.
+    /// Call this when the item is removed from the view hierarchy (e.g. in onDisappear).
+    ///
+    /// - Parameter itemId: The unique identifier of the item to stop tracking.
     public func unregister(itemId: String) {
         queue.async { [weak self] in
             self?.itemsById.removeValue(forKey: itemId)
         }
     }
 
+    /// Removes all tracked items from the tracker.
+    /// Use this to reset tracking state when the view hierarchy changes significantly.
     public func clear() {
         queue.async { [weak self] in
             self?.itemsById.removeAll()
@@ -100,11 +113,10 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
                 let intersection = insetViewport.intersection(trackedItem.frame)
                 let area = trackedItem.frame.width * trackedItem.frame.height
 
-                let visibility: Double?
-                if area <= 0 || intersection.isNull {
-                    visibility = nil
+                let visibility: Double? = if area <= 0 || intersection.isNull {
+                    nil
                 } else {
-                    visibility = (intersection.width * intersection.height) / area
+                    (intersection.width * intersection.height) / area
                 }
 
                 let state = ViewableImpressionStateAdapter(
