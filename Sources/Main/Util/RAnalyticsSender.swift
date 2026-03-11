@@ -131,7 +131,7 @@ enum SenderBackgroundTimerEnabler {
             RLogger.error(message: "Analytics event dropped because manual initialization is enabled and AnalyticsManager is not configured.")
             return
         }
-        
+
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
@@ -189,7 +189,7 @@ fileprivate extension RAnalyticsSender {
         if let delay = batchingDelayBlock()?() {
             if case .enabled(let startTimeKey) = backgroundTimerEnabler,
                let elapsedTime = scheduleElapsedTime(for: startTimeKey) {
-                if (elapsedTime <= delay) {
+                if elapsedTime <= delay {
                     uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay - elapsedTime), maxUploadInterval)
 
                 } else {

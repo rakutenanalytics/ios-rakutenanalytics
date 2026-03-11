@@ -40,22 +40,22 @@ protocol DevicePermissionCollector {
 }
 
 final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDelegate, DevicePermissionCollector {
-    
+
     static let shared = AnalyticsDevicePermissionCollector()
-    
+
     /// Collect permissions in order: Location (0..2) → Notification (0..1) → Privacy ID (0..1) → Camera (0..1) → Microphone (0..1).
     func collectPermissions() -> String {
         var permissions = [String]()
-        
+
         permissions.append(collectLocationPermissions())
         permissions.append(collectNotificationPermissions())
         permissions.append(collectPrivacyIDPermissions())
         permissions.append(collectCameraPermissions())
         permissions.append(collectMicrophonePermissions())
-        
+
         return permissions.joined()
     }
-    
+
     /// Collect location permissions
     private func collectLocationPermissions() -> String {
         if #available(iOS 14, *) {
@@ -82,12 +82,12 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
             }
         }
     }
-    
+
     /// Collect notification permissions
     private func collectNotificationPermissions() -> String {
         let semaphore = DispatchSemaphore(value: 0)
         var permission = DevicePermissionType.none.rawValue
-        
+
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .notDetermined, .denied:
@@ -99,11 +99,11 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
             }
             semaphore.signal()
         }
-        
+
         semaphore.wait()
         return permission
     }
-    
+
     /// Collect privacy ID permissions
     private func collectPrivacyIDPermissions() -> String {
         if #available(iOS 14, *) {
@@ -119,7 +119,7 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
             return DevicePermissionType.none.rawValue
         }
     }
-    
+
     /// Collect camera permissions
     private func collectCameraPermissions() -> String {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -131,7 +131,7 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
             return DevicePermissionType.none.rawValue
         }
     }
-    
+
     /// Collect microphone permissions
     private func collectMicrophonePermissions() -> String {
         switch AVCaptureDevice.authorizationStatus(for: .audio) {

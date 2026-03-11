@@ -27,7 +27,7 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
             installAutoTrackingHooks()
         }
     }
-    
+
     public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,

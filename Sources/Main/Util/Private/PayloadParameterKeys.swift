@@ -25,7 +25,7 @@ enum PayloadParameterKeys {
     /// The previous page name.
     /// - Note: previous `UIViewController` Class Name
     static let ref = "ref"
-    
+
     /// The page section the event originated from.
     static let pageSection = "pgs"
 
@@ -92,7 +92,7 @@ enum PayloadParameterKeys {
         /// The screen resolution.
         /// - Note: returned by `UIScreen.main.bounds.size`
         static let res = "res"
-        
+
         /// The device permissions
         /// - Note: returned by `AnalyticsDevicePermissionCollector`
         static let devicePer = "device_per"
@@ -194,7 +194,7 @@ enum PayloadParameterKeys {
         /// The application user agent.
         /// - Note: the format is `bundleIdentifier/currentVersion`
         static let ua = "ua"
-        
+
         /// The enriched application user agent.
         /// - Note: the format is `<application_name>/<application_version> (<operating_system_info>; <device_info>; <device_type>; <language>; Analytics/<sdk_version>)`
         static let uaEnriched = "ua_enriched"

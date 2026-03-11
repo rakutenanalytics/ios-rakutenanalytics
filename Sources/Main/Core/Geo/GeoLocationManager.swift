@@ -153,7 +153,7 @@ extension GeoLocationManager: CLLocationManagerDelegate {
 extension GeoLocationManager {
     private var isCollectionTime: Bool {
         Date().timeInSeconds >= configurationStore.configuration.startTime.toSeconds &&
-        Date().timeInSeconds <= configurationStore.configuration.endTime.toSeconds
+            Date().timeInSeconds <= configurationStore.configuration.endTime.toSeconds
     }
 
     private func handleDistanceBasedCollection(location: CLLocation) {
@@ -173,7 +173,7 @@ extension GeoLocationManager {
 
     private func stopRegionMonitoring() {
         guard let region = coreLocationManager.monitoredRegions
-            .first(where: { $0.identifier == GeoConstants.locationCollectionRegionIdentifier }) else {
+                .first(where: { $0.identifier == GeoConstants.locationCollectionRegionIdentifier }) else {
             return
         }
         coreLocationManager.stopMonitoring(for: region)

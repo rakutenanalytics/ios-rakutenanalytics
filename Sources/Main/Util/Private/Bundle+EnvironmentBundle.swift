@@ -41,7 +41,7 @@ extension Bundle: EnvironmentBundle {
         }
         return nil
     }
-    
+
     var preferredLocalization: String? {
         return preferredLocalizations.first
     }
@@ -180,7 +180,7 @@ extension Bundle: EnvironmentBundle {
 
     var backgroundLocationUpdates: Bool {
         guard let backgroundModes = object(forInfoDictionaryKey: "UIBackgroundModes") as? [String],
-                backgroundModes.contains("location") else {
+              backgroundModes.contains("location") else {
             return false
         }
         return true

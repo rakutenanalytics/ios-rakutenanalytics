@@ -39,7 +39,7 @@ protocol ReferralAppTrackable: AnyObject {
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
     static var isConfigured: Bool = false
-    
+
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
@@ -272,7 +272,7 @@ protocol ReferralAppTrackable: AnyObject {
     deinit {
         stopMonitoringLocation()
     }
-    
+
     /// Set carrier names for analytics tracking
     /// - Parameters:
     ///   - primary: Primary carrier name (mcn)
@@ -280,12 +280,12 @@ protocol ReferralAppTrackable: AnyObject {
     @objc public func setCarrierNames(primary: String?, secondary: String? = nil) {
         RAnalyticsRATTracker.shared().updateCarrierNames(mcn: primary, mcnd: secondary)
     }
-    
+
     /// Clear all carrier information
     @objc public func clearCarrierNames() {
         setCarrierNames(primary: nil, secondary: nil)
     }
-    
+
     /// Get current carrier names
     /// - Returns: Tuple containing primary and secondary carrier names
     public func getCarrierNames() -> (primary: String?, secondary: String?) {
@@ -347,13 +347,13 @@ extension AnalyticsManager {
                                                name: UIApplication.willResignActiveNotification,
                                                object: nil)
     }
-    
+
     private func refreshCookieStore(with targetDomains: [String]? = nil, completion: (([HTTPCookie]) -> Void)? = nil) {
         guard enableAppToWebTracking else {
             analyticsCookieInjector.clearCookies { }
             return
         }
-        
+
         // If targetDomains is not nil and not empty, proceed with the following logic
         guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
             injectAppToWebTrackingCookie(domain: nil) { trackingCookie in
@@ -369,7 +369,7 @@ extension AnalyticsManager {
 
         var trackingCookies: [HTTPCookie] = []
         let group = DispatchGroup()
-        
+
         for domain in targetDomains {
             group.enter()
             injectAppToWebTrackingCookie(domain: domain) { trackingCookie in
@@ -379,7 +379,7 @@ extension AnalyticsManager {
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             completion?(trackingCookies)
         }
@@ -532,7 +532,7 @@ extension AnalyticsManager: AnalyticsManageable {
         switch coreOrigin {
         case .analytics:
             if shouldTrackLastKnownLocation,
-                let location = locationManager.location {
+               let location = locationManager.location {
                 state.lastKnownLocation = LocationModel(location: location)
 
             } else {
@@ -574,7 +574,7 @@ extension AnalyticsManager: AnalyticsManageable {
         }
         return processed
     }
-    
+
     /// Initializes the SDK and installs auto-tracking hooks.
     ///
     /// This method sets up automatic tracking for various components of the app, such as the application lifecycle,
@@ -639,7 +639,7 @@ extension AnalyticsManager {
         }
         trackersLockableObject.unlock()
     }
-    
+
     /// Generates a new unique page identifier using device identifier and timestamp.
     /// Returns the generated page ID for the app to use as needed.
     ///
@@ -662,7 +662,7 @@ extension AnalyticsManager {
         }
         refreshCookieStore(with: [domain], completion: completion)
     }
-    
+
     /// Method to allow the app to set multiple custom domains for app-to-web tracking cookies.
     ///
     /// - Parameters:
@@ -677,7 +677,7 @@ extension AnalyticsManager {
     @objc public func webTrackingCookieDomain() -> String? {
         cookieDomainBlock?()
     }
-    
+
     /// Returns the latest web tracking cookie domains set by `setWebTrackingCookieMultipleDomains(array:)`
     @objc public func webTrackingCookieMultipleDomains() -> [String]? {
         cookieDomains

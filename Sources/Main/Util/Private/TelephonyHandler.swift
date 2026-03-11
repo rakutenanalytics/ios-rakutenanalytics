@@ -26,7 +26,7 @@ final class TelephonyHandler: TelephonyHandleable {
     private let userStorageHandler: UserStorageHandleable
     private var retrievedCarrierKey: String? // used for iOS == 12.x
     var reachabilityStatus: NSNumber?
-    
+
     /// Custom primary carrier name (mcn) set by the user
     var mcn: String? {
         didSet {
@@ -37,7 +37,7 @@ final class TelephonyHandler: TelephonyHandleable {
             }
         }
     }
-    
+
     /// Custom secondary carrier name (mcnd) set by the user
     var mcnd: String? {
         didSet {

@@ -8,6 +8,7 @@
 ### Improvements
 * CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework
 * CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects
+* CONRAT-43326: Re-enable SwiftLint.
 
 ### Build fixes
 * CONRAT-43264: fix the Swift Package Test Target.

@@ -14,12 +14,12 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
             installAutoTrackingHooks()
         }
     }
-    
+
     @objc public static func installAutoTrackingHooks() {
         guard rSDKABuildUserNotificationSupport else {
             return
         }
- 
+
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
                       with: #selector(rAutotrackSetUserNotificationCenterDelegate),

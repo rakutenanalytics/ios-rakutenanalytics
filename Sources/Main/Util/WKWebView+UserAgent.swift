@@ -17,7 +17,7 @@ extension WKWebView {
     /// - Returns: the app user agent.
     func appUserAgent(for bundle: Bundleable) -> String? {
         guard let bundleIdentifier = bundle.bundleIdentifier,
-            let version = bundle.shortVersion else {
+              let version = bundle.shortVersion else {
             return nil
         }
 

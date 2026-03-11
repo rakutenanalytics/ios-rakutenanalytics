@@ -39,7 +39,7 @@ final class UserAgentHandler {
     private let bundle: EnvironmentBundle
     private let deviceInfoProvider: DeviceInfoProvidable
     private let localeProvider: LocaleProvidable
-    
+
     /// Creates a new instance of `UserAgentHandler`.
     ///
     /// - Parameters:
@@ -72,7 +72,7 @@ extension UserAgentHandler: UserAgentHandleable {
             return nil
         }
     }
-    
+
     /// The enriched user agent value for RAT.
     ///
     /// - Parameters:
@@ -85,7 +85,7 @@ extension UserAgentHandler: UserAgentHandleable {
               let currentVersion = state?.currentVersion else {
             return nil
         }
-        
+
         let components = UserAgentComponents(
             appInfo: "\(bundleIdentifier)/\(currentVersion)",
             osInfo: "\(deviceInfoProvider.systemName) \(deviceInfoProvider.systemVersion)",
@@ -94,7 +94,7 @@ extension UserAgentHandler: UserAgentHandleable {
             language: getLanguageCode(),
             analyticsInfo: "Analytics/\(CoreHelpers.Constants.sdkVersion)"
         )
-        
+
         return formatUserAgent(components)
     }
 }
@@ -105,7 +105,7 @@ private extension UserAgentHandler {
     func formatUserAgent(_ components: UserAgentComponents) -> String {
         return "\(components.appInfo) (\(components.osInfo); \(components.deviceInfo); \(components.deviceType); \(components.language); \(components.analyticsInfo))"
     }
-    
+
     /// Determines the device type based on the user interface idiom and platform.
     func getDeviceType() -> String {
         #if os(watchOS)
@@ -131,7 +131,7 @@ private extension UserAgentHandler {
         }
         #endif
     }
-    
+
     /// Gets the language code using the locale provider.
     func getLanguageCode() -> String {
         if let appLanguage = bundle.preferredLocalization {

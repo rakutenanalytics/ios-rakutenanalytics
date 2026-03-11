@@ -98,7 +98,7 @@ import Foundation
 
         /// Event triggered when a PNP auto unregistration occurs.
         /// This event has a non-empty parameter named `deviceId`.
-        /// This event has a non-empty parameter named `pnpClientId`.  
+        /// This event has a non-empty parameter named `pnpClientId`.
         /// - Note: This event is renamed to `_rem_push_auto_unregister` on RAT backend.
         public static let pushAutoUnregistrationExternal = "_rem_push_auto_unregister_external"
 
@@ -144,7 +144,7 @@ import Foundation
         // MARK: - Page parameters
 
         public static let pageId = "page_id"
-        
+
         /// Parameter used to identify a section within a page (e.g. banner).
         public static let pageSection = "pgs"
 
