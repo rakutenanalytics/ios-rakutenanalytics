@@ -13,6 +13,9 @@
 ### Build fixes
 * CONRAT-43264: fix the Swift Package Test Target.
 
+### Templates
+* CONRAT-43329: Update Github PR Template so CONTRIBUTING.md line no longer appears.
+
 ## 11.0.0 (2025-11-25)
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.
