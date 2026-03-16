@@ -324,11 +324,7 @@ extension AnalyticsManager {
     private func configure() {
         configureWebViewUserAgent()
 
-        // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
-        // always rely solely on header availability so we also do a runtime check
-        if let ratTracker = NSObject.ratTracker {
-            add(ratTracker)
-        }
+        add(RAnalyticsRATTracker.shared())
 
         // Set up the location manager
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
