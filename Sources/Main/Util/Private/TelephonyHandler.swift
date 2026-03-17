@@ -24,7 +24,6 @@ final class TelephonyHandler: TelephonyHandleable {
     private var telephonyNetworkInfo: TelephonyNetworkInfoHandleable
     private let notificationCenter: NotificationObservable
     private let userStorageHandler: UserStorageHandleable
-    private var retrievedCarrierKey: String? // used for iOS == 12.x
     var reachabilityStatus: NSNumber?
 
     /// Custom primary carrier name (mcn) set by the user
@@ -72,17 +71,6 @@ final class TelephonyHandler: TelephonyHandleable {
         self.userStorageHandler = userStorageHandler
         self.mcn = userStorageHandler.string(forKey: UserDefaultsKeys.carrierPrimaryNameKey)
         self.mcnd = userStorageHandler.string(forKey: UserDefaultsKeys.carrierSecondaryNameKey)
-        configure()
-    }
-
-    private func configure() {
-        guard #available(iOS 13.0, *) else {
-            // Listen to changes in radio access technology, to detect LTE.
-            _ = notificationCenter.observe(forName: .CTServiceRadioAccessTechnologyDidChange, object: nil, queue: nil) { notification in
-                self.retrievedCarrierKey = notification.object as? String
-            }
-            return
-        }
     }
 }
 
@@ -102,12 +90,7 @@ extension TelephonyHandler {
 
 extension TelephonyHandler {
     private var selectedCarrierKey: String? {
-        if #available(iOS 13.0, *) {
-            return telephonyNetworkInfo.safeDataServiceIdentifier
-
-        } else {
-            return retrievedCarrierKey
-        }
+        telephonyNetworkInfo.safeDataServiceIdentifier
     }
 }
 
@@ -180,10 +163,7 @@ private extension String {
     }
 
     var is5G: Bool {
-        if #available(iOS 14.1, *) {
-            return self == CTRadioAccessTechnologyNR || self == CTRadioAccessTechnologyNRNSA
-        }
-        return false
+        self == CTRadioAccessTechnologyNR || self == CTRadioAccessTechnologyNRNSA
     }
 }
 

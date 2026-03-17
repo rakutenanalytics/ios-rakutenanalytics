@@ -159,7 +159,6 @@ struct TelephonyHandlerTests {
         }
         
         @Test("should return mnetw == 5, mnetwd == nil when there are only one radio (Physical SIM is primary)")
-        @available(iOS 14.1, *)
         func testShouldReturnMnetw5WhenOneRadioPhysicalSIMPrimaryNR() {
             var spec = TelephonyHandlerTests()
             spec.setUp()
@@ -199,7 +198,6 @@ struct TelephonyHandlerTests {
         }
         
         @Test("should return mnetw == 5, mnetwd == nil when there are only one radio (eSIM is primary)")
-        @available(iOS 14.1, *)
         func testShouldReturnMnetw5WhenOneRadioESIMPrimaryNR() {
             var spec = TelephonyHandlerTests()
             spec.setUp()
@@ -262,7 +260,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 3, mnetwd == 5 when the primary radio is Edge, the secondary radio is 5G")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw3Mnetwd5WhenEdgeNR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -290,7 +287,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 4, mnetwd == 5 when the primary radio is LTE, the secondary radio is 5G")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw4Mnetwd5WhenLTENR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -300,7 +296,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 3 when the primary radio is 5G, the secondary radio is Edge")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw5Mnetwd3WhenNREdge() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -310,7 +305,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 4 when the primary radio is 5G, the secondary radio is LTE")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw5Mnetwd4WhenNRLTE() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -320,8 +314,7 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 5 when the primary radio is 5G, the secondary radio is 5G")
-            @available(iOS 14.1, *)
-            func testShouldReturnMnetw5Mnetwd5WhenBothNR() {
+        func testShouldReturnMnetw5Mnetwd5WhenBothNR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
                 defer { spec.tearDown() }
@@ -380,7 +373,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 3 when the primary radio is Edge, the secondary radio is 5G")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw5Mnetwd3WhenEdgeNR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -408,7 +400,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 4 when the primary radio is LTE, the secondary radio is 5G")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw5Mnetwd4WhenLTENR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -418,7 +409,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 3, mnetwd == 5 when the primary radio is 5G, the secondary radio is Edge")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw3Mnetwd5WhenNREdge() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -428,7 +418,6 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 4, mnetwd == 5 when the primary radio is 5G, the secondary radio is LTE")
-            @available(iOS 14.1, *)
             func testShouldReturnMnetw4Mnetwd5WhenNRLTE() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
@@ -438,8 +427,7 @@ struct TelephonyHandlerTests {
             }
             
             @Test("should return mnetw == 5, mnetwd == 5 when the primary radio is 5G, the secondary radio is 5G")
-            @available(iOS 14.1, *)
-            func testShouldReturnMnetw5Mnetwd5WhenBothNR() {
+        func testShouldReturnMnetw5Mnetwd5WhenBothNR() {
                 var spec = TelephonyHandlerTests()
                 spec.setUp()
                 defer { spec.tearDown() }

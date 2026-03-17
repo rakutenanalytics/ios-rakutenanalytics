@@ -1,6 +1,5 @@
 import SwiftUI
 
-@available(iOS 13.0, *)
 extension View {
     /// Use this function in order to track the page visit event when a SwiftUI View appears.
     ///

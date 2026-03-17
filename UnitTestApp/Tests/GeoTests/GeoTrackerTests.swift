@@ -110,28 +110,16 @@ struct GeoTrackerTests {
         var location: CLLocation
         
         let coordinate = CLLocationCoordinate2D(latitude: expectedLatitude, longitude: expectedLongitude)
-        
-        if #available(iOS 13.4, *) {
-            location = CLLocation(
-                coordinate: coordinate,
-                altitude: expectedAltitude,
-                horizontalAccuracy: expectedAccuracy,
-                verticalAccuracy: expectedVerticalAccuracy,
-                course: expectedBearing,
-                courseAccuracy: expectedBearingAccuracy,
-                speed: expectedSpeed,
-                speedAccuracy: expectedSpeedAccuracy,
-                timestamp: Date(timeIntervalSince1970: expectedTms))
-        } else {
-            location = CLLocation(
-                coordinate: coordinate,
-                altitude: expectedAltitude,
-                horizontalAccuracy: expectedAccuracy,
-                verticalAccuracy: expectedVerticalAccuracy,
-                course: expectedBearing,
-                speed: expectedSpeed,
-                timestamp: Date(timeIntervalSince1970: expectedTms))
-        }
+        location = CLLocation(
+            coordinate: coordinate,
+            altitude: expectedAltitude,
+            horizontalAccuracy: expectedAccuracy,
+            verticalAccuracy: expectedVerticalAccuracy,
+            course: expectedBearing,
+            courseAccuracy: expectedBearingAccuracy,
+            speed: expectedSpeed,
+            speedAccuracy: expectedSpeedAccuracy,
+            timestamp: Date(timeIntervalSince1970: expectedTms))
         
         return LocationModel(location: location, isAction: isAction, actionParameters: actionParameters)
     }

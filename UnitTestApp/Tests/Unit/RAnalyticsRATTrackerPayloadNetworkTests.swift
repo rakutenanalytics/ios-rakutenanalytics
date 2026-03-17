@@ -256,7 +256,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                 }
                 
                 @Test("should process an event with Edge primary radio and 5G secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                @available(iOS 14.1, *)
                 mutating func testShouldProcessEventWithEdgePrimaryRadioAnd5GSecondaryRadio() async throws {
                     helper.setUp()
                     defer { helper.tearDown() }
@@ -264,7 +263,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                 }
                 
                 @Test("should process an event with 5G primary radio and Edge secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                @available(iOS 14.1, *)
                 mutating func testShouldProcessEventWith5GPrimaryRadioAndEdgeSecondaryRadio() async throws {
                     helper.setUp()
                     defer { helper.tearDown() }
@@ -272,7 +270,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                 }
                 
                 @Test("should process an event with Edge primary radio and 5G secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                @available(iOS 14.1, *)
                 mutating func testShouldProcessEventWithLTEPrimaryRadioAnd5GSecondaryRadio() async throws {
                     helper.setUp()
                     defer { helper.tearDown() }
@@ -280,7 +277,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                 }
                 
                 @Test("should process an event with 5G primary radio and Edge secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                @available(iOS 14.1, *)
                 mutating func testShouldProcessEventWith5GPrimaryRadioAndLTESecondaryRadio() async throws {
                     helper.setUp()
                     defer { helper.tearDown() }
@@ -344,7 +340,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     var helper = PayloadTestHelper.TestHelper()
                     
                     @Test("should process an event with 5G primary radio and no secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWith5GPrimaryRadioAndNoSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }
@@ -352,7 +347,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     }
                     
                     @Test("should process an event with no primary radio and 5G secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWithNoPrimaryRadioAnd5GSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }
@@ -360,7 +354,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     }
                     
                     @Test("should process an event with 5G primary radio and 5G secondary radio when the network status is wwan and the radio is Edge for the main carrier and LTE for the eSIM")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWith5GPrimaryRadioAnd5GSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }
@@ -437,7 +430,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     var helper = PayloadTestHelper.TestHelper()
                     
                     @Test("should process an event with wifi when there is 5G primary radio, no secondary radio and the network status is wifi")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWithWifiWhen5GPrimaryRadioAndNoSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }
@@ -445,7 +437,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     }
                     
                     @Test("should process an event with wifi when there is no primary radio, 5G secondary radio and the network status is wifi")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWithWifiWhenNoPrimaryRadioAnd5GSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }
@@ -453,7 +444,6 @@ struct RAnalyticsRATTrackerPayloadNetworkTests {
                     }
                     
                     @Test("should process an event with wifi when there is 5G primary radio, 5G secondary radio and the network status is wifi")
-                    @available(iOS 14.1, *)
                     mutating func testShouldProcessEventWithWifiWhen5GPrimaryRadioAnd5GSecondaryRadio() async throws {
                         helper.setUp()
                         defer { helper.tearDown() }

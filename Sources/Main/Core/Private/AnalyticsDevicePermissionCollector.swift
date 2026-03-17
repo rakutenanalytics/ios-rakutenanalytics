@@ -58,28 +58,15 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
 
     /// Collect location permissions
     private func collectLocationPermissions() -> String {
-        if #available(iOS 14, *) {
-            switch CLLocationManager().authorizationStatus {
-            case .restricted, .denied, .notDetermined:
-                return DevicePermissionType.none.rawValue
-            case .authorizedWhenInUse:
-                return DevicePermissionType.foregroundOnly.rawValue
-            case .authorizedAlways:
-                return DevicePermissionType.alwaysAllow.rawValue
-            @unknown default:
-                return DevicePermissionType.none.rawValue
-            }
-        } else {
-            switch CLLocationManager.authorizationStatus() {
-            case .restricted, .denied, .notDetermined:
-                return DevicePermissionType.none.rawValue
-            case .authorizedWhenInUse:
-                return DevicePermissionType.foregroundOnly.rawValue
-            case .authorizedAlways:
-                return DevicePermissionType.alwaysAllow.rawValue
-            @unknown default:
-                return DevicePermissionType.none.rawValue
-            }
+        switch CLLocationManager().authorizationStatus {
+        case .restricted, .denied, .notDetermined:
+            return DevicePermissionType.none.rawValue
+        case .authorizedWhenInUse:
+            return DevicePermissionType.foregroundOnly.rawValue
+        case .authorizedAlways:
+            return DevicePermissionType.alwaysAllow.rawValue
+        @unknown default:
+            return DevicePermissionType.none.rawValue
         }
     }
 
@@ -106,16 +93,12 @@ final class AnalyticsDevicePermissionCollector: NSObject, CLLocationManagerDeleg
 
     /// Collect privacy ID permissions
     private func collectPrivacyIDPermissions() -> String {
-        if #available(iOS 14, *) {
-            switch ATTrackingManager.trackingAuthorizationStatus {
-            case .denied, .notDetermined, .restricted:
-                return DevicePermissionType.none.rawValue
-            case .authorized:
-                return DevicePermissionType.allowed.rawValue
-            @unknown default:
-                return DevicePermissionType.none.rawValue
-            }
-        } else {
+        switch ATTrackingManager.trackingAuthorizationStatus {
+        case .denied, .notDetermined, .restricted:
+            return DevicePermissionType.none.rawValue
+        case .authorized:
+            return DevicePermissionType.allowed.rawValue
+        @unknown default:
             return DevicePermissionType.none.rawValue
         }
     }

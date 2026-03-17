@@ -825,7 +825,6 @@ class MockUserNotificationCenterCollector: UserNotificationCenter {
 
 // MARK: - ATTrackingManagerCollectorMock
 
-@available(iOS 14, *)
 class ATTrackingManagerCollectorMock: ATTrackingManager {
     static var trackingAuthorizationStatusMock: ATTrackingManager.AuthorizationStatus = .notDetermined
 
@@ -863,18 +862,13 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
         
         permissions.append(collectLocationPermissions())
         permissions.append(collectNotificationPermissions())
-        if #available(iOS 14, *) {
-            permissions.append(collectPrivacyIDPermissions())
-        } else {
-            permissions.append(DevicePermissionType.none.rawValue)
-        }
+        permissions.append(collectPrivacyIDPermissions())
         permissions.append(collectCameraPermissions())
         permissions.append(collectMicrophonePermissions())
         
         return permissions.joined()
     }
     
-    @available(iOS 14, *)
     public func setup(locationAuthStatus: CLAuthorizationStatus,
                       notificationsAuthStatus: UNAuthorizationStatus,
                       trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
@@ -921,7 +915,6 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
         return permission
     }
     
-    @available(iOS 14, *)
     private func collectPrivacyIDPermissions() -> String {
         switch ATTrackingManagerCollectorMock.trackingAuthorizationStatusMock {
         case .denied, .notDetermined, .restricted:

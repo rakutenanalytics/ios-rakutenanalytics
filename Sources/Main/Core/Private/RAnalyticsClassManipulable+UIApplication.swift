@@ -122,9 +122,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             return
         }
 
-        if #available(iOS 13.0, *) {
-            SceneDelegateHelper.autoTrack()
-        }
+        SceneDelegateHelper.autoTrack()
 
         let recipient = type(of: unwrappedDelegate)
         UIApplication.replaceMethod(

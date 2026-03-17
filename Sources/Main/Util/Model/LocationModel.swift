@@ -3,11 +3,7 @@ import CoreLocation
 
 extension CLLocation {
     var safeCourseAccuracy: CLLocationDirectionAccuracy {
-        var value: CLLocationDirectionAccuracy = 0.0
-        if #available(iOS 13.4, *) {
-            value = courseAccuracy
-        }
-        return value
+        courseAccuracy
     }
 }
 

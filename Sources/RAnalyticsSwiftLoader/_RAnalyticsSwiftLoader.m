@@ -27,12 +27,9 @@ NS_ASSUME_NONNULL_END
     NSMutableArray *mutableClassesArray = [NSMutableArray arrayWithArray:@[
         UIApplication.class,
         UIViewController.class,
-        UNUserNotificationCenter.class
+        UNUserNotificationCenter.class,
+        UIWindowScene.class
     ]];
-
-    if (@available(iOS 13.0, *)) {
-        [mutableClassesArray addObject:UIWindowScene.class];
-    }
 
     for (Class loadableClass in mutableClassesArray) {
         if ([loadableClass respondsToSelector:@selector(loadSwift)]) {
