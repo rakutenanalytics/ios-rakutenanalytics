@@ -75,7 +75,6 @@ struct RAnalyticsCookieInjectorTests {
 
         @Test("should set cookie samesite to none")
         @MainActor
-        @available(iOS 13.0, *)
         func testSetsCookieSameSiteToNone() async {
             var cookie: HTTPCookie?
             await MainActor.run {

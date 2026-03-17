@@ -1,6 +1,5 @@
 import UIKit
 
-@available(iOS 13.0, *)
 extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
     /// Hold a stored property.
     ///
@@ -27,7 +26,7 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
             installAutoTrackingHooks()
         }
     }
-    
+
     public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
@@ -133,7 +132,6 @@ extension UIWindowScene: RAnalyticsClassManipulable, RuntimeLoadable {
     }
 }
 
-@available(iOS 13.0, *)
 extension UIOpenURLContext {
     /// As `UIOpenURLContext`'s init is unavailable, this property below is used to inject the URL.
     ///

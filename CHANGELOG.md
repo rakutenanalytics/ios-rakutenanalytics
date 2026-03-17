@@ -7,11 +7,21 @@
 * CONRAT-42909: Add manual viewable impressions tracking for UIKit and SwiftUI.
 
 ### Improvements
-* CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework
-* CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects
+* CONRAT-43229: Remove redundant availability checks.
+* CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework.
+* CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects.
+* CONRAT-43326: Re-enable SwiftLint.
+* CONRAT-43324: Remove NSObject.ratTracker from AnalyticsManager and use RAnalyticsRATTracker shared instance instead.
+* CONRAT-43283: Remove AnalyticsManager dependency from RAnalyticsDatabase.
 
 ### Build fixes
 * CONRAT-43264: fix the Swift Package Test Target.
+
+### Templates
+* CONRAT-43329: Update Github PR Template so CONTRIBUTING.md line no longer appears.
+
+### Build configuration
+* CONRAT-43335: Add SwiftLint to Github Actions.
 
 ## 11.0.0 (2025-11-25)
 

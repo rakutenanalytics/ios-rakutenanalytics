@@ -20,7 +20,7 @@ protocol GeoTrackable {
     /// This method starts the location collection.
     ///
     /// Call this method to start the location collection.
-    /// 
+    ///
     /// - Parameter configuration: GeoConfiguration used for location collection.
     ///
     /// - NOTE: On calling this method if a value is not passed in configuration, the default configuration value will be used.

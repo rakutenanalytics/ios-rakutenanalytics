@@ -99,8 +99,6 @@
 		CF35031B2C5B40AC00F95F77 /* PositiveIntegerNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35029C2C5B3D4100F95F77 /* PositiveIntegerNumberTests.swift */; };
 		CF35031C2C5B40AC00F95F77 /* SwiftInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502B42C5B3D4100F95F77 /* SwiftInterop.swift */; };
 		CF35031D2C5B40AC00F95F77 /* RAnalyticsEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502A22C5B3D4100F95F77 /* RAnalyticsEventTests.swift */; };
-		D1A1B2C3D4E5F60718293A4B /* ViewableImpressionTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */; };
-		D1A1B2C3D4E5F60718293A4D /* AnalyticsViewableImpressionModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */; };
 		CF35031E2C5B40AC00F95F77 /* ReferralAppTrackingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502AF2C5B3D4100F95F77 /* ReferralAppTrackingIntegrationTests.swift */; };
 		CF35031F2C5B40B000F95F77 /* CoreInfosCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502932C5B3D4100F95F77 /* CoreInfosCollectorTests.swift */; };
 		CF3503202C5B40B000F95F77 /* DatabaseDirectoriesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502942C5B3D4100F95F77 /* DatabaseDirectoriesTests.swift */; };
@@ -139,6 +137,8 @@
 		CFA3FA212C7450DE0038933F /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = CFA3FA202C7450DE0038933F /* ViewInspector */; };
 		CFA3FA2D2C7450ED0038933F /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = CFA3FA2C2C7450ED0038933F /* ViewInspector */; };
 		CFA3FA312C75B7050038933F /* DevicePermissionsCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA3FA302C75B7050038933F /* DevicePermissionsCollectorTests.swift */; };
+		D1A1B2C3D4E5F60718293A4B /* ViewableImpressionTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */; };
+		D1A1B2C3D4E5F60718293A4D /* AnalyticsViewableImpressionModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */; };
 		E0788F63626E24F9C3B78C06 /* Pods_Common_IntegrationTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57412EB5E38BA2D8593DFB27 /* Pods_Common_IntegrationTests.framework */; };
 		E409309ED19EE7B553F1C4F9 /* Pods_Common_FunctionalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96F7889F1527C23416BBD32F /* Pods_Common_FunctionalTests.framework */; };
 /* End PBXBuildFile section */
@@ -252,8 +252,6 @@
 		CF3502A02C5B3D4100F95F77 /* RAnalyticsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsDatabaseTests.swift; sourceTree = "<group>"; };
 		CF3502A12C5B3D4100F95F77 /* RAnalyticsEndpointSettableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEndpointSettableTests.swift; sourceTree = "<group>"; };
 		CF3502A22C5B3D4100F95F77 /* RAnalyticsEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsEventTests.swift; sourceTree = "<group>"; };
-		D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionTrackerTests.swift; sourceTree = "<group>"; };
-		D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewableImpressionModifierTests.swift; sourceTree = "<group>"; };
 		CF3502A32C5B3D4100F95F77 /* RAnalyticsExternalCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsExternalCollectorTests.swift; sourceTree = "<group>"; };
 		CF3502A42C5B3D4100F95F77 /* RAnalyticsLaunchCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsLaunchCollectorTests.swift; sourceTree = "<group>"; };
 		CF3502A52C5B3D4100F95F77 /* RAnalyticsRATTrackerDuplicateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RAnalyticsRATTrackerDuplicateTests.swift; sourceTree = "<group>"; };
@@ -302,6 +300,8 @@
 		CFA3FA0C2C744FAC0038933F /* ios-analytics */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-analytics"; path = ..; sourceTree = "<group>"; };
 		CFA3FA302C75B7050038933F /* DevicePermissionsCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePermissionsCollectorTests.swift; sourceTree = "<group>"; };
 		CFE09BF52E84B776002FB2DB /* UserAgentHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAgentHandlerTests.swift; sourceTree = "<group>"; };
+		D1A1B2C3D4E5F60718293A4C /* ViewableImpressionTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionTrackerTests.swift; sourceTree = "<group>"; };
+		D1A1B2C3D4E5F60718293A4E /* AnalyticsViewableImpressionModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewableImpressionModifierTests.swift; sourceTree = "<group>"; };
 		D89DBB73A9275981897B473E /* Pods-Common-IntegrationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-IntegrationTests.release.xcconfig"; path = "Target Support Files/Pods-Common-IntegrationTests/Pods-Common-IntegrationTests.release.xcconfig"; sourceTree = "<group>"; };
 		F8A9EA30B2296E48634809B6 /* Pods-Common-IntegrationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-IntegrationTests.debug.xcconfig"; path = "Target Support Files/Pods-Common-IntegrationTests/Pods-Common-IntegrationTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */

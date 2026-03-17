@@ -7,7 +7,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             installAutoTrackingHooks()
         }
     }
-    
+
     @objc public static func installAutoTrackingHooks() {
         replaceMethod(#selector(setter: delegate),
                       inClass: self,
@@ -122,9 +122,7 @@ extension UIApplication: RAnalyticsClassManipulable, RuntimeLoadable {
             return
         }
 
-        if #available(iOS 13.0, *) {
-            SceneDelegateHelper.autoTrack()
-        }
+        SceneDelegateHelper.autoTrack()
 
         let recipient = type(of: unwrappedDelegate)
         UIApplication.replaceMethod(

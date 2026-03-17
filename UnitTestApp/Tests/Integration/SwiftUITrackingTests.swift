@@ -16,7 +16,6 @@ import RAnalyticsTestHelpers
 #endif
 
 struct RView: View {
-    @available(iOS 13.0.0, *)
     var body: some View {
         rviewOnAppear(pageName: "MyView", with: MainDependenciesContainer.analyticsManager) {
         }
@@ -39,26 +38,21 @@ final class SwiftUITrackingTests: QuickSpec {
             }
 
             it("should track pv event with pgn equal to MyView when the pageName is MyView") {
-                if #available(iOS 13.0, *) {
-                    var taskIsCompleted = false
+                var taskIsCompleted = false
 
-                    sessionMock.onCompletedTask = {
-                        taskIsCompleted = true
-                    }
-    
-                    try view.inspect().implicitAnyView().view(RView.self).callOnAppear()
-
-                    expect(taskIsCompleted).toEventually(beTrue(), timeout: .seconds(5))
-                    expect(sessionMock.sentRequest).toEventuallyNot(beNil())
-
-                    let ratPayload = sessionMock.sentRequest?.httpBody?.ratPayload
-                    let json = ratPayload?.pageVisitJSON
-
-                    expect(json?[PayloadParameterKeys.pgn] as? String).to(equal("MyView"))
-                } else {
-                    // Can't test on iOS < iOS 13.0
-                    // Don't call `assertionFailure` in order to let the tests run on lower versions of Xcode
+                sessionMock.onCompletedTask = {
+                    taskIsCompleted = true
                 }
+
+                try view.inspect().implicitAnyView().view(RView.self).callOnAppear()
+
+                expect(taskIsCompleted).toEventually(beTrue(), timeout: .seconds(5))
+                expect(sessionMock.sentRequest).toEventuallyNot(beNil())
+
+                let ratPayload = sessionMock.sentRequest?.httpBody?.ratPayload
+                let json = ratPayload?.pageVisitJSON
+
+                expect(json?[PayloadParameterKeys.pgn] as? String).to(equal("MyView"))
             }
         }
     }

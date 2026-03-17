@@ -131,7 +131,7 @@ enum SenderBackgroundTimerEnabler {
             RLogger.error(message: "Analytics event dropped because manual initialization is enabled and AnalyticsManager is not configured.")
             return
         }
-        
+
         guard let data = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
               let payloadString = String(data: data, encoding: .utf8) else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
@@ -189,7 +189,7 @@ fileprivate extension RAnalyticsSender {
         if let delay = batchingDelayBlock()?() {
             if case .enabled(let startTimeKey) = backgroundTimerEnabler,
                let elapsedTime = scheduleElapsedTime(for: startTimeKey) {
-                if (elapsedTime <= delay) {
+                if elapsedTime <= delay {
                     uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay - elapsedTime), maxUploadInterval)
 
                 } else {
@@ -316,6 +316,7 @@ fileprivate extension RAnalyticsSender {
                 NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
                 self.logSentRecords(ratJsonRecords)
 
+                self.database.enabled = AnalyticsManager.isConfigured
                 self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
                     self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
                 }
@@ -346,6 +347,7 @@ fileprivate extension RAnalyticsSender {
 // MARK: Database handling
 extension RAnalyticsSender {
     func insert(dataBlob: Data) {
+        database.enabled = AnalyticsManager.isConfigured
         database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
             self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
         }
@@ -357,6 +359,7 @@ extension RAnalyticsSender {
             userStorageHandler.removeObject(forKey: startTimeKey)
         }
 
+        database.enabled = AnalyticsManager.isConfigured
         database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
 
             assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")

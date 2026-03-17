@@ -1,7 +1,6 @@
 import Foundation
 import UIKit
 
-@available(iOS 13.0, *)
 enum SceneDelegateHelper {
 
     /// Autotrack the UISceneDelegate functions.

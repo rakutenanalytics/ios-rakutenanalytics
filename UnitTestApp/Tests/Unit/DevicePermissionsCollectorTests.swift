@@ -17,18 +17,11 @@ struct AnalyticsDevicePermissionCollectorTests {
     struct WhenCollectingAllPermissionsTests {
         @Test("should return default values")
         func testShouldReturnDefaultValues() {
-            guard #available(iOS 14, *) else {
-                return
-            }
             #expect(AnalyticsDevicePermissionCollector.shared.collectPermissions() == "00000")
         }
         
         @Test("returns the correct combined permissions string for various states")
         func testReturnsCorrectCombinedPermissionsStringForVariousStates() {
-            guard #available(iOS 14, *) else {
-                return
-            }
-            
             var spec = AnalyticsDevicePermissionCollectorTests()
             spec.setUp()
             

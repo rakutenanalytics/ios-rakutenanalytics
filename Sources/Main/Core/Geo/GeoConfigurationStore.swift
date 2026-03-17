@@ -35,32 +35,32 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
     init(userStorageHandler: UserStorageHandleable) {
         self.userStorageHandler = userStorageHandler
     }
-    
+
     @discardableResult
     func store(configuration: GeoConfiguration) -> Bool {
-        
+
         var geoConfiguration = configuration
         // Range check for startTime and endTime
         let validTime = validateTime(startTime: geoConfiguration.startTime,
                                      endTime: geoConfiguration.endTime)
-        
+
         geoConfiguration.startTime = validTime.startTime
         geoConfiguration.endTime = validTime.endTime
-        
+
         // RangeCheck for distanceInterval
         if case (GeoConfigurationFactory.distanceIntervalRange) = geoConfiguration.distanceInterval {
             RLogger.debug(message: "distanceInterval is within range")
         } else {
             geoConfiguration.distanceInterval = GeoConfigurationFactory.defaultConfiguration.distanceInterval
         }
-        
+
         // RangeCheck for timeInterval
         if case (GeoConfigurationFactory.timeIntervalRange) = geoConfiguration.timeInterval {
             RLogger.debug(message: "timeInterval is within range")
         } else {
             geoConfiguration.timeInterval = GeoConfigurationFactory.defaultConfiguration.timeInterval
         }
-        
+
         do {
             let data = try JSONEncoder().encode(geoConfiguration)
             userStorageHandler.set(value: data, forKey: UserDefaultsKeys.configurationKey)
@@ -71,7 +71,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
         }
         return false
     }
-    
+
     /// Retrieve configuration from storage if present, else return nil.
     func retrieveGeoConfigurationFromStorage() -> GeoConfiguration? {
         do {
@@ -92,7 +92,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
     }
 
     func validateTime(startTime: GeoTime, endTime: GeoTime) -> (startTime: GeoTime, endTime: GeoTime) {
-        
+
         // Check startTime range
         var startHours = startTime.hours
         var startMinutes = startTime.minutes
@@ -103,7 +103,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
                     startMinutes > GeoConfigurationFactory.endMinutes {
             startMinutes = GeoConfigurationFactory.startMinutes
         }
-        
+
         // Check endTime range
         var endHours = endTime.hours
         var endMinutes = endTime.minutes
@@ -114,7 +114,7 @@ struct GeoConfigurationStore: GeoConfigurationStorable {
                     endMinutes > GeoConfigurationFactory.endMinutes {
             endMinutes = GeoConfigurationFactory.endMinutes
         }
-        
+
         // Check additional conditions if startTime > endTime then store the default time of startTime and endTime
         if endHours < startHours || (endHours == startHours && endMinutes <= startMinutes) {
             startHours = GeoConfigurationFactory.startHours

@@ -137,7 +137,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
         if Bundle.main.isManualInitializationEnabled {
             guard AnalyticsManager.isConfigured else {
-                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing RAnalyticsRATTracker.shared(). Call AnalyticsManager.configure() first.")
                 return singleton
             }
             return singleton
@@ -216,7 +216,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             return
         }
     }
-    
+
     /// Update carrier names in the RAnalyticsRATTracker's AutomaticFieldsBuilder
     /// - Parameters:
     ///   - mcn: The primary carrier name
@@ -224,7 +224,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     internal func updateCarrierNames(mcn: String?, mcnd: String?) {
         automaticFieldsBuilder.updateCarrierNames(mcn: mcn, mcnd: mcnd)
     }
-    
+
     /// Get current carrier names from the RAnalyticsRATTracker's AutomaticFieldsBuilder
     /// - Returns: Tuple containing primary and secondary carrier names
     internal func getCarrierNames() -> (primary: String?, secondary: String?) {
@@ -439,9 +439,9 @@ extension RAnalyticsRATTracker {
         // MARK: _rem_push_notify_external, _rem_push_received_external
         // MARK: _rem_push_auto_register_external, _rem_push_auto_unregister_external
         case RAnalyticsEvent.Name.pushNotificationExternal,
-            RAnalyticsEvent.Name.pushNotificationReceivedExternal,
-            RAnalyticsEvent.Name.pushAutoRegistrationExternal,
-            RAnalyticsEvent.Name.pushAutoUnregistrationExternal:
+             RAnalyticsEvent.Name.pushNotificationReceivedExternal,
+             RAnalyticsEvent.Name.pushAutoRegistrationExternal,
+             RAnalyticsEvent.Name.pushAutoUnregistrationExternal:
             if let etype = payload[PayloadParameterKeys.etype] as? String {
                 payload[PayloadParameterKeys.etype] = etype.remove(suffix: "_external")
             }
@@ -517,7 +517,7 @@ extension RAnalyticsRATTracker {
         default:
             return false
         }
-        
+
         if let pgidValue = event.parameters["pgid"] as? String {
             if validatePgidFormat(pgidValue, deviceIdentifier: state.deviceIdentifier) {
                 payload["pgid"] = pgidValue
@@ -525,7 +525,7 @@ extension RAnalyticsRATTracker {
                 payload.removeObject(forKey: "pgid")
             }
         }
-        
+
         if let pageSection = event.parameters[RAnalyticsEvent.Parameter.pageSection] as? String, !pageSection.isEmpty {
             payload[PayloadParameterKeys.pageSection] = pageSection
         } else {
@@ -595,7 +595,7 @@ private extension RAnalyticsRATTracker {
             }
             return false
         }
-        
+
         payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
@@ -720,7 +720,7 @@ extension RAnalyticsRATTracker {
         let (wasAdded, _) = duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
         return wasAdded
     }
-    
+
     /// Validates the format of a pgid parameter.
     ///
     /// - Parameters:
@@ -729,11 +729,11 @@ extension RAnalyticsRATTracker {
     /// - Returns: `true` if the pgid format is valid, `false` otherwise
     private func validatePgidFormat(_ pgid: String, deviceIdentifier: String) -> Bool {
         let components = pgid.components(separatedBy: "_")
-        
+
         guard components.count == 2, components[0] == deviceIdentifier, TimeInterval(components[1]) != nil else {
             return false
         }
-        
+
         return true
     }
 }

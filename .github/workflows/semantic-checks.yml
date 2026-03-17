@@ -9,9 +9,10 @@ on:
 
 jobs:
   main:
-    name: Validate PR Size, PR Name and Branch Name
+    name: Validate PR Size, PR Name, Branch Name and SwiftLint
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
       issues: write
     steps:
@@ -76,3 +77,15 @@ jobs:
               console.log(message);
               core.setFailed('Branch name does not match the required format.');
             }
+
+      # Clone the repository into the GitHub Actions runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Run SwiftLint
+      - name: SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --reporter github-actions-logging --strict

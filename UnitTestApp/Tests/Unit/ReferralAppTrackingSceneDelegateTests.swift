@@ -15,7 +15,6 @@ import UIKit
 #if SWIFT_PACKAGE
 // rAutotrackSetSceneDelegate is called in the Cocoapods tests target and in an application containing the RAnalytics Pod
 #else
-@available(iOS 13.0, *)
 private final class CustomSceneDelegate: NSObject, UISceneDelegate {
     var sceneopenURLContextsIsCalled = false
     var sceneContinueIsCalled = false
@@ -42,16 +41,12 @@ struct ReferralAppTrackingSceneDelegateTests {
     // effectively toggle swizzling and cause one selector (commonly `scene(_:continue:)`) to be
     // unswizzled, leading to "nothing tracked" timeouts.
     private static var suiteUIKitInitialized = false
-    @available(iOS 13.0, *)
     private static let suiteSceneDelegate = CustomSceneDelegate()
-    @available(iOS 13.0, *)
     private static var suiteWindowScene: UIWindowScene?
-    @available(iOS 13.0, *)
     private static var suiteWindow: UIWindow?
     
     @MainActor
     private static func ensureSuiteUIKitInitialized() {
-        guard #available(iOS 13.0, *) else { return }
         guard !suiteUIKitInitialized else { return }
         
         // Grab any scene the host app created for the test run.
@@ -85,7 +80,6 @@ struct ReferralAppTrackingSceneDelegateTests {
     let session = SwiftyURLSessionMock()
     let dependenciesContainer = SimpleContainerMock()
     
-    @available(iOS 13.0, *)
     fileprivate var sceneDelegate: CustomSceneDelegate { Self.suiteSceneDelegate }
     var windowScene: UIWindowScene? { Self.suiteWindowScene }
     var analyticsManager: ReferralAppTrackable!
@@ -125,19 +119,15 @@ struct ReferralAppTrackingSceneDelegateTests {
         ratTracker.set(batchingDelay: 0)
         (analyticsManager as? AnalyticsManager)?.add(ratTracker)
 
-        if #available(iOS 13.0, *) {
-            // This setter updates a static holder used by the swizzled delegate implementations.
-            windowScene?.analyticsManager = analyticsManager
-        }
+        // This setter updates a static holder used by the swizzled delegate implementations.
+        windowScene?.analyticsManager = analyticsManager
     }
     
     @MainActor
     mutating func tearDown() {
-        if #available(iOS 13.0, *) {
-            // Do NOT reset the scene delegate here; toggling delegate assignment can toggle swizzling.
-            // Just restore the analytics manager to its default.
-            windowScene?.analyticsManager = AnalyticsManager.shared()
-        }
+        // Do NOT reset the scene delegate here; toggling delegate assignment can toggle swizzling.
+        // Just restore the analytics manager to its default.
+        windowScene?.analyticsManager = AnalyticsManager.shared()
         DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
         database.closeConnection()
         databaseConnection = nil
@@ -150,10 +140,6 @@ struct ReferralAppTrackingSceneDelegateTests {
             @Test("should process the referral app tracking")
             @MainActor
             mutating func testShouldProcessReferralAppTracking() async throws {
-                guard #available(iOS 13.0, *) else {
-                    return
-                }
-                
                 var spec = ReferralAppTrackingSceneDelegateTests()
                 spec.setUp()
                 defer { spec.tearDown() }
@@ -203,10 +189,6 @@ struct ReferralAppTrackingSceneDelegateTests {
             @Test("should process the referral app tracking")
             @MainActor
             mutating func testShouldProcessReferralAppTracking() async throws {
-                guard #available(iOS 13.0, *) else {
-                    return
-                }
-                
                 var spec = ReferralAppTrackingSceneDelegateTests()
                 spec.setUp()
                 defer { spec.tearDown() }

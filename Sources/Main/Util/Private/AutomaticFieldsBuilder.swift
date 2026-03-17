@@ -119,7 +119,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         if let existingValue = payload[PayloadParameterKeys.sdkSource] as? String, !existingValue.isEmpty {
             return
         }
-        
+
         // For custom events, check event parameters since regular params don't get copied to payload
         if event.name == RAnalyticsEvent.Name.custom,
            let sdkSource = event.parameters["sdk_source"] as? String, !sdkSource.isEmpty {
@@ -144,7 +144,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // MARK: aid
         payload[PayloadParameterKeys.aid] =
-        (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.applicationIdentifier)
+            (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.applicationIdentifier)
 
         // MARK: dln
         if let languageCode = bundle.languageCode {
@@ -187,7 +187,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // MARK: ua
         payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
-        
+
         // MARK: ua_enriched
         payload[PayloadParameterKeys.UserAgent.uaEnriched] = userAgentHandler.enrichedValue(for: state)
 
@@ -222,7 +222,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
             payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
         }
-        
+
         // MARK: device_per
         if payload[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.sessionEnd {
             payload[PayloadParameterKeys.Device.devicePer] = AnalyticsDevicePermissionCollector.shared.collectPermissions()
@@ -263,7 +263,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             payload[PayloadParameterKeys.isAction] = locationModel.isAction
         }
     }
-    
+
     /// Update the carrier names in the telephony handler
     ///
     /// - Parameters:
@@ -273,7 +273,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         telephonyHandler.mcn = mcn
         telephonyHandler.mcnd = mcnd
     }
-    
+
     /// Get the current carrier names from the telephony handler
     ///
     /// - Returns: Tuple containing primary and secondary carrier names

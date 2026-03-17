@@ -101,7 +101,7 @@ public struct ReferralAppModel: Hashable {
     public let component: String?
     /// The referral app's custom parameters
     public var customParameters: [String: String]?
-    
+
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -138,7 +138,7 @@ public struct ReferralAppModel: Hashable {
                   customParameters: customParameters,
                   bundle: bundle)
     }
-    
+
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -182,7 +182,7 @@ public struct ReferralAppModel: Hashable {
                   component: component,
                   customParameters: customParameters)
     }
-    
+
     /// Create a new App-to-App Referral Tracking Model.
     ///
     /// - Parameters:
@@ -207,7 +207,7 @@ public struct ReferralAppModel: Hashable {
         self.component = component
         self.customParameters = customParameters
     }
-    
+
     /// Constructs a URL Scheme for app-to-app referral tracking.
     ///
     /// - Parameters:
@@ -221,14 +221,14 @@ public struct ReferralAppModel: Hashable {
         guard !appScheme.isEmpty else {
             return nil
         }
-        
+
         var components = URLComponents()
         components.scheme = appScheme
         components.host = ""
-        
+
         return buildURLWithComponents(components: components, pathComponent: pathComponent, ref: ref)
     }
-    
+
     /// Constructs a universal link for app-to-app referral tracking.
     ///
     /// - Parameters:
@@ -242,17 +242,17 @@ public struct ReferralAppModel: Hashable {
         guard !domain.isEmpty else {
             return nil
         }
-        
+
         var components = URLComponents()
         components.scheme = "https"
         components.host = domain
-        
+
         return buildURLWithComponents(components: components, pathComponent: pathComponent, ref: ref)
     }
 }
 
 extension ReferralAppModel {
-    
+
     /// Constructs a URL from the given URL components, optional path component, and reference.
     /// - Parameters:
     ///   - urlComponents: The base URL components to configure.
@@ -261,13 +261,13 @@ extension ReferralAppModel {
     /// - Returns: A configured URL or nil if the URL could not be constructed.
     private func buildURLWithComponents(components: URLComponents, pathComponent: String? = nil, ref: String? = nil) -> URL? {
         var configuredComponents = components
-        
+
         if let pathComponent = pathComponent, !pathComponent.isEmpty {
             configuredComponents.path = "/\(pathComponent)"
         }
-        
+
         var queryItems = [URLQueryItem]()
-        
+
         if let ref = ref, !ref.isEmpty {
             queryItems.append(URLQueryItem(name: "ref", value: ref))
         } else {
@@ -275,7 +275,7 @@ extension ReferralAppModel {
                 queryItems.append(URLQueryItem(name: "ref", value: bundleIdentifier))
             }
         }
-        
+
         let queryString = self.query
         if !queryString.isEmpty {
             let queryComponents = queryString.split(separator: "&")
@@ -288,10 +288,10 @@ extension ReferralAppModel {
                 }
             }
         }
-        
+
         configuredComponents.queryItems = queryItems.isEmpty ? nil : queryItems
-        
+
         return configuredComponents.url
     }
-    
+
 }
