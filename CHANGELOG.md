@@ -19,6 +19,9 @@
 ### Templates
 * CONRAT-43329: Update Github PR Template so CONTRIBUTING.md line no longer appears.
 
+### Build configuration
+* CONRAT-43335: Add SwiftLint to Github Actions.
+
 ## 11.0.0 (2025-11-25)
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.
