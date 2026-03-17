@@ -26,7 +26,6 @@ struct RAnalyticsDatabaseTests {
         sqlite3_close_v2(readonlyConnection)
         
         bundle.isManualInitializationEnabled = false
-        AnalyticsManager.isConfigured = true
     }
     
     @Suite("when calling insert(blobs:into:limit:then:)")
@@ -49,7 +48,6 @@ struct RAnalyticsDatabaseTests {
             sqlite3_close_v2(readonlyConnection)
             
             bundle.isManualInitializationEnabled = false
-            AnalyticsManager.isConfigured = true
         }
         
         @Test("should create table to insert if it does not exist yet")
@@ -60,6 +58,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableExists = false
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.insert(blobs: [], into: "some_table", limit: 1) {
                     tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                     continuation.resume()
@@ -79,6 +78,7 @@ struct RAnalyticsDatabaseTests {
             
             var insertedBlobs = [Data]()
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                     insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -100,7 +100,6 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
                 sqlite3_close_v2(connection)
                 bundle.isManualInitializationEnabled = false
-                AnalyticsManager.isConfigured = true
             }
             
             @Test("should not insert given blobs if SDK not initialized")
@@ -112,10 +111,10 @@ struct RAnalyticsDatabaseTests {
                 let anotherBlob = "bar".data(using: .utf8)!
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.isConfigured = false
                 
                 var insertedBlobs = [Data]()
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = false
                     database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                         insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -133,10 +132,10 @@ struct RAnalyticsDatabaseTests {
                 let anotherBlob = "bar".data(using: .utf8)!
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.configure()
                 
                 var insertedBlobs = [Data]()
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                         insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -159,6 +158,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableContents = [Data]()
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.insert(blobs: [], into: "some_table", limit: 1) {
                     tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -185,6 +185,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableContents = [Data]()
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.insert(blobs: newContent, into: "some_table", limit: 1) {
                     tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -211,6 +212,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableContents = [Data]()
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.insert(blobs: newContent, into: "some_table", limit: 0) {
                     tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -244,6 +246,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var tableExists: Bool?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
                         tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                         continuation.resume()
@@ -260,6 +263,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var tableContents: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.insert(blobs: ["foo".data(using: .utf8)!], into: "some_table", limit: 0) {
                         tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -277,6 +281,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var tableContents = [Data]()
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.insert(blobs: ["bar".data(using: .utf8)!], into: "some_table", limit: 0) {
                         tableContents = DatabaseTestUtils.fetchTableContents("some_table", connection: readonlyConnection)
                         continuation.resume()
@@ -305,7 +310,6 @@ struct RAnalyticsDatabaseTests {
             sqlite3_close_v2(connection)
             sqlite3_close_v2(readonlyConnection)
             bundle.isManualInitializationEnabled = false
-            AnalyticsManager.isConfigured = true
         }
         
         @Test("should create passed table if table did not exist before")
@@ -316,6 +320,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableExists = false
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { _, _ in
                     tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                     continuation.resume()
@@ -333,6 +338,7 @@ struct RAnalyticsDatabaseTests {
             var tableExists = false
             try await withCheckedThrowingContinuation { continuation in
                 NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { _, _ in
                     tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                     continuation.resume()
@@ -351,6 +357,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedBlobs: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { blobs, _ in
                     fetchedBlobs = blobs
                     continuation.resume()
@@ -372,7 +379,6 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
                 sqlite3_close_v2(connection)
                 bundle.isManualInitializationEnabled = false
-                AnalyticsManager.isConfigured = true
             }
             
             @Test("should not fetch given blobs if SDK not initialized")
@@ -384,10 +390,10 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.isConfigured = false
                 
                 var fetchedBlobs: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = false
                     database.fetchBlobs(FetchBlobsTests.bigNumber, from: "some_table") { blobs, _ in
                         fetchedBlobs = blobs
                         continuation.resume()
@@ -405,10 +411,10 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.configure()
                 
                 var fetchedBlobs: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.fetchBlobs(FetchBlobsTests.bigNumber, from: "some_table") { blobs, _ in
                         fetchedBlobs = blobs
                         continuation.resume()
@@ -428,6 +434,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedBlobs: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { blobs, _ in
                     fetchedBlobs = blobs
                     continuation.resume()
@@ -454,6 +461,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedBlobs: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { blobs, _ in
                     fetchedBlobs = blobs
                     continuation.resume()
@@ -471,6 +479,7 @@ struct RAnalyticsDatabaseTests {
             DatabaseTestUtils.insert(blobs: [blob], table: "some_table", connection: connection)
             var fetchedIds: [Int64]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(Self.bigNumber, from: "some_table") { _, ids in
                     fetchedIds = ids
                     continuation.resume()
@@ -489,6 +498,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedBlobs: [Data]? = []
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(0, from: "some_table") { blobs, _ in
                     fetchedBlobs = blobs
                     continuation.resume()
@@ -507,6 +517,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedIds: [Int64]? = []
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(0, from: "some_table") { _, ids in
                     fetchedIds = ids
                     continuation.resume()
@@ -529,6 +540,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedBlobs: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(2, from: "some_table") { blobs, _ in
                     fetchedBlobs = blobs
                     continuation.resume()
@@ -552,6 +564,7 @@ struct RAnalyticsDatabaseTests {
             
             var fetchedIds: [Int64]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.fetchBlobs(2, from: "some_table") { _, ids in
                     fetchedIds = ids
                     continuation.resume()
@@ -584,6 +597,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var tableExists: Bool?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.fetchBlobs(FetchBlobsTests.bigNumber, from: "some_table") { _, _ in
                         tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                         continuation.resume()
@@ -598,10 +612,12 @@ struct RAnalyticsDatabaseTests {
                 
                 let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                 let blob = "foo".data(using: .utf8)!
+                database.enabled = true
                 database.insert(blob: blob, into: "some_table", limit: 0, then: { })
                 
                 var fetchedBlobs: [Data]? = []
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.fetchBlobs(FetchBlobsTests.bigNumber, from: "some_table") { blobs, _ in
                         fetchedBlobs = blobs
                         continuation.resume()
@@ -616,10 +632,12 @@ struct RAnalyticsDatabaseTests {
                 
                 let database = DatabaseTestUtils.mkDatabase(connection: readonlyConnection)
                 let blob = "foo".data(using: .utf8)!
+                database.enabled = true
                 database.insert(blob: blob, into: "some_table", limit: 0, then: { })
                 
                 var fetchedIds: [Int64]? = []
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.fetchBlobs(FetchBlobsTests.bigNumber, from: "some_table") { _, ids in
                         fetchedIds = ids
                         continuation.resume()
@@ -643,7 +661,6 @@ struct RAnalyticsDatabaseTests {
             DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
             sqlite3_close_v2(connection)
             bundle.isManualInitializationEnabled = false
-            AnalyticsManager.isConfigured = true
         }
         
         @Test("should not create passed table if table did not exist before")
@@ -654,6 +671,7 @@ struct RAnalyticsDatabaseTests {
             
             var tableExists: Bool?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.deleteBlobs(identifiers: [], in: "some_table") {
                     tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: connection)
                     continuation.resume()
@@ -675,6 +693,7 @@ struct RAnalyticsDatabaseTests {
             
             var itemsInDb: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
                     itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -696,7 +715,6 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.deleteTableIfExists("some_table", connection: connection)
                 sqlite3_close_v2(connection)
                 bundle.isManualInitializationEnabled = false
-                AnalyticsManager.isConfigured = true
             }
             
             @Test("should not delete given items if SDK not initialized")
@@ -711,10 +729,10 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.insert(blobs: blobs, table: "some_table", connection: connection)
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.isConfigured = false
                 
                 var itemsInDb: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = false
                     database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
                         itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -735,10 +753,10 @@ struct RAnalyticsDatabaseTests {
                 DatabaseTestUtils.insert(blobs: blobs, table: "some_table", connection: connection)
                 
                 bundle.isManualInitializationEnabled = true
-                AnalyticsManager.configure()
                 
                 var itemsInDb: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.deleteBlobs(identifiers: [1, 2], in: "some_table") {
                         itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -761,6 +779,7 @@ struct RAnalyticsDatabaseTests {
             
             var itemsInDb: [Data]?
             try await withCheckedThrowingContinuation { continuation in
+                database.enabled = true
                 database.deleteBlobs(identifiers: [1], in: "some_table") {
                     itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                     continuation.resume()
@@ -793,6 +812,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var tableExists: Bool?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.deleteBlobs(identifiers: [], in: "some_table") {
                         tableExists = DatabaseTestUtils.isTablePresent("some_table", connection: readonlyConnection)
                         continuation.resume()
@@ -811,6 +831,7 @@ struct RAnalyticsDatabaseTests {
                 
                 var itemsInDb: [Data]?
                 try await withCheckedThrowingContinuation { continuation in
+                    database.enabled = true
                     database.deleteBlobs(identifiers: [1], in: "some_table") {
                         itemsInDb = DatabaseTestUtils.fetchTableContents("some_table", connection: connection)
                         continuation.resume()
@@ -887,7 +908,8 @@ struct RAnalyticsDatabaseTests {
                 try await withCheckedThrowingContinuation { continuation in
                     let blob = "foo".data(using: .utf8)!
                     let anotherBlob = "bar".data(using: .utf8)!
-                    
+
+                    databaseA.enabled = true
                     databaseA.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                         let insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connectionB)
                         #expect(insertedBlobs == [blob, anotherBlob])
@@ -964,7 +986,8 @@ struct RAnalyticsDatabaseTests {
                 try await withCheckedThrowingContinuation { continuation in
                     let blob = "foo".data(using: .utf8)!
                     let anotherBlob = "bar".data(using: .utf8)!
-                    
+
+                    databaseA.enabled = true
                     databaseA.insert(blobs: [blob, anotherBlob], into: "some_table", limit: 0) {
                         let insertedBlobs = DatabaseTestUtils.fetchTableContents("some_table", connection: connectionB)
                         #expect(insertedBlobs == [blob, anotherBlob])

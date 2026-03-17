@@ -316,6 +316,7 @@ fileprivate extension RAnalyticsSender {
                 NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
                 self.logSentRecords(ratJsonRecords)
 
+                self.database.enabled = AnalyticsManager.isConfigured
                 self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
                     self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
                 }
@@ -346,6 +347,7 @@ fileprivate extension RAnalyticsSender {
 // MARK: Database handling
 extension RAnalyticsSender {
     func insert(dataBlob: Data) {
+        database.enabled = AnalyticsManager.isConfigured
         database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
             self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
         }
@@ -357,6 +359,7 @@ extension RAnalyticsSender {
             userStorageHandler.removeObject(forKey: startTimeKey)
         }
 
+        database.enabled = AnalyticsManager.isConfigured
         database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
 
             assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")

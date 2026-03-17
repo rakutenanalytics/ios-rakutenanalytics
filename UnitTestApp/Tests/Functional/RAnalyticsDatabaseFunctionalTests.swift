@@ -52,6 +52,7 @@ struct RAnalyticsDatabaseFunctionalTests {
         let testConnection = connection!
         
         await withCheckedContinuation { continuation in
+            testDatabase.enabled = true
             testDatabase.insert(blobs: Self.events, into: "events_table", limit: 2) {
                 continuation.resume()
             }
@@ -71,6 +72,7 @@ struct RAnalyticsDatabaseFunctionalTests {
         
         let testDatabase = database!
         let (fetchedEvents, fetchedIds) = await withCheckedContinuation { continuation in
+            testDatabase.enabled = true
             testDatabase.fetchBlobs(2, from: "events_table") { blobs, ids in
                 continuation.resume(returning: (blobs, ids))
             }
@@ -90,6 +92,7 @@ struct RAnalyticsDatabaseFunctionalTests {
         
         let testDatabase = database!
         await withCheckedContinuation { continuation in
+            testDatabase.enabled = true
             testDatabase.deleteBlobs(identifiers: [1, 2], in: "events_table") {
                 let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
                 #expect(eventsInDb.isEmpty == true)

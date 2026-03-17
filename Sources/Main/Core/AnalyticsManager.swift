@@ -38,6 +38,9 @@ protocol ReferralAppTrackable: AnyObject {
 
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
+    /// - Note:
+    ///     - set to true when configure() is called for manual initialization or false otherwise.
+    ///     - always set to true for automatic initialization.
     static var isConfigured: Bool = false
 
     private static let singleton: AnalyticsManager = {

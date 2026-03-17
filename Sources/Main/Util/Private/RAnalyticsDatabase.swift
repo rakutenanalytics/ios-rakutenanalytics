@@ -26,6 +26,11 @@ final class RAnalyticsDatabase {
     }()
     @AtomicGetSet private var appWillTerminate = false
 
+    /// Enables the operations (fetch, insert and delete) over the database.
+    ///
+    /// - Note: This feature is created for enabling RAnalyticsDatabase operations only when AnalyticsManager is manually initialized.
+    var enabled = false
+
     /// Creates DB manager instance with SQLite connection
     ///
     /// - Parameter connection: SQLite DB connection
@@ -70,7 +75,7 @@ final class RAnalyticsDatabase {
                 into table: String,
                 limit maximumNumberOfBlobs: UInt,
                 then completion: @escaping () -> Void) {
-        guard AnalyticsManager.isConfigured else {
+        guard enabled else {
             RLogger.error(message: "Database insert operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
             completion()
             return
@@ -124,7 +129,7 @@ final class RAnalyticsDatabase {
     /// - Parameter table:                 Name of the table.
     /// - Parameter completion:            Block to call upon completion.
     func fetchBlobs(_ maximumNumberOfBlobs: UInt, from table: String, then completion: @escaping (_ blobs: [Data]?, _ identifiers: [Int64]?) -> Void) {
-        guard AnalyticsManager.isConfigured else {
+        guard enabled else {
             RLogger.warning(message: "Database fetch operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
             completion(nil, nil)
             return
@@ -187,7 +192,7 @@ final class RAnalyticsDatabase {
     func deleteBlobs(identifiers: [Int64],
                      in table: String,
                      then completion: @escaping () -> Void) {
-        guard AnalyticsManager.isConfigured else {
+        guard enabled else {
             RLogger.error(message: "Database delete operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
             completion()
             return
