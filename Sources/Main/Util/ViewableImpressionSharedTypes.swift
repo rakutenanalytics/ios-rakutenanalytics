@@ -76,4 +76,3 @@ struct ViewableImpressionQualifiedItemData {
     let itemPosition: Int
     let screenName: String?
 }
-

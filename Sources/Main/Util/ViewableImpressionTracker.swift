@@ -30,16 +30,6 @@ struct ViewableImpressionRefreshResult {
     let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)?
     let eventParameters: [String: Any]?
 
-    init(eventData: [[String: Any]],
-         refreshAfterDelay: TimeInterval?,
-         refreshAfterDwell: (() -> ViewableImpressionRefreshResult)?,
-         eventParameters: [String: Any]?) {
-        self.eventData = eventData
-        self.refreshAfterDelay = refreshAfterDelay
-        self.refreshAfterDwell = refreshAfterDwell
-        self.eventParameters = eventParameters
-    }
-
     static let empty = ViewableImpressionRefreshResult(
         eventData: [],
         refreshAfterDelay: nil,
@@ -70,6 +60,13 @@ private final class ManualTrackedItem {
     }
 
     var itemId: String { item.itemId }
+}
+
+/// Visibility metrics for a view within a viewport.
+private struct ViewableImpressionVisibilityMetrics {
+    let visibility: Double
+    let intersection: CGRect
+    let timestamp: Date
 }
 
 // MARK: - Viewable Impression Tracker (Manual)
@@ -191,7 +188,7 @@ private final class ManualTrackedItem {
 
     private func visibilityMetrics(for view: UIView,
                                    in viewportView: UIView?,
-                                   viewportInsets: UIEdgeInsets) -> (visibility: Double, intersection: CGRect, timestamp: Date)? {
+                                   viewportInsets: UIEdgeInsets) -> ViewableImpressionVisibilityMetrics? {
         guard view.window != nil,
               !view.isHidden,
               view.alpha > 0.01,
@@ -212,7 +209,11 @@ private final class ManualTrackedItem {
         guard area > 0 else { return nil }
 
         let visibility = (intersection.width * intersection.height) / area
-        return (Double(visibility), intersection, Date())
+        return ViewableImpressionVisibilityMetrics(
+            visibility: Double(visibility),
+            intersection: intersection,
+            timestamp: Date()
+        )
     }
 
     private func executeOnMain(_ work: @escaping () -> Void) {

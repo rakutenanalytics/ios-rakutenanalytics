@@ -1,29 +1,39 @@
 import Foundation
 
+/// Result of processing a single item's viewable impression state.
+struct ViewableImpressionProcessResult {
+    /// The qualified item data if the item met visibility and dwell thresholds.
+    let qualified: ViewableImpressionQualifiedItemData?
+    /// Remaining dwell time in seconds before the item would qualify, if still accumulating.
+    let remaining: TimeInterval?
+}
+
 struct ViewableImpressionTrackStateProcessor {
     static func process(item: ViewableImpressionTrackState,
                         visibility: Double?,
                         now: Date,
                         minimumVisibility: Double,
-                        minimumDwell: TimeInterval) -> (qualified: ViewableImpressionQualifiedItemData?, remaining: TimeInterval?) {
+                        minimumDwell: TimeInterval) -> ViewableImpressionProcessResult {
         guard let visibility = visibility else {
             item.isVisible = false
             item.firstVisibleTime = .distantPast
             item.hasTriggered = false
             item.visibilityPercentage = 0.0
-            return (nil, nil)
+            return ViewableImpressionProcessResult(qualified: nil, remaining: nil)
         }
 
         item.visibilityPercentage = visibility
 
         let evaluation = ViewableImpressionEvaluation.evaluate(
-            visibility: visibility,
-            isVisible: item.isVisible,
-            firstVisibleTime: item.firstVisibleTime,
-            hasTriggered: item.hasTriggered,
-            minimumVisibility: minimumVisibility,
-            minimumDwell: minimumDwell,
-            now: now
+            ViewableImpressionEvaluationInput(
+                visibility: visibility,
+                isVisible: item.isVisible,
+                firstVisibleTime: item.firstVisibleTime,
+                hasTriggered: item.hasTriggered,
+                minimumVisibility: minimumVisibility,
+                minimumDwell: minimumDwell,
+                now: now
+            )
         )
 
         item.isVisible = evaluation.isVisible
@@ -32,18 +42,18 @@ struct ViewableImpressionTrackStateProcessor {
 
         if evaluation.qualifies {
             let dwellTime = now.timeIntervalSince(item.firstVisibleTime)
-            return (
-                ViewableImpressionQualifiedItemData(
+            return ViewableImpressionProcessResult(
+                qualified: ViewableImpressionQualifiedItemData(
                     item: item.item,
                     dwellTime: dwellTime,
                     visibilityPercentage: visibility,
                     itemPosition: item.itemPosition,
                     screenName: item.screenName
                 ),
-                nil
+                remaining: nil
             )
         }
 
-        return (nil, evaluation.remainingDwell)
+        return ViewableImpressionProcessResult(qualified: nil, remaining: evaluation.remainingDwell)
     }
 }

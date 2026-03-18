@@ -179,7 +179,7 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
 // MARK: - View Modifier
 
 @available(iOS 13.0, *)
-public struct AnalyticsManualViewableImpressionModifier<Item: ViewableImpressionTrackable>: ViewModifier {
+public struct AnalyticsManualImpressionModifier<Item: ViewableImpressionTrackable>: ViewModifier {
     @ObservedObject private var tracker: SwiftUIManualViewableImpressionTracker
     private let item: Item
     private let itemPosition: Int
@@ -219,7 +219,7 @@ public extension View {
         itemPosition: Int = 0
     ) -> some View {
         modifier(
-            AnalyticsManualViewableImpressionModifier(
+            AnalyticsManualImpressionModifier(
                 tracker: tracker,
                 item: item,
                 itemPosition: itemPosition
