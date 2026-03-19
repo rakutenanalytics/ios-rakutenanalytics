@@ -327,7 +327,7 @@ extension AnalyticsManager {
     private func configure() {
         configureWebViewUserAgent()
 
-        add(RAnalyticsRATTracker.shared())
+        addAndConfigureIfNeeded(RAnalyticsRATTracker.shared())
 
         // Set up the location manager
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -624,6 +624,12 @@ extension AnalyticsManager {
             RLogger.debug(message: "Added tracker \(tracker)")
         }
         trackersLockableObject.unlock()
+    }
+
+    /// Adds the tracker and marks it as configured if it conforms to `RATConfigurable`.
+    private func addAndConfigureIfNeeded(_ tracker: Tracker) {
+        add(tracker)
+        (tracker as? RATConfigurable)?.markAsConfigured()
     }
 
     /// Remove a tracker from tracker list.

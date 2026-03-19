@@ -6,6 +6,7 @@
 * CONRAT-41923: Add sdk_source parameter for SDK usage tracking.
 
 ### Improvements
+* CONRAT-43292: Remove AnalyticsManager dependency from RAnalyticsRATTracker; Make UNUserNotificationCenter.installAutoTrackingHooks idempotent.
 * CONRAT-43229: Remove redundant availability checks.
 * CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework.
 * CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects.

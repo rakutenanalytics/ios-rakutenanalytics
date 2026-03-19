@@ -22,6 +22,7 @@ protocol EnvironmentBundle: Bundleable {
     var version: String? { get }
     var applicationSceneManifest: ApplicationSceneManifest? { get }
     var isWebViewAppUserAgentEnabledAtBuildtime: Bool { get }
+    var isManualInitializationEnabled: Bool { get }
     var databaseParentDirectory: FileManager.SearchPathDirectory { get }
     var backgroundLocationUpdates: Bool { get }
 }

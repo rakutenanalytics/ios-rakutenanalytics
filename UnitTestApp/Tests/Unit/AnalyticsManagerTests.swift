@@ -110,6 +110,13 @@ struct AnalyticsManagerTests {
             analyticsManager.add(TrackerMock())
             #expect(analyticsManager.trackersLockableObject.get().count == 2)
         }
+
+        @Test("should configure RAT tracker when added during initialization")
+        func testConfiguresRATTrackerWhenAddedDuringInitialization() {
+            _ = AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
+            #expect(RAnalyticsRATTracker.shared().isRATConfigured == true,
+                    "RAT tracker should be configured when AnalyticsManager is initialized")
+        }
     }
 
     @Suite("isTrackingGeoLocation")

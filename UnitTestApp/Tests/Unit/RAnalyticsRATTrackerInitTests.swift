@@ -18,6 +18,21 @@ struct RAnalyticsRATTrackerInitTests {
         }
     }
     
+    @Suite("markAsConfigured")
+    struct MarkAsConfiguredTests {
+        @Test("should set isRATConfigured to true when called")
+        func testSetsIsRATConfiguredToTrueWhenCalled() {
+            let dependenciesContainer = SimpleContainerMock()
+            dependenciesContainer.bundle = BundleMock.create()
+            let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+            #expect(ratTracker.isRATConfigured == false)
+
+            ratTracker.markAsConfigured()
+
+            #expect(ratTracker.isRATConfigured == true, "markAsConfigured should set isRATConfigured to true")
+        }
+    }
+
     @Suite("shared")
     struct SharedTests {
         @Test("should not be nil")

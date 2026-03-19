@@ -9,8 +9,7 @@ extension AnalyticsManager {
         process(RAnalyticsEvent(name: AnalyticsManager.Event.Name.applink, parameters: nil))
         launchCollector.referralTracking = .none
 
-        /// Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external
-        /// call or push notification.
+        // Reset the origin to RAnalyticsInternalOrigin for the next page visit after each external call or push notification.
         AnalyticsManager.shared().launchCollector.origin = .inner
     }
 }
