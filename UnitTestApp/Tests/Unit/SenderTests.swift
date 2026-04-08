@@ -30,7 +30,8 @@ struct SenderTests {
             databaseTable: databaseTableName,
             bundle: bundle,
             session: URLSession.shared,
-            userStorageHandler: userDefaultsMock)
+            userStorageHandler: userDefaultsMock,
+            allowsAnalyticsSend: AnalyticsSendPolicy.makeDefaultSendPredicate(for: bundle))
     }
     
     mutating func tearDown() {
@@ -118,7 +119,8 @@ struct SenderTests {
                                            bundle: spec.bundle,
                                            session: URLSession.shared,
                                            maxUploadInterval: 900.0,
-                                           userStorageHandler: spec.userDefaultsMock)
+                                           userStorageHandler: spec.userDefaultsMock,
+                                           allowsAnalyticsSend: AnalyticsSendPolicy.makeDefaultSendPredicate(for: spec.bundle))
         }
         
         @Suite("When setting enableBackgroundTimerUpdate to false")

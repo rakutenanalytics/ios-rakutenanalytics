@@ -170,7 +170,8 @@ protocol RATConfigurable: AnyObject {
         self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
                                        bundle: bundleContainer,
                                        session: dependenciesContainer.session,
-                                       userStorageHandler: dependenciesContainer.userStorageHandler)
+                                       userStorageHandler: dependenciesContainer.userStorageHandler,
+                                       allowsAnalyticsSend: dependenciesContainer.makeAnalyticsSendPredicate())
         self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         // Attempt to read the IDs from the app's plist

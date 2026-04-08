@@ -41,6 +41,9 @@ enum SenderBackgroundTimerEnabler {
 
     private let userStorageHandler: UserStorageHandleable
 
+    /// Closure that returns whether persisting and uploading analytics events is currently allowed.
+    private let allowsAnalyticsSend: () -> Bool
+
     private var scheduleStartDate: Date?
 
     @AtomicGetSet private var safeEndpointURL: URL?
@@ -75,28 +78,11 @@ enum SenderBackgroundTimerEnabler {
     ///   - endpoint: endpoint URL
     ///   - database: database to read/write
     ///   - databaseTable: name of database
-    ///   - userStorageHandler: the user storage handler.
-    convenience init(endpoint: URL,
-                     database: RAnalyticsDatabase,
-                     databaseTable: String,
-                     userStorageHandler: UserStorageHandleable) {
-        self.init(endpoint: endpoint,
-                  database: database,
-                  databaseTable: databaseTable,
-                  bundle: Bundle.main,
-                  session: URLSession.shared,
-                  userStorageHandler: userStorageHandler)
-    }
-
-    /// Initialize Sender
-    /// - Parameters:
-    ///   - endpoint: endpoint URL
-    ///   - database: database to read/write
-    ///   - databaseTable: name of database
     ///   - bundle: the bundle
     ///   - session: the URL session
     ///   - maxUploadInterval: the maximum time interval. The default value is 60 seconds.
     ///   - userStorageHandler: the user storage handler.
+    ///   - allowsAnalyticsSend: Whether persisting and uploading analytics events is allowed; inject for tests or custom policy.
     ///
     ///   - Note: if the batching delay is greater than `maxUploadInterval`, then `maxUploadInterval` is taken as the default batching delay.
     init(endpoint: URL,
@@ -105,7 +91,8 @@ enum SenderBackgroundTimerEnabler {
          bundle: EnvironmentBundle,
          session: SwiftySessionable,
          maxUploadInterval: TimeInterval = TimeInterval(60.0),
-         userStorageHandler: UserStorageHandleable) {
+         userStorageHandler: UserStorageHandleable,
+         allowsAnalyticsSend: @escaping () -> Bool) {
         self.safeEndpointURL = endpoint
         self.database = database
         self.databaseTableName = databaseTable
@@ -114,6 +101,7 @@ enum SenderBackgroundTimerEnabler {
         self.session = session
         self.maxUploadInterval = maxUploadInterval
         self.userStorageHandler = userStorageHandler
+        self.allowsAnalyticsSend = allowsAnalyticsSend
         super.init()
 
         configureNotifications()
@@ -127,8 +115,8 @@ enum SenderBackgroundTimerEnabler {
     /// - Parameter jsonObject: json object
     @objc(sendJSONObject:)
     public func send(jsonObject: Any) {
-        guard AnalyticsManager.isConfigured else {
-            RLogger.error(message: "Analytics event dropped because manual initialization is enabled and AnalyticsManager is not configured.")
+        guard allowsAnalyticsSend() else {
+            RLogger.error(message: "Analytics event dropped because manual initialization is enabled and the analytics SDK is not configured.")
             return
         }
 
@@ -316,7 +304,7 @@ fileprivate extension RAnalyticsSender {
                 NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
                 self.logSentRecords(ratJsonRecords)
 
-                self.database.enabled = AnalyticsManager.isConfigured
+                self.database.enabled = self.allowsAnalyticsSend()
                 self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
                     self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
                 }
@@ -347,7 +335,7 @@ fileprivate extension RAnalyticsSender {
 // MARK: Database handling
 extension RAnalyticsSender {
     func insert(dataBlob: Data) {
-        database.enabled = AnalyticsManager.isConfigured
+        database.enabled = allowsAnalyticsSend()
         database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
             self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
         }
@@ -359,7 +347,7 @@ extension RAnalyticsSender {
             userStorageHandler.removeObject(forKey: startTimeKey)
         }
 
-        database.enabled = AnalyticsManager.isConfigured
+        database.enabled = allowsAnalyticsSend()
         database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
 
             assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")
@@ -423,7 +411,8 @@ extension RAnalyticsSender {
     convenience init?(databaseConfiguration: DatabaseConfigurable?,
                       bundle: EnvironmentBundle,
                       session: SwiftySessionable,
-                      userStorageHandler: UserStorageHandleable) {
+                      userStorageHandler: UserStorageHandleable,
+                      allowsAnalyticsSend: @escaping () -> Bool) {
         guard let databaseConfiguration = databaseConfiguration else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.senderErrorDomain,
                                              code: ErrorCode.senderCreationFailed.rawValue,
@@ -443,6 +432,7 @@ extension RAnalyticsSender {
                   databaseTable: databaseConfiguration.tableName,
                   bundle: bundle,
                   session: session,
-                  userStorageHandler: userStorageHandler)
+                  userStorageHandler: userStorageHandler,
+                  allowsAnalyticsSend: allowsAnalyticsSend)
     }
 }

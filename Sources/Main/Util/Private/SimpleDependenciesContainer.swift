@@ -4,7 +4,7 @@ import WebKit
 import AdSupport
 import CoreTelephony
 
-protocol SimpleDependenciesContainable {
+protocol SimpleDependenciesContainable: AnalyticsHostBundleProviding {
     var notificationHandler: NotificationObservable { get }
     var userStorageHandler: UserStorageHandleable { get }
     var sharedUserStorageHandlerType: UserStorageHandleable.Type { get }

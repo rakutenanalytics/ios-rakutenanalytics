@@ -41,7 +41,11 @@ protocol ReferralAppTrackable: AnyObject {
     /// - Note:
     ///     - set to true when configure() is called for manual initialization or false otherwise.
     ///     - always set to true for automatic initialization.
-    static var isConfigured: Bool = false
+    ///     - Stored in `AnalyticsInitState` (same value send gating reads).
+    static var isConfigured: Bool {
+        get { AnalyticsInitState.isConfigured }
+        set { AnalyticsInitState.applyIsConfigured(newValue) }
+    }
 
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
