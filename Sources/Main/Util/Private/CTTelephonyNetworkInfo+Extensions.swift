@@ -7,10 +7,9 @@ import CoreTelephony
 protocol TelephonyNetworkInfoHandleable: NSObjectProtocol {
     var safeDataServiceIdentifier: String? { get }
 
-    @available(iOS 12.0, *)
+    /// Forwarded from `CTTelephonyNetworkInfo` for consumers that need the system notifier.
     var serviceSubscriberCellularProvidersDidUpdateNotifier: ((String) -> Void)? { get set }
 
-    @available(iOS 12.0, *)
     var serviceCurrentRadioAccessTechnology: [String: String]? { get }
 }
 

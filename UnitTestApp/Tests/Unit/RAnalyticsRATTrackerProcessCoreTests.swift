@@ -35,6 +35,26 @@ struct RAnalyticsRATTrackerProcessCoreTests {
             }
         }
         
+        @Suite("When manual initialization is enabled and RAT is not configured")
+        struct ManualInitNotConfiguredTests {
+            @Test("should return false and not process the event")
+            func testShouldReturnFalseWhenManualInitEnabledAndRATNotConfigured() {
+                let bundle = BundleMock()
+                bundle.accountIdentifier = 477
+                bundle.applicationIdentifier = 1
+                bundle.endpointAddress = URL(string: "https://endpoint.co.jp")
+                bundle.isManualInitializationEnabled = true
+
+                let dependenciesContainer = SimpleContainerMock()
+                dependenciesContainer.bundle = bundle
+
+                let ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+                let result = ratTracker.process(event: Tracking.defaultEvent, state: Tracking.defaultState)
+
+                #expect(result == false, "process should return false when manual init is enabled and RAT is not configured")
+            }
+        }
+
         @Suite("When the RAT identifiers are set")
         struct RatIdentifiersSetTests {
             @Test("should return true")

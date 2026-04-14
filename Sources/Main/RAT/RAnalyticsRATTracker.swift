@@ -5,13 +5,29 @@ import UIKit
 public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool
 // swiftlint:enable type_name
 
+// MARK: - RATConfigurable
+
+/// A tracker that can be marked as configured by the analytics manager.
+protocol RATConfigurable: AnyObject {
+    /// Marks the tracker as configured and ready to process events.
+    func markAsConfigured()
+}
+
 /// Concrete implementation of @ref RAnalyticsTracker that sends events to RAT.
 ///
 /// - Attention: Application developers **MUST** configure the instance by setting
 /// the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
 ///
 /// - Warning: The app **CRASHES** in DEBUG mode when `RATAccountIdentifier`key is not set in their app's Info.plist.
-@objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
+@objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker, RATConfigurable {
+    /// Indicates whether the tracker has been configured and is ready to process events.
+    /// Set to `true` when the tracker is added during the analytics manager's configuration.
+    var isRATConfigured: Bool = false
+
+    func markAsConfigured() {
+        isRATConfigured = true
+    }
+
     enum Constants {
         static let ratEventPrefix      = "rat."
         static let ratGenericEventName = "rat.generic"
@@ -72,8 +88,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
     /// Enable or disable events from being duplicated at runtime.
     ///
-    /// For example, to disable `AnalyticsManager.Event.Name.sessionStart`:
-    /// `RAnalyticsRATTracker.shared().shouldDuplicateRATEventHandler = { eventName, acc in eventName != AnalyticsManager.Event.Name.sessionStart }`
+    /// For example, to disable `RAnalyticsEvent.Name.sessionStart`:
+    /// `RAnalyticsRATTracker.shared().shouldDuplicateRATEventHandler = { eventName, acc in eventName != RAnalyticsEvent.Name.sessionStart }`
     ///
     /// Note that it is also possible to prevent duplicate events at build time in the `RAnalyticsConfiguration.plist` file:
     /// 1) First create a `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
@@ -135,15 +151,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
-        if Bundle.main.isManualInitializationEnabled {
-            guard AnalyticsManager.isConfigured else {
-                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing RAnalyticsRATTracker.shared(). Call AnalyticsManager.configure() first.")
-                return singleton
-            }
-            return singleton
-        } else {
-            return singleton
-        }
+        singleton
     }
 
     /// Creates a new instance of `RAnalyticsRATTracker`.
@@ -162,7 +170,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
                                        bundle: bundleContainer,
                                        session: dependenciesContainer.session,
-                                       userStorageHandler: dependenciesContainer.userStorageHandler)
+                                       userStorageHandler: dependenciesContainer.userStorageHandler,
+                                       allowsAnalyticsSend: dependenciesContainer.makeAnalyticsSendPredicate())
         self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         // Attempt to read the IDs from the app's plist
@@ -242,12 +251,19 @@ extension RAnalyticsRATTracker {
     ///    - state: the state associated to the event
     ///
     /// - Returns:
+    ///    - `false` when manual initialization is enabled and the tracker has not been configured
     ///    - `false` when `RATAccountIdentifier` or `RATApplicationIdentifier` is not set in the app's Info.plist
     ///    - `false` when the payload build fails
     ///    - `false` when the sender is nil (`RATEndpoint` is not set in the app's Info.plist)
     ///    - `true` otherwise
     @discardableResult
     @objc(processEvent:state:) public func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        if bundle.isManualInitializationEnabled && !isRATConfigured {
+            RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance " +
+                "of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+            return false
+        }
+
         guard accountIdentifier != 0 && applicationIdentifier != 0 else {
             RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
 

@@ -3,7 +3,7 @@ import CoreLocation
 import CoreTelephony
 import UIKit
 
-protocol GeoDependenciesContainable {
+protocol GeoDependenciesContainable: AnalyticsHostBundleProviding {
     var notificationHandler: NotificationObservable { get }
     var userStorageHandler: UserStorageHandleable { get }
     var locationManager: LocationManageable { get }

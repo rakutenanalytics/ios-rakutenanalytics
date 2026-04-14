@@ -9,6 +9,11 @@ let rSDKABuildUserNotificationSupport = false
 
 extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable {
 
+    /// Tracks whether the delegate setter has been swizzled, ensuring `installAutoTrackingHooks()` is idempotent.
+    private static var delegateHooksAreInstalled: Bool = false
+
+    private static let installLock = NSLock()
+
     @objc public static func loadSwift() {
         if !Bundle.main.isManualInitializationEnabled {
             installAutoTrackingHooks()
@@ -19,6 +24,12 @@ extension UNUserNotificationCenter: RAnalyticsClassManipulable, RuntimeLoadable 
         guard rSDKABuildUserNotificationSupport else {
             return
         }
+        installLock.lock()
+        defer { installLock.unlock() }
+        guard !delegateHooksAreInstalled else {
+            return
+        }
+        delegateHooksAreInstalled = true
 
         replaceMethod(#selector(setter: delegate),
                       inClass: self,

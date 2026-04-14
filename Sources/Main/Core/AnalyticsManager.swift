@@ -41,7 +41,11 @@ protocol ReferralAppTrackable: AnyObject {
     /// - Note:
     ///     - set to true when configure() is called for manual initialization or false otherwise.
     ///     - always set to true for automatic initialization.
-    static var isConfigured: Bool = false
+    ///     - Stored in `AnalyticsInitState` (same value send gating reads).
+    static var isConfigured: Bool {
+        get { AnalyticsInitState.isConfigured }
+        set { AnalyticsInitState.applyIsConfigured(newValue) }
+    }
 
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
@@ -327,7 +331,7 @@ extension AnalyticsManager {
     private func configure() {
         configureWebViewUserAgent()
 
-        add(RAnalyticsRATTracker.shared())
+        addAndConfigureIfNeeded(RAnalyticsRATTracker.shared())
 
         // Set up the location manager
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -624,6 +628,12 @@ extension AnalyticsManager {
             RLogger.debug(message: "Added tracker \(tracker)")
         }
         trackersLockableObject.unlock()
+    }
+
+    /// Adds the tracker and marks it as configured if it conforms to `RATConfigurable`.
+    private func addAndConfigureIfNeeded(_ tracker: Tracker) {
+        add(tracker)
+        (tracker as? RATConfigurable)?.markAsConfigured()
     }
 
     /// Remove a tracker from tracker list.

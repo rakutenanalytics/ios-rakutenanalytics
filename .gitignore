@@ -11,6 +11,11 @@ xcuserdata
 *.xcworkspace
 build
 
+# Swift Package Manager
+.build
+.swiftpm/xcode/xcuserdata
+.swiftpm/xcode/package.xcworkspace/xcuserdata
+
 # Cocoapods
 Podfile.lock
 Pods

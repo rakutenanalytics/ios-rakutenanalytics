@@ -7,12 +7,15 @@
 * CONRAT-42909: Add manual viewable impressions tracking for UIKit and SwiftUI.
 
 ### Improvements
+* CONRAT-43292: Remove AnalyticsManager dependency from RAnalyticsRATTracker; Make UNUserNotificationCenter.installAutoTrackingHooks idempotent.
 * CONRAT-43229: Remove redundant availability checks.
 * CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework.
 * CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects.
 * CONRAT-43326: Re-enable SwiftLint.
 * CONRAT-43324: Remove NSObject.ratTracker from AnalyticsManager and use RAnalyticsRATTracker shared instance instead.
 * CONRAT-43283: Remove AnalyticsManager dependency from RAnalyticsDatabase.
+* CONRAT-43293: Remove AnalyticsManager dependency from RAnalyticsSender.
+* CONRAT-43568: Remove unused internal code and redundant availability wiring (unused reachability definitions, telephony protocol cleanup, dead push RAT helpers and internal payload key enums).
 
 ### Build fixes
 * CONRAT-43264: fix the Swift Package Test Target.

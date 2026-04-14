@@ -38,7 +38,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             let trackingIdentifier = "trackingIdentifier"
                             let event = RAnalyticsEvent(
                                 name: RAnalyticsEvent.Name.pushNotificationReceivedExternal,
-                                parameters: [CpParameterKeys.Push.pushNotifyValue: trackingIdentifier])
+                                parameters: ["push_notify_value": trackingIdentifier])
                             
                             var payload: [String: Any]?
                             var cpPayload: [String: Any]?
@@ -50,8 +50,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             try await TestingHelpers.eventually {
                                 payload != nil && cpPayload != nil
                             }
-                            #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == trackingIdentifier)
-                            #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] == nil)
+                            #expect(cpPayload?["push_notify_value"] as? String == trackingIdentifier)
+                            #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] == nil)
                         }
                         
                         @Test("should process the _rem_push_received event with rid")
@@ -60,7 +60,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             defer { helper.tearDown() }
                             
                             var parameters = [String: Any]()
-                            parameters[CpParameterKeys.Push.pushNotifyValue] = "rid:123456"
+                            parameters["push_notify_value"] = "rid:123456"
                             
                             let event = RAnalyticsEvent(
                                 name: RAnalyticsEvent.Name.pushNotificationReceivedExternal,
@@ -76,8 +76,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             try await TestingHelpers.eventually {
                                 payload != nil && cpPayload != nil
                             }
-                            #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == "rid:123456")
-                            #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] == nil)
+                            #expect(cpPayload?["push_notify_value"] as? String == "rid:123456")
+                            #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] == nil)
                         }
                     }
                     
@@ -96,7 +96,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                                 name: RAnalyticsEvent.Name.pushNotificationReceivedExternal,
                                 parameters: [RAnalyticsEvent.Parameter.pushTrackingIdentifier: trackingIdentifier,
                                              RAnalyticsEvent.Parameter.pushRequestIdentifier: requestIdentifier,
-                                             CpParameterKeys.Push.pushNotifyValue: trackingIdentifier])
+                                             "push_notify_value": trackingIdentifier])
                             var payload: [String: Any]?
                             var cpPayload: [String: Any]?
                             
@@ -107,8 +107,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             try await TestingHelpers.eventually {
                                 payload != nil && cpPayload != nil
                             }
-                            #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == trackingIdentifier)
-                            #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == requestIdentifier)
+                            #expect(cpPayload?["push_notify_value"] as? String == trackingIdentifier)
+                            #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == requestIdentifier)
                         }
                         
                         @Test("should process the _rem_push_received event with rid and a request identifier")
@@ -119,8 +119,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             let requestIdentifier = "requestIdentifier"
                             
                             var parameters = [String: Any]()
-                            parameters[CpParameterKeys.Push.pushNotifyValue] = "rid:123456"
-                            parameters[AnalyticsManager.Event.Parameter.pushRequestIdentifier] = requestIdentifier
+                            parameters["push_notify_value"] = "rid:123456"
+                            parameters[RAnalyticsEvent.Parameter.pushRequestIdentifier] = requestIdentifier
                             
                             let event = RAnalyticsEvent(name: RAnalyticsEvent.Name.pushNotificationReceivedExternal, parameters: parameters)
                             
@@ -134,8 +134,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                             try await TestingHelpers.eventually {
                                 payload != nil && cpPayload != nil
                             }
-                            #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == "rid:123456")
-                            #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == requestIdentifier)
+                            #expect(cpPayload?["push_notify_value"] as? String == "rid:123456")
+                            #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == requestIdentifier)
                         }
                     }
                 }
@@ -157,7 +157,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                         let trackingIdentifier = "trackingIdentifier"
                         let event = RAnalyticsEvent(
                             name: RAnalyticsEvent.Name.pushNotificationExternal,
-                            parameters: [CpParameterKeys.Push.pushNotifyValue: trackingIdentifier])
+                            parameters: ["push_notify_value": trackingIdentifier])
                         var payload: [String: Any]?
                         var cpPayload: [String: Any]?
                         try await helper.expecter.expectEventAsync(event, state: Tracking.defaultState, equal: RAnalyticsEvent.Name.pushNotificationOpenedForRAT) {
@@ -167,7 +167,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                         try await TestingHelpers.eventually {
                             payload != nil && cpPayload != nil
                         }
-                        #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == trackingIdentifier)
+                        #expect(cpPayload?["push_notify_value"] as? String == trackingIdentifier)
                     }
                     
                     @Test("should process the _rem_push_notify event with rid")
@@ -176,7 +176,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                         defer { helper.tearDown() }
                         
                         var parameters = [String: Any]()
-                        parameters[CpParameterKeys.Push.pushNotifyValue] = "rid:123456"
+                        parameters["push_notify_value"] = "rid:123456"
                         
                         let event = RAnalyticsEvent(
                             name: AnalyticsManager.Event.Name.pushNotificationExternal,
@@ -191,7 +191,7 @@ struct RAnalyticsRATTrackerProcessPushTests {
                         try await TestingHelpers.eventually {
                             payload != nil && cpPayload != nil
                         }
-                        #expect(cpPayload?[CpParameterKeys.Push.pushNotifyValue] as? String == "rid:123456")
+                        #expect(cpPayload?["push_notify_value"] as? String == "rid:123456")
                     }
                 }
             }
@@ -207,8 +207,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     
                     let event = RAnalyticsEvent(
                         name: AnalyticsManager.Event.Name.pushNotificationConversion,
-                        parameters: [AnalyticsManager.Event.Parameter.pushRequestIdentifier: "",
-                                     AnalyticsManager.Event.Parameter.pushConversionAction: ""])
+                        parameters: [RAnalyticsEvent.Parameter.pushRequestIdentifier: "",
+                                     RAnalyticsEvent.Parameter.pushConversionAction: ""])
                     
                     var payload: [String: Any]?
                     var cpPayload: [String: Any]?
@@ -221,8 +221,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     try await TestingHelpers.eventually {
                         payload != nil && cpPayload != nil
                     }
-                    #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == "")
-                    #expect(cpPayload?[CpParameterKeys.Push.pushConversionAction] as? String == "")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == "")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushConversionAction] as? String == "")
                 }
                 
                 @Test("should not process the _rem_push_cv event when request identifier is empty")
@@ -232,8 +232,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     
                     let event = RAnalyticsEvent(
                         name: AnalyticsManager.Event.Name.pushNotificationConversion,
-                        parameters: [AnalyticsManager.Event.Parameter.pushRequestIdentifier: "",
-                                     AnalyticsManager.Event.Parameter.pushConversionAction: "pushConversionAction"])
+                        parameters: [RAnalyticsEvent.Parameter.pushRequestIdentifier: "",
+                                     RAnalyticsEvent.Parameter.pushConversionAction: "pushConversionAction"])
                     var payload: [String: Any]?
                     var cpPayload: [String: Any]?
                     
@@ -245,8 +245,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     try await TestingHelpers.eventually {
                         payload != nil && cpPayload != nil
                     }
-                    #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == "")
-                    #expect(cpPayload?[CpParameterKeys.Push.pushConversionAction] as? String == "pushConversionAction")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == "")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushConversionAction] as? String == "pushConversionAction")
                 }
                 
                 @Test("should not process the _rem_push_cv event when conversion action is empty")
@@ -256,8 +256,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     
                     let event = RAnalyticsEvent(
                         name: AnalyticsManager.Event.Name.pushNotificationConversion,
-                        parameters: [AnalyticsManager.Event.Parameter.pushRequestIdentifier: "pushRequestIdentifier",
-                                     AnalyticsManager.Event.Parameter.pushConversionAction: ""])
+                        parameters: [RAnalyticsEvent.Parameter.pushRequestIdentifier: "pushRequestIdentifier",
+                                     RAnalyticsEvent.Parameter.pushConversionAction: ""])
                     
                     var payload: [String: Any]?
                     var cpPayload: [String: Any]?
@@ -270,8 +270,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     try await TestingHelpers.eventually {
                         payload != nil && cpPayload != nil
                     }
-                    #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == "pushRequestIdentifier")
-                    #expect(cpPayload?[CpParameterKeys.Push.pushConversionAction] as? String == "")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == "pushRequestIdentifier")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushConversionAction] as? String == "")
                 }
                 
                 @Test("should process the _rem_push_cv event when request identifier and conversion action are not empty")
@@ -281,8 +281,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     
                     let event = RAnalyticsEvent(
                         name: AnalyticsManager.Event.Name.pushNotificationConversion,
-                        parameters: [AnalyticsManager.Event.Parameter.pushRequestIdentifier: "pushRequestIdentifier",
-                                     AnalyticsManager.Event.Parameter.pushConversionAction: "pushConversionAction"])
+                        parameters: [RAnalyticsEvent.Parameter.pushRequestIdentifier: "pushRequestIdentifier",
+                                     RAnalyticsEvent.Parameter.pushConversionAction: "pushConversionAction"])
                     var payload: [String: Any]?
                     var cpPayload: [String: Any]?
                     
@@ -293,8 +293,8 @@ struct RAnalyticsRATTrackerProcessPushTests {
                     try await TestingHelpers.eventually {
                         payload != nil && cpPayload != nil
                     }
-                    #expect(cpPayload?[CpParameterKeys.Push.pushRequestIdentifier] as? String == "pushRequestIdentifier")
-                    #expect(cpPayload?[CpParameterKeys.Push.pushConversionAction] as? String == "pushConversionAction")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String == "pushRequestIdentifier")
+                    #expect(cpPayload?[RAnalyticsEvent.Parameter.pushConversionAction] as? String == "pushConversionAction")
                 }
             }
             
