@@ -63,7 +63,7 @@
 		CF3502F32C5B3FDA00F95F77 /* MockUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35027E2C5B3D4100F95F77 /* MockUtils.swift */; };
 		CF3502F42C5B3FDB00F95F77 /* MockUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35027E2C5B3D4100F95F77 /* MockUtils.swift */; };
 		CF3502F72C5B3FEA00F95F77 /* RAnalyticsCookieInjector+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502802C5B3D4100F95F77 /* RAnalyticsCookieInjector+Create.swift */; };
-		CF3502F82C5B3FFA00F95F77 /* RAnalyticsEvent+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502812C5B3D4100F95F77 /* RAnalyticsEvent+Helper.swift */; };
+		CF3502F82C5B406500F95F77 /* RAnalyticsEvent+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502812C5B3D4100F95F77 /* RAnalyticsEvent+Helper.swift */; };
 		CF3502F92C5B406600F95F77 /* RAnalyticsRATExpecter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502822C5B3D4100F95F77 /* RAnalyticsRATExpecter.swift */; };
 		CF3502FA2C5B406C00F95F77 /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502832C5B3D4100F95F77 /* UIApplication+Extensions.swift */; };
 		CF3502FB2C5B407300F95F77 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3502842C5B3D4100F95F77 /* URLSessionMock.swift */; };
@@ -938,7 +938,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CB6200C2EC59DE400EEC43D /* UserAgentHandlerTests.swift in Sources */,
-				CF3502F82C5B3FFA00F95F77 /* RAnalyticsEvent+Helper.swift in Sources */,
 				CF3502F22C5B3FD400F95F77 /* IceBase.swift in Sources */,
 				CF3502DB2C5B3EBA00F95F77 /* AppDelegates.swift in Sources */,
 				CF3502F32C5B3FDA00F95F77 /* MockUtils.swift in Sources */,
@@ -1027,6 +1026,7 @@
 				CF545AC82EF258450098BC2F /* RAnalyticsRATTrackerPayloadNetworkTests.swift in Sources */,
 				CF3502E12C5B3F3700F95F77 /* ReachabilityTests.swift in Sources */,
 				CF3502F72C5B3FEA00F95F77 /* RAnalyticsCookieInjector+Create.swift in Sources */,
+				CF3502F82C5B406500F95F77 /* RAnalyticsEvent+Helper.swift in Sources */,
 				CF3502E32C5B3F3700F95F77 /* RLoggerTests.swift in Sources */,
 				CF3502E42C5B3F3700F95F77 /* URLSessionExtensionsTests.swift in Sources */,
 				CF3502E52C5B3F3700F95F77 /* DictionaryExtensionsTests.swift in Sources */,

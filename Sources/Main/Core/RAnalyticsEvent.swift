@@ -84,7 +84,7 @@ import Foundation
 
         /// Event to trigger manually for conversion tracking.
         /// This event has a parameter named `RAnalyticsEvent.Parameter.pushRequestIdentifier`.
-        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushNotificationConversion`.
+        /// This event has a parameter named `RAnalyticsEvent.Parameter.pushConversionAction`.
         public static let pushNotificationConversion = "_rem_push_cv"
 
         /// Event triggered when a PNP auto registration occurs.

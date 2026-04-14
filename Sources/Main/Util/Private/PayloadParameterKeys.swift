@@ -265,17 +265,6 @@ enum CpParameterKeys {
         static let url = "url"
     }
 
-    enum Push {
-        /// The push notification tracking identifier.
-        static let pushNotifyValue = "push_notify_value"
-
-        /// The push notification request identifier.
-        static let pushRequestIdentifier = "push_request_id"
-
-        /// The push conversion action.
-        static let pushConversionAction = "push_cv_action"
-    }
-
     enum PNP {
         /// The PNP device identifier.
         static let deviceId = "deviceId"
