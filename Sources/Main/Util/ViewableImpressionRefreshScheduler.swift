@@ -4,7 +4,7 @@ struct ViewableImpressionRefreshScheduler {
     static func deliver(result: ViewableImpressionRefreshResult,
                         pendingWorkItem: inout DispatchWorkItem?,
                         onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
-        if !result.eventData.isEmpty || result.refreshAfterDelay == nil {
+        if !result.eventData.isEmpty {
             pendingWorkItem?.cancel()
             pendingWorkItem = nil
             DispatchQueue.main.async {
@@ -13,22 +13,20 @@ struct ViewableImpressionRefreshScheduler {
             return
         }
 
-        guard let delay = result.refreshAfterDelay,
-              let refreshAfterDwell = result.refreshAfterDwell else {
+        if let delay = result.refreshAfterDelay,
+           let refreshAfterDwell = result.refreshAfterDwell {
             pendingWorkItem?.cancel()
-            pendingWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
+            let workItem = DispatchWorkItem {
+                let followUp = refreshAfterDwell()
+                onResult(followUp.eventParameters)
             }
+            pendingWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
             return
         }
 
-        pendingWorkItem?.cancel()
-        let workItem = DispatchWorkItem {
-            let followUp = refreshAfterDwell()
-            onResult(followUp.eventParameters)
+        DispatchQueue.main.async {
+            onResult(result.eventParameters)
         }
-        pendingWorkItem = workItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 }

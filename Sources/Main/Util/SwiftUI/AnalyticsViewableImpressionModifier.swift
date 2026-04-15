@@ -27,7 +27,7 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
             self.hasTriggered = false
             self.visibilityPercentage = 0.0
         }
-        
+
         var itemId: String { item.itemId }
     }
 
@@ -49,7 +49,7 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     /// - Parameters:
     ///   - item: The trackable item to update.
     ///   - frame: The item's current frame in screen coordinates.
-    ///   - itemPosition: Optional position index for ordering (default: 0).
+    ///   - itemPosition: Optional position index for ordering (default: `0`).
     public func update(item: ViewableImpressionTrackable, frame: CGRect, itemPosition: Int = 0) {
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -68,7 +68,8 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     /// - Parameter itemId: The unique identifier of the item to stop tracking.
     public func unregister(itemId: String) {
         queue.async { [weak self] in
-            self?.itemsById.removeValue(forKey: itemId)
+            guard let self = self else { return }
+            _ = self.itemsById.removeValue(forKey: itemId)
         }
     }
 
@@ -83,6 +84,11 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     /// Manually refresh visibility state once and receive results when ready.
     /// The completion is called immediately if items already qualify, or after
     /// the suggested dwell delay if items are still accumulating dwell time.
+    ///
+    /// - Parameters:
+    ///   - viewport: Region in screen coordinates used for visibility; defaults to the main screen bounds.
+    ///   - viewportInsets: Insets applied to `viewport` before intersecting item frames.
+    ///   - onResult: Called on the main queue with event parameters when viewable data is ready, or `nil` if none.
     public func refreshState(viewport: CGRect? = nil,
                              viewportInsets: UIEdgeInsets? = nil,
                              onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
@@ -173,10 +179,42 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
         }
         return result
     }
-
 }
 
 // MARK: - View Modifier
+
+/// Quantized global frame so `onChange` fires more reliably than raw `CGRect` during `LazyVStack` layout.
+private struct ViewableGlobalFrameToken: Equatable {
+    let minX: Int
+    let minY: Int
+    let width: Int
+    let height: Int
+
+    init(_ frame: CGRect) {
+        func q(_ v: CGFloat) -> Int { Int((v * 4).rounded()) }
+        minX = q(frame.minX)
+        minY = q(frame.minY)
+        width = q(frame.width)
+        height = q(frame.height)
+    }
+}
+
+private extension View {
+    /// Two-parameter `onChange` is iOS 17+; single-parameter form is iOS 14–16 (see `onChange(of:perform:)`).
+    @ViewBuilder
+    func onViewableGlobalFrameTokenChange(
+        _ token: ViewableGlobalFrameToken,
+        perform update: @escaping () -> Void
+    ) -> some View {
+        if #available(iOS 17.0, *) {
+            self.onChange(of: token) { _, _ in update() }
+        } else if #available(iOS 14.0, *) {
+            self.onChange(of: token) { _ in update() }
+        } else {
+            self
+        }
+    }
+}
 
 @available(iOS 13.0, *)
 public struct AnalyticsManualImpressionModifier<Item: ViewableImpressionTrackable>: ViewModifier {
@@ -184,6 +222,10 @@ public struct AnalyticsManualImpressionModifier<Item: ViewableImpressionTrackabl
     private let item: Item
     private let itemPosition: Int
 
+    /// - Parameters:
+    ///   - tracker: The manual viewable-impression tracker that stores item geometry and qualification state.
+    ///   - item: The trackable model for this row or cell.
+    ///   - itemPosition: Zero-based position among tracked items for analytics ordering.
     public init(tracker: SwiftUIManualViewableImpressionTracker,
                 item: Item,
                 itemPosition: Int = 0) {
@@ -196,15 +238,16 @@ public struct AnalyticsManualImpressionModifier<Item: ViewableImpressionTrackabl
         content
             .background(
                 GeometryReader { proxy in
+                    let frame = proxy.frame(in: .global)
                     Color.clear
                         .onAppear {
-                            tracker.update(item: item, frame: proxy.frame(in: .global), itemPosition: itemPosition)
+                            tracker.update(item: item, frame: frame, itemPosition: itemPosition)
                         }
                         .onDisappear {
                             tracker.unregister(itemId: item.itemId)
                         }
-                        .onChange(of: proxy.frame(in: .global)) { newFrame in
-                            tracker.update(item: item, frame: newFrame, itemPosition: itemPosition)
+                        .onViewableGlobalFrameTokenChange(ViewableGlobalFrameToken(frame)) {
+                            tracker.update(item: item, frame: frame, itemPosition: itemPosition)
                         }
                 }
             )
@@ -213,6 +256,12 @@ public struct AnalyticsManualImpressionModifier<Item: ViewableImpressionTrackabl
 
 @available(iOS 13.0, *)
 public extension View {
+    /// Tracks viewable impressions for this view using manual geometry updates and `tracker.refreshState`.
+    ///
+    /// - Parameters:
+    ///   - tracker: Shared ``SwiftUIManualViewableImpressionTracker`` for the screen or list.
+    ///   - item: Trackable metadata for this view.
+    ///   - itemPosition: Zero-based index for ordering in emitted analytics.
     func analyticsViewableImpressionManual<Item: ViewableImpressionTrackable>(
         tracker: SwiftUIManualViewableImpressionTracker,
         item: Item,

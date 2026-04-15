@@ -61,8 +61,6 @@ struct ViewableImpressionsView: View {
     @State private var lastDurationMs: Double?
     @State private var lastQualified: Int?
     @State private var lastReason = "—"
-    /// Suppresses debounced `scroll_settled` right after appear / preset change (layout churn).
-    @State private var scrollSettleGateDate = Date.distantPast
 
     private var items: [ViewableItem] {
         (1...preset.listCount).map { index in
@@ -80,11 +78,10 @@ struct ViewableImpressionsView: View {
     var body: some View {
         ScrollView {
             listStack
+                .id(preset.rawValue)
                 .padding()
         }
-        .coordinateSpace(name: "viewableScroll")
-        .onDebouncedScrollSettle(delay: 0.35) {
-            guard Date().timeIntervalSince(scrollSettleGateDate) >= 0.75 else { return }
+        .debouncedOnScrollSettled(debounce: 0.35) {
             triggerDwellRefresh(reason: "scroll_settled")
         }
         .navigationTitle("Viewable Impressions")
@@ -107,16 +104,14 @@ struct ViewableImpressionsView: View {
             metricsPanel
         }
         .onAppear {
-            scrollSettleGateDate = Date()
             triggerDwellRefresh(reason: "onAppear")
         }
-        .onChange(of: preset) { _ in
-            scrollSettleGateDate = Date()
+        .onChange(of: preset) { _, _ in
             tracker.clear()
             lastDurationMs = nil
             lastQualified = nil
             lastReason = "preset_changed"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                 triggerDwellRefresh(reason: "preset_changed")
             }
         }
@@ -126,12 +121,10 @@ struct ViewableImpressionsView: View {
     private var listStack: some View {
         if preset.usesLazyStack {
             LazyVStack(alignment: .leading, spacing: 12) {
-                ScrollMinYReporter()
                 rowContent
             }
         } else {
             VStack(alignment: .leading, spacing: 12) {
-                ScrollMinYReporter()
                 rowContent
             }
         }
@@ -210,6 +203,31 @@ struct ViewableImpressionsView: View {
                 )
             }
         }
+    }
+}
+
+// MARK: - Scroll settled (sample-only; iOS 18 `onScrollGeometryChange`)
+
+private struct ScrollGeometryDebouncedSettledModifier: ViewModifier {
+    let debounce: TimeInterval
+    let onSettled: () -> Void
+    @State private var pendingWorkItem: DispatchWorkItem?
+
+    func body(content: Content) -> some View {
+        content.onScrollGeometryChange(for: CGFloat.self) { geometry in
+            geometry.contentOffset.y
+        } action: { _, _ in
+            pendingWorkItem?.cancel()
+            let work = DispatchWorkItem { onSettled() }
+            pendingWorkItem = work
+            DispatchQueue.main.asyncAfter(deadline: .now() + debounce, execute: work)
+        }
+    }
+}
+
+private extension View {
+    func debouncedOnScrollSettled(debounce: TimeInterval = 0.35, onSettled: @escaping () -> Void) -> some View {
+        modifier(ScrollGeometryDebouncedSettledModifier(debounce: debounce, onSettled: onSettled))
     }
 }
 
