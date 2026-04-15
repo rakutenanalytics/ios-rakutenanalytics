@@ -1,5 +1,5 @@
-import SwiftUI
 import RakutenAnalytics
+import SwiftUI
 
 struct ViewableItemRow: View {
     let item: ViewableImpressionsView.ViewableItem

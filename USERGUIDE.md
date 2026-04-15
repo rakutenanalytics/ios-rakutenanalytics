@@ -57,13 +57,25 @@ These recommendations follow from the current implementation and aim to limit UI
 
 :::tip When to call `refreshState`
 
-Prefer **`refreshState`** when scrolling **settles** (e.g. after deceleration ends), not on every small scroll delta. Frequent calls—especially with **many** registered items—increase work on the device.
+Call **`refreshState`** when scrolling **settles**—for example from **`scrollViewDidEndDecelerating`** and, when there is no deceleration, **`scrollViewDidEndDragging`**—not from **`scrollViewDidScroll`** on every frame. Tying refresh to **continuous** scrolling multiplies work; cost scales with **call frequency × number of registered items**.
+
+:::
+
+:::tip `UITableView` / `UICollectionView` and reuse
+
+With normal **cell reuse**, registrations usually track **roughly the live cell pool** (on the order of a **screenful**), not “every row in the data source.” Each reuse replaces the previous item for that view. **`refreshState`** still evaluates **each** entry currently in the tracker, but that set stays **small** in typical list screens. **Custom** layouts that **`track`** many **non‑reused** views (or that never **`untrack`**) can grow registration count and cost per refresh.
+
+:::
+
+:::tip SwiftUI refresh cadence
+
+Do **not** drive **`refreshState`** from **high‑frequency** gestures (e.g. every drag end) or tight **`onChange`** loops. Prefer the same **scroll‑stop** idea as UIKit—**manual** actions, or patterns that fire when scrolling **finishes**—and use **`unregister`** / **`clear`** when rows leave the hierarchy so registrations stay bounded.
 
 :::
 
 :::tip Scope of registered items
 
-Each **`refreshState`** pass considers **every** registered item, not only rows currently visible. Registrations should be **removed** when items leave the screen (`untrack` / `clear` / `disable` patterns) so large numbers of stale rows are not retained unnecessarily.
+Each **`refreshState`** pass considers **every** registered item, not only rows that happen to be visible in the viewport. Remove registrations when items are no longer in scope (`untrack` / `clear` / `disable` patterns) so stale or off‑screen content does not stay in the map unnecessarily—especially important when reuse does **not** apply.
 
 :::
 
