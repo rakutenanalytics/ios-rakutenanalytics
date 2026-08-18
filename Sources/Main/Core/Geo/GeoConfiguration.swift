@@ -25,7 +25,7 @@ public struct GeoConfiguration: Codable, Equatable {
 
     /// Time to end location collection.
     public var endTime: GeoTime
-    
+
     public init(distanceInterval: UInt = GeoConfigurationConstants.distanceInterval,
                 timeInterval: UInt = GeoConfigurationConstants.timeInterval,
                 accuracy: GeoAccuracy = GeoConfigurationConstants.accuracy,
@@ -43,7 +43,7 @@ public struct GeoConfiguration: Codable, Equatable {
 public struct GeoTime: Codable, Equatable {
     public let hours: UInt
     public let minutes: UInt
-    
+
     public init(hours: UInt, minutes: UInt) {
         self.hours = hours
         self.minutes = minutes

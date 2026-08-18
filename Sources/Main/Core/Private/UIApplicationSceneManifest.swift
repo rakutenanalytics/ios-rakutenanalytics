@@ -15,6 +15,13 @@ extension ApplicationSceneManifest {
     var firstSceneDelegateClassName: String? {
         sceneConfigurations?.windowSceneSessionRoleApplication?.first?.sceneDelegateClassName
     }
+
+    var allSceneDelegateClassNames: [String] {
+        sceneConfigurations?
+            .windowSceneSessionRoleApplication?
+            .compactMap(\.sceneDelegateClassName)
+            .filter { !$0.isEmpty } ?? []
+    }
 }
 
 /// Scene Configurations Model

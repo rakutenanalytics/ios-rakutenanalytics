@@ -47,7 +47,7 @@ final class RAnalyticsLaunchCollector {
     private let userStorageHandler: UserStorageHandleable?
     private let pushEventHandler: PushEventHandleable
     private let keychainHandler: KeychainHandleable?
-    private let applicationStateGetter: ApplicationStateGettable?
+    private var hasBeenInBackground = false
 
     /// A delegate for tracking an event and its parameters
     weak var trackerDelegate: Trackable?
@@ -68,8 +68,8 @@ final class RAnalyticsLaunchCollector {
         self.keychainHandler = dependenciesContainer.keychainHandler
         self.referralTracking = .none
         pushEventHandler = dependenciesContainer.pushEventHandler
-        applicationStateGetter = dependenciesContainer.applicationStateGetter
 
+        configureSessionStartCoordinator()
         configureNotifications()
         configureLaunchValues()
         resetToDefaults()
@@ -77,10 +77,25 @@ final class RAnalyticsLaunchCollector {
         isUpdateLaunch = lastVersion != (Bundle.main.shortVersion ?? "")
     }
 
+    private func configureSessionStartCoordinator() {
+        RAnalyticsSessionStartCoordinator.shared.configure(
+            onTrackInitialLaunch: { [weak self] in
+                self?.trackInitialLaunch()
+            },
+            onTrackResumedSessionStart: { [weak self] in
+                self?.trackResumedSessionStart()
+            })
+    }
+
     private func configureNotifications() {
         notificationHandler?.addObserver(self,
                                          selector: #selector(willResume(_:)),
                                          name: UIApplication.willEnterForegroundNotification,
+                                         object: nil)
+
+        notificationHandler?.addObserver(self,
+                                         selector: #selector(didBecomeActive(_:)),
+                                         name: UIApplication.didBecomeActiveNotification,
                                          object: nil)
 
         notificationHandler?.addObserver(self,
@@ -123,20 +138,32 @@ final class RAnalyticsLaunchCollector {
 
 @objc extension RAnalyticsLaunchCollector {
     func willResume(_ notification: NSNotification) {
-        guard applicationStateGetter?.applicationState == .background else {
+        guard hasBeenInBackground else {
             return
         }
+        hasBeenInBackground = false
         update()
-        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
+        RAnalyticsSessionStartCoordinator.shared.scheduleResumedSessionStart()
+    }
+
+    func didBecomeActive(_ notification: NSNotification) {
+        RAnalyticsSessionStartCoordinator.shared.applicationDidBecomeActive()
     }
 
     func didSuspend(_ notification: NSNotification) {
+        hasBeenInBackground = true
+        RAnalyticsSessionStartCoordinator.shared.cancelResumedSessionStart()
         trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionEnd, parameters: nil)
     }
 
     func didLaunch(_ notification: NSNotification) {
         update()
+        RAnalyticsSessionStartCoordinator.shared.scheduleInitialLaunch()
+    }
+}
 
+private extension RAnalyticsLaunchCollector {
+    func trackInitialLaunch() {
         /// Equivalent to installation or reinstallation.
         if isInitialLaunch {
             trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.initialLaunch, parameters: nil)
@@ -208,6 +235,10 @@ extension RAnalyticsLaunchCollector {
 }
 
 private extension RAnalyticsLaunchCollector {
+    func trackResumedSessionStart() {
+        trackerDelegate?.trackEvent(name: AnalyticsManager.Event.Name.sessionStart, parameters: nil)
+    }
+
     func update() {
         resetToDefaults()
 

@@ -5,7 +5,6 @@
 	};
 	objectVersion = 54;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		5A7D6385201827520025F4F1 /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */; };
 		5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */; };
@@ -15,10 +14,19 @@
 		5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */; };
 		5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AB66CD820171F730028CEBC /* TableViewController.swift */; };
 		6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AB66CC12016CE8A0028CEBC /* Assets.xcassets */; };
-		77E4D94CD1BB0C06E404C98D /* Pods_Common_RakutenAnalyticsSamplePod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 562589AF5E352880CEC7DEF7 /* Pods_Common_RakutenAnalyticsSamplePod.framework */; };
+		8B3E9B4A44D64E66A1C0C2A1 /* ViewableImpressionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */; };
+		8B3E9B4A44D64E66A1C0C2A3 /* ViewableImpressionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */; };
+		9A1C3D4E5F60718293A4B5C6 /* ViewableImpressionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */; };
+		9A1C3D4E5F60718293A4B5D1 /* ViewableItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1C3D4E5F60718293A4B5D0 /* ViewableItemRow.swift */; };
+		B2C3D4E5F607182940A0B0C02 /* ViewableImpressionsSampleMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F607182940A0B0C01 /* ViewableImpressionsSampleMetrics.swift */; };
+		B2C3D4E5F607182940A0B0C03 /* ViewableImpressionsSampleMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F607182940A0B0C01 /* ViewableImpressionsSampleMetrics.swift */; };
+		B2C3D4E5F607182940A0B0C04 /* ViewableImpressionsSampleMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F607182940A0B0C01 /* ViewableImpressionsSampleMetrics.swift */; };
 		C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEC28C0DAC400596714 /* AppDelegate.swift */; };
 		C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEE28C0DAC400596714 /* SceneDelegate.swift */; };
 		C900FBF128C0DAC400596714 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBF028C0DAC400596714 /* ViewController.swift */; };
+		DESTDL00128C0DAC400596714 /* IncomingDeepLinkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DESTDL00228C0DAC400596714 /* IncomingDeepLinkStore.swift */; };
+		C900FBF228C0DAC400596716 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDEEP0022C0DAC400596718 /* SceneDelegate.swift */; };
+		C900FBF328C0DAC400596717 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDEEP0012C0DAC400596718 /* DeepLinkManager.swift */; };
 		C900FBF428C0DAC400596714 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF228C0DAC400596714 /* Main.storyboard */; };
 		C900FBF628C0DAC600596714 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF528C0DAC600596714 /* Assets.xcassets */; };
 		C900FBF928C0DAC600596714 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */; };
@@ -43,7 +51,6 @@
 		CFF8E15D2C61BB3300B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E15C2C61BB3300B1C970 /* RakutenAnalytics */; };
 		CFF8E15F2C61BB3700B1C970 /* RakutenAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = CFF8E15E2C61BB3700B1C970 /* RakutenAnalytics */; };
 /* End PBXBuildFile section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		6D2B866323D5A56C00960D85 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -66,9 +73,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		562589AF5E352880CEC7DEF7 /* Pods_Common_RakutenAnalyticsSamplePod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Common_RakutenAnalyticsSamplePod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
 		5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
@@ -80,13 +85,16 @@
 		5AB66CC42016CE8A0028CEBC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5AB66CC62016CE8A0028CEBC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5AB66CD820171F730028CEBC /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
-		5BA0B31E81C6821A92DCDAD3 /* Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig"; path = "Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig"; sourceTree = "<group>"; };
 		6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RAnalyticsSample.entitlements; sourceTree = "<group>"; };
-		8D060370386465E7A8C8ACA8 /* Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig"; path = "Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig"; sourceTree = "<group>"; };
+		8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionsViewController.swift; sourceTree = "<group>"; };
+		9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionsView.swift; sourceTree = "<group>"; };
+		9A1C3D4E5F60718293A4B5D0 /* ViewableItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableItemRow.swift; sourceTree = "<group>"; };
+		B2C3D4E5F607182940A0B0C01 /* ViewableImpressionsSampleMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewableImpressionsSampleMetrics.swift; sourceTree = "<group>"; };
 		C900FBEA28C0DAC400596714 /* RakutenAnalyticsSampleDest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakutenAnalyticsSampleDest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C900FBEC28C0DAC400596714 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C900FBEE28C0DAC400596714 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		C900FBF028C0DAC400596714 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DESTDL00228C0DAC400596714 /* IncomingDeepLinkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingDeepLinkStore.swift; sourceTree = "<group>"; };
 		C900FBF328C0DAC400596714 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C900FBF528C0DAC600596714 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C900FBF828C0DAC600596714 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -102,16 +110,16 @@
 		C98A4AE627C3FF54006A76AA /* SheetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SheetView.swift; sourceTree = "<group>"; };
 		C98D715125A6EE0E00B1D048 /* RAnalyticsConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = RAnalyticsConfiguration.plist; sourceTree = "<group>"; };
 		C9D1FB6F29261C3C0043C520 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		CFF8E1552C61B3C900B1C970 /* RakutenAnalyticsSamplePod.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RakutenAnalyticsSamplePod.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFDEEP0012C0DAC400596718 /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
+		CFDEEP0022C0DAC400596718 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		CFF8E1592C61BB1800B1C970 /* ios-analytics */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "ios-analytics"; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		5AB66CB52016CE890028CEBC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF8E15B2C61BB2A00B1C970 /* RakutenAnalytics in Frameworks */,
+				CFF8E15B2C61BB2A00B1C970 /* RakutenAnalytics in Frameworks */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF8E15F2C61BB3700B1C970 /* RakutenAnalytics in Frameworks */,
+				CFF8E15F2C61BB3700B1C970 /* RakutenAnalytics in Frameworks */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,7 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF8E15D2C61BB3300B1C970 /* RakutenAnalytics in Frameworks */,
+				CFF8E15D2C61BB3300B1C970 /* RakutenAnalytics in Frameworks */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,17 +143,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77E4D94CD1BB0C06E404C98D /* Pods_Common_RakutenAnalyticsSamplePod.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
-
 /* Begin PBXGroup section */
 		5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */ = {
 			isa = PBXGroup;
 			children = (
 				5AB66CBA2016CE8A0028CEBC /* AppDelegate.swift */,
+				CFDEEP0012C0DAC400596718 /* DeepLinkManager.swift */,
+				CFDEEP0022C0DAC400596718 /* SceneDelegate.swift */,
 				5AB66CC12016CE8A0028CEBC /* Assets.xcassets */,
 				5A7D6383201827520025F4F1 /* BaseTableViewCell.swift */,
 				5AB66CC62016CE8A0028CEBC /* Info.plist */,
@@ -155,7 +163,8 @@
 				6D26EBD020352CFE009FE1F7 /* RAnalyticsSample.entitlements */,
 				5A7D6391201862120025F4F1 /* SwitchTableViewCell.swift */,
 				5AB66CD820171F730028CEBC /* TableViewController.swift */,
-				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */,
+				8B3E9B4A44D64E66A1C0C2A2 /* ViewableImpressionsViewController.swift */,
+				5A7D638F201857030025F4F1 /* TextFieldTableViewCell.swift */
 			);
 			path = RAnalyticsSample;
 			sourceTree = "<group>";
@@ -164,12 +173,12 @@
 			isa = PBXGroup;
 			children = (
 				CFF8E1592C61BB1800B1C970 /* ios-analytics */,
+				B2C3D4E5F607182940A0B0C05 /* Shared */,
 				5AB66CB92016CE8A0028CEBC /* RAnalyticsSample */,
 				C980DAC227BAA4E80059E12D /* RAnalyticsSampleSwiftUI */,
 				C900FBEB28C0DAC400596714 /* RAnalyticsSampleDest */,
 				697AAE18192DA4FA006EF197 /* Products */,
-				CECCB6190E493107EA41038F /* Frameworks */,
-				7D7629841660E611D415699F /* Pods */,
+				CECCB6190E493107EA41038F /* Frameworks */
 			);
 			sourceTree = "<group>";
 		};
@@ -178,19 +187,17 @@
 			children = (
 				5AB66CB82016CE890028CEBC /* RakutenAnalyticsSample.app */,
 				C980DAC127BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI.app */,
-				C900FBEA28C0DAC400596714 /* RakutenAnalyticsSampleDest.app */,
-				CFF8E1552C61B3C900B1C970 /* RakutenAnalyticsSamplePod.app */,
+				C900FBEA28C0DAC400596714 /* RakutenAnalyticsSampleDest.app */
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7D7629841660E611D415699F /* Pods */ = {
+		B2C3D4E5F607182940A0B0C05 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				8D060370386465E7A8C8ACA8 /* Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig */,
-				5BA0B31E81C6821A92DCDAD3 /* Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig */,
+				B2C3D4E5F607182940A0B0C01 /* ViewableImpressionsSampleMetrics.swift */
 			);
-			path = Pods;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		C900FBEB28C0DAC400596714 /* RAnalyticsSampleDest */ = {
@@ -199,11 +206,12 @@
 				C900FBFE28C0DF5E00596714 /* RAnalyticsSampleDest.entitlements */,
 				C900FBEC28C0DAC400596714 /* AppDelegate.swift */,
 				C900FBEE28C0DAC400596714 /* SceneDelegate.swift */,
+				DESTDL00228C0DAC400596714 /* IncomingDeepLinkStore.swift */,
 				C900FBF028C0DAC400596714 /* ViewController.swift */,
 				C900FBF228C0DAC400596714 /* Main.storyboard */,
 				C900FBF528C0DAC600596714 /* Assets.xcassets */,
 				C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */,
-				C900FBFA28C0DAC600596714 /* Info.plist */,
+				C900FBFA28C0DAC600596714 /* Info.plist */
 			);
 			path = RAnalyticsSampleDest;
 			sourceTree = "<group>";
@@ -214,11 +222,13 @@
 				C9D1FB6F29261C3C0043C520 /* Info.plist */,
 				C980DAC727BAA4EA0059E12D /* Assets.xcassets */,
 				C980DAC527BAA4E80059E12D /* ContentView.swift */,
+				9A1C3D4E5F60718293A4B5C7 /* ViewableImpressionsView.swift */,
+				9A1C3D4E5F60718293A4B5D0 /* ViewableItemRow.swift */,
 				C980DACF27BAA9F00059E12D /* LoginView.swift */,
 				C980DAC927BAA4EA0059E12D /* Preview Content */,
 				C980DAC327BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift */,
 				C980DAD127BAAA130059E12D /* SettingsView.swift */,
-				C98A4AE627C3FF54006A76AA /* SheetView.swift */,
+				C98A4AE627C3FF54006A76AA /* SheetView.swift */
 			);
 			path = RAnalyticsSampleSwiftUI;
 			sourceTree = "<group>";
@@ -226,7 +236,7 @@
 		C980DAC927BAA4EA0059E12D /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				C980DACA27BAA4EA0059E12D /* Preview Assets.xcassets */,
+				C980DACA27BAA4EA0059E12D /* Preview Assets.xcassets */
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -234,24 +244,21 @@
 		CECCB6190E493107EA41038F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */,
-				562589AF5E352880CEC7DEF7 /* Pods_Common_RakutenAnalyticsSamplePod.framework */,
+				5AB2B82C1FC3F64C0017CF83 /* NotificationCenter.framework */
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
-
 /* Begin PBXNativeTarget section */
 		5AB66CB72016CE890028CEBC /* RakutenAnalyticsSample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSample" */;
 			buildPhases = (
 				5AB66CB42016CE890028CEBC /* Sources */,
-				6D69AB6623D0105200C13E1A /* SwiftLint */,
 				5AB66CB52016CE890028CEBC /* Frameworks */,
 				5AB66CB62016CE890028CEBC /* Resources */,
-				6D2B866323D5A56C00960D85 /* Embed App Extensions */,
+				6D2B866323D5A56C00960D85 /* Embed App Extensions */
 			);
 			buildRules = (
 			);
@@ -259,7 +266,7 @@
 			);
 			name = RakutenAnalyticsSample;
 			packageProductDependencies = (
-				CFF8E15A2C61BB2A00B1C970 /* RakutenAnalytics */,
+				CFF8E15A2C61BB2A00B1C970 /* RakutenAnalytics */
 			);
 			productName = RSDKAnalyticsSampleSwift;
 			productReference = 5AB66CB82016CE890028CEBC /* RakutenAnalyticsSample.app */;
@@ -271,7 +278,7 @@
 			buildPhases = (
 				C900FBE628C0DAC400596714 /* Sources */,
 				C900FBE728C0DAC400596714 /* Frameworks */,
-				C900FBE828C0DAC400596714 /* Resources */,
+				C900FBE828C0DAC400596714 /* Resources */
 			);
 			buildRules = (
 			);
@@ -279,7 +286,7 @@
 			);
 			name = RakutenAnalyticsSampleDest;
 			packageProductDependencies = (
-				CFF8E15E2C61BB3700B1C970 /* RakutenAnalytics */,
+				CFF8E15E2C61BB3700B1C970 /* RakutenAnalytics */
 			);
 			productName = RAnalyticsSampleDest;
 			productReference = C900FBEA28C0DAC400596714 /* RakutenAnalyticsSampleDest.app */;
@@ -291,7 +298,7 @@
 			buildPhases = (
 				C980DABD27BAA4E80059E12D /* Sources */,
 				C980DABE27BAA4E80059E12D /* Frameworks */,
-				C980DABF27BAA4E80059E12D /* Resources */,
+				C980DABF27BAA4E80059E12D /* Resources */
 			);
 			buildRules = (
 			);
@@ -299,34 +306,13 @@
 			);
 			name = RakutenAnalyticsSampleSwiftUI;
 			packageProductDependencies = (
-				CFF8E15C2C61BB3300B1C970 /* RakutenAnalytics */,
+				CFF8E15C2C61BB3300B1C970 /* RakutenAnalytics */
 			);
 			productName = RAnalyticsSampleSwiftUI;
 			productReference = C980DAC127BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CFF8E13B2C61B3C900B1C970 /* RakutenAnalyticsSamplePod */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CFF8E1522C61B3C900B1C970 /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSamplePod" */;
-			buildPhases = (
-				0304929C8522A5A4E52BE51F /* [CP] Check Pods Manifest.lock */,
-				CFF8E1402C61B3C900B1C970 /* Sources */,
-				CFF8E1472C61B3C900B1C970 /* Frameworks */,
-				CFF8E14A2C61B3C900B1C970 /* Resources */,
-				CFF8E14F2C61B3C900B1C970 /* Embed App Extensions */,
-				3D85DDB996BB917910BE5292 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RakutenAnalyticsSamplePod;
-			productName = RSDKAnalyticsSampleSwift;
-			productReference = CFF8E1552C61B3C900B1C970 /* RakutenAnalyticsSamplePod.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
-
 /* Begin PBXProject section */
 		697AAE0F192DA4FA006EF197 /* Project object */ = {
 			isa = PBXProject;
@@ -365,11 +351,10 @@
 			knownRegions = (
 				English,
 				en,
-				Base,
+				Base
 			);
 			mainGroup = 697AAE0E192DA4FA006EF197;
 			packageReferences = (
-				CFA3FA322C76D2D90038933F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			productRefGroup = 697AAE18192DA4FA006EF197 /* Products */;
 			projectDirPath = "";
@@ -377,12 +362,10 @@
 			targets = (
 				5AB66CB72016CE890028CEBC /* RakutenAnalyticsSample */,
 				C980DAC027BAA4E80059E12D /* RakutenAnalyticsSampleSwiftUI */,
-				C900FBE928C0DAC400596714 /* RakutenAnalyticsSampleDest */,
-				CFF8E13B2C61B3C900B1C970 /* RakutenAnalyticsSamplePod */,
+				C900FBE928C0DAC400596714 /* RakutenAnalyticsSampleDest */
 			);
 		};
 /* End PBXProject section */
-
 /* Begin PBXResourcesBuildPhase section */
 		5AB66CB62016CE890028CEBC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
@@ -391,7 +374,7 @@
 				C98D717D25A6F71F00B1D048 /* RAnalyticsConfiguration.plist in Resources */,
 				6D2B866423D5AA8000960D85 /* Assets.xcassets in Resources */,
 				5AB66CC52016CE8A0028CEBC /* LaunchScreen.storyboard in Resources */,
-				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */,
+				5AB66CC02016CE8A0028CEBC /* Main.storyboard in Resources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +384,7 @@
 			files = (
 				C900FBF928C0DAC600596714 /* LaunchScreen.storyboard in Resources */,
 				C900FBF628C0DAC600596714 /* Assets.xcassets in Resources */,
-				C900FBF428C0DAC400596714 /* Main.storyboard in Resources */,
+				C900FBF428C0DAC400596714 /* Main.storyboard in Resources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,7 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C980DACB27BAA4EA0059E12D /* Preview Assets.xcassets in Resources */,
-				C980DAC827BAA4EA0059E12D /* Assets.xcassets in Resources */,
+				C980DAC827BAA4EA0059E12D /* Assets.xcassets in Resources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,74 +404,13 @@
 				CFF8E14B2C61B3C900B1C970 /* RAnalyticsConfiguration.plist in Resources */,
 				CFF8E14C2C61B3C900B1C970 /* Assets.xcassets in Resources */,
 				CFF8E14D2C61B3C900B1C970 /* LaunchScreen.storyboard in Resources */,
-				CFF8E14E2C61B3C900B1C970 /* Main.storyboard in Resources */,
+				CFF8E14E2C61B3C900B1C970 /* Main.storyboard in Resources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
 /* Begin PBXShellScriptBuildPhase section */
-		0304929C8522A5A4E52BE51F /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Common-RakutenAnalyticsSamplePod-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3D85DDB996BB917910BE5292 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/RakutenAnalytics/RakutenAnalytics.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RakutenAnalytics.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Common-RakutenAnalyticsSamplePod/Pods-Common-RakutenAnalyticsSamplePod-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6D69AB6623D0105200C13E1A /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# SWIFT_PACKAGE_DIR=\"${BUILD_DIR%Build/*}SourcePackages/artifacts\"\n# SWIFTLINT_CMD=$(ls \"$SWIFT_PACKAGE_DIR\"/swiftlintplugins/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-*/bin/swiftlint | head -n 1)\n# SWIFTLINT_CONFIG_PATH=\"$SRCROOT/.swiftlint.yml\"\n\n# if test -f \"$SWIFTLINT_CMD\" 2>&1\n# then\n    # \"$SWIFTLINT_CMD\" --config \"$SWIFTLINT_CONFIG_PATH\"\n# else\n    # echo \"warning: `swiftlint` command not found - See https://github.com/realm/SwiftLint#installation for installation instructions.\"\n# fi\n";
-		};
 /* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		5AB66CB42016CE890028CEBC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -497,8 +419,12 @@
 				5A7D6385201827520025F4F1 /* BaseTableViewCell.swift in Sources */,
 				5A7D6390201857040025F4F1 /* TextFieldTableViewCell.swift in Sources */,
 				5AB66CBB2016CE8A0028CEBC /* AppDelegate.swift in Sources */,
+				C900FBF228C0DAC400596716 /* SceneDelegate.swift in Sources */,
+				C900FBF328C0DAC400596717 /* DeepLinkManager.swift in Sources */,
 				5AB66CD920171F730028CEBC /* TableViewController.swift in Sources */,
-				5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */,
+				8B3E9B4A44D64E66A1C0C2A1 /* ViewableImpressionsViewController.swift in Sources */,
+				B2C3D4E5F607182940A0B0C02 /* ViewableImpressionsSampleMetrics.swift in Sources */,
+				5A7D6392201862120025F4F1 /* SwitchTableViewCell.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,6 +435,7 @@
 				C900FBF128C0DAC400596714 /* ViewController.swift in Sources */,
 				C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */,
 				C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */,
+				DESTDL00128C0DAC400596714 /* IncomingDeepLinkStore.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,7 +447,10 @@
 				C980DAD227BAAA130059E12D /* SettingsView.swift in Sources */,
 				C98A4AE727C3FF54006A76AA /* SheetView.swift in Sources */,
 				C980DAC627BAA4E80059E12D /* ContentView.swift in Sources */,
-				C980DAC427BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift in Sources */,
+				9A1C3D4E5F60718293A4B5C6 /* ViewableImpressionsView.swift in Sources */,
+				9A1C3D4E5F60718293A4B5D1 /* ViewableItemRow.swift in Sources */,
+				B2C3D4E5F607182940A0B0C04 /* ViewableImpressionsSampleMetrics.swift in Sources */,
+				C980DAC427BAA4E80059E12D /* RAnalyticsSampleSwiftUIApp.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,17 +462,18 @@
 				CFF8E1422C61B3C900B1C970 /* TextFieldTableViewCell.swift in Sources */,
 				CFF8E1432C61B3C900B1C970 /* AppDelegate.swift in Sources */,
 				CFF8E1442C61B3C900B1C970 /* TableViewController.swift in Sources */,
-				CFF8E1452C61B3C900B1C970 /* SwitchTableViewCell.swift in Sources */,
+				8B3E9B4A44D64E66A1C0C2A3 /* ViewableImpressionsViewController.swift in Sources */,
+				B2C3D4E5F607182940A0B0C03 /* ViewableImpressionsSampleMetrics.swift in Sources */,
+				CFF8E1452C61B3C900B1C970 /* SwitchTableViewCell.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
 /* Begin PBXVariantGroup section */
 		5AB66CBE2016CE8A0028CEBC /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5AB66CBF2016CE8A0028CEBC /* Base */,
+				5AB66CBF2016CE8A0028CEBC /* Base */
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -550,7 +481,7 @@
 		5AB66CC32016CE8A0028CEBC /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5AB66CC42016CE8A0028CEBC /* Base */,
+				5AB66CC42016CE8A0028CEBC /* Base */
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -558,7 +489,7 @@
 		C900FBF228C0DAC400596714 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C900FBF328C0DAC400596714 /* Base */,
+				C900FBF328C0DAC400596714 /* Base */
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -566,89 +497,13 @@
 		C900FBF728C0DAC600596714 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C900FBF828C0DAC600596714 /* Base */,
+				C900FBF828C0DAC600596714 /* Base */
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
-		5AB2B8391FC3F64C0017CF83 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		5AB2B83A1FC3F64C0017CF83 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 5J4GVGN58B;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 5J4GVGN58B;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = AnalyticsTodayExt/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample.AnalyticsTodayExt;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
-				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		5AB66CC72016CE8A0028CEBC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -673,13 +528,13 @@
 				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = RakutenAnalyticsSample;
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -713,14 +568,14 @@
 				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = RakutenAnalyticsSample;
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -759,7 +614,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
+					"$(inherited)"
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -857,7 +712,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -865,7 +720,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.analytics.mobile.demoapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse230830;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse250702;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse251222;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -915,7 +770,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -923,7 +778,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.rakuten.analytics.mobile.demoapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = Ecosystemdemo_InHouse230830;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse250702;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = AnalyticsDemoApp_InHouse251222;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -968,10 +823,10 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -979,7 +834,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1025,10 +880,10 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1036,7 +891,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -1047,7 +902,6 @@
 		};
 		CFF8E1532C61B3C900B1C970 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8D060370386465E7A8C8ACA8 /* Pods-Common-RakutenAnalyticsSamplePod.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1070,13 +924,13 @@
 				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1086,7 +940,6 @@
 		};
 		CFF8E1542C61B3C900B1C970 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5BA0B31E81C6821A92DCDAD3 /* Pods-Common-RakutenAnalyticsSamplePod.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1111,14 +964,14 @@
 				INFOPLIST_FILE = RAnalyticsSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/Frameworks"
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.rakuten.RAnalyticsSample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "7a1ef39f-8e92-43d3-b518-2d3245899fdd";
 				PROVISIONING_PROFILE_SPECIFIER = R_Enterprise12th_230714;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise15th_250701;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = R_Enterprise16th_260629;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -1127,13 +980,12 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
-
 /* Begin XCConfigurationList section */
 		5AB66CC92016CE8A0028CEBC /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5AB66CC72016CE8A0028CEBC /* Debug */,
-				5AB66CC82016CE8A0028CEBC /* Release */,
+				5AB66CC82016CE8A0028CEBC /* Release */
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1142,7 +994,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				697AAE4A192DA4FB006EF197 /* Debug */,
-				697AAE4B192DA4FB006EF197 /* Release */,
+				697AAE4B192DA4FB006EF197 /* Release */
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1151,7 +1003,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C900FBFB28C0DAC600596714 /* Debug */,
-				C900FBFC28C0DAC600596714 /* Release */,
+				C900FBFC28C0DAC600596714 /* Release */
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1160,33 +1012,12 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C980DACC27BAA4EA0059E12D /* Debug */,
-				C980DACD27BAA4EA0059E12D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFF8E1522C61B3C900B1C970 /* Build configuration list for PBXNativeTarget "RakutenAnalyticsSamplePod" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFF8E1532C61B3C900B1C970 /* Debug */,
-				CFF8E1542C61B3C900B1C970 /* Release */,
+				C980DACD27BAA4EA0059E12D /* Release */
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		CFA3FA322C76D2D90038933F /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.56.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		CFF8E15A2C61BB2A00B1C970 /* RakutenAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

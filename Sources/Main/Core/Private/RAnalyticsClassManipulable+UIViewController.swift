@@ -7,7 +7,7 @@ extension UIViewController: RAnalyticsClassManipulable, RuntimeLoadable {
             installAutoTrackingHooks()
         }
     }
-    
+
     @objc public static func installAutoTrackingHooks() {
         replaceMethod(#selector(viewDidAppear),
                       inClass: self,

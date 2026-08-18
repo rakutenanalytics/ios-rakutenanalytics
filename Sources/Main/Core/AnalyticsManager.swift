@@ -1,7 +1,11 @@
 import Foundation
 import CoreLocation
+import UIKit
+#if os(iOS)
 import AdSupport
 import WebKit
+import UserNotifications
+#endif
 
 // swiftlint:disable type_name
 public typealias RAnalyticsShouldTrackEventCompletionBlock = (String) -> Bool
@@ -32,14 +36,25 @@ enum CoreOrigin {
 protocol ReferralAppTrackable: AnyObject {
     func tryToTrackReferralApp(with url: URL?, sourceApplication: String?)
     func tryToTrackReferralApp(with webpageURL: URL?)
+    func handleIncomingURLContexts(_ contexts: Set<UIOpenURLContext>)
+    func handleIncomingConnectionOptions(_ options: UIScene.ConnectionOptions)
+    func handleIncomingUserActivity(_ userActivity: NSUserActivity)
+    func handleIncomingColdLaunchFromInjectedValues()
 }
 
 // MARK: - AnalyticsManager
 
 /// Main class of the module.
 @objc(RAnalyticsManager) public final class AnalyticsManager: NSObject {
-    static var isConfigured: Bool = false
-    
+    /// - Note:
+    ///     - set to true when configure() is called for manual initialization or false otherwise.
+    ///     - always set to true for automatic initialization.
+    ///     - Stored in `AnalyticsInitState` (same value send gating reads).
+    static var isConfigured: Bool {
+        get { AnalyticsInitState.isConfigured }
+        set { AnalyticsInitState.applyIsConfigured(newValue) }
+    }
+
     private static let singleton: AnalyticsManager = {
         AnalyticsManager(dependenciesContainer: SimpleDependenciesContainer())
     }()
@@ -172,7 +187,6 @@ protocol ReferralAppTrackable: AnyObject {
     }
 
     private let locationManager: LocationManageable
-    private var authorizationStatusLockableObject: LockableObject<CLAuthorizationStatus>
     private(set) var locationManagerIsUpdating: Bool = false
 
     /// Session cookie. We use an UUID automatically created at startup and
@@ -240,6 +254,10 @@ protocol ReferralAppTrackable: AnyObject {
 
         shouldTrackLastKnownLocation = true
         shouldTrackAdvertisingIdentifier = true
+        #if os(tvOS)
+        shouldTrackLastKnownLocation = false
+        shouldTrackAdvertisingIdentifier = false
+        #endif
 
         // Inject the Dependencies Container
         advertisingIdentifierHandler = RAdvertisingIdentifierHandler(dependenciesContainer: dependenciesContainer)
@@ -249,8 +267,6 @@ protocol ReferralAppTrackable: AnyObject {
 
         trackers = NSMutableSet()
         trackersLockableObject = LockableObject(trackers)
-
-        authorizationStatusLockableObject = LockableObject(type(of: locationManager).authorizationStatus())
 
         deviceIdentifierHandler = DeviceIdentifierHandler(device: dependenciesContainer.deviceCapability,
                                                           hasher: SecureHasher())
@@ -272,7 +288,7 @@ protocol ReferralAppTrackable: AnyObject {
     deinit {
         stopMonitoringLocation()
     }
-    
+
     /// Set carrier names for analytics tracking
     /// - Parameters:
     ///   - primary: Primary carrier name (mcn)
@@ -280,12 +296,12 @@ protocol ReferralAppTrackable: AnyObject {
     @objc public func setCarrierNames(primary: String?, secondary: String? = nil) {
         RAnalyticsRATTracker.shared().updateCarrierNames(mcn: primary, mcnd: secondary)
     }
-    
+
     /// Clear all carrier information
     @objc public func clearCarrierNames() {
         setCarrierNames(primary: nil, secondary: nil)
     }
-    
+
     /// Get current carrier names
     /// - Returns: Tuple containing primary and secondary carrier names
     public func getCarrierNames() -> (primary: String?, secondary: String?) {
@@ -300,6 +316,7 @@ extension AnalyticsManager {
     ///
     /// - Warning: If the `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
     private func configureWebViewUserAgent() {
+        #if os(iOS)
         guard bundle.isWebViewAppUserAgentEnabledAtBuildtime else {
             // WKWebView can only be instantiated on the main thread.
             MainThreadExecutor.run {
@@ -319,16 +336,13 @@ extension AnalyticsManager {
                 self.userStorageHandler.register(defaults: [UserDefaultsKeys.userAgentKey: customUserAgent])
             }
         }
+        #endif
     }
 
     private func configure() {
         configureWebViewUserAgent()
 
-        // Due to https://github.com/CocoaPods/CocoaPods/issues/2774 we can't
-        // always rely solely on header availability so we also do a runtime check
-        if let ratTracker = NSObject.ratTracker {
-            add(ratTracker)
-        }
+        addAndConfigureIfNeeded(RAnalyticsRATTracker.shared())
 
         // Set up the location manager
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -347,13 +361,13 @@ extension AnalyticsManager {
                                                name: UIApplication.willResignActiveNotification,
                                                object: nil)
     }
-    
+
     private func refreshCookieStore(with targetDomains: [String]? = nil, completion: (([HTTPCookie]) -> Void)? = nil) {
         guard enableAppToWebTracking else {
             analyticsCookieInjector.clearCookies { }
             return
         }
-        
+
         // If targetDomains is not nil and not empty, proceed with the following logic
         guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
             injectAppToWebTrackingCookie(domain: nil) { trackingCookie in
@@ -369,7 +383,7 @@ extension AnalyticsManager {
 
         var trackingCookies: [HTTPCookie] = []
         let group = DispatchGroup()
-        
+
         for domain in targetDomains {
             group.enter()
             injectAppToWebTrackingCookie(domain: domain) { trackingCookie in
@@ -379,7 +393,7 @@ extension AnalyticsManager {
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             completion?(trackingCookies)
         }
@@ -416,27 +430,6 @@ extension AnalyticsManager {
 extension AnalyticsManager {
     private func startStopMonitoringLocationIfNeeded() {
         let status: CLAuthorizationStatus = type(of: locationManager).authorizationStatus()
-
-        #if DEBUG
-        var lastStatus: CLAuthorizationStatus?
-        Synchronizable.withSynchronized([authorizationStatusLockableObject]) {
-            let hasUpdated = status != lastStatus
-            if hasUpdated {
-                lastStatus = status
-
-                var statusString = ""
-                switch status {
-                case .notDetermined:       statusString = "Not Determined"
-                case .restricted:          statusString = "Restricted"
-                case .denied:              statusString = "Denied"
-                case .authorizedAlways:    statusString = "Authorized Always"
-                case .authorizedWhenInUse: statusString = "Authorized When In Use"
-                default: statusString = "Value (\(String(describing: status)))"
-                }
-                RLogger.debug(message: "Location services' authorization status changed to [\(statusString)].")
-            }
-        }
-        #endif
 
         if shouldTrackLastKnownLocation &&
             (status == .authorizedAlways
@@ -480,6 +473,7 @@ extension AnalyticsManager: CLLocationManagerDelegate {
         startStopMonitoringLocationIfNeeded()
     }
 
+    #if os(iOS)
     public func locationManagerDidPauseLocationUpdates(_ manager: CLLocationManager) {
         RLogger.verbose(message: "Location updates paused.")
     }
@@ -494,6 +488,7 @@ extension AnalyticsManager: CLLocationManagerDelegate {
                                          description: ErrorDescription.locationHasFailed,
                                          reason: "\(error?.localizedDescription ?? "")"))
     }
+    #endif
 }
 
 // MARK: - Public API
@@ -532,7 +527,7 @@ extension AnalyticsManager: AnalyticsManageable {
         switch coreOrigin {
         case .analytics:
             if shouldTrackLastKnownLocation,
-                let location = locationManager.location {
+               let location = locationManager.location {
                 state.lastKnownLocation = LocationModel(location: location)
 
             } else {
@@ -574,20 +569,19 @@ extension AnalyticsManager: AnalyticsManageable {
         }
         return processed
     }
-    
+
     /// Initializes the SDK and installs auto-tracking hooks.
     ///
-    /// This method sets up automatic tracking for various components of the app, such as the application lifecycle,
-    /// user notifications, view controllers, and window scenes (if available).
-    ///
-    /// - Note: For iOS 13.0 and above, it also installs auto-tracking hooks for `UIWindowScene`.
+    /// This method sets up automatic tracking for user notifications, view controllers, and window scenes.
+    /// Host apps must adopt the UIKit scene-based lifecycle with a `UISceneDelegate`.
     public static func configure() {
-        UIApplication.installAutoTrackingHooks()
+        #if os(iOS)
         UNUserNotificationCenter.installAutoTrackingHooks()
+        #endif
         UIViewController.installAutoTrackingHooks()
-        if #available(iOSApplicationExtension 13.0, *) {
-            UIWindowScene.installAutoTrackingHooks()
-        }
+        UIWindowScene.installAutoTrackingHooks()
+        SceneDelegateHelper.autoTrack()
+        GeoLaunchConfigurator.configureIfNeeded()
         isConfigured = true
     }
 }
@@ -627,6 +621,12 @@ extension AnalyticsManager {
         trackersLockableObject.unlock()
     }
 
+    /// Adds the tracker and marks it as configured if it conforms to `RATConfigurable`.
+    private func addAndConfigureIfNeeded(_ tracker: Tracker) {
+        add(tracker)
+        (tracker as? RATConfigurable)?.markAsConfigured()
+    }
+
     /// Remove a tracker from tracker list.
     ///
     /// - Parameter tracker: Any object that comforms to the RAnalyticsTracker protocol.
@@ -639,7 +639,7 @@ extension AnalyticsManager {
         }
         trackersLockableObject.unlock()
     }
-    
+
     /// Generates a new unique page identifier using device identifier and timestamp.
     /// Returns the generated page ID for the app to use as needed.
     ///
@@ -662,7 +662,7 @@ extension AnalyticsManager {
         }
         refreshCookieStore(with: [domain], completion: completion)
     }
-    
+
     /// Method to allow the app to set multiple custom domains for app-to-web tracking cookies.
     ///
     /// - Parameters:
@@ -677,7 +677,7 @@ extension AnalyticsManager {
     @objc public func webTrackingCookieDomain() -> String? {
         cookieDomainBlock?()
     }
-    
+
     /// Returns the latest web tracking cookie domains set by `setWebTrackingCookieMultipleDomains(array:)`
     @objc public func webTrackingCookieMultipleDomains() -> [String]? {
         cookieDomains

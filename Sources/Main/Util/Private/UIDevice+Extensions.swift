@@ -3,12 +3,17 @@ import UIKit
 
 protocol DeviceCapability {
     var idfvUUID: String? { get }
+}
+
+#if os(iOS)
+
+protocol DeviceBatteryCapability: DeviceCapability {
     var batteryState: UIDevice.BatteryState { get }
     var batteryLevel: Float { get }
     func setBatteryMonitoring(_ value: Bool)
 }
 
-extension UIDevice: DeviceCapability {
+extension UIDevice: DeviceBatteryCapability {
     var idfvUUID: String? {
         identifierForVendor?.uuidString
     }
@@ -18,6 +23,16 @@ extension UIDevice: DeviceCapability {
         isBatteryMonitoringEnabled = value
     }
 }
+
+#elseif os(tvOS)
+
+extension UIDevice: DeviceCapability {
+    var idfvUUID: String? {
+        identifierForVendor?.uuidString
+    }
+}
+
+#endif
 
 extension UIDevice {
     /// Return the model identifier of the device the application is currently running on.

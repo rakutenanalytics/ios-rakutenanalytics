@@ -37,11 +37,11 @@ extension Bundle {
 // MARK: - Manual Initialization
 
 extension Bundle {
-    
+
     private enum Keys {
         static let manualInitializationEnabledKey = "RATEnableManualInitialization"
     }
-    
+
     /// Indicates whether manual initialization is enabled.
     ///
     /// This property retrieves its value from the app's Info.plist using the key `manualInitializationEnabled`.
@@ -54,5 +54,5 @@ extension Bundle {
         }
         return value
     }
-    
+
 }

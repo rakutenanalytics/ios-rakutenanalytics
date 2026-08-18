@@ -62,8 +62,17 @@ import SQLite3
         switch code {
         case SQLITE_OK:
             while sqlite3_step(statement) == SQLITE_ROW {
-                let bytes: UnsafeRawPointer = sqlite3_column_blob(statement, 1)
                 let length = sqlite3_column_bytes(statement, 1)
+                
+                // sqlite3_column_blob may return NULL for NULL/empty blobs. Creating Data with a nil pointer crashes.
+                guard length > 0 else {
+                    result.append(Data())
+                    continue
+                }
+                guard let bytes = sqlite3_column_blob(statement, 1) else {
+                    result.append(Data())
+                    continue
+                }
 
                 result.append(Data(bytes: bytes, count: Int(length)))
             }

@@ -1,8 +1,10 @@
 import Foundation
 import UIKit
 import CoreLocation
-import CoreTelephony
 import SystemConfiguration
+#if os(iOS)
+import CoreTelephony
+#endif
 
 // MARK: - Date extension
 
@@ -33,6 +35,7 @@ protocol AutomaticFieldsBuildable {
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
          reachability: ReachabilityType?,
          userStorageHandler: UserStorageHandleable)
+    func addSdkSourceIfNeeded(_ payload: NSMutableDictionary, event: RAnalyticsEvent)
     func addCommonParameters(_ payload: NSMutableDictionary, state: RAnalyticsState)
     func addLocation(_ payload: NSMutableDictionary,
                      state: RAnalyticsState,
@@ -102,8 +105,36 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         _ = notificationHandler.observe(forName: UIApplication.didBecomeActiveNotification,
                                         object: nil,
                                         queue: nil) { _ in
+            #if os(iOS)
             self.telephonyHandler.update(telephonyNetworkInfo: CTTelephonyNetworkInfo())
+            #elseif os(tvOS)
+            self.telephonyHandler.update(telephonyNetworkInfo: NoOpTelephonyNetworkInfo())
+            #endif
         }
+    }
+
+    /// Add sdk_source parameter to the payload if not already set.
+    /// This allows extensions and wrappers to set sdk_source before calling process(),
+    /// and the main SDK will not overwrite their values.
+    ///
+    /// - Parameters:
+    ///   - payload: The payload dictionary.
+    ///   - event: The event being processed (used to check event parameters for custom events).
+    func addSdkSourceIfNeeded(_ payload: NSMutableDictionary, event: RAnalyticsEvent) {
+        // Check if sdk_source is already set in payload (and not empty)
+        if let existingValue = payload[PayloadParameterKeys.sdkSource] as? String, !existingValue.isEmpty {
+            return
+        }
+
+        // For custom events, check event parameters since regular params don't get copied to payload
+        if event.name == RAnalyticsEvent.Name.custom,
+           let sdkSource = event.parameters["sdk_source"] as? String, !sdkSource.isEmpty {
+            payload[PayloadParameterKeys.sdkSource] = sdkSource
+            return
+        }
+
+        // Always set to "main" if not set or empty
+        payload[PayloadParameterKeys.sdkSource] = "main"
     }
 
     /// Add the automatic fields to the RAT Payload.
@@ -119,7 +150,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // MARK: aid
         payload[PayloadParameterKeys.aid] =
-        (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.applicationIdentifier)
+            (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.applicationIdentifier)
 
         // MARK: dln
         if let languageCode = bundle.languageCode {
@@ -163,6 +194,9 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         // MARK: ua
         payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
 
+        // MARK: ua_enriched
+        payload[PayloadParameterKeys.UserAgent.uaEnriched] = userAgentHandler.enrichedValue(for: state)
+
         // MARK: res
         payload[PayloadParameterKeys.Device.res] = deviceHandler.screenResolution
 
@@ -177,12 +211,12 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         payload.addEntries(from: state.corePayload)
 
-        if deviceHandler.batteryState != .unknown {
+        if deviceHandler.includesBatteryMetrics {
             // MARK: powerstatus
-            payload[PayloadParameterKeys.Device.powerStatus] = NSNumber(value: deviceHandler.batteryState != .unplugged ? 1 : 0)
+            payload[PayloadParameterKeys.Device.powerStatus] = NSNumber(value: deviceHandler.batteryPowerStatusValue)
 
             // MARK: mbat
-            payload[PayloadParameterKeys.Device.mbat] = String(format: "%0.f", deviceHandler.batteryLevel * 100)
+            payload[PayloadParameterKeys.Device.mbat] = String(format: "%0.f", deviceHandler.batteryLevelPercentage)
         }
 
         // MARK: cka
@@ -194,7 +228,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
             payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
         }
-        
+
         // MARK: device_per
         if payload[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.sessionEnd {
             payload[PayloadParameterKeys.Device.devicePer] = AnalyticsDevicePermissionCollector.shared.collectPermissions()
@@ -235,7 +269,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             payload[PayloadParameterKeys.isAction] = locationModel.isAction
         }
     }
-    
+
     /// Update the carrier names in the telephony handler
     ///
     /// - Parameters:
@@ -245,7 +279,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
         telephonyHandler.mcn = mcn
         telephonyHandler.mcnd = mcnd
     }
-    
+
     /// Get the current carrier names from the telephony handler
     ///
     /// - Returns: Tuple containing primary and secondary carrier names

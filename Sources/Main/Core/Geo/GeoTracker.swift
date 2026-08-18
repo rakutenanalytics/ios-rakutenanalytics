@@ -65,7 +65,8 @@ final class GeoTracker: NSObject {
                                   bundle: dependenciesContainer.bundle,
                                   session: dependenciesContainer.session,
                                   maxUploadInterval: batchingDelay,
-                                  userStorageHandler: dependenciesContainer.userStorageHandler)
+                                  userStorageHandler: dependenciesContainer.userStorageHandler,
+                                  allowsAnalyticsSend: dependenciesContainer.makeAnalyticsSendPredicate())
         sender.setBatchingDelayBlock(batchingDelay)
         sender.backgroundTimerEnabler = .enabled(startTimeKey: UserDefaultsKeys.geoScheduleStartTimeKey)
 
@@ -101,6 +102,7 @@ extension GeoTracker: Tracker {
 
         payload[PayloadParameterKeys.etype] = event.name
 
+        automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
         automaticFieldsBuilder.addCommonParameters(payload, state: state)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,

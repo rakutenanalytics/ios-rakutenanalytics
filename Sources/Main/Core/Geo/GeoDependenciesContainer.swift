@@ -1,9 +1,11 @@
 import Foundation
 import CoreLocation
-import CoreTelephony
 import UIKit
+#if os(iOS)
+import CoreTelephony
+#endif
 
-protocol GeoDependenciesContainable {
+protocol GeoDependenciesContainable: AnalyticsHostBundleProviding {
     var notificationHandler: NotificationObservable { get }
     var userStorageHandler: UserStorageHandleable { get }
     var locationManager: LocationManageable { get }
@@ -20,13 +22,17 @@ protocol GeoDependenciesContainable {
 final class GeoDependenciesContainer: GeoDependenciesContainable {
     let notificationHandler: NotificationObservable = NotificationCenter.default
     let userStorageHandler: UserStorageHandleable = UserDefaults.standard
-    let locationManager: LocationManageable = CLLocationManager()
+    let locationManager: LocationManageable = LocationManagerFactory.makeDefault()
     let bundle: EnvironmentBundle = Bundle.main
+    #if os(iOS)
     let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
+    #elseif os(tvOS)
+    let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = NoOpTelephonyNetworkInfo()
+    #endif
     let deviceCapability: DeviceCapability = UIDevice.current
-    let screenHandler: Screenable = UIScreen.main
+    let screenHandler: Screenable = UIScreen.screenableFromScene
     let session: SwiftySessionable = URLSession.shared
-    let analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
+    let analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = RAnalyticsApplicationOrientationProvider()
     let automaticFieldsBuilder: AutomaticFieldsBuildable
 
     init() {

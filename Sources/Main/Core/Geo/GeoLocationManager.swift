@@ -56,7 +56,9 @@ final class GeoLocationManager: NSObject {
         super.init()
 
         coreLocationManager.delegate = self
+        #if os(iOS)
         coreLocationManager.allowsBackgroundLocationUpdates = bundle.backgroundLocationUpdates
+        #endif
         coreLocationManager.desiredAccuracy = configurationStore.configuration.accuracy.desiredAccuracy
     }
 }
@@ -86,13 +88,17 @@ extension GeoLocationManager: GeoLocationManageable {
     }
 
     func startMonitoringSignificantLocationChanges() {
+        #if os(iOS)
         if CLLocationManager.significantLocationChangeMonitoringAvailable() {
             coreLocationManager.startMonitoringSignificantLocationChanges()
         }
+        #endif
     }
 
     func stopMonitoringSignificantLocationChanges() {
+        #if os(iOS)
         coreLocationManager.stopMonitoringSignificantLocationChanges()
+        #endif
     }
 }
 
@@ -126,6 +132,7 @@ extension GeoLocationManager: CLLocationManagerDelegate {
         }
     }
 
+    #if os(iOS)
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         guard state == .outside, region.identifier == GeoConstants.locationCollectionRegionIdentifier, let location = manager.location else {
             RLogger.debug(message: "should not update for region state: \(state.rawValue) with id: \(region.identifier)")
@@ -146,6 +153,7 @@ extension GeoLocationManager: CLLocationManagerDelegate {
         }
         RLogger.debug(message: "locationManager monitoringDidFailFor \(failedRegion.identifier) withError: \(error.localizedDescription)")
     }
+    #endif
 }
 
 // MARK: - GeoLocationManager Helpers
@@ -153,29 +161,35 @@ extension GeoLocationManager: CLLocationManagerDelegate {
 extension GeoLocationManager {
     private var isCollectionTime: Bool {
         Date().timeInSeconds >= configurationStore.configuration.startTime.toSeconds &&
-        Date().timeInSeconds <= configurationStore.configuration.endTime.toSeconds
+            Date().timeInSeconds <= configurationStore.configuration.endTime.toSeconds
     }
 
     private func handleDistanceBasedCollection(location: CLLocation) {
+        #if os(iOS)
         if !coreLocationManager.monitoredRegions.contains(where: { $0.identifier == GeoConstants.locationCollectionRegionIdentifier }) {
             startRegionMonitoring(at: location)
         }
+        #endif
     }
 
     private func startRegionMonitoring(at location: CLLocation) {
+        #if os(iOS)
         stopRegionMonitoring()
         let region = CLCircularRegion(center: location.coordinate,
                                       radius: CLLocationDistance(configurationStore.configuration.distanceInterval),
                                       identifier: GeoConstants.locationCollectionRegionIdentifier)
         region.notifyOnEntry = false
         coreLocationManager.startMonitoring(for: region)
+        #endif
     }
 
     private func stopRegionMonitoring() {
+        #if os(iOS)
         guard let region = coreLocationManager.monitoredRegions
-            .first(where: { $0.identifier == GeoConstants.locationCollectionRegionIdentifier }) else {
+                .first(where: { $0.identifier == GeoConstants.locationCollectionRegionIdentifier }) else {
             return
         }
         coreLocationManager.stopMonitoring(for: region)
+        #endif
     }
 }

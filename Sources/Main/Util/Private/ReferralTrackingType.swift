@@ -6,4 +6,5 @@ enum ReferralTrackingType: Hashable {
     case page(currentPage: UIViewController?) // Currently-visited UIKit view controller.
     case swiftuiPage(pageName: String) // Currently-visited SwiftUI view.
     case referralApp(ReferralAppModel)
+    case externalReferral(URL)
 }

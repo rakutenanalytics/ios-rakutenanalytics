@@ -1,8 +1,11 @@
-import AdSupport.ASIdentifierManager
+import Foundation
 
 protocol AdvertisementIdentifiable {
     var advertisingIdentifierUUIDString: String { get }
 }
+
+#if os(iOS)
+import AdSupport.ASIdentifierManager
 
 extension ASIdentifierManager: AdvertisementIdentifiable {
     /// Fix a native iOS crash `UUID.unconditionallyBridgeFromObjectiveC `
@@ -15,3 +18,12 @@ extension ASIdentifierManager: AdvertisementIdentifiable {
         safeAdvertisingIdentifier?.uuidString ?? ""
     }
 }
+#endif
+
+#if os(tvOS)
+
+final class NoOpAdvertisementIdentifierManager: AdvertisementIdentifiable {
+    var advertisingIdentifierUUIDString: String { "" }
+}
+
+#endif

@@ -10,8 +10,15 @@ xcuserdata
 *.xccheckout
 *.xcworkspace
 build
+.derivedData/
+DerivedData/
 
-# Cocoapods
+# Swift Package Manager
+.build
+.swiftpm/xcode/xcuserdata
+.swiftpm/xcode/package.xcworkspace/xcuserdata
+
+# Legacy CocoaPods artifacts (no longer supported)
 Podfile.lock
 Pods
 

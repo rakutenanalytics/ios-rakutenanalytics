@@ -1,0 +1,320 @@
+import Foundation
+import UIKit
+
+// MARK: - Public Protocols
+
+/// Protocol for items that can be tracked for viewable impressions.
+public protocol ViewableImpressionTrackable {
+    /// Unique identifier for the item.
+    var itemId: String { get }
+
+    /// Title/name of the item.
+    var itemTitle: String { get }
+
+    /// Description of the item.
+    var itemDescription: String? { get }
+
+    /// Category of the item.
+    var itemCategory: String? { get }
+
+    /// Genre of the item.
+    var itemGenre: String? { get }
+
+    /// Price of the item.
+    var itemPrice: String? { get }
+}
+
+struct ViewableImpressionRefreshResult {
+    let eventData: [[String: Any]]
+    let refreshAfterDelay: TimeInterval?
+    let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)?
+    let eventParameters: [String: Any]?
+
+    static let empty = ViewableImpressionRefreshResult(
+        eventData: [],
+        refreshAfterDelay: nil,
+        refreshAfterDwell: nil,
+        eventParameters: nil
+    )
+}
+
+// MARK: - Internal Models
+
+private final class ManualTrackedItem {
+    let item: ViewableImpressionTrackable
+    weak var view: UIView?
+    var itemPosition: Int
+    var visibilityPercentage: Double
+    var firstVisibleTime: Date
+    var hasTriggeredViewableImpression: Bool
+    var isVisible: Bool
+
+    init(item: ViewableImpressionTrackable, view: UIView, itemPosition: Int, visibilityPercentage: Double, timestamp: Date = Date(), hasTriggered: Bool = false, isVisible: Bool = false) {
+        self.item = item
+        self.view = view
+        self.itemPosition = itemPosition
+        self.visibilityPercentage = visibilityPercentage
+        self.firstVisibleTime = timestamp
+        self.hasTriggeredViewableImpression = hasTriggered
+        self.isVisible = isVisible
+    }
+
+    var itemId: String { item.itemId }
+}
+
+/// Visibility metrics for a view within a viewport.
+private struct ViewableImpressionVisibilityMetrics {
+    let visibility: Double
+    let intersection: CGRect
+    let timestamp: Date
+}
+
+// MARK: - Viewable Impression Tracker (Manual)
+
+@objc public final class ViewableImpressionTracker: NSObject {
+    /// Minimum dwell time in seconds that items must remain visible.
+    @objc public var minimumDwellTime: TimeInterval = 1.5
+
+    /// Minimum visibility percentage required to consider an item visible. Default is 50%.
+    @objc public var minimumVisibilityPercentage: Double = 0.5
+
+    /// Indicates if tracking is currently active.
+    @objc public private(set) var isEnabled: Bool = false
+
+    // MARK: Private State
+
+    private weak var viewportContextView: UIView?
+    private let synchronizationQueue = DispatchQueue(label: "com.rakuten.analytics.viewableImpressions", attributes: .concurrent)
+    private var manualItemsStorage: [String: ManualTrackedItem] = [:]
+    private var pendingRefreshWorkItem: DispatchWorkItem?
+    private var manualItemsByIdentifier: [String: ManualTrackedItem] {
+        get { synchronizationQueue.sync { manualItemsStorage } }
+        set { synchronizationQueue.sync(flags: .barrier) { self.manualItemsStorage = newValue } }
+    }
+
+    // MARK: Initialization
+
+    /// Create a tracker without a specific viewport context.
+    /// You can pass a viewport later via `refreshState(viewportView:onResult:)`.
+    @objc public override init() {
+        self.viewportContextView = nil
+        super.init()
+    }
+
+    /// Create a tracker with an optional viewport context view.
+    @objc public init(view: UIView?) {
+        self.viewportContextView = view
+        super.init()
+    }
+
+    /// Backwards-compatible initializer for scroll-view contexts.
+    @objc public convenience init(scrollView: UIScrollView) {
+        self.init(view: scrollView)
+    }
+
+    // MARK: Public API
+
+    /// Enable viewable impression tracking.
+    @objc public func enableTracking() {
+        guard !isEnabled else { return }
+        isEnabled = true
+    }
+
+    /// Disable viewable impression tracking.
+    @objc public func disableTracking() {
+        guard isEnabled else { return }
+        isEnabled = false
+        pendingRefreshWorkItem?.cancel()
+        pendingRefreshWorkItem = nil
+        synchronizationQueue.sync(flags: .barrier) {
+            manualItemsStorage.removeAll()
+        }
+    }
+
+    /// Register a view manually for viewable impression tracking.
+    /// Call `refreshState(onResult:)` to evaluate visibility and receive results.
+    public func track(view: UIView, item: ViewableImpressionTrackable, itemPosition: Int = 0) {
+        guard isEnabled else { return }
+
+        executeOnMain {
+            self.synchronizationQueue.sync(flags: .barrier) {
+                let reusedItemIds = self.manualItemsStorage
+                    .filter { $0.value.view === view && $0.key != item.itemId }
+                    .map { $0.key }
+                reusedItemIds.forEach { self.manualItemsStorage.removeValue(forKey: $0) }
+
+                self.manualItemsStorage[item.itemId] = ManualTrackedItem(
+                    item: item,
+                    view: view,
+                    itemPosition: itemPosition,
+                    visibilityPercentage: 0.0
+                )
+            }
+        }
+    }
+
+    /// Unregister a manually tracked item by ID.
+    public func untrack(itemId: String) {
+        performBarrier {
+            self.manualItemsStorage.removeValue(forKey: itemId)
+        }
+    }
+
+    /// Clears all manually tracked items.
+    public func clearManualTracking() {
+        performBarrier {
+            self.manualItemsStorage.removeAll()
+        }
+    }
+
+    /// Manually refresh visibility state once and receive results when ready.
+    /// The completion is called immediately if items already qualify, or after
+    /// the suggested dwell delay if items are still accumulating dwell time.
+    public func refreshState(viewportView: UIView? = nil,
+                             viewportInsets: UIEdgeInsets = .zero,
+                             onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
+        let result = refreshStateInternal(
+            viewportView: viewportView,
+            viewportInsets: viewportInsets
+        )
+        ViewableImpressionRefreshScheduler.deliver(
+            result: result,
+            pendingWorkItem: &pendingRefreshWorkItem,
+            onResult: onResult
+        )
+    }
+
+    // MARK: - Private Helpers
+
+    private func visibilityMetrics(for view: UIView,
+                                   in viewportView: UIView?,
+                                   viewportInsets: UIEdgeInsets) -> ViewableImpressionVisibilityMetrics? {
+        guard view.window != nil,
+              !view.isHidden,
+              view.alpha > 0.01,
+              view.bounds.width > 0,
+              view.bounds.height > 0 else {
+            return nil
+        }
+
+        let viewport = viewportView?.bounds ?? UIScreen.screenableFromScene.bounds
+        let insetViewport = viewport.inset(by: viewportInsets)
+        guard insetViewport.width > 0, insetViewport.height > 0 else { return nil }
+
+        let rectInViewport = view.convert(view.bounds, to: viewportView)
+        let intersection = rectInViewport.intersection(insetViewport)
+        guard !intersection.isNull else { return nil }
+
+        let area = rectInViewport.width * rectInViewport.height
+        guard area > 0 else { return nil }
+
+        let visibility = (intersection.width * intersection.height) / area
+        return ViewableImpressionVisibilityMetrics(
+            visibility: Double(visibility),
+            intersection: intersection,
+            timestamp: Date()
+        )
+    }
+
+    private func executeOnMain(_ work: @escaping () -> Void) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.sync(execute: work)
+            return
+        }
+        work()
+    }
+
+    private func performBarrier(_ work: () -> Void) {
+        synchronizationQueue.sync(flags: .barrier, execute: work)
+    }
+
+    private func refreshStateInternal(viewportView: UIView?,
+                                      viewportInsets: UIEdgeInsets) -> ViewableImpressionRefreshResult {
+        guard isEnabled else { return .empty }
+
+        var result = ViewableImpressionRefreshResult.empty
+        executeOnMain {
+            let effectiveViewportView = viewportView ?? self.viewportContextView
+            let now = Date()
+            var qualifiedItems: [ViewableImpressionQualifiedItemData] = []
+            var itemsToRemove: [String] = []
+            var nextRefreshDelay: TimeInterval?
+
+            let snapshot = self.manualItemsByIdentifier
+            for (itemId, trackedItem) in snapshot {
+                guard let view = trackedItem.view else {
+                    itemsToRemove.append(itemId)
+                    continue
+                }
+
+                let visibility: Double? = if !view.isValidForTracking {
+                    nil
+                } else if let metrics = self.visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) {
+                    metrics.visibility
+                } else {
+                    nil
+                }
+
+                let state = ViewableImpressionStateAdapter(
+                    item: trackedItem.item,
+                    itemPosition: trackedItem.itemPosition,
+                    screenName: trackedItem.view?.findViewController().map { String(describing: type(of: $0)) },
+                    getIsVisible: { trackedItem.isVisible },
+                    setIsVisible: { trackedItem.isVisible = $0 },
+                    getFirstVisibleTime: { trackedItem.firstVisibleTime },
+                    setFirstVisibleTime: { trackedItem.firstVisibleTime = $0 },
+                    getHasTriggered: { trackedItem.hasTriggeredViewableImpression },
+                    setHasTriggered: { trackedItem.hasTriggeredViewableImpression = $0 },
+                    getVisibilityPercentage: { trackedItem.visibilityPercentage },
+                    setVisibilityPercentage: { trackedItem.visibilityPercentage = $0 }
+                )
+                let result = ViewableImpressionTrackStateProcessor.process(
+                    item: state,
+                    visibility: visibility,
+                    now: now,
+                    minimumVisibility: self.minimumVisibilityPercentage,
+                    minimumDwell: self.minimumDwellTime
+                )
+
+                if let qualified = result.qualified {
+                    qualifiedItems.append(qualified)
+                } else if let remaining = result.remaining, remaining > 0 {
+                    nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
+                }
+            }
+
+            if !itemsToRemove.isEmpty {
+                self.synchronizationQueue.sync(flags: .barrier) {
+                    itemsToRemove.forEach { self.manualItemsStorage.removeValue(forKey: $0) }
+                }
+            }
+
+            let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)? = nextRefreshDelay == nil ? nil : { [weak self] in
+                guard let self = self else { return .empty }
+                return self.refreshStateInternal(
+                    viewportView: viewportView,
+                    viewportInsets: viewportInsets
+                )
+            }
+
+            let eventTimestamp = NSNumber(value: Date().toRatTimestamp)
+            let eventData = ViewableImpressionEventEmitter.buildItemPayloads(
+                items: qualifiedItems,
+                eventTimestamp: eventTimestamp
+            )
+            let eventParameters = ViewableImpressionEventEmitter.buildEventParameters(
+                viewableData: eventData
+            )
+
+            result = ViewableImpressionRefreshResult(
+                eventData: eventData,
+                refreshAfterDelay: nextRefreshDelay,
+                refreshAfterDwell: refreshAfterDwell,
+                eventParameters: eventParameters
+            )
+        }
+
+        return result
+    }
+
+}

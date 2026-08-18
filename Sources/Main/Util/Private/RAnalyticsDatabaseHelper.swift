@@ -52,8 +52,7 @@ extension RAnalyticsDatabase {
         var connection: OpaquePointer?
         let databaseFileURL = FileManager.default.databaseFileURL(databaseName: databaseName, databaseParentDirectory: databaseParentDirectory)
 
-        guard let databasePath = databaseFileURL,
-              sqlite3_open(databasePath.path, &connection) == SQLITE_OK else {
+        guard let databasePath = databaseFileURL, sqlite3_open_v2(databasePath.path, &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.databaseErrorDomain,
                                              code: ErrorCode.databaseTableCreationFailure.rawValue,
                                              description: ErrorDescription.databaseError,
@@ -62,13 +61,16 @@ extension RAnalyticsDatabase {
             return mkAnalyticsInMemoryDBConnection()
         }
 
+        // Reduce flakiness under concurrent access (tests and SDK background work).
+        sqlite3_busy_timeout(connection, 5_000)
         return connection
     }
 
     private static func mkAnalyticsInMemoryDBConnection() -> OpaquePointer? {
         var connection: OpaquePointer?
-        sqlite3_open("file::memory:?cache=shared", &connection)
+        sqlite3_open_v2("file::memory:?cache=shared", &connection, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_URI | SQLITE_OPEN_FULLMUTEX, nil)
 
+        sqlite3_busy_timeout(connection, 5_000)
         return connection
     }
 }

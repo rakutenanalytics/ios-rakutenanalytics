@@ -36,7 +36,7 @@ class Reachability: ReachabilityType {
     private let monitor: NWPathMonitor
     private let monitorQueue = DispatchQueue(label: "ReachabilityQueue", qos: .default)
     private let notificationQueue = DispatchQueue.main
-    
+
     private let flagsQueue = DispatchQueue(label: "ReachabilityFlagsQueue", qos: .default)
     private var _flags: SCNetworkReachabilityFlags?
     private(set) var flags: SCNetworkReachabilityFlags? {
@@ -110,7 +110,7 @@ class Reachability: ReachabilityType {
             self.observers.forEach { $0.value?.reachabilityChanged(self) }
         }
     }
-    
+
     #if DEBUG
     /// Test-only setter for `flags`
     func setFlagsForTesting(_ newFlags: SCNetworkReachabilityFlags) {
@@ -121,7 +121,7 @@ class Reachability: ReachabilityType {
 }
 
 extension SCNetworkReachabilityFlags {
-    
+
     var reachabilityStatus: RATReachabilityStatus {
         if !contains(.reachable) || contains(.connectionRequired) {
             return .offline

@@ -1,10 +1,13 @@
 import Foundation
+import UIKit
 import CoreLocation
+#if os(iOS)
 import WebKit
 import AdSupport
 import CoreTelephony
+#endif
 
-protocol SimpleDependenciesContainable {
+protocol SimpleDependenciesContainable: AnalyticsHostBundleProviding {
     var notificationHandler: NotificationObservable { get }
     var userStorageHandler: UserStorageHandleable { get }
     var sharedUserStorageHandlerType: UserStorageHandleable.Type { get }
@@ -35,16 +38,24 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let notificationHandler: NotificationObservable = NotificationCenter.default
     let userStorageHandler: UserStorageHandleable = UserDefaults.standard
     let sharedUserStorageHandlerType: UserStorageHandleable.Type = UserDefaults.self
+    #if os(iOS)
     let adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
+    #elseif os(tvOS)
+    let adIdentifierManager: AdvertisementIdentifiable = NoOpAdvertisementIdentifierManager()
+    #endif
     let httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
-    let locationManager: LocationManageable = CLLocationManager()
+    let locationManager: LocationManageable = LocationManagerFactory.makeDefault()
     let bundle: EnvironmentBundle = Bundle.main
     let keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
+    #if os(iOS)
     let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
+    #elseif os(tvOS)
+    let telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = NoOpTelephonyNetworkInfo()
+    #endif
     let deviceCapability: DeviceCapability = UIDevice.current
-    let screenHandler: Screenable = UIScreen.main
+    let screenHandler: Screenable = UIScreen.screenableFromScene
     let session: SwiftySessionable = URLSession.shared
-    let analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
+    let analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = RAnalyticsApplicationOrientationProvider()
     let databaseConfiguration: DatabaseConfigurable? = {
         DatabaseConfigurationHandler.create(databaseName: RATTrackerConstants.databaseName,
                                             tableName: RATTrackerConstants.tableName,
@@ -54,7 +65,11 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
     let automaticFieldsBuilder: AutomaticFieldsBuildable
     let applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
+    #if os(iOS)
     lazy var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
+    #elseif os(tvOS)
+    lazy var wkHttpCookieStore: WKHTTPCookieStorable = NoOpWKHTTPCookieStore()
+    #endif
 
     init() {
         let appGroupId = bundle.appGroupId

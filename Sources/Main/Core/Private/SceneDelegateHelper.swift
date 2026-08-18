@@ -1,22 +1,33 @@
 import Foundation
 import UIKit
 
-@available(iOS 13.0, *)
 enum SceneDelegateHelper {
 
-    /// Autotrack the UISceneDelegate functions.
+    /// Autotrack the UISceneDelegate functions declared in the host app's Info.plist.
     static func autoTrack(bundle: EnvironmentBundle = Bundle.main) {
         guard let applicationSceneManifest = bundle.applicationSceneManifest else {
-            RLogger.debug(message: "The app's Info.plist is not configured with UIApplicationSceneManifest.")
+            RLogger.error(message: "UIApplicationSceneManifest is missing from Info.plist — referral, deeplink, and geo launch auto-tracking are disabled. " +
+                "Adopt the UIKit scene lifecycle and add UIApplicationSceneManifest to Info.plist. See the v12 migration guide.")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsManagerErrorDomain,
+                                             code: ErrorCode.sceneDelegateManifestMissing.rawValue,
+                                             description: ErrorDescription.sceneDelegateManifestMissing,
+                                             reason: ErrorReason.sceneDelegateManifestMissing))
             return
         }
 
-        guard let sceneDelegateClassName = applicationSceneManifest.firstSceneDelegateClassName else {
-            RLogger.debug(message: "UISceneDelegateClassName could not be retrieved.")
+        let classNames = applicationSceneManifest.allSceneDelegateClassNames
+        guard !classNames.isEmpty else {
+            RLogger.debug(message: "No UISceneDelegateClassName entries found in scene configurations.")
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsManagerErrorDomain,
+                                             code: ErrorCode.sceneDelegateClassNameMissing.rawValue,
+                                             description: ErrorDescription.sceneDelegateClassNameMissing,
+                                             reason: ErrorReason.sceneDelegateClassNameMissing))
             return
         }
 
-        UIWindowScene.rAutotrackSceneDelegateFunctions(sceneDelegateClassName)
-        RLogger.debug(message: "\(sceneDelegateClassName) is autotracked.")
+        for className in classNames {
+            UIWindowScene.rAutotrackSceneDelegateFunctions(className)
+            RLogger.debug(message: "\(className) is autotracked.")
+        }
     }
 }

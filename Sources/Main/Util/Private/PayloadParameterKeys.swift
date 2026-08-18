@@ -8,6 +8,10 @@ enum PayloadParameterKeys {
     /// The RAT application identifier.
     static let aid = "aid"
 
+    /// The SDK source parameter indicating which Analytics SDK is used.
+    /// Values: "main" (Analytics SDK), "ext" (Analytics SDK Extensions), "wrapper" (Analytics SDK Wrapper).
+    static let sdkSource = "sdk_source"
+
     /// The RAT event type.
     static let etype = "etype"
 
@@ -18,10 +22,10 @@ enum PayloadParameterKeys {
     /// - Note: current `UIViewController` Class Name
     static let pgn = "pgn"
 
-    /// The previous page name.
-    /// - Note: previous `UIViewController` Class Name
+    /// The previous page name or reference that lead to the current page.
+    /// - Note: previous `UIViewController` Class Name or URI link used to open the page.
     static let ref = "ref"
-    
+
     /// The page section the event originated from.
     static let pageSection = "pgs"
 
@@ -86,9 +90,9 @@ enum PayloadParameterKeys {
         static let model = "model"
 
         /// The screen resolution.
-        /// - Note: returned by `UIScreen.main.bounds.size`
+        /// - Note: bounds from ``UIScreen/screenableFromScene`` (normally the active ``UIWindowScene``’s screen), resolved when the payload is built; `0×0` if no scene is available yet
         static let res = "res"
-        
+
         /// The device permissions
         /// - Note: returned by `AnalyticsDevicePermissionCollector`
         static let devicePer = "device_per"
@@ -190,6 +194,10 @@ enum PayloadParameterKeys {
         /// The application user agent.
         /// - Note: the format is `bundleIdentifier/currentVersion`
         static let ua = "ua"
+
+        /// The enriched application user agent.
+        /// - Note: the format is `<application_name>/<application_version> (<operating_system_info>; <device_info>; <device_type>; <language>; Analytics/<sdk_version>)`
+        static let uaEnriched = "ua_enriched"
     }
 
     enum Time {
@@ -255,17 +263,6 @@ enum CpParameterKeys {
         /// The web view absolute url.
         /// - Note: returned by `WKWebView.url.absoluteURL.absoluteString`
         static let url = "url"
-    }
-
-    enum Push {
-        /// The push notification tracking identifier.
-        static let pushNotifyValue = "push_notify_value"
-
-        /// The push notification request identifier.
-        static let pushRequestIdentifier = "push_request_id"
-
-        /// The push conversion action.
-        static let pushConversionAction = "push_cv_action"
     }
 
     enum PNP {

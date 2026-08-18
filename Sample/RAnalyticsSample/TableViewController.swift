@@ -20,8 +20,13 @@ enum GlobalConstants {
     static let requestGeoLocation = "Request Geo Location"
     static let showEmptyPage = "Show empty page (for pv event tests)"
     static let emptyPageTitle = "Empty page"
+    static let viewableImpressions = "Viewable Impressions"
     static let urlSchemeLocator = "appToAppTracking_button_urlScheme"
     static let universalLinkLocator = "appToAppTracking_button_universalLink"
+    static let inboundURLScheme = "Open Inbound URL Scheme (self)"
+    static let showLastDeepLink = "Show Last Received Deep Link"
+    static let inboundURLSchemeLocator = "deepLinkQA_button_inboundURLScheme"
+    static let showLastDeepLinkLocator = "deepLinkQA_button_showLastDeepLink"
 }
 
 enum TableViewCellType: Int, CaseIterable {
@@ -35,11 +40,14 @@ enum TableViewCellType: Int, CaseIterable {
          universalLink,
          universalLinkPathComponent,
          universalLinkRef,
+         inboundURLScheme,
+         showLastDeepLink,
          enableAppUserAgent,
          showWebViewUserAgent,
          requestGeoLocation,
          startLocationCollection,
-         showEmptyPage
+         showEmptyPage,
+         viewableImpressions
 
     var cellIdentifier: String {
         switch self {
@@ -47,7 +55,9 @@ enum TableViewCellType: Int, CaseIterable {
             return "SwitchTableViewCell"
         case .accountID, .appID, .urlSchemePathComponent, .universalLinkPathComponent, .urlSchemeRef, .universalLinkRef:
             return "TextFieldTableViewCell"
-        case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation, .showEmptyPage:
+        case .urlScheme, .universalLink, .showWebViewUserAgent, .requestGeoLocation, .showEmptyPage, .inboundURLScheme, .showLastDeepLink:
+            return "BaseTableViewCell"
+        case .viewableImpressions:
             return "BaseTableViewCell"
         }
     }
@@ -84,6 +94,12 @@ enum TableViewCellType: Int, CaseIterable {
             return GlobalConstants.startLocationCollection
         case .showEmptyPage:
             return GlobalConstants.showEmptyPage
+        case .inboundURLScheme:
+            return GlobalConstants.inboundURLScheme
+        case .showLastDeepLink:
+            return GlobalConstants.showLastDeepLink
+        case .viewableImpressions:
+            return GlobalConstants.viewableImpressions
         }
     }
 }
@@ -166,19 +182,19 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         }
         
         if let urlSchemePathComponent = dict[GlobalConstants.kRATUrlSchemePathComponent] as? String {
-            self.urlSchemePathComponent = urlSchemePathComponent
+            self.urlSchemePathComponent = urlSchemePathComponent.isEmpty ? nil : urlSchemePathComponent
         }
-        
+
         if let urlSchemeRef = dict[GlobalConstants.kRATUrlSchemeRef] as? String {
-            self.urlSchemeRef = urlSchemeRef
+            self.urlSchemeRef = urlSchemeRef.isEmpty ? nil : urlSchemeRef
         }
-        
+
         if let universalLinkPathComponent = dict[GlobalConstants.kRATUniversalLinkPathComponent] as? String {
-            self.universalLinkPathComponent = universalLinkPathComponent
+            self.universalLinkPathComponent = universalLinkPathComponent.isEmpty ? nil : universalLinkPathComponent
         }
-        
+
         if let universalLinkRef = dict[GlobalConstants.kRATUniversalLinkRef] as? String {
-            self.universalLinkRef = universalLinkRef
+            self.universalLinkRef = universalLinkRef.isEmpty ? nil : universalLinkRef
         }
     }
 
@@ -231,12 +247,46 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             cell.titleLabel.accessibilityIdentifier = GlobalConstants.universalLinkLocator
         }
 
+        if cellType == .inboundURLScheme {
+            cell.contentView.accessibilityIdentifier = GlobalConstants.inboundURLSchemeLocator
+            cell.titleLabel.accessibilityIdentifier = GlobalConstants.inboundURLSchemeLocator
+        }
+
+        if cellType == .showLastDeepLink {
+            cell.contentView.accessibilityIdentifier = GlobalConstants.showLastDeepLinkLocator
+            cell.titleLabel.accessibilityIdentifier = GlobalConstants.showLastDeepLinkLocator
+        }
+
+        if let textCell = cell as? TextFieldTableViewCell {
+            switch cellType {
+            case .accountID:
+                textCell.applyInputText(accountId)
+            case .appID:
+                textCell.applyInputText(applicationId)
+            case .urlSchemePathComponent:
+                textCell.applyInputText(urlSchemePathComponent)
+            case .urlSchemeRef:
+                textCell.applyInputText(urlSchemeRef)
+            case .universalLinkPathComponent:
+                textCell.applyInputText(universalLinkPathComponent)
+            case .universalLinkRef:
+                textCell.applyInputText(universalLinkRef)
+            default:
+                break
+            }
+        }
+
         cell.delegate = self
         cell.title = cellType.title
         return cell
     }
 
     // MARK: - UITableViewDelegate
+
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        view.endEditing(true)
+        return indexPath
+    }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cellType = TableViewCellType(rawValue: indexPath.row) else {
@@ -303,6 +353,28 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         case .showEmptyPage:
             let viewController = UIViewController()
             viewController.title = GlobalConstants.emptyPageTitle
+            navigationController?.pushViewController(viewController, animated: true)
+
+        case .inboundURLScheme:
+            guard let url = DeepLinkManager.makeInboundTestURL(),
+                  UIApplication.shared.canOpenURL(url) else {
+                UIAlertController.show(errorTitle, message: "Could not open inbound URL Scheme", from: self)
+                return
+            }
+            UIApplication.shared.open(url, options: [:])
+
+        case .showLastDeepLink:
+            let message: String
+            if let url = DeepLinkManager.lastReceivedURL,
+               let entryPoint = DeepLinkManager.lastEntryPoint {
+                message = "Entry point: \(entryPoint)\nURL: \(url.absoluteString)"
+            } else {
+                message = "No deep link received yet. Tap \"Open Inbound URL Scheme (self)\" or launch the app from a URL."
+            }
+            UIAlertController.show("Last Received Deep Link", message: message, from: self)
+
+        case .viewableImpressions:
+            let viewController = ViewableImpressionsViewController()
             navigationController?.pushViewController(viewController, animated: true)
 
         default: ()

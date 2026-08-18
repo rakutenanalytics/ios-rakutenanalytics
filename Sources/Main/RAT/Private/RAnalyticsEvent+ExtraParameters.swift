@@ -49,27 +49,6 @@ extension RAnalyticsEvent {
         return extra
     }
 
-    // MARK: - Push
-
-    var pushParameters: [String: Any]? {
-        let trackingIdentifier = parameters[RAnalyticsEvent.Parameter.pushTrackingIdentifier] as? String
-        guard !trackingIdentifier.isEmpty else {
-            return nil
-        }
-
-        var extra = [String: Any]()
-        extra[CpParameterKeys.Push.pushNotifyValue] = trackingIdentifier
-        return extra
-    }
-
-    var pushRequestIdentifier: String? {
-        parameters[RAnalyticsEvent.Parameter.pushRequestIdentifier] as? String
-    }
-
-    var pushConversionAction: String? {
-        parameters[RAnalyticsEvent.Parameter.pushConversionAction] as? String
-    }
-
     // MARK: - Discover
 
     var discoverParameters: [String: Any] {

@@ -1,5 +1,55 @@
 # Changelog
 
+## 12.0.0 (2026-08-18)
+
+⚠️ **Important**: SDK 12.0.0 requires the UIKit scene-based lifecycle (`UIApplicationSceneManifest` + `UISceneDelegate`). AppDelegate-only auto-tracking is removed; on iOS 27, apps without scenes fail to launch. Referral, deeplink, and launch-origin tracking now use `UISceneDelegate` hooks only. See [TN3187](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle).
+
+### Breaking changes
+* CONRAT-44240: Drop AppDelegate-only auto-tracking support. Host apps must adopt the UIKit scene-based lifecycle with `UIApplicationSceneManifest` and a `UISceneDelegate`. Referral, deeplink, and launch-origin tracking now rely exclusively on `UIWindowScene` hooks.
+* CONRAT-44390: Remove CocoaPods support for `RakutenAnalytics`. Drop `RAnalyticsBroadcast` and its unit tests; Swift Package Manager is the only supported integration path.
+
+### Features
+* CONRAT-44019: Add tvOS 15.0 support for Swift Package Manager and CocoaPods.
+* CONRAT-44019: Add `TvOSSample` app for Apple TV integration validation.
+* CONRAT-41923: Add sdk_source parameter for SDK usage tracking.
+* CONRAT-42909: Add manual viewable impressions tracking for UIKit and SwiftUI.
+* CONRAT-43035: Add external universal link referral handling to capture those as `pv` events with the link under the `ref` parameter.
+
+### Improvements
+* CONRAT-44019: Gate iOS-only capabilities on tvOS (WebKit, IDFA, geo, telephony, push, battery metrics).
+* CONRAT-43634: Resolve screen bounds via UIWindowScene instead of deprecated UIScreen.main.
+* CONRAT-44244: Defer `_rem_launch` on foreground resume until UIKit state restoration completes, using `UIScene.extendStateRestoration` / `completeStateRestoration` coordination.
+* CONRAT-43292: Remove AnalyticsManager dependency from RAnalyticsRATTracker; Make UNUserNotificationCenter.installAutoTrackingHooks idempotent.
+* CONRAT-43229: Remove redundant availability checks.
+* CONRAT-42439: Migrate unit tests from Quick/Nimble to Testing framework.
+* CONRAT-42855: Update deprecated URLSession initializer for unit test mock objects.
+* CONRAT-43326: Re-enable SwiftLint.
+* CONRAT-43324: Remove NSObject.ratTracker from AnalyticsManager and use RAnalyticsRATTracker shared instance instead.
+* CONRAT-43283: Remove AnalyticsManager dependency from RAnalyticsDatabase.
+* CONRAT-43293: Remove AnalyticsManager dependency from RAnalyticsSender.
+* CONRAT-43568: Remove unused internal code and redundant availability wiring (unused reachability definitions, telephony protocol cleanup, dead push RAT helpers and internal payload key enums).
+* CONRAT-44240: Migrate SDK auto-tracking to SceneDelegate-only lifecycle; surface missing scene manifest configuration via `errorHandler` and unconditional error-level logs so misconfigured apps are discoverable without an error handler set.
+* CONRAT-44240: Improve SceneDelegate auto-tracking parity - idempotent swizzling, multi-delegate plist support, centralized incoming URL handling, class-name resolution fallback, third-party swizzler compatibility tests, and sample app deep-link QA flow.
+* CONRAT-44241: Harden SceneDelegate auto-tracking - unified swizzle idempotency, single `AnalyticsManager.shared()` on cold launch, and test reset for `GeoLaunchConfigurator`.
+* CONRAT-44640: Improve Sample app URL scheme QA - show inbound `ref`, path, and full URL on `RakutenAnalyticsSampleDest`; fix `RakutenAnalyticsSample` text fields to apply values without requiring the keyboard Return key.
+
+### Bug fixes
+* CONRAT-44243: Fix `device_per` main-thread deadlock on `_rem_end_session`: replace synchronous notification permission lookup with a cached async value so session-end payload construction no longer blocks the main thread on iOS 27.
+* CONRAT-44660: Fix `mori` reporting portrait after relaunch in landscape: resolve orientation from the active window scene at payload build time, resolve `UIApplication` lazily when the SDK initializes early, and defer cold-launch automatic events until the app becomes active.
+* CONRAT-44701: Fix `res` permanently reporting `0x0` when the SDK initializes before a window scene exists: resolve screen bounds lazily at payload build time on iOS and tvOS.
+
+### Build fixes
+* CONRAT-43264: fix the Swift Package Test Target.
+
+### Templates
+* CONRAT-43329: Update Github PR Template so CONTRIBUTING.md line no longer appears.
+
+### Build configuration
+* CONRAT-43335: Add SwiftLint to Github Actions.
+
+### Documentation
+* CONRAT-44211: Fix the broken links in README.md.
+
 ## 11.0.0 (2025-11-25)
 
 ⚠️ **Important**: The minimum supported version is now iOS 15.0.
@@ -7,7 +57,8 @@
 ### Features
 * CONRAT-38785: Add manual initialization of the SDK.
 * CONRAT-41112: Add primary and secondary carrier public API.
-* CONRAT-40899: Add support for the page section parameter (pgs)
+* CONRAT-40899: Add support for the page section parameter (pgs).
+* CONRAT-41034: Add enriched user agent parameter to events (ua_enriched).
 
 ### Improvements
 * CONRAT-36390: Setup iOS 15.0 as minimum supported version, fix deprecation warnings, update dependencies, remove unused and refacor deprecated code.

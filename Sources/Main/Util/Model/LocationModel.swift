@@ -3,11 +3,7 @@ import CoreLocation
 
 extension CLLocation {
     var safeCourseAccuracy: CLLocationDirectionAccuracy {
-        var value: CLLocationDirectionAccuracy = 0.0
-        if #available(iOS 13.4, *) {
-            value = courseAccuracy
-        }
-        return value
+        courseAccuracy
     }
 }
 
@@ -88,17 +84,17 @@ public struct LocationModel {
 extension LocationModel: Hashable {
     public static func == (lhs: LocationModel, rhs: LocationModel) -> Bool {
         lhs.latitude == rhs.latitude
-        && lhs.longitude == rhs.longitude
-        && lhs.horizontalAccuracy == rhs.horizontalAccuracy
-        && lhs.speed == rhs.speed
-        && lhs.speedAccuracy == rhs.speedAccuracy
-        && lhs.verticalAccuracy == rhs.verticalAccuracy
-        && lhs.altitude == rhs.altitude
-        && lhs.course == rhs.course
-        && lhs.courseAccuracy == rhs.courseAccuracy
-        && lhs.timestamp == rhs.timestamp
-        && lhs.isAction == rhs.isAction
-        && lhs.actionParameters == rhs.actionParameters
+            && lhs.longitude == rhs.longitude
+            && lhs.horizontalAccuracy == rhs.horizontalAccuracy
+            && lhs.speed == rhs.speed
+            && lhs.speedAccuracy == rhs.speedAccuracy
+            && lhs.verticalAccuracy == rhs.verticalAccuracy
+            && lhs.altitude == rhs.altitude
+            && lhs.course == rhs.course
+            && lhs.courseAccuracy == rhs.courseAccuracy
+            && lhs.timestamp == rhs.timestamp
+            && lhs.isAction == rhs.isAction
+            && lhs.actionParameters == rhs.actionParameters
     }
 
     public func hash(into hasher: inout Hasher) {

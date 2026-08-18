@@ -8,6 +8,7 @@ internal enum AppGroupUserDefaultsKeys {
 
 protocol EnvironmentBundle: Bundleable {
     var languageCode: Any? { get }
+    var preferredLocalization: String? { get }
     var bundleIdentifier: String? { get }
     var useDefaultSharedCookieStorage: Bool { get }
     var endpointAddress: URL? { get }
@@ -21,6 +22,7 @@ protocol EnvironmentBundle: Bundleable {
     var version: String? { get }
     var applicationSceneManifest: ApplicationSceneManifest? { get }
     var isWebViewAppUserAgentEnabledAtBuildtime: Bool { get }
+    var isManualInitializationEnabled: Bool { get }
     var databaseParentDirectory: FileManager.SearchPathDirectory { get }
     var backgroundLocationUpdates: Bool { get }
 }
@@ -39,6 +41,10 @@ extension Bundle: EnvironmentBundle {
             return localeLanguageCode
         }
         return nil
+    }
+
+    var preferredLocalization: String? {
+        return preferredLocalizations.first
     }
 
     var useDefaultSharedCookieStorage: Bool {
@@ -175,7 +181,7 @@ extension Bundle: EnvironmentBundle {
 
     var backgroundLocationUpdates: Bool {
         guard let backgroundModes = object(forInfoDictionaryKey: "UIBackgroundModes") as? [String],
-                backgroundModes.contains("location") else {
+              backgroundModes.contains("location") else {
             return false
         }
         return true

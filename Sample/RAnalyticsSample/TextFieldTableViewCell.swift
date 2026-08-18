@@ -1,36 +1,53 @@
 import UIKit
 
-class TextFieldTableViewCell: BaseTableViewCell {
+class TextFieldTableViewCell: BaseTableViewCell, UITextFieldDelegate {
     @IBOutlet weak var textField: UITextField!
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        textField.delegate = self
+        textField.addTarget(self, action: #selector(commitValue), for: .editingChanged)
+    }
 
     override func update(title: String?) {
         super.update(title: title)
-        if title == GlobalConstants.kRATAccountID {
-            if let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int {
-                self.textField.text = String(accountId)
+        guard let title = title else { return }
+
+        switch title {
+        case GlobalConstants.kRATAccountID:
+            textField.placeholder = "123"
+            if textField.text?.isEmpty != false,
+               let accountId = Bundle.main.infoDictionary?["RATAccountIdentifier"] as? Int {
+                textField.text = String(accountId)
             }
-        } else if title == GlobalConstants.kRATAppID {
-            if let appId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int {
-                self.textField.text = String(appId)
+        case GlobalConstants.kRATAppID:
+            textField.placeholder = "456"
+            if textField.text?.isEmpty != false,
+               let appId = Bundle.main.infoDictionary?["RATAppIdentifier"] as? Int {
+                textField.text = String(appId)
             }
-        } else if title == GlobalConstants.kRATUrlSchemePathComponent {
-            self.textField.text = nil
-            self.textField.placeholder = "/path"
-        } else if title == GlobalConstants.kRATUniversalLinkPathComponent {
-            self.textField.text = nil
-            self.textField.placeholder = "/path"
-        } else if title == GlobalConstants.kRATUrlSchemeRef {
-            self.textField.text = nil
-            self.textField.placeholder = "ref"
-        } else if title == GlobalConstants.kRATUniversalLinkRef {
-            self.textField.text = nil
-            self.textField.placeholder = "ref"
+        case GlobalConstants.kRATUrlSchemePathComponent, GlobalConstants.kRATUniversalLinkPathComponent:
+            textField.placeholder = "/path"
+        case GlobalConstants.kRATUrlSchemeRef, GlobalConstants.kRATUniversalLinkRef:
+            textField.placeholder = "ref"
+        default:
+            break
         }
     }
 
+    func applyInputText(_ text: String?) {
+        textField.text = text
+    }
+
     @IBAction func valueChanged(_ sender: Any) {
-        if let value = self.textField.text {
-            self.update(value)
-        }
+        commitValue()
+    }
+
+    @objc func commitValue() {
+        update(textField.text ?? "")
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        commitValue()
     }
 }

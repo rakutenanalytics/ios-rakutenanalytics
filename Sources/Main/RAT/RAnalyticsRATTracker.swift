@@ -5,13 +5,29 @@ import UIKit
 public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: String, _ duplicateAccId: Int64) -> Bool
 // swiftlint:enable type_name
 
+// MARK: - RATConfigurable
+
+/// A tracker that can be marked as configured by the analytics manager.
+protocol RATConfigurable: AnyObject {
+    /// Marks the tracker as configured and ready to process events.
+    func markAsConfigured()
+}
+
 /// Concrete implementation of @ref RAnalyticsTracker that sends events to RAT.
 ///
 /// - Attention: Application developers **MUST** configure the instance by setting
 /// the `RATAccountIdentifier` and `RATAppIdentifier` keys in their app's Info.plist.
 ///
 /// - Warning: The app **CRASHES** in DEBUG mode when `RATAccountIdentifier`key is not set in their app's Info.plist.
-@objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker {
+@objc(RAnalyticsRATTracker) public final class RAnalyticsRATTracker: NSObject, Tracker, RATConfigurable {
+    /// Indicates whether the tracker has been configured and is ready to process events.
+    /// Set to `true` when the tracker is added during the analytics manager's configuration.
+    var isRATConfigured: Bool = false
+
+    func markAsConfigured() {
+        isRATConfigured = true
+    }
+
     enum Constants {
         static let ratEventPrefix      = "rat."
         static let ratGenericEventName = "rat.generic"
@@ -72,8 +88,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
 
     /// Enable or disable events from being duplicated at runtime.
     ///
-    /// For example, to disable `AnalyticsManager.Event.Name.sessionStart`:
-    /// `RAnalyticsRATTracker.shared().shouldDuplicateRATEventHandler = { eventName, acc in eventName != AnalyticsManager.Event.Name.sessionStart }`
+    /// For example, to disable `RAnalyticsEvent.Name.sessionStart`:
+    /// `RAnalyticsRATTracker.shared().shouldDuplicateRATEventHandler = { eventName, acc in eventName != RAnalyticsEvent.Name.sessionStart }`
     ///
     /// Note that it is also possible to prevent duplicate events at build time in the `RAnalyticsConfiguration.plist` file:
     /// 1) First create a `RAnalyticsConfiguration.plist` file and add it to your Xcode project.
@@ -135,15 +151,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
-        if Bundle.main.isManualInitializationEnabled {
-            guard AnalyticsManager.isConfigured else {
-                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
-                return singleton
-            }
-            return singleton
-        } else {
-            return singleton
-        }
+        singleton
     }
 
     /// Creates a new instance of `RAnalyticsRATTracker`.
@@ -162,7 +170,8 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
         self.sender = RAnalyticsSender(databaseConfiguration: dependenciesContainer.databaseConfiguration,
                                        bundle: bundleContainer,
                                        session: dependenciesContainer.session,
-                                       userStorageHandler: dependenciesContainer.userStorageHandler)
+                                       userStorageHandler: dependenciesContainer.userStorageHandler,
+                                       allowsAnalyticsSend: dependenciesContainer.makeAnalyticsSendPredicate())
         self.sender?.setBatchingDelayBlock(Constants.ratBatchingDelay)
 
         // Attempt to read the IDs from the app's plist
@@ -216,7 +225,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
             return
         }
     }
-    
+
     /// Update carrier names in the RAnalyticsRATTracker's AutomaticFieldsBuilder
     /// - Parameters:
     ///   - mcn: The primary carrier name
@@ -224,7 +233,7 @@ public typealias RAnalyticsRATShouldDuplicateEventCompletion = (_ eventName: Str
     internal func updateCarrierNames(mcn: String?, mcnd: String?) {
         automaticFieldsBuilder.updateCarrierNames(mcn: mcn, mcnd: mcnd)
     }
-    
+
     /// Get current carrier names from the RAnalyticsRATTracker's AutomaticFieldsBuilder
     /// - Returns: Tuple containing primary and secondary carrier names
     internal func getCarrierNames() -> (primary: String?, secondary: String?) {
@@ -242,12 +251,19 @@ extension RAnalyticsRATTracker {
     ///    - state: the state associated to the event
     ///
     /// - Returns:
+    ///    - `false` when manual initialization is enabled and the tracker has not been configured
     ///    - `false` when `RATAccountIdentifier` or `RATApplicationIdentifier` is not set in the app's Info.plist
     ///    - `false` when the payload build fails
     ///    - `false` when the sender is nil (`RATEndpoint` is not set in the app's Info.plist)
     ///    - `true` otherwise
     @discardableResult
     @objc(processEvent:state:) public func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
+        if bundle.isManualInitializationEnabled && !isRATConfigured {
+            RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance " +
+                "of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+            return false
+        }
+
         guard accountIdentifier != 0 && applicationIdentifier != 0 else {
             RLogger.error(message: ErrorReason.ratIdentifiersAreNotSet)
 
@@ -336,6 +352,7 @@ extension RAnalyticsRATTracker {
             payload[PayloadParameterKeys.cp] = extra
         }
 
+        automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
         automaticFieldsBuilder.addCommonParameters(payload, state: state)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,
@@ -438,9 +455,9 @@ extension RAnalyticsRATTracker {
         // MARK: _rem_push_notify_external, _rem_push_received_external
         // MARK: _rem_push_auto_register_external, _rem_push_auto_unregister_external
         case RAnalyticsEvent.Name.pushNotificationExternal,
-            RAnalyticsEvent.Name.pushNotificationReceivedExternal,
-            RAnalyticsEvent.Name.pushAutoRegistrationExternal,
-            RAnalyticsEvent.Name.pushAutoUnregistrationExternal:
+             RAnalyticsEvent.Name.pushNotificationReceivedExternal,
+             RAnalyticsEvent.Name.pushAutoRegistrationExternal,
+             RAnalyticsEvent.Name.pushAutoUnregistrationExternal:
             if let etype = payload[PayloadParameterKeys.etype] as? String {
                 payload[PayloadParameterKeys.etype] = etype.remove(suffix: "_external")
             }
@@ -485,8 +502,31 @@ extension RAnalyticsRATTracker {
                 extra.addEntries(from: parameters)
             }
 
+            if let viewableData = event.parameters[RAnalyticsEvent.Parameter.viewableData] {
+                switch viewableData {
+                case let dictionary as [AnyHashable: Any] where !dictionary.isEmpty:
+                    extra.addEntries(from: dictionary)
+
+                case let array as [Any] where !array.isEmpty:
+                    extra[RAnalyticsEvent.Parameter.viewableData] = array
+
+                default: ()
+                }
+            }
+
             if let customAccNumber = event.parameters[RAnalyticsEvent.Parameter.customAccNumber] as? NSNumber {
                 payload[PayloadParameterKeys.acc] = customAccNumber.positiveIntegerNumber
+            }
+
+        // MARK: External Refferal Event
+        case RAnalyticsEvent.Name.externalReferrer:
+            switch state.referralTracking {
+            case .externalReferral(let referralURL):
+                payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
+                payload[PayloadParameterKeys.ref] = referralURL.absoluteString
+                extra[CpParameterKeys.Ref.type] = RAnalyticsOrigin.external.toString
+            default:
+                return false
             }
 
         // MARK: rat.＊
@@ -504,7 +544,7 @@ extension RAnalyticsRATTracker {
         default:
             return false
         }
-        
+
         if let pgidValue = event.parameters["pgid"] as? String {
             if validatePgidFormat(pgidValue, deviceIdentifier: state.deviceIdentifier) {
                 payload["pgid"] = pgidValue
@@ -512,7 +552,7 @@ extension RAnalyticsRATTracker {
                 payload.removeObject(forKey: "pgid")
             }
         }
-        
+
         if let pageSection = event.parameters[RAnalyticsEvent.Parameter.pageSection] as? String, !pageSection.isEmpty {
             payload[PayloadParameterKeys.pageSection] = pageSection
         } else {
@@ -521,6 +561,7 @@ extension RAnalyticsRATTracker {
 
         return true
     }
+
 }
 
 // MARK: - Page Visit Event
@@ -581,7 +622,7 @@ private extension RAnalyticsRATTracker {
             }
             return false
         }
-        
+
         payload[PayloadParameterKeys.pgn] = pageIdentifier
 
         let lastVisitedPageIdentifier = self.lastVisitedPageIdentifier
@@ -706,7 +747,7 @@ extension RAnalyticsRATTracker {
         let (wasAdded, _) = duplicateAccounts.insert(RATAccount(accountId: accountId, applicationId: applicationId, disabledEvents: nil))
         return wasAdded
     }
-    
+
     /// Validates the format of a pgid parameter.
     ///
     /// - Parameters:
@@ -715,11 +756,11 @@ extension RAnalyticsRATTracker {
     /// - Returns: `true` if the pgid format is valid, `false` otherwise
     private func validatePgidFormat(_ pgid: String, deviceIdentifier: String) -> Bool {
         let components = pgid.components(separatedBy: "_")
-        
+
         guard components.count == 2, components[0] == deviceIdentifier, TimeInterval(components[1]) != nil else {
             return false
         }
-        
+
         return true
     }
 }

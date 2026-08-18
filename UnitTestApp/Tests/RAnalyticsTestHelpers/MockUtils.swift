@@ -160,28 +160,32 @@ public final class SessionMock: Sessionable {
 
 // MARK: - URL Session Task
 
-final class URLSessionTaskMock: URLSessionTaskable {
-    func resume() {}
+public final class URLSessionTaskMock: URLSessionTaskable {
+    public init() {}
+    public func resume() {}
 }
 
 // MARK: - Swifty Session
 
 public final class SwiftyURLSessionMock: NSObject, SwiftySessionable {
-    private let queue = DispatchQueue(label: "com.example.SwityURLSessionMock.queue")
-    public var urlRequest: URLRequest?
-    public var response: URLResponse?
-    public var completion: (() -> Void)?
+    @AtomicGetSet public var urlRequest: URLRequest?
+    @AtomicGetSet public var response: URLResponse?
+    @AtomicGetSet public var completion: (() -> Void)?
 
     public override init() {
         super.init()
     }
 
     public func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
-        queue.sync {
-            self.urlRequest = request
-            completionHandler(.success((nil, response ?? URLResponse())))
-            completion?()
-        }
+        urlRequest = request
+        let responseSnapshot = response
+        let completionSnapshot = completion
+        let fallbackResponse = URLResponse(url: request.url ?? URL(string: "about:blank")!,
+                                           mimeType: nil,
+                                           expectedContentLength: 0,
+                                           textEncodingName: nil)
+        completionHandler(.success((nil, responseSnapshot ?? fallbackResponse)))
+        completionSnapshot?()
         return URLSessionTaskMock()
     }
 }
@@ -320,7 +324,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var bundle: EnvironmentBundle = Bundle.main
     public var telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
     public var deviceCapability: DeviceCapability = UIDevice.current
-    public var screenHandler: Screenable = UIScreen.main
+    public var screenHandler: Screenable = UIScreen.screenableFromScene
     public var session: SwiftySessionable = URLSession.shared
     public var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
     public var databaseConfiguration: DatabaseConfigurable? = {
@@ -359,7 +363,7 @@ public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
     public var bundle: EnvironmentBundle = Bundle.main
     public var telephonyNetworkInfoHandler: TelephonyNetworkInfoHandleable = CTTelephonyNetworkInfo()
     public var deviceCapability: DeviceCapability = UIDevice.current
-    public var screenHandler: Screenable = UIScreen.main
+    public var screenHandler: Screenable = UIScreen.screenableFromScene
     public var session: SwiftySessionable = URLSession.shared
     public var analyticsStatusBarOrientationGetter: StatusBarOrientationGettable? = UIApplication.RAnalyticsSharedApplication
     public var automaticFieldsBuilder: AutomaticFieldsBuildable
@@ -473,7 +477,8 @@ public enum Tracking {
 
 // MARK: - DeviceMock
 
-public final class DeviceMock: NSObject, DeviceCapability {
+#if os(iOS)
+public final class DeviceMock: NSObject, DeviceBatteryCapability {
     public override init() {
         super.init()
     }
@@ -491,6 +496,15 @@ public final class DeviceMock: NSObject, DeviceCapability {
     public func setBatteryMonitoring(_ value: Bool) {
     }
 }
+#else
+public final class DeviceMock: NSObject, DeviceCapability {
+    public override init() {
+        super.init()
+    }
+
+    public var idfvUUID: String?
+}
+#endif
 
 // MARK: - TelephonyNetworkInfoMock
 
@@ -522,8 +536,8 @@ public final class ApplicationMock: NSObject, StatusBarOrientationGettable {
         self.injectedValue = injectedValue
     }
 
-    public var analyticsStatusBarOrientation: UIInterfaceOrientation {
-        injectedValue
+    public var analyticsIsLandscape: Bool {
+        injectedValue.isLandscape
     }
 }
 
@@ -592,6 +606,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var databaseParentDirectory: FileManager.SearchPathDirectory = FileManager.SearchPathDirectory.documentDirectory
     public var backgroundLocationUpdates: Bool = false
     public var languageCode: Any?
+    public var preferredLocalization: String?
     public var accountIdentifier: Int64 = 1
     public var applicationIdentifier: Int64 = 1
     public var disabledEventsAtBuildTime: [String]?
@@ -820,7 +835,6 @@ class MockUserNotificationCenterCollector: UserNotificationCenter {
 
 // MARK: - ATTrackingManagerCollectorMock
 
-@available(iOS 14, *)
 class ATTrackingManagerCollectorMock: ATTrackingManager {
     static var trackingAuthorizationStatusMock: ATTrackingManager.AuthorizationStatus = .notDetermined
 
@@ -848,33 +862,28 @@ class AVCaptureDeviceCollectorMock: AVCaptureDevice {
 
 // MARK: - MockDevicePermissionCollector
 
-class MockDevicePermissionCollector: DevicePermissionCollector {
-    static let shared = MockDevicePermissionCollector()
+public class MockDevicePermissionCollector: DevicePermissionCollector {
+    public static let shared = MockDevicePermissionCollector()
     
     let mockNotificationCenter = MockUserNotificationCenterCollector()
 
-    func collectPermissions() -> String {
+    public func collectPermissions() -> String {
         var permissions = [String]()
         
         permissions.append(collectLocationPermissions())
         permissions.append(collectNotificationPermissions())
-        if #available(iOS 14, *) {
-            permissions.append(collectPrivacyIDPermissions())
-        } else {
-            permissions.append(DevicePermissionType.none.rawValue)
-        }
+        permissions.append(collectPrivacyIDPermissions())
         permissions.append(collectCameraPermissions())
         permissions.append(collectMicrophonePermissions())
         
         return permissions.joined()
     }
     
-    @available(iOS 14, *)
-    func setup(locationAuthStatus: CLAuthorizationStatus,
-               notificationsAuthStatus: UNAuthorizationStatus,
-               trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
-               videoAuthStatus: AVAuthorizationStatus,
-               audioAuthStatus: AVAuthorizationStatus) {
+    public func setup(locationAuthStatus: CLAuthorizationStatus,
+                      notificationsAuthStatus: UNAuthorizationStatus,
+                      trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
+                      videoAuthStatus: AVAuthorizationStatus,
+                      audioAuthStatus: AVAuthorizationStatus) {
         CLLocationManagerCollectorMock.mockAuthorizationStatus = locationAuthStatus
         mockNotificationCenter.settings = MockNotificationSettings(authorizationStatus: notificationsAuthStatus)
         ATTrackingManagerCollectorMock.trackingAuthorizationStatusMock = trackingAuthStatus
@@ -916,7 +925,6 @@ class MockDevicePermissionCollector: DevicePermissionCollector {
         return permission
     }
     
-    @available(iOS 14, *)
     private func collectPrivacyIDPermissions() -> String {
         switch ATTrackingManagerCollectorMock.trackingAuthorizationStatusMock {
         case .denied, .notDetermined, .restricted:

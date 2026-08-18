@@ -30,7 +30,7 @@ extension RStatusBarOrientationHandler: MoriGettable {
             // Note: [UIApplication sharedApplication] is not available for App Extension
             return .portrait // default value
         }
-        return application.analyticsStatusBarOrientation.isLandscape ? .landscape : .portrait
+        return application.analyticsIsLandscape ? .landscape : .portrait
     }
 
     /// Executes a closure on the main thread

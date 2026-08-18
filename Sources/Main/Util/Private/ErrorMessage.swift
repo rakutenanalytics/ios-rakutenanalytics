@@ -61,6 +61,11 @@ enum ErrorCode: Int {
     // Geo Tracker
     case geoTrackerCreationFailed
 
+    // Scene Delegate
+    case sceneDelegateManifestMissing
+    case sceneDelegateClassNameMissing
+    case sceneDelegateClassUnresolved
+
     case senderBackgroundTimerStartDateIsNil
 }
 
@@ -109,6 +114,11 @@ enum ErrorDescription {
 
     // Keychain Handler
     static let keychainHandlerFailed = "The keychain handler failed."
+
+    // Scene Delegate
+    static let sceneDelegateManifestMissing = "The app's Info.plist is not configured with UIApplicationSceneManifest."
+    static let sceneDelegateClassNameMissing = "UISceneDelegateClassName could not be retrieved from UIApplicationSceneManifest."
+    static let sceneDelegateClassUnresolved = "The scene delegate class declared in Info.plist could not be resolved."
 }
 
 enum ErrorReason {
@@ -140,6 +150,14 @@ enum ErrorReason {
     // Bundle
     static let bundleIdentifierIsNil = "The bundle identifier is nil"
     static let ratIdentifiersAreNotSet = "`RATAccountIdentifier` must be set in the app's Info.plist."
+
+    // Scene Delegate
+    static let sceneDelegateManifestMissing = "Add UIApplicationSceneManifest to the host app's Info.plist to enable automatic scene delegate tracking."
+    static let sceneDelegateClassNameMissing = "Set UISceneDelegateClassName in UIApplicationSceneManifest to enable automatic scene delegate tracking."
+
+    static func sceneDelegateClassUnresolved(className: String) -> String {
+        "Could not resolve scene delegate class '\(className)'. Use $(PRODUCT_MODULE_NAME).SceneDelegate in Info.plist."
+    }
 }
 
 enum ErrorConstants {

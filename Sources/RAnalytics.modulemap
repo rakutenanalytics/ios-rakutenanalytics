@@ -11,7 +11,5 @@ framework module RakutenAnalytics {
   link framework "UIKit"
   link framework "CoreGraphics"
   link framework "CoreLocation"
-  link framework "CoreTelephony"
   link framework "SystemConfiguration"
-  link framework "AdSupport"
 }

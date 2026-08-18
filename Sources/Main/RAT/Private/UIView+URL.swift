@@ -1,4 +1,7 @@
 import Foundation
+import UIKit
+
+#if os(iOS)
 import WebKit
 
 extension UIView {
@@ -35,3 +38,9 @@ extension UIView {
         return url
     }
 }
+#else
+extension UIView {
+    /// WebKit page URLs are not collected on tvOS.
+    func getWebViewURL() -> URL? { nil }
+}
+#endif

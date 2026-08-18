@@ -20,7 +20,7 @@ protocol GeoTrackable {
     /// This method starts the location collection.
     ///
     /// Call this method to start the location collection.
-    /// 
+    ///
     /// - Parameter configuration: GeoConfiguration used for location collection.
     ///
     /// - NOTE: On calling this method if a value is not passed in configuration, the default configuration value will be used.
@@ -28,6 +28,8 @@ protocol GeoTrackable {
     /// - NOTE: The timer interval based collection only works when the app is in foreground. The distance based collection will work in all states of the app provided user has granted always access to location services.
     ///
     /// - Warning: This function should be called on the main thread, otherwise starting the location collection is not guaranteed.
+    ///
+    /// - Note: Location collection is not supported on tvOS. Calling this method on tvOS has no effect.
     func startLocationCollection(configuration: GeoConfiguration?)
 
     /// This method stops the location collection.
@@ -45,6 +47,8 @@ protocol GeoTrackable {
     ///     - completionHandler: Executes a block called `GeoRequestLocationBlock`.
     ///
     /// - Warning: This function should be called on the main thread, otherwise requesting the location collection is not guaranteed.
+    ///
+    /// - Note: On tvOS, the completion handler is called immediately with a failure because location services are unavailable.
     func requestLocation(actionParameters: GeoActionParameters?,
                          completionHandler: @escaping GeoRequestLocationBlock)
 
@@ -58,6 +62,16 @@ protocol GeoTrackable {
 // MARK: - GeoManager
 /// The object that you use to start, stop and request the delivery of location-related events to your app.
 public final class GeoManager {
+
+    private enum LocationPlatform {
+        #if os(tvOS)
+        static let unsupportedError: Error = NSError(
+            domain: kCLErrorDomain,
+            code: CLError.denied.rawValue,
+            userInfo: [NSLocalizedDescriptionKey: "Location services are not available on tvOS."]
+        )
+        #endif
+    }
 
     /// Instance of type `GeoLocationManageable`.
     private let geoLocationManager: GeoLocationManageable
@@ -144,6 +158,9 @@ public final class GeoManager {
 extension GeoManager: GeoTrackable {
 
     public func startLocationCollection(configuration: GeoConfiguration? = nil) {
+        #if os(tvOS)
+        RLogger.debug(message: "startLocationCollection(configuration:) is not supported on tvOS.")
+        #else
         if let safeConfiguration = configuration,
            safeConfiguration != getConfiguration() {
             handleConfigurationAndLocationCollection(configuration: safeConfiguration)
@@ -151,6 +168,7 @@ extension GeoManager: GeoTrackable {
                   getConfiguration() != GeoConfiguration() {
             handleConfigurationAndLocationCollection(configuration: GeoConfiguration())
         }
+        #endif
     }
 
     public func stopLocationCollection() {
@@ -160,9 +178,13 @@ extension GeoManager: GeoTrackable {
 
     public func requestLocation(actionParameters: GeoActionParameters? = nil,
                                 completionHandler: @escaping GeoRequestLocationBlock) {
+        #if os(tvOS)
+        completionHandler(.failure(LocationPlatform.unsupportedError))
+        #else
         self.userActionParameters = actionParameters
         self.userActionLocationCallback = completionHandler
         requestLocationUpdate(for: .userAction)
+        #endif
     }
 
     public func getConfiguration() -> GeoConfiguration? {
@@ -187,6 +209,9 @@ extension GeoManager {
     }
 
     func configurePoller() {
+        #if os(tvOS)
+        RLogger.debug(message: "Location collection is not supported on tvOS.")
+        #else
         guard let lastCollectedLocationTms = userStorageHandler.object(forKey: UserDefaultsKeys.locationTimestampKey) as? Date else {
             startPoller(interval: configurationStore.configuration.timeInterval, delay: 0, repeats: true)
             return
@@ -195,6 +220,7 @@ extension GeoManager {
         let timeInterval = configurationStore.configuration.timeInterval
         let delay = elapsedTimeInterval < timeInterval ? (timeInterval - elapsedTimeInterval) : 0
         startPoller(interval: configurationStore.configuration.timeInterval, delay: delay, repeats: false)
+        #endif
     }
 
     private func startPoller(interval: UInt, delay: UInt, repeats: Bool) {
