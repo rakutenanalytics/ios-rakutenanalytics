@@ -581,31 +581,33 @@ private extension RAnalyticsRATTracker {
                                      payload: NSMutableDictionary,
                                      extra: NSMutableDictionary,
                                      currentPage: UIViewController) -> Bool {
-        var pageIdentifier = pageVisitEvent.parameters[RAnalyticsEvent.Parameter.pageId] as? String
-        var pageTitle = currentPage.navigationItem.title ?? currentPage.title
-        let pageURL = currentPage.view?.getWebViewURL()?.absoluteURL
+        MainThreadExecutor.run {
+            var pageIdentifier = pageVisitEvent.parameters[RAnalyticsEvent.Parameter.pageId] as? String
+            var pageTitle = currentPage.navigationItem.title ?? currentPage.title
+            let pageURL = currentPage.view?.getWebViewURL()?.absoluteURL
 
-        pageIdentifier = !pageIdentifier.isEmpty ? pageIdentifier : nil
-        pageTitle = !pageTitle.isEmpty ? pageTitle : nil
+            pageIdentifier = !pageIdentifier.isEmpty ? pageIdentifier : nil
+            pageTitle = !pageTitle.isEmpty ? pageTitle : nil
 
-        if pageIdentifier == nil {
-            if let bundleIdentifier = Bundle(for: type(of: currentPage)).bundleIdentifier,
-               bundleIdentifier.hasPrefix("com.apple.") && pageURL == nil && pageTitle == nil {
-                // Apple class with no title and no URL − should not count as a page visit.
-                pageIdentifier = nil
+            if pageIdentifier == nil {
+                if let bundleIdentifier = Bundle(for: type(of: currentPage)).bundleIdentifier,
+                   bundleIdentifier.hasPrefix("com.apple.") && pageURL == nil && pageTitle == nil {
+                    // Apple class with no title and no URL − should not count as a page visit.
+                    pageIdentifier = nil
 
-            } else {
-                // Custom view controller class with no title.
-                pageIdentifier = NSStringFromClass(type(of: currentPage))
+                } else {
+                    // Custom view controller class with no title.
+                    pageIdentifier = NSStringFromClass(type(of: currentPage))
+                }
             }
-        }
 
-        return updatePayloadForPageVisit(pageIdentifier: pageIdentifier,
-                                         pageTitle: pageTitle,
-                                         pageURL: pageURL,
-                                         state: state,
-                                         payload: payload,
-                                         extra: extra)
+            return updatePayloadForPageVisit(pageIdentifier: pageIdentifier,
+                                             pageTitle: pageTitle,
+                                             pageURL: pageURL,
+                                             state: state,
+                                             payload: payload,
+                                             extra: extra)
+        }
     }
 
     func updatePayloadForPageVisit(pageIdentifier: String?,

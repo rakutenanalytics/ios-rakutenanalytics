@@ -114,6 +114,7 @@
 		CF369AF22DB9F785009E47E6 /* SceneDelegateHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AF12DB9F785009E47E6 /* SceneDelegateHelperTests.swift */; };
 		CF369AF32DB9F786009E47E6 /* IncomingURLsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AF42DB9F786009E47E6 /* IncomingURLsTests.swift */; };
 		CF369AF52DB9F787009E47E6 /* SceneDelegateSwizzlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AF62DB9F787009E47E6 /* SceneDelegateSwizzlingTests.swift */; };
+		CF369B012DC0A001009E47E6 /* SceneDelegateAllowlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369B022DC0A001009E47E6 /* SceneDelegateAllowlistTests.swift */; };
 		CF369AF72DB9F788009E47E6 /* IceSceneBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AF82DB9F788009E47E6 /* IceSceneBase.swift */; };
 		CF369AF92DB9F789009E47E6 /* SceneDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AFA2DB9F789009E47E6 /* SceneDelegates.swift */; };
 		CF369AFB2DB9F78A009E47E6 /* SceneDelegateCompatibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF369AFC2DB9F78A009E47E6 /* SceneDelegateCompatibilityTests.swift */; };
@@ -274,6 +275,7 @@
 		CF369AF12DB9F785009E47E6 /* SceneDelegateHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateHelperTests.swift; sourceTree = "<group>"; };
 		CF369AF42DB9F786009E47E6 /* IncomingURLsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingURLsTests.swift; sourceTree = "<group>"; };
 		CF369AF62DB9F787009E47E6 /* SceneDelegateSwizzlingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateSwizzlingTests.swift; sourceTree = "<group>"; };
+		CF369B022DC0A001009E47E6 /* SceneDelegateAllowlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateAllowlistTests.swift; sourceTree = "<group>"; };
 		CF369AF82DB9F788009E47E6 /* IceSceneBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IceSceneBase.swift; sourceTree = "<group>"; };
 		CF369AFA2DB9F789009E47E6 /* SceneDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegates.swift; sourceTree = "<group>"; };
 		CF369AFC2DB9F78A009E47E6 /* SceneDelegateCompatibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateCompatibilityTests.swift; sourceTree = "<group>"; };
@@ -522,6 +524,7 @@
 				CF369AF12DB9F785009E47E6 /* SceneDelegateHelperTests.swift */,
 				CF369AF42DB9F786009E47E6 /* IncomingURLsTests.swift */,
 				CF369AF62DB9F787009E47E6 /* SceneDelegateSwizzlingTests.swift */,
+				CF369B022DC0A001009E47E6 /* SceneDelegateAllowlistTests.swift */,
 				CF369AFC2DB9F78A009E47E6 /* SceneDelegateCompatibilityTests.swift */,
 				CF369AFE2DBA1111009E47E6 /* GeoLaunchConfiguratorTests.swift */
 			);
@@ -813,6 +816,7 @@
 				CF369AF92DB9F789009E47E6 /* SceneDelegates.swift in Sources */,
 				CF369AF32DB9F786009E47E6 /* IncomingURLsTests.swift in Sources */,
 				CF369AF52DB9F787009E47E6 /* SceneDelegateSwizzlingTests.swift in Sources */,
+				CF369B012DC0A001009E47E6 /* SceneDelegateAllowlistTests.swift in Sources */,
 				CF369AFB2DB9F78A009E47E6 /* SceneDelegateCompatibilityTests.swift in Sources */,
 				CF369AFD2DBA1111009E47E6 /* GeoLaunchConfiguratorTests.swift in Sources */,
 				CF35032B2C5B40B000F95F77 /* DeviceHandlerTests.swift in Sources */,

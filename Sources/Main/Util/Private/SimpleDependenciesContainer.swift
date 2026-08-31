@@ -66,7 +66,9 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     let automaticFieldsBuilder: AutomaticFieldsBuildable
     let applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
     #if os(iOS)
-    lazy var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
+    lazy var wkHttpCookieStore: WKHTTPCookieStorable = MainThreadExecutor.run {
+        WKWebsiteDataStore.default().httpCookieStore
+    }
     #elseif os(tvOS)
     lazy var wkHttpCookieStore: WKHTTPCookieStorable = NoOpWKHTTPCookieStore()
     #endif

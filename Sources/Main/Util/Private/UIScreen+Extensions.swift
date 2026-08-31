@@ -21,9 +21,11 @@ extension UIScreen {
 
 private struct SceneBackedScreen: Screenable {
     var bounds: CGRect {
-        guard let scene = UIApplication.RAnalyticsSharedApplication?.activeWindowScene else {
-            return .zero
+        MainThreadExecutor.run {
+            guard let scene = UIApplication.RAnalyticsSharedApplication?.activeWindowScene else {
+                return .zero
+            }
+            return scene.screen.bounds
         }
-        return scene.screen.bounds
     }
 }

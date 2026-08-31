@@ -6,6 +6,7 @@ extension UIWindowScene: RuntimeLoadable {
     /// - Note: stored properties are not allowed in Swift extensions.
     private enum Holder {
         static var analyticsManager: ReferralAppTrackable?
+        static var swizzlableSceneDelegateClasses = Set<ObjectIdentifier>()
         static var swizzledSceneDelegateClasses = Set<ObjectIdentifier>()
     }
 
@@ -82,11 +83,29 @@ extension UIWindowScene: RuntimeLoadable {
                                              reason: ErrorReason.sceneDelegateClassUnresolved(className: sceneDelegateClassName)))
             return
         }
+        registerSwizzlableSceneDelegateClass(recipient)
         swizzleSceneDelegateFunctions(recipient)
+    }
+
+    /// Registers a host-app scene delegate class declared in `UIApplicationSceneManifest` for auto-tracking.
+    static func registerSwizzlableSceneDelegateClass(_ recipient: UISceneDelegate.Type) {
+        Holder.swizzlableSceneDelegateClasses.insert(ObjectIdentifier(recipient))
     }
 
     static func swizzleSceneDelegateFunctions(_ recipient: UISceneDelegate.Type) {
         let classIdentifier = ObjectIdentifier(recipient)
+
+        guard Holder.swizzlableSceneDelegateClasses.contains(classIdentifier) else {
+            RLogger.debug(message: "Skipping scene delegate swizzle for \(recipient) — "
+                + "class is not declared in UIApplicationSceneManifest.")
+            return
+        }
+
+        guard !NSObject.isApplePrivateClass(recipient) else {
+            RLogger.debug(message: "Skipping scene delegate swizzle for Apple private class \(recipient).")
+            return
+        }
+
         guard !Holder.swizzledSceneDelegateClasses.contains(classIdentifier) else {
             RLogger.debug(message: "Scene delegate class \(recipient) already swizzled, skipping.")
             return

@@ -17,6 +17,7 @@ struct SceneDelegateSwizzlingTests {
         let delegateType = IdempotentSceneDelegate.self
         let delegate = IdempotentSceneDelegate()
 
+        UIWindowScene.registerSwizzlableSceneDelegateClass(delegateType)
         UIWindowScene.swizzleSceneDelegateFunctions(delegateType)
         UIWindowScene.swizzleSceneDelegateFunctions(delegateType)
 

@@ -21,8 +21,10 @@ struct SceneDelegateCompatibilityTests {
 
     @MainActor
     private func swizzleDelegateClassIfNeeded(_ delegate: NSObject & UISceneDelegate) {
+        let delegateType = type(of: delegate)
+        UIWindowScene.registerSwizzlableSceneDelegateClass(delegateType)
         // `swizzleSceneDelegateFunctions` is idempotent in SDK code, so this is safe and deterministic.
-        UIWindowScene.swizzleSceneDelegateFunctions(type(of: delegate))
+        UIWindowScene.swizzleSceneDelegateFunctions(delegateType)
     }
 
     @MainActor

@@ -28,7 +28,9 @@ final class RAnalyticsApplicationOrientationProvider: StatusBarOrientationGettab
 extension UIApplication: StatusBarOrientationGettable {
     var analyticsIsLandscape: Bool {
         #if os(iOS)
-        return activeWindowScene?.interfaceOrientation.isLandscape ?? false
+        return MainThreadExecutor.run {
+            self.unsafeActiveWindowScene?.interfaceOrientation.isLandscape ?? false
+        }
         #elseif os(tvOS)
         // Apple TV UI is landscape-first; `UIInterfaceOrientation` is unavailable on tvOS.
         return true
@@ -43,6 +45,10 @@ extension UIApplication: StatusBarOrientationGettable {
     /// If there are no connected window scenes, falls back to
     /// ``UIApplicationDelegate/window``’s scene when present.
     var activeWindowScene: UIWindowScene? {
+        MainThreadExecutor.run { unsafeActiveWindowScene }
+    }
+
+    private var unsafeActiveWindowScene: UIWindowScene? {
         let windowScenes = connectedScenes.compactMap { $0 as? UIWindowScene }
         guard !windowScenes.isEmpty else {
             return delegate?.window??.windowScene

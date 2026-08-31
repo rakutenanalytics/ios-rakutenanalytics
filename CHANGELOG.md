@@ -1,5 +1,14 @@
 # Changelog
 
+## 12.0.1 (2026-08-31)
+
+### Bug fixes
+* CONRAT-44872: Fix iOS 27 crash when the system keyboard scene delegate is assigned: restrict scene-delegate swizzling to classes declared in `UIApplicationSceneManifest`, and skip Apple private `UISceneDelegate` classes as defense-in-depth.
+* CONRAT-44828: Fix Main Thread Checker violations when building event payloads from a background thread: dispatch scene-based UIKit reads (`UIApplication.connectedScenes`, `UIWindowScene.screen`), page-visit view-controller properties, WKWebView URL traversal, and `WKWebsiteDataStore` initialization to the main thread via `MainThreadExecutor`.
+
+### Build fixes
+* Fix SonarCloud coverage import from xccov reports: replace the legacy `sed`-based `xccov-to-sonarqube-generic.sh` converter with robust path filtering, normalization to `Sources/`, XML validation, and CI diagnostics for malformed or empty coverage output.
+
 ## 12.0.0 (2026-08-18)
 
 ⚠️ **Important**: SDK 12.0.0 requires the UIKit scene-based lifecycle (`UIApplicationSceneManifest` + `UISceneDelegate`). AppDelegate-only auto-tracking is removed; on iOS 27, apps without scenes fail to launch. Referral, deeplink, and launch-origin tracking now use `UISceneDelegate` hooks only. See [TN3187](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle).

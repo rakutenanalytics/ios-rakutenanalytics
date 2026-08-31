@@ -54,16 +54,19 @@ struct ReferralAppTrackingSceneDelegateTests {
         suiteWindowScene = scene
         suiteWindow = UIWindow(windowScene: scene)
         
+        let delegateType = type(of: suiteSceneDelegate)
+        UIWindowScene.registerSwizzlableSceneDelegateClass(delegateType)
+
         // Set delegate once for the entire suite (mirrors QuickSpec behavior).
         scene.delegate = suiteSceneDelegate
-        
+
         // `swizzleSceneDelegateFunctions` is idempotent (guarded by ObjectIdentifier set), but we
         // guard here too so the intent is explicit: swizzle once per suite, never again.
         let delegateObject = suiteSceneDelegate as NSObject
         let hasOpenURLSwizzle = delegateObject.responds(to: #selector(UIWindowScene.rAutotrackScene(_:openURLContexts:)))
         let hasContinueSwizzle = delegateObject.responds(to: #selector(UIWindowScene.rAutotrackScene(_:continue:)))
         if !hasOpenURLSwizzle || !hasContinueSwizzle {
-            UIWindowScene.swizzleSceneDelegateFunctions(type(of: suiteSceneDelegate))
+            UIWindowScene.swizzleSceneDelegateFunctions(delegateType)
         }
         
         suiteUIKitInitialized = true
