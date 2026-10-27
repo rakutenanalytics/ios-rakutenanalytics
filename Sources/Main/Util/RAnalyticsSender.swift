@@ -16,11 +16,6 @@ private enum SenderConstants {
     @objc(sendJSONObject:) func send(jsonObject: Any)
 }
 
-private enum AppStateOrigin {
-    case foreground
-    case background
-}
-
 enum SenderBackgroundTimerEnabler {
     case none
     case enabled(startTimeKey: String)
@@ -58,20 +53,16 @@ enum SenderBackgroundTimerEnabler {
     /// The maximum upload time interval
     private let maxUploadInterval: TimeInterval
 
-    /// uploadTimer is used to throttle uploads. A call to scheduleBackgroundUpload
-    /// will do nothing if uploadTimer is not nil.
-
-    /// Since we don't want to start a new upload until the previous one has been fully
-    /// processed, though, we only invalidate that timer at the very end of the HTTP
-    /// request. That's why we also need uploadRequested, set by scheduleBackgroundUpload,
-    /// so that we know we have to restart our timer at that point.
-    @AtomicGetSet private(set) var uploadTimer: Timer?
     @objc public private(set) var uploadTimerInterval = SenderConstants.defaultUploadInterval
 
     private var batchingDelayClosure: BatchingDelayBlock?
     private let batchingDelayQueue = DispatchQueue(label: "com.analytics.batchingDelayQueue")
-    @AtomicGetSet private var uploadRequested = false
-    @AtomicGetSet private var zeroBatchingDelayUploadInProgress = false
+    private let scheduleCoordinator: SenderScheduleCoordinator
+
+    /// Whether batching/retry scheduling is idle. Test infrastructure uses this seam after uploads.
+    var isUploadSchedulingIdle: Bool {
+        scheduleCoordinator.isSchedulingIdle
+    }
 
     /// Initialize Sender
     /// - Parameters:
@@ -102,13 +93,19 @@ enum SenderBackgroundTimerEnabler {
         self.maxUploadInterval = maxUploadInterval
         self.userStorageHandler = userStorageHandler
         self.allowsAnalyticsSend = allowsAnalyticsSend
+        let scheduleTaskHandles = SenderScheduleTaskHandles()
+        let scheduleIdleMirror = UploadSchedulingIdleMirror()
+        self.scheduleCoordinator = SenderScheduleCoordinator(
+            taskHandles: scheduleTaskHandles,
+            idleMirror: scheduleIdleMirror
+        )
         super.init()
 
         configureNotifications()
     }
 
     deinit {
-        uploadTimer?.invalidate()
+        scheduleCoordinator.cancelAllWork()
     }
 
     /// Store event data in database to be sent later
@@ -157,114 +154,7 @@ enum SenderBackgroundTimerEnabler {
 
 // MARK: Scheduling
 fileprivate extension RAnalyticsSender {
-    /// - Returns: the schedule elapsed time or `nil` if the elapsed time is not stored in the UserDefaults.
-    private func scheduleElapsedTime(for startTimeKey: String) -> TimeInterval? {
-        let scheduleStartTime = userStorageHandler.object(forKey: startTimeKey)
-
-        guard let startedDateTime = scheduleStartTime as? NSNumber else {
-            return nil
-        }
-
-        let elapsedTime = Date().timeIntervalSince1970 - startedDateTime.doubleValue
-
-        return elapsedTime
-    }
-
-    /// Schedule an upload.
-    ///
-    /// - Parameter appStateOrigin: the app state origin needed for a background upload.
-    func scheduleUploadOrPerformImmediately(appStateOrigin: AppStateOrigin) {
-        if let delay = batchingDelayBlock()?() {
-            if case .enabled(let startTimeKey) = backgroundTimerEnabler,
-               let elapsedTime = scheduleElapsedTime(for: startTimeKey) {
-                if elapsedTime <= delay {
-                    uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay - elapsedTime), maxUploadInterval)
-
-                } else {
-                    uploadTimerInterval = 0
-                }
-
-            } else {
-                uploadTimerInterval = min(max(SenderConstants.minUploadInterval, delay), maxUploadInterval)
-            }
-        }
-
-        /// Upload immediately if batching delay is 0 and a request isn't in progress.
-        /// Otherwise, schedule the upload in background.
-        if uploadTimerInterval <= 0, uploadTimer == nil || uploadTimer?.isValid == false, !zeroBatchingDelayUploadInProgress {
-            zeroBatchingDelayUploadInProgress = true
-            DispatchQueue.main.async {
-                self.fetchAndUpload()
-            }
-        } else {
-            scheduleBackgroundUpload(appStateOrigin: appStateOrigin)
-        }
-    }
-
-    /// Schedule a new background upload, if none has already been scheduled or is currently being processed.
-    ///
-    /// - Parameter appStateOrigin: the app state origin. Only read when `backgroundTimerEnabler` is set to true.
-    func scheduleBackgroundUpload(appStateOrigin: AppStateOrigin) {
-        DispatchQueue.main.async {
-            if self.uploadTimer?.isValid == true {
-                if case .enabled(_) = self.backgroundTimerEnabler,
-                   appStateOrigin == .background {
-                    self.uploadTimer?.invalidate()
-                    self.createUploadTimer()
-
-                } else {
-                    /// Background upload has already been scheduled or is underway
-                    self.uploadRequested = true
-                }
-                return
-            }
-
-            if case .enabled(let startTimeKey) = self.backgroundTimerEnabler {
-                if let scheduleStartTime = self.userStorageHandler.object(forKey: startTimeKey) as? NSNumber {
-                    self.scheduleStartDate = Date(timeIntervalSince1970: scheduleStartTime.doubleValue)
-
-                } else {
-                    let nowDate = Date()
-                    self.scheduleStartDate = nowDate
-                    self.userStorageHandler.set(value: NSNumber(value: nowDate.timeIntervalSince1970),
-                                                forKey: startTimeKey)
-                }
-            }
-
-            self.createUploadTimer()
-        }
-    }
-
-    /// Create an upload timer.
-    private func createUploadTimer() {
-        /// If timer interval is zero and we got here it means that there is an upload in progress.
-        /// Therefore, schedule a timer with a 10s delay which is short-ish but long enough that
-        /// the in progress upload will likely complete before the timer fires.
-        let interval = self.uploadTimerInterval == 0 ? SenderConstants.retryInterval : self.uploadTimerInterval
-
-        let uploadTimer = Timer(timeInterval: interval,
-                                target: self,
-                                selector: #selector(self.fetchAndUpload),
-                                userInfo: nil,
-                                repeats: false)
-        self.uploadTimer = uploadTimer
-        RunLoop.current.add(uploadTimer, forMode: .common)
-        self.uploadRequested = false
-    }
-
-    /// Called whenever a background upload ends, successfully or not.
-    /// If uploadRequested has been set, it schedules another upload.
-    func backgroundUploadEnded() {
-        uploadTimer?.invalidate()
-        uploadTimer = nil
-        zeroBatchingDelayUploadInProgress = false
-
-        if uploadRequested {
-            scheduleBackgroundUpload(appStateOrigin: .foreground)
-        }
-    }
-
-    func doBackgroundUpload(records: [Data], identifiers: [Int64]) {
+    func performBackgroundUpload(records: [Data], identifiers: [Int64]) async {
         /// If you make changes to the payload format, always confirm with RAT team
         /// that the server-side program will accept the updated format.
         guard let endpointURL = endpointURL,
@@ -282,35 +172,30 @@ fileprivate extension RAnalyticsSender {
 
         let request = URLRequest(url: endpointURL, body: data)
 
-        let task = session.dataTask(with: request) { result in
-            switch result {
-            case .failure(let error):
-                /// Connection failed. Request a new attempt before calling the completion.
-                self.uploadRequested = true
-                self.raise(error: error)
-                self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
+        do {
+            let (_, response) = try await session.data(for: request)
+            let statusCode = (response as? HTTPURLResponse)?.statusCode
 
-            case .success(let responseInfo):
-                let statusCode = (responseInfo.response as? HTTPURLResponse)?.statusCode
-
-                guard statusCode == 200 else {
-                    let nonOptionalStatusCode = statusCode ?? 0
-                    let error = ErrorConstants.statusCodeError(with: nonOptionalStatusCode)
-                    self.raise(error: error)
-                    self.handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
-                    return
-                }
-
-                NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
-                self.logSentRecords(ratJsonRecords)
-
-                self.database.enabled = self.allowsAnalyticsSend()
-                self.database.deleteBlobs(identifiers: identifiers, in: self.databaseTableName) {
-                    self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
-                }
+            guard statusCode == 200 else {
+                let nonOptionalStatusCode = statusCode ?? 0
+                let error = ErrorConstants.statusCodeError(with: nonOptionalStatusCode)
+                raise(error: error)
+                await handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
+                return
             }
+
+            NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadSuccess, object: ratJsonRecords)
+            logSentRecords(ratJsonRecords)
+
+            database.enabled = allowsAnalyticsSend()
+            await database.deleteBlobs(identifiers: identifiers, in: databaseTableName)
+            await scheduleCoordinator.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground, context: self)
+        } catch {
+            /// Connection failed. Request a new attempt before ending the upload.
+            await scheduleCoordinator.markUploadRequested()
+            raise(error: error)
+            await handleBackgroundUploadError(error, ratJsonRecords: ratJsonRecords)
         }
-        task.resume()
     }
 
     private func raise(error: Error) {
@@ -324,11 +209,11 @@ fileprivate extension RAnalyticsSender {
                                          reason: (error as NSError).localizedFailureReason ?? ""))
     }
 
-    private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) {
+    private func handleBackgroundUploadError(_ error: Error, ratJsonRecords: [JsonRecord]) async {
         NotificationCenter.default.post(name: Notification.Name.rAnalyticsUploadFailure,
                                         object: ratJsonRecords,
                                         userInfo: [NSUnderlyingErrorKey: error])
-        backgroundUploadEnded()
+        await scheduleCoordinator.backgroundUploadEnded(context: self)
     }
 }
 
@@ -336,30 +221,53 @@ fileprivate extension RAnalyticsSender {
 extension RAnalyticsSender {
     func insert(dataBlob: Data) {
         database.enabled = allowsAnalyticsSend()
-        database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit) {
-            self.scheduleUploadOrPerformImmediately(appStateOrigin: .foreground)
+        let blob = dataBlob
+        Task { [weak self] in
+            guard let self else { return }
+            await self.scheduleCoordinator.enqueueInsert(dataBlob: blob, context: self)
         }
     }
 
     @objc func fetchAndUpload() {
+        Task { [weak self] in
+            await self?.performFetchAndUpload()
+        }
+    }
+
+    func performFetchAndUpload() async {
         // Remove schedule start time from UserDefaults
         if case .enabled(let startTimeKey) = backgroundTimerEnabler {
             userStorageHandler.removeObject(forKey: startTimeKey)
         }
 
         database.enabled = allowsAnalyticsSend()
-        database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName) { (blobs, identifiers) in
+        let (blobs, identifiers) = await database.fetchBlobs(SenderConstants.ratBatchSize, from: databaseTableName)
 
-            assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")
+        assert(blobs?.count == identifiers?.count, "Sender error: number of blobs must equal number of identifiers.")
 
-            /// Get a group of records and start uploading them.
-            if let records = blobs, let identifiers = identifiers {
-                RLogger.debug(message: "Events fetched from DB table %@ \(self.databaseTableName) now upload them")
-                self.doBackgroundUpload(records: records, identifiers: identifiers)
-            } else {
-                RLogger.debug(message: "No events found in DB table \(self.databaseTableName) so end upload")
-                self.backgroundUploadEnded()
+        /// Get a group of records and start uploading them.
+        if let records = blobs, let identifiers = identifiers {
+            RLogger.debug(message: "Events fetched from DB table %@ \(databaseTableName) now upload them")
+            await performBackgroundUpload(records: records, identifiers: identifiers)
+        } else {
+            RLogger.debug(message: "No events found in DB table \(databaseTableName) so end upload")
+            await scheduleCoordinator.backgroundUploadEnded(context: self)
+        }
+    }
+
+    /// Cancels pending uploads and deletes all queued event payloads.
+    func clearPendingEvents(completion: @escaping () -> Void) {
+        Task { [weak self] in
+            guard let self else {
+                completion()
+                return
             }
+            await self.scheduleCoordinator.clearPendingScheduling()
+            if case .enabled(let startTimeKey) = self.backgroundTimerEnabler {
+                self.userStorageHandler.removeObject(forKey: startTimeKey)
+            }
+            self.database.enabled = self.allowsAnalyticsSend()
+            self.database.deleteAllBlobs(in: self.databaseTableName, then: completion)
         }
     }
 }
@@ -374,7 +282,10 @@ extension RAnalyticsSender {
     }
 
     @objc func appDidBecomeActive() {
-        scheduleUploadOrPerformImmediately(appStateOrigin: .background)
+        Task { [weak self] in
+            guard let self else { return }
+            await self.scheduleCoordinator.scheduleUploadOrPerformImmediately(appStateOrigin: .background, context: self)
+        }
     }
 }
 
@@ -434,5 +345,49 @@ extension RAnalyticsSender {
                   session: session,
                   userStorageHandler: userStorageHandler,
                   allowsAnalyticsSend: allowsAnalyticsSend)
+    }
+}
+
+// MARK: Schedule coordinator context
+extension RAnalyticsSender: SenderScheduleContext {
+    func senderMaxUploadInterval() -> TimeInterval {
+        maxUploadInterval
+    }
+
+    func senderUploadTimerInterval() -> TimeInterval {
+        uploadTimerInterval
+    }
+
+    func setSenderUploadTimerInterval(_ interval: TimeInterval) {
+        uploadTimerInterval = interval
+    }
+
+    func batchingDelayInterval() -> TimeInterval? {
+        batchingDelayBlock()?()
+    }
+
+    func scheduleElapsedTime(for startTimeKey: String) -> TimeInterval? {
+        let scheduleStartTime = userStorageHandler.object(forKey: startTimeKey)
+
+        guard let startedDateTime = scheduleStartTime as? NSNumber else {
+            return nil
+        }
+
+        return Date().timeIntervalSince1970 - startedDateTime.doubleValue
+    }
+
+    func ensureBackgroundScheduleStartDate(for startTimeKey: String) {
+        if let scheduleStartTime = userStorageHandler.object(forKey: startTimeKey) as? NSNumber {
+            scheduleStartDate = Date(timeIntervalSince1970: scheduleStartTime.doubleValue)
+        } else {
+            let nowDate = Date()
+            scheduleStartDate = nowDate
+            userStorageHandler.set(value: NSNumber(value: nowDate.timeIntervalSince1970),
+                                   forKey: startTimeKey)
+        }
+    }
+
+    func performInsert(dataBlob: Data) async {
+        await database.insert(blob: dataBlob, into: databaseTableName, limit: SenderConstants.tableBlobLimit)
     }
 }

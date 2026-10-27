@@ -3,7 +3,7 @@ import RakutenAnalytics
 
 struct ContentView: View {
     @State private var showingSheet = false
-    
+
     var body: some View {
         NavigationView {
             VStack(alignment: .center, spacing: 40, content: {

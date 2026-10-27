@@ -22,6 +22,25 @@ extension URLSessionMock {
     }
 }
 
+extension SwiftyURLSessionMock {
+    public func stubResponse(url: URL? = URL(string: "empty"),
+                             statusCode: Int,
+                             headerFields: [String: String]? = nil,
+                             completion: (() -> Void)? = nil) {
+        guard let url = url else {
+            completion?()
+            return
+        }
+        response = HTTPURLResponse(url: url,
+                                   statusCode: statusCode,
+                                   httpVersion: nil,
+                                   headerFields: headerFields)
+        data = nil
+        error = nil
+        self.completion = completion
+    }
+}
+
 // MARK: - Stub RAT Response
 
 extension URLSessionMock {
@@ -35,7 +54,7 @@ extension URLSessionMock {
                      statusCode: 200,
                      headerFields: ["Set-Cookie": cookie])
     }
-    
+
     public func stubRATServerErrorResponse(url: URL? = URL(string: "https://rat.rakuten.co.jp")) {
         stubResponse(url: url, statusCode: 500)
     }

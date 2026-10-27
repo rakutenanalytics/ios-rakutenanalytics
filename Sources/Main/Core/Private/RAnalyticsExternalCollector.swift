@@ -411,6 +411,36 @@ private extension RAnalyticsExternalCollector {
         let result = (userStorageHandler.object(forKey: Constants.loginMethodKey) as? NSNumber)?.uintValue ?? 0
         loginMethod = AnalyticsManager.State.LoginMethod(rawValue: result) ?? .other
     }
+
+    func clearPersistedLoginData() {
+        [
+            Constants.loginStateKey,
+            Constants.trackingIdentifierKey,
+            Constants.userIdentifierKey,
+            Constants.easyIdentifierKey,
+            Constants.loginMethodKey
+        ].forEach { userStorageHandler?.removeObject(forKey: $0) }
+
+        try? keychainHandler?.set(value: nil, for: Constants.easyIdentifierKey)
+    }
+
+    func resetInMemoryLoginStateAfterClear() {
+        isLoggedIn = false
+        trackingIdentifier = nil
+        userIdentifier = nil
+        easyIdentifier = nil
+        loginMethod = .other
+        logoutMethod = nil
+    }
+}
+
+// MARK: - DataErasable
+
+extension RAnalyticsExternalCollector: DataErasable {
+    func clearData() async throws {
+        clearPersistedLoginData()
+        resetInMemoryLoginStateAfterClear()
+    }
 }
 
 // MARK: - Helpers

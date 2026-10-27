@@ -1,32 +1,24 @@
 import Foundation
 
 struct ViewableImpressionRefreshScheduler {
-    static func deliver(result: ViewableImpressionRefreshResult,
-                        pendingWorkItem: inout DispatchWorkItem?,
-                        onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
+    @MainActor
+    static func deliver(result: ViewableImpressionRefreshResult) async -> [String: Any]? {
         if !result.eventData.isEmpty {
-            pendingWorkItem?.cancel()
-            pendingWorkItem = nil
-            DispatchQueue.main.async {
-                onResult(result.eventParameters)
-            }
-            return
+            return result.eventParameters
         }
 
         if let delay = result.refreshAfterDelay,
            let refreshAfterDwell = result.refreshAfterDwell {
-            pendingWorkItem?.cancel()
-            let workItem = DispatchWorkItem {
-                let followUp = refreshAfterDwell()
-                onResult(followUp.eventParameters)
+            let nanoseconds = UInt64(delay * 1_000_000_000)
+            do {
+                try await Task.sleep(nanoseconds: nanoseconds)
+            } catch {
+                return nil
             }
-            pendingWorkItem = workItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
-            return
+            let followUp = refreshAfterDwell()
+            return await deliver(result: followUp)
         }
 
-        DispatchQueue.main.async {
-            onResult(result.eventParameters)
-        }
+        return result.eventParameters
     }
 }

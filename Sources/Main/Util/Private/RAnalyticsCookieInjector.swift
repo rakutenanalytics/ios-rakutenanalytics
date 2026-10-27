@@ -6,7 +6,6 @@ final class RAnalyticsCookieInjector {
         static let name = "ra_uid"
         static let defaultDomain = ".rakuten.co.jp"
     }
-    private let cookiesDeletionQueue = DispatchQueue(label: "com.analytics.cookies.deletion.queue", qos: .default)
     private let httpCookieStore: WKHTTPCookieStorable
     private let adIdentifierManager: AdvertisementIdentifiable
 
@@ -25,26 +24,32 @@ extension RAnalyticsCookieInjector {
     /// - Parameters:
     ///     - domain:  Domain to set on cookie, if nil default domain will be used
     ///     - deviceIdentifier: Device identifier string
-    ///     - completionHandler: Injected cookie or nil if cookie cannot be created or injected
+    ///
+    /// - Returns: Injected cookie or nil if cookie cannot be created or injected
     func injectAppToWebTrackingCookie(domain: String?,
-                                      deviceIdentifier: String,
-                                      completionHandler: ((HTTPCookie?) -> Void)?) {
+                                      deviceIdentifier: String) async -> HTTPCookie? {
         guard !deviceIdentifier.isEmpty,
               let trackingCookieValue = trackingCookieValue(deviceIdentifier: deviceIdentifier),
               let trackingCookie = trackingCookie(domain: domain, value: trackingCookieValue) else {
-            completionHandler?(nil)
-            return
+            return nil
         }
-        clearCookies {
-            self.storeCookie(cookieToStore: trackingCookie) {
-                completionHandler?(trackingCookie)
-            }
-        }
+        await clearTrackingCookies(forDomain: trackingCookie.domain)
+        await storeCookie(cookieToStore: trackingCookie)
+        return trackingCookie
     }
 
-    /// Delete all cookies in WKWebsiteDataStore
-    func clearCookies(completion: @escaping () -> Void) {
-        httpCookieStore.allCookies { self.deleteCookies($0, completionHandler: completion)}
+    /// Delete all app-to-web tracking cookies in WKWebsiteDataStore
+    func clearCookies() async {
+        let cookies = await httpCookieStore.allCookies()
+        await deleteCookies(cookies)
+    }
+}
+
+// MARK: - DataErasable
+
+extension RAnalyticsCookieInjector: DataErasable {
+    func clearData() async throws {
+        await clearCookies()
     }
 }
 
@@ -73,31 +78,24 @@ extension RAnalyticsCookieInjector {
                                        .secure: true])
     }
 
-    private func deleteCookies(_ cookies: [HTTPCookie], completionHandler: @escaping () -> Void) {
+    private func clearTrackingCookies(forDomain domain: String) async {
+        let cookies = await httpCookieStore.allCookies()
+        await deleteCookies(cookies.filter { $0.domain == domain })
+    }
+
+    private func deleteCookies(_ cookies: [HTTPCookie]) async {
         let cookiesToDelete = cookies.filter { $0.name == TrackingCookieConstants.name }
         guard !cookiesToDelete.isEmpty else {
-            completionHandler()
             return
         }
-        let group = DispatchGroup()
-        cookiesToDelete.forEach { (cookie) in
-            group.enter()
-            httpCookieStore.delete(cookie: cookie) {
-                RLogger.verbose(message: "Delete cookie \(cookie) on webview")
-                group.leave()
-            }
-        }
-        group.notify(queue: cookiesDeletionQueue) {
-            DispatchQueue.main.async {
-                completionHandler()
-            }
+        for cookie in cookiesToDelete {
+            await httpCookieStore.delete(cookie: cookie)
+            RLogger.verbose(message: "Delete cookie \(cookie) on webview")
         }
     }
 
-    private func storeCookie(cookieToStore: HTTPCookie, completionHandler: @escaping () -> Void) {
-        httpCookieStore.set(cookie: cookieToStore) {
-            RLogger.verbose(message: "Set cookie \(cookieToStore) on webview")
-            completionHandler()
-        }
+    private func storeCookie(cookieToStore: HTTPCookie) async {
+        await httpCookieStore.set(cookie: cookieToStore)
+        RLogger.verbose(message: "Set cookie \(cookieToStore) on webview")
     }
 }

@@ -35,7 +35,7 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     public var minimumVisibilityPercentage: Double
     private let queue = DispatchQueue(label: "com.rakuten.analytics.swiftui.manualImpressions")
     private var itemsById: [String: ManualTrackedItem] = [:]
-    private var pendingRefreshWorkItem: DispatchWorkItem?
+    private let refreshCoordinator = ViewableImpressionRefreshCoordinator()
 
     public init(minimumDwellTime: TimeInterval = AnalyticsSwiftUIConstants.defaultMinimumDwellTime,
                 minimumVisibilityPercentage: Double = AnalyticsSwiftUIConstants.defaultMinimumVisibility) {
@@ -51,10 +51,9 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     ///   - frame: The item's current frame in screen coordinates.
     ///   - itemPosition: Optional position index for ordering (default: `0`).
     public func update(item: ViewableImpressionTrackable, frame: CGRect, itemPosition: Int = 0) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            guard let existing = self.itemsById[item.itemId] else {
-                self.itemsById[item.itemId] = ManualTrackedItem(item: item, frame: frame, itemPosition: itemPosition)
+        queue.sync {
+            guard let existing = itemsById[item.itemId] else {
+                itemsById[item.itemId] = ManualTrackedItem(item: item, frame: frame, itemPosition: itemPosition)
                 return
             }
             existing.frame = frame
@@ -67,40 +66,36 @@ public final class SwiftUIManualViewableImpressionTracker: ObservableObject {
     ///
     /// - Parameter itemId: The unique identifier of the item to stop tracking.
     public func unregister(itemId: String) {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            _ = self.itemsById.removeValue(forKey: itemId)
+        refreshCoordinator.cancel()
+        queue.sync {
+            _ = itemsById.removeValue(forKey: itemId)
         }
     }
 
     /// Removes all tracked items from the tracker.
     /// Use this to reset tracking state when the view hierarchy changes significantly.
     public func clear() {
-        queue.async { [weak self] in
-            self?.itemsById.removeAll()
+        refreshCoordinator.cancel()
+        queue.sync {
+            itemsById.removeAll()
         }
     }
 
     /// Manually refresh visibility state once and receive results when ready.
-    /// The completion is called immediately if items already qualify, or after
-    /// the suggested dwell delay if items are still accumulating dwell time.
+    /// Returns immediately if items already qualify, or after the dwell delay if items are still accumulating dwell time.
     ///
     /// - Parameters:
     ///   - viewport: Region in screen coordinates used for visibility; defaults to the active window scene screen bounds.
     ///   - viewportInsets: Insets applied to `viewport` before intersecting item frames.
-    ///   - onResult: Called on the main queue with event parameters when viewable data is ready, or `nil` if none.
+    @MainActor
     public func refreshState(viewport: CGRect? = nil,
-                             viewportInsets: UIEdgeInsets? = nil,
-                             onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
-        let result = refreshStateInternal(
-            viewport: viewport,
-            viewportInsets: viewportInsets
-        )
-        ViewableImpressionRefreshScheduler.deliver(
-            result: result,
-            pendingWorkItem: &pendingRefreshWorkItem,
-            onResult: onResult
-        )
+                             viewportInsets: UIEdgeInsets? = nil) async -> [String: Any]? {
+        await refreshCoordinator.refresh { [self] in
+            self.refreshStateInternal(
+                viewport: viewport,
+                viewportInsets: viewportInsets
+            )
+        }
     }
 
     private func refreshStateInternal(viewport: CGRect?,

@@ -3,48 +3,37 @@ import Foundation
 // MARK: - Sessionable
 
 protocol Sessionable {
-
-    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable
-}
-
-extension URLSession: Sessionable {
-    func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable {
-        dataTask(with: request, completionHandler: completionHandler)
-    }
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 
 // MARK: - SwiftySessionable
 
 protocol SwiftySessionable {
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 
-extension URLSession: SwiftySessionable {
-    func dataTask(with request: URLRequest,
-                  completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
-
-        return dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                completionHandler(.failure(error))
-                return
+private extension URLSession {
+    /// Routes through `dataTask(with:completionHandler:)` so URLSessionMock swizzling works in tests.
+    func dataFromDataTask(for request: URLRequest) async throws -> (Data, URLResponse) {
+        try await withCheckedThrowingContinuation { continuation in
+            let task = dataTask(with: request) { data, response, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let response = response else {
+                    continuation.resume(throwing: URLError(.badServerResponse))
+                    return
+                }
+                continuation.resume(returning: (data ?? Data(), response))
             }
-
-            guard let response = response else {
-                assertionFailure()
-                completionHandler(.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown)))
-                return
-            }
-
-            completionHandler(.success((data, response)))
+            task.resume()
         }
     }
 }
 
-// MARK: - URLSessionTaskable
-
-protocol URLSessionTaskable {
-    func resume()
+extension URLSession: Sessionable, SwiftySessionable {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
+        try await dataFromDataTask(for: request)
+    }
 }
-
-extension URLSessionTask: URLSessionTaskable {}

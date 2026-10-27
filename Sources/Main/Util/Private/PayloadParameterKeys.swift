@@ -1,287 +1,221 @@
+// Generated from rakuten-analytics-json-schema latest, schemas/base-non-strict.json. Do not edit manually.
 import Foundation
 
-/// The RAT payload keys.
+/// RAT payload keys whose `x-definitionLevel` explicitly includes `iOS` and whose `x-layerLevel` is `SDK`.
 enum PayloadParameterKeys {
-    /// The RAT account identifier.
+    /// Each account ID corresponds to a group of services
     static let acc = "acc"
 
-    /// The RAT application identifier.
+    /// The service ID is assigned individually for each service. Multiple services can have same ID if their account ID differs. This is an optional parameter.
     static let aid = "aid"
 
-    /// The SDK source parameter indicating which Analytics SDK is used.
-    /// Values: "main" (Analytics SDK), "ext" (Analytics SDK Extensions), "wrapper" (Analytics SDK Wrapper).
-    static let sdkSource = "sdk_source"
+    /// App name
+    static let appName = "app_name"
 
-    /// The RAT event type.
+    /// App version
+    static let appVer = "app_ver"
+
+    /// IDFA/ADID
+    static let cka = "cka"
+
+    /// Value is set indirectly by specifying the corresponding cookie name
+    static let ckp = "ckp"
+
+    /// Session Cookie with a unique value for each user, regardless of their membership. This value will match the Rp Cookie, and it will only be set on the rakuten.co.jp domain or on third party domains which have been allowed access to the Rp Cookie. On other third party domains this property will not be present.
+    static let cks = "cks"
+
+    /// The device permissions collected from the device.
+    static let devicePer = "device_per"
+
+    /// Device language
+    static let dln = "dln"
+
+    /// In principle this should be in cp group since it applies to Ichiba only
+    static let easyid = "easyid"
+
+    /// Event type
     static let etype = "etype"
 
-    /// The RAT extra parameters.
-    static let cp = "cp"
+    /// To indiacate location collection is user action or interval/distance based location collection, not sent when geotracker is disabled
+    static let isaction = "isaction"
 
-    /// The current page name.
-    /// - Note: current `UIViewController` Class Name
+    /// Script start time
+    static let ltm = "ltm"
+
+    /// Battery usage
+    static let mbat = "mbat"
+
+    /// Mobile carrier name
+    static let mcn = "mcn"
+
+    /// Mobile carrier name for dual SIM functionality
+    static let mcnd = "mcnd"
+
+    /// Mobile network type (-1-Unknown, 1-Wifi, 2-GPRS/2G, 3-3G, 4-4G/LTE, 5-5G, 6-Android専用Ethernet)
+    static let mnetw = "mnetw"
+
+    /// Mobile network type (-1-Unknown, 1-Wifi, 2-GPRS/2G, 3-3G, 4-4G/LTE, 5-5G) for dual SIM functionality
+    static let mnetwd = "mnetwd"
+
+    /// Mobile device brand model
+    static let model = "model"
+
+    /// Mobile orientation (0: unknown, 1: portrait, 2: landscape)
+    static let mori = "mori"
+
+    /// Mobile OS
+    static let mos = "mos"
+
+    /// Online status when creating the event client side
+    static let online = "online"
+
+    /// Page id
+    static let pgid = "pgid"
+
+    /// Page name
     static let pgn = "pgn"
 
-    /// The previous page name or reference that lead to the current page.
-    /// - Note: previous `UIViewController` Class Name or URI link used to open the page.
+    /// Page Section
+    static let pgs = "pgs"
+
+    /// Battery charging status (0-Not charging, 1-Charging)
+    static let powerstatus = "powerstatus"
+
+    /// 4 digit representation of the current data collection type consent status (1: enabled, 0: disabled). Order: location, mobile network, device information, user information.
+    static let privacyMode = "privacy_mode"
+
+    /// Referrer URL
     static let ref = "ref"
 
-    /// The page section the event originated from.
-    static let pageSection = "pgs"
+    /// Device screen resolution
+    static let res = "res"
 
-    enum Core {
-        /// The application version.
-        /// - Note: returned by `CFBundleShortVersionString`
-        static let appVer = "app_ver"
+    /// SDK source which was used for sending an event.
+    static let sdkSource = "sdk_source"
 
-        /// The application name.
-        /// - Note: Returned by `CFBundleIdentifier` key in app's Info.plist (also returned by `Bundle.main.bundleIdentifier`)
-        static let appName = "app_name"
+    /// For redirect and native app purposes only. Format: seconds since epoch time
+    static let ts1 = "ts1"
 
-        /// The OS version.
-        /// - Note: returned by `String(format: "%@ %@", UIDevice.current.systemName, UIDevice.current.systemVersion)`
-        static let mos = "mos"
+    /// Timezone expressed in hour offset from GMT
+    static let tzo = "tzo"
 
-        /// The SDK version.
-        static let ver = "ver"
+    /// User agent
+    static let ua = "ua"
 
-        /// The curent timestamp.
-        static let ts1 = "ts1"
-    }
+    /// Enriched user agent string to capture device and OS details.
+    static let uaEnriched = "ua_enriched"
 
-    enum Identifier {
-        /// The device identifier.
-        /// - Note: based on `UIDevice.identifierForVendor.uuidString`
-        /// https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor
-        static let ckp = "ckp"
+    /// Defined for applications to pass users encrypted member id
+    static let userid = "userid"
 
-        /// The session identifier.
-        /// - Note: returned by `NSUUID().uuidString`
-        static let cks = "cks"
+    /// Client SDK or Library version
+    static let ver = "ver"
 
-        /// The advertising identifier.
-        /// - Note: based on `ASIdentifierManager.advertisingIdentifier.uuidString`
-        /// https://developer.apple.com/documentation/adsupport/asidentifiermanager/1614151-advertisingidentifier
-        static let cka = "cka"
+    /// Array of qualified viewable impression items from a single refreshState evaluation.
+    static let viewableData = "viewable_data"
 
-        /// The IDSDK easy identifier.
-        static let easyid = "easyid"
-    }
-
-    enum Language {
-        /// The language code
-        /// - Note: returned by `NSLocale.Key.languageCode`
-        static let dln = "dln"
-    }
-
-    enum Device {
-        /// The device battery state.
-        /// - Note: returned by `UIDevice.BatteryState`
-        /// https://developer.apple.com/documentation/uikit/uidevice/1620051-batterystate
-        static let powerStatus = "powerstatus"
-
-        // The device battery level.
-        /// - Note: returned by `UIDevice.batteryLevel`
-        /// https://developer.apple.com/documentation/uikit/uidevice/1620042-batterylevel
-        static let mbat = "mbat"
-
-        /// The model Identifier.
-        /// - Note: returned by `UIDevice.current.modelIdentifier`
-        static let model = "model"
-
-        /// The screen resolution.
-        /// - Note: bounds from ``UIScreen/screenableFromScene`` (normally the active ``UIWindowScene``’s screen), resolved when the payload is built; `0×0` if no scene is available yet
-        static let res = "res"
-
-        /// The device permissions
-        /// - Note: returned by `AnalyticsDevicePermissionCollector`
-        static let devicePer = "device_per"
-    }
-
-    /// Location
-    enum Location {
-        /// The location dictionary containing `lat`, `long`, `accu`, `tms`, `speed`, `speed_accuracy`, `alt`, `vertical_accuracy`, `bearing`, `bearing_accuracy`
-        static let loc = "loc"
-
-        /// Latitude of collected location in degrees
-        /// ex: 12.01245 or -39.01245
-        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
-        static let lat = "lat"
-
-        /// Longitude of collected location in degrees
-        /// ex: 136.02391 or  -130.1245
-        /// https://developer.apple.com/documentation/corelocation/cllocationcoordinate2d
-        static let long = "long"
-
-        /// Horizontal accuracy of this location
-        /// ex: 5.0
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423599-horizontalaccuracy
-        static let accu = "accu"
-
-        /// The time at which this location was determined.
-        /// Timestamp in ms (Unix epoch time)
-        /// ex: 1525648664398
-        static let tms = "tms"
-
-        /// Speed at the time of this location
-        /// ex: 5.0
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423798-speed
-        static let speed = "speed"
-
-        /// The accuracy of the speed value, measured in meters per second.
-        /// ex: 9.8
-        /// https://developer.apple.com/documentation/corelocation/cllocation/3524340-speedaccuracy
-        static let speedAccuracy = "speed_accuracy"
-
-        /// The altitude above mean sea level associated with a location, measured in meters
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423820-altitude
-        static let altitude = "altitude"
-
-        /// Vertical accuracy of this location
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423550-verticalaccuracy
-        static let verticalAccuracy = "vertical_accuracy"
-
-        /// Bearing at the time of this location Value is between 0.0 and 360.0 inclusive
-        /// https://developer.apple.com/documentation/corelocation/cllocation/1423832-course
-        static let bearing = "bearing"
-
-        /// Bearing accuracy in degrees of this location
-        /// https://developer.apple.com/documentation/corelocation/cllocation/3524338-courseaccuracy
-        static let bearingAccuracy = "bearing_accuracy"
-    }
-
-    /// Available only when the etype = `loc`
-    /// isAction = false → The Location collection in regular interval/distance.
-    /// isAction = true → The Location Collection is happening on demand(Application Calls Public Method requestLocation)
-    /// Default value: `false`
-    static let isAction = "isaction"
-
-    /// Optional Values which application can send along with requestLocation() method of public API.
-    /// - Note: Present only when `isaction` = true.
-    enum ActionParameters {
-
+    /// Optional action parameters for requestion a location for an event of type `loc`, sent only when atleast one of them is present
+    enum ActionParams {
+        /// Optional action parameters for requestion a location for an event of type `loc`, sent only when atleast one of them is present
         static let actionParams = "action_params"
 
-        /// Type of action performed in requesting location
+        /// Type of action user performed when requesting location, sent only when application provides the details
         static let type = "type"
 
-        /// Logs related to performed action
+        /// Action Log when requesting location, sent only when application provides the details
         static let log = "log"
 
-        /// Identifier associated with the action
-        static let identifier = "id"
+        /// Action ID when requesting location, sent only when application provides the details
+        static let id = "id"
 
-        /// Duration of action
+        /// Action duration when requesting location, sent only when application provides the details
         static let duration = "duration"
 
-        /// Additional Information related to performed action
+        /// Addtional action Log when requesting location, sent only when application provides the details
         static let addLog = "add_log"
     }
 
-    enum Orientation {
-        /// The interface orientation normally corresponds to the device orientation.
-        /// `UIWindowScene.interfaceOrientation`
-        /// https://developer.apple.com/documentation/uikit/uiwindowscene/3198088-interfaceorientation
-        static let mori = "mori"
-    }
+    /// Custom parameter group: contain fields which are specific to certain services but do not apply in general to all services
+    enum Cp {
+        /// Custom parameter group: contain fields which are specific to certain services but do not apply in general to all services
+        static let cp = "cp"
 
-    enum Network {
-        /// The network connection status.
-        static let online = "online"
-    }
-
-    enum UserAgent {
-        /// The application user agent.
-        /// - Note: the format is `bundleIdentifier/currentVersion`
-        static let ua = "ua"
-
-        /// The enriched application user agent.
-        /// - Note: the format is `<application_name>/<application_version> (<operating_system_info>; <device_info>; <device_type>; <language>; Analytics/<sdk_version>)`
-        static let uaEnriched = "ua_enriched"
-    }
-
-    enum Time {
-        /// The starts time when the application is launched.
-        /// - Note: returned by `NSDate().toString`
-        static let ltm = "ltm"
-    }
-
-    /// The time zone (current difference in hours between the receiver and Greenwich Mean Time).
-    /// - Note: returned by `NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)`
-    /// https://developer.apple.com/documentation/foundation/nstimezone/1387221-secondsfromgmt
-    enum TimeZone {
-        static let tzo = "tzo"
-    }
-
-    enum Telephony {
-        /// The name of the primary carrier
-        static let mcn = "mcn"
-
-        /// The name of the secondary carrier
-        static let mcnd = "mcnd"
-
-        /// The network status of the primary carrier.
-        static let mnetw = "mnetw"
-
-        /// The network status of the secondary carrier.
-        static let mnetwd = "mnetwd"
-    }
-}
-
-/// The RAT CP payload keys.
-enum CpParameterKeys {
-    enum Ref {
-        /// The launch origin: internal, external, push.
-        static let type = "ref_type"
-
-        /// The source app RAT account identifier.
-        static let accountIdentifier = "ref_acc"
-
-        /// The source app RAT application identifier.
-        static let applicationIdentifier = "ref_aid"
+        /// Page transition type
+        static let refType = "ref_type"
 
         /// The deeplink used by the source app.
-        static let link = "ref_link"
+        static let refLink = "ref_link"
 
         /// The source app components.
-        static let component = "ref_comp"
-    }
+        static let refComp = "ref_comp"
 
-    enum SessionStart {
         /// The days passed since the installation launch date.
         static let daysSinceFirstUse = "days_since_first_use"
 
         /// The days passed since the last launch date.
         static let daysSinceLastUse = "days_since_last_use"
-    }
 
-    enum Page {
-        /// The page title.
-        /// - Note: returned by `UIViewController.title`
+        /// The days passed since the last upgrade.
+        static let daysSinceLastUpgrade = "days_since_last_upgrade"
+
+        /// The number of launches since the last upgrade.
+        static let launchesSinceLastUpgrade = "launches_since_last_upgrade"
+
+        /// The previous installed version number.
+        static let previousVersion = "previous_version"
+
+        /// The application information.
+        static let appInfo = "app_info"
+
+        /// The login method. Possible values are password, one_tap_login or empty string if not available.
+        static let loginMethod = "login_method"
+
+        /// The logout method. Possible values are single, all or nil if not available
+        static let logoutMethod = "logout_method"
+
+        /// Displayed page title
         static let title = "title"
 
-        /// The web view absolute url.
-        /// - Note: returned by `WKWebView.url.absoluteURL.absoluteString`
+        /// Page url
         static let url = "url"
     }
 
-    enum PNP {
-        /// The PNP device identifier.
-        static let deviceId = "deviceId"
+    /// Geolocation coordinates (ref: https://dev.w3.org/geo/api/spec-source.html#navi-geo)
+    enum Loc {
+        /// Geolocation coordinates (ref: https://dev.w3.org/geo/api/spec-source.html#navi-geo)
+        static let loc = "loc"
 
-        /// The PNP client identifier.
-        static let pnpClientId = "pnpClientId"
+        /// Accuracy level of the latitude and longitude coordinates, specified in meters
+        static let accu = "accu"
+
+        /// Height of the position, specified in meters
+        static let altitude = "altitude"
+
+        /// Latitude coordinate in decimal degrees
+        static let lat = "lat"
+
+        /// Longitude coordinate in decimal degrees
+        static let long = "long"
+
+        /// Horizontal component of the device's velocity, in meters per second
+        static let speed = "speed"
+
+        /// Represent the time when the location was acquired, in milliseconds since epoch time
+        static let tms = "tms"
+
+        /// The instantaneous speed of the device, measured in meters per second, not sent when the value cannot be detemined
+        static let speedAccuracy = "speed_accuracy"
+
+        /// The validity of the altitude values, and their estimated uncertainty, measured in meters, not sent when the value cannot be detemined
+        static let verticalAccuracy = "vertical_accuracy"
+
+        /// The direction in which the device is traveling, measured in degrees and relative to due north, not sent when the value cannot be detemined
+        static let bearing = "bearing"
+
+        /// The accuracy of the course value, measured in degrees, not sent when the value cannot be detemined
+        static let bearingAccuracy = "bearing_accuracy"
     }
 
-    enum Login {
-        /// The login method.
-        static let method = "login_method"
-    }
-
-    enum Logout {
-        /// The logout method.
-        static let method = "logout_method"
-    }
 }
 
 enum PayloadConstants {

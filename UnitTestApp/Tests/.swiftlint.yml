@@ -1,0 +1,18 @@
+# Test targets: inherit repo rules; relax conventions common in large Swift Testing suites.
+parent_config: ../../.swiftlint.yml
+
+disabled_rules:
+  - type_name
+  - superfluous_disable_command
+  - large_tuple
+  - multiple_closures_with_trailing_closure
+  - redundant_discardable_let
+  - unused_optional_binding
+  - empty_string
+  # Tests use `"foo".data(using: .utf8)!` heavily; this rule is pathologically slow on
+  # large suites (e.g. RAnalyticsDatabaseTests) and adds little value in test code.
+  - non_optional_string_data_conversion
+
+type_body_length:
+  warning: 500
+  error: 600

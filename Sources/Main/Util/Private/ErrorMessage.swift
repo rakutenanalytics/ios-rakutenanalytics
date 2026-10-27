@@ -5,6 +5,7 @@ enum ErrorDomain {
     static let analyticsManagerErrorDomain = "\(domainName).analytics-manager"
     static let ratTrackerErrorDomain = "\(domainName).rat-tracker"
     static let geoTrackerErrorDomain = "\(domainName).geo-tracker"
+    static let geoManagerErrorDomain = "\(domainName).geo-manager"
     static let rpCookieFetcherErrorDomain = "\(domainName).rp-cookie-fetcher"
     static let databaseErrorDomain = "\(domainName).database"
     static let senderErrorDomain = "\(domainName).sender"
@@ -61,12 +62,18 @@ enum ErrorCode: Int {
     // Geo Tracker
     case geoTrackerCreationFailed
 
+    // Geo Manager
+    case locationDataCollectionDisabledByPrivacy
+
     // Scene Delegate
     case sceneDelegateManifestMissing
     case sceneDelegateClassNameMissing
     case sceneDelegateClassUnresolved
 
     case senderBackgroundTimerStartDateIsNil
+
+    // Clear Data
+    case clearDataAlreadyRunning
 }
 
 enum ErrorDescription {
@@ -93,8 +100,12 @@ enum ErrorDescription {
     static let databaseError = "An error occurred with RAnalyticsDatabase."
     static let databasePrepareTableError = "RAnalyticsDatabase's prepareTable is cancelled"
 
+    // Clear Data
+    static let clearDataAlreadyRunning = "clearData() is already in progress."
+
     // Location
     static let locationHasFailed = "Failed to acquire device location."
+    static let locationDataCollectionDisabledByPrivacy = "Location data collection is disabled."
 
     // Reachability Notifier
     static let reachabilityNotifierCreationFailed = "ReachabilityNotifier creation has failed."

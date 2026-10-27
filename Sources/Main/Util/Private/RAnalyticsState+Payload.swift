@@ -1,16 +1,18 @@
 import Foundation
 
 extension RAnalyticsState {
-    /// - Returns: the core payload for RAT trackers.
-    ///
-    /// - Note: this payload contains `app_ver`, `app_name`, `mos`, `ver` and `ts1`.
-    var corePayload: [String: Any] {
+    /// Fields collected regardless of device-information consent (app version, name, SDK version, ordering timestamp).
+    var alwaysCollectedCorePayload: [String: Any] {
         var dict = [String: Any]()
-        dict[PayloadParameterKeys.Core.appVer] = currentVersion
-        dict[PayloadParameterKeys.Core.appName] = CoreHelpers.Constants.applicationName
-        dict[PayloadParameterKeys.Core.mos] = CoreHelpers.Constants.osVersion
-        dict[PayloadParameterKeys.Core.ver] = CoreHelpers.Constants.sdkVersion
-        dict[PayloadParameterKeys.Core.ts1] = Swift.max(0, round(NSDate().timeIntervalSince1970))
+        dict[PayloadParameterKeys.appVer] = currentVersion
+        dict[PayloadParameterKeys.appName] = CoreHelpers.Constants.applicationName
+        dict[PayloadParameterKeys.ver] = CoreHelpers.Constants.sdkVersion
+        dict[PayloadParameterKeys.ts1] = Swift.max(0, round(NSDate().timeIntervalSince1970))
         return dict
+    }
+
+    /// OS version (`mos`), included only when device-information collection is allowed.
+    var deviceInformationMosPayload: [String: Any] {
+        [PayloadParameterKeys.mos: CoreHelpers.Constants.osVersion]
     }
 }

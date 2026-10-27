@@ -7,8 +7,8 @@ extension RAnalyticsState {
     var sessionStartParameters: [String: Any] {
         var extra = [String: Any]()
 
-        extra[CpParameterKeys.SessionStart.daysSinceFirstUse] = NSNumber(value: NSDate.daysPassedSinceDate(installLaunchDate))
-        extra[CpParameterKeys.SessionStart.daysSinceLastUse] = NSNumber(value: NSDate.daysPassedSinceDate(lastLaunchDate))
+        extra[PayloadParameterKeys.Cp.daysSinceFirstUse] = NSNumber(value: NSDate.daysPassedSinceDate(installLaunchDate))
+        extra[PayloadParameterKeys.Cp.daysSinceLastUse] = NSNumber(value: NSDate.daysPassedSinceDate(lastLaunchDate))
 
         return extra
     }
@@ -22,10 +22,10 @@ extension RAnalyticsState {
             extra[RAnalyticsConstants.appInfoKey] = appInfoNotOptional
         }
         if !lastVersion.isEmpty {
-            extra["previous_version"] = lastVersion
+            extra[PayloadParameterKeys.Cp.previousVersion] = lastVersion
         }
-        extra["launches_since_last_upgrade"] = NSNumber(value: lastVersionLaunches)
-        extra["days_since_last_upgrade"] = NSNumber(value: NSDate.daysPassedSinceDate(lastUpdateDate))
+        extra[PayloadParameterKeys.Cp.launchesSinceLastUpgrade] = NSNumber(value: lastVersionLaunches)
+        extra[PayloadParameterKeys.Cp.daysSinceLastUpgrade] = NSNumber(value: NSDate.daysPassedSinceDate(lastUpdateDate))
 
         return extra
     }
@@ -37,7 +37,7 @@ extension RAnalyticsState {
 
         let loginMethodString = loginMethod.toString
         if !loginMethodString.isEmpty {
-            extra[CpParameterKeys.Login.method] = loginMethodString
+            extra[PayloadParameterKeys.Cp.loginMethod] = loginMethodString
         }
 
         return extra

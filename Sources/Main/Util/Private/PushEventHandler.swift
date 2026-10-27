@@ -26,6 +26,7 @@ protocol PushEventHandleable {
     func cachedDarwinEvents() -> [[String: Any]]
     func save(darwinEvents: [[String: Any]])
     func clearDarwinEventsCache()
+    func clearPushTrackingCache()
 }
 
 // MARK: - PushEventHandler
@@ -87,5 +88,11 @@ extension PushEventHandler: PushEventHandleable {
     /// Clear the Darwin events array in the App Group User Defaults.
     internal func clearDarwinEventsCache() {
         sharedUserStorageHandler?.set(value: [], forKey: PushEventHandlerKeys.openCountCachedEventsKey)
+    }
+
+    /// Clear push open-count deduplication and cached extension events.
+    internal func clearPushTrackingCache() {
+        sharedUserStorageHandler?.removeObject(forKey: PushEventHandlerKeys.openCountSentUserDefaultKey)
+        clearDarwinEventsCache()
     }
 }

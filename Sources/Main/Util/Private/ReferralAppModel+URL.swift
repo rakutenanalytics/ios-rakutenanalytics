@@ -1,10 +1,10 @@
 import Foundation
 
 private let reservedQueryItemNames = [PayloadParameterKeys.ref,
-                                      CpParameterKeys.Ref.accountIdentifier,
-                                      CpParameterKeys.Ref.applicationIdentifier,
-                                      CpParameterKeys.Ref.link,
-                                      CpParameterKeys.Ref.component]
+                                      DeepLinkParameterKeys.accountIdentifier,
+                                      DeepLinkParameterKeys.applicationIdentifier,
+                                      PayloadParameterKeys.Cp.refLink,
+                                      PayloadParameterKeys.Cp.refComp]
 
 // MARK: - Init with URL
 
@@ -20,23 +20,23 @@ extension ReferralAppModel {
         }
         self.bundleIdentifier = bundleIdentifier
 
-        guard let accString = queryItems.first(where: { $0.name == CpParameterKeys.Ref.accountIdentifier })?.value,
+        guard let accString = queryItems.first(where: { $0.name == DeepLinkParameterKeys.accountIdentifier })?.value,
               let accountIdentifier = Int64(accString),
               accountIdentifier > 0 else {
             return nil
         }
         self.accountIdentifier = accountIdentifier
 
-        guard let aidString = queryItems.first(where: { $0.name == CpParameterKeys.Ref.applicationIdentifier })?.value,
+        guard let aidString = queryItems.first(where: { $0.name == DeepLinkParameterKeys.applicationIdentifier })?.value,
               let applicationIdentifier = Int64(aidString),
               applicationIdentifier > 0 else {
             return nil
         }
         self.applicationIdentifier = applicationIdentifier
 
-        link = queryItems.first(where: { $0.name == CpParameterKeys.Ref.link })?.value
+        link = queryItems.first(where: { $0.name == PayloadParameterKeys.Cp.refLink })?.value
 
-        component = queryItems.first(where: { $0.name == CpParameterKeys.Ref.component })?.value
+        component = queryItems.first(where: { $0.name == PayloadParameterKeys.Cp.refComp })?.value
 
         if !queryItems.isEmpty {
             customParameters = queryItems.reduce(into: [:]) { params, queryItem in
@@ -54,22 +54,22 @@ extension ReferralAppModel {
     public var query: String {
         var queryBuilder = [String]()
 
-        if let encodedKey = CpParameterKeys.Ref.accountIdentifier.addEncodingForRFC3986UnreservedCharacters(),
+        if let encodedKey = DeepLinkParameterKeys.accountIdentifier.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = "\(accountIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
             queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
-        if let encodedKey = CpParameterKeys.Ref.applicationIdentifier.addEncodingForRFC3986UnreservedCharacters(),
+        if let encodedKey = DeepLinkParameterKeys.applicationIdentifier.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = "\(applicationIdentifier)".addEncodingForRFC3986UnreservedCharacters() {
             queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
-        if let encodedKey = CpParameterKeys.Ref.link.addEncodingForRFC3986UnreservedCharacters(),
+        if let encodedKey = PayloadParameterKeys.Cp.refLink.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = link?.addEncodingForRFC3986UnreservedCharacters() {
             queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }
 
-        if let encodedKey = CpParameterKeys.Ref.component.addEncodingForRFC3986UnreservedCharacters(),
+        if let encodedKey = PayloadParameterKeys.Cp.refComp.addEncodingForRFC3986UnreservedCharacters(),
            let encodedValue = component?.addEncodingForRFC3986UnreservedCharacters() {
             queryBuilder.append("\(encodedKey)=\(encodedValue)")
         }

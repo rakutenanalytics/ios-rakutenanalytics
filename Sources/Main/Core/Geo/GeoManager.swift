@@ -5,15 +5,6 @@ enum GeoRequestLocationType {
     case continual, userAction
 }
 
-/// The geo location result type.
-public typealias GeoRequestLocationResult = Result<LocationModel, Error>
-
-/// Completion block for request location.
-///
-/// This block is triggered on requesting a one-time delivery of the user’s current location.
-///  - Returns: An object with value of type `LocationModel` on success or an error of type `Error` on failure.
-public typealias GeoRequestLocationBlock = (GeoRequestLocationResult) -> Void
-
 // MARK: - GeoTrackable
 /// `GeoTrackable` defines a blueprint for tracking geo location informations.
 protocol GeoTrackable {
@@ -44,13 +35,12 @@ protocol GeoTrackable {
     /// Call this method to get a single location update of the user's current location.
     /// - parameters:
     ///     - actionParameters: Represents optional value of type `GeoActionParameters`.
-    ///     - completionHandler: Executes a block called `GeoRequestLocationBlock`.
     ///
     /// - Warning: This function should be called on the main thread, otherwise requesting the location collection is not guaranteed.
     ///
-    /// - Note: On tvOS, the completion handler is called immediately with a failure because location services are unavailable.
-    func requestLocation(actionParameters: GeoActionParameters?,
-                         completionHandler: @escaping GeoRequestLocationBlock)
+    /// - Note: On tvOS, this method throws immediately because location services are unavailable.
+    @MainActor
+    func requestLocation(actionParameters: GeoActionParameters?) async throws -> LocationModel
 
     /// Get configuration used for location collection.
     ///
@@ -91,11 +81,16 @@ public final class GeoManager {
     /// Instance of type `GeoConfigurationStorable`.
     private let configurationStore: GeoConfigurationStorable
 
-    /// Callback to provide user action based location or error
-    private var userActionLocationCallback: ((GeoRequestLocationResult) -> Void)?
+    /// Geo event tracker used to enqueue and send location payloads.
+    private let geoTracker: GeoTracker?
 
-    /// user action info
-    private var userActionParameters: GeoActionParameters?
+    /// Consent store for location data collection.
+    private let consentStore: DataCollectionConsentReadable
+
+    /// When true, Geo Tracker workers are stopped because location consent is off, but configuration remains for resume.
+    private var isGeoPausedForPrivacyConsent = false
+
+    @MainActor private let userActionRequestCoordinator = GeoUserActionRequestCoordinator()
 
     /// - Returns: The shared instance of `GeoManager` object.
     public static let shared: GeoManager = {
@@ -117,8 +112,9 @@ public final class GeoManager {
                                                                  coreLocationManager: coreLocationManager,
                                                                  configurationStore: GeoConfigurationStore(userStorageHandler: userStorageHandler)),
                           device: dependenciesContainer.deviceCapability,
-                          tracker: geoTracker,
-                          analyticsManager: AnalyticsManager.shared())
+                          geoTracker: geoTracker,
+                          analyticsManager: AnalyticsManager.shared(),
+                          consentStore: DataCollectionConsentStore.shared)
     }()
 
     /// Creates a new instance of GeoManager.
@@ -126,30 +122,43 @@ public final class GeoManager {
     /// - Parameter userStorageHandler: Parameter of type `UserStorageHandleable` provides an interface to the user’s defaults database, where you store key-value pairs persistently across launches of your app.
     /// - Parameter geoLocationManager: The geolocation manager.
     /// - Parameter device: The device capability.
-    /// - Parameter tracker: The geo tracker.
+    /// - Parameter geoTracker: The geo tracker.
     /// - Parameter analyticsManager: The analytics manager processing events.
+    /// - Parameter consentStore: Consent store for location data collection.
     init(userStorageHandler: UserStorageHandleable,
          geoLocationManager: GeoLocationManageable,
          device: DeviceCapability,
-         tracker: Tracker?,
-         analyticsManager: AnalyticsManager) {
+         geoTracker: GeoTracker? = nil,
+         analyticsManager: AnalyticsManager,
+         consentStore: DataCollectionConsentReadable = DataCollectionConsentStore.shared) {
         self.poller = GeoPoller()
 
         self.userStorageHandler = userStorageHandler
+        self.geoTracker = geoTracker
 
         self.configurationStore = GeoConfigurationStore(userStorageHandler: userStorageHandler)
 
         self.geoLocationManager = geoLocationManager
 
+        self.consentStore = consentStore
+
         self.deviceIdentifierHandler = DeviceIdentifierHandler(device: device, hasher: SecureHasher())
 
         self.analyticsManager = analyticsManager
 
-        if let tracker = tracker {
-            self.analyticsManager.add(tracker)
+        if let geoTracker = geoTracker {
+            self.analyticsManager.add(geoTracker)
         }
 
         self.geoLocationManager.delegate = self
+
+        Task { @MainActor in
+            PrivacyConsentReactor.shared.register(geo: self)
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -172,23 +181,26 @@ extension GeoManager: GeoTrackable {
     }
 
     public func stopLocationCollection() {
-        userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
-        manageStopLocationCollection()
+        MainThreadExecutor.run {
+            self.isGeoPausedForPrivacyConsent = false
+            self.userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
+            self.manageStopLocationCollection()
+        }
     }
 
-    public func requestLocation(actionParameters: GeoActionParameters? = nil,
-                                completionHandler: @escaping GeoRequestLocationBlock) {
+    @MainActor
+    public func requestLocation(actionParameters: GeoActionParameters? = nil) async throws -> LocationModel {
         #if os(tvOS)
-        completionHandler(.failure(LocationPlatform.unsupportedError))
+        throw LocationPlatform.unsupportedError
         #else
-        self.userActionParameters = actionParameters
-        self.userActionLocationCallback = completionHandler
-        requestLocationUpdate(for: .userAction)
+        try await userActionRequestCoordinator.begin(actionParameters: actionParameters) { [weak self] in
+            self?.requestLocationUpdate(for: .userAction)
+        }
         #endif
     }
 
     public func getConfiguration() -> GeoConfiguration? {
-        return configurationStore.retrieveGeoConfigurationFromStorage()
+        configurationStore.retrieveGeoConfigurationFromStorage()
     }
 }
 
@@ -199,7 +211,15 @@ extension GeoManager {
     private func handleConfigurationAndLocationCollection(configuration: GeoConfiguration) {
         configurationStore.store(configuration: configuration)
         userStorageHandler.set(value: true, forKey: UserDefaultsKeys.locationCollectionKey)
-        manageStartLocationCollection()
+
+        MainThreadExecutor.run {
+            guard self.consentStore.isEnabled(.location) else {
+                self.isGeoPausedForPrivacyConsent = true
+                return
+            }
+            self.isGeoPausedForPrivacyConsent = false
+            self.manageStartLocationCollection()
+        }
     }
 
     private func manageStartLocationCollection() {
@@ -236,10 +256,12 @@ extension GeoManager {
     }
 
     private func performLocationCollectionTasks() {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let strongSelf = self,
-                  strongSelf.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey) else { return }
-            strongSelf.requestLocationUpdate(for: .continual)
+        MainThreadExecutor.run { [weak self] in
+            guard let self = self,
+                  self.userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey),
+                  self.consentStore.isEnabled(.location),
+                  !self.isGeoPausedForPrivacyConsent else { return }
+            self.requestLocationUpdate(for: .continual)
         }
     }
 
@@ -257,6 +279,40 @@ extension GeoManager {
         geoLocationManager.stopLocationUpdates()
         poller.invalidateLocationCollectionPoller()
         configurationStore.purgeConfiguration()
+        userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationTimestampKey)
+    }
+
+    private func pauseLocationOperationsPreservingState() {
+        geoLocationManager.stopMonitoringSignificantLocationChanges()
+        geoLocationManager.stopLocationUpdates()
+        poller.invalidateLocationCollectionPoller()
+        userStorageHandler.removeObject(forKey: UserDefaultsKeys.locationTimestampKey)
+    }
+
+    func reconcileLocationCollectionWithPrivacyConsent() {
+        guard consentStore.isPrivacyControlEnabled else {
+            guard isGeoPausedForPrivacyConsent else { return }
+            isGeoPausedForPrivacyConsent = false
+            resumeGeoCollectionIfNeeded()
+            return
+        }
+
+        let wantsCollection = userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)
+        let allowed = consentStore.isEnabled(.location)
+
+        if wantsCollection, !allowed, !isGeoPausedForPrivacyConsent {
+            pauseLocationOperationsPreservingState()
+            isGeoPausedForPrivacyConsent = true
+        } else if wantsCollection, allowed, isGeoPausedForPrivacyConsent {
+            isGeoPausedForPrivacyConsent = false
+            manageStartLocationCollection()
+        }
+    }
+
+    private func resumeGeoCollectionIfNeeded() {
+        let wants = userStorageHandler.bool(forKey: UserDefaultsKeys.locationCollectionKey)
+        guard wants, getConfiguration() != nil else { return }
+        manageStartLocationCollection()
     }
 }
 
@@ -278,16 +334,31 @@ private extension GeoManager {
 extension GeoManager: GeoLocationManagerDelegate {
 
     func geoLocationManager(didUpdateLocation location: CLLocation, for requestType: GeoRequestLocationType) {
+        guard consentStore.isEnabled(.location) else {
+            guard case .userAction = requestType else { return }
+            let privacyError = NSError(domain: ErrorDomain.geoManagerErrorDomain,
+                                       code: ErrorCode.locationDataCollectionDisabledByPrivacy.rawValue,
+                                       userInfo: [NSLocalizedDescriptionKey: ErrorDescription.locationDataCollectionDisabledByPrivacy])
+            Task { @MainActor [weak self] in
+                self?.userActionRequestCoordinator.fail(with: privacyError)
+            }
+            return
+        }
         switch requestType {
         case .continual:
             let locationModel = LocationModel(location: location)
             trackLocEvent(locationModel)
             userStorageHandler.set(value: locationModel.timestamp, forKey: UserDefaultsKeys.locationTimestampKey)
         case .userAction:
-            let locationModel = LocationModel(location: location, isAction: true, actionParameters: userActionParameters)
-            trackLocEvent(locationModel)
-            if let safeCallback = userActionLocationCallback {
-                safeCallback(.success(locationModel))
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                let locationModel = LocationModel(
+                    location: location,
+                    isAction: true,
+                    actionParameters: self.userActionRequestCoordinator.actionParameters
+                )
+                self.trackLocEvent(locationModel)
+                self.userActionRequestCoordinator.complete(with: locationModel)
             }
         }
     }
@@ -297,9 +368,30 @@ extension GeoManager: GeoLocationManagerDelegate {
         case .continual:
             RLogger.debug(message: error.localizedDescription)
         case .userAction:
-            if let userActionLocationCallback = userActionLocationCallback {
-                userActionLocationCallback(.failure(error))
+            Task { @MainActor [weak self] in
+                self?.userActionRequestCoordinator.fail(with: error)
             }
+        }
+    }
+}
+
+// MARK: - Privacy consent reconciliation
+
+extension GeoManager: GeoPrivacyConsentReconciling {}
+
+// MARK: - DataErasable
+
+extension GeoManager: DataErasable {
+    func clearData() async throws {
+        await MainActor.run {
+            self.isGeoPausedForPrivacyConsent = false
+            self.userStorageHandler.set(value: false, forKey: UserDefaultsKeys.locationCollectionKey)
+            self.manageStopLocationCollection()
+            self.userActionRequestCoordinator.cancel()
+        }
+
+        if let geoTracker = geoTracker {
+            try await geoTracker.clearData()
         }
     }
 }

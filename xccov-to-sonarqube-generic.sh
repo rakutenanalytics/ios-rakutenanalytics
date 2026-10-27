@@ -144,6 +144,14 @@ function filter_coverage_input {
 function print_xccov_path_diagnostics {
   local xcresult="$1"
 
+  echo "DEBUG: xcodebuild/xcode-select version:" >&2
+  xcodebuild -version 2>&1 | sed 's/^/  /' >&2 || true
+
+  echo "DEBUG: total distinct file paths in xcresult:" >&2
+  xcrun xccov view --archive "$xcresult" 2>/dev/null \
+    | awk '/:$/ && !/^ *[0-9]+:/ { sub(/:$/, "", $0); print }' \
+    | sort -u | wc -l | sed 's/^/  /' >&2 || true
+
   echo "DEBUG: sample xccov file paths:" >&2
   xcrun xccov view --archive "$xcresult" 2>/dev/null \
     | awk '/:$/ && !/^ *[0-9]+:/ { sub(/:$/, "", $0); print "  " $0 }' \
@@ -202,6 +210,48 @@ function xccov_to_generic {
   echo '</coverage>'
 }
 
+function find_profdata {
+  local derived_data="${DERIVED_DATA_PATH:-$HOME/Library/Developer/Xcode/DerivedData}"
+  find "$derived_data" -path '*/Build/ProfileData/*/Coverage.profdata' -print0 2>/dev/null \
+    | xargs -0 ls -t 2>/dev/null | head -1
+}
+
+# xccov intermittently drops statically linked SPM targets (Sources/) from the
+# xcresult, while the raw profdata still has them. Read it with llvm-cov instead.
+function llvm_cov_to_generic {
+  local profdata="$1"
+  local products_dir="${profdata%/ProfileData/*}/Products"
+  local objects=()
+  local bundle
+
+  while IFS= read -r -d '' bundle; do
+    objects+=("-object" "$bundle/$(basename "$bundle" .xctest)")
+  done < <(find "$products_dir" -name '*.xctest' -type d -print0)
+
+  [[ ${#objects[@]} -gt 0 ]] || return 1
+
+  echo '<coverage version="1">'
+  xcrun llvm-cov export -format=lcov -instr-profile "$profdata" "${objects[@]:1}" \
+    | awk '
+      /^SF:/ {
+        path = substr($0, 4)
+        keep = (path ~ /\/Sources\// && path !~ /SourcePackages\/|Pods\/|ViewInspector\/|RAnalyticsBroadcast\/|DerivedData\//)
+        if (keep) print "  <file path=\"" path "\">"
+        next
+      }
+      /^DA:/ && keep {
+        split(substr($0, 4), da, ",")
+        printf "    <lineToCover lineNumber=\"%s\" covered=\"%s\"/>\n", da[1], (da[2] > 0) ? "true" : "false"
+        next
+      }
+      /^end_of_record/ {
+        if (keep) print "  </file>"
+        keep = 0
+      }
+    ' | normalize_coverage_paths
+  echo '</coverage>'
+}
+
 function is_xcode_version_supported() {
   local major=${1:-0} minor=${2:-0}
   if (( (major >= 14) || (major == 13 && minor >= 3) )); then
@@ -238,9 +288,16 @@ fi
 coverage_xml="$(mktemp)"
 trap 'rm -f "$coverage_xml"' EXIT
 
-xccov_to_generic "$xcresult" > "$coverage_xml"
+xccov_to_generic "$xcresult" > "$coverage_xml" || true
 
 file_count="$(grep -c '<file path=' "$coverage_xml" || true)"
+
+if [[ "$file_count" -eq 0 ]] && profdata="$(find_profdata)" && [[ -n "$profdata" ]]; then
+  echo "WARNING: xccov reported no Sources/ files; falling back to llvm-cov on $profdata" >&2
+  llvm_cov_to_generic "$profdata" > "$coverage_xml" || true
+  file_count="$(grep -c '<file path=' "$coverage_xml" || true)"
+fi
+
 line_count="$(grep -c '<lineToCover ' "$coverage_xml" || true)"
 
 echo "Coverage report: $file_count files, $line_count lines" >&2

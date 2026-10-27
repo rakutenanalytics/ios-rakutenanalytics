@@ -8,7 +8,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene,
                willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard scene is UIWindowScene else { return }
 
         if let url = connectionOptions.urlContexts.first?.url {
             DeepLinkManager.record(url: url, entryPoint: "willConnectTo(url)")

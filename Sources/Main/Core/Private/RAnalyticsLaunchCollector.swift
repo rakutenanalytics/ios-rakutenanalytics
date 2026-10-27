@@ -232,6 +232,43 @@ extension RAnalyticsLaunchCollector {
         lastVersion = userStorageHandler?.string(forKey: Constants.lastVersionKey)
         lastVersionLaunches = (userStorageHandler?.object(forKey: Constants.lastVersionLaunchesKey) as? NSNumber)?.uintValue ?? 0
     }
+
+    func clearPersistedLaunchData() {
+        keychainHandler?.deleteItem(for: Constants.initialLaunchDateKey)
+
+        [
+            Constants.installLaunchDateKey,
+            Constants.lastUpdateDateKey,
+            Constants.lastLaunchDateKey,
+            Constants.lastVersionKey,
+            Constants.lastVersionLaunchesKey
+        ].forEach { userStorageHandler?.removeObject(forKey: $0) }
+
+        pushEventHandler.clearPushTrackingCache()
+    }
+
+    func resetInMemoryLaunchStateAfterClear() {
+        initialLaunchDate = nil
+        installLaunchDate = nil
+        lastUpdateDate = nil
+        lastLaunchDate = nil
+        lastVersion = nil
+        lastVersionLaunches = 0
+        origin = .inner
+        referralTracking = .none
+        isInitialLaunch = true
+        isInstallLaunch = true
+        isUpdateLaunch = lastVersion != (Bundle.main.shortVersion ?? "")
+    }
+}
+
+// MARK: - DataErasable
+
+extension RAnalyticsLaunchCollector: DataErasable {
+    func clearData() async throws {
+        clearPersistedLaunchData()
+        resetInMemoryLaunchStateAfterClear()
+    }
 }
 
 private extension RAnalyticsLaunchCollector {

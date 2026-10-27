@@ -284,38 +284,37 @@ extension ViewableImpressionsViewController: UITableViewDataSource, UITableViewD
 
 private extension ViewableImpressionsViewController {
     func triggerDwellRefresh(reason: String) {
+        Task { await performDwellRefresh(reason: reason) }
+    }
+
+    @MainActor
+    func performDwellRefresh(reason: String) async {
         let start = CFAbsoluteTimeGetCurrent()
         let listSize = registeredCountForMetrics
         let signpostID = ViewableImpressionsSampleMetrics.signposter.makeSignpostID()
         let intervalState = ViewableImpressionsSampleMetrics.signposter.beginInterval("refreshState", id: signpostID)
 
-        tracker.refreshState(viewportView: activeScrollView()) { [weak self] eventParameters in
-            ViewableImpressionsSampleMetrics.signposter.endInterval("refreshState", intervalState)
+        let eventParameters = await tracker.refreshState(viewportView: activeScrollView())
+        ViewableImpressionsSampleMetrics.signposter.endInterval("refreshState", intervalState)
 
-            let elapsedMs = (CFAbsoluteTimeGetCurrent() - start) * 1_000
-            let qualified = ViewableImpressionsSampleMetrics.viewableItemCount(in: eventParameters)
+        let elapsedMs = (CFAbsoluteTimeGetCurrent() - start) * 1_000
+        let qualified = ViewableImpressionsSampleMetrics.viewableItemCount(in: eventParameters)
+        ViewableImpressionsSampleMetrics.logRefreshCompleted(
+            reason: reason,
+            listSize: listSize,
+            qualified: qualified,
+            durationMs: elapsedMs
+        )
 
-            let durationLabel = String(format: "%.2f", elapsedMs)
-            ViewableImpressionsSampleMetrics.logger.notice(
-                "viewable refresh reason=\(reason, privacy: .public) list_size=\(listSize, privacy: .public) viewable_items_in_batch=\(qualified, privacy: .public) duration_ms=\(durationLabel, privacy: .public)"
-            )
+        updateStatsLabel(lastDurationMs: elapsedMs, qualified: qualified, reason: reason)
 
-            DispatchQueue.main.async { [weak self] in
-                self?.updateStatsLabel(lastDurationMs: elapsedMs, qualified: qualified, reason: reason)
-            }
-
-            if let eventParameters {
-                ViewableImpressionsSampleMetrics.logger.notice(
-                    "sample RAT: sending pageVisit with viewable_data count=\(qualified, privacy: .public) (items in this event)"
-                )
-                RAnalyticsRATTracker.shared()
-                    .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
-                    .track()
-            } else {
-                ViewableImpressionsSampleMetrics.logger.notice(
-                    "sample RAT: no pageVisit sent — viewable_data empty (0 viewable impression items)"
-                )
-            }
+        if let eventParameters {
+            ViewableImpressionsSampleMetrics.logPageVisitSent(qualified: qualified)
+            RAnalyticsRATTracker.shared()
+                .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
+                .track()
+        } else {
+            ViewableImpressionsSampleMetrics.logPageVisitSkipped()
         }
     }
 }

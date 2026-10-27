@@ -1,5 +1,44 @@
 # Changelog
 
+## 13.0.0 (2026-10-27)
+
+⚠️ **Important**: Completion-handler APIs are removed from public surfaces. Adopt `async`/`await` for Rp cookie fetch, web tracking cookies, one-shot geo location, and viewable impression refresh.
+
+⚠️ **Important**: `fetchRpCookie()` no longer fails immediately when offline. It waits for connectivity (up to the existing retry timeout budget), re-checks on foreground, and can retry sooner after a failed request when the app becomes active. Host apps that relied on instant offline failure should review call-site error handling.
+
+### Breaking changes
+* CONRAT-43121: Remove completion-handler public APIs; replace with async `fetchRpCookie()`, `setWebTrackingCookieDomain`, `setWebTrackingCookieMultipleDomains`, `requestLocation(actionParameters:)`, and `refreshState`.
+
+### Features
+* CONRAT-43443: Mobile Privacy Control: optional Info.plist flag, async runtime consent API (`set(dataCollection:enabled:)`, `isDataCollectionEnabled(dataCollection:)`), granular categories for location, mobile network, device information (including app-to-web `ra_uid` cookie), user information (easy identifier and Rp cookie), and aggregate-all; category-aware payloads, geo tracking, and cookies.
+* CONRAT-43969: Mobile Privacy Control migration: startup flow, persisted `privacy_version`, and `showConsentCallback` to notify the host app of data collection types with no stored consent.
+
+### Deprecations
+* CONRAT-43443: With privacy control enabled, the legacy last-known-location and advertising-identifier properties are deprecated in favor of the runtime consent API for the location and device-information categories.
+
+### Improvements
+* CONRAT-45025: Harden async cancellation for viewable impression refresh, SwiftUI manual impressions, geo one-shot location, and consent Rp cookie clearing.
+* CONRAT-43121: Migrate internal networking, database CRUD, and upload scheduling to structured concurrency; update tests and Sendable conformance accordingly.
+* CONRAT-43121: Replace `Reachability` observer callbacks with `connectionUpdates: AsyncStream<Connection>`; wire Rp cookie fetch to await connectivity and resume on foreground.
+* CONRAT-43121: Fetch analytics blobs in deterministic FIFO order (`ORDER BY rowid ASC`) so multi-event uploads preserve insert order under async scheduling.
+* CONRAT-43121: Consolidate sender upload scheduling in a private actor; cancel insert/upload tasks on sender teardown.
+* CONRAT-43443: Add `DataEraserCoordinator` and `DataErasable` erasure hooks across launch/login collectors, RAT tracker, geo manager, cookie injector, and session state.
+* CONRAT-44838: Main-actor `set(dataCollection:enabled:)` awaits ordered reconciliation (Geo, Rp cookies, app-to-web cookies, WebView user agent) before returning; add async `clearData()`.
+* CONRAT-44948: Organize UnitTestApp tests into thematic subfolders under `Unit`, `GeoTests`, `Integration`, and `UtilsTests`, aligned with SDK domains; update Xcode project groups accordingly.
+
+### Bug fixes
+* Fix flaky `SenderTests` upload-failure observer when parallel senders post unrelated notifications.
+* Fix `LockableTests` cleanup by resuming on the main actor after a cross-thread unlock attempt.
+* CONRAT-44948: Fix flaky consent cookie tests that raced on async app-to-web cookie injection before revoke assertions.
+* CONRAT-45260: Fix multi-domain app-to-web tracking keeping only the last domain's `ra_uid` cookie in the WebView cookie store; toggling `enableAppToWebTracking` and consent changes now re-inject the most recently configured domain(s).
+
+### Scripts
+* CONRAT-44728: Script for updating iOS SDK's PayloadParameterKeys.swift file from the JSON Schema.
+
+### CI
+* CONRAT-44865: fix SwiftLint on CI (github action).
+* CONRAT-44854: Add a CI check on `PayloadParameterKeys.swift` file validity in `semantic-checks.yml`.
+
 ## 12.0.1 (2026-08-31)
 
 ### Bug fixes

@@ -20,9 +20,7 @@ protocol LocaleProvidable {
 extension UIDevice: DeviceInfoProvidable {}
 
 struct DefaultLocaleProvider: LocaleProvidable {
-    var preferredLanguages: [String] {
-        return NSLocale.preferredLanguages
-    }
+    var preferredLanguages: [String] { NSLocale.preferredLanguages }
 }
 
 private struct UserAgentComponents {
@@ -65,12 +63,11 @@ extension UserAgentHandler: UserAgentHandleable {
     ///
     /// - Returns: a user agent string of the form AppId/Version.
     func value(for state: RAnalyticsState?) -> String? {
-        if let bundleIdentifier = bundle.bundleIdentifier,
-           let currentVersion = state?.currentVersion {
-            return "\(bundleIdentifier)/\(currentVersion)"
-        } else {
+        guard let bundleIdentifier = bundle.bundleIdentifier,
+              let currentVersion = state?.currentVersion else {
             return nil
         }
+        return "\(bundleIdentifier)/\(currentVersion)"
     }
 
     /// The enriched user agent value for RAT.
@@ -81,8 +78,7 @@ extension UserAgentHandler: UserAgentHandleable {
     /// - Returns: a user agent string in the format:
     /// `<application_name>/<application_version> (<operating_system_info>; <device_info>; <device_type>; <language>; Analytics/<sdk_version>)`
     func enrichedValue(for state: RAnalyticsState?) -> String? {
-        guard let bundleIdentifier = bundle.bundleIdentifier,
-              let currentVersion = state?.currentVersion else {
+        guard let bundleIdentifier = bundle.bundleIdentifier, let currentVersion = state?.currentVersion else {
             return nil
         }
 
@@ -103,7 +99,8 @@ extension UserAgentHandler: UserAgentHandleable {
 private extension UserAgentHandler {
     /// Formats the user agent string from components
     func formatUserAgent(_ components: UserAgentComponents) -> String {
-        return "\(components.appInfo) (\(components.osInfo); \(components.deviceInfo); \(components.deviceType); \(components.language); \(components.analyticsInfo))"
+        "\(components.appInfo) (\(components.osInfo); \(components.deviceInfo); "
+            + "\(components.deviceType); \(components.language); \(components.analyticsInfo))"
     }
 
     /// Determines the device type based on the user interface idiom and platform.
@@ -136,10 +133,7 @@ private extension UserAgentHandler {
     func getLanguageCode() -> String {
         if let appLanguage = bundle.preferredLocalization {
             return String(appLanguage.prefix(2))
-        } else if let systemLanguage = localeProvider.preferredLanguages.first {
-            return systemLanguage
-        } else {
-            return "ja_JP"
         }
+        return localeProvider.preferredLanguages.first ?? "ja_JP"
     }
 }

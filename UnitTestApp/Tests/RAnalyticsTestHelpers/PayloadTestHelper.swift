@@ -18,20 +18,20 @@ extension LocationModel {
         timestamp: Date = Date(timeIntervalSince1970: 1679054447.532),
         isAction: Bool = false,
         actionParameters: GeoActionParameters? = nil) -> LocationModel {
-            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            let location = CLLocation(
-                coordinate: coordinate,
-                altitude: altitude,
-                horizontalAccuracy: horizontalAccuracy,
-                verticalAccuracy: verticalAccuracy,
-                course: course,
-                courseAccuracy: courseAccuracy,
-                speed: speed,
-                speedAccuracy: speedAccuracy,
-                timestamp: timestamp)
-            
-            return LocationModel(location: location, isAction: isAction, actionParameters: actionParameters)
-        }
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        let location = CLLocation(
+            coordinate: coordinate,
+            altitude: altitude,
+            horizontalAccuracy: horizontalAccuracy,
+            verticalAccuracy: verticalAccuracy,
+            course: course,
+            courseAccuracy: courseAccuracy,
+            speed: speed,
+            speedAccuracy: speedAccuracy,
+            timestamp: timestamp)
+
+        return LocationModel(location: location, isAction: isAction, actionParameters: actionParameters)
+    }
 }
 
 // MARK: - PayloadTestHelper
@@ -46,9 +46,9 @@ public enum PayloadTestHelper {
         bundle.preferredLocalization = Bundle.main.preferredLocalizations.first
         return bundle
     }()
-    
+
     // MARK: - Test Helper
-    
+
     public struct TestHelper {
         var databaseConnection: SQlite3Pointer!
         var database: RAnalyticsDatabase!
@@ -56,10 +56,11 @@ public enum PayloadTestHelper {
         public var ratTracker: RAnalyticsRATTracker!
         public let reachabilityMock = ReachabilityMock()
         public let expecter = RAnalyticsRATExpecter()
-        
+
         public init() {}
-        
+
         mutating public func setUp() {
+            AnalyticsManager.isConfigured = true
             let databaseTableName = "testTableName_RAnalyticsRATTrackerTests"
             databaseConnection = DatabaseTestUtils.openRegularConnection()!
             database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
@@ -69,6 +70,8 @@ public enum PayloadTestHelper {
             dependenciesContainer.deviceCapability = DeviceMock()
             dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
             dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
+            let consent = DataCollectionConsentStoreMock()
+            dependenciesContainer.dataCollectionConsent = consent
             dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(
                 bundle: PayloadTestHelper.bundle,
                 deviceCapability: dependenciesContainer.deviceCapability,
@@ -77,23 +80,47 @@ public enum PayloadTestHelper {
                 notificationHandler: dependenciesContainer.notificationHandler,
                 analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
                 reachability: reachabilityMock,
-                userStorageHandler: dependenciesContainer.userStorageHandler)
+                userStorageHandler: dependenciesContainer.userStorageHandler,
+                consentStore: consent)
             reachabilityMock.flags = nil
-            
+
             ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
             ratTracker.set(batchingDelay: 0)
-            
+
             expecter.dependenciesContainer = dependenciesContainer
             expecter.endpointURL = PayloadTestHelper.bundle.endpointAddress
             expecter.databaseTableName = dependenciesContainer.databaseConfiguration?.tableName
             expecter.databaseConnection = databaseConnection
             expecter.ratTracker = ratTracker
         }
-        
+
         mutating public func tearDown() {
             DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
             database.closeConnection()
             databaseConnection = nil
+        }
+
+        /// `RATEnablePrivacyControl` on, device-information consent off; rebuilds tracker and automatic fields.
+        mutating public func configureRatForCkpGatedOffPrivacy() {
+            let consentMock = DataCollectionConsentStoreMock()
+            consentMock.isPrivacyControlEnabled = true
+            consentMock.enabledTypes = [.location, .mobileNetwork, .userInformation]
+            dependenciesContainer.dataCollectionConsent = consentMock
+            dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(
+                bundle: PayloadTestHelper.bundle,
+                deviceCapability: dependenciesContainer.deviceCapability,
+                screenHandler: dependenciesContainer.screenHandler,
+                telephonyNetworkInfoHandler: dependenciesContainer.telephonyNetworkInfoHandler,
+                notificationHandler: dependenciesContainer.notificationHandler,
+                analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
+                reachability: ReachabilityMock(),
+                userStorageHandler: dependenciesContainer.userStorageHandler,
+                consentStore: consentMock)
+            (dependenciesContainer.bundle as? BundleMock)?.isPrivacyControlEnabled = true
+            ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
+            ratTracker.set(batchingDelay: 0)
+            expecter.dependenciesContainer = dependenciesContainer
+            expecter.ratTracker = ratTracker
         }
     }
 }

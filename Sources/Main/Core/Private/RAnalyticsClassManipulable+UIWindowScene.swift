@@ -76,7 +76,7 @@ extension UIWindowScene: RuntimeLoadable {
     static func rAutotrackSceneDelegateFunctions(_ sceneDelegateClassName: String) {
         guard let recipient = resolveSceneDelegateClass(named: sceneDelegateClassName) else {
             RLogger.debug(message: "Could not resolve scene delegate class '\(sceneDelegateClassName)'. "
-                + "Ensure Info.plist uses $(PRODUCT_MODULE_NAME).SceneDelegate.")
+                            + "Ensure Info.plist uses $(PRODUCT_MODULE_NAME).SceneDelegate.")
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsManagerErrorDomain,
                                              code: ErrorCode.sceneDelegateClassUnresolved.rawValue,
                                              description: ErrorDescription.sceneDelegateClassUnresolved,

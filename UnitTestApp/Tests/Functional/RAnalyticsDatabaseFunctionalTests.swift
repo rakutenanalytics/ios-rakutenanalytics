@@ -12,95 +12,84 @@ struct RAnalyticsDatabaseFunctionalTests {
     static let databaseParentDirectory = FileManager.SearchPathDirectory.documentDirectory
     static let databaseName = "RSDKAnalytics_Test.db"
     static let events = [mkEvent, mkAnotherEvent]
-    
+
     var connection: SQlite3Pointer!
     var databaseURL: URL!
     var database: RAnalyticsDatabase!
-    
+
     init() {
         databaseURL = FileManager.default.databaseFileURL(
             databaseName: Self.databaseName, databaseParentDirectory: Self.databaseParentDirectory)
         try? FileManager.default.removeItem(at: databaseURL)
     }
-    
+
     mutating func setUp() {
         connection = RAnalyticsDatabase.mkAnalyticsDBConnection(
             databaseName: Self.databaseName, databaseParentDirectory: Self.databaseParentDirectory)
         guard let safeConnection = connection else { return }
         database = RAnalyticsDatabase.database(connection: safeConnection)
     }
-    
+
     mutating func tearDown() {
         database?.closeConnection()
         connection = nil
         try? FileManager.default.removeItem(at: databaseURL)
     }
-    
+
     @Test("should create database stored in a file")
     mutating func testDatabaseFileCreation() {
         setUp()
         defer { tearDown() }
         #expect(FileManager.default.fileExists(atPath: databaseURL.path) == true)
     }
-    
+
     @Test("should insert events to database")
     mutating func testInsertEvents() async {
         setUp()
         defer { tearDown() }
-        
+
         let testDatabase = database!
         let testConnection = connection!
-        
-        await withCheckedContinuation { continuation in
-            testDatabase.enabled = true
-            testDatabase.insert(blobs: Self.events, into: "events_table", limit: 2) {
-                continuation.resume()
-            }
-        }
-        
+
+        testDatabase.enabled = true
+        await testDatabase.insert(blobs: Self.events, into: "events_table", limit: 2)
+
         let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
         #expect(eventsInDb.elementsEqual(Self.events))
     }
-    
+
     @Test("should fetch saved events from database")
     mutating func testFetchEvents() async {
         setUp()
         defer { tearDown() }
-        
+
         let testConnection = connection!
         DatabaseTestUtils.insert(blobs: Self.events, table: "events_table", connection: testConnection)
-        
+
         let testDatabase = database!
-        let (fetchedEvents, fetchedIds) = await withCheckedContinuation { continuation in
-            testDatabase.enabled = true
-            testDatabase.fetchBlobs(2, from: "events_table") { blobs, ids in
-                continuation.resume(returning: (blobs, ids))
-            }
-        }
-        
+        testDatabase.enabled = true
+        let (fetchedEvents, fetchedIds) = await testDatabase.fetchBlobs(2, from: "events_table")
+
         #expect(fetchedEvents?.elementsEqual(Self.events) == true)
         #expect(fetchedIds?.elementsEqual([1, 2]) == true)
     }
-    
+
     @Test("should delete saved events according to passed IDs")
     mutating func testDeleteEvents() async {
         setUp()
         defer { tearDown() }
-        
+
         let testConnection = connection!
         DatabaseTestUtils.insert(blobs: Self.events, table: "events_table", connection: testConnection)
-        
+
         let testDatabase = database!
-        await withCheckedContinuation { continuation in
-            testDatabase.enabled = true
-            testDatabase.deleteBlobs(identifiers: [1, 2], in: "events_table") {
-                let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
-                #expect(eventsInDb.isEmpty == true)
-                continuation.resume()
-            }
-        }
+        testDatabase.enabled = true
+        await testDatabase.deleteBlobs(identifiers: [1, 2], in: "events_table")
+
+        let eventsInDb = DatabaseTestUtils.fetchTableContents("events_table", connection: testConnection)
+        #expect(eventsInDb.isEmpty == true)
     }
-    
+
     static let mkEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",
@@ -129,7 +118,7 @@ struct RAnalyticsDatabaseFunctionalTests {
         }
         }
     """#.data(using: .utf8)!
-    
+
     static let mkAnotherEvent = #"""
         {
         "ckp": "bd8ac43958a9e7fa0f097c0a0ba5c2979299e69d",

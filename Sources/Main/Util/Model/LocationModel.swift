@@ -123,26 +123,26 @@ extension LocationModel {
 
         if horizontalAccuracy >= 0
             && CLLocationCoordinate2DIsValid(coordinate) {
-            payload[PayloadParameterKeys.Location.accu] = NSNumber(value: horizontalAccuracy)
-            payload[PayloadParameterKeys.Location.lat] = NSNumber(value: min(90.0, max(-90.0, latitude)))
-            payload[PayloadParameterKeys.Location.long] = NSNumber(value: min(180.0, max(-180.0, longitude)))
+            payload[PayloadParameterKeys.Loc.accu] = NSNumber(value: horizontalAccuracy)
+            payload[PayloadParameterKeys.Loc.lat] = NSNumber(value: min(90.0, max(-90.0, latitude)))
+            payload[PayloadParameterKeys.Loc.long] = NSNumber(value: min(180.0, max(-180.0, longitude)))
         }
 
-        payload[PayloadParameterKeys.Location.tms] = NSNumber(value: timestamp.toRatTimestamp)
+        payload[PayloadParameterKeys.Loc.tms] = NSNumber(value: timestamp.toRatTimestamp)
 
         if speedAccuracy >= 0 && speed >= 0 {
-            payload[PayloadParameterKeys.Location.speedAccuracy] = NSNumber(value: speedAccuracy)
-            payload[PayloadParameterKeys.Location.speed] = NSNumber(value: speed)
+            payload[PayloadParameterKeys.Loc.speedAccuracy] = NSNumber(value: speedAccuracy)
+            payload[PayloadParameterKeys.Loc.speed] = NSNumber(value: speed)
         }
 
         if verticalAccuracy > 0 {
-            payload[PayloadParameterKeys.Location.verticalAccuracy] = NSNumber(value: verticalAccuracy)
-            payload[PayloadParameterKeys.Location.altitude] = NSNumber(value: altitude)
+            payload[PayloadParameterKeys.Loc.verticalAccuracy] = NSNumber(value: verticalAccuracy)
+            payload[PayloadParameterKeys.Loc.altitude] = NSNumber(value: altitude)
         }
 
         if courseAccuracy >= 0 && course >= 0 {
-            payload[PayloadParameterKeys.Location.bearingAccuracy] = NSNumber(value: courseAccuracy)
-            payload[PayloadParameterKeys.Location.bearing] = NSNumber(value: course)
+            payload[PayloadParameterKeys.Loc.bearingAccuracy] = NSNumber(value: courseAccuracy)
+            payload[PayloadParameterKeys.Loc.bearing] = NSNumber(value: course)
         }
 
         return payload
@@ -156,23 +156,23 @@ extension LocationModel {
            let actionParameters = actionParameters {
 
             if let actionType = actionParameters.actionType, !actionType.isEmpty {
-                locationActionParameters[PayloadParameterKeys.ActionParameters.type] = actionType
+                locationActionParameters[PayloadParameterKeys.ActionParams.type] = actionType
             }
 
             if let actionLog = actionParameters.actionLog, !actionLog.isEmpty {
-                locationActionParameters[PayloadParameterKeys.ActionParameters.log] = actionLog
+                locationActionParameters[PayloadParameterKeys.ActionParams.log] = actionLog
             }
 
             if let actionId = actionParameters.actionId, !actionId.isEmpty {
-                locationActionParameters[PayloadParameterKeys.ActionParameters.identifier] = actionId
+                locationActionParameters[PayloadParameterKeys.ActionParams.id] = actionId
             }
 
             if let actionDuration = actionParameters.actionDuration, !actionDuration.isEmpty {
-                locationActionParameters[PayloadParameterKeys.ActionParameters.duration] = actionDuration
+                locationActionParameters[PayloadParameterKeys.ActionParams.duration] = actionDuration
             }
 
             if let additionalLog = actionParameters.additionalLog, !additionalLog.isEmpty {
-                locationActionParameters[PayloadParameterKeys.ActionParameters.addLog] = additionalLog
+                locationActionParameters[PayloadParameterKeys.ActionParams.addLog] = additionalLog
             }
         }
 

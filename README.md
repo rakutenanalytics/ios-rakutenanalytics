@@ -47,7 +47,7 @@ On tvOS, `shouldTrackLastKnownLocation` and `shouldTrackAdvertisingIdentifier` d
 Open your project settings in Xcode and add a new package in 'Swift Packages' tab:
 
 * Repository URL: `https://github.com/rakutenanalytics/ios-rakutenanalytics.git`
-* Version settings: `12.0.1` "Up to Next Major"
+* Version settings: `13.0.0` "Up to Next Major"
 
 Choose `RakutenAnalytics` product for your target. If you want to link other targets (Notification Service Extension, Notification Content Extension, etc), go to Build Phases of that target, then in Link Binary With Libraries click + button and add `RakutenAnalytics`.
 
@@ -107,3 +107,35 @@ For the details, please refer to [Using the SDK](https://pages.ghe.rakuten-it.co
 
 * iOS sample: `Sample/RakutenAnalyticsSample.xcodeproj`
 * tvOS sample: `Sample/TvOSSample/TvOSSample.xcodeproj` — see [Sample/TvOSSample/README.md](Sample/TvOSSample/README.md) for setup and run instructions.
+
+# RAT Parameters Generator
+
+## Description
+
+Generate `PayloadParameterKeys.swift` from the RAT JSON schema.
+
+```
+./generate-swift-payload-keys.swift [--version <schema-version>] [output-path]
+```
+
+* `--version <schema-version>`: the `rakuten-analytics-json-schema` tag to clone (e.g. `3.2.0` or `v3.2.0`). If omitted, the repository's default branch is cloned.
+* `output-path`: where to write the generated file. Defaults to `Sources/Main/Util/Private/PayloadParameterKeys.swift`.
+
+If the schema repository is private, set `PRIVATE_GITHUB_USERNAME` and `PRIVATE_GITHUB_TOKEN` in the environment to clone it with credentials. Both must be set together.
+
+## Examples
+
+Get the latest version from the default branch:
+```
+./generate-swift-payload-keys.swift
+```
+
+Get a specific version:
+```
+./generate-swift-payload-keys.swift --version 3.2.0
+```
+
+Get a specific version from a private repository (e.g. in CI):
+```
+PRIVATE_GITHUB_USERNAME=<username> PRIVATE_GITHUB_TOKEN=<token> ./generate-swift-payload-keys.swift --version 3.2.0
+```

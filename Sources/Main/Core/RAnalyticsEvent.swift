@@ -121,7 +121,7 @@ import Foundation
 
         /// Event triggered when the geolocation is updated.
         public static let geoLocation = "loc"
-        
+
         /// Event triggered when the app is opened by Universal Link or Deeplink from an external source (not a Rakuten app).
         /// Event triggered internally and converted to `pv` before being sent.
         public static let externalReferrer = "external_referrer"

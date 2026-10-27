@@ -12,12 +12,7 @@ enum RATReachabilityStatus: Int {
 protocol ReachabilityType {
     var connection: Reachability.Connection { get }
     var flags: SCNetworkReachabilityFlags? { get }
-    func addObserver(_ observer: ReachabilityObserver)
-    func removeObserver(_ observer: ReachabilityObserver)
-}
-
-protocol ReachabilityObserver: AnyObject {
-    func reachabilityChanged(_ reachability: ReachabilityType)
+    var connectionUpdates: AsyncStream<Reachability.Connection> { get }
 }
 
 class Reachability: ReachabilityType {
@@ -32,10 +27,11 @@ class Reachability: ReachabilityType {
         }
     }
 
-    private var observers = [WeakWrapper<ReachabilityObserver>]()
+    private let connectionUpdatesContinuation: AsyncStream<Connection>.Continuation
+    let connectionUpdates: AsyncStream<Connection>
     private let monitor: NWPathMonitor
-    private let monitorQueue = DispatchQueue(label: "ReachabilityQueue", qos: .default)
-    private let notificationQueue = DispatchQueue.main
+    private static let monitorQueueKey = DispatchSpecificKey<Void>()
+    private let monitorQueue: DispatchQueue
 
     private let flagsQueue = DispatchQueue(label: "ReachabilityFlagsQueue", qos: .default)
     private var _flags: SCNetworkReachabilityFlags?
@@ -45,7 +41,7 @@ class Reachability: ReachabilityType {
         }
         set {
             flagsQueue.sync { _flags = newValue }
-            notifyReachabilityChanged()
+            emitConnectionUpdate()
         }
     }
 
@@ -62,32 +58,39 @@ class Reachability: ReachabilityType {
     }
 
     init() {
+        let (stream, continuation) = AsyncStream<Connection>.makeStream()
+        self.connectionUpdates = stream
+        self.connectionUpdatesContinuation = continuation
         self.monitor = NWPathMonitor()
+        let monitorQueue = DispatchQueue(label: "ReachabilityQueue", qos: .default)
+        monitorQueue.setSpecific(key: Self.monitorQueueKey, value: ())
+        self.monitorQueue = monitorQueue
+        continuation.yield(.unavailable)
         startNotifier()
     }
 
     deinit {
+        connectionUpdatesContinuation.finish()
         stopNotifier()
-    }
-
-    func addObserver(_ observer: ReachabilityObserver) {
-        observers.append(WeakWrapper(value: observer))
-    }
-
-    func removeObserver(_ observer: ReachabilityObserver) {
-        observers.removeAll { $0.value === observer }
     }
 
     private func startNotifier() {
         monitor.pathUpdateHandler = { [weak self] path in
-            guard let self = self else { return }
-            self.updateFlags(from: path)
+            self?.updateFlags(from: path)
         }
         monitor.start(queue: monitorQueue)
     }
 
     private func stopNotifier() {
-        monitor.cancel()
+        let stop = { [monitor] in
+            monitor.pathUpdateHandler = nil
+            monitor.cancel()
+        }
+        if DispatchQueue.getSpecific(key: Self.monitorQueueKey) != nil {
+            stop()
+        } else {
+            monitorQueue.sync(execute: stop)
+        }
     }
 
     private func updateFlags(from path: NWPath) {
@@ -104,18 +107,15 @@ class Reachability: ReachabilityType {
         self.flags = newFlags
     }
 
-    private func notifyReachabilityChanged() {
-        notificationQueue.async { [weak self] in
-            guard let self = self else { return }
-            self.observers.forEach { $0.value?.reachabilityChanged(self) }
-        }
+    private func emitConnectionUpdate() {
+        connectionUpdatesContinuation.yield(connection)
     }
 
     #if DEBUG
     /// Test-only setter for `flags`
     func setFlagsForTesting(_ newFlags: SCNetworkReachabilityFlags) {
+        stopNotifier()
         self.flags = newFlags
-        notifyReachabilityChanged()
     }
     #endif
 }

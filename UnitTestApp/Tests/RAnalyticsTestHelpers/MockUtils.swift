@@ -71,25 +71,27 @@ public final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
         observers = [WKHTTPCookieStoreObservable]()
     }
 
+    @MainActor
     private func updateObservers() {
         observers.forEach { observer in
             observer.cookiesDidChange(in: self)
         }
     }
 
-    public func allCookies(_ completionHandler: @escaping ([HTTPCookie]) -> Void) {
-        completionHandler(cookiesArray)
+    @MainActor
+    public func allCookies() async -> [HTTPCookie] {
+        cookiesArray
     }
 
-    public func set(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+    @MainActor
+    public func set(cookie: HTTPCookie) async {
         cookiesArray.append(cookie)
-        completionHandler?()
         updateObservers()
     }
 
-    public func delete(cookie: HTTPCookie, completionHandler: (() -> Void)?) {
+    @MainActor
+    public func delete(cookie: HTTPCookie) async {
         cookiesArray.removeAll { $0 == cookie }
-        completionHandler?()
         updateObservers()
     }
 
@@ -101,7 +103,22 @@ public final class WKHTTPCookieStorageMock: WKHTTPCookieStorable {
 // MARK: - User Defaults
 
 public final class UserDefaultsMock: NSObject {
-    public var dictionary: [String: Any]?
+    private let lock = NSLock()
+    private var _dictionary: [String: Any]?
+
+    public var dictionary: [String: Any]? {
+        get {
+            lock.lock()
+            defer { lock.unlock() }
+            return _dictionary
+        }
+        set {
+            lock.lock()
+            defer { lock.unlock() }
+            _dictionary = newValue
+        }
+    }
+
     public convenience init(_ dictionary: [String: Any]) {
         self.init()
         self.dictionary = dictionary
@@ -115,28 +132,74 @@ extension UserDefaultsMock: UserStorageHandleable {
         }
         self.init()
     }
-    public func array(forKey defaultName: String) -> [Any]? { dictionary?[defaultName] as? [Any] }
-    public func dictionary(forKey defaultName: String) -> [String: Any]? { dictionary?[defaultName] as? [String: Any] }
-    public func set(value: Any?, forKey key: String) { dictionary?[key] = value }
-    public func removeObject(forKey defaultName: String) { dictionary?[defaultName] = nil }
-    public func object(forKey defaultName: String) -> Any? { dictionary?[defaultName] }
-    public func string(forKey defaultName: String) -> String? { dictionary?[defaultName] as? String }
+
+    public func array(forKey defaultName: String) -> [Any]? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _dictionary?[defaultName] as? [Any]
+    }
+
+    public func dictionary(forKey defaultName: String) -> [String: Any]? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _dictionary?[defaultName] as? [String: Any]
+    }
+
+    public func set(value: Any?, forKey key: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        if _dictionary == nil { _dictionary = [:] }
+        _dictionary?[key] = value
+    }
+
+    public func removeObject(forKey defaultName: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        _dictionary?[defaultName] = nil
+    }
+
+    public func object(forKey defaultName: String) -> Any? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _dictionary?[defaultName]
+    }
+
+    public func string(forKey defaultName: String) -> String? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _dictionary?[defaultName] as? String
+    }
+
     public func bool(forKey defaultName: String) -> Bool {
-        guard let result = dictionary?[defaultName] as? Bool else {
+        lock.lock()
+        defer { lock.unlock() }
+        guard let value = _dictionary?[defaultName] else {
             return false
         }
-        return result
+        if let boolValue = value as? Bool {
+            return boolValue
+        }
+        if let number = value as? NSNumber {
+            return number.boolValue
+        }
+        return false
     }
+
     public func data(forKey defaultName: String) -> Data? {
-        dictionary?[defaultName] as? Data
+        lock.lock()
+        defer { lock.unlock() }
+        return _dictionary?[defaultName] as? Data
     }
 
     public func register(defaults registrationDictionary: [String: Any]) {
     }
+
     public func synchronize() -> Bool { true }
 
     public func double(forKey key: String) -> Double {
-        (dictionary?[key] as? Double) ?? 0.0
+        lock.lock()
+        defer { lock.unlock() }
+        return (_dictionary?[key] as? Double) ?? 0.0
     }
 }
 
@@ -151,18 +214,16 @@ public final class SessionMock: Sessionable {
     public init() {
     }
 
-    public func createDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionTaskable {
+    public func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         willComplete?()
-        completionHandler(data, response, error)
-        return URLSessionTaskMock()
+        if let error = error {
+            throw error
+        }
+        guard let response = response else {
+            throw NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown)
+        }
+        return (data ?? Data(), response)
     }
-}
-
-// MARK: - URL Session Task
-
-public final class URLSessionTaskMock: URLSessionTaskable {
-    public init() {}
-    public func resume() {}
 }
 
 // MARK: - Swifty Session
@@ -170,26 +231,85 @@ public final class URLSessionTaskMock: URLSessionTaskable {
 public final class SwiftyURLSessionMock: NSObject, SwiftySessionable {
     @AtomicGetSet public var urlRequest: URLRequest?
     @AtomicGetSet public var response: URLResponse?
+    @AtomicGetSet public var data: Data?
+    @AtomicGetSet public var error: Error?
     @AtomicGetSet public var completion: (() -> Void)?
 
     public override init() {
         super.init()
     }
 
-    public func dataTask(with request: URLRequest, completionHandler: @escaping (Result<(data: Data?, response: URLResponse), Error>) -> Void) -> URLSessionTaskable {
+    public func data(for request: URLRequest) async throws -> (Data, URLResponse) {
         urlRequest = request
+        defer { completion?() }
+        if let error = error {
+            throw error
+        }
         let responseSnapshot = response
-        let completionSnapshot = completion
         let fallbackResponse = URLResponse(url: request.url ?? URL(string: "about:blank")!,
                                            mimeType: nil,
                                            expectedContentLength: 0,
                                            textEncodingName: nil)
-        completionHandler(.success((nil, responseSnapshot ?? fallbackResponse)))
-        completionSnapshot?()
-        return URLSessionTaskMock()
+        return (data ?? Data(), responseSnapshot ?? fallbackResponse)
     }
 }
 
+// MARK: - Sender upload test helpers
+
+extension TestingHelpers {
+    /// Runs an async operation with a timeout; the first task group child to finish wins.
+    static func awaitWithTimeout<T>(
+        timeout: TimeInterval,
+        timeoutError: Error = TestError.conditionNotMet,
+        operation: @escaping () async throws -> T
+    ) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask {
+                try await operation()
+            }
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                throw timeoutError
+            }
+            let value = try await group.next()!
+            group.cancelAll()
+            return value
+        }
+    }
+
+    /// Waits until a sender upload completes through the mocked session.
+    public static func awaitSenderUpload(
+        session: SwiftyURLSessionMock,
+        statusCode: Int = 200,
+        timeout: TimeInterval = 2.0,
+        onUploadComplete: (() -> Void)? = nil,
+        send: @escaping () -> Void
+    ) async throws {
+        try await awaitWithTimeout(timeout: timeout) {
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                var resumed = false
+                session.stubResponse(statusCode: statusCode) {
+                    guard !resumed else { return }
+                    resumed = true
+                    session.completion = nil
+                    onUploadComplete?()
+                    continuation.resume()
+                }
+                send()
+            }
+        }
+    }
+
+    /// Waits until the sender's upload scheduling is idle (test seam for back-to-back RAT expectations).
+    public static func waitForSenderIdle(_ sender: RAnalyticsSender?, timeout: TimeInterval = 2.0) async throws {
+        try await eventuallyAsync(timeout: timeout) {
+            sender?.fetchAndUpload()
+            await Task.yield()
+            guard let sender else { return true }
+            return sender.isUploadSchedulingIdle
+        }
+    }
+}
 
 // MARK: - HTTP Cookie Storage
 
@@ -237,6 +357,12 @@ public final class LocationManagerMock: NSObject, LocationManageable {
     public var stopMonitoringSignificantLocationChangesIsCalled = false
     public var startMonitoringForRegionIsCalled = false
     public var stopMonitoringForRegionIsCalled = false
+    /// When set, `requestLocation()` invokes the delegate with this location.
+    public var respondWithLocationOnRequest: CLLocation?
+    /// When set, `requestLocation()` invokes the delegate with this error.
+    public var respondWithErrorOnRequest: Error?
+    /// Manager instance passed to delegate callbacks; defaults to a new `CLLocationManager()`.
+    public var locationManagerForDelegateCallbacks: CLLocationManager?
 
     public override init() {
         super.init()
@@ -256,6 +382,12 @@ public final class LocationManagerMock: NSObject, LocationManageable {
 
     public func requestLocation() {
         requestLocationIsCalled = true
+        let manager = locationManagerForDelegateCallbacks ?? CLLocationManager()
+        if let error = respondWithErrorOnRequest {
+            delegate?.locationManager?(manager, didFailWithError: error)
+        } else if let location = respondWithLocationOnRequest {
+            delegate?.locationManager?(manager, didUpdateLocations: [location])
+        }
     }
 
     public static func significantLocationChangeMonitoringAvailable() -> Bool {
@@ -294,13 +426,17 @@ public final class KeychainHandlerMock: NSObject, KeychainHandleable {
 
     public func item(for label: String) -> KeychainResult { KeychainResult(result: nil, status: status) }
     public func set(creationDate: Date?, for label: String) { self.creationDate = creationDate }
+    public func deleteItem(for label: String) {
+        creationDate = nil
+        status = errSecItemNotFound
+    }
     public func creationDate(for reference: CFTypeRef?) -> Date? { creationDate }
 
-    public func string(for key: String) -> String? {
+    public func string(for key: String) throws -> String? {
         dictionary[key] as? String
     }
 
-    public func set(value: String?, for key: String) {
+    public func set(value: String?, for key: String) throws {
         dictionary[key] = value
     }
 }
@@ -317,7 +453,7 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     public var userStorageHandler: UserStorageHandleable = UserDefaults.standard
     public var sharedUserStorageHandlerType: UserStorageHandleable.Type = UserDefaults.self
     public var adIdentifierManager: AdvertisementIdentifiable = ASIdentifierManager.shared()
-    public var wkHttpCookieStore: WKHTTPCookieStorable = WKWebsiteDataStore.default().httpCookieStore
+    public var wkHttpCookieStore: WKHTTPCookieStorable = WKHTTPCookieStorageMock()
     public var httpCookieStore: HTTPCookieStorable = HTTPCookieStorage.shared
     public var keychainHandler: KeychainHandleable = KeychainHandler(bundle: Bundle.main)
     public var locationManager: LocationManageable = CLLocationManager()
@@ -334,10 +470,13 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
     }()
     public var pushEventHandler: PushEventHandleable
     public var coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
+    public var dataCollectionConsent: DataCollectionConsentReadable
     public var automaticFieldsBuilder: AutomaticFieldsBuildable
     public var applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
 
     public override init() {
+        let consent = DataCollectionConsentStoreMock()
+        self.dataCollectionConsent = consent
         let appGroupId = bundle.appGroupId
         let sharedUserStorageHandler = sharedUserStorageHandlerType.init(suiteName: appGroupId)
         pushEventHandler = PushEventHandler(sharedUserStorageHandler: sharedUserStorageHandler,
@@ -349,7 +488,8 @@ public final class SimpleContainerMock: NSObject, SimpleDependenciesContainable 
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
                                                         reachability: Reachability(),
-                                                        userStorageHandler: userStorageHandler)
+                                                        userStorageHandler: userStorageHandler,
+                                                        consentStore: consent)
         super.init()
     }
 }
@@ -376,7 +516,8 @@ public final class GeoContainerMock: NSObject, GeoDependenciesContainable {
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
                                                         reachability: Reachability(),
-                                                        userStorageHandler: userStorageHandler)
+                                                        userStorageHandler: userStorageHandler,
+                                                        consentStore: DataCollectionConsentStoreMock())
     }
 }
 
@@ -424,10 +565,10 @@ public enum Tracking {
     // MARK: - PNP Client Identifier
     public static let pnpClientIdentifier = "pnpClientIdentifier"
 
-    public static let customPage: CustomPage = {
+    public static let customPage: CustomPage = MainThreadExecutor.run {
         CustomPage(frame: CGRect(x: 0, y: 0, width: 200, height: 200))
-    }()
-    
+    }
+
     // MARK: - Default Event
     public static let defaultEvent = RAnalyticsEvent(name: "rat.defaultEvent", parameters: ["param1": "value1"])
 
@@ -545,11 +686,11 @@ public final class ApplicationMock: NSObject, StatusBarOrientationGettable {
 
 public final class ApplicationStateMock: ApplicationStateGettable {
     public var injectedValue: UIApplication.State
-    
+
     public init(_ injectedValue: UIApplication.State) {
         self.injectedValue = injectedValue
     }
-    
+
     public var applicationState: UIApplication.State {
         injectedValue
     }
@@ -581,10 +722,21 @@ public final class AnalyticsManagerMock: AnalyticsManageable {
 
 public final class ReachabilityMock: ReachabilityType {
     public var flags: SCNetworkReachabilityFlags?
-    public var connection: Reachability.Connection = .cellular
-    public init() {}
-    public func addObserver(_ observer: ReachabilityObserver) {}
-    public func removeObserver(_ observer: ReachabilityObserver) {}
+    public var connection: Reachability.Connection = .cellular {
+        didSet {
+            connectionUpdatesContinuation.yield(connection)
+        }
+    }
+
+    private let connectionUpdatesContinuation: AsyncStream<Reachability.Connection>.Continuation
+    public let connectionUpdates: AsyncStream<Reachability.Connection>
+
+    public init(connection: Reachability.Connection = .cellular) {
+        let (stream, continuation) = AsyncStream<Reachability.Connection>.makeStream()
+        self.connectionUpdates = stream
+        self.connectionUpdatesContinuation = continuation
+        self.connection = connection
+    }
 }
 
 // MARK: - CookieStoreObserver
@@ -597,6 +749,51 @@ public final class CookieStoreObserver: NSObject, WKHTTPCookieStoreObservable {
 
     public func cookiesDidChange(in cookieStore: WKHTTPCookieStorable) {
         completion()
+    }
+}
+
+// MARK: - DataCollectionConsentStoreMock
+
+/// Mock for testing. Returns configurable values per category. Default: all categories enabled when privacy control is off.
+public final class DataCollectionConsentStoreMock: DataCollectionConsentReadable, @unchecked Sendable {
+    public var enabledTypes: Set<DataCollectionType> = Set(DataCollectionType.individualTypes)
+    public var isPrivacyControlEnabled: Bool = false
+
+    public init() {}
+
+    public func setEnabled(_ enabled: Bool, for category: DataCollectionType) async {
+        guard isPrivacyControlEnabled else { return }
+        if category == .all {
+            enabledTypes = enabled ? Set(DataCollectionType.individualTypes) : []
+            return
+        }
+        if enabled {
+            enabledTypes.insert(category)
+        } else {
+            enabledTypes.remove(category)
+        }
+    }
+
+    public func isEnabled(_ category: DataCollectionType) -> Bool {
+        guard isPrivacyControlEnabled else {
+            return true
+        }
+        switch category {
+        case .all:
+            return DataCollectionType.individualTypes.allSatisfy { enabledTypes.contains($0) }
+        default:
+            return enabledTypes.contains(category)
+        }
+    }
+
+    public func storedConsentState(for category: DataCollectionType) -> DataCollectionConsentState? {
+        guard isPrivacyControlEnabled else {
+            return nil
+        }
+        guard category != .all else {
+            return nil
+        }
+        return enabledTypes.contains(category) ? .granted : .denied
     }
 }
 
@@ -643,6 +840,7 @@ public final class BundleMock: NSObject, EnvironmentBundle {
     public var applicationSceneManifest: RakutenAnalytics.ApplicationSceneManifest?
     public var isWebViewAppUserAgentEnabledAtBuildtime: Bool = true
     public var isManualInitializationEnabled: Bool = false
+    public var isPrivacyControlEnabled: Bool = false
 
     public override init() {
         self.dictionary = [String: Any]()
@@ -727,6 +925,10 @@ public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoL
     public var delegateGeoLocationManagerDidUpdateLocationIsCalled = false
     public var delegateGeoLocationManagerDidFailWithErrorIsCalled = false
     public var delegateCLLocationManagerDidDetermineStateIsCalled = false
+    /// When set, a `.userAction` request invokes the delegate with this location.
+    public var respondWithLocationOnUserActionRequest: CLLocation?
+    /// When set, a `.userAction` request invokes the delegate with this error.
+    public var respondWithErrorOnUserActionRequest: Error?
 
     public override init() {
     }
@@ -738,12 +940,13 @@ public final class GeoLocationManagerMock: NSObject, GeoLocationManageable, GeoL
     public func requestLocationUpdate(for requestType: RakutenAnalytics.GeoRequestLocationType) {
         switch requestType {
         case .continual:
-            DispatchQueue.main.async { [weak self] in
-                self?.requestLocationContinualIsCalled = true
-            }
+            requestLocationContinualIsCalled = true
         case .userAction:
-            DispatchQueue.main.async { [weak self] in
-                self?.requestLocationUserActionIsCalled = true
+            requestLocationUserActionIsCalled = true
+            if let error = respondWithErrorOnUserActionRequest {
+                delegate?.geoLocationManager(didFailWithError: error, for: .userAction)
+            } else if let location = respondWithLocationOnUserActionRequest {
+                delegate?.geoLocationManager(didUpdateLocation: location, for: .userAction)
             }
         }
     }
@@ -815,7 +1018,7 @@ extension UNNotificationSettings: NotificationSettings {}
 
 class MockNotificationSettings: NotificationSettings {
     var authorizationStatus: UNAuthorizationStatus
-    
+
     init(authorizationStatus: UNAuthorizationStatus) {
         self.authorizationStatus = authorizationStatus
     }
@@ -827,7 +1030,7 @@ protocol UserNotificationCenter {
 
 class MockUserNotificationCenterCollector: UserNotificationCenter {
     var settings: NotificationSettings?
-    
+
     func getNotificationSettings(completionHandler: @escaping (NotificationSettings) -> Void) {
         completionHandler(settings!)
     }
@@ -848,7 +1051,7 @@ class ATTrackingManagerCollectorMock: ATTrackingManager {
 class AVCaptureDeviceCollectorMock: AVCaptureDevice {
     static var authorizationStatusForVideo: AVAuthorizationStatus = .notDetermined
     static var authorizationStatusForAudio: AVAuthorizationStatus = .notDetermined
-    
+
     override class func authorizationStatus(for mediaType: AVMediaType) -> AVAuthorizationStatus {
         if mediaType == .video {
             return AVCaptureDeviceCollectorMock.authorizationStatusForVideo
@@ -864,21 +1067,21 @@ class AVCaptureDeviceCollectorMock: AVCaptureDevice {
 
 public class MockDevicePermissionCollector: DevicePermissionCollector {
     public static let shared = MockDevicePermissionCollector()
-    
+
     let mockNotificationCenter = MockUserNotificationCenterCollector()
 
     public func collectPermissions() -> String {
         var permissions = [String]()
-        
+
         permissions.append(collectLocationPermissions())
         permissions.append(collectNotificationPermissions())
         permissions.append(collectPrivacyIDPermissions())
         permissions.append(collectCameraPermissions())
         permissions.append(collectMicrophonePermissions())
-        
+
         return permissions.joined()
     }
-    
+
     public func setup(locationAuthStatus: CLAuthorizationStatus,
                       notificationsAuthStatus: UNAuthorizationStatus,
                       trackingAuthStatus: ATTrackingManager.AuthorizationStatus,
@@ -890,7 +1093,7 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
         AVCaptureDeviceCollectorMock.authorizationStatusForVideo = videoAuthStatus
         AVCaptureDeviceCollectorMock.authorizationStatusForAudio = audioAuthStatus
     }
-    
+
     private func collectLocationPermissions() -> String {
         switch CLLocationManagerCollectorMock.mockAuthorizationStatus {
         case .restricted, .denied, .notDetermined:
@@ -903,12 +1106,11 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
             return DevicePermissionType.none.rawValue
         }
     }
-    
-    
+
     private func collectNotificationPermissions() -> String {
         let semaphore = DispatchSemaphore(value: 0)
         var permission = DevicePermissionType.none.rawValue
-        
+
         mockNotificationCenter.getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .notDetermined, .denied:
@@ -920,11 +1122,11 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
             }
             semaphore.signal()
         }
-        
+
         semaphore.wait()
         return permission
     }
-    
+
     private func collectPrivacyIDPermissions() -> String {
         switch ATTrackingManagerCollectorMock.trackingAuthorizationStatusMock {
         case .denied, .notDetermined, .restricted:
@@ -935,7 +1137,7 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
             return DevicePermissionType.none.rawValue
         }
     }
-    
+
     private func collectCameraPermissions() -> String {
         switch AVCaptureDeviceCollectorMock.authorizationStatusForVideo {
         case .notDetermined, .denied:
@@ -946,7 +1148,7 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
             return DevicePermissionType.none.rawValue
         }
     }
-    
+
     private func collectMicrophonePermissions() -> String {
         switch AVCaptureDeviceCollectorMock.authorizationStatusForAudio {
         case .notDetermined, .denied:
@@ -957,5 +1159,5 @@ public class MockDevicePermissionCollector: DevicePermissionCollector {
             return DevicePermissionType.none.rawValue
         }
     }
-    
+
 }

@@ -9,8 +9,8 @@ on:
 
 jobs:
   main:
-    name: Validate PR Size, PR Name, Branch Name and SwiftLint
-    runs-on: ubuntu-latest
+    name: Validate PR Size, PR Name, Branch Name, RAT Keys and SwiftLint
+    runs-on: macos-latest
     permissions:
       contents: read
       pull-requests: read
@@ -78,14 +78,56 @@ jobs:
               core.setFailed('Branch name does not match the required format.');
             }
 
-      # Clone the repository into the GitHub Actions runner
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # Generate Github App Token
+      - name: Generate Github App Token
+        id: generate_token
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/create-github-app-token@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: |
+            ios-analytics
+            rakuten-analytics-json-schema
 
-      # Run SwiftLint
-      - name: SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v7
         with:
-          args: --reporter github-actions-logging --strict
+          fetch-depth: 0
+  
+      # Checkout RAT JSON schema and generate RAT Keys
+      - name: Checkout RAT JSON schema and generate RAT Keys
+        if: steps.generate_token.outputs.token != ''
+        env:
+          PRIVATE_GITHUB_USERNAME: x-access-token
+          PRIVATE_GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          swift ./generate-swift-payload-keys.swift
+
+      # Verify RAT keys are up to date
+      - name: Verify RAT keys are up to date
+        if: steps.generate_token.outputs.token != ''
+        run: |
+          if ! git diff --exit-code -- Sources/Main/Util/Private/PayloadParameterKeys.swift; then
+            echo "::error file=Sources/Main/Util/Private/PayloadParameterKeys.swift::PayloadParameterKeys.swift is out of date. Run ./generate-swift-payload-keys.swift and commit the result."
+            exit 1
+          fi
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Fetch base ref
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git fetch --no-tags --prune --depth=1 origin \
+            +refs/heads/${{ github.base_ref }}:refs/heads/${{ github.base_ref }}
+
+      - name: SwiftLint
+        run: |
+          swiftlint lint \
+            --force-exclude \
+            --reporter github-actions-logging \
+            --strict
+        env:
+          DIFF_BASE: ${{ github.base_ref }}

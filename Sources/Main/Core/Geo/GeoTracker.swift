@@ -103,7 +103,7 @@ extension GeoTracker: Tracker {
         payload[PayloadParameterKeys.etype] = event.name
 
         automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
-        automaticFieldsBuilder.addCommonParameters(payload, state: state)
+        automaticFieldsBuilder.addCommonParameters(payload, state: state, event: event)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,
                                            addActionParameters: true)
@@ -111,5 +111,17 @@ extension GeoTracker: Tracker {
         sender.send(jsonObject: payload)
 
         return true
+    }
+}
+
+// MARK: - DataErasable
+
+extension GeoTracker: DataErasable {
+    func clearData() async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            sender.clearPendingEvents {
+                continuation.resume()
+            }
+        }
     }
 }

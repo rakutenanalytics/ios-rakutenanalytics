@@ -1,53 +1,62 @@
+# Lint all first-party Swift in this repo. Paths must match the tree on disk —
+# stale entries (e.g. Tests/, Samples/) silently skip files in CI.
 included:
-  - Samples/RAnalyticsSample # path when run from CI
-  - RAnalyticsSample # path when run as an Xcode build phase
   - Sources
-  - Tests
+  - UnitTestApp/Tests
+  - Sample
 
 disabled_rules:
-- trailing_whitespace
-- nesting
-- identifier_name
-- todo
-- cyclomatic_complexity
-- empty_enum_arguments
+  - trailing_whitespace
+  - nesting
+  - identifier_name
+  - todo
+  - cyclomatic_complexity
+  - empty_enum_arguments
+  - type_name
 
 opt_in_rules:
-- empty_count
-- empty_string
+  - empty_count
+  - empty_string
+  - vertical_whitespace
 
 excluded:
-- Carthage
-- Samples/Pods
-- Pods
-- SwiftLint/Common/3rdPartyLib
+  - Carthage
+  - Pods
+  - .build
+  - .derivedData
+  - .swiftpm
+  - Sample/**/Pods
+  - SwiftLint/Common/3rdPartyLib
 
 line_length:
-    warning: 200
-    error: 220
-    ignores_function_declarations: true
-    ignores_comments: true
-    ignores_urls: true
+  warning: 200
+  error: 220
+  ignores_function_declarations: true
+  ignores_comments: true
+  ignores_urls: true
 
 function_body_length:
-    warning: 300
-    error: 500
+  warning: 300
+  error: 500
 
 type_body_length:
-    warning: 300
-    error: 500
+  warning: 300
+  error: 500
 
 file_length:
-    warning: 1000
-    error: 1500
-    ignore_comment_only_lines: true
+  warning: 1000
+  error: 1500
+  ignore_comment_only_lines: true
 
 cyclomatic_complexity:
-    warning: 15
-    error: 25
+  warning: 15
+  error: 25
 
 function_parameter_count:
-    warning: 6
-    error: 8
+  warning: 6
+  error: 8
+
+vertical_whitespace:
+  max_empty_lines: 1
 
 reporter: "xcode"

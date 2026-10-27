@@ -59,12 +59,16 @@ import CoreLocation.CLLocation
     /// Current app version.
     @objc public let currentVersion: String
 
-    /// `LocationModel` object representing the last known location of the device.
-    /// Only set if that information is available and AnalyticsManager.shouldTrackLastKnownLocation is `true`.
+    /// Last location considered for the **current** processed event’s RAT payload (`loc`).
+    ///
+    /// When the LOCATION category is not allowed (or legacy last-known-location is off), this stays `nil`, so
+    /// trackers do not attach coordinates—this is the SDK’s **non-persistent** “clear / don’t send location” for
+    /// automatic analytics (see ``AnalyticsManager``). Not stored on disk between events.
     public internal(set) var lastKnownLocation: LocationModel?
 
-    /// IDFA.
-    /// Only set if AnalyticsManager.shouldTrackAdvertisingId is `true`.
+    /// IDFA (`cka` / advertising identifier), when allowed by privacy rules and
+    /// ``AnalyticsManager/shouldTrackAdvertisingIdentifier`` (legacy) or device-information consent when
+    /// `RATEnablePrivacyControl` is enabled.
     @objc public internal(set) var advertisingIdentifier: String?
 
     /// This property stores the date when a new session is started.

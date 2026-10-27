@@ -180,7 +180,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                 GeoManager.shared.stopLocationCollection()
             }
         }
-        
+
         if let urlSchemePathComponent = dict[GlobalConstants.kRATUrlSchemePathComponent] as? String {
             self.urlSchemePathComponent = urlSchemePathComponent.isEmpty ? nil : urlSchemePathComponent
         }
@@ -211,7 +211,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
         // For quick testing of _RAnalyticsCookieInjector load a zero-frame webview
         WKWebView(frame: .zero).load(URLRequest(url: URL(string: "https://corp.rakuten.co.jp")!))
     }
-    
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -236,12 +236,12 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             let value = UserDefaults.standard.bool(forKey: UserDefaultsKeys.locationCollectionKey)
             (cell as? SwitchTableViewCell)?.usingSwitch.isOn = value
         }
-        
+
         if cell is SwitchTableViewCell && cellType == .urlScheme {
             cell.contentView.accessibilityIdentifier = GlobalConstants.urlSchemeLocator
             cell.titleLabel.accessibilityIdentifier = GlobalConstants.urlSchemeLocator
         }
-        
+
         if cell is SwitchTableViewCell && cellType == .universalLink {
             cell.contentView.accessibilityIdentifier = GlobalConstants.universalLinkLocator
             cell.titleLabel.accessibilityIdentifier = GlobalConstants.universalLinkLocator
@@ -308,7 +308,7 @@ class TableViewController: UITableViewController, BaseCellDelegate {
                 UIAlertController.show(errorTitle, message: "Could not open URL Scheme", from: self)
                 return
             }
-            
+
             UIApplication.shared.open(url, options: [:])
 
         case .universalLink:
@@ -336,17 +336,20 @@ class TableViewController: UITableViewController, BaseCellDelegate {
             present(alertController, animated: true)
 
         case .requestGeoLocation:
-            GeoManager.shared.requestLocation { result in
-                switch result {
-                case .success(let location):
-                    UIAlertController.show(self.successTitle,
-                                           message: "A geo location was returned: \(location.latitude), \(location.longitude)",
-                                           from: self)
-
-                case .failure(let error):
-                    UIAlertController.show(self.errorTitle,
-                                           message: "An error occured while requesting the geo location: \(error.localizedDescription)",
-                                           from: self)
+            Task {
+                do {
+                    let location = try await GeoManager.shared.requestLocation()
+                    await MainActor.run {
+                        UIAlertController.show(self.successTitle,
+                                               message: "A geo location was returned: \(location.latitude), \(location.longitude)",
+                                               from: self)
+                    }
+                } catch {
+                    await MainActor.run {
+                        UIAlertController.show(self.errorTitle,
+                                               message: "An error occured while requesting the geo location: \(error.localizedDescription)",
+                                               from: self)
+                    }
                 }
             }
 

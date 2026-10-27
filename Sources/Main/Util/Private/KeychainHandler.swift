@@ -5,6 +5,7 @@ import Foundation
 protocol KeychainHandleable {
     func item(for label: String) -> KeychainResult
     func set(creationDate: Date?, for label: String)
+    func deleteItem(for label: String)
     func creationDate(for reference: CFTypeRef?) -> Date?
     func string(for key: String) throws -> String?
     func set(value: String?, for key: String) throws
@@ -51,6 +52,10 @@ extension KeychainHandler: KeychainHandleable {
         var mutableQuery = query(for: label)
         mutableQuery[kSecAttrCreationDate as String] = creationDate
         SecItemAdd(mutableQuery as CFDictionary, nil)
+    }
+
+    func deleteItem(for label: String) {
+        SecItemDelete(query(for: label) as CFDictionary)
     }
 
     func creationDate(for reference: CFTypeRef?) -> Date? {

@@ -14,9 +14,9 @@ public enum ProcessTestHelper {
                                       "rsdks_pushpnp": "10.0.0",
                                       "rsdks_geo": "2.2.0",
                                       "rsdks_pitari": "3.0.0"]
-    
+
     // MARK: - Test Helper
-    
+
     public struct TestHelper {
         public var databaseConnection: SQlite3Pointer!
         var database: RAnalyticsDatabase!
@@ -24,19 +24,19 @@ public enum ProcessTestHelper {
         public var ratTracker: RAnalyticsRATTracker!
         public let expecter = RAnalyticsRATExpecter()
         let coreInfosCollectorMock = CoreInfosCollectorMock(appInfo: appInfoMock, sdkDependencies: sdkDependenciesMock)
-        
+
         public init() {}
-        
+
         mutating public func setUp() {
             let databaseTableName = "testTableName_RAnalyticsRATTrackerTests"
             databaseConnection = DatabaseTestUtils.openRegularConnection()!
             database = DatabaseTestUtils.mkDatabase(connection: databaseConnection)
-            
+
             let bundle = BundleMock()
             bundle.accountIdentifier = 777
             bundle.applicationIdentifier = 888
             bundle.endpointAddress = URL(string: "https://endpoint.co.jp/")!
-            
+
             dependenciesContainer.bundle = bundle
             dependenciesContainer.databaseConfiguration = DatabaseConfiguration(database: database, tableName: databaseTableName)
             dependenciesContainer.session = SwiftyURLSessionMock()
@@ -44,6 +44,8 @@ public enum ProcessTestHelper {
             dependenciesContainer.telephonyNetworkInfoHandler = TelephonyNetworkInfoMock()
             dependenciesContainer.analyticsStatusBarOrientationGetter = ApplicationMock(.portrait)
             dependenciesContainer.coreInfosCollector = coreInfosCollectorMock
+            let consent = DataCollectionConsentStoreMock()
+            dependenciesContainer.dataCollectionConsent = consent
             dependenciesContainer.automaticFieldsBuilder = AutomaticFieldsBuilder(
                 bundle: bundle,
                 deviceCapability: dependenciesContainer.deviceCapability,
@@ -52,38 +54,33 @@ public enum ProcessTestHelper {
                 notificationHandler: dependenciesContainer.notificationHandler,
                 analyticsStatusBarOrientationGetter: dependenciesContainer.analyticsStatusBarOrientationGetter,
                 reachability: Reachability(),
-                userStorageHandler: dependenciesContainer.userStorageHandler)
-            
+                userStorageHandler: dependenciesContainer.userStorageHandler,
+                consentStore: consent)
+
             ratTracker = RAnalyticsRATTracker(dependenciesContainer: dependenciesContainer)
             ratTracker.set(batchingDelay: 0)
-            
+
             expecter.dependenciesContainer = dependenciesContainer
             expecter.endpointURL = dependenciesContainer.bundle.endpointAddress
             expecter.databaseTableName = dependenciesContainer.databaseConfiguration?.tableName
             expecter.databaseConnection = databaseConnection
             expecter.ratTracker = ratTracker
         }
-        
+
         mutating public func tearDown() {
             DatabaseTestUtils.deleteTableIfExists(dependenciesContainer.databaseConfiguration!.tableName, connection: databaseConnection)
             database.closeConnection()
             databaseConnection = nil
         }
-        
+
         public func verifyCoreInfos(for eventName: String) async throws {
             let event = RAnalyticsEvent(name: eventName, parameters: nil)
-            var appInfoPayload: String?
-            var sdkDependencies: [String: String]?
-            
-            try await expecter.expectEventAsync(event, state: Tracking.defaultState, equal: eventName) {
-                let cp = $0.first?[PayloadParameterKeys.cp] as? [String: Any]
-                appInfoPayload = cp?.appInfo
-                sdkDependencies = cp?.sdkDependencies
-            }
-            
-            try await TestingHelpers.eventually {
-                appInfoPayload != nil
-            }
+
+            let payloads = try await expecter.expectEventAsync(event, state: Tracking.defaultState, equal: eventName)
+            let cp = payloads.first?[PayloadParameterKeys.Cp.cp] as? [String: Any]
+            let appInfoPayload = cp?.appInfo
+            let sdkDependencies = cp?.sdkDependencies
+
             #expect(appInfoPayload == appInfoMock)
             #expect(sdkDependencies == sdkDependenciesMock)
         }

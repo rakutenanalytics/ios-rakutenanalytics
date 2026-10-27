@@ -46,8 +46,8 @@ protocol RATConfigurable: AnyObject {
     private let bundle: EnvironmentBundle
 
     /// RPCookie fetcher is used to retrieve the cookie details on initialize
-    /// - Note: marked as `@objc` for `RAnalyticsRATTrackerInitSpec`.
-    @objc private let rpCookieFetcher: RAnalyticsRpCookieFetchable?
+    /// - Note: Stored as concrete type and marked `@objc` for `RAnalyticsRATTrackerInitSpec` runtime access.
+    @objc private let rpCookieFetcher: RAnalyticsRpCookieFetcher?
 
     /// Sender
     /// - Note: marked as `@objc` for this deprecated method:
@@ -82,6 +82,9 @@ protocol RATConfigurable: AnyObject {
 
     /// The dependencies container
     private let dependenciesContainer: SimpleDependenciesContainable
+
+    /// Runtime data-collection consent
+    private let dataCollectionConsent: DataCollectionConsentReadable
 
     /// RAT accounts to duplicate events to
     var duplicateAccounts: Set<RATAccount>
@@ -151,7 +154,11 @@ protocol RATConfigurable: AnyObject {
     ///
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> RAnalyticsRATTracker {
-        singleton
+        if Bundle.main.isManualInitializationEnabled && !AnalyticsInitState.isConfigured {
+            RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured "
+                            + "before accessing shared instance of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+        }
+        return singleton
     }
 
     /// Creates a new instance of `RAnalyticsRATTracker`.
@@ -163,6 +170,7 @@ protocol RATConfigurable: AnyObject {
     init(dependenciesContainer: SimpleDependenciesContainable) {
         // Retrieve the mandatory dependencies
         self.dependenciesContainer = dependenciesContainer
+        self.dataCollectionConsent = dependenciesContainer.dataCollectionConsent
         let bundleContainer = dependenciesContainer.bundle
         let httpCookieStore = dependenciesContainer.httpCookieStore
 
@@ -185,21 +193,25 @@ protocol RATConfigurable: AnyObject {
 
         // Rp Cookie Fetcher
         self.rpCookieFetcher = RAnalyticsRpCookieFetcher(cookieStorage: httpCookieStore)
-        self.rpCookieFetcher?.getRpCookieCompletionHandler { _, error in
-            if let error = error {
-                let errorReason = String(describing: error.localizedFailureReason)
-                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
-                                                 code: ErrorCode.rpCookieCantBeFetched.rawValue,
-                                                 description: ErrorDescription.rpCookieCantBeFetched,
-                                                 reason: "RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"))
-            }
-        }
 
         self.coreInfosCollector = dependenciesContainer.coreInfosCollector
 
         self.automaticFieldsBuilder = dependenciesContainer.automaticFieldsBuilder
 
         super.init()
+
+        Task { [weak self] in
+            guard let self = self, self.dataCollectionConsent.isEnabled(.userInformation) else { return }
+            do {
+                _ = try await self.rpCookieFetcher?.fetchRpCookie()
+            } catch {
+                let errorReason = String(describing: (error as NSError).localizedFailureReason)
+                ErrorRaiser.raise(.detailedError(domain: ErrorDomain.ratTrackerErrorDomain,
+                                                 code: ErrorCode.rpCookieCantBeFetched.rawValue,
+                                                 description: ErrorDescription.rpCookieCantBeFetched,
+                                                 reason: "RAnalyticsRpCookieFetcher error: \(error.localizedDescription) \(errorReason)"))
+            }
+        }
 
         logTrackingError(ErrorDescription.eventsNotProcessedByRATTracker)
 
@@ -237,7 +249,11 @@ protocol RATConfigurable: AnyObject {
     /// Get current carrier names from the RAnalyticsRATTracker's AutomaticFieldsBuilder
     /// - Returns: Tuple containing primary and secondary carrier names
     internal func getCarrierNames() -> (primary: String?, secondary: String?) {
-        return automaticFieldsBuilder.getCarrierNames()
+        automaticFieldsBuilder.getCarrierNames()
+    }
+
+    private var allowsDeviceInformationOnRatPayload: Bool {
+        PrivacyControlPayload.allowsDeviceInformationOnRatPayload(bundle: bundle, consentStore: dataCollectionConsent)
     }
 }
 
@@ -260,7 +276,7 @@ extension RAnalyticsRATTracker {
     @objc(processEvent:state:) public func process(event: RAnalyticsEvent, state: RAnalyticsState) -> Bool {
         if bundle.isManualInitializationEnabled && !isRATConfigured {
             RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance " +
-                "of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
+                            "of RAnalyticsRATTracker. Call AnalyticsManager.configure() first.")
             return false
         }
 
@@ -345,15 +361,15 @@ extension RAnalyticsRATTracker {
         if let dict = extra as? [String: Any],
            !dict.isEmpty {
             // If the event already had a 'cp' field, those values take precedence
-            if let params = payload[PayloadParameterKeys.cp] as? [AnyHashable: Any] {
+            if let params = payload[PayloadParameterKeys.Cp.cp] as? [AnyHashable: Any] {
                 extra.addEntries(from: params)
             }
 
-            payload[PayloadParameterKeys.cp] = extra
+            payload[PayloadParameterKeys.Cp.cp] = extra
         }
 
         automaticFieldsBuilder.addSdkSourceIfNeeded(payload, event: event)
-        automaticFieldsBuilder.addCommonParameters(payload, state: state)
+        automaticFieldsBuilder.addCommonParameters(payload, state: state, event: event)
         automaticFieldsBuilder.addLocation(payload,
                                            state: state,
                                            addActionParameters: false)
@@ -377,28 +393,36 @@ extension RAnalyticsRATTracker {
         // Core SDK events
         switch event.name {
         // MARK: _rem_init_launch
-        case RAnalyticsEvent.Name.initialLaunch: () // Do nothing
+        case RAnalyticsEvent.Name.initialLaunch:
+            // No tracker-specific fields; automatic parameters are added later in the pipeline.
+            break
 
         // MARK: _rem_install
         case RAnalyticsEvent.Name.install:
-            if let sdkDependencies = coreInfosCollector.sdkDependencies {
-                payload[PayloadParameterKeys.cp] = sdkDependencies
+            let allowDeviceInfoPayload = PrivacyControlPayload.allowsDeviceInformationOnRatPayload(bundle: bundle,
+                                                                                                   consentStore: dataCollectionConsent)
+            if allowDeviceInfoPayload, let sdkDependencies = coreInfosCollector.sdkDependencies {
+                payload[PayloadParameterKeys.Cp.cp] = sdkDependencies
             }
-            extra.addEntries(from: event.installParameters(with: coreInfosCollector.appInfo))
+            extra.addEntries(from: event.installParameters(with: allowDeviceInfoPayload ? coreInfosCollector.appInfo : nil))
 
         // MARK: _rem_launch
         case RAnalyticsEvent.Name.sessionStart:
             extra.addEntries(from: state.sessionStartParameters)
 
         // MARK: _rem_end_session
-        case RAnalyticsEvent.Name.sessionEnd: () // Do nothing
+        case RAnalyticsEvent.Name.sessionEnd:
+            // No tracker-specific fields; session end uses only automatic parameters.
+            break
 
         // MARK: _rem_update
         case RAnalyticsEvent.Name.applicationUpdate:
-            if let sdkDependencies = coreInfosCollector.sdkDependencies {
-                payload[PayloadParameterKeys.cp] = sdkDependencies
+            let allowDeviceInfoPayload = PrivacyControlPayload.allowsDeviceInformationOnRatPayload(bundle: bundle,
+                                                                                                   consentStore: dataCollectionConsent)
+            if allowDeviceInfoPayload, let sdkDependencies = coreInfosCollector.sdkDependencies {
+                payload[PayloadParameterKeys.Cp.cp] = sdkDependencies
             }
-            extra.addEntries(from: state.applicationUpdateParameters(with: coreInfosCollector.appInfo))
+            extra.addEntries(from: state.applicationUpdateParameters(with: allowDeviceInfoPayload ? coreInfosCollector.appInfo : nil))
 
         // MARK: _rem_login
         case RAnalyticsEvent.Name.login:
@@ -524,7 +548,7 @@ extension RAnalyticsRATTracker {
             case .externalReferral(let referralURL):
                 payload[PayloadParameterKeys.etype] = RAnalyticsEvent.Name.pageVisitForRAT
                 payload[PayloadParameterKeys.ref] = referralURL.absoluteString
-                extra[CpParameterKeys.Ref.type] = RAnalyticsOrigin.external.toString
+                extra[PayloadParameterKeys.Cp.refType] = RAnalyticsOrigin.external.toString
             default:
                 return false
             }
@@ -545,18 +569,20 @@ extension RAnalyticsRATTracker {
             return false
         }
 
-        if let pgidValue = event.parameters["pgid"] as? String {
-            if validatePgidFormat(pgidValue, deviceIdentifier: state.deviceIdentifier) {
-                payload["pgid"] = pgidValue
+        if let pgidValue = event.parameters[PayloadParameterKeys.pgid] as? String {
+            if validatePgidFormat(pgidValue,
+                                  deviceIdentifier: state.deviceIdentifier,
+                                  allowsDeviceInformationOnRatPayload: allowsDeviceInformationOnRatPayload) {
+                payload[PayloadParameterKeys.pgid] = pgidValue
             } else {
-                payload.removeObject(forKey: "pgid")
+                payload.removeObject(forKey: PayloadParameterKeys.pgid)
             }
         }
 
         if let pageSection = event.parameters[RAnalyticsEvent.Parameter.pageSection] as? String, !pageSection.isEmpty {
-            payload[PayloadParameterKeys.pageSection] = pageSection
+            payload[PayloadParameterKeys.pgs] = pageSection
         } else {
-            payload.removeObject(forKey: PayloadParameterKeys.pageSection)
+            payload.removeObject(forKey: PayloadParameterKeys.pgs)
         }
 
         return true
@@ -642,14 +668,14 @@ private extension RAnalyticsRATTracker {
             origin = result
             self.carriedOverOrigin = nil
         }
-        extra[CpParameterKeys.Ref.type] = origin.toString
+        extra[PayloadParameterKeys.Cp.refType] = origin.toString
 
         if let pageTitle = pageTitle {
-            extra[CpParameterKeys.Page.title] = pageTitle
+            extra[PayloadParameterKeys.Cp.title] = pageTitle
         }
 
         if let pageURL = pageURL {
-            extra[CpParameterKeys.Page.url] = pageURL.absoluteString
+            extra[PayloadParameterKeys.Cp.url] = pageURL.absoluteString
         }
 
         return true
@@ -660,14 +686,14 @@ private extension RAnalyticsRATTracker {
                                      referralApp: ReferralAppModel) {
         payload[PayloadParameterKeys.ref] = referralApp.bundleIdentifier
 
-        extra[CpParameterKeys.Ref.type] = RAnalyticsOrigin.external.toString
+        extra[PayloadParameterKeys.Cp.refType] = RAnalyticsOrigin.external.toString
         if let link = referralApp.link,
            !link.isEmpty {
-            extra[CpParameterKeys.Ref.link] = link
+            extra[PayloadParameterKeys.Cp.refLink] = link
         }
         if let comp = referralApp.component,
            !comp.isEmpty {
-            extra[CpParameterKeys.Ref.component] = comp
+            extra[PayloadParameterKeys.Cp.refComp] = comp
         }
 
         referralApp.customParameters?.forEach { extra[$0.key] = $0.value }
@@ -752,17 +778,59 @@ extension RAnalyticsRATTracker {
 
     /// Validates the format of a pgid parameter.
     ///
+    /// When `ckp` is allowed on RAT payloads, the first segment must equal `deviceIdentifier` (`ckp`).
+    /// When `ckp` is gated off, only `"_<timestamp>"` is valid (empty first segment) so `ckp` cannot be sent via `pgid`.
+    ///
     /// - Parameters:
     ///   - pgid: The pgid value to validate
-    ///   - deviceIdentifier: The current device identifier (ckp) for comparison
+    ///   - deviceIdentifier: The current device identifier (`ckp`) for comparison when allowed on payloads
+    ///   - allowsDeviceInformationOnRatPayload: Whether device-information (including `ckp`) may appear on RAT JSON
     /// - Returns: `true` if the pgid format is valid, `false` otherwise
-    private func validatePgidFormat(_ pgid: String, deviceIdentifier: String) -> Bool {
+    private func validatePgidFormat(_ pgid: String,
+                                    deviceIdentifier: String,
+                                    allowsDeviceInformationOnRatPayload: Bool) -> Bool {
         let components = pgid.components(separatedBy: "_")
-
-        guard components.count == 2, components[0] == deviceIdentifier, TimeInterval(components[1]) != nil else {
+        guard components.count == 2,
+              let timestampMs = Int64(components[1]),
+              timestampMs >= 0 else {
             return false
         }
-
-        return true
+        guard allowsDeviceInformationOnRatPayload else {
+            return components[0].isEmpty
+        }
+        return components[0] == deviceIdentifier
     }
+}
+
+// MARK: - DataErasable
+
+extension RAnalyticsRATTracker: DataErasable {
+    func clearData() async throws {
+        lastVisitedPageIdentifier = nil
+        carriedOverOrigin = nil
+        updateCarrierNames(mcn: nil, mcnd: nil)
+        clearRpCookiesFromStorage()
+
+        guard let sender = sender as? RAnalyticsSender else {
+            return
+        }
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            sender.clearPendingEvents {
+                continuation.resume()
+            }
+        }
+    }
+
+    private func clearRpCookiesFromStorage() {
+        guard let cookieStorage = dependenciesContainer.httpCookieStore as? HTTPCookieStorage else {
+            return
+        }
+        let urlsToCheck = Set(
+            [bundle.endpointAddress, RATConstants.ProductionRat.endpointURL].compactMap { $0 }
+        )
+        for url in urlsToCheck {
+            (cookieStorage.cookies(for: url) ?? [])
+                .filter { $0.name == RATConstants.RpCookie.cookieName }
+                .forEach { cookieStorage.deleteCookie($0) }
+        }    }
 }

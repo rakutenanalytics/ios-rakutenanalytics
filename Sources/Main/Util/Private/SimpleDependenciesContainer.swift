@@ -27,6 +27,14 @@ protocol SimpleDependenciesContainable: AnalyticsHostBundleProviding {
     var coreInfosCollector: CoreInfosCollectable { get }
     var automaticFieldsBuilder: AutomaticFieldsBuildable { get }
     var applicationStateGetter: ApplicationStateGettable? { get }
+    var dataCollectionConsent: DataCollectionConsentReadable { get }
+    var migrationConsentStore: PrivacyControlConsentMigrating? { get }
+}
+
+extension SimpleDependenciesContainable {
+    var migrationConsentStore: PrivacyControlConsentMigrating? {
+        dataCollectionConsent as? PrivacyControlConsentMigrating
+    }
 }
 
 final class SimpleDependenciesContainer: SimpleDependenciesContainable {
@@ -63,6 +71,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
     }()
     let pushEventHandler: PushEventHandleable
     let coreInfosCollector: CoreInfosCollectable = CoreInfosCollector()
+    let dataCollectionConsent: DataCollectionConsentReadable = DataCollectionConsentStore.shared
     let automaticFieldsBuilder: AutomaticFieldsBuildable
     let applicationStateGetter: ApplicationStateGettable? = UIApplication.RAnalyticsSharedApplication
     #if os(iOS)
@@ -86,6 +95,7 @@ final class SimpleDependenciesContainer: SimpleDependenciesContainable {
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
                                                         reachability: Reachability(),
-                                                        userStorageHandler: userStorageHandler)
+                                                        userStorageHandler: userStorageHandler,
+                                                        consentStore: dataCollectionConsent)
     }
 }

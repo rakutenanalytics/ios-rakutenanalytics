@@ -24,7 +24,7 @@
 		C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEC28C0DAC400596714 /* AppDelegate.swift */; };
 		C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBEE28C0DAC400596714 /* SceneDelegate.swift */; };
 		C900FBF128C0DAC400596714 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C900FBF028C0DAC400596714 /* ViewController.swift */; };
-		DESTDL00128C0DAC400596714 /* IncomingDeepLinkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DESTDL00228C0DAC400596714 /* IncomingDeepLinkStore.swift */; };
+		B2C3D4E5F607182940A0B0C06 /* IncomingDeepLinkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DESTDL00228C0DAC400596714 /* IncomingDeepLinkStore.swift */; };
 		C900FBF228C0DAC400596716 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDEEP0022C0DAC400596718 /* SceneDelegate.swift */; };
 		C900FBF328C0DAC400596717 /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDEEP0012C0DAC400596718 /* DeepLinkManager.swift */; };
 		C900FBF428C0DAC400596714 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C900FBF228C0DAC400596714 /* Main.storyboard */; };
@@ -435,7 +435,7 @@
 				C900FBF128C0DAC400596714 /* ViewController.swift in Sources */,
 				C900FBED28C0DAC400596714 /* AppDelegate.swift in Sources */,
 				C900FBEF28C0DAC400596714 /* SceneDelegate.swift in Sources */,
-				DESTDL00128C0DAC400596714 /* IncomingDeepLinkStore.swift in Sources */
+				B2C3D4E5F607182940A0B0C06 /* IncomingDeepLinkStore.swift in Sources */
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,8 +3,11 @@ import Foundation
 /// This wrapper ensures synchronized access to the value only for getter and setter.
 /// Mutating functions, subscript, incrementation etc. are not synchronized by default -
 /// use `mutate` function to ensure operation atomicity.
+///
+/// Marked `@unchecked Sendable` because access is serialized on an internal queue.
+/// Callers must not share non-Sendable `Value` types across task boundaries.
 @propertyWrapper
-class AtomicGetSet<Value> {
+final class AtomicGetSet<Value>: @unchecked Sendable {
     private let queue = PropertyQueueGenerator.spawnQueue(domain: "RAnalytics.AtomicProperty")
     private var value: Value
 

@@ -25,6 +25,7 @@ protocol EnvironmentBundle: Bundleable {
     var isManualInitializationEnabled: Bool { get }
     var databaseParentDirectory: FileManager.SearchPathDirectory { get }
     var backgroundLocationUpdates: Bool { get }
+    var isPrivacyControlEnabled: Bool { get }
 }
 
 extension Bundle: EnvironmentBundle {
@@ -33,6 +34,7 @@ extension Bundle: EnvironmentBundle {
     private enum Keys {
         static let applicationSceneManifestKey = "UIApplicationSceneManifest"
         static let setWebViewAppUserAgentEnabled = "RATSetWebViewAppUserAgentEnabled"
+        static let privacyControlEnabled = "RATEnablePrivacyControl"
     }
 
     var languageCode: Any? {
@@ -64,8 +66,7 @@ extension Bundle: EnvironmentBundle {
             #endif
             return nil
             #else
-            let prodURL = URL(string: "https://rat.rakuten.co.jp/")
-            return prodURL
+            return RATConstants.ProductionRat.endpointURL
             #endif
         }
         return userDefinedURL
@@ -185,6 +186,25 @@ extension Bundle: EnvironmentBundle {
             return false
         }
         return true
+    }
+
+    /// Build-time privacy control flag (`RATEnablePrivacyControl` in the app Info.plist; default `false`).
+    ///
+    /// Behavior matches the Analytics SDK Mobile Privacy Control specification:
+    /// - **`false` (default):** Ignore ``AnalyticsManager/set(dataCollection:enabled:)`` (and related runtime consent).
+    ///   All categories are collected; the Data Collection API has no effect.
+    /// - **`true`:** Granular APIs are active. Initial consent state is per product/legal (stored consent;
+    ///   unset is treated as not granted until the app grants categories via the runtime API).
+    ///   **Semantics:** consent gates **per-category collection and inclusion in RAT payloads** (and related
+    ///   behavior such as cookies/Geo). The SDK does **not** stop all events or block transport until the
+    ///   runtime API runs; core/minimal parameters may still be sent even before any `set(dataCollection:)` call.
+    ///
+    /// - Note: Set `RATEnablePrivacyControl` to `true` in Info.plist to enable granular control.
+    var isPrivacyControlEnabled: Bool {
+        guard let value = object(forInfoDictionaryKey: Keys.privacyControlEnabled) as? Bool else {
+            return false
+        }
+        return value
     }
 }
 

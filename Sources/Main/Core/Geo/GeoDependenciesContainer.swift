@@ -43,6 +43,7 @@ final class GeoDependenciesContainer: GeoDependenciesContainable {
                                                         notificationHandler: notificationHandler,
                                                         analyticsStatusBarOrientationGetter: analyticsStatusBarOrientationGetter,
                                                         reachability: Reachability(),
-                                                        userStorageHandler: userStorageHandler)
+                                                        userStorageHandler: userStorageHandler,
+                                                        consentStore: DataCollectionConsentStore.shared)
     }
 }

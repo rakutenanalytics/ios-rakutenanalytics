@@ -61,6 +61,12 @@ struct ViewableImpressionsView: View {
     @State private var lastDurationMs: Double?
     @State private var lastQualified: Int?
     @State private var lastReason = "—"
+    @State private var refreshTrigger: RefreshTrigger?
+
+    private struct RefreshTrigger: Equatable {
+        let id = UUID()
+        let reason: String
+    }
 
     private var items: [ViewableItem] {
         (1...preset.listCount).map { index in
@@ -106,6 +112,10 @@ struct ViewableImpressionsView: View {
         .onAppear {
             triggerDwellRefresh(reason: "onAppear")
         }
+        .task(id: refreshTrigger) {
+            guard let trigger = refreshTrigger else { return }
+            await performDwellRefresh(reason: trigger.reason)
+        }
         .onViewportSizeChange {
             triggerDwellRefresh(reason: "viewport_size_change")
         }
@@ -119,7 +129,6 @@ struct ViewableImpressionsView: View {
             }
         }
     }
-
     @ViewBuilder
     private var listStack: some View {
         if preset.usesLazyStack {
@@ -172,39 +181,39 @@ struct ViewableImpressionsView: View {
     }
 
     private func triggerDwellRefresh(reason: String) {
+        refreshTrigger = RefreshTrigger(reason: reason)
+    }
+
+    @MainActor
+    private func performDwellRefresh(reason: String) async {
         lastReason = reason
         let start = CFAbsoluteTimeGetCurrent()
         let listSize = items.count
         let signpostID = ViewableImpressionsSampleMetrics.signposter.makeSignpostID()
         let intervalState = ViewableImpressionsSampleMetrics.signposter.beginInterval("refreshState", id: signpostID)
 
-        tracker.refreshState { eventParameters in
-            ViewableImpressionsSampleMetrics.signposter.endInterval("refreshState", intervalState)
+        let eventParameters = await tracker.refreshState()
+        ViewableImpressionsSampleMetrics.signposter.endInterval("refreshState", intervalState)
 
-            let elapsedMs = (CFAbsoluteTimeGetCurrent() - start) * 1_000
-            let qualified = ViewableImpressionsSampleMetrics.viewableItemCount(in: eventParameters)
-            let durationLabel = String(format: "%.2f", elapsedMs)
-            ViewableImpressionsSampleMetrics.logger.notice(
-                "viewable refresh reason=\(reason, privacy: .public) list_size=\(listSize, privacy: .public) viewable_items_in_batch=\(qualified, privacy: .public) duration_ms=\(durationLabel, privacy: .public)"
-            )
+        let elapsedMs = (CFAbsoluteTimeGetCurrent() - start) * 1_000
+        let qualified = ViewableImpressionsSampleMetrics.viewableItemCount(in: eventParameters)
+        ViewableImpressionsSampleMetrics.logRefreshCompleted(
+            reason: reason,
+            listSize: listSize,
+            qualified: qualified,
+            durationMs: elapsedMs
+        )
 
-            DispatchQueue.main.async {
-                lastDurationMs = elapsedMs
-                lastQualified = qualified
-            }
+        lastDurationMs = elapsedMs
+        lastQualified = qualified
 
-            if let eventParameters {
-                ViewableImpressionsSampleMetrics.logger.notice(
-                    "sample RAT: sending pageVisit with viewable_data count=\(qualified, privacy: .public) (items in this event)"
-                )
-                RAnalyticsRATTracker.shared()
-                    .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
-                    .track()
-            } else {
-                ViewableImpressionsSampleMetrics.logger.notice(
-                    "sample RAT: no pageVisit sent — viewable_data empty (0 viewable impression items)"
-                )
-            }
+        if let eventParameters {
+            ViewableImpressionsSampleMetrics.logPageVisitSent(qualified: qualified)
+            RAnalyticsRATTracker.shared()
+                .event(withEventType: RAnalyticsEvent.Name.pageVisitForRAT, parameters: eventParameters)
+                .track()
+        } else {
+            ViewableImpressionsSampleMetrics.logPageVisitSkipped()
         }
     }
 }

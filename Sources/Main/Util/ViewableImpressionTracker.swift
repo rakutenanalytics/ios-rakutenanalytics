@@ -86,7 +86,7 @@ private struct ViewableImpressionVisibilityMetrics {
     private weak var viewportContextView: UIView?
     private let synchronizationQueue = DispatchQueue(label: "com.rakuten.analytics.viewableImpressions", attributes: .concurrent)
     private var manualItemsStorage: [String: ManualTrackedItem] = [:]
-    private var pendingRefreshWorkItem: DispatchWorkItem?
+    private let refreshCoordinator = ViewableImpressionRefreshCoordinator()
     private var manualItemsByIdentifier: [String: ManualTrackedItem] {
         get { synchronizationQueue.sync { manualItemsStorage } }
         set { synchronizationQueue.sync(flags: .barrier) { self.manualItemsStorage = newValue } }
@@ -95,7 +95,7 @@ private struct ViewableImpressionVisibilityMetrics {
     // MARK: Initialization
 
     /// Create a tracker without a specific viewport context.
-    /// You can pass a viewport later via `refreshState(viewportView:onResult:)`.
+    /// You can pass a viewport later via `refreshState(viewportView:)`.
     @objc public override init() {
         self.viewportContextView = nil
         super.init()
@@ -124,15 +124,14 @@ private struct ViewableImpressionVisibilityMetrics {
     @objc public func disableTracking() {
         guard isEnabled else { return }
         isEnabled = false
-        pendingRefreshWorkItem?.cancel()
-        pendingRefreshWorkItem = nil
+        refreshCoordinator.cancel()
         synchronizationQueue.sync(flags: .barrier) {
             manualItemsStorage.removeAll()
         }
     }
 
     /// Register a view manually for viewable impression tracking.
-    /// Call `refreshState(onResult:)` to evaluate visibility and receive results.
+    /// Call `refreshState` to evaluate visibility and receive results.
     public func track(view: UIView, item: ViewableImpressionTrackable, itemPosition: Int = 0) {
         guard isEnabled else { return }
 
@@ -168,20 +167,16 @@ private struct ViewableImpressionVisibilityMetrics {
     }
 
     /// Manually refresh visibility state once and receive results when ready.
-    /// The completion is called immediately if items already qualify, or after
-    /// the suggested dwell delay if items are still accumulating dwell time.
+    /// Returns immediately if items already qualify, or after the dwell delay if items are still accumulating dwell time.
+    @MainActor
     public func refreshState(viewportView: UIView? = nil,
-                             viewportInsets: UIEdgeInsets = .zero,
-                             onResult: @escaping (_ eventParameters: [String: Any]?) -> Void) {
-        let result = refreshStateInternal(
-            viewportView: viewportView,
-            viewportInsets: viewportInsets
-        )
-        ViewableImpressionRefreshScheduler.deliver(
-            result: result,
-            pendingWorkItem: &pendingRefreshWorkItem,
-            onResult: onResult
-        )
+                             viewportInsets: UIEdgeInsets = .zero) async -> [String: Any]? {
+        return await refreshCoordinator.refresh { [self] in
+            self.refreshStateInternal(
+                viewportView: viewportView,
+                viewportInsets: viewportInsets
+            )
+        }
     }
 
     // MARK: - Private Helpers
@@ -232,89 +227,84 @@ private struct ViewableImpressionVisibilityMetrics {
                                       viewportInsets: UIEdgeInsets) -> ViewableImpressionRefreshResult {
         guard isEnabled else { return .empty }
 
-        var result = ViewableImpressionRefreshResult.empty
-        executeOnMain {
-            let effectiveViewportView = viewportView ?? self.viewportContextView
-            let now = Date()
-            var qualifiedItems: [ViewableImpressionQualifiedItemData] = []
-            var itemsToRemove: [String] = []
-            var nextRefreshDelay: TimeInterval?
+        let effectiveViewportView = viewportView ?? viewportContextView
+        let now = Date()
+        var qualifiedItems: [ViewableImpressionQualifiedItemData] = []
+        var itemsToRemove: [String] = []
+        var nextRefreshDelay: TimeInterval?
 
-            let snapshot = self.manualItemsByIdentifier
-            for (itemId, trackedItem) in snapshot {
-                guard let view = trackedItem.view else {
-                    itemsToRemove.append(itemId)
-                    continue
-                }
-
-                let visibility: Double? = if !view.isValidForTracking {
-                    nil
-                } else if let metrics = self.visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) {
-                    metrics.visibility
-                } else {
-                    nil
-                }
-
-                let state = ViewableImpressionStateAdapter(
-                    item: trackedItem.item,
-                    itemPosition: trackedItem.itemPosition,
-                    screenName: trackedItem.view?.findViewController().map { String(describing: type(of: $0)) },
-                    getIsVisible: { trackedItem.isVisible },
-                    setIsVisible: { trackedItem.isVisible = $0 },
-                    getFirstVisibleTime: { trackedItem.firstVisibleTime },
-                    setFirstVisibleTime: { trackedItem.firstVisibleTime = $0 },
-                    getHasTriggered: { trackedItem.hasTriggeredViewableImpression },
-                    setHasTriggered: { trackedItem.hasTriggeredViewableImpression = $0 },
-                    getVisibilityPercentage: { trackedItem.visibilityPercentage },
-                    setVisibilityPercentage: { trackedItem.visibilityPercentage = $0 }
-                )
-                let result = ViewableImpressionTrackStateProcessor.process(
-                    item: state,
-                    visibility: visibility,
-                    now: now,
-                    minimumVisibility: self.minimumVisibilityPercentage,
-                    minimumDwell: self.minimumDwellTime
-                )
-
-                if let qualified = result.qualified {
-                    qualifiedItems.append(qualified)
-                } else if let remaining = result.remaining, remaining > 0 {
-                    nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
-                }
+        let snapshot = manualItemsByIdentifier
+        for (itemId, trackedItem) in snapshot {
+            guard let view = trackedItem.view else {
+                itemsToRemove.append(itemId)
+                continue
             }
 
-            if !itemsToRemove.isEmpty {
-                self.synchronizationQueue.sync(flags: .barrier) {
-                    itemsToRemove.forEach { self.manualItemsStorage.removeValue(forKey: $0) }
-                }
+            let visibility: Double? = if !view.isValidForTracking {
+                nil
+            } else if let metrics = visibilityMetrics(for: view, in: effectiveViewportView, viewportInsets: viewportInsets) {
+                metrics.visibility
+            } else {
+                nil
             }
 
-            let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)? = nextRefreshDelay == nil ? nil : { [weak self] in
-                guard let self = self else { return .empty }
-                return self.refreshStateInternal(
-                    viewportView: viewportView,
-                    viewportInsets: viewportInsets
-                )
-            }
-
-            let eventTimestamp = NSNumber(value: Date().toRatTimestamp)
-            let eventData = ViewableImpressionEventEmitter.buildItemPayloads(
-                items: qualifiedItems,
-                eventTimestamp: eventTimestamp
+            let state = ViewableImpressionStateAdapter(
+                item: trackedItem.item,
+                itemPosition: trackedItem.itemPosition,
+                screenName: trackedItem.view?.findViewController().map { String(describing: type(of: $0)) },
+                getIsVisible: { trackedItem.isVisible },
+                setIsVisible: { trackedItem.isVisible = $0 },
+                getFirstVisibleTime: { trackedItem.firstVisibleTime },
+                setFirstVisibleTime: { trackedItem.firstVisibleTime = $0 },
+                getHasTriggered: { trackedItem.hasTriggeredViewableImpression },
+                setHasTriggered: { trackedItem.hasTriggeredViewableImpression = $0 },
+                getVisibilityPercentage: { trackedItem.visibilityPercentage },
+                setVisibilityPercentage: { trackedItem.visibilityPercentage = $0 }
             )
-            let eventParameters = ViewableImpressionEventEmitter.buildEventParameters(
-                viewableData: eventData
+            let result = ViewableImpressionTrackStateProcessor.process(
+                item: state,
+                visibility: visibility,
+                now: now,
+                minimumVisibility: minimumVisibilityPercentage,
+                minimumDwell: minimumDwellTime
             )
 
-            result = ViewableImpressionRefreshResult(
-                eventData: eventData,
-                refreshAfterDelay: nextRefreshDelay,
-                refreshAfterDwell: refreshAfterDwell,
-                eventParameters: eventParameters
+            if let qualified = result.qualified {
+                qualifiedItems.append(qualified)
+            } else if let remaining = result.remaining, remaining > 0 {
+                nextRefreshDelay = min(nextRefreshDelay ?? remaining, remaining)
+            }
+        }
+
+        if !itemsToRemove.isEmpty {
+            synchronizationQueue.sync(flags: .barrier) {
+                itemsToRemove.forEach { manualItemsStorage.removeValue(forKey: $0) }
+            }
+        }
+
+        let refreshAfterDwell: (() -> ViewableImpressionRefreshResult)? = nextRefreshDelay == nil ? nil : { [weak self] in
+            guard let self = self else { return .empty }
+            return self.refreshStateInternal(
+                viewportView: viewportView,
+                viewportInsets: viewportInsets
             )
         }
 
-        return result
+        let eventTimestamp = NSNumber(value: Date().toRatTimestamp)
+        let eventData = ViewableImpressionEventEmitter.buildItemPayloads(
+            items: qualifiedItems,
+            eventTimestamp: eventTimestamp
+        )
+        let eventParameters = ViewableImpressionEventEmitter.buildEventParameters(
+            viewableData: eventData
+        )
+
+        return ViewableImpressionRefreshResult(
+            eventData: eventData,
+            refreshAfterDelay: nextRefreshDelay,
+            refreshAfterDwell: refreshAfterDwell,
+            eventParameters: eventParameters
+        )
     }
 
 }

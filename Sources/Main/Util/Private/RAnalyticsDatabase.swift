@@ -4,14 +4,11 @@ import UIKit
 
 typealias SQlite3Pointer = OpaquePointer
 
-///
 /// Internal class used to centralize access to the analytics database.
 ///
-/// All the methods below are executed on a background FIFO, so there is no
-/// need to otherwise synchronize calls to them. Completion blocks are then
-/// executed on the caller's operation queue.
-///
-final class RAnalyticsDatabase {
+/// All CRUD runs on a serial `OperationQueue`; async methods bridge via continuations.
+/// `@unchecked Sendable` documents that queue contract for Swift concurrency.
+final class RAnalyticsDatabase: @unchecked Sendable {
     private static var sharedConnection: SQlite3Pointer?
     private static let connectionQueue = DispatchQueue(label: "com.rakuten.esd.sdk.analytics.connectionQueue")
 
@@ -57,12 +54,10 @@ final class RAnalyticsDatabase {
     /// - Parameter blob:                  Blob to insert.
     /// - Parameter table:                 Name of the destination table.
     /// - Parameter maximumNumberOfBlobs:  Maximum number of blobs to keep in the table.
-    /// - Parameter completion:            Block to call upon completion.
     func insert(blob: Data,
                 into table: String,
-                limit maximumNumberOfBlobs: UInt,
-                then completion: @escaping () -> Void) {
-        insert(blobs: [blob], into: table, limit: maximumNumberOfBlobs, then: completion)
+                limit maximumNumberOfBlobs: UInt) async {
+        await insert(blobs: [blob], into: table, limit: maximumNumberOfBlobs)
     }
 
     /// Insert multiple new blobs into a table, in a single transaction.
@@ -70,55 +65,20 @@ final class RAnalyticsDatabase {
     /// - Parameter blobs:                 Blobs to insert.
     /// - Parameter table:                 Name of the destination table.
     /// - Parameter maximumNumberOfBlobs:  Maximum number of blobs to keep in the table.
-    /// - Parameter completion:            Block to call upon completion.
     func insert(blobs: [Data],
                 into table: String,
-                limit maximumNumberOfBlobs: UInt,
-                then completion: @escaping () -> Void) {
+                limit maximumNumberOfBlobs: UInt) async {
         guard enabled else {
             RLogger.error(message: "Database insert operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
-            completion()
             return
         }
 
-        queue.addOperation { [weak self] in
-            defer {
-                completion()
-            }
-            guard let self = self, let connection = self.connection else {
-                return
-            }
-
-            let error = self.prepareTable(table)
-            guard error == nil,
-                  RAnalyticsDatabaseHelper.beginTransaction(connection: connection) else {
-                return
-            }
-            defer {
-                RAnalyticsDatabaseHelper.commitTransaction(connection: connection)
-            }
-
-            let query = "insert into \(table) (data) values(?)"
-            var statement: SQlite3Pointer?
-            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: connection) else {
-                return
-            }
-
-            let op: (Data) -> Void = { blob in
-                blob.withUnsafeBytes { bytes in
-                    if sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(bytes.count), nil) == SQLITE_OK {
-                        sqlite3_step(statement)
-                        sqlite3_clear_bindings(statement)
-                    }
-                    sqlite3_reset(statement)
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            queue.addOperation { [weak self] in
+                defer {
+                    continuation.resume()
                 }
-            }
-            blobs.forEach(op)
-            sqlite3_finalize(statement)
-
-            if maximumNumberOfBlobs != 0 {
-                let query = "delete from \(table) where id not in (select id from \(table) order by id desc limit \(maximumNumberOfBlobs))"
-                sqlite3_exec(connection, query, nil, nil, nil)
+                self?.insertBlobsSync(blobs, into: table, limit: maximumNumberOfBlobs)
             }
         }
     }
@@ -127,46 +87,17 @@ final class RAnalyticsDatabase {
     ///
     /// - Parameter maximumNumberOfBlobs:  Maximum number of blobs we want to read.
     /// - Parameter table:                 Name of the table.
-    /// - Parameter completion:            Block to call upon completion.
-    func fetchBlobs(_ maximumNumberOfBlobs: UInt, from table: String, then completion: @escaping (_ blobs: [Data]?, _ identifiers: [Int64]?) -> Void) {
+    func fetchBlobs(_ maximumNumberOfBlobs: UInt, from table: String) async -> (blobs: [Data]?, identifiers: [Int64]?) {
         guard enabled else {
             RLogger.warning(message: "Database fetch operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
-            completion(nil, nil)
-            return
+            return (nil, nil)
         }
 
-        queue.addOperation { [weak self] in
-            guard let self = self, let connection = self.connection else {
-                completion(nil, nil)
-                return
+        return await withCheckedContinuation { continuation in
+            queue.addOperation { [weak self] in
+                let result = self?.fetchBlobsSync(maximumNumberOfBlobs, from: table) ?? (nil, nil)
+                continuation.resume(returning: result)
             }
-
-            var blobs = [Data]()
-            var identifiers = [Int64]()
-
-            defer {
-                completion(blobs.isEmpty ? nil : blobs, identifiers.isEmpty ? nil : identifiers)
-            }
-
-            blobs.reserveCapacity(Int(maximumNumberOfBlobs))
-            identifiers.reserveCapacity(Int(maximumNumberOfBlobs))
-
-            guard self.prepareTable(table) == nil, maximumNumberOfBlobs > 0 else { return }
-
-            let query = "SELECT * FROM \(table) LIMIT \(maximumNumberOfBlobs)"
-            var statement: OpaquePointer?
-
-            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: connection) else {
-                return
-            }
-
-            defer {
-                if statement != nil {
-                    sqlite3_finalize(statement)
-                }
-            }
-
-            self.processStatement(statement, blobs: &blobs, identifiers: &identifiers)
         }
     }
 
@@ -184,22 +115,18 @@ final class RAnalyticsDatabase {
         }
     }
 
-    /// Delete blobs with the given identifier from a table.
+    /// Delete all blobs from a table.
     ///
-    /// - Parameter identifiers:  Blob identifiers.
     /// - Parameter table:        Name of the table.
     /// - Parameter completion:   Block to call upon completion.
-    func deleteBlobs(identifiers: [Int64],
-                     in table: String,
-                     then completion: @escaping () -> Void) {
+    func deleteAllBlobs(in table: String, then completion: @escaping () -> Void) {
         guard enabled else {
-            RLogger.error(message: "Database delete operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
             completion()
             return
         }
 
         guard !appWillTerminate else {
-            RLogger.debug(message: "RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
+            RLogger.debug(message: "RAnalyticsDatabase - deleteAllBlobs is cancelled because the app will terminate")
             completion()
             return
         }
@@ -212,6 +139,142 @@ final class RAnalyticsDatabase {
                 return
             }
 
+            guard self.isTablePresent(table),
+                  RAnalyticsDatabaseHelper.beginTransaction(connection: connection) else {
+                return
+            }
+            defer {
+                RAnalyticsDatabaseHelper.commitTransaction(connection: connection)
+            }
+
+            let query = "delete from \(table)"
+            sqlite3_exec(connection, query, nil, nil, nil)
+        }
+    }
+
+    /// Delete blobs with the given identifier from a table.
+    ///
+    /// - Parameter identifiers:  Blob identifiers.
+    /// - Parameter table:        Name of the table.
+    func deleteBlobs(identifiers: [Int64], in table: String) async {
+        guard enabled else {
+            RLogger.error(message: "Database delete operation blocked because manual initialization is enabled and AnalyticsManager is not configured.")
+            return
+        }
+
+        guard !appWillTerminate else {
+            RLogger.debug(message: "RAnalyticsDatabase - deleteBlobs is cancelled because the app will terminate")
+            return
+        }
+
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            queue.addOperation { [weak self] in
+                defer {
+                    continuation.resume()
+                }
+                self?.deleteBlobsSync(identifiers: identifiers, in: table)
+            }
+        }
+    }
+
+    /// Safely closes DB connection after all operations are finished.
+    /// Calling this method makes this RAnalyticsDatabase object unusable. Use for tests only.
+    func closeConnection() {
+        let operation = BlockOperation(block: { [weak self] in
+            guard let connection = self?.connection else { return }
+            _ = SQLiteConnectionLock.withLock(connection) {
+                sqlite3_close_v2(connection)
+            }
+            self?.connection = nil
+        })
+        queue.addOperations([operation], waitUntilFinished: true)
+    }
+}
+
+private extension RAnalyticsDatabase {
+
+    func insertBlobsSync(_ blobs: [Data], into table: String, limit maximumNumberOfBlobs: UInt) {
+        guard let connection = self.connection else {
+            return
+        }
+
+        SQLiteConnectionLock.withLock(connection) {
+            let error = self.prepareTable(table)
+            guard error == nil,
+                  RAnalyticsDatabaseHelper.beginTransaction(connection: connection) else {
+                return
+            }
+            defer {
+                RAnalyticsDatabaseHelper.commitTransaction(connection: connection)
+            }
+
+            let query = "insert into \(table) (data) values(?)"
+            var statement: SQlite3Pointer?
+            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: connection) else {
+                return
+            }
+
+            blobs.forEach { blob in
+                self.bindAndStep(blob: blob, statement: statement)
+            }
+            sqlite3_finalize(statement)
+
+            if maximumNumberOfBlobs != 0 {
+                let query = "delete from \(table) where id not in (select id from \(table) order by id desc limit \(maximumNumberOfBlobs))"
+                sqlite3_exec(connection, query, nil, nil, nil)
+            }
+        }
+    }
+
+    func bindAndStep(blob: Data, statement: SQlite3Pointer?) {
+        blob.withUnsafeBytes { bytes in
+            if sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(bytes.count), nil) == SQLITE_OK {
+                sqlite3_step(statement)
+                sqlite3_clear_bindings(statement)
+            }
+            sqlite3_reset(statement)
+        }
+    }
+
+    func fetchBlobsSync(_ maximumNumberOfBlobs: UInt, from table: String) -> (blobs: [Data]?, identifiers: [Int64]?) {
+        guard let connection = self.connection else {
+            return (nil, nil)
+        }
+
+        var blobs = [Data]()
+        var identifiers = [Int64]()
+
+        SQLiteConnectionLock.withLock(connection) {
+            blobs.reserveCapacity(Int(maximumNumberOfBlobs))
+            identifiers.reserveCapacity(Int(maximumNumberOfBlobs))
+
+            guard self.prepareTable(table) == nil, maximumNumberOfBlobs > 0 else { return }
+
+            let query = "SELECT * FROM \(table) ORDER BY rowid ASC LIMIT \(maximumNumberOfBlobs)"
+            var statement: OpaquePointer?
+
+            guard RAnalyticsDatabaseHelper.prepareStatement(&statement, query: query, connection: connection) else {
+                return
+            }
+
+            defer {
+                if statement != nil {
+                    sqlite3_finalize(statement)
+                }
+            }
+
+            self.processStatement(statement, blobs: &blobs, identifiers: &identifiers)
+        }
+
+        return (blobs.isEmpty ? nil : blobs, identifiers.isEmpty ? nil : identifiers)
+    }
+
+    func deleteBlobsSync(identifiers: [Int64], in table: String) {
+        guard let connection = self.connection else {
+            return
+        }
+
+        SQLiteConnectionLock.withLock(connection) {
             guard self.isTablePresent(table),
                   RAnalyticsDatabaseHelper.beginTransaction(connection: connection) else {
                 return
@@ -235,19 +298,6 @@ final class RAnalyticsDatabase {
             sqlite3_finalize(statement)
         }
     }
-
-    /// Safely closes DB connection after all operations are finished.
-    /// Calling this method makes this RAnalyticsDatabase object unusable. Use for tests only.
-    func closeConnection() {
-        let operation = BlockOperation(block: { [weak self] in
-            sqlite3_close_v2(self?.connection)
-            self?.connection = nil
-        })
-        queue.addOperations([operation], waitUntilFinished: true)
-    }
-}
-
-private extension RAnalyticsDatabase {
 
     func isTablePresent(_ table: String) -> Bool {
         guard !tables.contains(table) else {

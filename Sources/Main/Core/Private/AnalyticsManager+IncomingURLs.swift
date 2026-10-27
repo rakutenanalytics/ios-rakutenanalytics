@@ -50,7 +50,7 @@ extension AnalyticsManager {
         if contexts.isEmpty {
             if let url = UIOpenURLContext.DefaultValues.url {
                 RLogger.verbose(message: "Tracking incoming URL from scene(openURLContexts:): \(url.absoluteString), "
-                    + "sourceApplication=\(String(describing: UIOpenURLContext.DefaultValues.sourceApplication))")
+                                    + "sourceApplication=\(String(describing: UIOpenURLContext.DefaultValues.sourceApplication))")
             }
             handleIncomingURLContexts(contexts)
             return
@@ -58,7 +58,7 @@ extension AnalyticsManager {
 
         for context in contexts {
             RLogger.verbose(message: "Tracking incoming URL from scene(openURLContexts:): \(context.url.absoluteString), "
-                + "sourceApplication=\(String(describing: context.options.sourceApplication))")
+                                + "sourceApplication=\(String(describing: context.options.sourceApplication))")
         }
         handleIncomingURLContexts(contexts)
     }
@@ -66,7 +66,7 @@ extension AnalyticsManager {
     func handleIncomingConnectionOptionsWithLogging(_ options: UIScene.ConnectionOptions) {
         for context in options.urlContexts {
             RLogger.verbose(message: "Tracking incoming URL from scene(willConnectTo:options:): \(context.url.absoluteString), "
-                + "sourceApplication=\(String(describing: context.options.sourceApplication))")
+                                + "sourceApplication=\(String(describing: context.options.sourceApplication))")
         }
         for activity in options.userActivities {
             if let url = activity.webpageURL {

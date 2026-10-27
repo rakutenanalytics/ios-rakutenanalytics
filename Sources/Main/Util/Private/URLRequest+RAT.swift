@@ -21,9 +21,11 @@ extension URLRequest {
     init(url: URL,
          body: Data,
          environmentBundle: EnvironmentBundle = Bundle.main,
+         consentStore: DataCollectionConsentReadable = DataCollectionConsentStore.shared,
          at date: Date = Date()) {
         self.init(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 30)
         httpShouldHandleCookies = environmentBundle.useDefaultSharedCookieStorage
+            && consentStore.isEnabled(.userInformation)
 
         /// For historical reasons we don't send the JSON as JSON but as non-urlEncoded x-www-form-urlencoded,
         /// passed as text/plain. The backend also doesn't accept a charset value (but assumes UTF-8).

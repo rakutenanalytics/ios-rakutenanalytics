@@ -1,8 +1,11 @@
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
-@objc public protocol RAnalyticsRpCookieFetchable {
+public protocol RAnalyticsRpCookieFetchable: AnyObject {
     var endpointURL: URL? { get set }
-    func getRpCookieCompletionHandler(_ completionHandler: @escaping (HTTPCookie?, NSError?) -> Void)
+    func fetchRpCookie() async throws -> HTTPCookie
     func getRpCookieFromCookieStorage() -> HTTPCookie?
 }
 
@@ -18,18 +21,18 @@ import Foundation
     }
 
     @AtomicGetSet private var safeEndpointURL: URL?
-    private var retryInterval: TimeInterval
-    private var rpCookieRequestRetryCount: UInt
-    private let rpCookieQueue: DispatchQueue
+    /// Retry/backoff state is `@AtomicGetSet` so recursive async retry is safe across task hops.
+    @AtomicGetSet private var retryInterval: TimeInterval
+    @AtomicGetSet private var rpCookieRequestRetryCount: UInt
     private let cookieStorage: HTTPCookieStorable
     private let session: Sessionable
     private let bundle: EnvironmentBundle
     private let maximumTimeOut: UInt
+    private let consentStore: DataCollectionConsentReadable
     private enum Constants {
         static let initialRetryInterval: TimeInterval = 10 // 10s as initial timeout request
         static let backOffMultiplier: UInt = 2 // Setting multiplier as 2
         static let timeOut: UInt = 600 // 10 mins as the time out
-        static let rpName = "Rp"
     }
     private enum RpCookieFetcherError {
         static let failureReason = "Invalid/NoCookie details available"
@@ -40,6 +43,9 @@ import Foundation
         static let endpoint = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
                                       code: 0,
                                       userInfo: [NSLocalizedDescriptionKey: "The Rp Cookie Fetcher endpoint is not set."])
+        static let consentDisabled = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                                             code: ErrorCode.getRpCookieFromRATFailed.rawValue,
+                                             userInfo: [NSLocalizedDescriptionKey: "User information data collection is disabled."])
     }
 
     /// Reachability
@@ -72,7 +78,8 @@ import Foundation
           bundle: EnvironmentBundle,
           session: Sessionable,
           reachability: ReachabilityType?,
-          maximumTimeOut: UInt) {
+          maximumTimeOut: UInt,
+          consentStore: DataCollectionConsentReadable = DataCollectionConsentStore.shared) {
         guard let endpointAddress = bundle.endpointAddress else {
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
                                              code: ErrorCode.rpCookieFetcherCreationFailed.rawValue,
@@ -83,12 +90,12 @@ import Foundation
         safeEndpointURL = endpointAddress
         retryInterval = Constants.initialRetryInterval
         rpCookieRequestRetryCount = 0
-        rpCookieQueue = DispatchQueue(label: "com.rakuten.tech.analytics.rpcookie")
         self.bundle = bundle
         self.cookieStorage = cookieStorage
         self.session = session
         self.maximumTimeOut = maximumTimeOut
         self.reachability = reachability
+        self.consentStore = consentStore
 
         super.init()
     }
@@ -97,37 +104,36 @@ import Foundation
 // MARK: - Public API
 
 extension RAnalyticsRpCookieFetcher: RAnalyticsRpCookieFetchable {
-    /// Will pass valid Rp cookie to completionHandler as soon as it is available.
+    /// Returns a valid Rp cookie as soon as it is available.
     ///
     /// If a valid cookie is cached it will be returned immediately. Otherwise a new cookie will be retrieved
     /// from RAT, which might take time or be delayed depending on network connectivity.
-    ///
-    /// - Parameters:
-    ///     - completionHandler: Returns valid cookie or nil cookie and an error in case of failure.
-    ///     `completionHandler` may be called on a background queue.
-    @objc public func getRpCookieCompletionHandler(_ completionHandler: @escaping (HTTPCookie?, NSError?) -> Void) {
-        guard let rpCookie = getRpCookieFromCookieStorage() else {
-            getRpCookieFromRAT { result in
-                switch result {
-                case .success(let cookie):
-                    completionHandler(cookie, nil)
-
-                case .failure(let error):
-                    let reason = "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))"
-                    ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
-                                                     code: ErrorCode.getRpCookieFromRATFailed.rawValue,
-                                                     description: ErrorDescription.getRpCookieFromRATFailed,
-                                                     reason: reason))
-                    completionHandler(nil, error as NSError)
-                }
-            }
-            return
+    public func fetchRpCookie() async throws -> HTTPCookie {
+        guard consentStore.isEnabled(.userInformation) else {
+            throw RpCookieFetcherError.consentDisabled
         }
-        completionHandler(rpCookie, nil)
+
+        if let rpCookie = getRpCookieFromCookieStorage() {
+            return rpCookie
+        }
+
+        do {
+            return try await getRpCookieFromRAT()
+        } catch {
+            let reason = "\(error.localizedDescription), \(String(describing: (error as NSError).localizedFailureReason))"
+            ErrorRaiser.raise(.detailedError(domain: ErrorDomain.rpCookieFetcherErrorDomain,
+                                             code: ErrorCode.getRpCookieFromRATFailed.rawValue,
+                                             description: ErrorDescription.getRpCookieFromRATFailed,
+                                             reason: reason))
+            throw error
+        }
     }
 
     /// - Returns: A cached valid Rp cookie.
     @objc public func getRpCookieFromCookieStorage() -> HTTPCookie? {
+        guard consentStore.isEnabled(.userInformation) else {
+            return nil
+        }
         do {
             return try getRpCookie(from: cookieStorage)
 
@@ -166,7 +172,7 @@ extension RAnalyticsRpCookieFetcher {
         }
 
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: allHeaderFields, for: endpointURL)
-        let result = cookies.first { $0.name == Constants.rpName }
+        let result = cookies.first { $0.name == RATConstants.RpCookie.cookieName }
 
         guard let cookie = result else {
             let userInfo = [NSLocalizedDescriptionKey: errorDescription,
@@ -190,7 +196,7 @@ extension RAnalyticsRpCookieFetcher {
         let cookies = cookieStorage.cookies(for: endpointURL)
         let rpCookie = cookies?.first(where: {
             if let expiresDate = $0.expiresDate,
-               $0.name == Constants.rpName && expiresDate.timeIntervalSinceNow > 0 {
+               $0.name == RATConstants.RpCookie.cookieName && expiresDate.timeIntervalSinceNow > 0 {
                 return true
             }
             return false
@@ -209,86 +215,163 @@ extension RAnalyticsRpCookieFetcher {
 
 extension RAnalyticsRpCookieFetcher {
     /// Get the Rp Cookie from the `endpointURL`.
-    ///
-    /// - Parameter completionHandler: the completion handler.
-    private func getRpCookieFromRAT(_ completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
-        guard self.reachability?.connection != .unavailable else {
-            completionHandler(.failure(ErrorConstants.rpCookieCantBeFetchedError(reason: ErrorReason.connectionIsOffline)))
-            return
-        }
+    private func getRpCookieFromRAT() async throws -> HTTPCookie {
+        try await waitForAvailableConnection()
 
         guard let endpointURL = endpointURL else {
-            completionHandler(.failure(RpCookieFetcherError.endpoint))
-            return
+            throw RpCookieFetcherError.endpoint
         }
 
         var request = URLRequest(url: endpointURL)
         request.httpShouldHandleCookies = bundle.useDefaultSharedCookieStorage
 
-        session.createDataTask(with: request) { _, response, error in
-            self.handleResponse(request: request, response: response, error: error, completionHandler: completionHandler)
-        }.resume()
+        let response: URLResponse?
+        let fetchError: Error?
+        do {
+            let (_, sessionResponse) = try await self.session.data(for: request)
+            response = sessionResponse
+            fetchError = nil
+        } catch {
+            response = nil
+            fetchError = error
+        }
+        return try await handleResponse(request: request, response: response, error: fetchError)
     }
 
-    private func handleResponse(request: URLRequest, response: URLResponse?, error: Error?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+    private func handleResponse(request: URLRequest, response: URLResponse?, error: Error?) async throws -> HTTPCookie {
         let httpResponse = response as? HTTPURLResponse
 
         if let error = error {
-            self.handleError(error: error, httpResponse: httpResponse, completionHandler: completionHandler)
+            return try await handleError(error: error, httpResponse: httpResponse)
         } else if httpResponse?.statusCode != 200 {
-            self.handleNon200Response(httpResponse: httpResponse, completionHandler: completionHandler)
+            return try await handleNon200Response(httpResponse: httpResponse)
         } else {
-            self.handleSuccess(request: request, httpResponse: httpResponse, completionHandler: completionHandler)
+            return try handleSuccess(request: request, httpResponse: httpResponse)
         }
     }
 
-    private func handleError(error: Error, httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
-        self.retryFetchingRpCookie { retry in
-            guard retry else {
-                self.rpCookieRequestRetryCount = 0
-                completionHandler(.failure(error))
-                return
+    private func handleError(error: Error, httpResponse _: HTTPURLResponse?) async throws -> HTTPCookie {
+        let shouldRetry = await retryFetchingRpCookie()
+        guard shouldRetry else {
+            self.rpCookieRequestRetryCount = 0
+            throw error
+        }
+        return try await getRpCookieFromRAT()
+    }
+
+    private func handleNon200Response(httpResponse: HTTPURLResponse?) async throws -> HTTPCookie {
+        let shouldRetry = await retryFetchingRpCookie()
+        guard shouldRetry else {
+            self.rpCookieRequestRetryCount = 0
+            if let statusCode = httpResponse?.statusCode {
+                let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(self.endpointURL?.absoluteString ?? "")"
+                let userInfo = [NSLocalizedDescriptionKey: errorDescription]
+                let statusCodeError = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: statusCode, userInfo: userInfo)
+                throw statusCodeError
+            } else {
+                throw RpCookieFetcherError.unknown
             }
-            self.getRpCookieFromRAT(completionHandler)
         }
+        return try await getRpCookieFromRAT()
     }
 
-    private func handleNon200Response(httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
-        self.retryFetchingRpCookie { retry in
-            guard retry else {
-                self.rpCookieRequestRetryCount = 0
-                if let statusCode = httpResponse?.statusCode {
-                    let errorDescription = "The Rp Cookie request response status code is \(statusCode) - \(self.endpointURL?.absoluteString ?? "")"
-                    let userInfo = [NSLocalizedDescriptionKey: errorDescription]
-                    let statusCodeError = NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: statusCode, userInfo: userInfo)
-                    completionHandler(.failure(statusCodeError))
-                } else {
-                    completionHandler(.failure(RpCookieFetcherError.unknown))
-                }
-                return
-            }
-            self.getRpCookieFromRAT(completionHandler)
-        }
-    }
-
-    private func handleSuccess(request: URLRequest, httpResponse: HTTPURLResponse?, completionHandler: @escaping (Result<HTTPCookie, Error>) -> Void) {
+    private func handleSuccess(request: URLRequest, httpResponse: HTTPURLResponse?) throws -> HTTPCookie {
         self.rpCookieRequestRetryCount = 0
 
-        do {
-            let retrievedCookie: HTTPCookie
-            if request.httpShouldHandleCookies {
-                retrievedCookie = try self.getRpCookie(from: self.cookieStorage)
-            } else if let httpResponse = httpResponse {
-                retrievedCookie = try self.getRpCookie(from: httpResponse)
-            } else {
-                throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: [
-                    NSLocalizedDescriptionKey: "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(endpointURL?.absoluteString ?? "")",
-                    NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."
-                ])
+        if request.httpShouldHandleCookies {
+            return try self.getRpCookie(from: self.cookieStorage)
+        } else if let httpResponse = httpResponse {
+            return try self.getRpCookie(from: httpResponse)
+        } else {
+            throw NSError(domain: ErrorDomain.rpCookieFetcherErrorDomain, code: 0, userInfo: [
+                NSLocalizedDescriptionKey: "Cannot get Rp cookie from the RAT server and from the Cookie Storage - \(endpointURL?.absoluteString ?? "")",
+                NSLocalizedFailureReasonErrorKey: "httpShouldHandleCookies is false and httpResponse is nil."
+            ])
+        }
+    }
+}
+
+// MARK: - Reachability & lifecycle
+
+extension RAnalyticsRpCookieFetcher {
+    /// Waits until connectivity is available, re-checking on foreground resume, or times out.
+    private func waitForAvailableConnection() async throws {
+        guard let reachability else { return }
+        if reachability.connection.isAvailable { return }
+
+        let offlineError = ErrorConstants.rpCookieCantBeFetchedError(reason: ErrorReason.connectionIsOffline)
+        try await Self.waitUntilFirstThrowing(
+            timeoutNanoseconds: UInt64(maximumTimeOut) * 1_000_000_000,
+            timeoutError: offlineError
+        ) {
+            for await connection in reachability.connectionUpdates where connection.isAvailable {
+                return
             }
-            completionHandler(.success(retrievedCookie))
-        } catch {
-            completionHandler(.failure(error))
+            throw offlineError
+        } onForeground: {
+            reachability.connection.isAvailable
+        }
+    }
+
+    /// Returns when the first wait condition completes; cancels the rest.
+    private static func waitUntilFirstThrowing(
+        timeoutNanoseconds: UInt64,
+        timeoutError: Error,
+        connectivity waitForConnectivity: @escaping @Sendable () async throws -> Void,
+        onForeground isReadyAfterForeground: @escaping @Sendable () -> Bool
+    ) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask { try await waitForConnectivity() }
+            group.addTask {
+                for await _ in didBecomeActiveNotificationStream() where isReadyAfterForeground() {
+                    return
+                }
+            }
+            group.addTask {
+                try await Task.sleep(nanoseconds: timeoutNanoseconds)
+                throw timeoutError
+            }
+            try await group.next()
+            group.cancelAll()
+        }
+    }
+
+    /// Returns the result of the first wait condition; cancels the rest.
+    private static func waitUntilFirstBool(
+        interval waitForInterval: @escaping @Sendable () async -> Bool,
+        onForeground resumeOnForeground: @escaping @Sendable () -> Bool
+    ) async -> Bool {
+        await withTaskGroup(of: Bool.self) { group in
+            group.addTask { await waitForInterval() }
+            group.addTask {
+                for await _ in didBecomeActiveNotificationStream() {
+                    return resumeOnForeground()
+                }
+                return false
+            }
+            let result = await group.next() ?? false
+            group.cancelAll()
+            return result
+        }
+    }
+
+    /// Yields whenever the app becomes active so fetches can resume after background suspension.
+    private static func didBecomeActiveNotificationStream() -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            #if canImport(UIKit)
+            let observer = NotificationCenter.default.addObserver(
+                forName: UIApplication.didBecomeActiveNotification,
+                object: nil,
+                queue: nil
+            ) { _ in
+                continuation.yield(())
+            }
+            continuation.onTermination = { _ in
+                NotificationCenter.default.removeObserver(observer)
+            }
+            #else
+            continuation.finish()
+            #endif
         }
     }
 }
@@ -297,24 +380,36 @@ extension RAnalyticsRpCookieFetcher {
 
 extension RAnalyticsRpCookieFetcher {
     /// This method is used to retry getting the Rp Cookie until a given `maximumTimeOut`.
-    ///
-    /// - Parameter completionHandler: the completion handler.
-    private func retryFetchingRpCookie(_ completionHandler: @escaping (Bool) -> Void) {
-        // If failed retry fetch
-        rpCookieRequestRetryCount += 1
+    private func retryFetchingRpCookie() async -> Bool {
+        var retryCount: UInt = 0
+        _rpCookieRequestRetryCount.mutate { count in
+            count += 1
+            retryCount = count
+        }
 
-        let result = pow(Double(Constants.backOffMultiplier), Double(rpCookieRequestRetryCount))
+        let result = pow(Double(Constants.backOffMultiplier), Double(retryCount))
         retryInterval = min(Double(maximumTimeOut), result)
 
-        // Retry till the maximumTimeOut
         if UInt(retryInterval) < maximumTimeOut {
-            let deadlineTime = DispatchTime.now() + .seconds(Int(retryInterval))
-            rpCookieQueue.asyncAfter(deadline: deadlineTime) {
-                completionHandler(true)
-            }
+            let shouldContinue = await waitBeforeRetry(interval: retryInterval)
+            guard shouldContinue else { return false }
+            return true
+        }
 
-        } else {
-            completionHandler(false)
+        return false
+    }
+
+    /// Sleeps for the retry interval but also resumes early when the app returns to foreground.
+    private func waitBeforeRetry(interval: TimeInterval) async -> Bool {
+        await Self.waitUntilFirstBool {
+            do {
+                try await Task.sleep(nanoseconds: UInt64(interval) * 1_000_000_000)
+                return true
+            } catch {
+                return false
+            }
+        } onForeground: {
+            true
         }
     }
 }

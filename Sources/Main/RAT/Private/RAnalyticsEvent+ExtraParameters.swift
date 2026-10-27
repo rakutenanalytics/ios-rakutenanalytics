@@ -43,7 +43,7 @@ extension RAnalyticsEvent {
         let logoutMethod = parameters[RAnalyticsEvent.Parameter.logoutMethod] as? String
         let result = logoutMethod?.toLogoutString
         if !result.isEmpty {
-            extra[CpParameterKeys.Logout.method] = result
+            extra[PayloadParameterKeys.Cp.logoutMethod] = result
         }
 
         return extra

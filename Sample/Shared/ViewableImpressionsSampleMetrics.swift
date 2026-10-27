@@ -16,4 +16,20 @@ enum ViewableImpressionsSampleMetrics {
         }
         return data.count
     }
+
+    static func logRefreshCompleted(reason: String, listSize: Int, qualified: Int, durationMs: Double) {
+        let durationLabel = String(format: "%.2f", durationMs)
+        logger.notice(
+            "viewable refresh reason=\(reason, privacy: .public) list_size=\(listSize, privacy: .public) "
+                + "viewable_items_in_batch=\(qualified, privacy: .public) duration_ms=\(durationLabel, privacy: .public)"
+        )
+    }
+
+    static func logPageVisitSent(qualified: Int) {
+        logger.notice("sample RAT: sending pageVisit with viewable_data count=\(qualified, privacy: .public) (items in this event)")
+    }
+
+    static func logPageVisitSkipped() {
+        logger.notice("sample RAT: no pageVisit sent — viewable_data empty (0 viewable impression items)")
+    }
 }

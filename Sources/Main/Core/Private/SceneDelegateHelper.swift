@@ -7,7 +7,7 @@ enum SceneDelegateHelper {
     static func autoTrack(bundle: EnvironmentBundle = Bundle.main) {
         guard let applicationSceneManifest = bundle.applicationSceneManifest else {
             RLogger.error(message: "UIApplicationSceneManifest is missing from Info.plist — referral, deeplink, and geo launch auto-tracking are disabled. " +
-                "Adopt the UIKit scene lifecycle and add UIApplicationSceneManifest to Info.plist. See the v12 migration guide.")
+                            "Adopt the UIKit scene lifecycle and add UIApplicationSceneManifest to Info.plist. See the v12 migration guide.")
             ErrorRaiser.raise(.detailedError(domain: ErrorDomain.analyticsManagerErrorDomain,
                                              code: ErrorCode.sceneDelegateManifestMissing.rawValue,
                                              description: ErrorDescription.sceneDelegateManifestMissing,

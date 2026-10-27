@@ -10,6 +10,8 @@ xcuserdata
 *.xccheckout
 *.xcworkspace
 build
+.swiftpm
+.build
 .derivedData/
 DerivedData/
 

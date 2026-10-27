@@ -22,6 +22,7 @@ import SQLite3
             assert(sqlite3_exec(connection, "PRAGMA query_only = 1", nil, nil, nil) == SQLITE_OK) // forces read-only behavior
         }
 
+        sqlite3_busy_timeout(connection, 5_000)
         return connection
     }
 
@@ -30,93 +31,103 @@ import SQLite3
     }
 
     @objc public static func isTablePresent(_ table: String, connection: SQlite3Pointer) -> Bool {
-        let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
+        SQLiteConnectionLock.withLock(connection) {
+            let query = "SELECT EXISTS(SELECT name FROM sqlite_master WHERE type='table' AND name='\(table)')"
 
-        var statement: SQlite3Pointer?
-        sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
-        sqlite3_step(statement)
-        let tableCount = sqlite3_column_int(statement, 0)
-        sqlite3_reset(statement)
-        sqlite3_finalize(statement)
+            var statement: SQlite3Pointer?
+            sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
+            sqlite3_step(statement)
+            let tableCount = sqlite3_column_int(statement, 0)
+            sqlite3_reset(statement)
+            sqlite3_finalize(statement)
 
-        return tableCount > 0
+            return tableCount > 0
+        }
     }
 
     @objc public static func deleteTableIfExists(_ table: String, connection: SQlite3Pointer) {
-        let query = "DROP TABLE IF EXISTS '\(table)'"
+        SQLiteConnectionLock.withLock(connection) {
+            let query = "DROP TABLE IF EXISTS '\(table)'"
 
-        var statement: SQlite3Pointer?
-        sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
-        sqlite3_step(statement)
-        sqlite3_reset(statement)
-        sqlite3_finalize(statement)
+            var statement: SQlite3Pointer?
+            sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
+            sqlite3_step(statement)
+            sqlite3_reset(statement)
+            sqlite3_finalize(statement)
+        }
     }
 
     @objc public static func fetchTableContents(_ table: String, connection: SQlite3Pointer, errorCallback: ((String) -> Void)? = nil) -> [Data] {
-        var result = [Data]()
-        let query = "select * from \(table)"
+        SQLiteConnectionLock.withLock(connection) {
+            var result = [Data]()
+            let query = "SELECT * FROM \(table) ORDER BY rowid ASC"
 
-        var statement: SQlite3Pointer?
-        
-        let code = sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
-        switch code {
-        case SQLITE_OK:
-            while sqlite3_step(statement) == SQLITE_ROW {
-                let length = sqlite3_column_bytes(statement, 1)
-                
-                // sqlite3_column_blob may return NULL for NULL/empty blobs. Creating Data with a nil pointer crashes.
-                guard length > 0 else {
-                    result.append(Data())
-                    continue
-                }
-                guard let bytes = sqlite3_column_blob(statement, 1) else {
-                    result.append(Data())
-                    continue
-                }
+            var statement: SQlite3Pointer?
 
-                result.append(Data(bytes: bytes, count: Int(length)))
+            let code = sqlite3_prepare_v3(connection, query, -1, 0, &statement, nil)
+            switch code {
+            case SQLITE_OK:
+                while sqlite3_step(statement) == SQLITE_ROW {
+                    let length = sqlite3_column_bytes(statement, 1)
+
+                    // sqlite3_column_blob may return NULL for NULL/empty blobs. Creating Data with a nil pointer crashes.
+                    guard length > 0 else {
+                        result.append(Data())
+                        continue
+                    }
+                    guard let bytes = sqlite3_column_blob(statement, 1) else {
+                        result.append(Data())
+                        continue
+                    }
+
+                    result.append(Data(bytes: bytes, count: Int(length)))
+                }
+                sqlite3_finalize(statement)
+            default:
+                var errorMessage = "DatabaseTestUtils: fetchTableContents() error. Unexpected sqlite code \(code)"
+                if let sqliteError = sqlite3_errmsg(connection) {
+                    errorMessage += " - \(String(cString: sqliteError))"
+                }
+                errorCallback?(errorMessage)
             }
-            sqlite3_finalize(statement)
-        default:
-            var errorMessage = "DatabaseTestUtils: fetchTableContents() error. Unexpected sqlite code \(code)"
-            if let sqliteError = sqlite3_errmsg(connection) {
-                errorMessage += " - \(String(cString: sqliteError))"
-            }
-            errorCallback?(errorMessage)
+
+            return result
         }
-
-        return result
     }
 
     @objc public static func insert(blobs: [Data], table: String, connection: SQlite3Pointer) {
-        assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
+        SQLiteConnectionLock.withLock(connection) {
+            assert(sqlite3_exec(connection, "begin exclusive transaction", nil, nil, nil) == SQLITE_OK)
 
-        let createTableQuery = "create table if not exists \(table) (id integer primary key, data blob)"
-        assert(sqlite3_exec(connection, createTableQuery, nil, nil, nil) == SQLITE_OK)
+            let createTableQuery = "create table if not exists \(table) (id integer primary key, data blob)"
+            assert(sqlite3_exec(connection, createTableQuery, nil, nil, nil) == SQLITE_OK)
 
-        let insertQuery = "insert into \(table) (data) values(?)"
-        var statement: SQlite3Pointer?
-        assert(sqlite3_prepare_v3(connection, insertQuery, -1, 0, &statement, nil) == SQLITE_OK)
+            let insertQuery = "insert into \(table) (data) values(?)"
+            var statement: SQlite3Pointer?
+            assert(sqlite3_prepare_v3(connection, insertQuery, -1, 0, &statement, nil) == SQLITE_OK)
 
-        blobs.forEach { blob in
-            blob.withUnsafeBytes { bytes -> Void in
-                let status1 = sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(blob.count), nil)
-                let status2 = sqlite3_step(statement)
-                let status3 = sqlite3_clear_bindings(statement)
-                let status4 = sqlite3_reset(statement)
-                assert([status1, status3, status4].allSatisfy({ $0 == SQLITE_OK }))
-                assert(status2 == SQLITE_DONE)
+            blobs.forEach { blob in
+                blob.withUnsafeBytes { bytes in
+                    let status1 = sqlite3_bind_blob(statement, 1, bytes.baseAddress, Int32(blob.count), nil)
+                    let status2 = sqlite3_step(statement)
+                    let status3 = sqlite3_clear_bindings(statement)
+                    let status4 = sqlite3_reset(statement)
+                    assert([status1, status3, status4].allSatisfy({ $0 == SQLITE_OK }))
+                    assert(status2 == SQLITE_DONE)
+                }
             }
-        }
 
-        sqlite3_finalize(statement)
-        assert(sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK)
+            sqlite3_finalize(statement)
+            assert(sqlite3_exec(connection, "commit transaction", nil, nil, nil) == SQLITE_OK)
+        }
     }
 
     @objc public static func databaseName(connection: SQlite3Pointer) -> String? {
-        guard let dbName = sqlite3_db_filename(connection, nil) else {
-            return nil
+        SQLiteConnectionLock.withLock(connection) {
+            guard let dbName = sqlite3_db_filename(connection, nil) else {
+                return nil
+            }
+            return String(cString: dbName)
         }
-        return String(cString: dbName)
     }
 }

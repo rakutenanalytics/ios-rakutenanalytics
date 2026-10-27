@@ -15,9 +15,29 @@ public typealias WebTrackingCookieDomainBlock = () -> String?
 
 public typealias RAnalyticsErrorBlock = (NSError) -> Void
 
+/// Handler invoked when the SDK needs the host app to collect or reconfirm privacy consent.
+public typealias AnalyticsShowConsentCallback = ([DataCollectionType]) -> Void
+
 enum CoreOrigin {
     case analytics
     case geo(LocationModel)
+}
+
+/// Serializes app-to-web cookie store refreshes so overlapping triggers (for example
+/// `enableAppToWebTracking` and `setWebTrackingCookieMultipleDomains`) cannot race.
+/// Each refresh waits for the previously scheduled one to finish before running, so refreshes execute in call order.
+private actor CookieStoreRefreshCoordinator {
+    private var previousRefresh: Task<[HTTPCookie], Never>?
+
+    func refresh(_ operation: @escaping @Sendable () async -> [HTTPCookie]) async -> [HTTPCookie] {
+        let prior = previousRefresh
+        let task = Task {
+            _ = await prior?.value
+            return await operation()
+        }
+        previousRefresh = task
+        return await task.value
+    }
 }
 
 @objc public enum RAnalyticsLoggingLevel: Int {
@@ -64,34 +84,55 @@ protocol ReferralAppTrackable: AnyObject {
     /// - Returns: The shared instance.
     @objc(sharedInstance) public static func shared() -> AnalyticsManager {
         if Bundle.main.isManualInitializationEnabled {
-            guard isConfigured else {
-                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured before accessing shared instance. Call AnalyticsManager.configure() first.")
-                return singleton
+            if !isConfigured {
+                RLogger.error(message: "Manual initialization is enabled. AnalyticsManager must be configured "
+                                + "before accessing shared instance. Call AnalyticsManager.configure() first.")
             }
-            return singleton
         } else {
             isConfigured = true
-            return singleton
         }
+        return singleton
     }
+
+    /// Backing for `shouldTrackLastKnownLocation` so internal reads do not trigger deprecation warnings.
+    private var allowsLastKnownLocationWhenPrivacyControlOff: Bool = true
 
     /// Control whether the SDK should track the device's location or not.
     /// This property is set to `YES` by default, which means @ref RAnalyticsManager will use the device's location.
     ///
+    /// When `RATEnablePrivacyControl` is `true`, last-known location collection for analytics follows **only** the
+    /// `.location` runtime consent from ``set(dataCollection:enabled:)``. In that mode this property does not gate collection.
+    ///
     /// - Warning: If the application has not already requested access to the location information, trying to set this property to `YES` has no effect. Please refer
     /// to the [Location and Maps Programming Guide](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/LocationAwarenessPG/)
     /// for more information.
+    @available(*, deprecated, message: "Use set(dataCollection: .location, enabled:) when RATEnablePrivacyControl is true. Only applies when privacy control is off.")
     @objc public var shouldTrackLastKnownLocation: Bool {
-        didSet(oldValue) {
-            if oldValue != shouldTrackLastKnownLocation {
+        get { allowsLastKnownLocationWhenPrivacyControlOff }
+        set {
+            let oldValue = allowsLastKnownLocationWhenPrivacyControlOff
+            allowsLastKnownLocationWhenPrivacyControlOff = newValue
+            if oldValue != newValue {
                 startStopMonitoringLocationIfNeeded()
             }
         }
     }
 
-    /// Control whether the SDK should track the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) or not.
-    /// This property is set to `YES` by default, which means @ref RAnalyticsManager will use the advertising identifier if it is set to a non-zeroed valid value.
-    @objc public var shouldTrackAdvertisingIdentifier: Bool = false
+    /// Backing for `shouldTrackAdvertisingIdentifier` so internal reads do not trigger deprecation warnings.
+    private var allowsAdvertisingIdentifierWhenDeviceInfoAllowed: Bool = true
+
+    /// Control whether the SDK may read the [advertising identifier (IDFA)](https://developer.apple.com/reference/adsupport/asidentifiermanager) when device information collection is allowed.
+    ///
+    /// When `RATEnablePrivacyControl` is `true`, IDFA is included in payloads only if **both** this flag
+    /// and device information consent are enabled.
+    ///
+    /// - Note: Deprecated in the Mobile Privacy Control specification (same role as Android’s deprecated
+    ///   `TrackAdvertisingId` manifest flag). Prefer ``set(dataCollection:enabled:)`` with `.deviceInformation`.
+    @available(*, deprecated, message: "Use set(dataCollection: .deviceInformation, enabled:) when RATEnablePrivacyControl is true. IDFA requires this flag and device-information consent.")
+    @objc public var shouldTrackAdvertisingIdentifier: Bool {
+        get { allowsAdvertisingIdentifierWhenDeviceInfoAllowed }
+        set { allowsAdvertisingIdentifierWhenDeviceInfoAllowed = newValue }
+    }
 
     /// Control whether the SDK should inject a tracking cookie into the WKWebView's cookie store.
     /// The cookie enables tracking between mobile app and webviews.
@@ -101,7 +142,7 @@ protocol ReferralAppTrackable: AnyObject {
     /// This property is set to `NO` by default
     @objc public var enableAppToWebTracking: Bool = false {
         didSet {
-            refreshCookieStore()
+            Task { await refreshCookieStore() }
         }
     }
 
@@ -166,6 +207,23 @@ protocol ReferralAppTrackable: AnyObject {
         }
     }
 
+    /// Registers a handler the SDK invokes at launch when privacy control is enabled and one or more
+    /// data collection categories have no stored consent.
+    ///
+    /// Set this as early as possible (for example in `application(_:didFinishLaunchingWithOptions:)`),
+    /// before ``shared()`` or ``configure()``, so the host app can present consent UI before automatic
+    /// startup events. The handler receives granular categories in ``DataCollectionType/individualTypes``
+    /// order whose persisted consent is still `undetermined`.
+    ///
+    /// When `RATEnablePrivacyControl` is `false`, the handler is never invoked and consent is not persisted.
+    /// The handler is delivered at most once per process launch.
+    ///
+    /// - Parameter callback: Invoked on the main actor with categories that still need consent.
+    @MainActor
+    public static func showConsentCallback(callback: @escaping AnalyticsShowConsentCallback) {
+        PrivacyControlMigrationCoordinator.shared.registerShowConsentCallback(callback)
+    }
+
     /// Enable or disable the tracking of an event from an iOS Extension.
     @objc public var enableExtensionEventTracking: Bool = false {
         didSet {
@@ -195,6 +253,11 @@ protocol ReferralAppTrackable: AnyObject {
     private var sessionStartDate: Date?
     private var cookieDomainBlock: WebTrackingCookieDomainBlock?
     private var cookieDomains: [String]?
+    /// `true` when `setWebTrackingCookieDomain(block:)` was called after `setWebTrackingCookieMultipleDomains(array:)`.
+    /// Decides which of `cookieDomainBlock` / `cookieDomains` is used when the cookie store is refreshed
+    /// (toggle of `enableAppToWebTracking`, consent change); the other one is only a fallback.
+    private var isCookieDomainBlockLastConfigured = false
+    private let cookieStoreRefreshCoordinator = CookieStoreRefreshCoordinator()
 
     /// Trackers Set
     /// - Note: The 'Tracker' type has to conform to protocol `Hashable` in order to use `Set` instead of `NSMutableSet`
@@ -210,7 +273,19 @@ protocol ReferralAppTrackable: AnyObject {
     private let eventObserver: AnalyticsEventObserver
     private let deviceIdentifierHandler: DeviceIdentifierHandler
     private let bundle: EnvironmentBundle
+    private let dataCollectionConsent: DataCollectionConsentReadable
     private let userStorageHandler: UserStorageHandleable
+
+    private lazy var dataEraserCoordinator: DataEraserCoordinator = {
+        DataEraserCoordinator(erasables: [
+            launchCollector,
+            externalCollector,
+            RAnalyticsRATTracker.shared(),
+            GeoManager.shared,
+            AnalyticsManagerSessionEraser(delegate: self),
+            analyticsCookieInjector
+        ])
+    }()
 
     /// The default `WKWebView` user agent
     public private(set) var defaultWebViewUserAgent: String?
@@ -240,23 +315,28 @@ protocol ReferralAppTrackable: AnyObject {
         externalCollector.easyIdentifier
     }
 
+    private var allowsDeviceInformationOnRatPayload: Bool {
+        PrivacyControlPayload.allowsDeviceInformationOnRatPayload(bundle: bundle, consentStore: dataCollectionConsent)
+    }
+
     init(dependenciesContainer: SimpleDependenciesContainable) {
         externalCollector = RAnalyticsExternalCollector(dependenciesContainer: dependenciesContainer)
         launchCollector = RAnalyticsLaunchCollector(dependenciesContainer: dependenciesContainer)
         self.locationManager = dependenciesContainer.locationManager
 
         bundle = dependenciesContainer.bundle
+        dataCollectionConsent = dependenciesContainer.dataCollectionConsent
         eventChecker = EventChecker(disabledEventsAtBuildTime: bundle.disabledEventsAtBuildTime)
 
         userStorageHandler = dependenciesContainer.userStorageHandler
 
         eventObserver = AnalyticsEventObserver(pushEventHandler: dependenciesContainer.pushEventHandler)
 
-        shouldTrackLastKnownLocation = true
-        shouldTrackAdvertisingIdentifier = true
+        allowsLastKnownLocationWhenPrivacyControlOff = true
+        allowsAdvertisingIdentifierWhenDeviceInfoAllowed = true
         #if os(tvOS)
-        shouldTrackLastKnownLocation = false
-        shouldTrackAdvertisingIdentifier = false
+        allowsLastKnownLocationWhenPrivacyControlOff = false
+        allowsAdvertisingIdentifierWhenDeviceInfoAllowed = false
         #endif
 
         // Inject the Dependencies Container
@@ -283,9 +363,19 @@ protocol ReferralAppTrackable: AnyObject {
         #else
         RLogger.debug(message: "RAnalytics Pod is running.")
         #endif
+
+        Task { @MainActor in
+            PrivacyConsentReactor.shared.register(analytics: self)
+        }
+        if let consentStore = dependenciesContainer.migrationConsentStore {
+            Task { @MainActor in
+                PrivacyControlMigrationCoordinator.shared.runStartupMigrationIfNeeded(consentStore: consentStore)
+            }
+        }
     }
 
     deinit {
+        NotificationCenter.default.removeObserver(self)
         stopMonitoringLocation()
     }
 
@@ -307,6 +397,55 @@ protocol ReferralAppTrackable: AnyObject {
     public func getCarrierNames() -> (primary: String?, secondary: String?) {
         return RAnalyticsRATTracker.shared().getCarrierNames()
     }
+
+    /// Apply a runtime data collection / privacy setting when `RATEnablePrivacyControl` is enabled.
+    ///
+    /// When `RATEnablePrivacyControl` is `false` (default), this is ignored and all categories are collected.
+    /// When `true`, granular consent applies; each category must be explicitly granted to be collected,
+    /// and unset stored consent is treated as not granted. This gates **what** is collected and sent per
+    /// category, not whether the SDK sends events altogether (core/minimal payloads may still flow).
+    ///
+    /// - Parameters:
+    ///   - type: Which category (or all categories) to update.
+    ///   - enabled: Whether collection for that category is allowed.
+    public func set(dataCollection type: DataCollectionType, enabled: Bool) async {
+        await dataCollectionConsent.setEnabled(enabled, for: type)
+    }
+
+    /// Returns whether data collection is currently enabled for `type`.
+    ///
+    /// When `RATEnablePrivacyControl` is `false` (default), this always returns `true` for every type (legacy full collection).
+    /// When `true`, this reflects persisted runtime consent; unset storage is treated as not granted.
+    ///
+    /// For ``DataCollectionType/all``, this returns `true` only when every granular category is enabled.
+    /// Prefer checking the four concrete types if you need per-category state.
+    ///
+    /// - Parameter type: The data collection category to query.
+    /// - Returns: Whether that category is allowed for collection and payloads, subject to OS permissions and other legacy rules.
+    public func isDataCollectionEnabled(dataCollection type: DataCollectionType) -> Bool {
+        dataCollectionConsent.isEnabled(type)
+    }
+
+    /// Erases locally stored analytics data (GDPR / opt-out).
+    ///
+    /// Clears SDK-owned UserDefaults, Keychain items, SQLite queues, cookies, and in-memory state.
+    /// Does not send analytics events or remove registered trackers.
+    ///
+    /// - Throws: ``ClearDataError/alreadyRunning`` when another `clearData()` call is already in progress.
+    public func clearData() async throws {
+        try await dataEraserCoordinator.clearData()
+    }
+}
+
+extension AnalyticsManager: SessionDataDelegating {
+    func clearSessionData() {
+        sessionCookie = nil
+        sessionStartDate = nil
+        userStorageHandler.removeObject(forKey: UserDefaultsKeys.userAgentKey)
+        clearCarrierNames()
+        stopMonitoringLocation()
+        startNewSession()
+    }
 }
 
 // MARK: - Configuration
@@ -317,24 +456,33 @@ extension AnalyticsManager {
     /// - Warning: If the `AnalyticsManager` is not launched from the main thread, then the `WKWebView` user agent will be set only in the next loop of the main Thread.
     private func configureWebViewUserAgent() {
         #if os(iOS)
+        MainThreadExecutor.run {
+            self.applyWebViewUserAgentForCurrentPrivacyState()
+        }
+        #endif
+    }
+
+    /// Applies WebView UA: custom analytics UA only when device-information collection is allowed (or privacy control is off).
+    /// Mobile Privacy Control spec: when `DEVICE_INFORMATION` is disabled, use the default system WebView user agent without SDK modification.
+    private func applyWebViewUserAgentForCurrentPrivacyState() {
+        #if os(iOS)
         guard bundle.isWebViewAppUserAgentEnabledAtBuildtime else {
-            // WKWebView can only be instantiated on the main thread.
-            MainThreadExecutor.run {
-                self.defaultWebViewUserAgent = WKWebView().rCurrentUserAgent
-            }
+            defaultWebViewUserAgent = WKWebView().rCurrentUserAgent
             return
         }
 
-        // WKWebView can only be instantiated on the main thread.
-        MainThreadExecutor.run {
-            let webView = WKWebView()
-            self.defaultWebViewUserAgent = webView.rCurrentUserAgent
+        let webView = WKWebView()
+        defaultWebViewUserAgent = webView.rCurrentUserAgent
 
-            if let userAgent = self.defaultWebViewUserAgent,
-               let customUserAgent = webView.webViewUserAgent(defaultWebViewUserAgent: userAgent,
-                                                              for: self.bundle) {
-                self.userStorageHandler.register(defaults: [UserDefaultsKeys.userAgentKey: customUserAgent])
-            }
+        let allowAnalyticsUserAgentCustomization = !bundle.isPrivacyControlEnabled
+            || dataCollectionConsent.isEnabled(.deviceInformation)
+        if allowAnalyticsUserAgentCustomization,
+           let userAgent = defaultWebViewUserAgent,
+           let customUserAgent = webView.webViewUserAgent(defaultWebViewUserAgent: userAgent,
+                                                          for: bundle) {
+            userStorageHandler.register(defaults: [UserDefaultsKeys.userAgentKey: customUserAgent])
+        } else {
+            userStorageHandler.removeObject(forKey: UserDefaultsKeys.userAgentKey)
         }
         #endif
     }
@@ -362,47 +510,46 @@ extension AnalyticsManager {
                                                object: nil)
     }
 
-    private func refreshCookieStore(with targetDomains: [String]? = nil, completion: (([HTTPCookie]) -> Void)? = nil) {
-        guard enableAppToWebTracking else {
-            analyticsCookieInjector.clearCookies { }
-            return
-        }
-
-        // If targetDomains is not nil and not empty, proceed with the following logic
-        guard let targetDomains = targetDomains, !targetDomains.isEmpty else {
-            injectAppToWebTrackingCookie(domain: nil) { trackingCookie in
-                if let trackingCookie = trackingCookie {
-                    completion?([trackingCookie])
-                } else {
-                    // No tracking cookie found, return an empty array
-                    completion?([])
-                }
+    private func refreshCookieStore() async -> [HTTPCookie] {
+        await cookieStoreRefreshCoordinator.refresh { [weak self] in
+            guard let self else {
+                return []
             }
-            return
-        }
-
-        var trackingCookies: [HTTPCookie] = []
-        let group = DispatchGroup()
-
-        for domain in targetDomains {
-            group.enter()
-            injectAppToWebTrackingCookie(domain: domain) { trackingCookie in
-                if let trackingCookie = trackingCookie {
-                    trackingCookies.append(trackingCookie)
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) {
-            completion?(trackingCookies)
+            return await self.performRefreshCookieStore()
         }
     }
 
-    private func injectAppToWebTrackingCookie(domain: String?, completion: ((HTTPCookie?) -> Void)? = nil) {
-        analyticsCookieInjector.injectAppToWebTrackingCookie(domain: domain, deviceIdentifier: deviceIdentifierHandler.ckp()) { trackingCookie in
-            completion?(trackingCookie)
+    private func performRefreshCookieStore() async -> [HTTPCookie] {
+        await analyticsCookieInjector.clearCookies()
+        guard enableAppToWebTracking else { return [] }
+
+        // ra_uid (app-to-web) is built from device identifiers (ckp / advertising id); gated by DEVICE_INFORMATION only.
+        // Rp cookie and shared cookie handling on RAT POSTs remain gated by USER_INFORMATION elsewhere.
+        guard dataCollectionConsent.isEnabled(.deviceInformation) else { return [] }
+
+        var trackingCookies: [HTTPCookie] = []
+        for domain in configuredWebTrackingCookieDomains() {
+            if let trackingCookie = await injectAppToWebTrackingCookie(domain: domain) {
+                trackingCookies.append(trackingCookie)
+            }
         }
+        return trackingCookies
+    }
+
+    /// The last configured domain setting wins; the other one is the fallback, then the default domain (`nil`).
+    private func configuredWebTrackingCookieDomains() -> [String?] {
+        let multipleDomains = cookieDomains?.isEmpty == false ? cookieDomains : nil
+        let blockDomains = cookieDomainBlock?().map { [$0] }
+        let domains = isCookieDomainBlockLastConfigured ? blockDomains ?? multipleDomains : multipleDomains ?? blockDomains
+        guard let domains else { return [nil] }
+        return domains
+    }
+
+    private func injectAppToWebTrackingCookie(domain: String?) async -> HTTPCookie? {
+        await analyticsCookieInjector.injectAppToWebTrackingCookie(
+            domain: domain,
+            deviceIdentifier: deviceIdentifierHandler.ckp()
+        )
     }
 
 }
@@ -428,12 +575,44 @@ extension AnalyticsManager {
 // MARK: - Location
 
 extension AnalyticsManager {
+    /// Last-known location for automatic events: legacy `shouldTrackLastKnownLocation` when privacy control is off;
+    /// location consent only when privacy control is on.
+    private var isLastKnownLocationCollectionAllowed: Bool {
+        if bundle.isPrivacyControlEnabled {
+            return dataCollectionConsent.isEnabled(.location)
+        }
+        return allowsLastKnownLocationWhenPrivacyControlOff
+    }
+
+    /// Sets ``RAnalyticsState/lastKnownLocation`` only when the LOCATION category may be used for analytics on this path.
+    ///
+    /// **Mobile Privacy Control — “clear location” for RAT:** the SDK does not persist a separate lat/long cache for
+    /// automatic events. Keeping ``lastKnownLocation`` `nil` here (when consent is off or location is unavailable)
+    /// is how we **omit `loc` from payloads**—there is nothing else to “clear” for outbound analytics on the main path.
+    /// ``AutomaticFieldsBuilder/addLocation`` also gates on location consent before attaching `loc`.
+    private func applyLastKnownLocationForPrivacyPolicy(to state: RAnalyticsState, coreOrigin: CoreOrigin) {
+        if case .analytics = coreOrigin {
+            if isLastKnownLocationCollectionAllowed,
+               let location = locationManager.location {
+                state.lastKnownLocation = LocationModel(location: location)
+            } else {
+                state.lastKnownLocation = nil
+            }
+        } else if case .geo(let locationModel) = coreOrigin {
+            if dataCollectionConsent.isEnabled(.location) {
+                state.lastKnownLocation = locationModel
+            } else {
+                state.lastKnownLocation = nil
+            }
+        }
+    }
+
     private func startStopMonitoringLocationIfNeeded() {
         let status: CLAuthorizationStatus = type(of: locationManager).authorizationStatus()
 
-        if shouldTrackLastKnownLocation &&
-            (status == .authorizedAlways
-                || (status == .authorizedWhenInUse && UIApplication.RAnalyticsSharedApplication?.applicationState == .active)) {
+        if isLastKnownLocationCollectionAllowed,
+           status == .authorizedAlways
+            || status == .authorizedWhenInUse && UIApplication.RAnalyticsSharedApplication?.applicationState == .active {
             startMonitoringLocation()
 
         } else {
@@ -519,25 +698,13 @@ extension AnalyticsManager: AnalyticsManageable {
         let state = RAnalyticsState(sessionIdentifier: sessionIdentifier,
                                     deviceIdentifier: deviceIdentifierHandler.ckp())
 
-        if shouldTrackAdvertisingIdentifier, let advertisingIdentifier = advertisingIdentifierHandler.idfa {
-            // User has not disabled tracking
+        if allowsAdvertisingIdentifierWhenDeviceInfoAllowed,
+           dataCollectionConsent.isEnabled(.deviceInformation),
+           let advertisingIdentifier = advertisingIdentifierHandler.idfa {
             state.advertisingIdentifier = advertisingIdentifier
         }
 
-        switch coreOrigin {
-        case .analytics:
-            if shouldTrackLastKnownLocation,
-               let location = locationManager.location {
-                state.lastKnownLocation = LocationModel(location: location)
-
-            } else {
-                state.lastKnownLocation = nil
-            }
-
-        case .geo(let locationModel):
-            state.lastKnownLocation = locationModel
-        }
-
+        applyLastKnownLocationForPrivacyPolicy(to: state, coreOrigin: coreOrigin)
         state.sessionStartDate = sessionStartDate ?? nil
 
         // Update state with data from external collector
@@ -640,37 +807,44 @@ extension AnalyticsManager {
         trackersLockableObject.unlock()
     }
 
-    /// Generates a new unique page identifier using device identifier and timestamp.
-    /// Returns the generated page ID for the app to use as needed.
+    /// Generates a new unique page identifier for optional `pgid` on RAT events.
     ///
-    /// - Returns: A unique page identifier in the format "<ckp>_<timestamp>"
+    /// Embeds `deviceIdentifierHandler.ckp()` when device-information may appear on RAT; otherwise `ckp` is
+    /// treated as empty, producing `"_<timestamp>"` (same validation shape without embedding the id).
+    ///
+    /// - Returns: `"<ckp>_<timestamp>"` or `"_<timestamp>"`.
     @objc public func generatePageId() -> String {
-        let deviceIdentifier = deviceIdentifierHandler.ckp()
-        return "\(deviceIdentifier)_\(Int(Date().toRatTimestamp))"
+        let timestamp = Int(Date().toRatTimestamp)
+        let ckp = allowsDeviceInformationOnRatPayload ? deviceIdentifierHandler.ckp() : ""
+        return "\(ckp)_\(timestamp)"
     }
 
     /// Block to allow the app to set a custom domain on the app-to-web tracking cookie.
     ///
     /// - Parameters:
     ///     - cookieDomainBlock: The block returns the domain string to set on the cookie.
-    ///     - completion: An optional completion handler that returns the tracking cookies.
-    @objc(setWebTrackingCookieDomainWithBlock:completion:) public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock, completion: (([HTTPCookie]) -> Void)? = nil) {
+    ///
+    /// - Returns: The tracking cookies injected into the web view cookie store.
+    ///
+    /// - Note: Takes precedence over domains set by `setWebTrackingCookieMultipleDomains(array:)` until that method is called again.
+    public func setWebTrackingCookieDomain(block cookieDomainBlock: @escaping WebTrackingCookieDomainBlock) async -> [HTTPCookie] {
         self.cookieDomainBlock = cookieDomainBlock
-        guard let domain = self.cookieDomainBlock?() else {
-            refreshCookieStore(completion: completion)
-            return
-        }
-        refreshCookieStore(with: [domain], completion: completion)
+        isCookieDomainBlockLastConfigured = true
+        return await refreshCookieStore()
     }
 
     /// Method to allow the app to set multiple custom domains for app-to-web tracking cookies.
     ///
     /// - Parameters:
     ///     - cookieDomains: An array of domain strings to set on the cookie.
-    ///     - completion: An optional completion handler that returns the tracking cookies.
-    @objc(setWebTrackingCookieMultipleDomainsWithArray:completion:) public func setWebTrackingCookieMultipleDomains(array cookieDomains: [String]?, completion: (([HTTPCookie]) -> Void)? = nil) {
+    ///
+    /// - Returns: The tracking cookies injected into the web view cookie store.
+    ///
+    /// - Note: Takes precedence over the domain set by `setWebTrackingCookieDomain(block:)` until that method is called again.
+    public func setWebTrackingCookieMultipleDomains(array cookieDomains: [String]?) async -> [HTTPCookie] {
         self.cookieDomains = cookieDomains
-        refreshCookieStore(with: cookieDomains, completion: completion)
+        isCookieDomainBlockLastConfigured = false
+        return await refreshCookieStore()
     }
 
     /// Returns the web tracking cookie domain set by `setWebTrackingCookieDomain(block:)`
@@ -730,5 +904,21 @@ extension AnalyticsManager {
     /// - Note: By removing the member identifier, `_rem_logout` is automatically tracked.
     public func removeMemberIdentifier() {
         externalCollector.trackLogout()
+    }
+}
+
+// MARK: - Privacy consent reconciliation
+
+extension AnalyticsManager: AnalyticsPrivacyConsentReconciling {
+    func reconcileLastKnownLocationMonitoringAfterConsentChange() {
+        startStopMonitoringLocationIfNeeded()
+    }
+
+    func refreshAppToWebCookiesAfterConsentChange() async {
+        _ = await refreshCookieStore()
+    }
+
+    func applyWebViewUserAgentAfterConsentChange() {
+        applyWebViewUserAgentForCurrentPrivacyState()
     }
 }

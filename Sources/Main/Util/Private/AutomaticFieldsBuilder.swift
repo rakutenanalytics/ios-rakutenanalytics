@@ -34,9 +34,12 @@ protocol AutomaticFieldsBuildable {
          notificationHandler: NotificationObservable,
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
          reachability: ReachabilityType?,
-         userStorageHandler: UserStorageHandleable)
+         userStorageHandler: UserStorageHandleable,
+         consentStore: DataCollectionConsentReadable)
     func addSdkSourceIfNeeded(_ payload: NSMutableDictionary, event: RAnalyticsEvent)
-    func addCommonParameters(_ payload: NSMutableDictionary, state: RAnalyticsState)
+    func addCommonParameters(_ payload: NSMutableDictionary,
+                             state: RAnalyticsState,
+                             event: RAnalyticsEvent)
     func addLocation(_ payload: NSMutableDictionary,
                      state: RAnalyticsState,
                      addActionParameters: Bool)
@@ -72,6 +75,9 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
     /// The reachability class handling the network status.
     private let reachability: ReachabilityType?
 
+    /// Consent store for privacy control gating.
+    private let consentStore: DataCollectionConsentReadable
+
     /// The reachability status
     private var reachabilityStatus: NSNumber? {
         guard let value = reachability?.flags?.reachabilityStatus.rawValue else {
@@ -88,9 +94,11 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
          notificationHandler: NotificationObservable,
          analyticsStatusBarOrientationGetter: StatusBarOrientationGettable?,
          reachability: ReachabilityType?,
-         userStorageHandler: UserStorageHandleable) {
+         userStorageHandler: UserStorageHandleable,
+         consentStore: DataCollectionConsentReadable = DataCollectionConsentStore.shared) {
         self.startTime = NSDate().toString
         self.bundle = bundle
+        self.consentStore = consentStore
         self.deviceHandler = DeviceHandler(device: deviceCapability,
                                            screen: screenHandler)
         self.telephonyHandler = TelephonyHandler(telephonyNetworkInfo: telephonyNetworkInfoHandler,
@@ -128,7 +136,7 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
         // For custom events, check event parameters since regular params don't get copied to payload
         if event.name == RAnalyticsEvent.Name.custom,
-           let sdkSource = event.parameters["sdk_source"] as? String, !sdkSource.isEmpty {
+           let sdkSource = event.parameters[PayloadParameterKeys.sdkSource] as? String, !sdkSource.isEmpty {
             payload[PayloadParameterKeys.sdkSource] = sdkSource
             return
         }
@@ -139,103 +147,91 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
 
     /// Add the automatic fields to the RAT Payload.
     ///
+    /// Every event sent through RAT (including Geo `loc`) passes this method. It always sets root-level
+    /// `privacy_mode` last so the current consent snapshot cannot be overwritten by other merged fields.
+    ///
     /// - Parameters:
     ///    - payload: The payload to update.
     ///    - state: The state.
     func addCommonParameters(_ payload: NSMutableDictionary,
-                             state: RAnalyticsState) {
-        // MARK: acc
+                             state: RAnalyticsState,
+                             event _: RAnalyticsEvent) {
+        // MARK: acc, aid (always include)
         payload[PayloadParameterKeys.acc] =
             (payload[PayloadParameterKeys.acc] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.accountIdentifier)
-
-        // MARK: aid
         payload[PayloadParameterKeys.aid] =
             (payload[PayloadParameterKeys.aid] as? NSNumber)?.positiveIntegerNumber ?? NSNumber(value: bundle.applicationIdentifier)
 
-        // MARK: dln
+        payload.addEntries(from: state.alwaysCollectedCorePayload)
+        addDeviceInformationParameters(payload, state: state)
+        addUserInformationParameters(payload, state: state)
+        addMobileNetworkParameters(payload)
+
+        // MARK: ltm, cks (always include - session)
+        payload[PayloadParameterKeys.ltm] = startTime
+        payload[PayloadParameterKeys.cks] = state.sessionIdentifier
+
+        payload[PayloadParameterKeys.privacyMode] = PrivacyControlPayload.privacyModeString(bundle: bundle, consentStore: consentStore)
+    }
+
+    private func addDeviceInformationParameters(_ payload: NSMutableDictionary, state: RAnalyticsState) {
+        guard consentStore.isEnabled(.deviceInformation) else {
+            return
+        }
+        payload.addEntries(from: state.deviceInformationMosPayload)
         if let languageCode = bundle.languageCode {
-            payload[PayloadParameterKeys.Language.dln] = languageCode
+            payload[PayloadParameterKeys.dln] = languageCode
         }
+        payload[PayloadParameterKeys.model] = UIDevice.current.modelIdentifier
+        payload[PayloadParameterKeys.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
+        payload[PayloadParameterKeys.ckp] = state.deviceIdentifier
+        payload[PayloadParameterKeys.ua] = userAgentHandler.value(for: state)
+        payload[PayloadParameterKeys.uaEnriched] = userAgentHandler.enrichedValue(for: state)
+        payload[PayloadParameterKeys.res] = deviceHandler.screenResolution
+        payload[PayloadParameterKeys.tzo] = NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)
+        if deviceHandler.includesBatteryMetrics {
+            payload[PayloadParameterKeys.powerstatus] = NSNumber(value: deviceHandler.batteryPowerStatusValue)
+            payload[PayloadParameterKeys.mbat] = String(format: "%0.f", deviceHandler.batteryLevelPercentage)
+        }
+        if !state.advertisingIdentifier.isEmpty {
+            payload[PayloadParameterKeys.cka] = state.advertisingIdentifier
+        }
+        if payload[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.sessionEnd {
+            payload[PayloadParameterKeys.devicePer] = AnalyticsDevicePermissionCollector.shared.collectPermissions()
+        }
+    }
 
-        // MARK: model
-        payload[PayloadParameterKeys.Device.model] = UIDevice.current.modelIdentifier
+    private func addUserInformationParameters(_ payload: NSMutableDictionary,
+                                              state: RAnalyticsState) {
+        guard consentStore.isEnabled(.userInformation) else {
+            return
+        }
+        if !state.easyIdentifier.isEmpty, (payload[PayloadParameterKeys.easyid] as? String).isEmpty {
+            payload[PayloadParameterKeys.easyid] = state.easyIdentifier
+        }
+    }
 
-        // Telephony Handler
+    private func addMobileNetworkParameters(_ payload: NSMutableDictionary) {
+        guard consentStore.isEnabled(.mobileNetwork) else { return }
         telephonyHandler.reachabilityStatus = reachabilityStatus
-
-        // MARK: mcn
         if let mcn = telephonyHandler.mcn, !mcn.isEmpty {
-            payload[PayloadParameterKeys.Telephony.mcn] = mcn
+            payload[PayloadParameterKeys.mcn] = mcn
         }
-
-        // MARK: mcnd
         if let mcnd = telephonyHandler.mcnd, !mcnd.isEmpty {
-            payload[PayloadParameterKeys.Telephony.mcnd] = mcnd
+            payload[PayloadParameterKeys.mcnd] = mcnd
         }
-
-        // MARK: mnetw
-        payload[PayloadParameterKeys.Telephony.mnetw] = telephonyHandler.mnetw ?? ""
-
-        // MARK: mnetwd
-        payload[PayloadParameterKeys.Telephony.mnetwd] = telephonyHandler.mnetwd ?? ""
-
-        // MARK: mori
-        payload[PayloadParameterKeys.Orientation.mori] = NSNumber(value: statusBarOrientationHandler.mori.rawValue)
-
-        // MARK: online
+        payload[PayloadParameterKeys.mnetw] = telephonyHandler.mnetw ?? ""
+        payload[PayloadParameterKeys.mnetwd] = telephonyHandler.mnetwd ?? ""
         if let reachabilityStatus = reachabilityStatus {
             let isOnline = reachabilityStatus.uintValue != RATReachabilityStatus.offline.rawValue
-            payload[PayloadParameterKeys.Network.online] = NSNumber(value: isOnline)
-        }
-
-        // MARK: ckp
-        payload[PayloadParameterKeys.Identifier.ckp] = state.deviceIdentifier
-
-        // MARK: ua
-        payload[PayloadParameterKeys.UserAgent.ua] = userAgentHandler.value(for: state)
-
-        // MARK: ua_enriched
-        payload[PayloadParameterKeys.UserAgent.uaEnriched] = userAgentHandler.enrichedValue(for: state)
-
-        // MARK: res
-        payload[PayloadParameterKeys.Device.res] = deviceHandler.screenResolution
-
-        // MARK: ltm
-        payload[PayloadParameterKeys.Time.ltm] = startTime
-
-        // MARK: cks
-        payload[PayloadParameterKeys.Identifier.cks] = state.sessionIdentifier
-
-        // MARK: tzo
-        payload[PayloadParameterKeys.TimeZone.tzo] = NSNumber(value: Double(NSTimeZone.local.secondsFromGMT()) / 3600.0)
-
-        payload.addEntries(from: state.corePayload)
-
-        if deviceHandler.includesBatteryMetrics {
-            // MARK: powerstatus
-            payload[PayloadParameterKeys.Device.powerStatus] = NSNumber(value: deviceHandler.batteryPowerStatusValue)
-
-            // MARK: mbat
-            payload[PayloadParameterKeys.Device.mbat] = String(format: "%0.f", deviceHandler.batteryLevelPercentage)
-        }
-
-        // MARK: cka
-        if !state.advertisingIdentifier.isEmpty {
-            payload[PayloadParameterKeys.Identifier.cka] = state.advertisingIdentifier
-        }
-
-        // MARK: easyid
-        if !state.easyIdentifier.isEmpty && (payload[PayloadParameterKeys.Identifier.easyid] as? String).isEmpty {
-            payload[PayloadParameterKeys.Identifier.easyid] = state.easyIdentifier
-        }
-
-        // MARK: device_per
-        if payload[PayloadParameterKeys.etype] as? String == RAnalyticsEvent.Name.sessionEnd {
-            payload[PayloadParameterKeys.Device.devicePer] = AnalyticsDevicePermissionCollector.shared.collectPermissions()
+            payload[PayloadParameterKeys.online] = NSNumber(value: isOnline)
         }
     }
 
     /// Add the RAT location fields to the RAT Payload.
+    ///
+    /// `loc` is added only if **both** LOCATION consent is enabled **and** ``RAnalyticsState/lastKnownLocation`` is
+    /// non-`nil` (set in ``AnalyticsManager`` when collection is allowed). Otherwise the payload has no `loc`.
     ///
     /// - Parameters:
     ///    - payload: The Payload to update.
@@ -245,6 +241,10 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
                      state: RAnalyticsState,
                      addActionParameters: Bool) {
         // MARK: loc
+        guard consentStore.isEnabled(.location) else {
+            RLogger.debug(message: "Location not added to payload because data collection is disabled.")
+            return
+        }
 
         guard let locationModel = state.lastKnownLocation else {
             RLogger.debug(message: "Location can't be tracked because lastKnownLocation is nil.")
@@ -259,14 +259,14 @@ final class AutomaticFieldsBuilder: AutomaticFieldsBuildable {
             return
         }
 
-        payload[PayloadParameterKeys.Location.loc] = locationModel.toDictionary
+        payload[PayloadParameterKeys.Loc.loc] = locationModel.toDictionary
 
         if addActionParameters {
             let requestLocationActionParameters = locationModel.requestLocationActionParameters()
             if !requestLocationActionParameters.isEmpty {
-                payload[PayloadParameterKeys.ActionParameters.actionParams] = requestLocationActionParameters
+                payload[PayloadParameterKeys.ActionParams.actionParams] = requestLocationActionParameters
             }
-            payload[PayloadParameterKeys.isAction] = locationModel.isAction
+            payload[PayloadParameterKeys.isaction] = locationModel.isAction
         }
     }
 
